@@ -1,8 +1,9 @@
 # Phase 2 input diagnostics — 2026-10-08
 
 Scope: SPEC §§6, 9, 12; Phase 2 safe event metadata viewer.
-Status: implemented, software-tested and Russian native UI inspected.
-**Physical collection and performance remain unverified.**
+Status: implemented, software-tested, Russian native UI inspected and basic G603
+side-button collection user-verified. **Remaining physical safety/performance checks
+remain open.**
 
 ## Contract
 
@@ -75,11 +76,27 @@ Build/signature/catalog results are recorded in PLAN.md. Logs
 `/tmp/rebind-diagnostics-{doctor,tests,build-final,release-final}.log`;
 result `build/Phase2DiagnosticsTests.xcresult` (ignored).
 
-## Physical checks (pending)
+## User hardware result — 2026-10-08
+
+The user reports “Да, все отлично” and supplies a populated panel screenshot for
+the previously reported G603 LIGHTSPEED/G HUB setup. It shows Button 4 → CG 3 and
+Button 5 → CG 4, down/up pairs and Button 5 drag rows. Collection is active around
+31–33 seconds; rules are paused and the displayed decisions are passed through.
+This verifies basic collection and populated Russian table metadata. It does not
+establish physical-device attribution from Quartz events.
+
+The omitted counter reads 609. It counts rate-limit exclusions and ring overwrites;
+the screenshot does not distinguish them or establish hardware event loss or
+performance. Middle-button CG 2, active-rule output, expiry and explicit/protected
+clearing are not shown and remain physical checks. Software/build evidence above
+is unchanged; this confirmation required documentation changes only.
+
+## Remaining physical checks
 
 1. Run a single rebuilt Xcode copy (⌘R), confirm its actual permissions, keep the
-   existing rules. Start diagnostics while rules are paused: middle/side Buttons 3/4/5
-   should show CG 2/3/4 down/up with normal passthrough. No output should be queued.
+   existing rules. With rules paused, verify middle Button 3 shows CG 2 down/up with
+   normal passthrough and no queued output. Side Buttons 4/5 → CG 3/4 and their
+   passed-through decisions are already visible in the user screenshot.
 2. Enable working rules and check ordinary/hold/leftward gesture in disposable TextEdit
    with the panel open in the background. Check queue versus source consumption,
    source modifier labels, no duplicate output and no keyboard/feedback rows.

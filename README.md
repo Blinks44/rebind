@@ -6,9 +6,17 @@ recording/editing, exact modifiers, pause/emergency bypass, permission status,
 menu-bar lifecycle and atomic local configuration. **The user verified G603 Control + Button 4 → Command+A in TextEdit, with
 plain Button 4 retaining its behavior. The user also confirms Button 5 long press
 → Command+A with a 1000 ms delay after cancellation fixes, and the requested
-Option + Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
+Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
 double press, other gesture directions and full suppression/cancellation/lifecycle checks remain open.
 Multitouch and per-device rules are not implemented.
+
+Phase 3 adds **Devices**: live native CoreHID interface discovery, names, VID/PID,
+transport and current-connection IDs. Receivers may appear as multiple interfaces
+and hide the mouse model. Declared HID buttons are shown only when individual
+element metadata is available; incomplete descriptions are explicitly unknown.
+This inventory does not establish which device emitted a Quartz event or enable
+physical-device rules. See the [HID walkthrough](docs/verification/phase-3-hid.md)
+for native evidence and remaining unplug/replug/button checks.
 
 The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
@@ -39,7 +47,9 @@ up to 128 entries, 20 per one-second window, 60 seconds per session, memory only
 Stop retains the current rows for inspection; closing, sleep, Secure Input or capture
 loss stops collection and clears them. Existing rules continue normally; diagnostics
 also works with rules paused. “Queued” does not prove output delivery. No export,
-logging service or new permission/dependency. Real G603 collection still needs verification.
+logging service or new permission/dependency. Basic G603 side-button collection and
+paused passthrough decisions are user-verified; physical expiry, clearing, active-rule
+regression and performance checks remain open.
 
 ## Development
 

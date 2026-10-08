@@ -15,6 +15,7 @@ import Dispatch
     var recording: RecordingRequest?
     var lastRecording: RecordedInput?
     private(set) var diagnostics = DiagnosticSnapshot()
+    let deviceDiscovery = HIDDeviceDiscovery()
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
@@ -33,6 +34,7 @@ import Dispatch
 
     func start() {
         guard timer == nil else { return }
+        deviceDiscovery.start()
         configureEngine(configuration)
         EventTapWorker.start(mailbox: mailbox)
         refresh()
@@ -47,6 +49,7 @@ import Dispatch
     }
 
     func stop() {
+        deviceDiscovery.stop()
         cancelRecording()
         mailbox.stop()
         timer?.invalidate()
