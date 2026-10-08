@@ -12,7 +12,7 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
 
     var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers) }
     var isValid: Bool {
-        scope == trigger.scope && trigger.isSupported && action.shortcut.isSupported
+        scope == trigger.scope && trigger.isSupported && action.isSupported
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
             && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture))

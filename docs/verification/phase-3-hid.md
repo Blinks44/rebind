@@ -1,9 +1,11 @@
+> **Retired — user decision 2026-10-08.** This inventory/source experiment and its tests/UI were removed. Historical evidence below is retained for engineering context, not a current feature or pending walkthrough. Use [manual profiles](profiles.md); do not resume source-attribution work without a new explicit request.
+
 # Phase 3 HID inventory — 2026-10-08
 
 Scope: SPEC §§3.2–3.3, D1/D2, 6–7, 10–12.
 Status: implemented metadata discovery; native enumeration and Russian UI/Refresh
-inspected on macOS 27.0.1. Physical hotplug and individual button capabilities
-remain unverified. No per-device rules or touch gestures enabled.
+inspected on macOS 27.0.1. The user confirms receiver disappearance on unplug;
+reconnect and individual button capabilities remain unverified. No per-device rules or touch gestures enabled.
 
 ## Contract
 
@@ -64,9 +66,17 @@ remain unverified. No per-device rules or touch gestures enabled.
   result `build/Phase3HIDTests-Final.xcresult` is ignored. PLAN records research,
   known system warnings, translation validation and remaining checks.
 
+## User hardware result — 2026-10-08
+
+The user reports that the inventory works correctly and the receiver disappears
+when unplugged, using the previously reported G603 LIGHTSPEED/G HUB setup. This
+verifies the removal happy path. Exact receiver VID/PID association, reconnect
+deduplication, ID stability, sleep and button capabilities were not separately
+reported. Source attribution remains a separate [experimental check](phase-3-source.md).
+
 ## Remaining manual checks
 
-1. Run one rebuilt Xcode copy (⌘R). Open **Devices**, note the Logitech receiver
+1. Removal happy path is user-confirmed. For remaining checks run one rebuilt Xcode copy (⌘R). Open **Devices**, note the Logitech receiver
    interfaces and IDs. Unplug only the G603 LIGHTSPEED receiver: its corresponding
    rows should disappear automatically, while unrelated devices remain.
 2. Reconnect it: interfaces should return once each. IDs may change. Confirm saved

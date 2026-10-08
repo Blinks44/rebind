@@ -37,7 +37,8 @@ struct PressActivationPersistenceTests {
         try store.save(original)
         #expect(try store.load() == original)
         let encoded = try JSONSerialization.jsonObject(with: Data(contentsOf: store.url)) as? [String: Any]
-        let encodedBindings = try #require(encoded?["bindings"] as? [[String: Any]])
+        let profiles = try #require(encoded?["profiles"] as? [[String: Any]])
+        let encodedBindings = try #require(profiles.first?["bindings"] as? [[String: Any]])
         #expect(encodedBindings.first?["activation"] as? String == "doublePress")
     }
 

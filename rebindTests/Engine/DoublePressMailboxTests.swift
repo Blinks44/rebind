@@ -22,7 +22,7 @@ struct DoublePressMailboxTests {
         mailbox.configure(configuration, doublePressIntervalNanoseconds: 100)
         firstPress(mailbox)
         #expect(mailbox.handle(event(.down, at: 100), secureInput: false))
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(mailbox.handle(event(.up, at: 101), secureInput: false))
         #expect(mailbox.state.withLock { $0.matcher.hasSuppressedInput } == false)
     }
@@ -74,7 +74,7 @@ struct DoublePressMailboxTests {
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
         firstPress(mailbox)
-        mailbox.state.withLock { $0.pending = Array(repeating: output, count: 16) }
+        mailbox.state.withLock { $0.pending = Array(repeating: RebindAction.shortcut(output), count: 16) }
         #expect(mailbox.handle(event(.down, at: 2), secureInput: false) == false)
         mailbox.state.withLock { $0.pending.removeAll() }
         // The failed-open second press was never owned and must have a normal up.

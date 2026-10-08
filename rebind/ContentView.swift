@@ -2,34 +2,36 @@ import SwiftUI
 
 struct ContentView: View {
     let model: AppModel
-    @State private var selection: SidebarSelection = .category(.allKeyboards)
+    @State private var selection: DeviceScope = .allKeyboards
     @State private var editor: EditorSelection?
     @State private var pendingDeletion: Binding?
     @State private var showingDiagnostics = false
+    @State private var showingProfiles = false
 
     var body: some View {
         NavigationSplitView {
             List(selection: $selection) {
                 Section(.inputCategories) {
-                    Label(.allKeyboards, systemImage: "keyboard").tag(SidebarSelection.category(.allKeyboards))
-                    Label(.allMice, systemImage: "computermouse").tag(SidebarSelection.category(.allMice))
+                    Label(.allKeyboards, systemImage: "keyboard").tag(DeviceScope.allKeyboards)
+                    Label(.allMice, systemImage: "computermouse").tag(DeviceScope.allMice)
                 }
-                Label(.hidDevicesNavigation, systemImage: "cable.connector").tag(SidebarSelection.devices)
                 Section(.plannedInputs) {
                     Label(.trackpadNotAvailable, systemImage: "rectangle.and.hand.point.up.left").disabled(true)
                     Label(.magicMouseNotAvailable, systemImage: "computermouse").disabled(true)
                 }.foregroundStyle(.secondary)
             }.navigationSplitViewColumnWidth(min: 180, ideal: 220)
         } detail: {
-            switch selection {
-            case .devices: HIDDevicesView(discovery: model.deviceDiscovery)
-            case .category(let scope): bindingsView(scope: scope)
-            }
+            bindingsView(scope: selection)
         }.frame(minWidth: 850, minHeight: 560)
         .sheet(item: $editor) { selection in
             BindingEditor(model: model, scope: selection.scope, existing: selection.binding)
         }
         .sheet(isPresented: $showingDiagnostics) { InputDiagnosticsView(model: model) }
+        .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
+        .onChange(of: model.configuration.selectedProfileID) {
+            editor = nil
+            pendingDeletion = nil
+        }
         .alert(.deleteBinding, isPresented: deletionPresented) {
             Button(.cancel, role: .cancel) { pendingDeletion = nil }
             Button(.deleteBinding, role: .destructive) {
@@ -41,6 +43,12 @@ struct ContentView: View {
 
     private func bindingsView(scope: DeviceScope) -> some View {
         VStack(spacing: 0) {
+            HStack {
+                ProfilePicker(model: model).frame(maxWidth: 300)
+                Button(.manageProfiles, systemImage: "slider.horizontal.3") { showingProfiles = true }
+                    .disabled(model.storageLocked)
+                Spacer()
+            }.padding(.horizontal, 20).padding(.top, 16)
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(scope == .allKeyboards ? LocalizedStringResource.allKeyboards : .allMice).font(.title2.bold())
@@ -64,7 +72,11 @@ struct ContentView: View {
                             if binding.activation == .hold {
                                 Text(.holdDuration(Int(binding.holdDurationMilliseconds))).font(.caption)
                             }
-                            Text("→ " + InputLabels.shortcut(binding.action.shortcut)).foregroundStyle(.secondary)
+                            Text("→ " + binding.action.label).foregroundStyle(.secondary)
+                            if !model.audioCapabilities.supports(binding.action) {
+                                Text(.audioActionUnavailable).font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                         Spacer()
                         Button(binding.isEnabled ? LocalizedStringResource.disableBinding : .enableBinding,
@@ -84,6 +96,7 @@ struct ContentView: View {
             Divider()
             VStack(alignment: .leading, spacing: 5) {
                 Text(.phaseOneHint)
+                if model.workspaceActionInProgress { Text(.openingTargetStatus) }
                 Text(.emergencyHint)
                 Text(.deviceScopeHint)
                 if scope == .allMice { Text(.wheelMappingHint) }
@@ -101,9 +114,4 @@ private struct EditorSelection: Identifiable {
     let id = UUID()
     let scope: DeviceScope
     var binding: Binding?
-}
-
-private enum SidebarSelection: Hashable {
-    case category(DeviceScope)
-    case devices
 }

@@ -20,7 +20,7 @@ struct HoldMailboxTests {
         #expect(mailbox.state.withLock { $0.pending.isEmpty })
         mailbox.pollHold(at: threshold, secureInput: false)
         mailbox.pollHold(at: threshold + 1, secureInput: false)
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false))
     }
 
@@ -36,13 +36,13 @@ struct HoldMailboxTests {
         mailbox.pollHold(at: 1_000_000_009, secureInput: false)
         #expect(mailbox.state.withLock { $0.pending.isEmpty })
         mailbox.pollHold(at: 1_000_000_010, secureInput: false)
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(4), phase: .up), secureInput: false))
         mailbox.state.withLock { $0.pending.removeAll() }
         #expect(!mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
         #expect(!mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false))
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), modifiers: .control, phase: .down), secureInput: false))
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
     }
 
     @Test func editingRecordingConfigurationAndPauseCancelPendingHold() {
@@ -79,7 +79,7 @@ struct HoldMailboxTests {
     @Test func saturatedQueueCancelsInsteadOfDeliveringLater() {
         let mailbox = EngineMailbox()
         start(mailbox)
-        mailbox.state.withLock { $0.pending = Array(repeating: output, count: 16) }
+        mailbox.state.withLock { $0.pending = Array(repeating: RebindAction.shortcut(output), count: 16) }
         mailbox.pollHold(at: threshold, secureInput: false)
         #expect(mailbox.state.withLock { $0.pending.count } == 16)
         mailbox.state.withLock { $0.pending.removeAll() }

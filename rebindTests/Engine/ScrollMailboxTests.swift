@@ -79,7 +79,7 @@ struct ScrollMailboxTests {
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
         mailbox.state.withLock {
-            $0.pending = Array(repeating: KeyboardShortcut(keyCode: 13, modifiers: .command), count: 16)
+            $0.pending = Array(repeating: RebindAction.shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)), count: 16)
         }
         #expect(mailbox.handle(impulse(), secureInput: false) == false)
         #expect(mailbox.state.withLock { $0.pending.count } == 16)

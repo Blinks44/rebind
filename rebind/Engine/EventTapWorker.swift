@@ -88,21 +88,6 @@ nonisolated final class EventTapWorker {
         }
         guard port != nil, !secure, !failureLatched else { return }
         mailbox.pollHold(at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled())
-        // Posting occurs between run-loop iterations, never in the tap callback.
-        // The bounded handoff is checked again under the lock for immediate pause.
-        while true {
-            let shortcut = mailbox.state.withLock { state -> KeyboardShortcut? in
-                guard state.enabled, !state.editing, !state.suspended, !state.stopped, state.recording == nil,
-                      !state.pending.isEmpty else { return nil }
-                return state.pending.removeFirst()
-            }
-            guard let shortcut else { break }
-            guard !IsSecureEventInputEnabled(), CGPreflightPostEventAccess(), ShortcutSender.send(shortcut) else {
-                failureLatched = true
-                mailbox.captureLost(status: .outputFailed, pause: true)
-                break
-            }
-        }
     }
 
     static func eventMask(capturePointerMotion: Bool) -> CGEventMask {

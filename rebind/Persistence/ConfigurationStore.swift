@@ -1,46 +1,9 @@
 import Foundation
 
-nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 5
-    var schemaVersion = Self.currentSchemaVersion
-    var isEnabled = false
-    var bindings: [Binding] = []
-
-    func validate() throws {
-        guard schemaVersion == Self.currentSchemaVersion else { throw ConfigurationError.incompatible }
-        guard bindings.count <= 1000, Set(bindings.map(\.id)).count == bindings.count,
-              bindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
-        let keys = bindings.filter(\.isEnabled).map(\.matchKey)
-        guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
-        let gestureSources = Set(keys.filter { $0.trigger.isPointerGesture }.map(\.pressSource))
-        guard !keys.contains(where: { !$0.trigger.isPointerGesture && gestureSources.contains($0.pressSource) }) else {
-            throw ConfigurationError.conflict
-        }
-    }
-
-    func migrated() throws -> Configuration {
-        var result = self
-        if (1...4).contains(schemaVersion) {
-            guard bindings.allSatisfy({ !$0.trigger.isPointerGesture }),
-                  schemaVersion == 4 || bindings.allSatisfy({ $0.activation != .hold }),
-                  schemaVersion >= 3 || bindings.allSatisfy({ $0.activation == .press }) else {
-                throw ConfigurationError.invalid
-            }
-            // Version 1 supports key/button rules only. Reject disguised future
-            // content rather than silently accepting it as a legacy configuration.
-            guard schemaVersion != 1 || bindings.allSatisfy({ !$0.trigger.isScroll }) else {
-                throw ConfigurationError.invalid
-            }
-            result.schemaVersion = Self.currentSchemaVersion
-        }
-        try result.validate()
-        return result
-    }
-}
-
-nonisolated enum ConfigurationError: Error, Equatable { case incompatible, invalid, conflict }
+nonisolated enum ConfigurationError: Error, Equatable { case incompatible, invalid, conflict, profileInvalid, profileLimit, lastProfile }
 
 nonisolated struct ConfigurationStore: Sendable {
+    static let maximumBytes = 2_000_000
     let url: URL
 
     static var applicationStore: Self {
@@ -51,7 +14,7 @@ nonisolated struct ConfigurationStore: Sendable {
     func load() throws -> Configuration {
         guard FileManager.default.fileExists(atPath: url.path) else { return Configuration() }
         let data = try Data(contentsOf: url)
-        guard data.count <= 2_000_000 else { throw ConfigurationError.invalid }
+        guard data.count <= Self.maximumBytes else { throw ConfigurationError.invalid }
         let configuration = try JSONDecoder().decode(Configuration.self, from: data)
         // Migration is in memory. Preserve the original until a successful save.
         return try configuration.migrated()
@@ -60,6 +23,7 @@ nonisolated struct ConfigurationStore: Sendable {
     func save(_ configuration: Configuration) throws {
         try configuration.validate()
         let data = try JSONEncoder().encode(configuration)
+        guard data.count <= Self.maximumBytes else { throw ConfigurationError.invalid }
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
                                                 withIntermediateDirectories: true)
         // If reading fails, the UI locks editing; never overwrite an unreadable file.

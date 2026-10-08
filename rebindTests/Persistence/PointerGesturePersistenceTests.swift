@@ -22,7 +22,7 @@ struct PointerGesturePersistenceTests {
         let configuration = Configuration(isEnabled: true, bindings: [rule])
         try store.save(configuration)
         #expect(try store.load() == configuration)
-        #expect(configuration.schemaVersion == 5)
+        #expect(configuration.schemaVersion == Configuration.currentSchemaVersion)
     }
 
     @Test func version4UserHoldConfigurationMigratesWithoutRewriting() throws {
@@ -33,7 +33,7 @@ struct PointerGesturePersistenceTests {
         try bytes.write(to: store.url)
         let migrated = try store.load()
         let rule = try #require(migrated.bindings.first)
-        #expect(migrated.schemaVersion == 5 && migrated.isEnabled)
+        #expect(migrated.schemaVersion == Configuration.currentSchemaVersion && migrated.isEnabled)
         #expect(rule.id.uuidString == "00000000-0000-0000-0000-000000000005")
         #expect(rule.activation == .hold && rule.holdDurationMilliseconds == 1000)
         #expect(rule.trigger == .mouseButton(4) && rule.modifiers.isEmpty && rule.action.shortcut == output)
@@ -90,7 +90,7 @@ struct PointerGesturePersistenceTests {
         for version in 1...4 {
             #expect(throws: ConfigurationError.invalid) { try Configuration(schemaVersion: version, bindings: [binding()]).migrated() }
         }
-        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: 6).migrated() }
+        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated() }
         #expect(try Data(contentsOf: store.url) == bytes)
     }
 

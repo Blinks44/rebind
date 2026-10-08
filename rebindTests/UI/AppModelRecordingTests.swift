@@ -11,7 +11,7 @@ import Testing
         #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(4), phase: .down), secureInput: false))
         model.cancelRecording() // The didResignActive notification's selector.
         model.mailbox.pollHold(at: 1_000_000_000, secureInput: false)
-        #expect(model.mailbox.state.withLock { $0.pending } == [output])
+        #expect(model.mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(4), phase: .up), secureInput: false))
     }
 

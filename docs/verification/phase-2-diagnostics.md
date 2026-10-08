@@ -7,6 +7,7 @@ remain open.**
 
 ## Contract
 
+
 - Open **Input Diagnostics** at the bottom of the main window, then explicitly start
   a 60-second session. Opening alone never starts collection. Observation continues
   when another app has focus, so TextEdit can receive the configured output.

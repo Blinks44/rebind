@@ -14,7 +14,7 @@ struct CaptureLifecycleTests {
         let mailbox = EngineMailbox()
         mailbox.configure(configuration())
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         mailbox.captureLost(status: .permissionRequired)
         #expect(mailbox.state.withLock { $0.pending.isEmpty && $0.matcher.hasSuppressedInput == false })
         #expect(mailbox.state.withLock { $0.enabled }) // Permission restoration preserves user preference.
@@ -40,7 +40,7 @@ struct CaptureLifecycleTests {
         #expect(mailbox.state.withLock { $0.pending.isEmpty })
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down, receivedAt: 600_000_000), secureInput: false))
         mailbox.pollHold(at: 1_100_000_000, secureInput: false)
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
     }
 
     @Test func interruptionPausesUntilExplicitResumeAndAdvancesRetry() {

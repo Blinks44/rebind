@@ -16,7 +16,8 @@ nonisolated struct InputEvent: Sendable {
 
 nonisolated struct MatchDecision: Equatable, Sendable {
     var suppress = false
-    var shortcut: KeyboardShortcut?
+    var action: RebindAction?
+    var shortcut: KeyboardShortcut? { action?.shortcut }
     var emergencyPause = false
 }
 
@@ -72,7 +73,7 @@ nonisolated struct InputMatcher: Sendable {
             if binding.trigger.isPointerGesture { gestureSources.insert(binding.matchKey.pressSource) }
             else { ordinarySources.insert(binding.matchKey.pressSource) }
             if rules[binding.matchKey] != nil { conflicts.insert(binding.matchKey) }
-            rules[binding.matchKey] = CompiledBinding(shortcut: binding.action.shortcut, activation: binding.activation,
+            rules[binding.matchKey] = CompiledBinding(action: binding.action, activation: binding.activation,
                                                       holdDurationNanoseconds: UInt64(binding.holdDurationMilliseconds) * 1_000_000)
         }
         let ambiguousSources = gestureSources.intersection(ordinarySources)
@@ -118,8 +119,8 @@ nonisolated struct InputMatcher: Sendable {
             doublePress = nil
             if pointerGesture?.key.trigger == event.trigger {
                 let suppress = event.phase != .drag || pointerGesture?.capturesMovement == true
-                let shortcut = handlePointerGesture(event, rules: rules)
-                return MatchDecision(suppress: suppress, shortcut: shortcut)
+                let action = handlePointerGesture(event, rules: rules)
+                return MatchDecision(suppress: suppress, action: action)
             }
             if event.phase == .down || event.phase == .drag { cancelPointerGesture() }
             if let candidate = hold, candidate.key.trigger == event.trigger {
@@ -177,7 +178,7 @@ nonisolated struct InputMatcher: Sendable {
                    event.timestamp - candidate.startedAt <= doublePressIntervalNanoseconds {
                     doublePress = nil
                     suppressed.insert(event.trigger)
-                    return MatchDecision(suppress: true, shortcut: rule.shortcut)
+                    return MatchDecision(suppress: true, action: rule.action)
                 }
             }
             // One candidate, so another physical press interrupts the sequence.
@@ -187,7 +188,7 @@ nonisolated struct InputMatcher: Sendable {
         }
         doublePress = nil
         suppressed.insert(event.trigger)
-        return MatchDecision(suppress: true, shortcut: rule.shortcut)
+        return MatchDecision(suppress: true, action: rule.action)
     }
 
     mutating func consume(_ event: InputEvent) {
@@ -227,7 +228,7 @@ nonisolated struct InputMatcher: Sendable {
     }
 
     private mutating func handlePointerGesture(_ event: InputEvent,
-                                               rules: [MatchKey: CompiledBinding]) -> KeyboardShortcut? {
+                                               rules: [MatchKey: CompiledBinding]) -> RebindAction? {
         guard var candidate = pointerGesture, candidate.recognizing else { return nil }
         let now = event.receivedAt ?? event.timestamp
         guard event.phase == .drag, event.modifiers == candidate.key.modifiers,
@@ -258,11 +259,11 @@ nonisolated struct InputMatcher: Sendable {
         }
         candidate.recognizing = false
         pointerGesture = candidate
-        return rule.shortcut
+        return rule.action
     }
 
     mutating func pollHold(at now: UInt64, rules: [MatchKey: CompiledBinding],
-                           enabled: Bool, canDispatch: Bool = true) -> KeyboardShortcut? {
+                           enabled: Bool, canDispatch: Bool = true) -> RebindAction? {
         guard let candidate = hold else { return nil }
         guard enabled, canDispatch, suppressed.contains(candidate.key.trigger),
               let rule = rules[candidate.key], rule.activation == .hold,
@@ -271,7 +272,7 @@ nonisolated struct InputMatcher: Sendable {
         guard elapsed >= rule.holdDurationNanoseconds else { return nil }
         hold = nil
         guard elapsed - rule.holdDurationNanoseconds <= Self.holdLatenessNanoseconds else { return nil }
-        return rule.shortcut
+        return rule.action
     }
 
     private mutating func handleScroll(_ event: InputEvent, rules: [MatchKey: CompiledBinding],
@@ -290,6 +291,6 @@ nonisolated struct InputMatcher: Sendable {
         // One pulse per accepted event, independent of the OS line multiplier.
         // The limiter is shared by wheel bindings so alternating axes cannot storm.
         lastScrollDispatch = event.timestamp
-        return MatchDecision(suppress: true, shortcut: rule.shortcut)
+        return MatchDecision(suppress: true, action: rule.action)
     }
 }

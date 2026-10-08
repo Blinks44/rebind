@@ -1,5 +1,6 @@
 nonisolated struct CompiledBinding: Sendable {
-    var shortcut: KeyboardShortcut
+    var action: RebindAction
+    var shortcut: KeyboardShortcut? { action.shortcut }
     var activation: PressActivation
     var holdDurationNanoseconds: UInt64 = 500_000_000
 }

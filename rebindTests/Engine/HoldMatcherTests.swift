@@ -22,7 +22,7 @@ struct HoldMatcherTests {
         let down = matcher.handle(event(.down, at: 10, trigger: trigger), rules: rules, enabled: true)
         #expect(down.suppress && down.shortcut == nil)
         #expect(matcher.pollHold(at: threshold + 9, rules: rules, enabled: true) == nil)
-        #expect(matcher.pollHold(at: threshold + 10, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: threshold + 10, rules: rules, enabled: true) == .shortcut(output))
         #expect(matcher.pollHold(at: threshold * 2, rules: rules, enabled: true) == nil)
         #expect(matcher.handle(event(.up, at: threshold * 2, trigger: trigger, modifiers: []), rules: rules, enabled: false).suppress)
         #expect(!matcher.hasSuppressedInput)
@@ -42,7 +42,7 @@ struct HoldMatcherTests {
         let rules = InputMatcher.compile([binding()])
         _ = matcher.handle(event(.down, at: 0), rules: rules, enabled: true)
         #expect(matcher.handle(event(.down, at: threshold - 1, repeat: true), rules: rules, enabled: true).suppress)
-        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == .shortcut(output))
         #expect(matcher.handle(event(.down, at: threshold + 1, repeat: true), rules: rules, enabled: true).shortcut == nil)
         #expect(matcher.pollHold(at: threshold * 2, rules: rules, enabled: true) == nil)
     }
@@ -89,7 +89,7 @@ struct HoldMatcherTests {
             #expect(decision.suppress && decision.shortcut == nil)
         }
         #expect(matcher.pollHold(at: duration + 9, rules: rules, enabled: true) == nil)
-        #expect(matcher.pollHold(at: duration + 10, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: duration + 10, rules: rules, enabled: true) == .shortcut(output))
         #expect(matcher.handle(event(.drag, at: duration + 11, trigger: trigger), rules: rules, enabled: true).suppress)
         #expect(matcher.pollHold(at: duration * 2, rules: rules, enabled: true) == nil)
         #expect(matcher.handle(event(.up, at: duration * 2, trigger: trigger), rules: rules, enabled: true).suppress)
@@ -112,7 +112,7 @@ struct HoldMatcherTests {
         var feedback = event(.down, at: 1, trigger: .key(0), modifiers: .command)
         feedback.isSynthetic = true
         #expect(!matcher.handle(feedback, rules: rules, enabled: true).suppress)
-        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == .shortcut(output))
     }
 
     @Test func receiptClockControlsHoldIndependentlyOfQuartzTimestamp() {
@@ -124,7 +124,7 @@ struct HoldMatcherTests {
         var repeated = event(.down, at: 1, repeat: true)
         repeated.receivedAt = 1
         #expect(matcher.handle(repeated, rules: rules, enabled: true).suppress)
-        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == .shortcut(output))
     }
 
     @Test func queueDenialPauseAndRuleRemovalCancelPermanently() {
@@ -150,7 +150,7 @@ struct HoldMatcherTests {
         var matcher = InputMatcher()
         let rules = InputMatcher.compile([binding()])
         _ = matcher.handle(event(.down, at: .max - threshold), rules: rules, enabled: true)
-        #expect(matcher.pollHold(at: .max, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: .max, rules: rules, enabled: true) == .shortcut(output))
     }
 
     @Test(arguments: [UInt32(100), 700, 5000])
@@ -160,6 +160,6 @@ struct HoldMatcherTests {
         _ = matcher.handle(event(.down, at: 0), rules: rules, enabled: true)
         let threshold = UInt64(milliseconds) * 1_000_000
         #expect(matcher.pollHold(at: threshold - 1, rules: rules, enabled: true) == nil)
-        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == output)
+        #expect(matcher.pollHold(at: threshold, rules: rules, enabled: true) == .shortcut(output))
     }
 }

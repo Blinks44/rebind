@@ -8,15 +8,45 @@ plain Button 4 retaining its behavior. The user also confirms Button 5 long pres
 → Command+A with a 1000 ms delay after cancellation fixes, and the requested
 Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
 double press, other gesture directions and full suppression/cancellation/lifecycle checks remain open.
-Multitouch and per-device rules are not implemented.
+Multitouch is not implemented. Physical-device routing is outside the current scope.
 
-Phase 3 adds **Devices**: live native CoreHID interface discovery, names, VID/PID,
-transport and current-connection IDs. Receivers may appear as multiple interfaces
-and hide the mouse model. Declared HID buttons are shown only when individual
-element metadata is available; incomplete descriptions are explicitly unknown.
-This inventory does not establish which device emitted a Quartz event or enable
-physical-device rules. See the [HID walkthrough](docs/verification/phase-3-hid.md)
-for native evidence and remaining unplug/replug/button checks.
+Phase 3 uses **manual profiles**: create, copy, rename and delete named rule sets,
+then select one above the rules or from the Menu Bar **Profile** submenu. A profile
+covers all input categories; its name does not identify a physical mouse. Switching
+preserves pause and cancels the old profile's pending recognition/output/recording,
+while retaining already suppressed releases. Existing schemas 1–5 migrate into
+**Default** in memory, preserving all rules; the first successful edit saves the current schema (9).
+No HID inventory, device-specific routing or private event-source API remains.
+See the [profile walkthrough](docs/verification/profiles.md).
+
+Phase 4 adds a shared searchable **Action** chooser for recorded keyboard shortcuts
+and native default-output volume up/down/mute. Volume uses 6.25% scalar steps;
+changing volume leaves mute unchanged. Main-element controls must be readable and
+writable: unavailable actions are explained/disabled and their rules pass through.
+Audio and shortcut sending share a bounded serial action worker, separate from the
+tap run loop. The user reports the configured audio mapping and existing bindings
+work after this change; all audio variants, output replacement and cancellation
+still need hardware checks. See the [audio walkthrough](docs/verification/phase-4-audio.md).
+
+The same chooser now offers **Windows and Applications**: close/minimize the
+active window, press its full-screen button, or hide the active app through public
+Accessibility APIs. Target support is checked when dispatched; Rebind itself is
+excluded. Unsupported targets show an error without replaying the consumed input.
+AX calls run on the serial action worker with request timeouts, focus rechecks and
+cancellation before mutation. No window titles or contents are read. These actions
+are implemented and unit-tested; the user confirms all four work in manual testing.
+Cancellation, unsupported targets, revoked access and latency checks remain open. See the [window-action walkthrough](docs/verification/phase-4-windows.md).
+
+The chooser also opens a selected application, activates its already running copy,
+or opens an **HTTP/HTTPS address, local file or folder** in the default app. Native
+system dialogs select targets. Activation never cold-launches a closed app; moved
+apps/files must be selected again. Metadata preparation runs on the action worker,
+with one MainActor async NSWorkspace request in flight. Pending work is cancelled
+on profile/pause/capture changes; an OS-accepted request cannot be recalled. Failures
+show a localized message without replaying consumed input. These actions have
+software and picker/validation checks; the user confirms the requested actions work.
+Detailed failure/cancellation, revoked-access and latency checks remain open. See the
+[opening walkthrough](docs/verification/phase-4-opening.md).
 
 The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
@@ -176,8 +206,8 @@ or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close w
 quitting the app. Settings are stored at
 `~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
 file is preserved and locks editing instead of being overwritten. Configuration
-schema 5 reads schemas 1–4, preserving ordinary/wheel/double/long-press rules, IDs and
-enabled state. Legacy rules get the default long-press threshold without rewriting
+schema 9 reads schemas 1–8, preserving profiles, selection, shortcut/audio/window actions,
+ordinary/wheel/double/long-press/gesture rules, IDs and enabled state. Legacy rules get the default long-press threshold without rewriting
 the file until the next successful save.
 
 ## Agent skills

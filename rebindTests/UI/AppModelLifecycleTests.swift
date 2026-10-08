@@ -42,7 +42,7 @@ import Testing
         let request = RecordingRequest(target: .mouseTrigger)
         model.recording = request
         model.mailbox.record(request)
-        model.mailbox.state.withLock { $0.pending = [KeyboardShortcut(keyCode: 0, modifiers: .command)] }
+        model.mailbox.state.withLock { $0.pending = [.shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command))] }
         model.stop()
         #expect(model.recording == nil)
         #expect(model.mailbox.state.withLock { $0.stopped && $0.pending.isEmpty && $0.recording == nil })

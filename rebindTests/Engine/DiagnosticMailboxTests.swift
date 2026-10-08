@@ -31,7 +31,7 @@ struct DiagnosticMailboxTests {
         #expect(mailbox.handle(button(), secureInput: false))
         #expect(mailbox.handle(button(phase: .up, time: 2), secureInput: false))
         #expect(snapshot(mailbox).entries.map(\.outcome) == [.queued, .suppressed])
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(mailbox.state.withLock { $0.matcher.hasSuppressedInput } == false)
     }
 
@@ -55,7 +55,7 @@ struct DiagnosticMailboxTests {
         #expect(mailbox.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down, receivedAt: 600_000_000), secureInput: false))
         mailbox.pollHold(at: 1_100_000_000, secureInput: false)
         #expect(snapshot(mailbox).entries.isEmpty)
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
     }
 
     @Test func burstThrottlingDoesNotThrottleMatchingOrSwallowedReleases() {

@@ -26,7 +26,7 @@ struct PointerGestureMailboxTests {
         #expect(mailbox.state.withLock { $0.pending.isEmpty })
         #expect(mailbox.handlePointerMotion(PointerMotion(deltaX: -1, deltaY: 0), modifiers: .control,
                                             receivedAt: 2, secureInput: false))
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(move(mailbox, time: 3))
         #expect(mailbox.state.withLock { $0.pending.count } == 1)
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false))
@@ -36,7 +36,7 @@ struct PointerGestureMailboxTests {
     @Test func saturatedQueueRestoresMotionAndNeverEnqueuesStaleGesture() {
         let mailbox = EngineMailbox()
         start(mailbox)
-        mailbox.state.withLock { $0.pending = Array(repeating: output, count: 16) }
+        mailbox.state.withLock { $0.pending = Array(repeating: RebindAction.shortcut(output), count: 16) }
         #expect(move(mailbox) == false)
         #expect(mailbox.state.withLock { $0.pending.count } == 16)
         mailbox.state.withLock { $0.pending.removeAll() }
@@ -75,7 +75,7 @@ struct PointerGestureMailboxTests {
 
     @Test func protectedUnbuttonedMotionClearsOtherQueuedOutputWithoutGestureCapture() {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.pending = [output] }
+        mailbox.state.withLock { $0.pending = [.shortcut(output)] }
         #expect(move(mailbox, secure: true) == false)
         #expect(mailbox.state.withLock { $0.pending.isEmpty })
     }
@@ -108,7 +108,7 @@ struct PointerGestureMailboxTests {
         let mailbox = EngineMailbox()
         start(mailbox)
         #expect(move(mailbox))
-        #expect(mailbox.state.withLock { $0.pending } == [output])
+        #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         #expect(mailbox.handle(InputEvent(trigger: .key(53), modifiers: [.control, .option, .shift, .command], phase: .down), secureInput: false))
         #expect(mailbox.state.withLock { $0.pending.isEmpty && $0.emergencyPause && !$0.enabled })
         #expect(move(mailbox, time: 2) == false)

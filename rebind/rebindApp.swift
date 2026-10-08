@@ -33,6 +33,9 @@ private struct RebindMenu: View {
     var body: some View {
         Text(model.statusText)
         Button(.openRebind) { openWindow(id: "main"); NSApp.activate() }
+        Menu(.profileTitle) {
+            ProfilePicker(model: model).pickerStyle(.inline)
+        }.disabled(model.storageLocked)
         Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
             model.setEnabled(!model.configuration.isEnabled)
         }.disabled(model.storageLocked && !model.configuration.isEnabled)

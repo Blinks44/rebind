@@ -15,11 +15,13 @@ import Dispatch
     var recording: RecordingRequest?
     var lastRecording: RecordedInput?
     private(set) var diagnostics = DiagnosticSnapshot()
-    let deviceDiscovery = HIDDeviceDiscovery()
+    private(set) var audioCapabilities = AudioOutputCapabilities()
+    private(set) var workspaceActionInProgress = false
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
     @ObservationIgnored private var timer: Timer?
+    @ObservationIgnored private var workspaceTask: Task<Void, Never>?
     @ObservationIgnored private var lastPermissionCheck = Date.distantPast
     @ObservationIgnored private var workspaceSleeping = false
     @ObservationIgnored private var workspaceSessionInactive = false
@@ -34,9 +36,9 @@ import Dispatch
 
     func start() {
         guard timer == nil else { return }
-        deviceDiscovery.start()
         configureEngine(configuration)
         EventTapWorker.start(mailbox: mailbox)
+        ActionWorker.start(mailbox: mailbox)
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
@@ -49,9 +51,11 @@ import Dispatch
     }
 
     func stop() {
-        deviceDiscovery.stop()
         cancelRecording()
         mailbox.stop()
+        workspaceTask?.cancel()
+        workspaceTask = nil
+        workspaceActionInProgress = false
         timer?.invalidate()
         timer = nil
         NotificationCenter.default.removeObserver(self)
@@ -64,12 +68,15 @@ import Dispatch
             lastPermissionCheck = Date()
         }
         let update = mailbox.state.withLock { state in
-            let result = (state.status, state.recorded, state.emergencyPause)
+            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil)
+            state.actionFailed = nil
             state.recorded = nil
             state.emergencyPause = false
             return result
         }
         status = update.0
+        audioCapabilities = update.3
+        workspaceActionInProgress = update.5
         refreshDiagnostics()
         if let captured = update.1, captured.request == recording {
             lastRecording = captured
@@ -81,6 +88,23 @@ import Dispatch
             paused.isEnabled = false
             configuration.isEnabled = false
             trySave(paused)
+        }
+        if let failed = update.4 {
+            switch failed {
+            case .shortcut: error = .outputFailed
+            case .system: error = .audioActionFailed
+            case .window: error = .windowActionFailed
+            case .workspace: error = .workspaceActionFailed
+            }
+        }
+        if workspaceTask == nil, mailbox.hasWorkspaceRequest {
+            let mailbox = mailbox
+            // The timer bridges sync AppKit lifecycle to one async native call.
+            // At most one task/slot exists; the event tap never creates tasks.
+            workspaceTask = Task { [weak self] in
+                defer { self?.workspaceTask = nil }
+                await WorkspaceActionExecutor(mailbox: mailbox).service()
+            }
         }
     }
 
@@ -165,7 +189,11 @@ import Dispatch
         return status.text
     }
 
-    func saveBinding(_ binding: Binding) -> Bool {
+    func saveBinding(_ binding: Binding, profileID: UUID? = nil) -> Bool {
+        guard profileID == nil || profileID == configuration.selectedProfileID else {
+            error = .profileChanged
+            return false
+        }
         var updated = configuration
         if let index = updated.bindings.firstIndex(where: { $0.id == binding.id }) {
             updated.bindings[index] = binding
@@ -185,17 +213,64 @@ import Dispatch
         _ = saveBinding(updated)
     }
 
+    @discardableResult func selectProfile(_ id: UUID) -> Bool {
+        guard id != configuration.selectedProfileID else { return true }
+        return updateProfiles { try $0.selectProfile(id) }
+    }
+
+    @discardableResult func createProfile(name: String, copying sourceID: UUID? = nil) -> Bool {
+        guard profileNameIsAvailable(name) else { error = .profileInvalid; return false }
+        return updateProfiles { try $0.createProfile(name: name, copying: sourceID) }
+    }
+
+    @discardableResult func renameProfile(_ id: UUID, name: String) -> Bool {
+        guard profileNameIsAvailable(name, excluding: id) else { error = .profileInvalid; return false }
+        return updateProfiles { try $0.renameProfile(id, name: name) }
+    }
+
+    private func profileNameIsAvailable(_ name: String, excluding id: UUID? = nil) -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Include the localized built-in label, whose stored name is nil.
+        return !configuration.profiles.contains {
+            $0.id != id && $0.title.compare(trimmed, options: [.caseInsensitive, .diacriticInsensitive],
+                                           locale: Locale(identifier: "en_US_POSIX")) == .orderedSame
+        }
+    }
+
+    @discardableResult func deleteProfile(_ id: UUID) -> Bool {
+        updateProfiles { try $0.deleteProfile(id) }
+    }
+
+    private func updateProfiles(_ mutation: (inout Configuration) throws -> Void) -> Bool {
+        var updated = configuration
+        do { try mutation(&updated); return trySave(updated) }
+        catch { showConfigurationError(error); return false }
+    }
+
+    private func showConfigurationError(_ error: any Error) {
+        switch error {
+        case ConfigurationError.conflict: self.error = .bindingConflict
+        case ConfigurationError.profileInvalid: self.error = .profileInvalid
+        case ConfigurationError.profileLimit: self.error = .profileLimit
+        case ConfigurationError.lastProfile: self.error = .lastProfileRequired
+        case ConfigurationError.invalid: self.error = .bindingInvalid
+        default: self.error = .storageWriteFailed
+        }
+    }
+
     @discardableResult private func trySave(_ updated: Configuration) -> Bool {
         guard !storageLocked else { error = .storageUnreadable; return false }
         do {
             try store.save(updated)
             error = nil
+            if configuration.selectedProfileID != updated.selectedProfileID {
+                recording = nil
+                lastRecording = nil
+            }
             configuration = updated
             configureEngine(updated)
             return true
-        } catch ConfigurationError.conflict { self.error = .bindingConflict }
-        catch ConfigurationError.invalid { self.error = .bindingInvalid }
-        catch { self.error = .storageWriteFailed }
+        } catch { showConfigurationError(error) }
         return false
     }
 
