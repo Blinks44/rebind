@@ -81,6 +81,19 @@ For every dependency record in `docs/PLAN.md`: purpose, source URL, license, sup
 - If private MultitouchSupport or other private APIs are necessary, isolate them behind a small adapter, document macOS compatibility risk, and confirm behavior on an actual device.
 - Prefer public, stable APIs when they can satisfy the same requirement; do not use unsupported APIs merely for novelty.
 
+### Project-local skills and tooling
+
+Reviewed skills live in `.agents/skills/` and should be committed with their licenses and `manifest.json` (pinned sources and checksums). Codex discovers this location; newly installed skills are available on the next turn. Read only the relevant skill and references:
+
+- `swiftui-pro/SKILL.md`: SwiftUI changes, UI code review, localization, and view performance.
+- `swift-concurrency-pro/SKILL.md`: isolation, shared state, asynchronous work, and Swift 6 diagnostics.
+- `swift-testing-pro/SKILL.md`: behavioral unit/integration tests; UI tests still use XCTest.
+- `appkit-accessibility-auditor/SKILL.md`: AppKit controls, focus, keyboard operation, and VoiceOver. This concerns UI accessibility, not TCC Accessibility permission.
+
+Resolve skill-relative paths from the installed folder. Rebind's macOS 26 minimum, actual installed SDK, and synchronous input-callback rules take precedence over upstream iOS examples, newer toolchain assumptions, and generic async advice. Do not install upstream plugin bundles or execute their scripts implicitly. See `docs/PLAN.md` for review decisions.
+
+Use `scripts/dev.sh doctor`, `build`, `release`, `build-for-testing`, `test`, `resolve`, or `run`; see `README.md`. The script selects full Xcode per process without changing `xcode-select`. Keep target/scheme `rebind`, module `rebind`, and bundle ID `blinks44.rebind` stable; the app product is `Rebind.app`. Global-input code must explicitly opt out of the app target's default MainActor isolation where its callback contract requires it.
+
 ## 7. Persistence, localization, and security
 
 - Store user rules locally. Prefer versioned `Codable` data and atomic file replacement unless the real feature set justifies a database.

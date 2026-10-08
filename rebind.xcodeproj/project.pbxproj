@@ -6,11 +6,27 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		A10000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 75EDDC5E307784AF00EC4D02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 75EDDC65307784AF00EC4D02;
+			remoteInfo = rebind;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		75EDDC66307784AF00EC4D02 /* rebind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rebind.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		75EDDC66307784AF00EC4D02 /* Rebind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rebind.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000002 /* rebindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = rebindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A10000000000000000000003 /* rebindTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = rebindTests;
+			sourceTree = "<group>";
+		};
 		75EDDC68307784AF00EC4D02 /* rebind */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = rebind;
@@ -19,6 +35,10 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = ();
+		};
 		75EDDC63307784AF00EC4D02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
@@ -31,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				75EDDC68307784AF00EC4D02 /* rebind */,
+				A10000000000000000000003 /* rebindTests */,
 				75EDDC67307784AF00EC4D02 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -38,7 +59,8 @@
 		75EDDC67307784AF00EC4D02 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				75EDDC66307784AF00EC4D02 /* rebind.app */,
+				75EDDC66307784AF00EC4D02 /* Rebind.app */,
+				A10000000000000000000002 /* rebindTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -46,6 +68,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A10000000000000000000005 /* rebindTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000006 /* Build configuration list for PBXNativeTarget "rebindTests" */;
+			buildPhases = (
+				A10000000000000000000007 /* Sources */,
+				A10000000000000000000004 /* Frameworks */,
+				A10000000000000000000008 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				A10000000000000000000009 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A10000000000000000000003 /* rebindTests */,
+			);
+			name = rebindTests;
+			productName = rebindTests;
+			productReference = A10000000000000000000002 /* rebindTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		75EDDC65307784AF00EC4D02 /* rebind */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 75EDDC71307784B000EC4D02 /* Build configuration list for PBXNativeTarget "rebind" */;
@@ -61,7 +103,7 @@
 			);
 			name = rebind;
 			productName = rebind;
-			productReference = 75EDDC66307784AF00EC4D02 /* rebind.app */;
+			productReference = 75EDDC66307784AF00EC4D02 /* Rebind.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -74,6 +116,10 @@
 				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
+					A10000000000000000000005 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 75EDDC65307784AF00EC4D02;
+					};
 					75EDDC65307784AF00EC4D02 = {
 						CreatedOnToolsVersion = 27.0;
 					};
@@ -94,11 +140,16 @@
 			projectRoot = "";
 			targets = (
 				75EDDC65307784AF00EC4D02 /* rebind */,
+				A10000000000000000000005 /* rebindTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = ();
+		};
 		75EDDC64307784AF00EC4D02 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
@@ -107,6 +158,10 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = ();
+		};
 		75EDDC62307784AF00EC4D02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
@@ -114,7 +169,47 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A10000000000000000000009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 75EDDC65307784AF00EC4D02 /* rebind */;
+			targetProxy = A10000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A1000000000000000000000A /* Debug configuration for rebindTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@loader_path/../Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = blinks44.rebind.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rebind.app/Contents/MacOS/Rebind";
+			};
+			name = Debug;
+		};
+		A1000000000000000000000B /* Release configuration for rebindTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@loader_path/../Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = blinks44.rebind.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rebind.app/Contents/MacOS/Rebind";
+			};
+			name = Release;
+		};
 		75EDDC6F307784B000EC4D02 /* Debug configuration for PBXProject "rebind" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -168,7 +263,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -225,7 +320,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -241,10 +336,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Rebind;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -252,14 +348,15 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = blinks44.rebind;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_MODULE_NAME = rebind;
+				PRODUCT_NAME = Rebind;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -268,13 +365,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Rebind;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -282,20 +381,29 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = blinks44.rebind;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
+				PRODUCT_MODULE_NAME = rebind;
+				PRODUCT_NAME = Rebind;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A10000000000000000000006 /* Build configuration list for PBXNativeTarget "rebindTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000000000000000000000A /* Debug */,
+				A1000000000000000000000B /* Release */,
+			);
+			defaultConfigurationName = Release;
+		};
 		75EDDC61307784AF00EC4D02 /* Build configuration list for PBXProject "rebind" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

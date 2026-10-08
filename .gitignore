@@ -1,15 +1,26 @@
 # macOS
 .DS_Store
+.AppleDouble
+._*
 
 # Xcode
 DerivedData/
 build/
+Build/
 *.xcuserstate
 xcuserdata/
+*.xcresult/
+*.xcarchive/
+*.dSYM/
+*.hmap
+*.ipa
 
 # JetBrains
 .idea/
 
 # Swift Package Manager
 .build/
-.swiftpm/xcode/package.xcworkspace/xcuserdata/
+.swiftpm/cache/
+.swiftpm/security/
+
+# Keep shared schemes, Package.resolved, docs, references, and .agents/skills tracked.
