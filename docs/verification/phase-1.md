@@ -24,7 +24,8 @@ no global tap, physical remap or injected action was manually verified.
   delivered by Quartz can be recorded. Primary/secondary buttons are deferred.
 - Repeats and drags belonging to a suppressed press are swallowed until
   release. Held output, modifier-only keys, Caps Lock, Fn, click counting,
-  wheel and gestures are deferred. Events carrying the secondary-Fn flag
+  gestures are deferred. Wheel support is described separately in the
+  [Phase 2 walkthrough](phase-2-wheel.md). Events carrying the secondary-Fn flag
   pass through rather than matching a chord with that flag silently removed.
 - Output uses a private CGEventSource and explicit modifier flags on key
   down/up, without synthesizing modifier key-downs. It therefore owns no
@@ -38,10 +39,10 @@ no global tap, physical remap or injected action was manually verified.
   string, clipboard or Unicode payload is read from incoming events.
 - Editing suspends mappings. Recording is explicit, cancels on Escape or
   app deactivation, and never executes an output shortcut while recording.
-- New configurations start paused. Atomic version-1 JSON lives at
+- New configurations start paused. Atomic version-2 JSON (reading version 1) lives at
   `~/Library/Application Support/Rebind/configuration.json`. An unreadable,
   invalid or future-version file is preserved and locks editing. Recovery
-  controls, migrations and import/export remain Phase 7 work.
+  controls, further migrations and import/export remain Phase 7 work.
 
 ## Physical walkthrough to finish Phase 1
 

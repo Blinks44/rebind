@@ -1,7 +1,7 @@
 # Rebind
 
-Native macOS input remapping application. Phase 1 now implements a native
-Quartz keyboard/middle-or-extra-mouse-button → shortcut slice, interactive
+Native macOS input remapping application. Phase 1 and the first Phase 2 slice implement native
+Quartz keyboard/middle-or-extra-mouse-button/discrete-wheel → shortcut mappings, interactive
 recording/editing, exact modifiers, pause/emergency bypass, permission status,
 menu-bar lifecycle and atomic local configuration. **Physical remapping is not
 yet hardware-verified.** Gestures and per-device rules are not implemented.
@@ -10,6 +10,8 @@ The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
 See the [Phase 1 verification walkthrough](docs/verification/phase-1.md) for
 supported limits and checks needed before claiming end-to-end support.
+The [Phase 2 wheel walkthrough](docs/verification/phase-2-wheel.md) covers four
+scroll directions, exact modifiers, rate limiting and remaining device checks.
 
 Requirements and roadmap: [SPEC](docs/SPEC.md), [PLAN](docs/PLAN.md),
 [agent instructions](AGENTS.md). Design references remain in `docs/references/`.
@@ -61,7 +63,8 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build \
 The Swift Testing target covers matching, exact modifiers, press/release
 ownership, conflict handling, emergency pause, recording, bounded dispatch,
 Secure Input/suspension policy, balanced/tagged event construction and
-versioned configuration. Tests do not post global input or start the event tap;
+wheel direction/passthrough, scroll throttling and versioned configuration migration.
+Tests do not post global input or start the event tap;
 they use temporary configuration files. Real event interception and shortcut
 delivery still require the documented manual checks.
 
@@ -89,13 +92,21 @@ recording is requested and required access is available. This development
 session does not grant permissions or reset TCC.
 
 New installations start paused with no bindings. Record a key or middle/extra
-mouse button and an output shortcut, save, then enable bindings. Output fires
-once per press; repeats/held output, Caps Lock, Fn and modifier-only sources
+mouse button and an output shortcut, save, then enable bindings. In **All mice**,
+choose **Scroll Wheel** in the editor to record up/down/left/right with modifiers.
+Key/button output fires once per press. Wheel output is limited to one pulse
+per 100 ms across wheel bindings; intermediate matched events are consumed.
+Smooth, momentum, diagonal and unmatched scroll events pass through. Directions
+follow delivered macOS events, including system direction settings and other
+utilities' transformations; there is no physical mouse attribution.
+Repeats/held output, Caps Lock, Fn and modifier-only sources
 remain deferred. Escape cancels recording. Pause is available in the menu bar
 or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close without
 quitting the app. Settings are stored at
 `~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
-file is preserved and locks editing instead of being overwritten.
+file is preserved and locks editing instead of being overwritten. Configuration
+schema 2 reads existing schema-1 key/button rules without rewriting the file
+until the next successful save.
 
 ## Agent skills
 

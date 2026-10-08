@@ -99,7 +99,7 @@ nonisolated final class EventTapWorker {
     }
 
     private func installTap() {
-        let types: [CGEventType] = [.keyDown, .keyUp, .otherMouseDown, .otherMouseUp, .otherMouseDragged]
+        let types: [CGEventType] = [.keyDown, .keyUp, .otherMouseDown, .otherMouseUp, .otherMouseDragged, .scrollWheel]
         let mask = types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
         let context = Unmanaged.passUnretained(self).toOpaque()
         guard let port = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
@@ -146,6 +146,10 @@ nonisolated final class EventTapWorker {
         }
         guard event.getIntegerValueField(.eventSourceUserData) != ShortcutSender.eventTag else {
             return Unmanaged.passUnretained(event)
+        }
+        if type == .scrollWheel {
+            guard let input = ScrollEventAdapter.input(from: event) else { return Unmanaged.passUnretained(event) }
+            return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
         }
         let trigger: InputTrigger
         let phase: InputEvent.Phase

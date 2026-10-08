@@ -1,10 +1,12 @@
 nonisolated struct InputEvent: Sendable {
-    enum Phase: Sendable { case down, up, drag }
+    enum Phase: Sendable { case down, up, drag, scroll }
     var trigger: InputTrigger
     var modifiers: ModifierSet = []
     var phase: Phase
     var isRepeat = false
     var isSynthetic = false
+    // Quartz timestamps are roughly nanoseconds since startup, not wall time.
+    var timestamp: UInt64 = 0
 }
 
 nonisolated struct MatchDecision: Equatable, Sendable {
@@ -15,6 +17,8 @@ nonisolated struct MatchDecision: Equatable, Sendable {
 
 nonisolated struct InputMatcher: Sendable {
     private var suppressed: Set<InputTrigger> = []
+    private var lastScrollDispatch: UInt64?
+    static let scrollIntervalNanoseconds: UInt64 = 100_000_000
     var hasSuppressedInput: Bool { !suppressed.isEmpty }
 
     init() { suppressed.reserveCapacity(128) }
@@ -33,6 +37,10 @@ nonisolated struct InputMatcher: Sendable {
     mutating func handle(_ event: InputEvent, rules: [MatchKey: KeyboardShortcut],
                          enabled: Bool, canDispatch: Bool = true) -> MatchDecision {
         guard !event.isSynthetic else { return MatchDecision() }
+        if event.phase == .scroll {
+            return handleScroll(event, rules: rules, enabled: enabled, canDispatch: canDispatch)
+        }
+        if case .scroll = event.trigger { return MatchDecision() }
         if event.phase == .up {
             return MatchDecision(suppress: suppressed.remove(event.trigger) != nil)
         }
@@ -51,8 +59,33 @@ nonisolated struct InputMatcher: Sendable {
     }
 
     mutating func consume(_ event: InputEvent) {
+        guard event.phase == .down else { return }
         suppressed.insert(event.trigger)
     }
 
-    mutating func resetAfterCaptureLoss() { suppressed.removeAll(keepingCapacity: true) }
+    mutating func resetScrollThrottle() { lastScrollDispatch = nil }
+
+    mutating func resetAfterCaptureLoss() {
+        suppressed.removeAll(keepingCapacity: true)
+        resetScrollThrottle()
+    }
+
+    private mutating func handleScroll(_ event: InputEvent, rules: [MatchKey: KeyboardShortcut],
+                                      enabled: Bool, canDispatch: Bool) -> MatchDecision {
+        guard case .scroll = event.trigger, enabled, canDispatch,
+              let shortcut = rules[MatchKey(trigger: event.trigger, modifiers: event.modifiers)] else {
+            return MatchDecision()
+        }
+        if let previous = lastScrollDispatch {
+            // Out-of-order events fail open without poisoning the monotonic limiter.
+            guard event.timestamp >= previous else { return MatchDecision() }
+            if event.timestamp - previous < Self.scrollIntervalNanoseconds {
+                return MatchDecision(suppress: true)
+            }
+        }
+        // One pulse per accepted event, independent of the OS line multiplier.
+        // The limiter is shared by wheel bindings so alternating axes cannot storm.
+        lastScrollDispatch = event.timestamp
+        return MatchDecision(suppress: true, shortcut: shortcut)
+    }
 }

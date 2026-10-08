@@ -993,25 +993,25 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Press a physical key with optional modifiers, or a middle/extra mouse button. Caps Lock, modifier-only keys, Fn and gestures are not supported in this slice. Escape cancels recording."
+            "value": "Record a physical key, middle/extra mouse button or wheel direction with optional modifiers. Caps Lock, modifier-only keys, Fn and gestures are not supported. Escape cancels recording."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Нажмите физическую клавишу с модификаторами либо среднюю/дополнительную кнопку мыши. Caps Lock, отдельные модификаторы, Fn и жесты пока не поддерживаются. Escape отменяет запись."
+            "value": "Запишите физическую клавишу, среднюю/дополнительную кнопку мыши или направление колеса с модификаторами. Caps Lock, отдельные модификаторы, Fn и жесты пока не поддерживаются. Escape отменяет запись."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine physische Taste mit optionalen Modifikatoren oder eine mittlere/zusätzliche Maustaste drücken. Caps Lock, reine Modifikatortasten, Fn und Gesten werden noch nicht unterstützt. Escape bricht ab."
+            "value": "Eine physische Taste, mittlere/zusätzliche Maustaste oder Mausradrichtung mit optionalen Modifikatoren erfassen. Caps Lock, reine Modifikatortasten, Fn und Gesten fehlen noch. Escape bricht die Erfassung ab."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Appuyez sur une touche avec des modificateurs facultatifs, ou sur un bouton central/supplémentaire de la souris. Verr. maj., modificateurs seuls, Fn et gestes ne sont pas encore pris en charge. Échap annule."
+            "value": "Enregistrez une touche, un bouton central/supplémentaire ou une direction de molette avec des modificateurs facultatifs. Verr. maj., modificateurs seuls, Fn et gestes ne sont pas pris en charge. Échap annule."
           }
         }
       }
@@ -1370,25 +1370,25 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implemented, hardware verification pending. One output shortcut per press; held output and repeats are not supported."
+            "value": "Implemented, hardware verification pending. Keys and buttons send one shortcut per press; held output and repeats are not supported."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Реализовано, требуется аппаратная проверка. Одно выходное сочетание на нажатие; удержание и повторы пока не поддерживаются."
+            "value": "Реализовано, требуется аппаратная проверка. Клавиши и кнопки отправляют одно сочетание на нажатие; удержание и повторы пока не поддерживаются."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implementiert, Hardwareprüfung ausstehend. Eine Ausgabekombination pro Druck; gehaltene Ausgabe und Wiederholung fehlen noch."
+            "value": "Implementiert, Hardwareprüfung ausstehend. Tasten und Maustasten senden eine Kombination pro Druck; gehaltene Ausgabe und Wiederholung fehlen noch."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implémenté, vérification matérielle requise. Un raccourci par pression ; maintien et répétition non pris en charge."
+            "value": "Implémenté, vérification matérielle requise. Les touches et boutons envoient un raccourci par pression ; maintien et répétition non pris en charge."
           }
         }
       }
@@ -1568,6 +1568,243 @@
         }
       },
       "comment": "One-based button label: Quartz index + 1. Argument is the display number."
+    },
+    "mouseInputKind": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse Input"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ввод мыши"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mauseingabe"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrée de la souris"
+          }
+        }
+      }
+    },
+    "mouseButtonInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse Button"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кнопка мыши"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bouton de souris"
+          }
+        }
+      }
+    },
+    "mouseWheelInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Wheel"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Колесо прокрутки"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausrad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Molette"
+          }
+        }
+      }
+    },
+    "scrollUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Up"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокрутка вверх"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach oben scrollen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défiler vers le haut"
+          }
+        }
+      },
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+    },
+    "scrollDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Down"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокрутка вниз"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach unten scrollen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défiler vers le bas"
+          }
+        }
+      },
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+    },
+    "scrollLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Left"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокрутка влево"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach links scrollen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défiler vers la gauche"
+          }
+        }
+      },
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+    },
+    "scrollRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Right"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокрутка вправо"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach rechts scrollen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défiler vers la droite"
+          }
+        }
+      },
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+    },
+    "wheelMappingHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discrete wheel events only; up to 10 shortcuts per second across wheel rules. Smooth, momentum and diagonal scrolling pass through. Directions follow macOS settings; converted events can also match."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только дискретная прокрутка: до 10 сочетаний в секунду суммарно для правил колеса. Плавная, инерционная и диагональная прокрутка сохраняются. Направления зависят от настроек macOS; преобразованные события тоже могут совпадать."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur diskrete Mausradereignisse; insgesamt bis zu 10 Tastenkombinationen pro Sekunde für Mausradbelegungen. Sanftes, träges und diagonales Scrollen bleibt erhalten. Richtungen folgen macOS-Einstellungen; umgewandelte Ereignisse können ebenfalls passen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Événements discrets de molette uniquement ; jusqu’à 10 raccourcis par seconde pour l’ensemble des règles de molette. Le défilement fluide, inertiel et diagonal est conservé. Les directions suivent les réglages macOS ; les événements convertis peuvent aussi correspondre."
+          }
+        }
+      },
+      "comment": "Limits apply to discrete line-based scroll events, globally across wheel rules. No physical device attribution is claimed."
     }
   },
   "version": "1.1"

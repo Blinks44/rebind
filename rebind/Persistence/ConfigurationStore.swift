@@ -1,16 +1,31 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    var schemaVersion = 1
+    static let currentSchemaVersion = 2
+    var schemaVersion = Self.currentSchemaVersion
     var isEnabled = false
     var bindings: [Binding] = []
 
     func validate() throws {
-        guard schemaVersion == 1 else { throw ConfigurationError.incompatible }
+        guard schemaVersion == Self.currentSchemaVersion else { throw ConfigurationError.incompatible }
         guard bindings.count <= 1000, Set(bindings.map(\.id)).count == bindings.count,
               bindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
         let keys = bindings.filter(\.isEnabled).map(\.matchKey)
         guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
+    }
+
+    func migrated() throws -> Configuration {
+        var result = self
+        if schemaVersion == 1 {
+            // Version 1 supports key/button rules only. Reject disguised future
+            // content rather than silently accepting it as a legacy configuration.
+            guard bindings.allSatisfy({ if case .scroll = $0.trigger { return false }; return true }) else {
+                throw ConfigurationError.invalid
+            }
+            result.schemaVersion = Self.currentSchemaVersion
+        }
+        try result.validate()
+        return result
     }
 }
 
@@ -29,8 +44,8 @@ nonisolated struct ConfigurationStore: Sendable {
         let data = try Data(contentsOf: url)
         guard data.count <= 2_000_000 else { throw ConfigurationError.invalid }
         let configuration = try JSONDecoder().decode(Configuration.self, from: data)
-        try configuration.validate()
-        return configuration
+        // Migration is in memory. Preserve the original until a successful save.
+        return try configuration.migrated()
     }
 
     func save(_ configuration: Configuration) throws {

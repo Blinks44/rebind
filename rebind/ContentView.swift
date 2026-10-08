@@ -61,6 +61,7 @@ struct ContentView: View {
                     Text(.phaseOneHint)
                     Text(.emergencyHint)
                     Text(.deviceScopeHint)
+                    if scope == .allMice { Text(.wheelMappingHint) }
                 }.font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(16)
             }.navigationTitle("Rebind")
         }.frame(minWidth: 850, minHeight: 560)

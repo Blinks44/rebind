@@ -5,7 +5,7 @@ nonisolated enum EngineStatus: Sendable {
     case paused, active, permissionRequired, secureInput, tapFailed, interrupted, outputFailed
 }
 
-nonisolated enum RecordingTarget: Sendable { case keyboardTrigger, mouseTrigger, output }
+nonisolated enum RecordingTarget: Hashable, Sendable { case keyboardTrigger, mouseTrigger, scrollTrigger, output }
 
 nonisolated struct RecordingRequest: Sendable, Equatable {
     var id = UUID()
@@ -44,6 +44,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.rules = compiled
             $0.enabled = configuration.isEnabled
             $0.pending.removeAll(keepingCapacity: true)
+            $0.matcher.resetScrollThrottle()
         }
     }
 
@@ -53,6 +54,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.recording = request
             $0.recorded = nil
             $0.pending.removeAll(keepingCapacity: true)
+            $0.matcher.resetScrollThrottle()
         }
     }
 
@@ -84,13 +86,14 @@ nonisolated final class EngineMailbox: Sendable {
             }
             if release.suppress { return true }
             if let request = state.recording {
-                guard event.phase == .down, !event.isRepeat else { return false }
+                guard event.phase == .down || event.phase == .scroll, !event.isRepeat else { return false }
                 if event.trigger == .key(53) {
                     state.recorded = RecordedInput(request: request, input: nil)
                 } else {
                     let matchesCategory: Bool
                     switch (request.target, event.trigger) {
                     case (.mouseTrigger, .mouseButton): matchesCategory = true
+                    case (.scrollTrigger, .scroll): matchesCategory = true
                     case (.keyboardTrigger, .key), (.output, .key): matchesCategory = true
                     default: matchesCategory = false
                     }

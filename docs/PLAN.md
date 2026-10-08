@@ -1,7 +1,7 @@
 # Rebind - Development Plan and Verification Log
 
-**Plan status:** Phase 1 keyboard/middle-or-extra-mouse-button → shortcut implementation is in place; automated tests and native UI checks pass. Global interception/delivery and Phase 1 exit criteria still need TCC and physical-device verification. Phase 0 hardware feasibility remains open.
-**Last reviewed:** 2026-10-08 (Phase 1 implementation, tests, native UI, toolchain and targeted upstream research).
+**Plan status:** Phase 1 keyboard/middle-or-extra-mouse-button → shortcut implementation and Phase 2's first discrete-wheel → shortcut slice are in place; automated tests and Russian native UI checks pass. Global interception/delivery and Phase 1/2 exit criteria still need TCC and physical-device verification. Phase 0 hardware feasibility remains open.
+**Last reviewed:** 2026-10-08 (Phase 2 wheel implementation, migration, tests, native UI, builds and targeted upstream research).
 **Owner:** Coding agent, with user decisions on major architecture or license trade-offs.  
 **Product requirements:** `SPEC.md`  
 **Engineering rules:** `../AGENTS.md`
@@ -113,15 +113,24 @@ No additional linting/formatting frameworks, XcodeGen, Node/Homebrew toolchains,
 
 **Goal:** production-quality core capture and matching, not just a proof-of-concept.
 
+**Current slice:** `SPEC.md` §§2, 3.2, 4, 5 (shortcut output), 6, 9, 12; S1/S2/S3.
+Category-wide discrete vertical/horizontal wheel with exact primary modifiers,
+one pulse per eligible event, shared 100 ms limiter. Continuous/momentum/diagonal
+scroll passes through. [Implemented limits and pending walkthrough](verification/phase-2-wheel.md).
+This independent extension does not close Phase 1's hardware gate.
+
 - [ ] Correct modifier transitions, left/right where detectable, key up/down, key repeat, rapid holds and releases.
 - [ ] Add double press/hold semantics and state machines; special-key research for `Caps Lock`, `Fn/Globe` and protected contexts.
 - [ ] Correctly handle many mouse button identifiers without fixed max enum; implement normal button, hold, double click and optional mouse-button combinations.
-- [ ] Implement modifier + vertical/horizontal wheel and button-hold + mouse motion gestures with thresholds/cancellation.
+- [x] Implement and unit-test discrete vertical/horizontal wheel normalization, exact modifier matching, shared throttling and fail-open cancellation/disabled policies. Constructed-event and pure state tests pass; this box covers software behavior only.
+- [ ] Verify modifier + wheel capture/suppression/delivery on real hardware, including driver transformations and coexistence with smooth/momentum scrolling. **Implemented subset:** discrete single-axis wheel → shortcut; no continuous-scroll recognition or native volume action yet.
+- [ ] Implement button-hold + mouse motion gestures with thresholds/cancellation.
 - [ ] Normalize button labels and numbers across HID/NSEvent/Quartz sources.
 - [ ] Handle event tap disable/timeouts, sleep/wake, engine restart, and permission removal gracefully.
 - [ ] Build a safe diagnostics view/tool that shows event metadata and raw button code, **never typed strings**.
 - [ ] Verify original-event suppression / passthrough and down/up symmetry with real apps.
-- [ ] Add tests for hold/release, click counts, scroll throttling, event cancellation, and disabled mode.
+- [x] Add wheel throttle/burst/axis, cancellation, pause, queue-bound, recording and schema-migration tests; current total **47 tests in 8 suites**.
+- [ ] Add remaining hold/release and click-count state-machine tests as those features are implemented.
 
 **Exit evidence:** all advertised core keyboard/mouse bindings reliably work in ordinary apps without stuck keys or click-through surprises.
 
@@ -248,6 +257,15 @@ No additional linting/formatting frameworks, XcodeGen, Node/Homebrew toolchains,
 - AX trust plus actual listen/post preflight gates tap startup. Secure Input is checked before matching and output. Tap-disable and output failures cancel queued actions and require explicit retry; sleep/session suspension clears acquisition state. Permission revocation, sleep/wake and protected contexts remain hardware/OS-unverified.
 - Small Phase 7 prerequisites are included so configured rules survive relaunch and the engine outlives its window: atomic version-1 JSON, corrupt/future-file editing lock and menu-bar lifecycle. This does **not** complete Phase 7 (recovery/import/export/migrations/login/settings remain open).
 
+### Phase 2 discrete wheel decision — 2026-10-08
+
+- Investigated Apple [line-delta fields](https://developer.apple.com/documentation/coregraphics/cgeventfield/scrollwheeleventdeltaaxis1), [timestamps](https://developer.apple.com/documentation/coregraphics/cgevent/timestamp) and installed SDK `CGEventTypes.h`; line axis 1 is vertical, axis 2 horizontal, timestamps approximately nanoseconds since startup. Continuous, scroll-phase, momentum-phase and third-axis fields provide a conservative eligibility filter. Any nonzero phase is left untouched; no undocumented phase-value interpretation is needed. [Hammerspoon's scroll-event documentation](https://www.hammerspoon.org/docs/hs.eventtap.event.html#newScrollEvent) supports positive up/left and negative down/right. These describe delivered events, not guaranteed physical-device identity.
+- Extended the existing public session tap and bounded mailbox instead of adding another event source. `ScrollEventAdapter` reads safe numeric metadata only; matcher emits at most one shortcut per 100 ms across wheel rules, swallowing intermediate matched pulses without delayed accumulation. Unsupported, unmatched, paused, overloaded and regressed-time inputs pass through. No posting, actor hop, timer creation, I/O or UI in the callback; output still drains on the existing worker. No private API or new permission.
+- Compared [UnnaturalScrollWheels source](https://github.com/ther0n/UnnaturalScrollWheels/blob/main/UnnaturalScrollWheels/ScrollInterceptor.swift), its GPL-3.0 license, [Mos](https://github.com/Caldis/Mos) README/license and existing MIT LinearMouse configuration/source references. UnnaturalScrollWheels discusses why the continuous flag alone cannot prove mouse/trackpad identity and includes tap/wake handling; Mos documents smoothing/conversion and per-axis behavior. Full applications and license/architecture costs do not justify importing them for this small slice. No third-party implementation was copied. A requested LinearMouse `Event/ScrollEvent.swift` URL failed; no source audit of that file is claimed.
+- GitHub and Swift Package Index searches for macOS wheel/event interception found no suitable drop-in package for this extension. This is search evidence, not proof no package exists or an index compatibility result. Retain native APIs; no runtime dependency installed.
+- Keep honest scope in all four languages: only discrete single-axis events, shared ten-pulse/s ceiling, OS-defined direction, transformed events can still match. Do not classify physical devices from the flag. Smooth/momentum handling, native actions, pointer gestures and per-device routing remain open.
+- Added configuration schema 2 and validated in-memory migration of schema-1 key/button rules. Legacy disk contents stay intact until successful save; disguised version-1 wheel content, invalid/conflicting or future files cannot overwrite valid data. Only this necessary migration is implemented; Phase 7 recovery/import/export/general migration work remains open.
+
 ### Risk R-01 - Trackpad raw contacts vs OS gesture suppression
 
 - **Source evidence:** OpenMultitouchSupport currently uses `MTDeviceCreateDefault`, a private binary framework, Swift tools 6.2/macOS 15+, and requires sandbox off. Its Swift adapter maps frames and formats timestamps; audit overhead/ownership before use. Subsurface supports multiple-device monitoring and recognition; its source also classifies Magic Mouse, but has private API and dependency risks.
@@ -293,7 +311,7 @@ No additional linting/formatting frameworks, XcodeGen, Node/Homebrew toolchains,
 
 ## Dependency decision register
 
-Reviewed upstream manifests, READMEs/licenses and relevant capture/source files. Maintenance dates below are the reviewed default-branch commit dates, not guarantees of quality or OS support. **No candidate runtime code was copied or installed, and no third-party library was built.** Source compatibility is declared upstream; Swift 6/macOS 26 runtime behavior still needs validation.
+Reviewed upstream manifests, READMEs/licenses and relevant capture/source files. Maintenance dates below are reviewed default-branch commit dates unless marked as inspection-only; none guarantees quality or OS support. **No candidate runtime code was copied or installed, and no third-party library was built.** Source compatibility is declared upstream; Swift 6/macOS 26 runtime behavior still needs validation.
 
 | Candidate / source | Purpose, compatibility and maintenance | License / limits / decision |
 |---|---|---|
@@ -310,6 +328,8 @@ Reviewed upstream manifests, READMEs/licenses and relevant capture/source files.
 | [HotKey](https://github.com/soffes/HotKey) | Carbon registered-hotkey wrapper; tools 5.0, README Swift 5/macOS support, no manifest minimum; commit 2024-12-29, `a3cf605`, not archived | MIT; older activity and same interception limits; strict-concurrency audit required. **Defer**, no current need. |
 | [AXSwift](https://github.com/tmandry/AXSwift) | Swift AX client wrapper; tools 4.0, no manifest OS floor; commit 2021-11-14, `e18a184`, not archived | MIT; longstanding low-level wrapper, no recent Swift 6 verification. **Defer**, use native AX first for small action slice, revisit wrapper value in Phase 4. |
 | Project skills | Four installed instruction bundles, see skill register and `.agents/skills/manifest.json` | MIT, **installed at project scope**. Never linked into Rebind; no runtime impact. |
+| [UnnaturalScrollWheels](https://github.com/ther0n/UnnaturalScrollWheels) | Scroll filtering/direction and wake/disable reference; Swift Xcode app, README discusses Catalina rather than declaring modern minimum/Swift support. Source/license inspected 2026-10-08; precise latest commit date not exposed by fetched GitHub page | GPL-3.0; **conceptual/API reference only, do not copy/link**. Continuous flag does not establish hardware identity; no Swift 6/macOS 26 compatibility validation. Native adapter is smaller. |
+| [Mos](https://github.com/Caldis/Mos) | Smooth-scroll conversion and independent axes reference; README declares macOS 10.13+, Swift Xcode app. Current README/license inspected 2026-10-08; copyright through 2026, precise latest commit date not exposed | [CC BY-NC 4.0](https://github.com/Caldis/Mos/blob/master/LICENSE), not a permissive commercial software license; **documentation reference only, no copying/linking**. Full app, no demonstrated drop-in Swift 6 package; native APIs chosen. |
 
 Swift Package Index was searched: [KeyboardShortcuts](https://swiftpackageindex.com/sindresorhus/KeyboardShortcuts) and [HotKey](https://swiftpackageindex.com/soffes/HotKey) listings accessed. OpenMultitouchSupport/Subsurface listing requests returned tool errors and did not provide compatibility evidence; use their reviewed manifests rather than claiming index build verification. Full GitHub commit SHAs are in installed-skill manifest where applicable; runtime source links/reviewed short revisions above identify research snapshots and must be rechecked before adoption.
 
@@ -325,7 +345,7 @@ Update statuses as functionality is implemented and tested. Fill exact device + 
 | Physical key remap including Caps Lock | Partial implementation; Caps Lock Researching | None | Ordinary key-code trigger/output path exists; modifier-only, Caps Lock and Fn deferred; Fn-flagged events pass through |
 | Modifier + Mouse Button 4/5 | Implemented | None | Middle/extra Quartz button recording + exact modifiers; requires physical side-button mouse and permissions |
 | Buttons beyond 5 | Implemented | None | Numeric UInt32 indexes; pure tests include high indices; actual device/driver events still pending |
-| Modifier + wheel | Planned | None | Continuous event throttling |
+| Modifier + wheel | Implemented subset | None; Russian selector/hints inspected on macOS 27.0.1 | Discrete single-axis four directions → shortcut, exact modifiers, shared 100 ms throttle; smooth/momentum/diagonal pass through; no physical attribution or real delivery result |
 | Button-hold + pointer direction | Planned | None | Gesture state machine |
 | Per-physical-device rules | Researching | None | No source attribution proof yet |
 | Trackpad four-finger tap | Researching | None | Private API and OS conflicts |
@@ -333,9 +353,20 @@ Update statuses as functionality is implemented and tested. Fill exact device + 
 | Magic Mouse touch gestures | Researching | None | Separate hardware validation |
 | Space switching | Researching | None | Shortcut mapping may be user-dependent |
 | Menu Bar and Launch at Login | Menu Bar Implemented; login Planned | Window close/process survival on macOS 27.0.1 | Open/Pause/Quit paths implemented; menu actions and background remap still pending; no SMAppService implementation |
-| EN / RU / DE / FR | Implemented for current slice; partial verification | Russian main/editor inspected on macOS 27.0.1 | 54 catalog keys with four complete translations; EN/DE/FR layout and manual language selector pending |
+| EN / RU / DE / FR | Implemented for current slice; partial verification | Russian main/editor inspected on macOS 27.0.1 | 62 catalog keys with four complete translations; EN/DE/FR layout and manual language selector pending |
 
 ## Session log
+
+### 2026-10-08 — Phase 2 first slice: discrete wheel (hardware exit pending)
+
+- Started from clean committed Phase 1 (`8276e35`); read AGENTS/SPEC/PLAN, current engine/UI/tests/project, both references and applicable installed SwiftUI Pro, Swift Concurrency Pro and Swift Testing Pro instructions/references. Phase 1 physical exit remains open; chose the independent planned wheel slice. No commits, subagents, dependency installs, permission grants or TCC changes.
+- Added four wheel directions, conservative Quartz metadata adapter, exact matching and global wheel-rate limiter, explicit wheel recording, native button/wheel selector and labels, eight new four-language strings plus updated limits, and schema-2 migration preserving old key/button rules. Existing callback/worker ownership, bounded dispatch and project identity/settings retained.
+- `scripts/dev.sh doctor`: existing Xcode 27.0 / Swift 6.4 / SDK 27.0 and Apple Silicon macOS 27.0.1 (26A434) confirmed; minimum remains 26. `scripts/dev.sh test -resultBundlePath build/Phase2WheelTests-Final.xcresult`: **TEST SUCCEEDED, 47 tests / 8 suites / 0 failures**. Includes 23 new behavior/migration tests and all 24 Phase 1 tests. No tap startup or globally posted input; temporary persistence only. Initial runs exposed incorrect test assumptions (legacy raw-representable modifiers encode as integers; Quartz setters convert oversized requested deltas). Corrected the literal legacy fixture and tested extreme direction normalization directly, while constructed-event tests inspect delivered values; final run passes.
+- Final `scripts/dev.sh build` and `scripts/dev.sh release`: **BUILD SUCCEEDED**, after UI wrapping fix. Release `lipo -archs` confirms arm64/x86_64; `codesign --verify --strict --verbose=2` passes. No Intel/macOS 26 runtime claim. No source/concurrency warnings; expected skipped AppIntents extraction. Hosted tests emit system `com.apple.linkd.autoShortcut` connection errors but pass all assertions.
+- Inspected exact Debug bundle in native UI: Russian mouse category, wheel selector, permission-disabled recording/save, footer/editor limits and Escape cancellation. Found and fixed truncated wheel hint with vertical text sizing; screenshot confirms full text. No physical event recorded, rule saved or output delivered in this session. Other locales, VoiceOver, populated editor and real grants remain pending.
+- Catalog validated: **62 keys**, all nonempty translated EN/RU/DE/FR units; original key ordering restored after Xcode serialization to keep the diff focused. `git diff --check` and project `plutil -lint` pass. Sandbox macro startup failed as in Phase 1; approved normal Xcode invocation succeeded without changing protections.
+- Logs: `/tmp/rebind-phase2-{build-final,release-final,tests-final,doctor}.log`; ignored result `build/Phase2WheelTests-Final.xcresult`. [Wheel verification record and manual checklist](verification/phase-2-wheel.md); README updated for limits and schema migration.
+- **Next:** stable signed build and actual Phase 1 keyboard/Button 4 plus Phase 2 wheel walkthrough. Continue Phase 2 hold/double-press and button-hold pointer state machines after targeted research; special keys, multitouch/Magic Mouse and two-device attribution retain their hardware gates. Neither phase is marked complete.
 
 ### 2026-10-08 — Phase 1 implementation (hardware exit pending)
 

@@ -7,6 +7,19 @@ struct BindingEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var trigger: MatchKey?
     @State private var output: KeyboardShortcut?
+    @State private var mouseRecordingTarget: RecordingTarget
+
+    init(model: AppModel, scope: DeviceScope, existing: Binding?) {
+        self.model = model
+        self.scope = scope
+        self.existing = existing
+        _trigger = State(initialValue: existing?.matchKey)
+        _output = State(initialValue: existing?.action.shortcut)
+        let target: RecordingTarget
+        if let existing, case .scroll = existing.trigger { target = .scrollTrigger }
+        else { target = .mouseTrigger }
+        _mouseRecordingTarget = State(initialValue: target)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -15,8 +28,18 @@ struct BindingEditor: View {
             GroupBox {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(.triggerTitle).font(.headline)
+                    if scope == .allMice {
+                        Picker(.mouseInputKind, selection: $mouseRecordingTarget) {
+                            Text(.mouseButtonInput).tag(RecordingTarget.mouseTrigger)
+                            Text(.mouseWheelInput).tag(RecordingTarget.scrollTrigger)
+                        }.pickerStyle(.segmented)
+                        if mouseRecordingTarget == .scrollTrigger {
+                            Text(.wheelMappingHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
                     Text(trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? String(localized: .notRecorded)).font(.title3.monospaced())
-                    Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : .mouseTrigger) }
+                    Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : mouseRecordingTarget) }
                         .disabled(!model.canRecord || model.recording != nil)
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
             }
@@ -49,8 +72,9 @@ struct BindingEditor: View {
                     .disabled(trigger == nil || output == nil || model.recording != nil || model.storageLocked)
             }
         }.padding(24).frame(width: 520)
-        .onAppear { model.error = nil; model.beginEditing(); trigger = existing?.matchKey; output = existing?.action.shortcut }
+        .onAppear { model.error = nil; model.beginEditing() }
         .onDisappear { model.endEditing() }
+        .onChange(of: mouseRecordingTarget) { model.cancelRecording(); trigger = nil }
         .onChange(of: model.lastRecording?.request.id) {
             guard let recording = model.lastRecording, let input = recording.input else { return }
             if recording.request.target == .output, case .key(let code) = input.trigger {
