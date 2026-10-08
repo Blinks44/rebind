@@ -1,8 +1,15 @@
 # Rebind
 
-Native macOS input remapping application, currently at repository preparation.
-The existing SwiftUI starter screen is unchanged. No input interception,
-permissions onboarding, remapping, or gestures have been implemented.
+Native macOS input remapping application. Phase 1 now implements a native
+Quartz keyboard/middle-or-extra-mouse-button → shortcut slice, interactive
+recording/editing, exact modifiers, pause/emergency bypass, permission status,
+menu-bar lifecycle and atomic local configuration. **Physical remapping is not
+yet hardware-verified.** Gestures and per-device rules are not implemented.
+
+The UI is translated into English, Russian, German and French using a String
+Catalog and the system language. Manual language selection remains planned.
+See the [Phase 1 verification walkthrough](docs/verification/phase-1.md) for
+supported limits and checks needed before claiming end-to-end support.
 
 Requirements and roadmap: [SPEC](docs/SPEC.md), [PLAN](docs/PLAN.md),
 [agent instructions](AGENTS.md). Design references remain in `docs/references/`.
@@ -51,10 +58,12 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build \
   -destination 'platform=macOS' -derivedDataPath build/DerivedData
 ```
 
-The test target imports Swift Testing and `@testable import rebind` to verify
-the infrastructure. It intentionally contains **zero behavioral tests**.
-Add meaningful matcher, lifecycle, and persistence tests with their features;
-an empty successful runner is not evidence of product correctness.
+The Swift Testing target covers matching, exact modifiers, press/release
+ownership, conflict handling, emergency pause, recording, bounded dispatch,
+Secure Input/suspension policy, balanced/tagged event construction and
+versioned configuration. Tests do not post global input or start the event tap;
+they use temporary configuration files. Real event interception and shortcut
+delivery still require the documented manual checks.
 
 ## Signing and permissions
 
@@ -70,12 +79,23 @@ build-script sandboxing are enabled. Release disables Xcode base-entitlement
 injection; Debug retains Xcode's debugger/test-runner entitlements. No custom
 entitlements, helpers, drivers, private frameworks, or runtime packages are added.
 
-Before validating real input permissions, configure a suitable existing Apple
+For repeatable permission persistence tests, prefer a suitable existing Apple
 Development identity/team in Xcode and keep bundle identity and launch location
-stable. Ad-hoc rebuilds can invalidate TCC grants. Developer ID signing and
-notarization require real credentials before distribution. The preparation
-session does not grant permissions or reset TCC. Future onboarding must check
-actual Accessibility/Input Monitoring state and request only needed access.
+stable. A locally signed build can be tested after granting access, but ad-hoc
+rebuilds can invalidate TCC grants. Developer ID signing and
+notarization require real credentials before distribution. Permission requests
+are explicit UI actions; status uses actual AX and Quartz preflight checks. The engine starts only when the configuration is enabled or
+recording is requested and required access is available. This development
+session does not grant permissions or reset TCC.
+
+New installations start paused with no bindings. Record a key or middle/extra
+mouse button and an output shortcut, save, then enable bindings. Output fires
+once per press; repeats/held output, Caps Lock, Fn and modifier-only sources
+remain deferred. Escape cancels recording. Pause is available in the menu bar
+or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close without
+quitting the app. Settings are stored at
+`~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
+file is preserved and locks editing instead of being overwritten.
 
 ## Agent skills
 
