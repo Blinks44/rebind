@@ -23,7 +23,7 @@ struct ContentView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(scope == .allKeyboards ? LocalizedStringResource.allKeyboards : .allMice).font(.title2.bold())
-                        Text(model.status.text).foregroundStyle(.secondary)
+                        Text(model.statusText).foregroundStyle(.secondary)
                     }
                     Spacer()
                     Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
@@ -39,6 +39,10 @@ struct ContentView: View {
                         HStack(spacing: 16) {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(InputLabels.trigger(binding.trigger, modifiers: binding.modifiers)).font(.headline)
+                                if binding.activation == .doublePress { Text(.doublePressActivation).font(.caption) }
+                                if binding.activation == .hold {
+                                    Text(.holdDuration(Int(binding.holdDurationMilliseconds))).font(.caption)
+                                }
                                 Text("→ " + InputLabels.shortcut(binding.action.shortcut)).foregroundStyle(.secondary)
                             }
                             Spacer()

@@ -53,7 +53,7 @@ struct InputMatcherTests {
         second.id = .init()
         #expect(InputMatcher.compile([first, second]).isEmpty)
         second.isEnabled = false
-        #expect(InputMatcher.compile([first, second])[first.matchKey] == output)
+        #expect(InputMatcher.compile([first, second])[first.matchKey]?.shortcut == output)
         var invalid = first
         invalid.scope = .allMice
         #expect(InputMatcher.compile([invalid]).isEmpty)

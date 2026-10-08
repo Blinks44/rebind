@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 2
+    static let currentSchemaVersion = 5
     var schemaVersion = Self.currentSchemaVersion
     var isEnabled = false
     var bindings: [Binding] = []
@@ -12,14 +12,23 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
               bindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
         let keys = bindings.filter(\.isEnabled).map(\.matchKey)
         guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
+        let gestureSources = Set(keys.filter { $0.trigger.isPointerGesture }.map(\.pressSource))
+        guard !keys.contains(where: { !$0.trigger.isPointerGesture && gestureSources.contains($0.pressSource) }) else {
+            throw ConfigurationError.conflict
+        }
     }
 
     func migrated() throws -> Configuration {
         var result = self
-        if schemaVersion == 1 {
+        if (1...4).contains(schemaVersion) {
+            guard bindings.allSatisfy({ !$0.trigger.isPointerGesture }),
+                  schemaVersion == 4 || bindings.allSatisfy({ $0.activation != .hold }),
+                  schemaVersion >= 3 || bindings.allSatisfy({ $0.activation == .press }) else {
+                throw ConfigurationError.invalid
+            }
             // Version 1 supports key/button rules only. Reject disguised future
             // content rather than silently accepting it as a legacy configuration.
-            guard bindings.allSatisfy({ if case .scroll = $0.trigger { return false }; return true }) else {
+            guard schemaVersion != 1 || bindings.allSatisfy({ !$0.trigger.isScroll }) else {
                 throw ConfigurationError.invalid
             }
             result.schemaVersion = Self.currentSchemaVersion

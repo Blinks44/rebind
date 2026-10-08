@@ -30,9 +30,10 @@ Phase 1's end-to-end exit criterion remains open; see its
   that event and never executes an action. Button and output recorders ignore
   wheel input. Escape cancels; switching mouse-input type cancels and clears the
   source while retaining the output. Missing permissions disable recording.
-- Schema 2 stores wheel rules. Schema 1 key/button rules migrate in memory with
+- Wheel rules were introduced in schema 2; current schema 4 preserves them as
+  ordinary-press mappings. Schema 1/2/3 rules migrate in memory with
   their IDs, enabled state, modifiers and output unchanged. Loading does not
-  rewrite disk; a successful save writes schema 2 atomically. Unknown/corrupt
+  rewrite disk; a successful save writes schema 4 atomically. Unknown/corrupt
   versions remain protected from editing/overwrite.
 
 ## Verification performed — 2026-10-08
@@ -84,7 +85,7 @@ such as Command+A. Complete Phase 1's keyboard/Button 4 checks as well.
    and retry after a disabled tap. Check pending actions do not fire afterward.
 7. Edit/save/relaunch a wheel rule; verify direction, modifiers, ID and output.
    Test a disposable legacy version-1 configuration: opening preserves disk
-   bytes and rules, saving writes version 2. Back up real user data first.
+   bytes and rules, saving writes current version 4. Back up real user data first.
 8. Check keyboard navigation, VoiceOver, EN/DE/FR layout and Increase Contrast.
    Two mice may both match category-wide rules; no per-device support follows
    from this slice. Magic Mouse touch and button-hold pointer gestures are deferred.

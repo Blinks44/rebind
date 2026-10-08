@@ -8,9 +8,7 @@ import Synchronization
 @MainActor @Observable final class AppModel: NSObject {
     private(set) var configuration = Configuration()
     private(set) var status: EngineStatus = .paused
-    private(set) var accessibilityGranted = false
-    private(set) var inputMonitoringGranted = false
-    private(set) var postingGranted = false
+    private(set) var permissions = InputPermissions()
     private(set) var storageLocked = false
     var error: LocalizedStringResource?
     var recording: RecordingRequest?
@@ -31,7 +29,7 @@ import Synchronization
 
     func start() {
         guard timer == nil else { return }
-        mailbox.configure(configuration)
+        configureEngine(configuration)
         EventTapWorker.start(mailbox: mailbox)
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
@@ -54,9 +52,7 @@ import Synchronization
 
     @objc func refresh() {
         if Date().timeIntervalSince(lastPermissionCheck) >= 0.5 {
-            accessibilityGranted = AXIsProcessTrusted()
-            inputMonitoringGranted = CGPreflightListenEventAccess()
-            postingGranted = CGPreflightPostEventAccess()
+            permissions = .current()
             lastPermissionCheck = Date()
         }
         let update = mailbox.state.withLock { state in
@@ -85,14 +81,14 @@ import Synchronization
     func setEnabled(_ enabled: Bool) {
         var updated = configuration
         updated.isEnabled = enabled
-        if !enabled { mailbox.configure(updated); configuration.isEnabled = false }
+        if !enabled { configureEngine(updated); configuration.isEnabled = false }
         trySave(updated)
     }
 
     func beginEditing() {
-        mailbox.state.withLock { $0.editing = true; $0.pending.removeAll(keepingCapacity: true) }
+        mailbox.setEditing(true)
     }
-    func endEditing() { cancelRecording(); mailbox.state.withLock { $0.editing = false } }
+    func endEditing() { cancelRecording(); mailbox.setEditing(false) }
 
     func beginRecording(_ target: RecordingTarget) {
         guard canRecord, NSApp.isActive else { return }
@@ -102,8 +98,29 @@ import Synchronization
         mailbox.record(request)
     }
 
-    @objc func cancelRecording() { recording = nil; mailbox.record(nil) }
-    var canRecord: Bool { accessibilityGranted && inputMonitoringGranted && postingGranted }
+    @objc func cancelRecording() {
+        // Losing UI focus ends explicit recording, not background recognition.
+        guard recording != nil else { return }
+        recording = nil
+        mailbox.record(nil)
+    }
+    var canRecord: Bool { permissions.allowsRemapping }
+
+    var permissionHint: LocalizedStringResource {
+        switch permissions.requirement {
+        case .eventPosting: .eventPostingRequired
+        case .accessibility: .permissionsRequired
+        case nil: .enginePaused
+        }
+    }
+
+    var statusText: LocalizedStringResource {
+        if case .permissionRequired = status {
+            if permissions.requirement == .eventPosting { return .eventPostingStatus }
+            return permissionHint
+        }
+        return status.text
+    }
 
     func saveBinding(_ binding: Binding) -> Bool {
         var updated = configuration
@@ -131,7 +148,7 @@ import Synchronization
             try store.save(updated)
             error = nil
             configuration = updated
-            mailbox.configure(updated)
+            configureEngine(updated)
             return true
         } catch ConfigurationError.conflict { self.error = .bindingConflict }
         catch ConfigurationError.invalid { self.error = .bindingInvalid }
@@ -139,13 +156,36 @@ import Synchronization
         return false
     }
 
+    private func configureEngine(_ configuration: Configuration) {
+        // Read AppKit's system preference on MainActor, never in the event callback.
+        let interval = NSEvent.doubleClickInterval
+        let nanoseconds: UInt64 = interval.isFinite && interval > 0 && interval <= 60
+            ? UInt64(interval * 1_000_000_000) : 500_000_000
+        mailbox.configure(configuration, doublePressIntervalNanoseconds: nanoseconds)
+    }
+
     func requestAccessibility() {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
         refreshPermissions()
+        // macOS may not repeat a prompt after an earlier denial. Always provide
+        // a useful route to the actual setting when access is still missing.
+        if !permissions.accessibility { openPrivacyPane("Privacy_Accessibility") }
     }
-    func requestInputMonitoring() { _ = CGRequestListenEventAccess(); refreshPermissions() }
+
+    func requestEventPosting() {
+        // AX trust and Quartz synthesis can disagree. Request the specific
+        // capability only after an explicit user action, never from polling.
+        guard AXIsProcessTrusted() else { refreshPermissions(); return }
+        _ = CGRequestPostEventAccess()
+        refreshPermissions()
+        if !permissions.posting { openPrivacyPane("Privacy_Accessibility") }
+    }
     func refreshPermissions() { lastPermissionCheck = .distantPast; refresh() }
+
+    func showApplicationInFinder() {
+        NSWorkspace.shared.activateFileViewerSelecting([Bundle.main.bundleURL])
+    }
 
     func openPrivacyPane(_ pane: String) {
         guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)") else { return }

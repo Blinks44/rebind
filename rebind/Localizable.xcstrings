@@ -1,837 +1,19 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "rebindWindowTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind"
-          }
-        }
-      }
-    },
-    "inputCategories": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inputs"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ввод"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eingaben"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entrées"
-          }
-        }
-      }
-    },
-    "allKeyboards": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All keyboards"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Все клавиатуры"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Tastaturen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tous les claviers"
-          }
-        }
-      }
-    },
-    "allMice": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All mice"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Все мыши"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Mäuse"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toutes les souris"
-          }
-        }
-      }
-    },
-    "plannedInputs": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not implemented"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ещё не реализовано"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch nicht implementiert"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pas encore implémenté"
-          }
-        }
-      }
-    },
-    "trackpadNotAvailable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trackpad gestures"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Жесты трекпада"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trackpad-Gesten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestes du trackpad"
-          }
-        }
-      }
-    },
-    "magicMouseNotAvailable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse gestures"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Жесты Magic Mouse"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse-Gesten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestes Magic Mouse"
-          }
-        }
-      }
-    },
-    "addBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add Binding"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Добавить правило"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegung hinzufügen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajouter une règle"
-          }
-        }
-      }
-    },
-    "editBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Edit Binding"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Изменить правило"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegung bearbeiten"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modifier la règle"
-          }
-        }
-      }
-    },
-    "deleteBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete Binding"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Удалить правило"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegung löschen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer la règle"
-          }
-        }
-      }
-    },
-    "deleteBindingConfirmation": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete this binding? This cannot be undone."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Удалить это правило? Это действие нельзя отменить."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diese Belegung löschen? Dies kann nicht rückgängig gemacht werden."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer cette règle ? Cette action est irréversible."
-          }
-        }
-      }
-    },
-    "enableBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enable Binding"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Включить правило"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegung aktivieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activer la règle"
-          }
-        }
-      }
-    },
-    "disableBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Disable Binding"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отключить правило"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegung deaktivieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Désactiver la règle"
-          }
-        }
-      }
-    },
-    "pauseBindings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pause"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Приостановить"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pausieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suspendre"
-          }
-        }
-      }
-    },
-    "resumeBindings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enable Bindings"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Включить правила"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegungen aktivieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activer les règles"
-          }
-        }
-      }
-    },
-    "enginePaused": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remapping paused"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Переназначения приостановлены"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegungen pausiert"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remappage suspendu"
-          }
-        }
-      }
-    },
-    "engineActive": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Engine active · hardware verification pending"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Движок активен · требуется аппаратная проверка"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Engine aktiv · Hardwareprüfung ausstehend"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moteur actif · vérification matérielle requise"
-          }
-        }
-      }
-    },
-    "permissionsRequired": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accessibility and Input Monitoring permissions are required."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Нужны разрешения «Универсальный доступ» и «Мониторинг ввода»."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zugriff auf Bedienungshilfen und Eingabeüberwachung erforderlich."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les autorisations Accessibilité et Surveillance de l’entrée sont requises."
-          }
-        }
-      }
-    },
-    "secureInputPaused": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Secure Input enabled · remapping suspended"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Защищённый ввод включён · переназначения приостановлены"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sichere Eingabe aktiv · Belegungen ausgesetzt"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saisie sécurisée active · remappage suspendu"
-          }
-        }
-      }
-    },
-    "tapCreationFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to create event tap. Pause, check permissions, then enable again."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось создать перехватчик. Приостановите правила, проверьте разрешения и включите их снова."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Event-Tap konnte nicht erstellt werden. Pausieren, Berechtigungen prüfen und erneut aktivieren."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impossible de créer le filtre. Suspendez, vérifiez les autorisations, puis réactivez."
-          }
-        }
-      }
-    },
-    "engineInterrupted": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS disabled capture. Check permissions and enable again."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS отключила перехват. Проверьте разрешения и включите правила снова."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS hat die Erfassung deaktiviert. Berechtigungen prüfen und erneut aktivieren."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS a désactivé la capture. Vérifiez les autorisations, puis réactivez."
-          }
-        }
-      }
-    },
-    "outputFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shortcut output failed. Remapping has been paused."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось отправить сочетание. Переназначения приостановлены."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tastenkombination konnte nicht gesendet werden. Belegungen pausiert."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Échec de l’envoi du raccourci. Remappage suspendu."
-          }
-        }
-      }
-    },
-    "storageUnreadable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Configuration could not be read. Editing is locked to preserve the file. Check ~/Library/Application Support/Rebind/configuration.json."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось прочитать настройки. Изменения заблокированы для сохранности файла. Проверьте ~/Library/Application Support/Rebind/configuration.json."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Konfiguration nicht lesbar. Bearbeitung zum Schutz der Datei gesperrt. Prüfen Sie ~/Library/Application Support/Rebind/configuration.json."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Configuration illisible. Modification bloquée pour préserver le fichier. Vérifiez ~/Library/Application Support/Rebind/configuration.json."
-          }
-        }
-      }
-    },
-    "storageWriteFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Could not save settings. Check available disk space and file permissions."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось сохранить настройки. Проверьте свободное место и права доступа к файлу."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen konnten nicht gespeichert werden. Speicherplatz und Dateirechte prüfen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impossible d’enregistrer les réglages. Vérifiez l’espace disque et les permissions du fichier."
-          }
-        }
-      }
-    },
-    "bindingConflict": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An enabled binding already uses this exact trigger and modifiers."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Активное правило уже использует этот триггер и набор модификаторов."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eine aktive Belegung verwendet bereits diese Eingabe und Modifikatoren."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Une règle active utilise déjà cette entrée et ces modificateurs."
-          }
-        }
-      }
-    },
-    "bindingInvalid": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unsupported binding. The emergency shortcut is reserved."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Неподдерживаемое правило. Аварийное сочетание зарезервировано."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht unterstützte Belegung. Die Notfallkombination ist reserviert."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Règle non prise en charge. Le raccourci d’urgence est réservé."
-          }
-        }
-      }
-    },
-    "permissionsTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allow input remapping"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Разрешите переназначение ввода"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eingabebelegung erlauben"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autoriser le remappage"
-          }
-        }
-      }
-    },
-    "permissionsExplanation": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind uses Accessibility to filter and send events, and Input Monitoring to receive physical key and mouse events. Typed text is never stored or logged."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind использует «Универсальный доступ» для фильтрации и отправки событий, а «Мониторинг ввода» — для получения событий клавиш и мыши. Вводимый текст не сохраняется и не записывается в журнал."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind benötigt Bedienungshilfen zum Filtern und Senden sowie Eingabeüberwachung zum Empfangen von Tasten- und Mausereignissen. Eingegebener Text wird weder gespeichert noch protokolliert."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind utilise Accessibilité pour filtrer et envoyer les événements, et Surveillance de l’entrée pour recevoir les événements du clavier et de la souris. Aucun texte saisi n’est enregistré ni journalisé."
-          }
-        }
-      }
-    },
     "accessibilityPermission": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accessibility"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Универсальный доступ"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Bedienungshilfen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility"
           }
         },
         "fr": {
@@ -839,498 +21,69 @@
             "state": "translated",
             "value": "Accessibilité"
           }
-        }
-      }
-    },
-    "inputMonitoringPermission": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Input Monitoring"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Мониторинг ввода"
+            "value": "Универсальный доступ"
           }
-        },
+        }
+      }
+    },
+    "activationTitle": {
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eingabeüberwachung"
+            "value": "Auslösung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activation"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Surveillance de l’entrée"
-          }
-        }
-      }
-    },
-    "grantAccess": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Request Access"
+            "value": "Déclenchement"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Запросить доступ"
+            "value": "Срабатывание"
           }
-        },
+        }
+      }
+    },
+    "addBinding": {
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zugriff anfordern"
+            "value": "Belegung hinzufügen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Binding"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Demander l’accès"
-          }
-        }
-      }
-    },
-    "openSettings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Settings"
+            "value": "Ajouter une règle"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Открыть настройки"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen öffnen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir les réglages"
-          }
-        }
-      }
-    },
-    "refreshPermissions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Refresh Permission Status"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Проверить разрешения"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Berechtigungen aktualisieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Actualiser les autorisations"
-          }
-        }
-      }
-    },
-    "signingHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local development builds may require granting access again after rebuilding. Relaunch if macOS requests it."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "После пересборки локальной версии может потребоваться повторное разрешение. Перезапустите приложение, если macOS попросит."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lokale Entwicklungsbuilds können nach dem Neubau erneut Zugriff benötigen. Bei Aufforderung durch macOS neu starten."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Après compilation locale, les autorisations peuvent devoir être accordées à nouveau. Relancez si macOS le demande."
-          }
-        }
-      }
-    },
-    "recordingLimitations": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Record a physical key, middle/extra mouse button or wheel direction with optional modifiers. Caps Lock, modifier-only keys, Fn and gestures are not supported. Escape cancels recording."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Запишите физическую клавишу, среднюю/дополнительную кнопку мыши или направление колеса с модификаторами. Caps Lock, отдельные модификаторы, Fn и жесты пока не поддерживаются. Escape отменяет запись."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eine physische Taste, mittlere/zusätzliche Maustaste oder Mausradrichtung mit optionalen Modifikatoren erfassen. Caps Lock, reine Modifikatortasten, Fn und Gesten fehlen noch. Escape bricht die Erfassung ab."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrez une touche, un bouton central/supplémentaire ou une direction de molette avec des modificateurs facultatifs. Verr. maj., modificateurs seuls, Fn et gestes ne sont pas pris en charge. Échap annule."
-          }
-        }
-      }
-    },
-    "triggerTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trigger"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Триггер"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auslöser"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déclencheur"
-          }
-        }
-      }
-    },
-    "outputShortcut": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Output Keyboard Shortcut"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Выходное сочетание клавиш"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auszugebende Tastenkombination"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Raccourci clavier de sortie"
-          }
-        }
-      }
-    },
-    "notRecorded": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not recorded"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не записано"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht erfasst"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Non enregistré"
-          }
-        }
-      }
-    },
-    "recordTrigger": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Record Trigger"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Записать триггер"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auslöser erfassen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrer le déclencheur"
-          }
-        }
-      }
-    },
-    "recordOutput": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Record Output Shortcut"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Записать выходное сочетание"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ausgabekombination erfassen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrer le raccourci de sortie"
-          }
-        }
-      }
-    },
-    "listeningHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listening… Press input, or Escape to cancel."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ожидание ввода… Нажмите кнопку или Escape для отмены."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warte auf Eingabe… Taste drücken oder mit Escape abbrechen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En attente… Appuyez sur une touche ou sur Échap pour annuler."
-          }
-        }
-      }
-    },
-    "cancelRecording": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop Recording"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Остановить запись"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erfassung stoppen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arrêter l’enregistrement"
-          }
-        }
-      }
-    },
-    "clearRecording": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Очистить"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leeren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Effacer"
-          }
-        }
-      }
-    },
-    "cancel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отмена"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abbrechen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Annuler"
-          }
-        }
-      }
-    },
-    "saveBinding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Сохранить"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sichern"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrer"
-          }
-        }
-      }
-    },
-    "noBindings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Bindings"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Нет правил"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Belegungen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune règle"
+            "value": "Добавить правило"
           }
         }
       }
@@ -1338,10 +91,22 @@
     "addBindingHint": {
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Belegung hinzufügen, um Eingabe und Ausgabekombination zu erfassen."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Add a binding to record input and choose an output shortcut."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez une règle pour enregistrer une entrée et un raccourci de sortie."
           }
         },
         "ru": {
@@ -1349,17 +114,1253 @@
             "state": "translated",
             "value": "Добавьте правило, чтобы записать ввод и выходное сочетание клавиш."
           }
-        },
+        }
+      }
+    },
+    "allKeyboards": {
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine Belegung hinzufügen, um Eingabe und Ausgabekombination zu erfassen."
+            "value": "Alle Tastaturen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All keyboards"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajoutez une règle pour enregistrer une entrée et un raccourci de sortie."
+            "value": "Tous les claviers"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все клавиатуры"
+          }
+        }
+      }
+    },
+    "allMice": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Mäuse"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All mice"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les souris"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все мыши"
+          }
+        }
+      }
+    },
+    "bindingConflict": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine aktive Belegung verwendet bereits diese Eingabe und Modifikatoren."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An enabled binding already uses this exact trigger and modifiers."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une règle active utilise déjà cette entrée et ces modificateurs."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активное правило уже использует этот триггер и набор модификаторов."
+          }
+        }
+      }
+    },
+    "bindingInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstützte Belegung. Die Notfallkombination ist reserviert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported binding. The emergency shortcut is reserved."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Règle non prise en charge. Le raccourci d’urgence est réservé."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неподдерживаемое правило. Аварийное сочетание зарезервировано."
+          }
+        }
+      }
+    },
+    "cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        }
+      }
+    },
+    "cancelRecording": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfassung stoppen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop Recording"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter l’enregistrement"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Остановить запись"
+          }
+        }
+      }
+    },
+    "clearRecording": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leeren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить"
+          }
+        }
+      }
+    },
+    "deleteBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegung löschen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Binding"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la règle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить правило"
+          }
+        }
+      }
+    },
+    "deleteBindingConfirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Belegung löschen? Dies kann nicht rückgängig gemacht werden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this binding? This cannot be undone."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer cette règle ? Cette action est irréversible."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить это правило? Это действие нельзя отменить."
+          }
+        }
+      }
+    },
+    "deviceScopeHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegungen gelten für die gesamte Kategorie. Maustaste 4 entspricht Quartz-Index 3. Gerätezuordnung und Gesten erfordern weitere Prüfung."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category-wide rules only. Mouse Button 4 means Quartz index 3. Per-device rules and gestures await verification."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Règles par catégorie uniquement. Bouton 4 correspond à l’indice Quartz 3. Règles par appareil et gestes en attente de vérification."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Правила для всей категории устройств. Кнопка мыши 4 — индекс Quartz 3. Привязка к отдельным устройствам и жесты ожидают проверки."
+          }
+        }
+      }
+    },
+    "disableBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegung deaktivieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disable Binding"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactiver la règle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключить правило"
+          }
+        }
+      }
+    },
+    "doublePressActivation": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doppeltes Drücken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double press"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double pression"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Двойное нажатие"
+          }
+        }
+      }
+    },
+    "doublePressHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslassen und innerhalb des macOS-Doppelklickintervalls erneut drücken. Beide Betätigungen werden abgefangen; eine einzelne löst nichts aus. Andere Betätigungen, Modifikatorwechsel, Wiederholungen und Ziehen brechen die Folge ab. Ein Auslösungsmodus pro Kombination."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Release and press again within the macOS double-click interval. Both presses are consumed; a single press does nothing. Other presses, modifier changes, repeats and dragging cancel the sequence. Only one activation mode per source combination."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relâchez puis appuyez à nouveau dans le délai de double-clic de macOS. Les deux pressions sont interceptées ; une seule ne fait rien. Une autre pression, un changement de modificateurs, la répétition ou un glissement annule la séquence. Un mode par combinaison."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отпустите и нажмите снова в пределах интервала двойного щелчка macOS. Оба нажатия поглощаются; одиночное ничего не делает. Другие нажатия, смена модификаторов, повторы и перетаскивание отменяют последовательность. Для сочетания доступен один режим срабатывания."
+          }
+        }
+      }
+    },
+    "editBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegung bearbeiten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Binding"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la règle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменить правило"
+          }
+        }
+      }
+    },
+    "emergencyHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notfallpause: ⌃⌥⇧⌘ Escape. Auch über die Menüleiste pausierbar."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emergency pause: ⌃⌥⇧⌘ Escape. You can also pause from the menu bar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause d’urgence : ⌃⌥⇧⌘ Échap. Également disponible dans la barre des menus."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аварийная пауза: ⌃⌥⇧⌘ Escape. Также можно приостановить правила через строку меню."
+          }
+        }
+      }
+    },
+    "enableBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegung aktivieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable Binding"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer la règle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включить правило"
+          }
+        }
+      }
+    },
+    "engineActive": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine aktiv · Hardwareprüfung ausstehend"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine active · hardware verification pending"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moteur actif · vérification matérielle requise"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Движок активен · требуется аппаратная проверка"
+          }
+        }
+      }
+    },
+    "engineInterrupted": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat die Erfassung deaktiviert. Berechtigungen prüfen und erneut aktivieren."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS disabled capture. Check permissions and enable again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS a désactivé la capture. Vérifiez les autorisations, puis réactivez."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS отключила перехват. Проверьте разрешения и включите правила снова."
+          }
+        }
+      }
+    },
+    "enginePaused": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegungen pausiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remapping paused"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remappage suspendu"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переназначения приостановлены"
+          }
+        }
+      }
+    },
+    "grantAccess": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zugriff anfordern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request Access"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demander l’accès"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запросить доступ"
+          }
+        }
+      }
+    },
+    "inputCategories": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingaben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inputs"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrées"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ввод"
+          }
+        }
+      }
+    },
+    "inputMonitoringNotRequiredHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für die aktuelle Tastatur- und Mausbelegung ist keine separate Eingabeüberwachung nötig: Bedienungshilfen erlauben bereits das Empfangen von Ereignissen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A separate Input Monitoring grant is not needed for the current keyboard and mouse remapping engine: Accessibility already allows listening to events."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le moteur actuel de remappage du clavier et de la souris ne nécessite pas d’autorisation distincte Surveillance de l’entrée : Accessibilité permet déjà de recevoir les événements."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для текущего переназначения клавиатуры и мыши отдельный «Мониторинг ввода» не нужен: «Универсальный доступ» уже разрешает получение событий."
+          }
+        }
+      }
+    },
+    "inputMonitoringPermission": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingabeüberwachung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input Monitoring"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surveillance de l’entrée"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мониторинг ввода"
+          }
+        }
+      }
+    },
+    "listeningHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warte auf Eingabe… Taste drücken oder mit Escape abbrechen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening… Press input, or Escape to cancel."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente… Appuyez sur une touche ou sur Échap pour annuler."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ожидание ввода… Нажмите кнопку или Escape для отмены."
+          }
+        }
+      }
+    },
+    "magicMouseNotAvailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magic Mouse-Gesten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magic Mouse gestures"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestes Magic Mouse"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жесты Magic Mouse"
+          }
+        }
+      }
+    },
+    "mouseButton": {
+      "comment": "One-based button label: Quartz index + 1. Argument is the display number.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse Button %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bouton de souris %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кнопка мыши %lld"
+          }
+        }
+      }
+    },
+    "mouseButtonInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse Button"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bouton de souris"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кнопка мыши"
+          }
+        }
+      }
+    },
+    "mouseInputKind": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mauseingabe"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse Input"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrée de la souris"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ввод мыши"
+          }
+        }
+      }
+    },
+    "mouseWheelInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausrad"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Wheel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Molette"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Колесо прокрутки"
+          }
+        }
+      }
+    },
+    "noBindings": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Belegungen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Bindings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune règle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет правил"
+          }
+        }
+      }
+    },
+    "notRecorded": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht erfasst"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not recorded"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non enregistré"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не записано"
+          }
+        }
+      }
+    },
+    "openRebind": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind öffnen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Rebind"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir Rebind"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть Rebind"
+          }
+        }
+      }
+    },
+    "openSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen öffnen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть настройки"
+          }
+        }
+      }
+    },
+    "outputFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tastenkombination konnte nicht gesendet werden. Belegungen pausiert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shortcut output failed. Remapping has been paused."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de l’envoi du raccourci. Remappage suspendu."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось отправить сочетание. Переназначения приостановлены."
+          }
+        }
+      }
+    },
+    "outputShortcut": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auszugebende Tastenkombination"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Output Keyboard Shortcut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourci clavier de sortie"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выходное сочетание клавиш"
+          }
+        }
+      }
+    },
+    "pauseBindings": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suspendre"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приостановить"
+          }
+        }
+      }
+    },
+    "permissionGranted": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaubt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Granted"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisé"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разрешено"
+          }
+        }
+      }
+    },
+    "permissionMissing": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht erlaubt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not granted"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non autorisé"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не разрешено"
+          }
+        }
+      }
+    },
+    "permissionNotRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht erforderlich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not required"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non requis"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не требуется"
+          }
+        }
+      }
+    },
+    "permissionSettingsHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivieren Sie diese Kopie von Rebind unter Systemeinstellungen → Datenschutz & Sicherheit → Bedienungshilfen. Fehlt sie, fügen Sie sie mit + hinzu; „App im Finder zeigen“ zeigt die laufende Kopie."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable this copy of Rebind in System Settings → Privacy & Security → Accessibility. If it is missing, add it with the + button; Show App in Finder reveals the running copy."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activez cette copie de Rebind dans Réglages Système → Confidentialité et sécurité → Accessibilité. Si elle manque, ajoutez-la avec + ; « Afficher l’app dans le Finder » indique la copie en cours d’exécution."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включите эту копию Rebind в «Системные настройки» → «Конфиденциальность и безопасность» → «Универсальный доступ». Если её нет в списке, добавьте кнопкой +; «Показать приложение в Finder» укажет запущенную копию."
+          }
+        }
+      }
+    },
+    "permissionsExplanation": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind nutzt Bedienungshilfen zum Empfangen, Filtern und Senden von Tastatur- und Mausereignissen. Eingegebener Text wird weder gespeichert noch protokolliert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind uses Accessibility to receive, filter and send keyboard and mouse events. Typed text is never stored or logged."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind utilise Accessibilité pour recevoir, filtrer et envoyer les événements du clavier et de la souris. Aucun texte saisi n’est enregistré ni journalisé."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind использует «Универсальный доступ» для получения, фильтрации и отправки событий клавиатуры и мыши. Вводимый текст не сохраняется и не записывается в журнал."
+          }
+        }
+      }
+    },
+    "permissionsRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für die Eingabebelegung ist der Zugriff auf Bedienungshilfen erforderlich."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility permission is required for input remapping."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’autorisation Accessibilité est requise pour le remappage."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для переназначения нужен «Универсальный доступ»."
+          }
+        }
+      }
+    },
+    "permissionsTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingabebelegung erlauben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow input remapping"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser le remappage"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разрешите переназначение ввода"
           }
         }
       }
@@ -1370,164 +1371,43 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implemented, hardware verification pending. Keys and buttons send one shortcut per press; held output and repeats are not supported."
+            "value": "Implemented; new modes need hardware verification. Keys and buttons can send one shortcut on press, double press or long press; held output and repeating actions are not supported."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Реализовано, требуется аппаратная проверка. Клавиши и кнопки отправляют одно сочетание на нажатие; удержание и повторы пока не поддерживаются."
+            "value": "Реализовано; новые режимы требуют аппаратной проверки. Клавиши и кнопки отправляют одно сочетание при нажатии, двойном или длительном нажатии; удержание выходных клавиш и повтор действий не поддерживаются."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implementiert, Hardwareprüfung ausstehend. Tasten und Maustasten senden eine Kombination pro Druck; gehaltene Ausgabe und Wiederholung fehlen noch."
+            "value": "Implementiert; neue Modi erfordern Hardwaretests. Tasten und Maustasten senden ein Tastenkürzel bei einfachem, doppeltem oder langem Drücken; gehaltene Ausgabetasten und wiederholte Aktionen werden nicht unterstützt."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Implémenté, vérification matérielle requise. Les touches et boutons envoient un raccourci par pression ; maintien et répétition non pris en charge."
-          }
-        }
-      }
-    },
-    "emergencyHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Emergency pause: ⌃⌥⇧⌘ Escape. You can also pause from the menu bar."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Аварийная пауза: ⌃⌥⇧⌘ Escape. Также можно приостановить правила через строку меню."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Notfallpause: ⌃⌥⇧⌘ Escape. Auch über die Menüleiste pausierbar."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pause d’urgence : ⌃⌥⇧⌘ Échap. Également disponible dans la barre des menus."
-          }
-        }
-      }
-    },
-    "deviceScopeHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Category-wide rules only. Mouse Button 4 means Quartz index 3. Per-device rules and gestures await verification."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Правила для всей категории устройств. Кнопка мыши 4 — индекс Quartz 3. Привязка к отдельным устройствам и жесты ожидают проверки."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Belegungen gelten für die gesamte Kategorie. Maustaste 4 entspricht Quartz-Index 3. Gerätezuordnung und Gesten erfordern weitere Prüfung."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Règles par catégorie uniquement. Bouton 4 correspond à l’indice Quartz 3. Règles par appareil et gestes en attente de vérification."
-          }
-        }
-      }
-    },
-    "openRebind": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Rebind"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открыть Rebind"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind öffnen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir Rebind"
-          }
-        }
-      }
-    },
-    "quitRebind": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quit Rebind"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Завершить Rebind"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rebind beenden"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quitter Rebind"
+            "value": "Implémenté ; les nouveaux modes nécessitent une vérification matérielle. Les touches et boutons envoient un raccourci lors d’un appui simple, double ou prolongé ; les touches de sortie maintenues et les actions répétées ne sont pas prises en charge."
           }
         }
       }
     },
     "physicalKey": {
+      "comment": "Fallback display name for an explicitly configured physical key code; argument is the numeric code.",
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Physical key %lld"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Физическая клавиша %lld"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Physische Taste %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Physical key %lld"
           }
         },
         "fr": {
@@ -1535,176 +1415,349 @@
             "state": "translated",
             "value": "Touche physique %lld"
           }
-        }
-      },
-      "comment": "Fallback display name for an explicitly configured physical key code; argument is the numeric code."
-    },
-    "mouseButton": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mouse Button %lld"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Кнопка мыши %lld"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maustaste %lld"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bouton de souris %lld"
-          }
-        }
-      },
-      "comment": "One-based button label: Quartz index + 1. Argument is the display number."
-    },
-    "mouseInputKind": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mouse Input"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ввод мыши"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mauseingabe"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entrée de la souris"
+            "value": "Физическая клавиша %lld"
           }
         }
       }
     },
-    "mouseButtonInput": {
+    "plannedInputs": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mouse Button"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Кнопка мыши"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Maustaste"
+            "value": "Noch nicht implementiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not implemented"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bouton de souris"
+            "value": "Pas encore implémenté"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ещё не реализовано"
           }
         }
       }
     },
-    "mouseWheelInput": {
+    "postingPermissionHint": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Wheel"
+            "value": "Accessibility is enabled, but the event-sending check still reports no access. Click Allow Event Sending to request that capability, then refresh or relaunch if macOS asks. Rebind keeps remapping paused until access is confirmed."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Колесо прокрутки"
+            "value": "«Универсальный доступ» включён, но проверка отправки событий пока не подтверждает доступ. Нажмите «Разрешить отправку событий», затем проверьте разрешения или перезапустите Rebind, если macOS попросит. До подтверждения переназначение остаётся на паузе."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mausrad"
+            "value": "Bedienungshilfen sind aktiviert, aber die Prüfung für das Senden von Ereignissen bestätigt noch keinen Zugriff. Klicken Sie auf „Senden von Ereignissen erlauben“, aktualisieren Sie den Status oder starten Sie Rebind bei Aufforderung neu. Die Eingabebelegung bleibt bis zur Bestätigung pausiert."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Molette"
+            "value": "Accessibilité est activée, mais la vérification de l’envoi d’événements ne confirme pas encore l’accès. Cliquez sur « Autoriser l’envoi d’événements », actualisez les autorisations ou relancez Rebind si macOS le demande. Le remappage reste en pause jusqu’à confirmation."
           }
         }
       }
     },
-    "scrollUp": {
+    "pressActivation": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Scroll Up"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Прокрутка вверх"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach oben scrollen"
+            "value": "Beim Drücken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On press"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défiler vers le haut"
+            "value": "À la pression"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "При нажатии"
           }
         }
-      },
-      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+      }
+    },
+    "quitRebind": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind beenden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Rebind"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter Rebind"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершить Rebind"
+          }
+        }
+      }
+    },
+    "Rebind": {},
+    "rebindWindowTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind"
+          }
+        }
+      }
+    },
+    "recordingLimitations": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine physische Taste, mittlere/zusätzliche Maustaste oder Mausradrichtung mit optionalen Modifikatoren erfassen. Caps Lock, reine Modifikatortasten, Fn und Gesten fehlen noch. Escape bricht die Erfassung ab."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record a physical key, middle/extra mouse button or wheel direction with optional modifiers. Caps Lock, modifier-only keys, Fn and gestures are not supported. Escape cancels recording."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrez une touche, un bouton central/supplémentaire ou une direction de molette avec des modificateurs facultatifs. Verr. maj., modificateurs seuls, Fn et gestes ne sont pas pris en charge. Échap annule."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запишите физическую клавишу, среднюю/дополнительную кнопку мыши или направление колеса с модификаторами. Caps Lock, отдельные модификаторы, Fn и жесты пока не поддерживаются. Escape отменяет запись."
+          }
+        }
+      }
+    },
+    "recordOutput": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgabekombination erfassen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record Output Shortcut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer le raccourci de sortie"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записать выходное сочетание"
+          }
+        }
+      }
+    },
+    "recordTrigger": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auslöser erfassen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record Trigger"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer le déclencheur"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записать триггер"
+          }
+        }
+      }
+    },
+    "refreshPermissions": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berechtigungen aktualisieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh Permission Status"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiser les autorisations"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверить разрешения"
+          }
+        }
+      }
+    },
+    "resumeBindings": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belegungen aktivieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable Bindings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer les règles"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включить правила"
+          }
+        }
+      }
+    },
+    "saveBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить"
+          }
+        }
+      }
     },
     "scrollDown": {
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction.",
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Scroll Down"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Прокрутка вниз"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nach unten scrollen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Down"
           }
         },
         "fr": {
@@ -1712,29 +1765,29 @@
             "state": "translated",
             "value": "Défiler vers le bas"
           }
-        }
-      },
-      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
-    },
-    "scrollLeft": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Scroll Left"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка влево"
+            "value": "Прокрутка вниз"
           }
-        },
+        }
+      }
+    },
+    "scrollLeft": {
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction.",
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nach links scrollen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Left"
           }
         },
         "fr": {
@@ -1742,29 +1795,29 @@
             "state": "translated",
             "value": "Défiler vers la gauche"
           }
-        }
-      },
-      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
-    },
-    "scrollRight": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Scroll Right"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка вправо"
+            "value": "Прокрутка влево"
           }
-        },
+        }
+      }
+    },
+    "scrollRight": {
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction.",
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nach rechts scrollen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scroll Right"
           }
         },
         "fr": {
@@ -1772,29 +1825,291 @@
             "state": "translated",
             "value": "Défiler vers la droite"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокрутка вправо"
+          }
         }
-      },
-      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction."
+      }
     },
-    "wheelMappingHint": {
+    "scrollUp": {
+      "comment": "Recorded direction of the Quartz scroll delta after macOS scrolling settings. Not the physical rotation direction.",
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach oben scrollen"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Discrete wheel events only; up to 10 shortcuts per second across wheel rules. Smooth, momentum and diagonal scrolling pass through. Directions follow macOS settings; converted events can also match."
+            "value": "Scroll Up"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défiler vers le haut"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Только дискретная прокрутка: до 10 сочетаний в секунду суммарно для правил колеса. Плавная, инерционная и диагональная прокрутка сохраняются. Направления зависят от настроек macOS; преобразованные события тоже могут совпадать."
+            "value": "Прокрутка вверх"
+          }
+        }
+      }
+    },
+    "secureInputPaused": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichere Eingabe aktiv · Belegungen ausgesetzt"
           }
         },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secure Input enabled · remapping suspended"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisie sécurisée active · remappage suspendu"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Защищённый ввод включён · переназначения приостановлены"
+          }
+        }
+      }
+    },
+    "showApplicationInFinder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App im Finder zeigen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show App in Finder"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher l’app dans le Finder"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать приложение в Finder"
+          }
+        }
+      }
+    },
+    "signingHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Entwicklungsbuilds können nach dem Neubau erneut Zugriff benötigen. Bei Aufforderung durch macOS neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local development builds may require granting access again after rebuilding. Relaunch if macOS requests it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Après compilation locale, les autorisations peuvent devoir être accordées à nouveau. Relancez si macOS le demande."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "После пересборки локальной версии может потребоваться повторное разрешение. Перезапустите приложение, если macOS попросит."
+          }
+        }
+      }
+    },
+    "storageUnreadable": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfiguration nicht lesbar. Bearbeitung zum Schutz der Datei gesperrt. Prüfen Sie ~/Library/Application Support/Rebind/configuration.json."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration could not be read. Editing is locked to preserve the file. Check ~/Library/Application Support/Rebind/configuration.json."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuration illisible. Modification bloquée pour préserver le fichier. Vérifiez ~/Library/Application Support/Rebind/configuration.json."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось прочитать настройки. Изменения заблокированы для сохранности файла. Проверьте ~/Library/Application Support/Rebind/configuration.json."
+          }
+        }
+      }
+    },
+    "storageWriteFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen konnten nicht gespeichert werden. Speicherplatz und Dateirechte prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save settings. Check available disk space and file permissions."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’enregistrer les réglages. Vérifiez l’espace disque et les permissions du fichier."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось сохранить настройки. Проверьте свободное место и права доступа к файлу."
+          }
+        }
+      }
+    },
+    "tapCreationFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event-Tap konnte nicht erstellt werden. Pausieren, Berechtigungen prüfen und erneut aktivieren."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unable to create event tap. Pause, check permissions, then enable again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de créer le filtre. Suspendez, vérifiez les autorisations, puis réactivez."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось создать перехватчик. Приостановите правила, проверьте разрешения и включите их снова."
+          }
+        }
+      }
+    },
+    "trackpadNotAvailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad-Gesten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad gestures"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestes du trackpad"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жесты трекпада"
+          }
+        }
+      }
+    },
+    "triggerTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auslöser"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trigger"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déclencheur"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Триггер"
+          }
+        }
+      }
+    },
+    "wheelMappingHint": {
+      "comment": "Limits apply to discrete line-based scroll events, globally across wheel rules. No physical device attribution is claimed.",
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nur diskrete Mausradereignisse; insgesamt bis zu 10 Tastenkombinationen pro Sekunde für Mausradbelegungen. Sanftes, träges und diagonales Scrollen bleibt erhalten. Richtungen folgen macOS-Einstellungen; umgewandelte Ereignisse können ebenfalls passen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discrete wheel events only; up to 10 shortcuts per second across wheel rules. Smooth, momentum and diagonal scrolling pass through. Directions follow macOS settings; converted events can also match."
           }
         },
         "fr": {
@@ -1802,9 +2117,451 @@
             "state": "translated",
             "value": "Événements discrets de molette uniquement ; jusqu’à 10 raccourcis par seconde pour l’ensemble des règles de molette. Le défilement fluide, inertiel et diagonal est conservé. Les directions suivent les réglages macOS ; les événements convertis peuvent aussi correspondre."
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только дискретная прокрутка: до 10 сочетаний в секунду суммарно для правил колеса. Плавная, инерционная и диагональная прокрутка сохраняются. Направления зависят от настроек macOS; преобразованные события тоже могут совпадать."
+          }
+        }
+      }
+    },
+    "eventPostingPermission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event sending"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправка событий"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden von Ereignissen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoi d’événements"
+          }
+        }
+      }
+    },
+    "requestEventPosting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Event Sending"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разрешить отправку событий"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senden von Ereignissen erlauben"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser l’envoi d’événements"
+          }
+        }
+      }
+    },
+    "eventPostingRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility is granted. Event sending still needs authorization. Use Allow Event Sending in the main window, then relaunch if macOS asks."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Универсальный доступ» разрешён. Нужно разрешить отправку событий: нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedienungshilfen sind erlaubt. Das Senden von Ereignissen muss noch erlaubt werden. Klicken Sie im Hauptfenster auf „Senden von Ereignissen erlauben“ und starten Sie Rebind bei Aufforderung neu."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibilité est autorisée. L’envoi d’événements doit encore être autorisé. Cliquez sur « Autoriser l’envoi d’événements » dans la fenêtre principale, puis relancez Rebind si macOS le demande."
+          }
+        }
+      }
+    },
+    "eventPostingStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event sending is not authorized."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не разрешена отправка событий."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Senden von Ereignissen ist nicht erlaubt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’envoi d’événements n’est pas autorisé."
+          }
+        }
+      }
+    },
+    "holdActivation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Long press"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительное нажатие"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langes Drücken"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appui prolongé"
+          }
+        }
+      }
+    },
+    "holdHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sends one shortcut after the selected hold duration. A short press is consumed without replay. Mouse movement keeps the hold active. Changing modifiers, another press, scrolling or pausing cancels the pending action. Output keys are not kept held; actions do not repeat."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправляет одно сочетание после указанного времени удержания. Короткое нажатие поглощается без повторного воспроизведения. Движение мыши сохраняет удержание. Смена модификаторов, другое нажатие, прокрутка или пауза отменяют ожидание. Выходные клавиши не удерживаются; действие не повторяется."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sendet nach der gewählten Haltedauer ein Tastenkürzel. Ein kurzer Druck wird ohne Wiedergabe unterdrückt. Mausbewegungen lassen das Halten aktiv. Andere Modifikatoren, ein weiterer Druck, Scrollen oder Pausieren brechen das Warten ab. Ausgabetasten werden nicht gehalten; Aktionen werden nicht wiederholt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoie un raccourci après la durée choisie. Un appui court est absorbé sans être rejoué. Le mouvement de la souris maintient l’appui actif. Un changement de modificateurs, un autre appui, un défilement ou une pause annulent l’attente. Les touches de sortie ne restent pas enfoncées ; l’action ne se répète pas."
+          }
+        }
+      }
+    },
+    "holdDuration %lld": {
+      "extractionState": "manual",
+      "comment": "Long-press threshold in milliseconds; integer between 100 and 5000.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Long press: %lld ms"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительное нажатие: %lld мс"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langes Drücken: %lld ms"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appui prolongé : %lld ms"
+          }
+        }
+      }
+    },
+    "pointerGestureInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Button + movement"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Движение с кнопкой"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taste + Bewegung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bouton + mouvement"
+          }
+        }
+      }
+    },
+    "pointerDirectionTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direction"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Направление"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direction"
+          }
+        }
+      }
+    },
+    "pointerLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Влево"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Links"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gauche"
+          }
+        }
+      }
+    },
+    "pointerRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вправо"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechts"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Droite"
+          }
+        }
+      }
+    },
+    "pointerUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вверх"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach oben"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haut"
+          }
+        }
+      }
+    },
+    "pointerDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Down"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вниз"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach unten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bas"
+          }
+        }
+      }
+    },
+    "mouseGesture %lld %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold Mouse Button %1$lld + move %2$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удерживать кнопку мыши %1$lld + движение %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste %1$lld halten + Bewegung %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenir le bouton %1$lld + mouvement %2$@"
+          }
         }
       },
-      "comment": "Limits apply to discrete line-based scroll events, globally across wheel rules. No physical device attribution is claimed."
+      "comment": "Source mouse button in one-based UI numbering and configured pointer direction. No physical device identity."
+    },
+    "pointerGestureHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record a middle or extra button, then choose a direction. Hold it and move clearly within 5 seconds: one shortcut fires. Clicks and gesture movement are consumed. Other presses, modifier changes, scrolling or pausing cancel; pointer movement resumes on cancellation, release or timeout. Direction rules can share a button, but conflict with press modes for the same modifiers."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запишите среднюю или боковую кнопку и выберите направление. Удерживайте её и заметно сдвиньте мышь за 5 секунд: сработает одно сочетание. Нажатие и движение жеста поглощаются. Другое нажатие, смена модификаторов, прокрутка или пауза отменяют жест; движение курсора возвращается при отмене, отпускании или тайм-ауте. Направления могут делить одну кнопку, но конфликтуют с режимами нажатия при тех же модификаторах."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine mittlere oder zusätzliche Taste aufnehmen und die Richtung wählen. Halten und innerhalb von 5 Sekunden deutlich bewegen: ein Tastenkürzel wird gesendet. Klick und Gestenbewegung werden unterdrückt. Weitere Tasten, andere Modifikatoren, Scrollen oder Pausieren brechen ab; die Zeigerbewegung kehrt bei Abbruch, Loslassen oder Zeitüberschreitung zurück. Richtungen dürfen eine Taste teilen, aber keine Druckmodi mit denselben Modifikatoren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrez un bouton central ou supplémentaire et choisissez une direction. Maintenez-le et déplacez clairement la souris dans les 5 secondes : un seul raccourci est envoyé. Le clic et le mouvement du geste sont absorbés. Un autre appui, des modificateurs différents, le défilement ou une pause annulent le geste ; le pointeur reprend au relâchement, à l’annulation ou à l’expiration. Les directions peuvent partager un bouton, mais pas ses modes d’appui avec les mêmes modificateurs."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

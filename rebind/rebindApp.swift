@@ -31,7 +31,7 @@ private struct RebindMenu: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Text(model.status.text)
+        Text(model.statusText)
         Button(.openRebind) { openWindow(id: "main"); NSApp.activate() }
         Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
             model.setEnabled(!model.configuration.isEnabled)

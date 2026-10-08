@@ -28,12 +28,25 @@ enum InputLabels {
         switch trigger {
         case .key(let code): label = key(code)
         case .mouseButton(let number): label = String(localized: .mouseButton(Int(number) + 1))
+        case .mouseGesture(let button, let direction):
+            label = String(localized: .mouseGesture(Int(button) + 1, String(localized: direction.label)))
         case .scroll(let direction): label = String(localized: direction.label)
         }
         return modifiers.glyphs + label
     }
 
     static func shortcut(_ shortcut: KeyboardShortcut) -> String { trigger(.key(shortcut.keyCode), modifiers: shortcut.modifiers) }
+}
+
+extension PointerDirection {
+    var label: LocalizedStringResource {
+        switch self {
+        case .left: .pointerLeft
+        case .right: .pointerRight
+        case .up: .pointerUp
+        case .down: .pointerDown
+        }
+    }
 }
 
 extension ScrollDirection {

@@ -15,6 +15,21 @@ Escape cancellation were observed. Closing the window left the same app
 process running. No Accessibility or Input Monitoring grants were given;
 no global tap, physical remap or injected action was manually verified.
 
+## User hardware result — 2026-10-08
+
+After the event-posting consent correction, the user confirms the permission flow
+works and records Logitech G603 middle **Mouse Button 3**, sides **Mouse Buttons
+4 and 5**. Transport: LIGHTSPEED; G HUB installed. This establishes real mouse
+recording for those controls, not external shortcut delivery or source suppression.
+The current UI conversion implies Quartz indexes 2/3/4; HID usages and per-device
+attribution have not been measured. No button beyond #5 was reported.
+
+The user subsequently confirmed Control + Button 4 → Command+A works in TextEdit
+and plain Button 4 retains its previous behavior. This meets the minimum external
+remap evidence on the tested G603 setup. Physical keyboard, held/repeated source,
+release symmetry, original-event leakage, pause/restart/background and protected
+contexts still need the full walkthrough; Phase 1 is not entirely verified.
+
 ## Supported implementation subset
 
 - Category-wide physical ordinary key, middle/extra mouse button, exact
@@ -23,7 +38,8 @@ no global tap, physical remap or injected action was manually verified.
   index 3. There is no fixed maximum button enum. Only events actually
   delivered by Quartz can be recorded. Primary/secondary buttons are deferred.
 - Repeats and drags belonging to a suppressed press are swallowed until
-  release. Held output, modifier-only keys, Caps Lock, Fn, click counting,
+  release. Long-press activation is described in the [hold walkthrough](phase-2-hold.md).
+  Held output, modifier-only keys, Caps Lock, Fn, click counting,
   gestures are deferred. Wheel support is described separately in the
   [Phase 2 walkthrough](phase-2-wheel.md). Events carrying the secondary-Fn flag
   pass through rather than matching a chord with that flag silently removed.
@@ -39,7 +55,7 @@ no global tap, physical remap or injected action was manually verified.
   string, clipboard or Unicode payload is read from incoming events.
 - Editing suspends mappings. Recording is explicit, cancels on Escape or
   app deactivation, and never executes an output shortcut while recording.
-- New configurations start paused. Atomic version-2 JSON (reading version 1) lives at
+- New configurations start paused. Atomic version-4 JSON (reading versions 1/2/3) lives at
   `~/Library/Application Support/Rebind/configuration.json`. An unreadable,
   invalid or future-version file is preserved and locks editing. Recovery
   controls, further migrations and import/export remain Phase 7 work.
@@ -50,7 +66,8 @@ Record Mac model, OS build, keyboard/mouse model and connection, OEM driver,
 signing identity/bundle path, keyboard layout, permission states and results.
 Use a disposable document in a foreground application such as TextEdit.
 
-1. Grant Rebind Accessibility and Input Monitoring using its permission UI.
+1. Grant Rebind Accessibility using its permission UI. A separate Input Monitoring
+   grant is not required by the current active Quartz tap; see [the correction](permissions.md).
    Return and refresh; relaunch if macOS asks. Check actual status, not the
    fact that a button was clicked. Keep the same signed bundle/launch path.
 2. Record Control+Option with an ordinary physical key; record Command+A

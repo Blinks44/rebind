@@ -3,7 +3,7 @@ import Testing
 
 struct ScrollMatcherTests {
     private let output = KeyboardShortcut(keyCode: 13, modifiers: .command)
-    private var rules: [MatchKey: KeyboardShortcut] {
+    private var rules: [MatchKey: CompiledBinding] {
         InputMatcher.compile(ScrollDirection.allCases.map {
             rebind.Binding(scope: .allMice, trigger: .scroll($0), modifiers: .control, action: .shortcut(output))
         })
@@ -85,7 +85,7 @@ struct ScrollMatcherTests {
         var matcher = InputMatcher()
         let keyboard = MatchKey(trigger: .key(0), modifiers: .control)
         var combined = rules
-        combined[keyboard] = output
+        combined[keyboard] = CompiledBinding(shortcut: output, activation: .press)
         _ = matcher.handle(scroll(at: 0), rules: combined, enabled: true)
         #expect(matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down), rules: combined, enabled: true).shortcut == output)
     }

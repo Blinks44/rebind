@@ -16,7 +16,7 @@ struct ConfigurationMigrationTests {
         let bytes = Data(ConfigurationFixtures.version1.utf8)
         try bytes.write(to: store.url)
         let configuration = try store.load()
-        #expect(configuration.schemaVersion == 2)
+        #expect(configuration.schemaVersion == Configuration.currentSchemaVersion)
         #expect(configuration.isEnabled)
         #expect(configuration.bindings.count == 2)
         let keyboard = try #require(configuration.bindings.first)
@@ -30,12 +30,12 @@ struct ConfigurationMigrationTests {
         #expect(mouse.isEnabled == false)
         #expect(try Data(contentsOf: store.url) == bytes)
         try store.save(configuration)
-        #expect(try JSONDecoder().decode(Configuration.self, from: Data(contentsOf: store.url)).schemaVersion == 2)
+        #expect(try JSONDecoder().decode(Configuration.self, from: Data(contentsOf: store.url)).schemaVersion == Configuration.currentSchemaVersion)
         #expect(try store.load() == configuration)
     }
 
     @Test(arguments: ScrollDirection.allCases)
-    func newWheelRulesRoundTripWithVersion2(_ direction: ScrollDirection) throws {
+    func wheelRulesRoundTripWithCurrentVersion(_ direction: ScrollDirection) throws {
         let store = temporaryStore()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         let binding = rebind.Binding(scope: .allMice, trigger: .scroll(direction), modifiers: [.control, .option],
@@ -46,7 +46,7 @@ struct ConfigurationMigrationTests {
     }
 
     @Test func futureVersionAndDisguisedWheelDataAreRejected() {
-        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: 3).migrated() }
+        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated() }
         let binding = rebind.Binding(scope: .allMice, trigger: .scroll(.up), modifiers: [],
                                      action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         #expect(throws: ConfigurationError.invalid) { try Configuration(schemaVersion: 1, bindings: [binding]).migrated() }
