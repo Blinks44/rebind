@@ -32,8 +32,20 @@ nonisolated final class EngineMailbox: Sendable {
         var pending: [KeyboardShortcut] = []
         var emergencyPause = false
         var retryID: UInt64 = 0
+        var diagnostics = InputDiagnostics()
 
         init() { pending.reserveCapacity(16) }
+
+        mutating func resetCapture(status: EngineStatus) {
+            if let request = recording {
+                recorded = RecordedInput(request: request, input: nil)
+                recording = nil
+            }
+            pending.removeAll(keepingCapacity: true)
+            matcher.resetAfterCaptureLoss()
+            diagnostics.stop(clear: true)
+            self.status = status
+        }
     }
 
     let state = Mutex(State())
@@ -71,32 +83,90 @@ nonisolated final class EngineMailbox: Sendable {
 
     func suspend(_ suspended: Bool) {
         state.withLock {
+            guard $0.suspended != suspended else { return }
             $0.suspended = suspended
-            $0.recording = nil
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.matcher.resetAfterCaptureLoss()
+            $0.resetCapture(status: .paused)
+        }
+    }
+
+    func captureLost(status: EngineStatus, pause: Bool = false) {
+        state.withLock {
+            $0.resetCapture(status: status)
+            if pause {
+                $0.enabled = false
+                $0.emergencyPause = true
+            }
+        }
+    }
+
+    func stop() {
+        state.withLock {
+            $0.stopped = true
+            $0.resetCapture(status: .paused)
         }
     }
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
         guard !event.isSynthetic else { return false }
-        return state.withLock { Self.handle(event, state: &$0, secureInput: secureInput) }
+        return state.withLock { Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput) }
     }
 
     func handlePointerMotion(_ motion: PointerMotion, modifiers: ModifierSet, receivedAt: UInt64,
                              secureInput: Bool) -> Bool {
         state.withLock { state in
+            guard !state.stopped, !state.suspended, !secureInput else {
+                state.resetCapture(status: secureInput ? .secureInput : .paused)
+                return false
+            }
             guard let source = state.matcher.pointerGestureSource else { return false }
             let event = InputEvent(trigger: source, modifiers: modifiers, phase: .drag,
                                    receivedAt: receivedAt, motion: motion)
-            return Self.handle(event, state: &state, secureInput: secureInput)
+            return Self.handleAndDiagnose(event, state: &state, secureInput: secureInput)
+        }
+    }
+
+    private static func handleAndDiagnose(_ event: InputEvent, state: inout State, secureInput: Bool) -> Bool {
+        let pendingCount = state.pending.count
+        let suppressed = handle(event, state: &state, secureInput: secureInput)
+        state.diagnostics.record(event, suppressed: suppressed, queued: state.pending.count > pendingCount)
+        return suppressed
+    }
+
+    @discardableResult func startDiagnostics(at now: UInt64) -> Bool {
+        state.withLock {
+            guard !$0.stopped, !$0.suspended else { return false }
+            $0.diagnostics.start(at: now)
+            $0.retryID &+= 1
+            return true
+        }
+    }
+
+    func stopDiagnostics(clear: Bool = false) { state.withLock { $0.diagnostics.stop(clear: clear) } }
+    func clearDiagnostics() { state.withLock { $0.diagnostics.clear() } }
+
+    func diagnosticSnapshot(since revision: UInt64, at now: UInt64) -> DiagnosticSnapshot? {
+        state.withLock {
+            $0.diagnostics.expire(at: now)
+            guard $0.diagnostics.revision != revision else { return nil }
+            return $0.diagnostics.snapshot()
+        }
+    }
+
+    func handleUnsupportedScroll(modifiers: ModifierSet, at now: UInt64, secureInput: Bool) {
+        state.withLock {
+            guard !$0.stopped, !$0.suspended, !secureInput else {
+                $0.resetCapture(status: secureInput ? .secureInput : .paused)
+                return
+            }
+            $0.matcher.cancelHold()
+            $0.diagnostics.append(kind: .unsupportedScroll, phase: .scroll, modifiers: modifiers,
+                                  outcome: .passedThrough, at: now)
         }
     }
 
     private static func handle(_ event: InputEvent, state: inout State, secureInput: Bool) -> Bool {
         guard !state.stopped, !state.suspended, !secureInput else {
-            state.pending.removeAll(keepingCapacity: true)
-            state.matcher.resetAfterCaptureLoss()
+            state.resetCapture(status: secureInput ? .secureInput : .paused)
             return false
         }
         // Evaluate once: a disabled pre-pass would cancel a temporal sequence.
@@ -109,6 +179,7 @@ nonisolated final class EngineMailbox: Sendable {
             state.emergencyPause = true
             state.recording = nil
             state.pending.removeAll(keepingCapacity: true)
+            state.diagnostics.stop(clear: true)
             return true
         }
         if let shortcut = decision.shortcut { state.pending.append(shortcut) }
@@ -140,15 +211,19 @@ nonisolated final class EngineMailbox: Sendable {
     func pollHold(at now: UInt64, secureInput: Bool) {
         state.withLock { state in
             guard !state.stopped, !state.suspended, !secureInput else {
-                state.pending.removeAll(keepingCapacity: true)
-                state.matcher.resetAfterCaptureLoss()
+                state.resetCapture(status: secureInput ? .secureInput : .paused)
                 return
             }
             state.matcher.expirePointerGesture(at: now)
+            let holdKey = state.matcher.holdKey
             if let shortcut = state.matcher.pollHold(at: now, rules: state.rules,
                                                       enabled: state.enabled && !state.editing && state.recording == nil,
                                                       canDispatch: state.pending.count < 16) {
                 state.pending.append(shortcut)
+                if let holdKey, case .mouseButton(let number) = holdKey.trigger {
+                    state.diagnostics.append(kind: .button(number), phase: .activation, modifiers: holdKey.modifiers,
+                                             outcome: .queued, at: now)
+                }
             }
         }
     }

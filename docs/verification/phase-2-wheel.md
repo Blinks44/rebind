@@ -30,10 +30,10 @@ Phase 1's end-to-end exit criterion remains open; see its
   that event and never executes an action. Button and output recorders ignore
   wheel input. Escape cancels; switching mouse-input type cancels and clears the
   source while retaining the output. Missing permissions disable recording.
-- Wheel rules were introduced in schema 2; current schema 4 preserves them as
-  ordinary-press mappings. Schema 1/2/3 rules migrate in memory with
+- Wheel rules were introduced in schema 2; current schema 5 preserves them as
+  ordinary-press mappings. Schema 1/2/3/4 rules migrate in memory with
   their IDs, enabled state, modifiers and output unchanged. Loading does not
-  rewrite disk; a successful save writes schema 4 atomically. Unknown/corrupt
+  rewrite disk; a successful save writes schema 5 atomically. Unknown/corrupt
   versions remain protected from editing/overwrite.
 
 ## Verification performed — 2026-10-08
@@ -88,6 +88,7 @@ such as Command+A. Complete Phase 1's keyboard/Button 4 checks as well.
    bytes and rules, saving writes current version 4. Back up real user data first.
 8. Check keyboard navigation, VoiceOver, EN/DE/FR layout and Increase Contrast.
    Two mice may both match category-wide rules; no per-device support follows
-   from this slice. Magic Mouse touch and button-hold pointer gestures are deferred.
+   from this slice. Magic Mouse touch remains deferred; button-hold pointer gestures
+   are implemented separately with their own pending hardware check.
 
 Do not mark the wheel requirement or Phase 2 complete without these results.

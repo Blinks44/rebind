@@ -4,6 +4,7 @@ import AppKit
 @preconcurrency import ApplicationServices
 import Observation
 import Synchronization
+import Dispatch
 
 @MainActor @Observable final class AppModel: NSObject {
     private(set) var configuration = Configuration()
@@ -13,11 +14,14 @@ import Synchronization
     var error: LocalizedStringResource?
     var recording: RecordingRequest?
     var lastRecording: RecordedInput?
+    private(set) var diagnostics = DiagnosticSnapshot()
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var lastPermissionCheck = Date.distantPast
+    @ObservationIgnored private var workspaceSleeping = false
+    @ObservationIgnored private var workspaceSessionInactive = false
 
     init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true) {
         self.store = store
@@ -34,16 +38,17 @@ import Synchronization
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
-        for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification] {
-            NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(sleep), name: name, object: nil)
-        }
-        for name in [NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification] {
-            NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(wake), name: name, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
+        for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
+                     NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification] {
+            NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceNotification(_:)),
+                                                            name: name, object: nil)
         }
     }
 
     func stop() {
-        mailbox.state.withLock { $0.stopped = true; $0.pending.removeAll(keepingCapacity: true) }
+        cancelRecording()
+        mailbox.stop()
         timer?.invalidate()
         timer = nil
         NotificationCenter.default.removeObserver(self)
@@ -62,6 +67,7 @@ import Synchronization
             return result
         }
         status = update.0
+        refreshDiagnostics()
         if let captured = update.1, captured.request == recording {
             lastRecording = captured
             recording = nil
@@ -75,8 +81,20 @@ import Synchronization
         }
     }
 
-    @objc func sleep() { cancelRecording(); mailbox.suspend(true) }
-    @objc func wake() { mailbox.suspend(false); refresh() }
+    @objc func handleWorkspaceNotification(_ notification: Notification) {
+        switch notification.name {
+        case NSWorkspace.willSleepNotification: workspaceSleeping = true
+        case NSWorkspace.didWakeNotification: workspaceSleeping = false
+        case NSWorkspace.sessionDidResignActiveNotification: workspaceSessionInactive = true
+        case NSWorkspace.sessionDidBecomeActiveNotification: workspaceSessionInactive = false
+        default: return
+        }
+        // Waking the machine does not necessarily reactivate this user's session.
+        let suspended = workspaceSleeping || workspaceSessionInactive
+        if suspended { cancelRecording() }
+        mailbox.suspend(suspended)
+        lastPermissionCheck = .distantPast
+    }
 
     func setEnabled(_ enabled: Bool) {
         var updated = configuration
@@ -105,6 +123,28 @@ import Synchronization
         mailbox.record(nil)
     }
     var canRecord: Bool { permissions.allowsRemapping }
+
+    var canStartDiagnostics: Bool {
+        guard canRecord else { return false }
+        if case .secureInput = status { return false }
+        return mailbox.state.withLock { !$0.suspended && !$0.stopped }
+    }
+
+    func startDiagnostics() {
+        guard canStartDiagnostics else { return }
+        mailbox.startDiagnostics(at: DispatchTime.now().uptimeNanoseconds)
+        refreshDiagnostics()
+    }
+
+    func stopDiagnostics() { mailbox.stopDiagnostics(); refreshDiagnostics() }
+    func clearDiagnostics() { mailbox.clearDiagnostics(); refreshDiagnostics() }
+    @objc func closeDiagnostics() { mailbox.stopDiagnostics(clear: true); refreshDiagnostics() }
+
+    private func refreshDiagnostics() {
+        if let snapshot = mailbox.diagnosticSnapshot(since: diagnostics.revision, at: DispatchTime.now().uptimeNanoseconds) {
+            diagnostics = snapshot
+        }
+    }
 
     var permissionHint: LocalizedStringResource {
         switch permissions.requirement {

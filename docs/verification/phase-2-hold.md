@@ -29,8 +29,9 @@ The user's ordinary G603 Control + Button 4 → Command+A result does not verify
 - Holds use receipt and polling from the same Dispatch uptime clock. Double-press/wheel
   timing keeps original Quartz timestamps. PrivacyInfo.xcprivacy declares timer/elapsed
   time reason 35F9.1, no tracking/data collection. No timestamps are persisted or sent.
-- Normal, double and long press for the same enabled chord conflict. Schema 4 migrates
-  schemas 1–3 in memory; stable IDs, output, activation and enabled state survive.
+- Normal, double and long press for the same enabled chord conflict, including with
+  button-direction rules. Current schema 5 migrates schemas 1–4 in memory; stable IDs,
+  output, activation and enabled state survive.
   Old thresholds default to 500; malformed/out-of-range durations and legacy hold modes
   are rejected without overwriting data. Saving is atomic.
 
@@ -99,7 +100,8 @@ Use G603 LIGHTSPEED with the currently installed G HUB and a disposable TextEdit
 7. Check ordinary/double/wheel regressions, keyboard navigation and VoiceOver, all
    languages, save/relaunch persistence and the unchanged ordinary G603 rule.
 
-Held synthetic output, repeating actions, button-hold pointer direction, primary button
+Button-hold pointer direction is implemented separately; [hardware verification remains pending](phase-2-pointer-gesture.md).
+Held synthetic output, repeating actions, primary button
 mapping, special keys, per-device rules and multitouch are separate unfinished work.
 
 ## Failed G603 attempt and correction

@@ -29,6 +29,7 @@ nonisolated struct InputMatcher: Sendable {
     var doublePressIntervalNanoseconds: UInt64 = 500_000_000
     static let scrollIntervalNanoseconds: UInt64 = 100_000_000
     var hasSuppressedInput: Bool { !suppressed.isEmpty }
+    var holdKey: MatchKey? { hold?.key }
     var pointerGestureSource: InputTrigger? {
         pointerGesture?.capturesMovement == true ? pointerGesture?.key.trigger : nil
     }
@@ -96,6 +97,8 @@ nonisolated struct InputMatcher: Sendable {
             cancelHold()
             return handleScroll(event, rules: rules, enabled: enabled, canDispatch: canDispatch)
         }
+        // Configured gesture tokens are never physical events from the adapter.
+        if event.trigger.isPointerGesture { return MatchDecision() }
         if case .scroll = event.trigger { return MatchDecision() }
         if event.phase == .up {
             if pointerGesture?.key.trigger == event.trigger { pointerGesture = nil }
@@ -253,7 +256,8 @@ nonisolated struct InputMatcher: Sendable {
             cancelPointerGesture()
             return nil
         }
-        pointerGesture?.recognizing = false
+        candidate.recognizing = false
+        pointerGesture = candidate
         return rule.shortcut
     }
 

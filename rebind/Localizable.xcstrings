@@ -384,25 +384,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Belegungen gelten für die gesamte Kategorie. Maustaste 4 entspricht Quartz-Index 3. Gerätezuordnung und Gesten erfordern weitere Prüfung."
+            "value": "Regeln gelten für die gesamte Gerätekategorie. Maustaste 4 ist Quartz-Index 3. Zuordnung zu einzelnen Geräten und Multitouch sind nicht verifiziert."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Category-wide rules only. Mouse Button 4 means Quartz index 3. Per-device rules and gestures await verification."
+            "value": "Rules apply to the whole device category. Mouse Button 4 is Quartz index 3. Physical-device routing and multitouch remain unverified."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Règles par catégorie uniquement. Bouton 4 correspond à l’indice Quartz 3. Règles par appareil et gestes en attente de vérification."
+            "value": "Les règles concernent toute la catégorie. Le bouton de souris 4 correspond à l’index Quartz 3. Le routage par appareil physique et le multitouch restent non vérifiés."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Правила для всей категории устройств. Кнопка мыши 4 — индекс Quartz 3. Привязка к отдельным устройствам и жесты ожидают проверки."
+            "value": "Правила для всей категории устройств. Кнопка мыши 4 — индекс Quartz 3. Привязка к отдельным устройствам и мультитач ожидают проверки."
           }
         }
       }
@@ -1368,28 +1368,28 @@
     "phaseOneHint": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Implemented; new modes need hardware verification. Keys and buttons can send one shortcut on press, double press or long press; held output and repeating actions are not supported."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Реализовано; новые режимы требуют аппаратной проверки. Клавиши и кнопки отправляют одно сочетание при нажатии, двойном или длительном нажатии; удержание выходных клавиш и повтор действий не поддерживаются."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Implementiert; neue Modi erfordern Hardwaretests. Tasten und Maustasten senden ein Tastenkürzel bei einfachem, doppeltem oder langem Drücken; gehaltene Ausgabetasten und wiederholte Aktionen werden nicht unterstützt."
           }
         },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Implemented; new modes need hardware verification. Keys and buttons can send one shortcut on press, double press or long press; held output and repeating actions are not supported."
+          }
+        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Implémenté ; les nouveaux modes nécessitent une vérification matérielle. Les touches et boutons envoient un raccourci lors d’un appui simple, double ou prolongé ; les touches de sortie maintenues et les actions répétées ne sont pas prises en charge."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Реализовано; новые режимы требуют аппаратной проверки. Клавиши и кнопки отправляют одно сочетание при нажатии, двойном или длительном нажатии; удержание выходных клавиш и повтор действий не поддерживаются."
           }
         }
       }
@@ -1456,28 +1456,28 @@
     "postingPermissionHint": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accessibility is enabled, but the event-sending check still reports no access. Click Allow Event Sending to request that capability, then refresh or relaunch if macOS asks. Rebind keeps remapping paused until access is confirmed."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "«Универсальный доступ» включён, но проверка отправки событий пока не подтверждает доступ. Нажмите «Разрешить отправку событий», затем проверьте разрешения или перезапустите Rebind, если macOS попросит. До подтверждения переназначение остаётся на паузе."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Bedienungshilfen sind aktiviert, aber die Prüfung für das Senden von Ereignissen bestätigt noch keinen Zugriff. Klicken Sie auf „Senden von Ereignissen erlauben“, aktualisieren Sie den Status oder starten Sie Rebind bei Aufforderung neu. Die Eingabebelegung bleibt bis zur Bestätigung pausiert."
           }
         },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility is enabled, but the event-sending check still reports no access. Click Allow Event Sending to request that capability, then refresh or relaunch if macOS asks. Rebind keeps remapping paused until access is confirmed."
+          }
+        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Accessibilité est activée, mais la vérification de l’envoi d’événements ne confirme pas encore l’accès. Cliquez sur « Autoriser l’envoi d’événements », actualisez les autorisations ou relancez Rebind si macOS le demande. Le remappage reste en pause jusqu’à confirmation."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Универсальный доступ» включён, но проверка отправки событий пока не подтверждает доступ. Нажмите «Разрешить отправку событий», затем проверьте разрешения или перезапустите Rebind, если macOS попросит. До подтверждения переназначение остаётся на паузе."
           }
         }
       }
@@ -1576,25 +1576,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine physische Taste, mittlere/zusätzliche Maustaste oder Mausradrichtung mit optionalen Modifikatoren erfassen. Caps Lock, reine Modifikatortasten, Fn und Gesten fehlen noch. Escape bricht die Erfassung ab."
+            "value": "Eine physische Taste, mittlere/zusätzliche Maustaste oder Scrollrichtung mit optionalen Modifikatoren aufnehmen. Für Bewegung mit Taste die Taste aufnehmen und die Richtung separat wählen. Feststelltaste, einzelne Modifikatoren, Fn und Multitouch werden nicht unterstützt. Escape bricht die Aufnahme ab."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Record a physical key, middle/extra mouse button or wheel direction with optional modifiers. Caps Lock, modifier-only keys, Fn and gestures are not supported. Escape cancels recording."
+            "value": "Record a physical key, middle/extra mouse button or wheel direction with optional modifiers. For button movement, record the button and choose the direction separately. Caps Lock, modifier-only keys, Fn and multitouch are not supported. Escape cancels recording."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrez une touche, un bouton central/supplémentaire ou une direction de molette avec des modificateurs facultatifs. Verr. maj., modificateurs seuls, Fn et gestes ne sont pas pris en charge. Échap annule."
+            "value": "Enregistrez une touche physique, un bouton central/supplémentaire ou une direction de molette avec des modificateurs facultatifs. Pour un mouvement avec bouton, enregistrez le bouton et choisissez la direction séparément. Verr. maj., modificateurs seuls, Fn et multitouch ne sont pas pris en charge. Échap annule l’enregistrement."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Запишите физическую клавишу, среднюю/дополнительную кнопку мыши или направление колеса с модификаторами. Caps Lock, отдельные модификаторы, Fn и жесты пока не поддерживаются. Escape отменяет запись."
+            "value": "Запишите физическую клавишу, среднюю/дополнительную кнопку мыши или направление колеса с модификаторами. Для движения с кнопкой запишите кнопку и отдельно выберите направление. Caps Lock, отдельные модификаторы, Fn и мультитач пока не поддерживаются. Escape отменяет запись."
           }
         }
       }
@@ -2129,22 +2129,16 @@
     "eventPostingPermission": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Event sending"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отправка событий"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Senden von Ereignissen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event sending"
           }
         },
         "fr": {
@@ -2152,28 +2146,28 @@
             "state": "translated",
             "value": "Envoi d’événements"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправка событий"
+          }
         }
       }
     },
     "requestEventPosting": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allow Event Sending"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Разрешить отправку событий"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Senden von Ereignissen erlauben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Event Sending"
           }
         },
         "fr": {
@@ -2181,28 +2175,28 @@
             "state": "translated",
             "value": "Autoriser l’envoi d’événements"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разрешить отправку событий"
+          }
         }
       }
     },
     "eventPostingRequired": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accessibility is granted. Event sending still needs authorization. Use Allow Event Sending in the main window, then relaunch if macOS asks."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "«Универсальный доступ» разрешён. Нужно разрешить отправку событий: нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Bedienungshilfen sind erlaubt. Das Senden von Ereignissen muss noch erlaubt werden. Klicken Sie im Hauptfenster auf „Senden von Ereignissen erlauben“ und starten Sie Rebind bei Aufforderung neu."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility is granted. Event sending still needs authorization. Use Allow Event Sending in the main window, then relaunch if macOS asks."
           }
         },
         "fr": {
@@ -2210,28 +2204,28 @@
             "state": "translated",
             "value": "Accessibilité est autorisée. L’envoi d’événements doit encore être autorisé. Cliquez sur « Autoriser l’envoi d’événements » dans la fenêtre principale, puis relancez Rebind si macOS le demande."
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Универсальный доступ» разрешён. Нужно разрешить отправку событий: нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
+          }
         }
       }
     },
     "eventPostingStatus": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Event sending is not authorized."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не разрешена отправка событий."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Das Senden von Ereignissen ist nicht erlaubt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event sending is not authorized."
           }
         },
         "fr": {
@@ -2239,28 +2233,28 @@
             "state": "translated",
             "value": "L’envoi d’événements n’est pas autorisé."
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не разрешена отправка событий."
+          }
         }
       }
     },
     "holdActivation": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Long press"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Длительное нажатие"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Langes Drücken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Long press"
           }
         },
         "fr": {
@@ -2268,28 +2262,28 @@
             "state": "translated",
             "value": "Appui prolongé"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительное нажатие"
+          }
         }
       }
     },
     "holdHint": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sends one shortcut after the selected hold duration. A short press is consumed without replay. Mouse movement keeps the hold active. Changing modifiers, another press, scrolling or pausing cancels the pending action. Output keys are not kept held; actions do not repeat."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отправляет одно сочетание после указанного времени удержания. Короткое нажатие поглощается без повторного воспроизведения. Движение мыши сохраняет удержание. Смена модификаторов, другое нажатие, прокрутка или пауза отменяют ожидание. Выходные клавиши не удерживаются; действие не повторяется."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Sendet nach der gewählten Haltedauer ein Tastenkürzel. Ein kurzer Druck wird ohne Wiedergabe unterdrückt. Mausbewegungen lassen das Halten aktiv. Andere Modifikatoren, ein weiterer Druck, Scrollen oder Pausieren brechen das Warten ab. Ausgabetasten werden nicht gehalten; Aktionen werden nicht wiederholt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sends one shortcut after the selected hold duration. A short press is consumed without replay. Mouse movement keeps the hold active. Changing modifiers, another press, scrolling or pausing cancels the pending action. Output keys are not kept held; actions do not repeat."
           }
         },
         "fr": {
@@ -2297,29 +2291,29 @@
             "state": "translated",
             "value": "Envoie un raccourci après la durée choisie. Un appui court est absorbé sans être rejoué. Le mouvement de la souris maintient l’appui actif. Un changement de modificateurs, un autre appui, un défilement ou une pause annulent l’attente. Les touches de sortie ne restent pas enfoncées ; l’action ne se répète pas."
           }
-        }
-      }
-    },
-    "holdDuration %lld": {
-      "extractionState": "manual",
-      "comment": "Long-press threshold in milliseconds; integer between 100 and 5000.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Long press: %lld ms"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Длительное нажатие: %lld мс"
+            "value": "Отправляет одно сочетание после указанного времени удержания. Короткое нажатие поглощается без повторного воспроизведения. Движение мыши сохраняет удержание. Смена модификаторов, другое нажатие, прокрутка или пауза отменяют ожидание. Выходные клавиши не удерживаются; действие не повторяется."
           }
-        },
+        }
+      }
+    },
+    "holdDuration %lld": {
+      "comment": "Long-press threshold in milliseconds; integer between 100 and 5000.",
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Langes Drücken: %lld ms"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Long press: %lld ms"
           }
         },
         "fr": {
@@ -2327,28 +2321,28 @@
             "state": "translated",
             "value": "Appui prolongé : %lld ms"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительное нажатие: %lld мс"
+          }
         }
       }
     },
     "pointerGestureInput": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Button + movement"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Движение с кнопкой"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Taste + Bewegung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Button + movement"
           }
         },
         "fr": {
@@ -2356,13 +2350,31 @@
             "state": "translated",
             "value": "Bouton + mouvement"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Движение с кнопкой"
+          }
         }
       }
     },
     "pointerDirectionTitle": {
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtung"
+          }
+        },
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direction"
+          }
+        },
+        "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Direction"
@@ -2373,40 +2385,22 @@
             "state": "translated",
             "value": "Направление"
           }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Richtung"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Direction"
-          }
         }
       }
     },
     "pointerLeft": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Left"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Влево"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Links"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
           }
         },
         "fr": {
@@ -2414,28 +2408,28 @@
             "state": "translated",
             "value": "Gauche"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Влево"
+          }
         }
       }
     },
     "pointerRight": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Right"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вправо"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Rechts"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
           }
         },
         "fr": {
@@ -2443,28 +2437,28 @@
             "state": "translated",
             "value": "Droite"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вправо"
+          }
         }
       }
     },
     "pointerUp": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Up"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вверх"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nach oben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up"
           }
         },
         "fr": {
@@ -2472,28 +2466,28 @@
             "state": "translated",
             "value": "Haut"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вверх"
+          }
         }
       }
     },
     "pointerDown": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Down"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вниз"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Nach unten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Down"
           }
         },
         "fr": {
@@ -2501,28 +2495,29 @@
             "state": "translated",
             "value": "Bas"
           }
-        }
-      }
-    },
-    "mouseGesture %lld %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hold Mouse Button %1$lld + move %2$@"
-          }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Удерживать кнопку мыши %1$lld + движение %2$@"
+            "value": "Вниз"
           }
-        },
+        }
+      }
+    },
+    "mouseGesture %lld %@": {
+      "comment": "Source mouse button in one-based UI numbering and configured pointer direction. No physical device identity.",
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Maustaste %1$lld halten + Bewegung %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold Mouse Button %1$lld + move %2$@"
           }
         },
         "fr": {
@@ -2530,17 +2525,34 @@
             "state": "translated",
             "value": "Maintenir le bouton %1$lld + mouvement %2$@"
           }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удерживать кнопку мыши %1$lld + движение %2$@"
+          }
         }
-      },
-      "comment": "Source mouse button in one-based UI numbering and configured pointer direction. No physical device identity."
+      }
     },
     "pointerGestureHint": {
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine mittlere oder zusätzliche Taste aufnehmen und die Richtung wählen. Halten und innerhalb von 5 Sekunden deutlich bewegen: ein Tastenkürzel wird gesendet. Klick und Gestenbewegung werden unterdrückt. Weitere Tasten, andere Modifikatoren, Scrollen oder Pausieren brechen ab; die Zeigerbewegung kehrt bei Abbruch, Loslassen oder Zeitüberschreitung zurück. Richtungen dürfen eine Taste teilen, aber keine Druckmodi mit denselben Modifikatoren."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Record a middle or extra button, then choose a direction. Hold it and move clearly within 5 seconds: one shortcut fires. Clicks and gesture movement are consumed. Other presses, modifier changes, scrolling or pausing cancel; pointer movement resumes on cancellation, release or timeout. Direction rules can share a button, but conflict with press modes for the same modifiers."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrez un bouton central ou supplémentaire et choisissez une direction. Maintenez-le et déplacez clairement la souris dans les 5 secondes : un seul raccourci est envoyé. Le clic et le mouvement du geste sont absorbés. Un autre appui, des modificateurs différents, le défilement ou une pause annulent le geste ; le pointeur reprend au relâchement, à l’annulation ou à l’expiration. Les directions peuvent partager un bouton, mais pas ses modes d’appui avec les mêmes modificateurs."
           }
         },
         "ru": {
@@ -2548,17 +2560,672 @@
             "state": "translated",
             "value": "Запишите среднюю или боковую кнопку и выберите направление. Удерживайте её и заметно сдвиньте мышь за 5 секунд: сработает одно сочетание. Нажатие и движение жеста поглощаются. Другое нажатие, смена модификаторов, прокрутка или пауза отменяют жест; движение курсора возвращается при отмене, отпускании или тайм-ауте. Направления могут делить одну кнопку, но конфликтуют с режимами нажатия при тех же модификаторах."
           }
-        },
+        }
+      }
+    },
+    "diagnosticsClose": {
+      "extractionState": "manual",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine mittlere oder zusätzliche Taste aufnehmen und die Richtung wählen. Halten und innerhalb von 5 Sekunden deutlich bewegen: ein Tastenkürzel wird gesendet. Klick und Gestenbewegung werden unterdrückt. Weitere Tasten, andere Modifikatoren, Scrollen oder Pausieren brechen ab; die Zeigerbewegung kehrt bei Abbruch, Loslassen oder Zeitüberschreitung zurück. Richtungen dürfen eine Taste teilen, aber keine Druckmodi mit denselben Modifikatoren."
+            "value": "Schließen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrez un bouton central ou supplémentaire et choisissez une direction. Maintenez-le et déplacez clairement la souris dans les 5 secondes : un seul raccourci est envoyé. Le clic et le mouvement du geste sont absorbés. Un autre appui, des modificateurs différents, le défilement ou une pause annulent le geste ; le pointeur reprend au relâchement, à l’annulation ou à l’expiration. Les directions peuvent partager un bouton, mais pas ses modes d’appui avec les mêmes modificateurs."
+            "value": "Fermer"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        }
+      }
+    },
+    "diagnosticsDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drücken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appui"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажатие"
+          }
+        }
+      }
+    },
+    "diagnosticsDrag": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouvement"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Движение"
+          }
+        }
+      }
+    },
+    "diagnosticsEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Mausereignisse"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No mouse events"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun événement de souris"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет событий мыши"
+          }
+        }
+      }
+    },
+    "diagnosticsHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Maustasten und Mausrad; Tastaturereignisse, Text und Zeigerkoordinaten sind ausgeschlossen. Quartz-Tastencodes beginnen bei 0. Regeln bleiben aktiv. „In Warteschlange“ bestätigt die Übergabe an die Engine, nicht die Zustellung an eine andere App."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouse buttons and wheel only; keyboard events, text and pointer coordinates are excluded. Quartz button codes start at 0. Rules remain active. “Queued” confirms handoff to the engine, not delivery to another app."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boutons de souris et molette uniquement ; événements clavier, texte et coordonnées du pointeur exclus. Les codes Quartz commencent à 0. Les règles restent actives. « En attente » confirme le transfert au moteur, pas la réception par une autre app."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только кнопки мыши и колесо: события клавиатуры, текст и координаты указателя исключены. Коды кнопок Quartz начинаются с 0. Правила продолжают действовать. «В очереди» означает передачу движку, а не доставку в другое приложение."
+          }
+        }
+      }
+    },
+    "diagnosticsInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingabe"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrée"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ввод"
+          }
+        }
+      }
+    },
+    "diagnosticsLimits": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis zu 128 Einträge, 20 pro Sekundenfenster, 60 Sekunden pro Sitzung. Nur im Speicher; Schließen, Ruhezustand, sichere Eingabe oder Zugriffsverlust stoppen die Erfassung und löschen die Daten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up to 128 entries, 20 per one-second window, 60 seconds per session. Memory only; closing, sleep, Secure Input or loss of access stops collection and clears the data."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jusqu’à 128 entrées, 20 par fenêtre d’une seconde, 60 secondes par session. En mémoire uniquement ; fermeture, veille, saisie sécurisée ou perte d’accès arrêtent la collecte et effacent les données."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "До 128 записей, 20 за секундное окно, 60 секунд на сеанс. Только в памяти; закрытие, сон, защищённый ввод или потеря доступа останавливают сбор и очищают данные."
+          }
+        }
+      }
+    },
+    "diagnosticsModifiers": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifikatoren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifiers"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modificateurs"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Модификаторы"
+          }
+        }
+      }
+    },
+    "diagnosticsOmitted %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durch Limits ausgelassene Ereignisse: %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Events omitted by limits: %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Événements omis par les limites : %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропущено из-за лимитов: %lld"
+          }
+        }
+      }
+    },
+    "diagnosticsOutcome": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine-Entscheidung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine decision"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Décision du moteur"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Решение движка"
+          }
+        }
+      }
+    },
+    "diagnosticsPassed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durchgelassen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passed through"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transmis"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропущено"
+          }
+        }
+      }
+    },
+    "diagnosticsPhase": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phase"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phase"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phase"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фаза"
+          }
+        }
+      }
+    },
+    "diagnosticsQueued": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Warteschlange"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queued"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В очереди"
+          }
+        }
+      }
+    },
+    "diagnosticsRawButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CG-Code"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CG code"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code CG"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Код CG"
+          }
+        }
+      }
+    },
+    "diagnosticsRunning": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausdaten werden erfasst"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collecting mouse metadata"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collecte des données de souris"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбор данных мыши"
+          }
+        }
+      }
+    },
+    "diagnosticsStart": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für 60 Sekunden starten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start for 60 seconds"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrer pour 60 secondes"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Начать на 60 секунд"
+          }
+        }
+      }
+    },
+    "diagnosticsStop": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stoppen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Остановить"
+          }
+        }
+      }
+    },
+    "diagnosticsStopped": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfassung gestoppt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collection stopped"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collecte arrêtée"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбор остановлен"
+          }
+        }
+      }
+    },
+    "diagnosticsSuppressed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterdrückt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consumed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intercepté"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поглощено"
+          }
+        }
+      }
+    },
+    "diagnosticsTime": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeit, ms"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time, ms"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temps, ms"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Время, мс"
+          }
+        }
+      }
+    },
+    "diagnosticsUnsupportedScroll": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstütztes Scrollen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported scroll"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défilement non pris en charge"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неподдерживаемая прокрутка"
+          }
+        }
+      }
+    },
+    "diagnosticsUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslassen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Release"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relâchement"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отпускание"
+          }
+        }
+      }
+    },
+    "inputDiagnostics": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingabediagnose"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input Diagnostics"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic des entrées"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Диагностика ввода"
           }
         }
       }

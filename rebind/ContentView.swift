@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var scope: DeviceScope = .allKeyboards
     @State private var editor: EditorSelection?
     @State private var pendingDeletion: Binding?
+    @State private var showingDiagnostics = false
 
     var body: some View {
         NavigationSplitView {
@@ -66,12 +67,14 @@ struct ContentView: View {
                     Text(.emergencyHint)
                     Text(.deviceScopeHint)
                     if scope == .allMice { Text(.wheelMappingHint) }
+                    Button(.inputDiagnostics, systemImage: "waveform.path") { showingDiagnostics = true }
                 }.font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(16)
             }.navigationTitle("Rebind")
         }.frame(minWidth: 850, minHeight: 560)
         .sheet(item: $editor) { selection in
             BindingEditor(model: model, scope: scope, existing: selection.binding)
         }
+        .sheet(isPresented: $showingDiagnostics) { InputDiagnosticsView(model: model) }
         .alert(.deleteBinding, isPresented: deletionPresented) {
             Button(.cancel, role: .cancel) { pendingDeletion = nil }
             Button(.deleteBinding, role: .destructive) {

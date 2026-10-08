@@ -47,18 +47,16 @@ nonisolated final class EventTapWorker {
             hasPermissions = InputPermissions.current().allowsRemapping
             lastPermissionCheck = Date()
         }
+        let now = DispatchTime.now().uptimeNanoseconds
         let control = mailbox.state.withLock {
-            ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput,
-             $0.enabled && $0.hasPointerGestureRules)
+            $0.diagnostics.expire(at: now)
+            return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput,
+                    $0.enabled && $0.hasPointerGestureRules, $0.diagnostics.isRunning)
         }
         if failureLatched { removeTap() }
         if !hasPermissions || control.2 {
             removeTap()
-            mailbox.state.withLock {
-                $0.pending.removeAll(keepingCapacity: true)
-                $0.matcher.resetAfterCaptureLoss()
-                $0.status = hasPermissions ? .paused : .permissionRequired
-            }
+            mailbox.captureLost(status: hasPermissions ? .paused : .permissionRequired)
             return
         }
         // Explicit Resume/Record is required after failure; avoid retry storms.
@@ -66,17 +64,24 @@ nonisolated final class EventTapWorker {
             failureLatched = false
             lastRetryID = control.3
         }
-        if !control.0 && !control.1 && !control.4 { removeTap() }
+        if !control.0 && !control.1 && !control.4 && !control.6 { removeTap() }
         if port != nil, capturesPointerMotion != control.5 { removeTap() }
-        if port == nil, (control.0 || control.1 || control.4), !failureLatched {
+        // A disabled/invalid tap may stop delivering callbacks altogether. Check
+        // on its owning thread before draining output, not just in the callback.
+        if let port, !CFMachPortIsValid(port) || !CGEvent.tapIsEnabled(tap: port) {
+            failureLatched = true
+            mailbox.captureLost(status: .interrupted, pause: true)
+            removeTap()
+        }
+        if port == nil, (control.0 || control.1 || control.4 || control.6), !failureLatched {
             installTap(capturePointerMotion: control.5)
         }
         let secure = IsSecureEventInputEnabled()
         mailbox.state.withLock {
             if secure {
-                $0.pending.removeAll(keepingCapacity: true)
-                $0.matcher.resetAfterCaptureLoss()
-                $0.status = .secureInput
+                // Keep a latched failure visible; it still needs explicit retry
+                // after Secure Input ends, rather than appearing protected forever.
+                $0.resetCapture(status: failureLatched ? $0.status : .secureInput)
             } else if !failureLatched {
                 $0.status = control.0 && port != nil ? .active : .paused
             }
@@ -94,25 +99,25 @@ nonisolated final class EventTapWorker {
             guard let shortcut else { break }
             guard !IsSecureEventInputEnabled(), CGPreflightPostEventAccess(), ShortcutSender.send(shortcut) else {
                 failureLatched = true
-                mailbox.state.withLock {
-                    $0.pending.removeAll(keepingCapacity: true)
-                    $0.enabled = false
-                    $0.emergencyPause = true
-                    $0.status = .outputFailed
-                }
+                mailbox.captureLost(status: .outputFailed, pause: true)
                 break
             }
         }
     }
 
-    private func installTap(capturePointerMotion: Bool) {
+    static func eventMask(capturePointerMotion: Bool) -> CGEventMask {
         var types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged, .leftMouseDown, .rightMouseDown,
+                                   .leftMouseUp, .rightMouseUp,
                                    .otherMouseDown, .otherMouseUp, .otherMouseDragged,
                                    .leftMouseDragged, .rightMouseDragged, .scrollWheel]
         // Do not intercept the high-frequency idle motion stream unless enabled
         // gesture rules need it. Some drivers deliver motion instead of dragging.
         if capturePointerMotion { types.append(.mouseMoved) }
-        let mask = types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
+        return types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
+    }
+
+    private func installTap(capturePointerMotion: Bool) {
+        let mask = Self.eventMask(capturePointerMotion: capturePointerMotion)
         let context = Unmanaged.passUnretained(self).toOpaque()
         guard let port = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
                                           options: .defaultTap, eventsOfInterest: mask,
@@ -122,13 +127,7 @@ nonisolated final class EventTapWorker {
             return worker.receive(type: type, event: event)
         }, userInfo: context), let source = CFMachPortCreateRunLoopSource(nil, port, 0) else {
             failureLatched = true
-            mailbox.state.withLock {
-                $0.pending.removeAll(keepingCapacity: true)
-                $0.matcher.resetAfterCaptureLoss()
-                $0.status = .tapFailed
-                if let request = $0.recording { $0.recorded = RecordedInput(request: request, input: nil) }
-                $0.recording = nil
-            }
+            mailbox.captureLost(status: .tapFailed)
             return
         }
         self.port = port
@@ -149,14 +148,7 @@ nonisolated final class EventTapWorker {
     private func receive(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             failureLatched = true
-            mailbox.state.withLock {
-                $0.enabled = false
-                $0.emergencyPause = true
-                $0.recording = nil
-                $0.pending.removeAll(keepingCapacity: true)
-                $0.matcher.resetAfterCaptureLoss()
-                $0.status = .interrupted
-            }
+            mailbox.captureLost(status: .interrupted, pause: true)
             // Do not re-enable in the callback. Let the user deliberately resume.
             return Unmanaged.passUnretained(event)
         }
@@ -169,12 +161,15 @@ nonisolated final class EventTapWorker {
                                                secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
         }
         if type == .scrollWheel {
-            guard let input = ScrollEventAdapter.input(from: event) else {
+            guard var input = ScrollEventAdapter.input(from: event) else {
                 // Smooth/momentum/diagonal input still cancels a pending hold,
                 // while passing through unchanged and never creating a wheel action.
-                mailbox.cancelHold()
+                mailbox.handleUnsupportedScroll(modifiers: ModifierSet(flags: event.flags),
+                                                at: DispatchTime.now().uptimeNanoseconds,
+                                                secureInput: IsSecureEventInputEnabled())
                 return Unmanaged.passUnretained(event)
             }
+            input.receivedAt = DispatchTime.now().uptimeNanoseconds
             return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
         }
         let trigger: InputTrigger
@@ -185,13 +180,13 @@ nonisolated final class EventTapWorker {
             guard let value = UInt16(exactly: code) else { return Unmanaged.passUnretained(event) }
             trigger = .key(value)
             phase = type == .flagsChanged ? .modifiersChanged : (type == .keyDown ? .down : .up)
-        case .leftMouseDown, .rightMouseDown, .otherMouseDown, .otherMouseUp,
+        case .leftMouseDown, .rightMouseDown, .otherMouseDown, .leftMouseUp, .rightMouseUp, .otherMouseUp,
              .otherMouseDragged, .leftMouseDragged, .rightMouseDragged:
             let number = event.getIntegerValueField(.mouseEventButtonNumber)
             guard let value = UInt32(exactly: number) else { return Unmanaged.passUnretained(event) }
             trigger = .mouseButton(value)
             switch type {
-            case .otherMouseUp: phase = .up
+            case .leftMouseUp, .rightMouseUp, .otherMouseUp: phase = .up
             case .otherMouseDragged, .leftMouseDragged, .rightMouseDragged: phase = .drag
             default: phase = .down
             }

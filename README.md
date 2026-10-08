@@ -1,13 +1,14 @@
 # Rebind
 
 Native macOS input remapping application. Phase 1 and current Phase 2 slices implement native
-Quartz keyboard/middle-or-extra-mouse-button/discrete-wheel → shortcut mappings, interactive
+Quartz keyboard/middle-or-extra-mouse-button/discrete-wheel/button-movement → shortcut mappings, interactive
 recording/editing, exact modifiers, pause/emergency bypass, permission status,
 menu-bar lifecycle and atomic local configuration. **The user verified G603 Control + Button 4 → Command+A in TextEdit, with
 plain Button 4 retaining its behavior. The user also confirms Button 5 long press
-→ Command+A with a 1000 ms delay after cancellation fixes.** Keyboard, wheel,
-double press and full hold/cancellation/lifecycle checks remain open. Gestures and
-per-device rules are not implemented.
+→ Command+A with a 1000 ms delay after cancellation fixes, and the requested
+Option + Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
+double press, other gesture directions and full suppression/cancellation/lifecycle checks remain open.
+Multitouch and per-device rules are not implemented.
 
 The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
@@ -19,9 +20,26 @@ The [double-press walkthrough](docs/verification/phase-2-double-press.md) explai
 activation modes, cancellation and physical checks.
 The [long-press walkthrough](docs/verification/phase-2-hold.md) covers thresholds,
 exclusive activation and cancellation.
+The [button-movement walkthrough](docs/verification/phase-2-pointer-gesture.md) covers
+four directions, thresholds, cancellation, the user-confirmed leftward G603 gesture
+and remaining hardware checks.
+The [capture-lifecycle walkthrough](docs/verification/phase-2-lifecycle.md) covers
+permission loss, tap interruption, overlapping sleep/session suspension and recovery.
+The [input-diagnostics walkthrough](docs/verification/phase-2-diagnostics.md) covers
+the opt-in mouse metadata viewer and its remaining physical checks.
 
 Requirements and roadmap: [SPEC](docs/SPEC.md), [PLAN](docs/PLAN.md),
 [agent instructions](AGENTS.md). Design references remain in `docs/references/`.
+
+**Input Diagnostics** at the bottom of the main window shows numeric Quartz mouse
+button codes (zero-based), button phases, wheel direction, modifiers and the engine's
+passthrough/consumption/queue decision. Keyboard events/codes, typed text, pointer
+coordinates, output parameters and device identity are excluded. Start explicitly:
+up to 128 entries, 20 per one-second window, 60 seconds per session, memory only.
+Stop retains the current rows for inspection; closing, sleep, Secure Input or capture
+loss stops collection and clears them. Existing rules continue normally; diagnostics
+also works with rules paused. “Queued” does not prove output delivery. No export,
+logging service or new permission/dependency. Real G603 collection still needs verification.
 
 ## Development
 
@@ -125,6 +143,18 @@ the held mouse button preserves the deadline; dragging with another button cance
 Switching away from Rebind cancels explicit recording, but preserves background recognition. A delayed
 worker skips stale actions. This mode does not hold output keys or repeat actions.
 Held output and native triple-click recognition remain deferred.
+Choose **Button + movement** in **All mice** to record a middle/extra button with
+modifiers and select left/right/up/down. Move clearly within five seconds of pressing
+the source: one shortcut fires when its stroke crosses the threshold. Direction rules
+may share the same button/modifiers, but conflict with ordinary/double/long press on
+that chord. These four directions are the complete intended mouse pointer gesture set;
+diagonals, spirals/circles and multi-stroke figures are out of scope. A click without a
+gesture is consumed without replay. Gesture movement
+is consumed until release, cancellation or timeout; diagonals or an unconfigured
+first direction cancel. Other presses, modifier changes, scrolling, editing and pause
+also cancel. Sensitivity depends on delivered Quartz deltas and mouse/driver settings.
+This is implemented and software-tested; the configured G603 leftward gesture works
+per the user, while other directions and full safety/cursor checks remain pending.
 Wheel output is limited to one pulse
 per 100 ms across wheel bindings; intermediate matched events are consumed.
 Smooth, momentum, diagonal and unmatched scroll events pass through. Directions
@@ -136,7 +166,7 @@ or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close w
 quitting the app. Settings are stored at
 `~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
 file is preserved and locks editing instead of being overwritten. Configuration
-schema 4 reads schemas 1–3, preserving ordinary/wheel/double-press rules, IDs and
+schema 5 reads schemas 1–4, preserving ordinary/wheel/double/long-press rules, IDs and
 enabled state. Legacy rules get the default long-press threshold without rewriting
 the file until the next successful save.
 

@@ -37,7 +37,7 @@ unverified.** Phase 1/2 hardware exit criteria remain open. See the
   but enabling conflicting ones is rejected. Double-press wheel rules are invalid.
 - No physical attribution: two keyboards/mice in the same category can contribute
   to a pair. Test this limit explicitly; no per-device support is implied.
-- Activation was introduced in schema 3; current schema 4 preserves it and adds
+- Activation was introduced in schema 3; current schema 5 preserves it and includes
   a default duration for the separate long-press mode. Version-1 key/button and version-2 wheel rules load
   as ordinary press without disk rewrite, retaining IDs, output, modifiers and
   enabled state. Saving is atomic; disguised legacy double rules, invalid enum
@@ -95,7 +95,8 @@ disposable TextEdit document with a harmless output such as Command+A.
    one device. Do not mark per-device behavior verified. Check keyboard navigation,
    VoiceOver and EN/DE/FR editor/list layouts separately.
 
-Held synthetic output, native click counts, triple-click, Caps Lock/Fn-only, pointer gestures
+Button-hold pointer gestures are implemented separately; their hardware check remains pending.
+Held synthetic output, native click counts, triple-click, Caps Lock/Fn-only
 and per-device rules remain future work; this slice does not close their criteria.
 
 Long-press trigger activation is implemented separately; see the [hold walkthrough](phase-2-hold.md).
