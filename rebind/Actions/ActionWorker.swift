@@ -13,8 +13,14 @@ nonisolated final class ActionWorker {
     private let capabilities: @Sendable () -> AudioOutputCapabilities
     private let performAudio: @Sendable (SystemAction, UInt32) -> Bool
     private let sendShortcut: @Sendable (KeyboardShortcut) -> Bool
+    private let performMouse: @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult
+    private let performMedia: @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult
+    private let performDock: @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult
     private let performWindow: @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult
+    private let performWindowLayout: @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult
+    private let layoutClock: @Sendable () -> UInt64
     private let prepareWorkspace: @Sendable (WorkspaceAction) -> WorkspaceTarget?
+    private let performAppleShortcut: @Sendable (AppleShortcutTarget, @Sendable () -> Bool) -> AppleShortcutRunResult
     private let secureInput: @Sendable () -> Bool
     private let postingAllowed: @Sendable () -> Bool
     private var lastCapabilitiesCheck: UInt64?
@@ -23,18 +29,40 @@ nonisolated final class ActionWorker {
          capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
          performAudio: @escaping @Sendable (SystemAction, UInt32) -> Bool = { CoreAudioOutput.perform($0, device: $1) },
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
+         performMouse: @escaping @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult = {
+             MouseClickSender.perform($0, canPerform: $1)
+         },
+         performMedia: @escaping @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult = {
+             MediaKeySender.perform($0, canPerform: $1)
+         },
+         performDock: @escaping @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult = {
+             DockActions.perform($0, canPerform: $1)
+         },
          performWindow: @escaping @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult = {
              WindowActionExecutor.perform($0, canPerform: $1)
          },
+         performWindowLayout: @escaping @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult = {
+             WindowLayoutExecutor.perform($0, displays: $1, canPerform: $2)
+         },
+         layoutClock: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
          prepareWorkspace: @escaping @Sendable (WorkspaceAction) -> WorkspaceTarget? = { WorkspacePreparation.prepare($0) },
+         performAppleShortcut: @escaping @Sendable (AppleShortcutTarget, @Sendable () -> Bool) -> AppleShortcutRunResult = {
+             AppleShortcuts.run($0, canPerform: $1)
+         },
          secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
          postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
         self.mailbox = mailbox
         self.capabilities = capabilities
         self.performAudio = performAudio
         self.sendShortcut = sendShortcut
+        self.performMouse = performMouse
+        self.performMedia = performMedia
+        self.performDock = performDock
         self.performWindow = performWindow
+        self.performWindowLayout = performWindowLayout
+        self.layoutClock = layoutClock
         self.prepareWorkspace = prepareWorkspace
+        self.performAppleShortcut = performAppleShortcut
         self.secureInput = secureInput
         self.postingAllowed = postingAllowed
     }
@@ -70,6 +98,34 @@ nonisolated final class ActionWorker {
         let success: Bool
         switch dispatch.action {
         case .shortcut(let shortcut): success = sendShortcut(shortcut)
+        case .media(let action):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = performMedia(action) {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
+        case .mouse(let action):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = performMouse(action) {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
+        case .desktop: success = false // Legacy decoding only; cannot enter compiled rules.
+        case .dock(let action):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = performDock(action) {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
         case .system(let action):
             guard let device = dispatch.deviceID else { mailbox.actionFailed(dispatch); return }
             success = performAudio(action, device)
@@ -82,12 +138,37 @@ nonisolated final class ActionWorker {
             }
             guard result != .cancelled else { return }
             success = result == .performed
+        case .windowLayout(let action):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let clock = layoutClock
+            let snapshot = mailbox.state.withLock { $0.windowDisplays }
+            guard snapshot.isFresh(at: clock()) else { mailbox.actionFailed(dispatch); return }
+            let result = performWindowLayout(action, snapshot.displays) {
+                let current = mailbox.state.withLock { $0.windowDisplays }
+                return current.displays == snapshot.displays && current.isFresh(at: clock())
+                    && mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
         case .workspace(let action):
             guard let target = prepareWorkspace(action) else { mailbox.actionFailed(dispatch); return }
             // Preparation can wait on filesystem metadata. The MainActor
             // consumer also rechecks immediately before the native request.
             mailbox.submitWorkspace(WorkspaceRequest(dispatch: dispatch, target: target))
             return
+        case .appleShortcut(let target):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            mailbox.state.withLock { $0.appleShortcutInProgress = true }
+            defer { mailbox.state.withLock { $0.appleShortcutInProgress = false } }
+            let result = performAppleShortcut(target) {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
         }
         if !success {
             mailbox.actionFailed(dispatch)

@@ -69,7 +69,7 @@ nonisolated enum WindowActionExecutor {
     }
 }
 
-nonisolated private struct AXWindowAccessibility: WindowAccessibility {
+nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility {
     private let system = AXUIElementCreateSystemWide()
     private let startedAt = DispatchTime.now().uptimeNanoseconds
     private let budget: UInt64 = 450_000_000
@@ -111,6 +111,44 @@ nonisolated private struct AXWindowAccessibility: WindowAccessibility {
     func press(_ element: AXUIElement) -> Bool {
         guard prepare(element) else { return false }
         return AXUIElementPerformAction(element, kAXPressAction as CFString) == .success
+    }
+
+    func isStandardWindow(_ element: AXUIElement) -> Bool {
+        (value(kAXSubroleAttribute, of: element) as? String) == kAXStandardWindowSubrole
+    }
+
+    func isMinimized(_ element: AXUIElement) -> Bool? {
+        guard let value = value(kAXMinimizedAttribute, of: element), CFGetTypeID(value) == CFBooleanGetTypeID() else { return nil }
+        return CFBooleanGetValue(unsafeDowncast(value, to: CFBoolean.self))
+    }
+
+    func frame(of element: AXUIElement) -> CGRect? {
+        guard let position = axValue(kAXPositionAttribute, of: element, type: .cgPoint),
+              let size = axValue(kAXSizeAttribute, of: element, type: .cgSize) else { return nil }
+        var point = CGPoint.zero
+        var dimensions = CGSize.zero
+        guard AXValueGetValue(position, .cgPoint, &point), AXValueGetValue(size, .cgSize, &dimensions) else { return nil }
+        let frame = CGRect(origin: point, size: dimensions)
+        return WindowLayoutGeometry.valid(frame) ? frame : nil
+    }
+
+    private func axValue(_ attribute: String, of element: AXUIElement, type: AXValueType) -> AXValue? {
+        guard let value = value(attribute, of: element), CFGetTypeID(value) == AXValueGetTypeID() else { return nil }
+        let typed = unsafeDowncast(value, to: AXValue.self)
+        return AXValueGetType(typed) == type ? typed : nil
+    }
+
+    func setPosition(_ position: CGPoint, of element: AXUIElement) -> Bool {
+        var point = position
+        guard point.x.isFinite, point.y.isFinite, let value = AXValueCreate(.cgPoint, &point), prepare(element) else { return false }
+        return AXUIElementSetAttributeValue(element, kAXPositionAttribute as CFString, value) == .success
+    }
+
+    func setSize(_ size: CGSize, of element: AXUIElement) -> Bool {
+        var size = size
+        guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0,
+              let value = AXValueCreate(.cgSize, &size), prepare(element) else { return false }
+        return AXUIElementSetAttributeValue(element, kAXSizeAttribute as CFString, value) == .success
     }
 
     private func value(_ attribute: String, of element: AXUIElement) -> CFTypeRef? {

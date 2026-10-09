@@ -1,8 +1,15 @@
 nonisolated enum RebindAction: Codable, Equatable, Sendable {
     case shortcut(KeyboardShortcut)
+    case mouse(MouseAction)
+    case media(MediaAction)
     case system(SystemAction)
     case window(WindowAction)
+    case windowLayout(WindowLayoutAction)
     case workspace(WorkspaceAction)
+    case appleShortcut(AppleShortcutTarget)
+    // Read-only legacy payload for schema-11/12 migration.
+    case desktop(DesktopAction, shortcut: KeyboardShortcut)
+    case dock(DesktopAction)
 
     var shortcut: KeyboardShortcut? {
         if case .shortcut(let value) = self { return value }
@@ -12,8 +19,11 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
     var isSupported: Bool {
         switch self {
         case .shortcut(let value): value.isSupported
-        case .system, .window: true
+        case .mouse, .media, .system, .window, .windowLayout: true
         case .workspace(let action): action.isSupported
+        case .appleShortcut(let target): target.isSupported
+        case .desktop: false
+        case .dock: true
         }
     }
 }

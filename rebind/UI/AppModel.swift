@@ -17,6 +17,7 @@ import Dispatch
     private(set) var diagnostics = DiagnosticSnapshot()
     private(set) var audioCapabilities = AudioOutputCapabilities()
     private(set) var workspaceActionInProgress = false
+    private(set) var appleShortcutInProgress = false
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
@@ -37,10 +38,12 @@ import Dispatch
     func start() {
         guard timer == nil else { return }
         configureEngine(configuration)
+        refreshWindowDisplays()
         EventTapWorker.start(mailbox: mailbox)
         ActionWorker.start(mailbox: mailbox)
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
         for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
@@ -56,19 +59,23 @@ import Dispatch
         workspaceTask?.cancel()
         workspaceTask = nil
         workspaceActionInProgress = false
+        appleShortcutInProgress = false
         timer?.invalidate()
         timer = nil
         NotificationCenter.default.removeObserver(self)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 
+    @objc private func refreshWindowDisplays() { mailbox.updateWindowDisplays(.current()) }
+
     @objc func refresh() {
         if Date().timeIntervalSince(lastPermissionCheck) >= 0.5 {
             permissions = .current()
+            refreshWindowDisplays()
             lastPermissionCheck = Date()
         }
         let update = mailbox.state.withLock { state in
-            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil)
+            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil, state.appleShortcutInProgress)
             state.actionFailed = nil
             state.recorded = nil
             state.emergencyPause = false
@@ -77,6 +84,7 @@ import Dispatch
         status = update.0
         audioCapabilities = update.3
         workspaceActionInProgress = update.5
+        appleShortcutInProgress = update.6
         refreshDiagnostics()
         if let captured = update.1, captured.request == recording {
             lastRecording = captured
@@ -91,10 +99,15 @@ import Dispatch
         }
         if let failed = update.4 {
             switch failed {
-            case .shortcut: error = .outputFailed
+            case .shortcut, .desktop: error = .outputFailed
+            case .mouse: error = .mouseActionFailed
+            case .media: error = .mediaActionFailed
+            case .dock(let action): error = action.isSpaceNavigation ? .spaceActionFailed : .dockActionFailed
             case .system: error = .audioActionFailed
+            case .windowLayout: error = .windowLayoutFailed
             case .window: error = .windowActionFailed
             case .workspace: error = .workspaceActionFailed
+            case .appleShortcut: error = .appleShortcutFailed
             }
         }
         if workspaceTask == nil, mailbox.hasWorkspaceRequest {

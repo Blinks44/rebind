@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 9
+    static let currentSchemaVersion = 16
     static let maximumProfiles = 20
     var schemaVersion: Int
     var isEnabled: Bool
@@ -48,6 +48,47 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
+        if schemaVersion < 16, profiles.flatMap(\.bindings).contains(where: {
+            if case .windowLayout = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 15, profiles.flatMap(\.bindings).contains(where: {
+            if case .media = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 14, profiles.flatMap(\.bindings).contains(where: {
+            if case .mouse = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 12, profiles.flatMap(\.bindings).contains(where: {
+            if case .dock = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 13, profiles.flatMap(\.bindings).contains(where: {
+            if case .dock(let action) = $0.action { return action.isSpaceNavigation }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if (11...12).contains(schemaVersion) {
+            for profile in result.profiles.indices {
+                for index in result.profiles[profile].bindings.indices {
+                    if case .desktop(let action, let shortcut) = result.profiles[profile].bindings[index].action {
+                        guard shortcut.isSupported, schemaVersion == 11 || action.isSpaceNavigation else {
+                            throw ConfigurationError.invalid
+                        }
+                        result.profiles[profile].bindings[index].action = .dock(action)
+                    }
+                }
+            }
+            result.schemaVersion = Self.currentSchemaVersion
+        }
+        if schemaVersion < 11, profiles.flatMap(\.bindings).contains(where: {
+            if case .desktop = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 10, profiles.flatMap(\.bindings).contains(where: {
+            if case .appleShortcut = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
         if (1...5).contains(schemaVersion) {
             guard profiles.count == 1,
                   schemaVersion >= 5 || bindings.allSatisfy({ !$0.trigger.isPointerGesture }),
@@ -79,6 +120,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             }) else { throw ConfigurationError.invalid }
             result.schemaVersion = Self.currentSchemaVersion
         }
+        if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...15).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         try result.validate()
         return result
     }

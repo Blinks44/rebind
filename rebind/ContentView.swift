@@ -97,6 +97,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(.phaseOneHint)
                 if model.workspaceActionInProgress { Text(.openingTargetStatus) }
+                if model.appleShortcutInProgress { Text(.runningAppleShortcutStatus) }
                 Text(.emergencyHint)
                 Text(.deviceScopeHint)
                 if scope == .allMice { Text(.wheelMappingHint) }

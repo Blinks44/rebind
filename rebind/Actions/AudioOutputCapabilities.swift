@@ -13,8 +13,10 @@ nonisolated struct AudioOutputCapabilities: Equatable, Sendable {
 
     func supports(_ action: RebindAction) -> Bool {
         switch action {
-        case .shortcut, .window, .workspace: true
+        case .shortcut, .mouse, .media, .window, .windowLayout, .workspace, .appleShortcut: true
+        case .desktop: false
         case .system(let action): supports(action)
+        case .dock(let action): DockActions.isAvailable(for: action)
         }
     }
 }

@@ -217,6 +217,7 @@ Every supported trigger uses the **same** action catalog. Group actions, search 
 ### Spaces and system
 
 - Next/previous desktop or Space via validated user-configured system shortcut or another proven method; macOS has no guarantee of a single documented universal 'move Space' API. Detect or explain shortcut dependencies.
+- Previous/next Space must behave like the native Control + Left/Right Arrow action: normal system transition (respecting Reduce Motion), display selection and first/last-Space boundaries. Do not substitute instant switching or a fling past the final desktop that produces a black screen and returns. Hardware acceptance must cover both animation and boundaries (user clarification, 2026-10-09).
 - Audio volume up/down/mute; play/pause/next/previous track when available.
 - Lock screen; sleep; open System Settings; display brightness only if hardware/OS provides an appropriate method.
 - Launchpad only if a currently supported and robust mechanism exists. Do not pretend a removed or private OS behavior is universal.

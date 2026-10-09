@@ -15,7 +15,7 @@ then select one above the rules or from the Menu Bar **Profile** submenu. A prof
 covers all input categories; its name does not identify a physical mouse. Switching
 preserves pause and cancels the old profile's pending recognition/output/recording,
 while retaining already suppressed releases. Existing schemas 1–5 migrate into
-**Default** in memory, preserving all rules; the first successful edit saves the current schema (9).
+**Default** in memory, preserving all rules; the first successful edit saves the current schema (14).
 No HID inventory, device-specific routing or private event-source API remains.
 See the [profile walkthrough](docs/verification/profiles.md).
 
@@ -28,6 +28,31 @@ tap run loop. The user reports the configured audio mapping and existing binding
 work after this change; all audio variants, output replacement and cancellation
 still need hardware checks. See the [audio walkthrough](docs/verification/phase-4-audio.md).
 
+**Audio** also offers **Play / Pause, Next Track and Previous Track**. These send
+native system media-key down/up pairs at the HID tap from the serial action worker,
+without keyboard modifiers, app-specific scripts or private MediaRemote calls.
+macOS selects the recipient and its response, just as for a media key. No eligible
+player or unsupported commands can mean no effect; posting cannot acknowledge
+playback or promise a particular application. Current-output volume capabilities
+do not gate these media keys. Construction/cancellation failures prevent the whole
+pair; a begun pair always completes release. The user confirms delivery via mouse/additional buttons in different applications, including background/minimized contexts. Detailed routing, modifier/interleaving and cancellation checks remain open.
+See the [media walkthrough](docs/verification/phase-4-media.md).
+
+The **Mouse** action group adds left, right, middle and double left click at the
+current global pointer position. All actions produce complete, tagged down/up pairs
+through public Quartz, outside the tap callback, with no keyboard modifiers. Double
+click carries click states 1 then 2; no artificial timing delay or pointer-move event.
+If the target output button is already held (hardware or combined session state),
+preparation fails with an error rather than synthesizing its release. That includes
+mapping a held middle button to its own click: use a different trigger. Cancellation,
+allocation failures and protected contexts prevent posting; a begun finite batch
+finishes release. Source input already consumed is not replayed, and preparation
+failure does not pause unrelated rules. The user confirms all four clicks work,
+including in third-party apps (2026-10-09); exact app names/triggers were not given.
+Fast pointer movement, detailed modifier/button interleaving and cancellation
+remain hardware checks. Held output, dragging, back/forward and scroll output are not
+implemented. See the [mouse-output walkthrough](docs/verification/phase-4-mouse-output.md).
+
 The same chooser now offers **Windows and Applications**: close/minimize the
 active window, press its full-screen button, or hide the active app through public
 Accessibility APIs. Target support is checked when dispatched; Rebind itself is
@@ -36,6 +61,17 @@ AX calls run on the serial action worker with request timeouts, focus rechecks a
 cancellation before mutation. No window titles or contents are read. These actions
 are implemented and unit-tested; the user confirms all four work in manual testing.
 Cancellation, unsupported targets, revoked access and latency checks remain open. See the [window-action walkthrough](docs/verification/phase-4-windows.md).
+
+Four additional window actions are implemented: Left Half, Right Half, Fill Available
+Screen and Center Window (preserving size). They use public Accessibility frame
+attributes on the focused ordinary window, choose its display by largest overlap
+and exclude the Dock/menu bar. App size constraints may prevent a requested layout;
+a partial change may remain on failure. These placements do not create macOS tile
+groups. Full-screen/unsupported windows are excluded conservatively. Software
+checks pass; the user confirms left/right placement and maximizing in different
+applications. Centering and detailed display/constraint/cancellation checks remain
+open in the [layout walkthrough](docs/verification/phase-4-window-layout.md).
+
 
 The chooser also opens a selected application, activates its already running copy,
 or opens an **HTTP/HTTPS address, local file or folder** in the default app. Native
@@ -47,6 +83,40 @@ show a localized message without replaying consumed input. These actions have
 software and picker/validation checks; the user confirms the requested actions work.
 Detailed failure/cancellation, revoked-access and latency checks remain open. See the
 [opening walkthrough](docs/verification/phase-4-opening.md).
+
+**Automation → Run Apple Shortcut** selects an existing command from Apple's
+native Shortcuts list. Rules store its UUID; renaming does not change that identity,
+and a deleted command never falls back to another command with the same name.
+Refresh updates the list and displayed names. Execution uses the native CLI on
+the action worker, without shell code or clipboard/file input. Other output waits
+while it runs. Rebind stops waiting after 60 seconds or a cancellation; this cannot
+undo accepted steps or guarantee that the Shortcuts service stops the workflow.
+Software tests, native listing and Russian picker checks pass; the user confirms
+the requested Apple Shortcut execution works. Rename/delete, prompts, cancellation
+and latency remain manual checks. See the [Shortcuts walkthrough](docs/verification/phase-4-shortcuts.md).
+
+**Mission Control and Spaces** offers three experimental direct Dock notifications:
+Mission Control, current-app windows and Show Desktop. The user confirms these
+three effects work on the current setup; detailed cancellation/latency checks remain open.
+
+Previous/next Space now posts the standard Control+Left/Right keyboard pair using
+public Quartz HID-state events at the HID tap, with the secondary-Fn arrow flag.
+The intended behavior is the normal system slide and first/last-desktop handling,
+including Reduce Motion and the focused display. It replaces the instant Dock swipe,
+which failed user acceptance: abrupt transitions and a black-screen bounce at the edge.
+No gesture serialization, Space prediction or animation override remains.
+The system Mission Control shortcuts must be enabled and use the standard chords;
+disabled, customized or malformed overrides prevent posting and show a localized error.
+The editor explains this dependency; catalog availability denotes API support,
+while settings are checked on the worker at execution. System preferences are never
+changed. Posting does not confirm the visual effect; the user now reports everything works well after the requested animation and
+first/last-desktop retest with the existing Windows modifier remap. Exact
+individual cases and timings were not restated; broader safety/display checks remain. Ordinary shortcuts and the three
+Dock notifications retain their senders. Deployment remains macOS 26; the old private
+26.6/27 gesture-layout gate is removed. Typed Space actions and existing rules are preserved;
+schema 16 adds window layout after schema 15 media and schema 14 mouse output, and loading older schemas still never rewrites the file. See the
+[Space walkthrough](docs/verification/phase-4-spaces.md) and
+[third-party notice](rebind/Resources/ThirdPartyNotices.txt).
 
 The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
@@ -206,7 +276,7 @@ or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close w
 quitting the app. Settings are stored at
 `~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
 file is preserved and locks editing instead of being overwritten. Configuration
-schema 9 reads schemas 1–8, preserving profiles, selection, shortcut/audio/window actions,
+schema 15 reads schemas 1–14, preserving profiles, selection, shortcut/audio/mouse/window/opening/Apple Shortcut/desktop actions,
 ordinary/wheel/double/long-press/gesture rules, IDs and enabled state. Legacy rules get the default long-press threshold without rewriting
 the file until the next successful save.
 

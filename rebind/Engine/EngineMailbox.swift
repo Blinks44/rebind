@@ -21,6 +21,7 @@ nonisolated final class EngineMailbox: Sendable {
     struct State: Sendable {
         var rules: [MatchKey: CompiledBinding] = [:]
         var allRules: [MatchKey: CompiledBinding] = [:]
+        var windowDisplays = WindowDisplaySnapshot()
         var audioCapabilities = AudioOutputCapabilities()
         var actionRevision: UInt64 = 0
         var actionFailed: RebindAction?
@@ -36,6 +37,7 @@ nonisolated final class EngineMailbox: Sendable {
         var pending: [RebindAction] = []
         var workspaceRequest: WorkspaceRequest?
         var workspaceClaimed = false
+        var appleShortcutInProgress = false
         var emergencyPause = false
         var retryID: UInt64 = 0
         var diagnostics = InputDiagnostics()
@@ -84,6 +86,11 @@ nonisolated final class EngineMailbox: Sendable {
             $0.matcher.cancelPendingActivation()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
         }
+    }
+
+    func updateWindowDisplays(_ snapshot: WindowDisplaySnapshot) {
+        // Screen refreshes must not invalidate queued unrelated actions or holds.
+        state.withLock { $0.windowDisplays = snapshot }
     }
 
     func updateAudioCapabilities(_ capabilities: AudioOutputCapabilities) {
@@ -147,10 +154,12 @@ nonisolated final class EngineMailbox: Sendable {
         state.withLock {
             guard $0.actionRevision == dispatch.revision else { return }
             $0.actionFailed = dispatch.action
-            if case .shortcut = dispatch.action {
+            switch dispatch.action {
+            case .shortcut, .desktop:
                 $0.resetCapture(status: .outputFailed)
                 $0.enabled = false
                 $0.emergencyPause = true
+            default: break
             }
         }
     }

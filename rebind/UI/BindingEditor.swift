@@ -12,6 +12,7 @@ struct BindingEditor: View {
     @State private var application: ApplicationTarget?
     @State private var webAddress: String
     @State private var file: URL?
+    @State private var appleShortcut: AppleShortcutTarget?
     @State private var mouseRecordingTarget: RecordingTarget
     @State private var activation: PressActivation
     @State private var holdDurationMilliseconds: UInt32
@@ -32,6 +33,8 @@ struct BindingEditor: View {
         else { _webAddress = State(initialValue: "") }
         if case .openFile(let url) = workspace { _file = State(initialValue: url) }
         else { _file = State(initialValue: nil) }
+        if case .appleShortcut(let target) = existing?.action { _appleShortcut = State(initialValue: target) }
+        else { _appleShortcut = State(initialValue: nil) }
         _activation = State(initialValue: existing?.activation ?? .press)
         _holdDurationMilliseconds = State(initialValue: existing?.holdDurationMilliseconds ?? 500)
         let target: RecordingTarget
@@ -104,6 +107,31 @@ struct BindingEditor: View {
                         if actionKind == .keyboardShortcut {
                             Text(output.map(InputLabels.shortcut) ?? String(localized: .notRecorded)).font(.title3.monospaced())
                             Button(.recordOutput) { model.beginRecording(.output) }.disabled(!model.canRecord || model.recording != nil)
+                        } else if actionKind.mouseAction != nil {
+                            Text(.mouseActionHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else if actionKind.windowLayoutAction != nil {
+                            Text(.windowLayoutHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else if actionKind.mediaAction != nil {
+                            Text(.mediaActionHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else if let desktop = actionKind.desktopAction {
+                            if desktop.dockNotification != nil {
+                                Text(.dockActionHint).font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if !actionKind.isAvailable(with: model.audioCapabilities) {
+                                    Text(.dockActionUnavailable).foregroundStyle(.secondary)
+                                }
+                            } else {
+                                Text(.spaceActionHint).font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if !actionKind.isAvailable(with: model.audioCapabilities) {
+                                    Text(.spaceActionUnavailable).foregroundStyle(.secondary)
+                                }
+                            }
+                        } else if actionKind == .runAppleShortcut {
+                            AppleShortcutParameters(target: $appleShortcut).disabled(model.recording != nil)
                         } else if actionKind.needsWorkspaceParameters {
                             WorkspaceActionParameters(kind: actionKind, application: $application, webAddress: $webAddress, file: $file)
                                 .disabled(model.recording != nil)
@@ -137,7 +165,7 @@ struct BindingEditor: View {
                 HStack {
                     Button(.clearRecording) {
                         model.cancelRecording(); trigger = nil; output = nil; actionKind = .keyboardShortcut
-                        application = nil; webAddress = ""; file = nil
+                        application = nil; webAddress = ""; file = nil; appleShortcut = nil
                     }
                     Spacer()
                     Button(.cancel) { dismiss() }.keyboardShortcut(.cancelAction)
@@ -155,7 +183,9 @@ struct BindingEditor: View {
             holdDurationMilliseconds = 500
             pointerDirection = .left
         }
-        .onChange(of: actionKind) { model.cancelRecording() }
+        .onChange(of: actionKind) {
+            model.cancelRecording()
+        }
         .onChange(of: activation) { model.cancelRecording() }
         .onChange(of: holdDurationMilliseconds) { model.cancelRecording() }
         .onChange(of: pointerDirection) { model.cancelRecording() }
@@ -168,7 +198,8 @@ struct BindingEditor: View {
     }
 
     private var configuredAction: RebindAction? {
-        actionKind.configuredAction(shortcut: output, application: application, webAddress: webAddress, file: file)
+        actionKind.configuredAction(shortcut: output, application: application, webAddress: webAddress, file: file,
+                                    appleShortcut: appleShortcut)
     }
 
     private func save() {

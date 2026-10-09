@@ -60,6 +60,64 @@
         }
       }
     },
+    "activateApplicationAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate Running Application"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активировать запущенное приложение"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laufendes Programm aktivieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer une application ouverte"
+          }
+        }
+      }
+    },
+    "activateApplicationHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activates the selected copy only if it is already running. Does not launch it. If the app moves, select it again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переключает на выбранную копию, только если она уже запущена. Не запускает её. После перемещения приложения выберите его заново."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiviert die ausgewählte Kopie nur, wenn sie bereits läuft. Startet sie nicht. Nach dem Verschieben erneut auswählen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active la copie choisie uniquement si elle est déjà ouverte, sans la lancer. Sélectionnez-la à nouveau si elle est déplacée."
+          }
+        }
+      }
+    },
     "activationTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -205,6 +263,209 @@
         }
       }
     },
+    "appleShortcutFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shortcut failed or exceeded 60 seconds. Check it in the Shortcuts app and its permissions. No input was replayed."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Команда завершилась с ошибкой или превысила 60 секунд. Проверьте её в приложении «Команды» и необходимые разрешения. Исходный ввод не повторяется."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Kurzbefehl ist fehlgeschlagen oder hat 60 Sekunden überschritten. Prüfen Sie ihn und seine Berechtigungen in der App „Kurzbefehle“. Die Eingabe wurde nicht wiederholt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le raccourci a échoué ou dépassé 60 secondes. Vérifiez-le et ses autorisations dans Raccourcis. L’entrée initiale n’a pas été rejouée."
+          }
+        }
+      }
+    },
+    "appleShortcutHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runs your selected shortcut by its identifier, without passing text, files or clipboard input. The limit is 60 seconds; other actions wait while it runs. Pause/profile changes stop waiting, but cannot undo steps already performed. Shortcuts manages its own permission prompts. Assigned input is consumed even if execution fails."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запускает выбранную команду по её ID без передачи текста, файлов или буфера обмена. Лимит — 60 секунд; остальные действия ждут завершения. Пауза и смена профиля останавливают ожидание, но не отменяют уже выполненные шаги. Разрешения запрашивает приложение «Команды». Назначенный ввод поглощается и при ошибке запуска."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Führt den gewählten Kurzbefehl anhand seiner ID aus, ohne Text, Dateien oder Zwischenablage zu übergeben. Limit: 60 Sekunden; andere Aktionen warten. Pause und Profilwechsel beenden das Warten, machen ausgeführte Schritte aber nicht rückgängig. Berechtigungen werden von Kurzbefehle angefordert. Zugeordnete Eingaben werden auch bei Fehlern unterdrückt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécute le raccourci choisi par son identifiant, sans transmettre de texte, de fichiers ni le presse-papiers. Limite : 60 secondes ; les autres actions attendent. La pause et le changement de profil interrompent l’attente sans annuler les étapes déjà effectuées. Raccourcis gère ses autorisations. L’entrée affectée est bloquée même en cas d’échec."
+          }
+        }
+      }
+    },
+    "appleShortcutMissing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved shortcut is missing from the list. Select it again if it was deleted or recreated."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранённой команды нет в списке. Если она удалена или создана заново, выберите её повторно."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gespeicherte Kurzbefehl fehlt in der Liste. Wählen Sie ihn erneut aus, wenn er gelöscht oder neu erstellt wurde."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le raccourci enregistré ne figure pas dans la liste. Sélectionnez-le à nouveau s’il a été supprimé ou recréé."
+          }
+        }
+      }
+    },
+    "appleShortcutTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Shortcut"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Быстрая команда Apple"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple-Kurzbefehl"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourci Apple"
+          }
+        }
+      }
+    },
+    "appleShortcutsEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No shortcuts. Create one in the Shortcuts app, then refresh this list."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет команд. Создайте команду в приложении «Команды» и обновите список."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Kurzbefehle. Erstellen Sie einen in der App „Kurzbefehle“ und aktualisieren Sie die Liste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun raccourci. Créez-en un dans l’application Raccourcis, puis actualisez la liste."
+          }
+        }
+      }
+    },
+    "appleShortcutsListFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load Shortcuts. Open the Shortcuts app, check access and refresh the list."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось загрузить команды. Откройте приложение «Команды», проверьте доступ и обновите список."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzbefehle konnten nicht geladen werden. Öffnen Sie die App „Kurzbefehle“, prüfen Sie den Zugriff und aktualisieren Sie die Liste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de charger les raccourcis. Ouvrez l’application Raccourcis, vérifiez l’accès et actualisez la liste."
+          }
+        }
+      }
+    },
+    "applicationWindowsAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show current app windows"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать окна текущего приложения"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fenster der aktuellen App anzeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les fenêtres de l’app active"
+          }
+        }
+      }
+    },
     "audioActionFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -317,6 +578,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Son"
+          }
+        }
+      }
+    },
+    "automationActions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automation"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Автоматизация"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automation"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisation"
           }
         }
       }
@@ -462,6 +752,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Choisir une action"
+          }
+        }
+      }
+    },
+    "chooseApplication": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose Application…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать приложение…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programm auswählen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir une application…"
+          }
+        }
+      }
+    },
+    "chooseFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose File or Folder…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать файл или папку…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datei oder Ordner auswählen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un fichier ou un dossier…"
           }
         }
       }
@@ -665,6 +1013,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer « %@ » et toutes ses règles ? Les autres profils seront conservés."
+          }
+        }
+      }
+    },
+    "desktopActions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control and Spaces"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control и рабочие столы"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control und Spaces"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control et espaces"
           }
         }
       }
@@ -1361,6 +1738,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "Отключить правило"
+          }
+        }
+      }
+    },
+    "dockActionFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS did not accept the Dock action. No keyboard fallback was sent."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS не приняла действие Dock. Запасное сочетание клавиш не отправлялось."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS hat die Dock-Aktion nicht angenommen. Es wurde kein Ersatzkurzbefehl gesendet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS n’a pas accepté l’action Dock. Aucun raccourci de secours n’a été envoyé."
+          }
+        }
+      }
+    },
+    "dockActionHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimental direct macOS action: no keyboard shortcut is sent. Uses an undocumented Dock interface that may change after a system update. Request acceptance does not confirm the visual result."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспериментальное прямое действие macOS: сочетание клавиш не отправляется. Используется недокументированный интерфейс Dock, который может измениться после обновления системы. Принятый запрос не подтверждает результат на экране."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimentelle direkte macOS-Aktion: Es wird kein Tastaturkurzbefehl gesendet. Verwendet eine undokumentierte Dock-Schnittstelle, die sich nach Systemupdates ändern kann. Ein angenommener Aufruf bestätigt nicht das sichtbare Ergebnis."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Action macOS directe expérimentale : aucun raccourci clavier n’est envoyé. Utilise une interface Dock non documentée, susceptible de changer après une mise à jour. L’acceptation de la requête ne confirme pas le résultat visuel."
+          }
+        }
+      }
+    },
+    "dockActionUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The direct Dock interface is unavailable on this macOS version. This rule passes input through."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прямой интерфейс Dock недоступен в этой версии macOS. Ввод для этого правила пропускается."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die direkte Dock-Schnittstelle ist in dieser macOS-Version nicht verfügbar. Diese Regel lässt Eingaben unverändert passieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’interface Dock directe n’est pas disponible dans cette version de macOS. Cette règle laisse passer les entrées."
           }
         }
       }
@@ -2149,6 +2613,35 @@
         }
       }
     },
+    "missionControlAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control"
+          }
+        }
+      }
+    },
     "mouseButton": {
       "comment": "One-based button label: Quartz index + 1. Argument is the display number.",
       "extractionState": "manual",
@@ -2325,6 +2818,35 @@
         }
       }
     },
+    "nextSpaceAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next Space"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Следующий рабочий стол"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächster Space"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Espace suivant"
+          }
+        }
+      }
+    },
     "noBindings": {
       "extractionState": "manual",
       "localizations": {
@@ -2412,6 +2934,64 @@
         }
       }
     },
+    "openApplicationAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Application"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть приложение"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programm öffnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une application"
+          }
+        }
+      }
+    },
+    "openFileAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open File or Folder"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть файл или папку"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datei oder Ordner öffnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir un fichier ou un dossier"
+          }
+        }
+      }
+    },
     "openRebind": {
       "extractionState": "manual",
       "localizations": {
@@ -2466,6 +3046,93 @@
           "stringUnit": {
             "state": "translated",
             "value": "Открыть настройки"
+          }
+        }
+      }
+    },
+    "openTargetHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the selected application, or the address/file in its default app. Moved files and applications must be selected again. The mapped input is consumed even if opening fails."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открывает выбранное приложение либо адрес или файл в приложении по умолчанию. Перемещённые файлы и приложения нужно выбрать заново. Назначенный ввод поглощается и при ошибке открытия."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das ausgewählte Programm oder die Adresse/Datei im Standardprogramm. Verschobene Dateien und Programme erneut auswählen. Die zugewiesene Eingabe wird auch bei einem Fehler unterdrückt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre l’application choisie, ou l’adresse/le fichier dans l’application par défaut. Sélectionnez à nouveau les fichiers et applications déplacés. L’entrée associée est interceptée même si l’ouverture échoue."
+          }
+        }
+      }
+    },
+    "openURLAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Web Address"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть веб-адрес"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Webadresse öffnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une adresse web"
+          }
+        }
+      }
+    },
+    "openingTargetStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for the application or file to open…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ожидается открытие приложения или файла…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warten auf das Öffnen des Programms oder der Datei…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de l’ouverture de l’application ou du fichier…"
           }
         }
       }
@@ -2766,28 +3433,29 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aktionen: Tastenkombinationen, verfügbare Audiosteuerung, unterstützte Aktionen für das aktive Fenster oder Programm sowie das Öffnen ausgewählter Programme, Webadressen oder Dateien. Multitouch und Schreibtischwechsel sind geplant."
+            "value": "Aktionen: Tastenkombinationen, Mausklicks, verfügbare Audio- und Wiedergabesteuerung, Fenster- und Programmaktionen, Öffnen von Programmen, Webadressen und Dateien sowie Apple-Kurzbefehle. Direkte Mission-Control-Aktionen sind experimentell; Space-Wechsel verwenden Standard-Systemkurzbefehle. Multitouch ist geplant."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actions: keyboard shortcuts, available sound controls, supported active-window/app operations, and opening selected apps, web addresses or files. Multitouch and desktop navigation are planned."
+            "value": "Actions: keyboard shortcuts, mouse clicks, available sound and playback controls, supported window/app operations, opening apps/web addresses/files, and Apple Shortcuts. Direct Mission Control actions are experimental; Space navigation uses standard system shortcuts. Multitouch is planned."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Actions : raccourcis clavier, commandes audio disponibles, opérations prises en charge pour la fenêtre ou l’application active et ouverture des applications, adresses web ou fichiers choisis. Multitouch et navigation entre bureaux sont prévus."
+            "value": "Actions : raccourcis clavier, clics de souris, commandes audio et de lecture disponibles, opérations sur les fenêtres et applications, ouverture d’applications, d’adresses web et de fichiers, et raccourcis Apple. Les actions directes de Mission Control sont expérimentales ; le changement de bureau utilise les raccourcis système standard. Le multitouch est prévu."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Действия: сочетания клавиш, доступное управление звуком, поддерживаемые операции с активным окном или приложением, открытие выбранных приложений, веб-адресов и файлов. Мультитач и рабочие столы появятся позже."
+            "value": "Действия: сочетания клавиш, клики мыши, доступное управление звуком и воспроизведением, операции с окнами и приложениями, открытие приложений, веб-адресов и файлов, быстрые команды Apple. Прямые действия Mission Control экспериментальные; переходы между рабочими столами используют штатные сочетания системы. Мультитач появится позже."
           }
         }
-      }
+      },
+      "comment": "Currently implemented action categories."
     },
     "physicalKey": {
       "comment": "Fallback display name for an explicitly configured physical key code; argument is the numeric code.",
@@ -3105,6 +3773,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "При нажатии"
+          }
+        }
+      }
+    },
+    "previousSpaceAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Space"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предыдущий рабочий стол"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriger Space"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Espace précédent"
           }
         }
       }
@@ -3544,6 +4241,35 @@
         }
       }
     },
+    "refreshAppleShortcuts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh Shortcuts"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновить список команд"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzbefehle aktualisieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiser les raccourcis"
+          }
+        }
+      }
+    },
     "refreshPermissions": {
       "extractionState": "manual",
       "localizations": {
@@ -3656,6 +4382,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Включить правила"
+          }
+        }
+      }
+    },
+    "runAppleShortcutAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run Apple Shortcut"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запустить быструю команду Apple"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple-Kurzbefehl ausführen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécuter un raccourci Apple"
+          }
+        }
+      }
+    },
+    "runningAppleShortcutStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Running Apple Shortcut…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выполняется быстрая команда Apple…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple-Kurzbefehl wird ausgeführt…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exécution du raccourci Apple…"
           }
         }
       }
@@ -3925,6 +4709,35 @@
         }
       }
     },
+    "showDesktopAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show desktop"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать рабочий стол"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibtisch anzeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le bureau"
+          }
+        }
+      }
+    },
     "signingHint": {
       "extractionState": "manual",
       "localizations": {
@@ -3950,6 +4763,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "После пересборки локальной версии может потребоваться повторное разрешение. Перезапустите приложение, если macOS попросит."
+          }
+        }
+      }
+    },
+    "spaceActionFailed": {
+      "comment": "Native system Space shortcut dependency; settings are read, never changed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not prepare the Space shortcut. In System Settings → Keyboard → Keyboard Shortcuts → Mission Control, enable Control + Left/Right Arrow for moving between Spaces. Disabled or customized shortcuts are not sent."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось подготовить сочетание для рабочего стола. В «Системные настройки» → «Клавиатура» → «Сочетания клавиш» → Mission Control включите Control + стрелка влево/вправо для перехода между рабочими столами. Отключённые или изменённые сочетания не отправляются."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Space-Kurzbefehl konnte nicht vorbereitet werden. Aktivieren Sie Control + Pfeil links/rechts für den Space-Wechsel unter Systemeinstellungen → Tastatur → Tastaturkurzbefehle → Mission Control. Deaktivierte oder angepasste Kurzbefehle werden nicht gesendet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de préparer le raccourci de bureau. Dans Réglages Système → Clavier → Raccourcis clavier → Mission Control, activez Contrôle + flèche gauche/droite pour changer de bureau. Les raccourcis désactivés ou personnalisés ne sont pas envoyés."
+          }
+        }
+      }
+    },
+    "spaceActionHint": {
+      "comment": "Native system Space shortcut dependency; settings are read, never changed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uses the standard Control + Left/Right Arrow shortcut. macOS handles the transition, screen selection and first/last desktop, respecting Reduce Motion. Enable these shortcuts in System Settings → Keyboard → Keyboard Shortcuts → Mission Control. Custom Space shortcuts are not supported yet. System settings are not changed."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Использует штатное сочетание Control + стрелка влево/вправо. macOS управляет переходом, выбором экрана и границами рабочих столов с учётом уменьшения движения. Включите эти сочетания в «Системные настройки» → «Клавиатура» → «Сочетания клавиш» → Mission Control. Изменённые сочетания для рабочих столов пока не поддерживаются. Настройки системы не изменяются."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwendet Control + Pfeil links/rechts. macOS steuert Übergang, Bildschirmauswahl und den ersten/letzten Schreibtisch und berücksichtigt „Bewegung reduzieren“. Aktivieren Sie diese Kurzbefehle unter Systemeinstellungen → Tastatur → Tastaturkurzbefehle → Mission Control. Angepasste Space-Kurzbefehle werden noch nicht unterstützt. Systemeinstellungen werden nicht geändert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utilise le raccourci standard Contrôle + flèche gauche/droite. macOS gère la transition, le choix de l’écran et les limites des bureaux, en respectant « Réduire les animations ». Activez ces raccourcis dans Réglages Système → Clavier → Raccourcis clavier → Mission Control. Les raccourcis de bureau personnalisés ne sont pas encore pris en charge. Les réglages système ne sont pas modifiés."
+          }
+        }
+      }
+    },
+    "spaceActionUnavailable": {
+      "comment": "Native system Space shortcut dependency; settings are read, never changed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space navigation requires the enabled standard Control + Left/Right Arrow shortcuts in Mission Control settings."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для переходов нужны включённые штатные сочетания Control + стрелка влево/вправо в настройках Mission Control."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Space-Wechsel erfordert die aktivierten Standardkurzbefehle Control + Pfeil links/rechts in den Mission-Control-Einstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le changement de bureau nécessite les raccourcis standard Contrôle + flèche gauche/droite activés dans les réglages de Mission Control."
           }
         }
       }
@@ -4037,6 +4940,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Не удалось создать перехватчик. Приостановите правила, проверьте разрешения и включите их снова."
+          }
+        }
+      }
+    },
+    "targetNotSelected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No target selected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цель не выбрана"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Ziel ausgewählt"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune cible sélectionnée"
+          }
+        }
+      }
+    },
+    "targetSelectionFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not use this selection. Choose an application other than Rebind, or a local file or folder for the selected action."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось использовать выбранную цель. Выберите приложение кроме Rebind либо локальный файл или папку для выбранного действия."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Auswahl konnte nicht verwendet werden. Wählen Sie ein anderes Programm als Rebind oder eine lokale Datei bzw. einen Ordner für diese Aktion."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette sélection ne peut pas être utilisée. Choisissez une application autre que Rebind, ou un fichier ou dossier local pour cette action."
           }
         }
       }
@@ -4215,6 +5176,64 @@
         }
       }
     },
+    "webAddressInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a complete HTTP or HTTPS address without a username or password."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введите полный адрес HTTP или HTTPS без имени пользователя и пароля."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geben Sie eine vollständige HTTP- oder HTTPS-Adresse ohne Benutzernamen oder Passwort ein."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisissez une adresse HTTP ou HTTPS complète, sans nom d’utilisateur ni mot de passe."
+          }
+        }
+      }
+    },
+    "webAddressTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web Address"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Веб-адрес"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Webadresse"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse web"
+          }
+        }
+      }
+    },
     "wheelMappingHint": {
       "comment": "Limits apply to discrete line-based scroll events, globally across wheel rules. No physical device attribution is claimed.",
       "extractionState": "manual",
@@ -4334,354 +5353,6 @@
         }
       }
     },
-    "openApplicationAction": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Application"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открыть приложение"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Programm öffnen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir une application"
-          }
-        }
-      }
-    },
-    "activateApplicationAction": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activate Running Application"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Активировать запущенное приложение"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laufendes Programm aktivieren"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activer une application ouverte"
-          }
-        }
-      }
-    },
-    "openURLAction": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Web Address"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открыть веб-адрес"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Webadresse öffnen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir une adresse web"
-          }
-        }
-      }
-    },
-    "openFileAction": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open File or Folder"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открыть файл или папку"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datei oder Ordner öffnen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir un fichier ou un dossier"
-          }
-        }
-      }
-    },
-    "chooseApplication": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose Application…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Выбрать приложение…"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Programm auswählen…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choisir une application…"
-          }
-        }
-      }
-    },
-    "chooseFile": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose File or Folder…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Выбрать файл или папку…"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datei oder Ordner auswählen…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choisir un fichier ou un dossier…"
-          }
-        }
-      }
-    },
-    "webAddressTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Web Address"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Веб-адрес"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Webadresse"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adresse web"
-          }
-        }
-      }
-    },
-    "targetNotSelected": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No target selected"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цель не выбрана"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kein Ziel ausgewählt"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune cible sélectionnée"
-          }
-        }
-      }
-    },
-    "webAddressInvalid": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter a complete HTTP or HTTPS address without a username or password."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Введите полный адрес HTTP или HTTPS без имени пользователя и пароля."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geben Sie eine vollständige HTTP- oder HTTPS-Adresse ohne Benutzernamen oder Passwort ein."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saisissez une adresse HTTP ou HTTPS complète, sans nom d’utilisateur ni mot de passe."
-          }
-        }
-      }
-    },
-    "targetSelectionFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Could not use this selection. Choose an application other than Rebind, or a local file or folder for the selected action."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось использовать выбранную цель. Выберите приложение кроме Rebind либо локальный файл или папку для выбранного действия."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diese Auswahl konnte nicht verwendet werden. Wählen Sie ein anderes Programm als Rebind oder eine lokale Datei bzw. einen Ordner für diese Aktion."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cette sélection ne peut pas être utilisée. Choisissez une application autre que Rebind, ou un fichier ou dossier local pour cette action."
-          }
-        }
-      }
-    },
-    "activateApplicationHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activates the selected copy only if it is already running. Does not launch it. If the app moves, select it again."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Переключает на выбранную копию, только если она уже запущена. Не запускает её. После перемещения приложения выберите его заново."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktiviert die ausgewählte Kopie nur, wenn sie bereits läuft. Startet sie nicht. Nach dem Verschieben erneut auswählen."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Active la copie choisie uniquement si elle est déjà ouverte, sans la lancer. Sélectionnez-la à nouveau si elle est déplacée."
-          }
-        }
-      }
-    },
-    "openTargetHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the selected application, or the address/file in its default app. Moved files and applications must be selected again. The mapped input is consumed even if opening fails."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открывает выбранное приложение либо адрес или файл в приложении по умолчанию. Перемещённые файлы и приложения нужно выбрать заново. Назначенный ввод поглощается и при ошибке открытия."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet das ausgewählte Programm oder die Adresse/Datei im Standardprogramm. Verschobene Dateien und Programme erneut auswählen. Die zugewiesene Eingabe wird auch bei einem Fehler unterdrückt."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvre l’application choisie, ou l’adresse/le fichier dans l’application par défaut. Sélectionnez à nouveau les fichiers et applications déplacés. L’entrée associée est interceptée même si l’ouverture échoue."
-          }
-        }
-      }
-    },
     "workspaceActionFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -4711,31 +5382,536 @@
         }
       }
     },
-    "openingTargetStatus": {
+    "mouseActions": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Waiting for the application or file to open…"
+            "value": "Mouse"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ожидается открытие приложения или файла…"
+            "value": "Мышь"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Warten auf das Öffnen des Programms oder der Datei…"
+            "value": "Maus"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "En attente de l’ouverture de l’application ou du fichier…"
+            "value": "Souris"
+          }
+        }
+      }
+    },
+    "leftClickAction": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left click"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Левый клик"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linksklick"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clic gauche"
+          }
+        }
+      }
+    },
+    "rightClickAction": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right click"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Правый клик"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechtsklick"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clic droit"
+          }
+        }
+      }
+    },
+    "middleClickAction": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Middle click"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Средний клик"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mittelklick"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clic du milieu"
+          }
+        }
+      }
+    },
+    "doubleLeftClickAction": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double left click"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Двойной левый клик"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linker Doppelklick"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double clic gauche"
+          }
+        }
+      }
+    },
+    "mouseActionHint": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clicks at the current pointer position without keyboard modifiers. Double click sends two left clicks. If the output button is already held, the action reports an error instead of releasing it. Dragging and held-button output are not supported."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Клик в текущей позиции указателя без модификаторов клавиатуры. Двойной клик отправляет два левых клика. Если выходная кнопка уже удерживается, действие сообщает об ошибке, чтобы не отпустить её. Перетаскивание и удержание выходной кнопки не поддерживаются."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klickt an der aktuellen Zeigerposition ohne Tastaturmodifikatoren. Ein Doppelklick sendet zwei Linksklicks. Ist die Ausgabetaste bereits gedrückt, wird ein Fehler gemeldet, statt sie loszulassen. Ziehen und das Halten einer Ausgabetaste werden nicht unterstützt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique à la position actuelle du pointeur sans modificateur clavier. Le double clic envoie deux clics gauches. Si le bouton de sortie est déjà maintenu, une erreur est signalée pour éviter de le relâcher. Le glisser-déposer et le maintien d’un bouton de sortie ne sont pas pris en charge."
+          }
+        }
+      }
+    },
+    "mouseActionFailed": {
+      "comment": "Mouse output action/category or execution contract; not a physical trigger.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not prepare the mouse click. Make sure the output mouse button is released and try again. The original input was not replayed."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось подготовить клик мыши. Отпустите выходную кнопку мыши и попробуйте снова. Исходный ввод не повторяется."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Mausklick konnte nicht vorbereitet werden. Lassen Sie die Ausgabetaste der Maus los und versuchen Sie es erneut. Die ursprüngliche Eingabe wurde nicht wiederholt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de préparer le clic de souris. Relâchez le bouton de sortie de la souris et réessayez. L’entrée d’origine n’a pas été répétée."
+          }
+        }
+      }
+    },
+    "playPauseAction": {
+      "comment": "Media playback action or dispatch error.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabe / Pause"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play / Pause"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture / Pause"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Воспроизведение / Пауза"
+          }
+        }
+      }
+    },
+    "nextTrackAction": {
+      "comment": "Media playback action or dispatch error.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächster Titel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next Track"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piste suivante"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Следующий трек"
+          }
+        }
+      }
+    },
+    "previousTrackAction": {
+      "comment": "Media playback action or dispatch error.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriger Titel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Track"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piste précédente"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предыдущий трек"
+          }
+        }
+      }
+    },
+    "mediaActionHint": {
+      "comment": "Native system media-key output; recipient selected by macOS.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sendet eine System-Medientaste ohne Modifikatortasten. macOS wählt den Player und dessen Reaktion. Ein geeigneter Player und ein unterstützter Befehl sind erforderlich; Rebind kann die Wiedergabeänderung nicht bestätigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sends a system media key without modifiers. macOS selects the player and its response. A supported command and an eligible player are required; playback cannot be confirmed by Rebind."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoie une touche multimédia système sans modificateurs. macOS choisit le lecteur et sa réponse. Un lecteur disponible et une commande prise en charge sont nécessaires ; Rebind ne peut pas confirmer le changement de lecture."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправляет системную медиаклавишу без модификаторов. Проигрыватель и реакцию выбирает macOS. Нужны доступный проигрыватель и поддерживаемая команда; Rebind не может подтвердить изменение воспроизведения."
+          }
+        }
+      }
+    },
+    "mediaActionFailed": {
+      "comment": "Media playback action or dispatch error.",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Medientaste konnte nicht gesendet werden. Prüfe den Bedienungshilfenzugriff und versuche es erneut. Die ursprüngliche Eingabe wurde nicht erneut gesendet."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The media key could not be sent. Check Accessibility access and try again. The original input was not replayed."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’envoyer la touche multimédia. Vérifiez l’accès Accessibilité et réessayez. L’entrée d’origine n’a pas été renvoyée."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось отправить медиаклавишу. Проверьте «Универсальный доступ» и повторите попытку. Исходный ввод не воспроизведён."
+          }
+        }
+      }
+    },
+    "leftHalfAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left Half"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Левая половина"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linke Hälfte"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moitié gauche"
+          }
+        }
+      }
+    },
+    "rightHalfAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right Half"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Правая половина"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechte Hälfte"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moitié droite"
+          }
+        }
+      }
+    },
+    "fillWindowAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill Available Screen"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заполнить доступную область экрана"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verfügbaren Bildschirmbereich ausfüllen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplir la zone disponible de l’écran"
+          }
+        }
+      }
+    },
+    "centerWindowAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Center Window"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Центрировать окно"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fenster zentrieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centrer la fenêtre"
+          }
+        }
+      }
+    },
+    "windowLayoutHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moves the focused standard window on its current display, excluding the Dock and menu bar. Center preserves size. Exit full screen first. Apps may limit window size; these placements do not create a macOS tile group."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Размещает активное обычное окно на его экране, учитывая Dock и строку меню. Центрирование сохраняет размер. Сначала выйдите из полноэкранного режима. Приложения могут ограничивать размер; эти действия не создают группу плиток macOS."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platziert das aktive normale Fenster auf seinem Bildschirm ohne Dock und Menüleiste. Zentrieren behält die Größe bei. Zuerst den Vollbildmodus verlassen. Apps können die Größe begrenzen; es wird keine macOS-Kachelgruppe erstellt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place la fenêtre standard active sur son écran, hors Dock et barre des menus. Le centrage conserve sa taille. Quittez d’abord le plein écran. Les apps peuvent limiter la taille ; ces placements ne créent pas de groupe de mosaïques macOS."
+          }
+        }
+      }
+    },
+    "windowLayoutFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The window could not be placed as requested. Use a standard window outside full screen. The app may limit its size or position. A partially accepted change may remain."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось разместить окно как запрошено. Используйте обычное окно вне полноэкранного режима. Приложение может ограничивать размер или положение. Частично выполненное изменение может сохраниться."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Fenster konnte nicht wie angefordert platziert werden. Verwenden Sie ein normales Fenster außerhalb des Vollbildmodus. Die App kann Größe oder Position begrenzen. Eine teilweise ausgeführte Änderung kann bestehen bleiben."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La fenêtre n’a pas pu être placée comme demandé. Utilisez une fenêtre standard hors plein écran. L’app peut limiter sa taille ou sa position. Une modification partielle peut subsister."
           }
         }
       }

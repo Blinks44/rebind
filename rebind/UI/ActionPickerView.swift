@@ -54,7 +54,7 @@ struct ActionPickerView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(kind.title)
                         if !available {
-                            Text(.audioActionUnavailable).font(.caption).foregroundStyle(.secondary)
+                            Text(kind.desktopAction.map { $0.isSpaceNavigation ? LocalizedStringResource.spaceActionUnavailable : .dockActionUnavailable } ?? .audioActionUnavailable).font(.caption).foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
