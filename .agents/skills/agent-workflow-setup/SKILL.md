@@ -3,7 +3,7 @@ name: agent-workflow-setup
 description: Set up, migrate, or audit durable agent workflows for development projects of any language, platform or discipline. Adapt project instructions, public documentation, current state, handoffs, relevant skills and Git ignore rules to the actual project. Use for configuring the workflow itself, rather than ordinary implementation under an existing workflow.
 license: MIT
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # Agent Workflow Setup
@@ -38,7 +38,7 @@ When Git is used or requested, read [repository hygiene](references/repository-h
 
 ## Select skills and tools deliberately
 
-Read [skill selection](references/skills.md) when inventorying/installing/updating project skills. Check existing skills first, match their actual contents to the detected stack and gaps, then review sources, licenses and executable behavior. Install a useful subset into the chosen project-local location when authorized; pin provenance and preserve licenses. Avoid duplicate skills, entire plugin bundles and blind catalog installs.
+Read [skill selection](references/skills.md) during setup and relevant audits. Inventory existing skills and research candidates for the detected stack, deliverables and near-term work, even when this session changes only documentation. Review actual contents, sources, licenses and executable behavior; record install/retain/skip decisions or an explicit discovery/access gap. Install a useful subset into the authorized project-local location, pin provenance and preserve licenses. Zero additions is valid after this review, not a substitute for it. Avoid duplicate skills, entire plugin bundles and blind catalog installs.
 
 Tool integrations and skills are separate: a design skill does not grant Sketch/Figma access, and an installed skill is not necessarily loaded by every agent client. Verify each client's discovery convention and document any thin adapter/explicit entry prompt. Do not change global settings or credentials as a side effect of project setup.
 
@@ -60,7 +60,7 @@ If the first slice needs unavailable hardware/access or another role's unfinishe
 
 ## Validate and deliver
 
-Use [validation](references/validation.md) to review a fresh-chat continuation, interrupted migration, design handoff and unavailable-tool scenario. Review affected links and facts, use the project's existing checks, and run `git diff --check` when Git is available. Fix actionable failures, inspect final scope and record checks actually performed. Do not add a runtime, custom validator, CI job or test framework solely for workflow documentation.
+Use [validation](references/validation.md) to review a fresh-chat continuation, interrupted migration, design handoff and unavailable-tool scenario. Review affected links and facts, use the project's existing checks, and run `git diff --check` when Git is available. Fix actionable failures, reconcile completed gates in their current owning records and record checks actually performed on the installed outcome. A staged transfer remains pending until the applying agent completes those checks. Do not add a runtime, custom validator, CI job or test framework solely for workflow documentation.
 
 Provide concrete changed files, adopted document roles, installed/retained/skipped skills with reasons, ignore-rule decisions and checks, remaining access/verification limits, and short prompts for the next development/design chat. Complete authorized setup; do not stop with a file list or proposal. Leave no generated placeholder contracts presented as complete.
 

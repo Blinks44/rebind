@@ -4,11 +4,11 @@
 - Stage: done (documentation/skill scope; product acceptance remains open)
 - Owner: Unassigned; completed documentation ownership released
 - Requirements: Domain-adaptive development/design workflow, role-aware short requests/named handoffs and project-specific Git hygiene; English, commit-ready records; instruction-only skill
-- Baseline: initial migration `6c1a5be`; current continuation review `f549764` plus uncommitted workflow/skill/docs changes. This task does not change app implementation.
+- Baseline: initial migration `6c1a5be`; continuation review `f549764`; portable adoption feedback reviewed at `365db64` plus uncommitted skill/docs changes. This task does not change app implementation.
 
 ## Outcome
 
-Created [agent-workflow-setup 1.2.0](../../.agents/skills/agent-workflow-setup/README.md), a self-contained MIT skill with domain-adaptive project adoption, short role-aware requests, document contracts, selective skill review/install, named contract/design handoffs, project-specific repository hygiene and review scenarios. Existing 11 third-party skill records and licenses are retained.
+Created [agent-workflow-setup 1.2.1](../../.agents/skills/agent-workflow-setup/README.md), a self-contained MIT skill with domain-adaptive project adoption, short role-aware requests, document contracts, selective skill review/install, named contract/design handoffs, project-specific repository hygiene and review scenarios. Existing 11 third-party skill records and licenses are retained.
 
 The workflow now covers selecting the next actionable unfinished slice, interruption recovery, advisory ownership, separately versioned code/design and verification of the final artifact. Shared records use English technical summaries. Reported results retain scope and evidence limits without quoting replies.
 
@@ -21,11 +21,11 @@ The workflow now covers selecting the next actionable unfinished slice, interrup
 - [x] Affected documents/links and final diff reviewed; product gates unchanged.
 - [x] Domain examples are non-exhaustive; unfamiliar projects derive contracts/checks from real artifacts/tools without mandatory app/UI scaffolding.
 - [x] Git ignore adaptation is part of setup, with relevant commented sections, excluded/kept path checks and no automatic untracking.
-- [x] Short role-aware continuation and named feature/transfer rules resolve from durable records without mandatory IDs; reporting identifies readiness/open work/next role. Author-reviewed scenarios; independent live execution remains untested.
+- [x] Short role-aware continuation and named feature/transfer rules resolve from durable records without mandatory IDs; reporting identifies readiness/open work/next role. Independent read-only code/design context recovery tested on a web project; full feature/design execution remains untested.
 
 ## Verification and limits
 
-Documentation/source inspection, affected local links/anchors, skill metadata/resource/version consistency and `git diff --check`; no app build, runtime/hardware test or live Sketch edit in this task. The skill's [validation guide](../../.agents/skills/agent-workflow-setup/references/validation.md) covers adoption and role-aware continuation cases; version-specific checks are below. These are author-performed reviews, not independent end-to-end adoption in other projects.
+Documentation/source inspection, affected local links/anchors, skill metadata/resource/version consistency and `git diff --check`; no Rebind app build, runtime/hardware test or live Sketch edit in this task. The skill's [validation guide](../../.agents/skills/agent-workflow-setup/references/validation.md) covers adoption and role-aware continuation cases; version-specific checks are below. Earlier reviews were author-performed. Subsequent web adoption and independent read-only continuation checks are scoped below; they do not establish a full feature/design delivery cycle.
 
 The 1.0.2 review checked 60 Markdown files and 258 local links/anchors without missing targets/anchors. Shared Markdown scan found no Cyrillic text, personal workstation paths or removed checker references. The manifest preserves all 11 third-party records; local raw backups/access hints are ignored and not tracked. The 1.1.0 checks below cover the added guidance and current ignore policy.
 
@@ -71,6 +71,23 @@ Author walkthrough against the current project records:
 Final checks: Skill Creator's built-in validator passed; metadata/README/manifest version 1.2.0 and nine instruction/metadata/license files are consistent. All 11 third-party skill records match HEAD. Local document check passed 62 Markdown files / 280 links and anchors. STATE stays below 8 KiB with dated role recommendations; outdated ID-dependent prompts and global input-first continuation text were removed from current entry points. `git diff --check` passes. Concurrent input-task/code changes were preserved. These checks and the 23-scenario author review do not claim an independently executed live design-to-code cycle or automatic shared chat memory.
 
 Semantic request review: the instruction-only skill contains no executable request parser or alias table. Project/skill rules now explicitly interpret intended action/outcome and established context in the user's language; examples are illustrative. Tool/language qualifiers constrain sources/modules and do not independently select a role or authorize migration/install. Reviewed equivalent wording, design inspection versus edits, and language-qualified implementation as an additional scenario. Exact user phrases were not copied into routing rules. Final checks passed the built-in skill validator, 62 Markdown files / 284 local links and anchors, nine skill files and a 24-scenario review guide; the shared instruction scan found no Cyrillic text or personal workstation paths. The review remains instruction/artifact inspection, not a live independent-agent execution guarantee.
+
+## Portable adoption feedback — 2026-10-10
+
+An independent agent used skill 1.2.0 on a public company-news frontend with TanStack Start, React, TypeScript, Tailwind, Query and Nitro; Strapi belongs to a separate unavailable repository. The initial setup connected project-specific instructions, public README, state, combined product requirements/plan, design/API contracts and tasks. The combined document roles were appropriate for the small scaffold; missing product details remained unknown rather than fabricated.
+
+First-pass findings and evaluator repairs are distinct:
+
+- The author deferred additional skill selection until feature implementation without actual candidate research. This left the setup's project-skill assessment incomplete, despite useful context documents. Version 1.2.1 requires documented discovery for upcoming work even in documentation-only setup, with reviewed choices or a visible pending gap; it imposes no installation quota.
+- Review corrected a draft README claim that the lockfile was committed while the repository had no commits. Final validation now explicitly compares version-control and installed/prepared claims with observed artifacts.
+- The applying reviewer closed the setup task/state but missed its remaining installation gate in the roadmap. Version 1.2.1 requires reconciliation of affected current owning records after a gate closes, with staged-delivery responsibility explicit. This was a reviewer omission, not a failed role-selection check.
+- Two fresh agents without prior history independently selected code runtime-baseline work and design reader-proposal work from disk. Both matched the source/configuration digest, preserved unknown design/API decisions and distinguished isolated build checks from unrun runtime/CMS checks. Their read-only scope did not exercise automatic post-feature persistence, client auto-discovery or a full design-to-code cycle.
+
+The isolated scaffold build and compiler checks passed, with bundler warnings retained in the receiving project's evidence. No Rebind source, existing third-party skill or live Sketch artwork was changed. The adoption prompted a narrow four-file instruction update, two regression scenarios and version/provenance updates; no helper runtime or scripts were added.
+
+Independent regression audit: a fresh agent used 1.2.1 on an isolated dependency-free copy, retained the combined document mapping, researched/pinned candidates, installed a licensed instruction-only framework subset and repaired the stale roadmap/manifest without guidance about the intended findings. Its checks covered 18 Markdown files / 46 local links, 16 excluded / 19 kept Git samples, whitespace and preservation of its index plus 35 unrelated inputs. This was actual setup/audit execution; feature/design continuation in that run was a written review. A later package-resource inventory clarification was author-reviewed.
+
+Receiving-project follow-up retained six reviewed package-supplied resources and installed three instruction-only skills for missing React routing/Query composition and web interface review, with pinned sources, full MIT notices and compatibility overrides. Final client-format validation rejected the official TanStack snapshots' top-level `requires`/`sources` extensions; they were preserved as string metadata with attribution, then passed validation. This was a local adaptation under the existing review/validation contract, not a reason to impose those skills on other stacks. Installed checks passed four project skill validators, six bundled path/version/digest checks, 23 Markdown files / 66 local links and anchors, whitespace, unchanged Git index and 27 unrelated pre-setup inputs. Existing setup instructions were intentionally updated; app source/dependencies/editor inputs were preserved. Runtime/client auto-discovery/full feature-cycle limits remain open.
 
 ## Next handoff
 

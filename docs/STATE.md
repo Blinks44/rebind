@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-10**. Baseline: `f549764` (`feat: phase 5`) plus uncommitted workflow updates and concurrent product work; inspect Git status/HEAD and actual artifacts before editing. Latest design review saved and checked Sketch onboarding layouts; it ran no app/hardware checks. Prior software/icon evidence retains its original scope. Tap/Dock hardware acceptance remains open.
+Updated **2026-10-10**. Baseline: `365db64` (`feat: ai workflow`) plus uncommitted screen-icon review; inspect Git status/HEAD and actual artifacts before editing. Latest design reviews saved and checked Sketch onboarding layouts and UI icon scaling; it ran no app/hardware checks. Prior software/icon evidence retains its original scope. Tap/Dock hardware acceptance remains open.
 
 ## Product and baseline
 
@@ -22,13 +22,13 @@ Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining 
 
 ## Design source and recent changes
 
-- **2026-10-10:** [agent-workflow-setup](../.agents/skills/agent-workflow-setup/README.md) 1.2.0 adds role-aware short requests and named handoffs: users can continue development/design or name a feature without task IDs. Records/reporting carry readiness and next role. Domain adaptation, Git hygiene, English technical summaries and prior 11 skills retained. Instruction-only MIT skill. [DOC-002](tasks/DOC-002-workflow-review-skill.md).
+- **2026-10-10:** [agent-workflow-setup](../.agents/skills/agent-workflow-setup/README.md) 1.2.1 incorporates web adoption feedback: candidate research for upcoming work, reviewed package-resource routing and installed-gate reconciliation. Independent setup/audit and read-only role recovery tested; full feature/design cycles remain open. Short requests, Git hygiene and prior 11 skills retained. [DOC-002](tasks/DOC-002-workflow-review-skill.md).
 
-- **2026-10-10:** Repaired clipping and resizing in six first-launch/permission Sketch frames: text origins, square icon, component anchors, action Stacks and bottom footer. All states checked at 520 × 560, 560 × 580 and 720 × 680; resize roundtrips pass. Menu Bar template remains integrated; native onboarding and its four-language copy are not integrated. [Evidence](verification/menu-bar-onboarding.md#onboarding-layout-repair--2026-10-10).
+- **2026-10-10:** Repaired clipping and resizing in six first-launch/permission Sketch frames: text origins, square icon, component anchors, action Stacks and bottom footer. All states checked at 520 × 560, 560 × 580 and 720 × 680; resize roundtrips pass. UI icon borders now scale at 32/48/80 pt; Brand sources preserved. [Icon review](verification/menu-bar-onboarding.md#screen-icon-consistency-repair--2026-10-10). Menu Bar template remains integrated; native onboarding and its four-language copy are not integrated. [Evidence](verification/menu-bar-onboarding.md#onboarding-layout-repair--2026-10-10).
 - **2026-10-10:** a buffered pre-mouse-up release regression failed in both cases, then passed after neutral recovery repair. **490 tests / 64 suites / 0 failures**, Debug test build/Release/signatures pass; thresholds unchanged. [Evidence](verification/phase-5-four-finger-tap.md#buffered-release-after-mouse-up--2026-10-10). Prior [library audit](research/trackpad-tap-reliability.md) retained; no dependency added. Sustained hardware failure still needs aggregate diagnostics.
 - **2026-10-10:** obsolete icon PNGs removed; fresh Xcode/repository resources match and Finder shows the new artwork. Scoped bundle registration refresh and one Dock restart completed after a stale-icon report; app relaunch result remains open. [Evidence](verification/app-icon-composer.md), [brand sources](../assets/brand/README.md).
 
-Live source: **Rebind.sketch**, resolved through Sketch MCP; last document ID `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD` on 2026-10-10. IDs can change: resolve again before work. [DESIGN](DESIGN.md) indexes frames/styles and distinguishes saved design from implemented UI. Mock rows include unsupported examples; do not enable those capabilities from artwork.
+Live source: **Rebind.sketch**, resolved through Sketch MCP; last document ID `F370A2F1-FBA6-4BF9-A056-A1500D5C8688` on 2026-10-10. IDs can change: resolve again before work. [DESIGN](DESIGN.md) indexes frames/styles and distinguishes saved design from implemented UI. Mock rows include unsupported examples; do not enable those capabilities from artwork.
 
 ## Open work / next steps
 
@@ -42,7 +42,7 @@ Resolve short requests by role and outcome; IDs below are agent navigation. Resu
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
 | [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | awaiting_verification | Unassigned; `/root` buffered-release fix saved | Retest one fresh diagnostic copy after clicks; if it stops, continue taps inside the 60-second window and collect the aggregate report. |
-| [UI-001](tasks/UI-001-permissions-onboarding.md) | in_design | Unassigned; scoped layout review completed/released | Six initial frames repaired and resize-checked; next compose main-window missing-permission and Settings → Permissions, then implement a bounded onboarding slice. |
+| [UI-001](tasks/UI-001-permissions-onboarding.md) | in_design | Unassigned; layout/icon reviews completed/released | Six initial frames repaired and resize-checked; next compose main-window missing-permission and Settings → Permissions, then implement a bounded onboarding slice. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | awaiting_verification | Unassigned; scoped refresh saved | Check Dock/live Menu Bar from the explicitly identified fresh bundle; actual tint and macOS 26 remain separate. |
 
 Additional open gates: Magic Mouse acquisition/recognition; remaining compact trackpad scope; physical keyboard/wheel/double-press/safety checks; full localization/accessibility; stable signing/TCC persistence, macOS 26/Intel, performance and distribution. See PLAN rather than implementing all of them from this summary.

@@ -112,10 +112,10 @@
       "name": "agent-workflow-setup",
       "origin": "Locally authored reusable workflow skill",
       "source_path": ".agents/skills/agent-workflow-setup",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "reviewed_on": "2026-10-10",
       "license": "MIT",
-      "normalization": "Standalone English instructions/references and metadata only; domain-adaptive workflows, role-aware short requests and named handoffs, project-specific Git hygiene and commit-ready technical summaries. No scripts/runtime dependencies or redistributed external skills. MIT covers this folder only."
+      "normalization": "Instruction-only workflow setup; candidate discovery covers upcoming project work even in documentation-only sessions; final installed-state reconciliation and first-pass versus evaluator-repair evidence are explicit. No scripts/runtime or redistributed external skills in this setup skill."
     }
   ],
   "design_source": "Current Rebind designs in Sketch via MCP; see AGENTS.md for document/frame inspection workflow",

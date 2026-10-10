@@ -80,3 +80,21 @@ The actual Sketch canvas was inspected in addition to MCP frame captures, becaus
 Saved revision: document `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`, SHA-256 `1fd30ff5ef06830fdb4ce6b8927133943e267b17a671218743a39f65b9915f4d`. ZIP CRC passes; **1,143 local layers**, six action-row containers added, no removed original nodes. Saved-node comparison against the pre-review backup found no content/style/geometry changes outside the ten owned frame/source subtrees; two unrelated layer-list disclosure flags changed, which are UI state. Shared text/layer styles are unchanged. All temporary probes were removed. Six refreshed exports are 560 × 580; two compact exports are 520 × 560. Post-save capture confirms the repaired Light frame. Layout work used the [public Sketch sizing/pinning/Stack API](https://developer.sketch.com/reference/api/).
 
 Affected document file links resolve and `git diff --check` passes. No native app build, launch, permission grant, remapping or behavioral test was performed for this design-only repair. Native sizing, RU/FR layout, keyboard/VoiceOver and accessibility-settings checks remain open. Next design slice remains the missing-permission main window and Settings → Permissions; the scoped layout repair is complete, the whole first-run feature is not.
+
+## Screen-icon consistency repair — 2026-10-10
+
+Scope: [UI-001](../tasks/UI-001-permissions-onboarding.md), three sidebar icon instances, Light/Dark Setup introduction icons and About. Git baseline `365db64`; Sketch 2026.3.1 / API 2.0. Live Brand inspection confirmed the same linked geometry, with Small deliberately opening the counters. The defect was fixed-width appearance: original rim 2.9711538 pt and white-face border 2 pt remained unchanged in 32/48/80 pt instances, making their silhouettes look heavier than Brand. Earlier layout checks covered the square icon frame, not its stroke scaling.
+
+Added six shared layer styles derived from the existing rim/white-face styles and scaled borders by target size / 1024. Two `layerStyle` overrides per icon preserve the original Symbol connection, paths, fills and material colors; no detach, raster replacement or Brand master modification.
+
+| Instance size | White-face border | Rim border |
+| --- | --- | --- |
+| Sidebar 32 pt | 0.0625 pt | 0.09284855625 pt |
+| Setup 48 pt | 0.09375 pt | 0.139272834375 pt |
+| About 80 pt | 0.15625 pt | 0.232121390625 pt |
+
+Observed MCP checks: all six permission frames, main Light/Dark/Compact and About reviewed after edits; the complete Dark main frame recaptured after its first capture showed stale rendering. Expanded icon trees confirm final border values; direct 32 pt captures agree in both appearances. Setup retains 48 × 48 proportions and the prior repaired text/footer layout. Evidence: [sidebar Light](screen-icons/sidebar-light.png), [sidebar Dark](screen-icons/sidebar-dark.png), [About](screen-icons/about.png); six onboarding exports refreshed at 560 × 580. Compact 520 × 560 exports above remain evidence of the earlier layout revision, not this icon-style revision.
+
+Saved document `F370A2F1-FBA6-4BF9-A056-A1500D5C8688`, SHA-256 `2fecf2bbaa7a6673ea789826ef59bcd6d4c3162cfed77e72c3b756bc6aff22f0`. ZIP CRC passes; all 1,143 original local nodes retained, no additions/removals, only the six owned icon nodes changed (`overrideValues` only). Original 36 shared layer styles are unchanged; six size-specific styles added. Original Brand artwork/review board, native `.icon` package and Menu Bar template remain unchanged. No geometry, text, engine or localization changes; no app build/runtime/permission tests needed or claimed for this Sketch-only correction. `git diff --check` and affected local file links pass.
+
+Scoped icon/layout reviews are complete. Whole first-run flow remains `in_design`: next compose missing-permission main-window and Settings → Permissions states, then hand off the bounded native slice.

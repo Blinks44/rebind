@@ -4,7 +4,11 @@
 
 Inspect skills already discoverable in the environment and project, including names/descriptions, folder/source, versions, licenses and actual relevant instructions. Retain compatible reviewed skills. Avoid copying a global skill into the repo merely to increase the count; project-local portability may justify it if licensing permits and that is the user's intent.
 
+Include instructions shipped with the detected dependencies/toolchain when available. Reviewed version-locked resources can be routed from the entry point instead of vendored again; document their installation prerequisite and verify referenced paths. A scaffold flag or package containing skills does not establish agent discovery. Fill actual missing resources selectively, and record compatibility overrides when upstream guidance conflicts with the observed project.
+
 Derive candidates from the detected stack and real gaps, not the project name. Read the candidate contents, relevant references and scripts before deciding to install it. Do not execute scripts merely to inspect them.
+
+During setup, assess skills for the project's upcoming development/design work as well as this session's edits. A documentation-only setup session still needs candidate discovery for the detected project. Start with maintained primary sources relevant to its real tools and deliverables; do not invent a source catalog for unfamiliar domains. Reuse an already documented candidate review when its inspected revision and project fit remain current. If research is unavailable, record that gap as pending rather than claiming no useful skills exist.
 
 The following examples are non-exhaustive. For unfamiliar domains, derive needs from actual languages, artifact formats, tools and verification gates; research relevant sources or retain general guidance when no suitable reviewed skill exists. Missing ecosystem-specific skills do not prevent useful workflow setup.
 
@@ -22,6 +26,8 @@ For Swift/Apple discovery, the [Swift Agent Skills directory](https://github.com
 ## Review and select
 
 Check origin/revision, license and redistribution conditions, maintained status, supported framework/platform/toolchain, instruction scope, scripts/tool/network requirements and contradictory rules. Prefer a small complementary set. A security or performance audit skill is useful when those tasks exist, not automatically a prerequisite for every change.
+
+Leave a compact selection record identifying candidates actually inspected, source/revision/license, decision and project-specific reason. A manifest section or setup-task table can own it; no separate backlog is required. Distinguish a skipped reviewed candidate from an unreviewed suggestion or unavailable source. Valid outcomes include retaining adequate existing guidance, installing a complementary skill, skipping a duplicate/conflicting/mismatched candidate, or recording an access/license gap. No minimum installation count applies, but omitting additions needs an evidence-based reason; absence of feature edits today is insufficient. For a separate backend repository, review frontend integration needs here without automatically installing backend implementation skills.
 
 Resolve platform conflicts explicitly in project instructions (for example, macOS availability/callback rules over generic iOS/async advice). Do not import unrelated delegation mandates, deployment policies, navigation scaffolds or typography preferences. If adapting redistributable third-party material, preserve notices and record the adaptation; do not silently remove required attribution.
 

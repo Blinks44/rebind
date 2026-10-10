@@ -23,7 +23,7 @@ Avoid indiscriminate blur, glass-on-glass stacks, giant decorative cards, arbitr
 
 ## Resolve the current document
 
-Current editable source: **Rebind.sketch**. Resolve it by name/current open document through Sketch MCP. Optional workstation access hints can live in ignored `.local/agent-context/`; they are not a dependency for another contributor. Latest layout repair saved document ID **`A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`** on 2026-10-10; revision digest is in [UI-001](tasks/UI-001-permissions-onboarding.md). Earlier document IDs are stale; never hardcode them as permanent identity.
+Current editable source: **Rebind.sketch**. Resolve it by name/current open document through Sketch MCP. Optional workstation access hints can live in ignored `.local/agent-context/`; they are not a dependency for another contributor. Latest layout/icon review saved document ID **`F370A2F1-FBA6-4BF9-A056-A1500D5C8688`** on 2026-10-10; revision digest is in [UI-001](tasks/UI-001-permissions-onboarding.md). Earlier document IDs are stale; never hardcode them as permanent identity.
 
 Load Sketch `get_guide` topics `mcp`, then `use`. Resolve the user's document using open-document path/name, refresh the document ID, then inspect document info, relevant layer trees/styles and screenshots. For authorized edits, follow guides and visually verify the changed frames; reading this file does not authorize editing Sketch. If the document is inaccessible or ambiguous, explain and request the missing target/connection; continue independent work without inventing a visual source.
 
@@ -79,6 +79,8 @@ Frames 08–13 and their Light/Dark introduction/other-permissions sources were 
 | Dock/Finder delivery | [rebind/AppIcon.icon](../rebind/AppIcon.icon/) | Integrated native Composer package, Debug/Release/Finder evidence |
 | Menu Bar source | Symbol `0F0BD265-F8D6-4405-8425-247D8DA43C06`; board `EBAC2CD7-4F7F-4756-8BC4-AC1D43192933` | Separate monochrome optical vector |
 | Menu Bar delivery | [RebindMenuBar.imageset](../rebind/Assets.xcassets/RebindMenuBar.imageset/) | Integrated named template, 18 pt/native resource checks |
+
+Screen icons retain live Brand Symbols: Small at 32 pt in the three sidebars, Frosted at 48 pt in Light/Dark Setup and 80 pt in About. Shared `White face / UI <size> pt` and `Frosted rim / UI <size> pt` style overrides compensate for fixed-width borders when shrinking Symbols; original Brand styles/geometry remain unchanged. Use the corresponding size-specific styles for future instances rather than shrinking the original unscaled border. [Review and exact widths](verification/menu-bar-onboarding.md#screen-icon-consistency-repair--2026-10-10).
 
 Sketch owns editable geometry/visual source. Icon Composer owns delivery materials, system masking and native appearances; export clean foreground/background layers rather than decorating them twice. Menu Bar uses a transparent monochrome template with system coloring, independent of the raised/gradient Dock artwork.
 

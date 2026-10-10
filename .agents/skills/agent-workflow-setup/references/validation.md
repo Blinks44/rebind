@@ -4,6 +4,8 @@
 
 Review affected local links/anchors, document-role consistency and skill metadata/resources/licenses. Use existing documentation tooling when available, and run `git diff --check` for a Git project. Check that the entry point reaches current state/contracts/tasks without depending on local backups or previous chats.
 
+Compare facts about untracked, staged, tracked, committed, prepared and installed artifacts with observed version-control/filesystem state. After resolving a gate, update the affected live state/task/plan references so continuation does not select already completed setup work; preserve dated historical evidence. For staged delivery, the author records pending installation and the applying agent owns installed-file checks and final status reconciliation. Validate document responsibilities and continuation coverage, not a fixed number of files: combined contracts are appropriate when they preserve clear ownership and navigation.
+
 Review publishability as part of completion: shared files use the chosen repository language, contain technical summaries instead of quoted replies, and omit raw chat/tool logs, personal absolute paths, real user data and temporary artifacts. Confirm that relevant ignore rules cover local-only material without hiding shared project context.
 
 For Git projects, follow [repository hygiene](repository-hygiene.md): check representative excluded and kept paths with Git, inspect nested rules and tracked files matching exclusions, and preserve deliberate exceptions. Report unavailable Git checks rather than inventing results.
@@ -22,12 +24,15 @@ Check the process against actual artifacts and evidence:
 - Do checks refer to the final artifact? Are failing/unrun/runtime/hardware checks still visible?
 - Did migration preserve previous information and uncommitted work? Will another run avoid duplicates/reinstalls/status resets?
 - Are public README claims honest and the installed skill set licensed, relevant and free of conflicting project rules?
+- Was candidate discovery actually performed for the detected stack and upcoming work, with reviewed install/retain/skip decisions or a visible pending gap, even when setup changed only docs?
 - Can an already-open chat adopt changed instructions without losing its task? Are root README, AGENTS and shared docs each populated with project-specific content rather than template placeholders?
 - Does the workflow fit the actual deliverable/toolchain even outside the example ecosystems? Are verification and contract handoffs appropriate without invented app/UI steps?
 - Are ignore rules organized, relevant and narrow, with shared context, required inputs and safe examples still visible?
 - Can the user simply continue development/design/the current task or name a feature, with role-aware selection and meaningful outcome reporting? Do handoffs resolve by name without asking for task/frame IDs or old transcripts?
 
 Fix concrete findings; do not claim a perfect or certified process from document completeness alone.
+
+When evaluating the skill, preserve first-pass findings and distinguish evaluator repairs from the original agent's output. Correct the affected project and make a narrow reusable skill change for a demonstrated instruction gap. Report which behavior was independently executed and which remains a written review; a repaired project alone is not proof that the original skill already prevented the error.
 
 ## Behavioral scenarios
 
@@ -59,5 +64,7 @@ Use the following to challenge the configured workflow. Distinguish a written sc
 | First role-compatible item blocked and no independent work available | Reports the precise missing access/receiving role and open acceptance; no invented busywork or recreated completed asset |
 | Finish a design slice then start a fresh code chat | Saved name/version/scope/next-role handoff and plain-language final report let the user give a short request without relaying metadata |
 | Equivalent request in another language, with a tool/language qualifier | Selects by intended action/outcome and context, not literal wording; distinguishes design inspection from editing and respects module/tool constraints without installing or migrating implicitly |
+| Documentation-only setup of an unfamiliar starter with just the setup skill installed | Researches relevant candidates for actual upcoming work; records reviewed choices or access gaps and installs a justified subset when authorized, without a mandatory count |
+| Prepared workflow is applied; state/task/roadmap disagree about installation | Verifies installed artifacts, reconciles the affected live references and retains historical checks; completed setup is not proposed again as the next product task |
 
 Task completion and release readiness are separate. For shipping, use the project's real supported-platform, compatibility, meaningful tests, rendered UX and operational/distribution gates. Setting up this skill does not certify the resulting application or prove all agent-client behaviors.

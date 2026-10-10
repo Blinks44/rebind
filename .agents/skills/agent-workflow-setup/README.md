@@ -24,6 +24,6 @@ Git rules are organized into relevant, commented sections derived from actual bu
 
 ## Checks and distribution
 
-This is an instruction-only skill: no scripts, runtime or package dependencies. See [validation](references/validation.md) for document and scenario review using existing project tools.
+This is an instruction-only skill: no scripts, runtime or package dependencies. See [validation](references/validation.md) for document and scenario review using existing project tools. Setup includes candidate-skill research for upcoming project work even when it changes only documentation; additions depend on reviewed fit, not a fixed count. Document roles may be combined for a small project. Installed completion must agree across the affected current records.
 
-Version **1.2.0**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host project or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.
+Version **1.2.1**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host project or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.

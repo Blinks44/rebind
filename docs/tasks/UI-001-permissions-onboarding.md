@@ -1,9 +1,9 @@
 # UI-001 — coherent first-run and permission recovery
 
-- Updated: 2026-10-10, after the scoped onboarding layout review.
+- Updated: 2026-10-10, after the scoped layout and screen-icon reviews.
 - Stage: `in_design`; repair of frames 08–13 is complete. Additional permission compositions and native implementation remain open.
-- Owner: Unassigned for the next slice; current design chat (`/root`) completed and released the scoped layout review on 2026-10-10.
-- Reviewed surfaces: Sketch frames 08–13 and their setup introduction/other-permissions sources. No app source/catalog ownership claimed; preserve concurrent workflow/input work.
+- Owner: Unassigned for the next slice; current design chat (`/root`) completed and released the layout/screen-icon reviews on 2026-10-10.
+- Reviewed surfaces: Frames 08–13/setup sources, three sidebar icon instances and About; six new size-specific shared styles. Original Brand masters/styles are preserved. No app source/catalog ownership claimed; preserve concurrent work.
 - Requirements: SPEC §§6–8/10–11, S2; PLAN Phases 7–9; DESIGN's modern macOS 26+ direction.
 - Code baseline inspected: `6c1a5be`, functional actual permission checks/guidance exist.
 
@@ -13,7 +13,7 @@ Provide a clear native first-run flow and recovery when grants are missing/revok
 
 ## Design handoff
 
-Saved `Rebind.sketch`, 2026-10-10; current document ID `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`, resolve live again. Saved revision SHA-256: `1fd30ff5ef06830fdb4ce6b8927133943e267b17a671218743a39f65b9915f4d`. Six permission frame IDs remain stable in [DESIGN](../DESIGN.md#screen-index-and-implementation-status). Repaired Light/Dark setup components and Apple macOS 26 controls remain live and reusable.
+Saved `Rebind.sketch`, 2026-10-10; current document ID `F370A2F1-FBA6-4BF9-A056-A1500D5C8688`, resolve live again. Saved revision SHA-256: `2fecf2bbaa7a6673ea789826ef59bcd6d4c3162cfed77e72c3b756bc6aff22f0`. Six permission frame IDs remain stable in [DESIGN](../DESIGN.md#screen-index-and-implementation-status). Repaired Light/Dark setup components and Apple macOS 26 controls remain live and reusable.
 
 Saved/reviewed states: Accessibility missing Light/Dark, AX granted/event-posting missing, ready, revoked and German expansion. The latest review fixes negative text origins, a vertically compressed icon, unanchored symbol contents and inconsistent button spacing. All six states were screenshot-checked at 560 × 580, 520 × 560 and 720 × 680; resizing back restores the original geometry after applying Stacks. See [layout review](../verification/menu-bar-onboarding.md#onboarding-layout-repair--2026-10-10).
 
@@ -30,9 +30,12 @@ Repaired live sources on **04 · Symbols**:
 
 [Copy handoff](../verification/permissions-onboarding-copy.json): 28 keys × EN/RU/DE/FR, not integrated into the app catalog. Use Writing for Interfaces when revising user-visible text; preserve terminology and all languages.
 
+Screen-icon consistency repair: Setup/About retain the Frosted master; sidebar retains Small optical geometry. Size-specific layer-style overrides scale only the white-face and rim borders by target size / 1024, preserving Brand geometry, materials and live Symbol connections. See [icon review](../verification/menu-bar-onboarding.md#screen-icon-consistency-repair--2026-10-10). App/Dock/Menu Bar delivery assets are unchanged.
+
 ## Acceptance
 
 - [x] Scoped repair: existing frames 08–13 saved, visually checked at three sizes, and resize roundtrip geometry verified; unaffected Sketch artwork preserved.
+- [x] Scoped screen-icon repair: sidebar 32 pt, Setup 48 pt and About 80 pt saved/screenshot-reviewed; original Brand masters/styles and layout preserved.
 - [ ] Missing-permission main-window and Settings → Permissions states saved and visually checked in current Sketch, with IDs/version/state behavior recorded.
 - [ ] Native onboarding uses existing AX/posting preflights; grants are never inferred from button taps or requested by polling.
 - [ ] Setup-later, ready and revocation routes are real; recording/remapping remain unavailable without required access, engine errors stay visible, deliberate pause/rules preserved.
