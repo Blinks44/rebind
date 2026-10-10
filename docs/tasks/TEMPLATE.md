@@ -36,4 +36,4 @@
 
 ## Next handoff
 
-<One concrete next action, required checkout/design revision, owner/transfer, and what a new agent needs. Do not require the old chat transcript.>
+<One concrete next action for each applicable role, readiness/dependency and required checkout/design revision; owner/transfer and what a new agent needs. Use the outcome name so natural-language requests resolve this record without an ID or old transcript. Identify a ready bounded handoff separately from unfinished design/implementation; skip irrelevant roles.>

@@ -41,9 +41,17 @@ nonisolated struct TrackpadTapSession: Sendable {
 
     @discardableResult mutating func consume(_ frame: NativeTrackpadFrame, at now: UInt64) -> TrackpadDiagnosticEvent? {
         guard frame.valid else { interrupt(); return .invalidFrame }
-        guard frame.revision == runtime.revision, frame.activity == runtime.inputActivity else { interrupt(); return .obsoleteFrame }
+        guard frame.revision == runtime.revision else { interrupt(); return .obsoleteFrame }
         guard frame.receipt <= now else { interrupt(); return .futureReceipt }
         guard now - frame.receipt <= 100_000_000 else { interrupt(); return .staleFrame }
+        guard frame.activity == runtime.inputActivity else {
+            // Mouse-up can advance activity after a release was buffered but
+            // before it is consumed. That release cannot qualify output, yet
+            // its fresh zero-contact observation still rearms the next stroke.
+            // Idle devices need not emit a second release with the new counter.
+            interrupt(isNeutral: frame.count == 0)
+            return .obsoleteFrame
+        }
         knownNeutral = frame.count == 0
         gate.contacts(frame.count, at: frame.receipt, buttons: frame.activity, observerReady: true)
         if frame.count > 0 { qualified = false }

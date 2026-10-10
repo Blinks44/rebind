@@ -31,6 +31,8 @@ Keep raw chat/tool transcripts, migration backups, personal absolute paths, actu
 
 A confirmation records only the result it supports: “Tester reported the configured binding working; timing and recovery checks remain open.” Design acceptance records the accepted scope/version separately from runtime verification. If the tested build or conditions are unknown, say so; a vague confirmation does not close broader acceptance. Shared STATE/tasks/evidence remain versioned. If committing is requested, review the exact staged diff; an ignore rule does not remove previously tracked private content.
 
+The commented root `.gitignore` owns shared exclusion policy for Rebind's actual Xcode/SPM, editor and local-agent output. When introducing tools or output paths, inspect existing/nested rules and preserve source, shared configuration, lockfiles, design assets and curated evidence. Test excluded and kept paths with `git check-ignore -v --no-index`; inspect `git ls-files --cached --ignored --exclude-standard` for tracked-rule conflicts. Do not exclude entire client directories or untrack files automatically. The reusable skill's [repository hygiene guide](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md) details adaptation to other projects.
+
 ## Start, resume and establish freshness
 
 1. Read AGENTS and STATE from the current checkout, not a remembered copy. Read this workflow on first use or when it changes; refresh relevant sections after compaction.
@@ -46,11 +48,22 @@ A new chat is a useful task boundary, not a requirement after every small edit. 
 
 Read the updated AGENTS and affected workflow/contracts from disk, refresh STATE and the current task, and reconcile them with the actual diff. Preserve that task's work and ownership; updating instructions is not a reason to restart implementation or run workflow setup again. Report any material conflict and continue the authorized task under the updated rules. Repeat this refresh after a relevant handoff from another agent.
 
-### When the request is simply “continue the app”
+### Short requests and role-aware task selection
 
-Reconcile STATE's next-task index with PLAN, existing tasks and actual artifacts. Resume an owned unfinished slice if ownership is current and compatible with this chat; otherwise choose the highest-priority actionable slice of the existing scope. Prefer a known regression/core acceptance gap before unrelated polish. Summarize what already exists, why this slice is next and what will count as success, then proceed without asking the user to reconstruct the previous chat.
+Interpret the intended action/outcome and established context in the user's language; example prompts are illustrations, not a command vocabulary. Tool or programming-language mentions constrain relevant sources/implementation, not the role by themselves: reading a design for implementation differs from editing it. They do not authorize installing tools or migrating the stack. Finding records, choosing IDs, reading contracts and maintaining status are the agent's responsibility. Match natural-language outcomes to task titles, requirements and actual artifacts; do not ask for an ID or old transcript when the project can answer the question.
+
+1. Resolve role and scope from the latest request and this chat's established work. “Continue the task” resumes this chat's current outcome before choosing another. A design request stays within design; a code agent handles implementation/engineering. A fresh unqualified Rebind development request defaults to implementation. If two plausible roles/outcomes remain materially different, ask one focused question using human-readable names, while doing independent useful inspection.
+2. Reconcile STATE/PLAN/task evidence and actual artifacts. Resume the current compatible unfinished slice if ownership is available; otherwise select the highest-priority actionable slice for that role. For code, prioritize core regressions/verification and ready implementation handoffs. For design, prioritize missing designs/states that unblock implementation. A hardware gate at the top of PLAN does not become a design task. Use STATE's role recommendations as dated hints, never unconditional commands.
+3. Refresh a dependent handoff before implementation. Only its ready bounded scope is eligible; a task may contain saved initial frames plus unfinished design and code. Keep missing design/verification visible. A dedicated code agent can continue independent engineering; it changes role only when the user's request or established scope authorizes it.
+4. Announce the chosen outcome, existing result, next action and bounded success in a few sentences, then work. Do not stop for routine approval of a next step already within the request. Continue until that bounded outcome/check/handoff is complete or requires unavailable access; a plain “continue” does not authorize working through the entire roadmap indefinitely.
 
 If the first item requires unavailable hardware, credentials, a design source or user interaction, leave its acceptance open and choose independent useful work from the remaining priorities. Ask only when the missing answer changes scope or blocks all useful progress. A saved next step is guidance, not authorization to change product direction, publish, send messages or alter real user settings.
+
+When blocked, say which outcome is waiting, exactly what is needed and what useful independent work remains. If nothing is actionable for this role, report that fact and the next receiving role/access requirement; do not invent polish or recreate a completed asset merely to keep busy. Active ownership conflicts still require coordination, not an automatic takeover.
+
+### A named feature or change
+
+“Let's build [feature]” selects that outcome ahead of the default next item. Check existing implementation/design and reuse a matching record; create a concise task only when useful. Derive observable acceptance and a sensible first slice from the request and current contracts, state the interpretation and proceed. Ask about materially missing behavior/product choices, not bookkeeping. Update affected requirements/priorities when the request changes them; distinguish proposed extensions from requested behavior. A design agent produces its design scope and implementation handoff; a code agent implements an existing ready contract or surfaces the precise design dependency while advancing independent prerequisites. Both agents can use the same outcome name without the user assigning IDs.
 
 ### Interrupted sessions and uncertain records
 
@@ -93,7 +106,7 @@ Before the final answer or interruption handoff:
 4. Update SPEC only for changed requirements; DESIGN only for changed direction/index/delivery; PLAN only for phase gates/priorities; CAPABILITIES only for changed supported behavior/evidence; research only for a relevant decision. No requirement to touch every file.
 5. Add a concise dated history entry for substantive work: outcome, reason, task/evidence link, unresolved acceptance. If the task already contains detail, link rather than duplicating. Never relabel an old verification as a new run.
 6. Check links/status consistency and `git diff --check`. Build after app code changes; run meaningful behavioral tests for changed logic. Docs-only work needs document verification; asset-only work needs the relevant asset/build checks. Do not launch input interception or execute configured actions merely to validate documentation.
-7. Report what changed, what was checked, limitations and the next planned item. Documentation/handoff is part of completion, not an optional promise for later.
+7. Report the meaningful outcome name, what is ready, checks/limits and the next step for this role or receiving role. When a role transfer is needed, include a short natural-language request such as “Implement the prepared first-run and permissions design”; it must resolve from shared records without an ID. Documentation/handoff is part of completion, not an optional promise for later. The user should not have to ask where the work stopped.
 
 Review the final diff against acceptance, capability limits and the affected design states. Fix actionable findings or leave them explicitly open. Relevant checks must describe the final changed artifact: later code/design changes invalidate affected earlier evidence until checked again. Identify an actual commit when one exists; for uncommitted work record the baseline plus changed files and, where reproducibility needs it, an artifact digest. Do not invent a commit to fill a field. A design saved after native review requires reconciliation of the affected native surfaces.
 
@@ -105,36 +118,27 @@ Do not append sessions to PLAN. New entries go into `history/YYYY-MM.md`; new co
 
 Review affected links, task/STATE/PLAN consistency and claims against source/evidence, then run `git diff --check`. Use an existing documentation check when the project already has one. Workflow setup adds no runtime, package, custom validator, CI job or test framework solely for Markdown bookkeeping.
 
-## How the user starts the next chat
+## Requests the user can give
 
-If you do not know the previous next step, this is sufficient:
+Open the same project/intended checkout. These are example short requests; equivalent wording in the user's language works through the same intent/context rules. The agent performs the reading, task lookup and record updates:
 
-> Continue work on Rebind. Restore context from AGENTS.md, inspect the current implementation and choose the next useful unfinished slice. Explain the choice, proceed within scope, and save the outcome and next step in the project.
+| Intent | Sufficient request |
+| --- | --- |
+| Continue implementation | “Continue development.” |
+| Continue design | “Continue creating the design.” |
+| Resume this chat's task | “Continue the task.” |
+| Select a feature | “Let's add [user-visible feature/behavior].” |
+| Consume a saved design | “Implement the prepared first-run and permissions design.” |
+| Ask for status | “What is ready, what is open, and what will you do next?” |
 
-Open the **same project** with the intended checkout and give the outcome, task ID if continuing, and constraints. It is not necessary to paste the specification or recite yesterday's work. A sufficient prompt:
+Task IDs/paths, acceptance details and constraints can help when the user has them; they are optional for continuing existing work. In a fresh chat, name a specific outcome only when intentionally selecting it. Give observable behavior for a genuinely new feature; the agent asks only about material ambiguity.
 
-> Continue Rebind following AGENTS.md. Refresh context from docs/STATE.md and task UI-001. Complete its next actionable step, preserve current constraints and update the handoff before finishing.
+Save the handoff automatically before finishing; the user should not need to remind the agent. An optional early interruption request is “Save the current result so we can continue later.”
 
-For a new feature:
-
-> Rebind needs [user outcome]. Follow AGENTS.md, inspect current implementation and create a task record when useful. Acceptance: [observable result].
-
-For design:
-
-> Continue Rebind design following AGENTS.md and docs/DESIGN.md: [screen/flow]. Use the current Rebind.sketch and existing components. Save the design and implementation handoff with frame IDs, states and unresolved questions.
-
-For an unfinished chat:
-
-> Save the task's current state and one concrete next action in the project so a new chat can continue it.
-
-For an already-open chat after instructions change:
-
-> Re-read the updated AGENTS.md and affected workflow documents from disk, refresh STATE and the current task, reconcile existing edits, and continue that task under the updated rules. Keep shared records in English.
-
-Use the setup skill to configure or audit a workflow, not for every product task. Normal feature/design requests use AGENTS and the relevant task; the agent selects applicable engineering/design skills.
+Existing chats that began before this workflow update should be told once: “Read the updated project instructions and continue your task.” They then use the same short requests. Use the setup skill for configuration/audit; ordinary product requests use the project entry point and relevant skills.
 
 ## Reusing the workflow elsewhere
 
-The document responsibilities, freshness checks, task/evidence status and handoff pattern apply to iOS, web, backend and other projects. Adapt ENGINEERING, commands, acceptance and DESIGN to each platform; do not copy Rebind's macOS/permission/input rules. Backend-only work can omit DESIGN or link its API contract instead. Shared API/schema contracts and deployment environment/revision become important evidence for frontend/backend work. Add architecture/decision docs only when they explain real contracts; no mandatory collection of empty files.
+The document responsibilities, freshness checks, task/evidence status, repository hygiene and handoff pattern apply to any development project. Derive contracts, commands, skills and verification from its actual domain, inputs, tools and delivery environment; the examples are not an eligibility list. Omit visual DESIGN when no visual contract exists, and use relevant API/data/engineering contracts instead. Do not copy Rebind's macOS/permission/input rules. Add architecture/decision docs only when they explain real contracts; no mandatory collection of empty files.
 
 Official background: [AGENTS discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [practical Codex guidance](https://learn.chatgpt.com/guides/best-practices). AGENTS is the entry point; arbitrary STATE/DESIGN files need these explicit reading instructions. This workflow supports fresh chats without claiming automatic cross-chat synchronization.

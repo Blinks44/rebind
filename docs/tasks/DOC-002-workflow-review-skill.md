@@ -3,12 +3,12 @@
 - Updated: 2026-10-10
 - Stage: done (documentation/skill scope; product acceptance remains open)
 - Owner: Unassigned; completed documentation ownership released
-- Requirements: Portable development/design workflow; English, commit-ready records; instruction-only skill
-- Baseline: `6c1a5be` plus uncommitted documentation changes; app implementation unchanged
+- Requirements: Domain-adaptive development/design workflow, role-aware short requests/named handoffs and project-specific Git hygiene; English, commit-ready records; instruction-only skill
+- Baseline: initial migration `6c1a5be`; current continuation review `f549764` plus uncommitted workflow/skill/docs changes. This task does not change app implementation.
 
 ## Outcome
 
-Created [agent-workflow-setup 1.0.2](../../.agents/skills/agent-workflow-setup/README.md), a self-contained MIT skill with project-adoption guidance, document contracts, selective skill review/install, design/code handoffs and review scenarios. Existing 11 third-party skill records and licenses are retained.
+Created [agent-workflow-setup 1.2.0](../../.agents/skills/agent-workflow-setup/README.md), a self-contained MIT skill with domain-adaptive project adoption, short role-aware requests, document contracts, selective skill review/install, named contract/design handoffs, project-specific repository hygiene and review scenarios. Existing 11 third-party skill records and licenses are retained.
 
 The workflow now covers selecting the next actionable unfinished slice, interruption recovery, advisory ownership, separately versioned code/design and verification of the final artifact. Shared records use English technical summaries. Reported results retain scope and evidence limits without quoting replies.
 
@@ -19,12 +19,15 @@ The workflow now covers selecting the next actionable unfinished slice, interrup
 - [x] Shared documentation is commit-ready; local transcripts/backups/access hints are excluded.
 - [x] Instruction-only skill with metadata/references and scoped MIT license; custom checker and tests removed.
 - [x] Affected documents/links and final diff reviewed; product gates unchanged.
+- [x] Domain examples are non-exhaustive; unfamiliar projects derive contracts/checks from real artifacts/tools without mandatory app/UI scaffolding.
+- [x] Git ignore adaptation is part of setup, with relevant commented sections, excluded/kept path checks and no automatic untracking.
+- [x] Short role-aware continuation and named feature/transfer rules resolve from durable records without mandatory IDs; reporting identifies readiness/open work/next role. Author-reviewed scenarios; independent live execution remains untested.
 
 ## Verification and limits
 
-Documentation/source inspection, affected local links/anchors, skill metadata/resource/version consistency and `git diff --check`; no app build, runtime/hardware test or live Sketch edit. Reviewed the 12 scenarios in the skill's [validation guide](../../.agents/skills/agent-workflow-setup/references/validation.md): stack adaptation, continuation, interrupted work, design access, overlapping ownership, offline skill review, informal test reports, already-open chats and repeated setup. These are author-performed reviews, not independent end-to-end adoption in other projects.
+Documentation/source inspection, affected local links/anchors, skill metadata/resource/version consistency and `git diff --check`; no app build, runtime/hardware test or live Sketch edit in this task. The skill's [validation guide](../../.agents/skills/agent-workflow-setup/references/validation.md) covers adoption and role-aware continuation cases; version-specific checks are below. These are author-performed reviews, not independent end-to-end adoption in other projects.
 
-Final document check: 60 Markdown files and 258 local links/anchors, no missing targets/anchors. Shared Markdown scan found no Cyrillic text, personal workstation paths or removed checker references. Skill metadata/version/license/resources are consistent; eight instruction/metadata/license files and no executable helpers. The manifest diff preserves all 11 third-party records. Local raw backups/access hints are ignored and not tracked. Final `git diff --check` passed.
+The 1.0.2 review checked 60 Markdown files and 258 local links/anchors without missing targets/anchors. Shared Markdown scan found no Cyrillic text, personal workstation paths or removed checker references. The manifest preserves all 11 third-party records; local raw backups/access hints are ignored and not tracked. The 1.1.0 checks below cover the added guidance and current ignore policy.
 
 ## Final workflow review — 2026-10-10
 
@@ -37,6 +40,38 @@ Final document check: 60 Markdown files and 258 local links/anchors, no missing 
 
 Raw migration snapshots and workstation access hints are retained only in ignored local storage. The discarded helper code was removed. The delivered skill has no scripts, runtime, package or CI dependency. No publication, global settings, unrelated skill install or app-wide license change.
 
+## Domain adaptation and repository hygiene — 2026-10-10
+
+- Skill 1.1.0 derives the workflow from actual deliverables, editable inputs, tools, target environments and acceptance evidence. The examples are not a platform/language allowlist. README/setup/checks and contract handoffs adapt to the project; a visual design pipeline is conditional.
+- Added [repository hygiene](../../.agents/skills/agent-workflow-setup/references/repository-hygiene.md) as part of setup: inspect existing/nested rules and tracked artifacts, write relevant commented sections, preserve justified exceptions and test both excluded and kept inputs. No blanket stack template, whole-agent-directory ignore, global Git mutation or automatic untracking.
+- Rebind `.gitignore` now explains shared-file policy and separates build, transient verification, editor/OS, local-agent and package state. Removed the unrelated IPA rule. Actual Git checks caught root-only SPM cache/security exclusions missing the standalone probe; changed them to cover root and nested packages. Shared skills/docs/tasks, source, assets, schemes and lockfiles remain visible.
+- During this session another checkout writer advanced HEAD to `f549764` (`feat: phase 5`), including the earlier ignore reorganization. Preserved that commit and current product records. This task did not create a commit or change application code.
+- Final verification: Git matching passed 19 excluded and 20 kept representative paths, including root/nested SPM state; `git ls-files --cached --ignored --exclude-standard` found no tracked-rule conflicts. The initial sample traversed an SPM symlink and was corrected to a direct output path; initial missing nested cache/security rules were fixed before the passing run. Skill Creator's built-in `quick_validate.py` passed using its existing external runtime; no helper/runtime was added to the project. Document check passed 62 Markdown files / 280 local links and anchors. Nine skill instruction/metadata/license files, version 1.1.0 consistency, unchanged 11 third-party records and `git diff --check` pass. Author-reviewed scenarios remain distinct from independent adoption tests.
+
+## Short-request continuation review — 2026-10-10
+
+Findings resolved in skill 1.2.0 and project instructions:
+
+- Global next-task selection could route a designer to the highest-priority hardware gate. Added role-first selection and role-specific STATE recommendations referencing the existing tasks/plan.
+- Examples required the user to supply `UI-001` and internal file names. Replaced them with sufficient short requests; agents resolve outcomes, IDs and handoffs themselves. Specific features select their outcome ahead of the default next item, while “continue the task” preserves the current chat's task.
+- Partially saved design could be mistaken for whole-task implementation readiness. The task template and first-run/permissions handoff now identify ready scope, design dependency and next action per relevant role. Current umbrella acceptance remains open.
+- User-facing completion lacked a concrete role-transfer contract. Agents now report meaningful outcome names, readiness, open checks and the next responsible role, with an optional short transfer request. Saving the handoff is automatic completion work.
+- Clarified that explicit design continuation authorizes bounded edits to an established source; setup alone does not. Known sources/frames are resolved from project records and live tools without asking for omitted IDs. Missing access or actual ambiguity remains a legitimate question.
+- Added seven role/feature/transfer/block scenarios to the existing 16-case review guide. No new runtime, script, task-board duplicate, agent spawning or app/Sketch changes.
+
+Author walkthrough against the current project records:
+
+| Short request | Record-based selection and preserved limit |
+| --- | --- |
+| Continue the design | First-run/permissions: missing-permission main-window and Settings → Permissions states; preserves input hardware gates and delivered icons. |
+| Continue development | Existing core acceptance first when usable evidence/access is available, otherwise independent engineering or a verified ready bounded handoff; never treats the full permissions flow as ready. |
+| Continue the task | Preserves this chat's workflow-review outcome; a fresh chat with ambiguous competing outcomes uses role/default and asks only a material outcome question. |
+| Add first-run permissions / implement the prepared permissions flow | Matches the existing named task instead of creating a duplicate; refreshes its partial design/source and scope before implementation. |
+
+Final checks: Skill Creator's built-in validator passed; metadata/README/manifest version 1.2.0 and nine instruction/metadata/license files are consistent. All 11 third-party skill records match HEAD. Local document check passed 62 Markdown files / 280 links and anchors. STATE stays below 8 KiB with dated role recommendations; outdated ID-dependent prompts and global input-first continuation text were removed from current entry points. `git diff --check` passes. Concurrent input-task/code changes were preserved. These checks and the 23-scenario author review do not claim an independently executed live design-to-code cycle or automatic shared chat memory.
+
+Semantic request review: the instruction-only skill contains no executable request parser or alias table. Project/skill rules now explicitly interpret intended action/outcome and established context in the user's language; examples are illustrative. Tool/language qualifiers constrain sources/modules and do not independently select a role or authorize migration/install. Reviewed equivalent wording, design inspection versus edits, and language-qualified implementation as an additional scenario. Exact user phrases were not copied into routing rules. Final checks passed the built-in skill validator, 62 Markdown files / 284 local links and anchors, nine skill files and a 24-scenario review guide; the shared instruction scan found no Cyrillic text or personal workstation paths. The review remains instruction/artifact inspection, not a live independent-agent execution guarantee.
+
 ## Next handoff
 
-Copy/publish the whole skill folder when requested. Continue the selected Rebind product task; INPUT-001, UI-001 and BRAND-001 retain their open acceptance. Refine the skill against demonstrated adoption results rather than adding speculative process/tooling.
+Copy/publish the whole skill folder when requested. Existing chats should read updated project instructions once, then accept the same short requests as fresh chats. Continue the role-compatible Rebind outcome; input, permissions and icon runtime tasks retain open acceptance. Refine the skill against demonstrated adoption results rather than adding speculative process/tooling.

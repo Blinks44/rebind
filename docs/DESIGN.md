@@ -1,6 +1,6 @@
 # Rebind — design direction and live source index
 
-Updated 2026-10-10. Owns the design direction and pointers to current artifacts; [SPEC §10](SPEC.md#10-interface-and-design-core) owns required screens/behavior. Read [WORKFLOW](WORKFLOW.md) for handoff. This documentation task inspected Sketch read-only; it did not change artwork or implement the redesigned screens.
+Updated 2026-10-10. Owns the design direction and pointers to current artifacts; [SPEC §10](SPEC.md#10-interface-and-design-core) owns required screens/behavior. Read [WORKFLOW](WORKFLOW.md) for handoff. Latest scoped review repaired onboarding layout in Sketch; native implementation remains pending.
 
 ## Direction: modern macOS 26+
 
@@ -23,7 +23,7 @@ Avoid indiscriminate blur, glass-on-glass stacks, giant decorative cards, arbitr
 
 ## Resolve the current document
 
-Current editable source: **Rebind.sketch**. Resolve it by name/current open document through Sketch MCP. Optional workstation access hints can live in ignored `.local/agent-context/`; they are not a dependency for another contributor. Last read-only MCP inspection on 2026-10-10 resolved document ID **`5E7440F8-E8FE-4C5B-9691-D1A211777C77`**. The earlier `10246E46-59D2-4110-95FB-7576E75168A9` is stale after the later save; do not hardcode either as permanent identity.
+Current editable source: **Rebind.sketch**. Resolve it by name/current open document through Sketch MCP. Optional workstation access hints can live in ignored `.local/agent-context/`; they are not a dependency for another contributor. Latest layout repair saved document ID **`A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`** on 2026-10-10; revision digest is in [UI-001](tasks/UI-001-permissions-onboarding.md). Earlier document IDs are stale; never hardcode them as permanent identity.
 
 Load Sketch `get_guide` topics `mcp`, then `use`. Resolve the user's document using open-document path/name, refresh the document ID, then inspect document info, relevant layer trees/styles and screenshots. For authorized edits, follow guides and visually verify the changed frames; reading this file does not authorize editing Sketch. If the document is inaccessible or ambiguous, explain and request the missing target/connection; continue independent work without inventing a visual source.
 
@@ -66,6 +66,8 @@ The entries below are saved design artifacts inspected through MCP, not evidence
 The Work mockup contains Caps Lock, Magic Mouse and action examples that are not all implemented. Use it for hierarchy/material direction; use source/CAPABILITIES for selectable inputs/actions. Do not turn placeholder rows into capability claims. Keep a compact profile picker/management above category rules; Settings/About separated below navigation, no extra Profiles/Workflows/Actions sidebars.
 
 Permissions design/copy contract: [UI-001](tasks/UI-001-permissions-onboarding.md), [review record](verification/menu-bar-onboarding.md), [28-key EN/RU/DE/FR handoff](verification/permissions-onboarding-copy.json). The JSON handoff is **not** integrated into `Localizable.xcstrings`. Missing-permission main-window and Settings → Permissions composition are the next design slice, not invented current frames.
+
+Frames 08–13 and their Light/Dark introduction/other-permissions sources were repaired after a canvas clipping report. All six states are now checked at preferred 560 × 580, compact 520 × 560 and expanded 720 × 680, with successful resize roundtrips. Text origins remain inside clipping containers, the 48 pt icon remains square, controls retain intrinsic dimensions and the footer follows the bottom edge. [Repair evidence and sizing handoff](verification/menu-bar-onboarding.md#onboarding-layout-repair--2026-10-10) supersede the initial visual review; native/accessibility/RU/FR checks remain open.
 
 ## Brand: existing source and delivered assets
 

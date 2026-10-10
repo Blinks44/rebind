@@ -4,7 +4,7 @@ Updated 2026-10-10. Read [STATE](STATE.md) first for current facts and next task
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt-app hardware check after reproduced receipt/poll timing and post-click neutrality fixes. Use the opt-in one-minute diagnostic report to investigate low recognition and physical-click output; T1/T2 remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt-app hardware check after the buffered-release repair; latest user comparison still reports loss after clicks despite 8/10 initial taps. Use the opt-in one-minute diagnostic report to investigate low recognition and physical-click output; T1/T2 remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
 2. [UI-001](tasks/UI-001-permissions-onboarding.md): continue missing-permission main-window and Settings → Permissions design, then implement the onboarding slice with actual permission state. Saved first-launch frames are available; no native implementation claim.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 

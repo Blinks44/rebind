@@ -149,3 +149,21 @@ This is **the real app**, not the standalone probe: saved rules remain active. A
 Counters are fixed safe reason names: frames, qualified taps, queueing/posting, recognition motion/contact/time/neutrality rejection, gate cancellation, buffer staleness/overflow, output held-input/target/deadline failures and capture availability. Rejections may count frames or completed sequences; do not interpret their sum as the number of gestures. `output-posted` is Quartz submission, not delivery acknowledgement. No text, coordinates, contact IDs, key/button codes, target identity or rules are included. Opt-in developer output is limited to a startup notice and one bounded aggregate JSON report; no diagnostic file is created. Aggregate collection expires after one minute and data is cleared on protected-context/access loss. Normal launch enables no report. Pure tests cover expiry, one-shot reporting and secure-context clearing. Acquisition/callback ownership and native-gesture passthrough remain unchanged.
 
 Next gate: rebuilt-app hardware frequency, click-only negatives and post-click recovery with this report. [Research decision](../research/trackpad-tap-reliability.md), [task](../tasks/INPUT-001-four-finger-tap.md). No broader gesture or BTT-equivalence claim.
+
+## Buffered release after mouse-up — 2026-10-10
+
+User-reported built-in-trackpad comparison: Rebind initially delivered 8/10 taps, then stopped responding after clicks/taps; BTT delivered 10/10 and continued operating. Exact app artifacts, BTT version/settings, overlap and diagnostic report were not supplied. This establishes a reported regression, not controlled latency or click-exclusivity acceptance.
+
+Baseline `f549764`, with uncommitted changes confined to `TrackpadTapSession.swift` and `TrackpadIntegrationTests.swift` plus affected records. The new parameterized regression reproduced a release buffered before physical mouse-up but consumed after the activity counter advanced. Both timestamped and untimed zero-contact cases failed against the baseline: the next tap could not qualify without an extra idle callback. This is a concrete recovery bug, not yet an explanation of the sustained hardware failure.
+
+The repair cancels output for an activity-mismatched frame but retains its neutral observation only when valid, same-revision, nonfuture and at most 100 ms old. Active-contact, malformed, stale, future and different-revision frames cannot rearm. Five negative cases verify cancellation and recovery after a later valid release. No thresholds, settling delay, callback ABI, capture ownership, dispatch guards or dependencies changed.
+
+Checks on the previously recorded Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
+
+- Before repair: `scripts/dev.sh test -only-testing:rebindTests/TrackpadIntegrationTests -resultBundlePath build/TrackpadBufferedReleaseBefore.xcresult`: **TEST FAILED**, both new release-order cases failed; 26 test functions / one suite / two issues.
+- After repair: `scripts/dev.sh test -resultBundlePath build/TrackpadBufferedReleaseFinal.xcresult`: **TEST SUCCEEDED**, 490 tests / 64 suites / zero failures, including Debug app compilation.
+- `scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing AppIntents metadata-skip warning remains. Both bundles pass `codesign --verify --deep --strict`.
+- Debug implementation dylib SHA-256: `c55c5c7bde615cb5d8c59ae4e866ccdc3402adc25a3f6c412b030959cdfad9ef`; Release executable: `868acf306921c22d47a8ef533aff7339c63aa52df1780bd8acef041532f466d1`.
+- No actual app/remapping launch, user-rule/permission changes, Sketch edit or agent commit. Hardware recovery, click-only output and minimum-OS/Intel checks remain open.
+
+Next: use the fresh packaged Debug executable with `--diagnose-trackpad` as above, with other Rebind copies/BTT closed. Alternate taps and quick/held clicks, then continue tapping if recognition stops within the one-minute report window. Save the aggregate report and observed delivery/click-only results. Do not claim the sustained failure fixed without that evidence.

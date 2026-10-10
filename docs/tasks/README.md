@@ -4,6 +4,8 @@ Use one record for a feature, design handoff, shared-file task or work continued
 
 Choose a unique descriptive ID/file: `UI-001-permissions-onboarding.md`, `INPUT-001-four-finger-tap.md`, etc. Do not reuse another task's ID for a different outcome. Check existing records first. Keep completed records for evidence; remove completed tasks from STATE's open-work table and link them from history.
 
+IDs are agent-maintained references. Users may continue work or name an outcome without one; resolve matching titles/requirements/artifacts yourself. Handoffs identify the ready scope, open work and next responsible role, so the receiving agent can continue from a short natural-language request.
+
 ## Existing pending handoffs
 
 - [INPUT-001](INPUT-001-four-finger-tap.md): existing built-in four-finger implementation awaiting revised hardware acceptance.

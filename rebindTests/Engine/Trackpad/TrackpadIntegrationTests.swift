@@ -112,6 +112,67 @@ struct TrackpadIntegrationTests {
         #expect(nextTap)
     }
 
+    @Test(arguments: [false, true])
+    func releaseBufferedBeforeMouseUpRearmsWithoutAnotherIdleCallback(_ timedRelease: Bool) {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)
+        session.consume(frame(1, count: 4, at: lift - 80_000_000), at: lift - 80_000_000)
+        var current = runtime
+        current.inputActivity = 1 // physical down
+        session.update(runtime: current, foreground: 100)
+        var held = frame(2, count: 4, at: lift - 60_000_000)
+        held.activity = 1
+        session.consume(held, at: held.receipt)
+        // A release received before mouse-up can still be queued when the
+        // consumer snapshots the newer activity counter. No idle callback follows.
+        var release = frame(timedRelease ? 3 : nil, count: 0, at: lift)
+        release.activity = 1
+        current.inputActivity = 2
+        session.update(runtime: current, foreground: 100)
+        let reason = session.consume(release, at: lift + 20_000_000)
+        #expect(reason?.key == "obsolete-frame")
+        let click = session.takeReady(at: lift + 60_000_000)
+        #expect(click == false)
+        for (offset, count) in [4, 4, 0].enumerated() {
+            var value = frame(Int32(100 + offset), count: count,
+                              at: lift + 1_000_000_000 + UInt64(offset) * 20_000_000)
+            value.activity = 2
+            session.consume(value, at: value.receipt)
+        }
+        let nextTap = session.takeReady(at: lift + 1_100_000_000)
+        #expect(nextTap)
+    }
+
+    @Test(arguments: 0...4)
+    func uncertainObsoleteReleaseCannotRearmButLaterValidReleaseRecovers(_ scenario: Int) {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        var current = runtime
+        current.inputActivity = 2
+        session.update(runtime: current, foreground: 100)
+        var release = frame(4, count: scenario == 0 ? 4 : 0, at: lift + 20_000_000)
+        release.activity = 1
+        if scenario == 1 { release.valid = false }
+        if scenario == 2 { release.revision = 0 }
+        let now = scenario == 3 ? release.receipt + 100_000_001
+            : scenario == 4 ? release.receipt - 1 : release.receipt
+        session.consume(release, at: now)
+        let pending = session.takeReady(at: lift + 60_000_000)
+        #expect(pending == false)
+        // The uncertain frame cannot act as the starting neutral observation.
+        // A subsequent real release must recover without restarting capture.
+        for tap in 1...2 {
+            for (offset, count) in [4, 4, 0].enumerated() {
+                var value = frame(Int32(tap * 100 + offset), count: count,
+                                  at: lift + UInt64(tap) * 1_000_000_000 + UInt64(offset) * 20_000_000)
+                value.activity = 2
+                session.consume(value, at: value.receipt)
+            }
+            let ready = session.takeReady(at: lift + UInt64(tap) * 1_000_000_000 + 100_000_000)
+            #expect(ready == (tap == 2))
+        }
+    }
+
     @Test(arguments: [false, true]) func backwardsReceiptOrPollingStillCancels(_ backwardsReceipt: Bool) {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         completed(&session, at: lift)

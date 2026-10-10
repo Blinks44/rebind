@@ -13,7 +13,7 @@ Act as a senior macOS engineer or product designer working on a production nativ
 
 Missing Sketch access blocks design-dependent work, not independent engineering. Explain the missing document/frame/connection, ask for what is necessary, and continue independent authorized work. Do not invent the current design or silently use an old PNG.
 
-If the user says only “continue the app”, use WORKFLOW's next-task selection rule: reconstruct the current state, choose the highest-priority actionable unfinished slice, explain the choice and proceed within scope. An unavailable hardware check must not prevent independent work.
+Interpret short requests by their intended action/outcome and established context in the user's language. Examples in WORKFLOW are illustrations, not required wording or keyword commands. Tool/language mentions constrain the relevant working source/implementation; they do not select a role by themselves or authorize a toolchain migration. Resolve the role/current outcome and task yourself using WORKFLOW's selection rules. Task IDs, file paths, prior-chat summaries and setup-skill invocation are optional for the user. In a fresh unqualified Rebind development request, default to app implementation; preserve an established design role or explicit design request. Explain the selected user-visible outcome briefly and proceed. Never route a design-only agent to hardware/engine work or require the user to find an existing task record.
 
 ## 2. Sources of truth
 
@@ -44,11 +44,16 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 - Preserve user changes. Coordinate ownership before editing the same code, catalog, docs section or Sketch source. Never stage/commit/reset/push unrelated work. Git commits and Sketch saves are separate operations; record both when actually performed.
 - Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR translations and purposeful Unicode/localization test data.
 - Commit technical outcomes and scoped verification evidence, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Summarize reported results with their evidence limits; see WORKFLOW's repository-content rules.
+- Follow the project's commented `.gitignore` policy. Keep shared instructions/skills, STATE/tasks/evidence, source/design inputs and lockfiles versioned. New tools/output paths need narrow exclusions checked with Git; never hide an entire agent directory or automatically untrack files.
 - This workflow does not authorize creating agents/chats, sending messages to other chats, executing remappings, changing real rules/permissions, editing Sketch, publishing or deploying. Proceed within the user's authorized scope without adding routine confirmation gates.
+
+An explicit request to continue/create design authorizes scoped edits to the established Rebind design within existing requirements; resolve its source/frames from DESIGN and live MCP. Setup/instructions alone do not authorize those edits. Request a document/frame only when it cannot be resolved or is genuinely ambiguous, not because the user omitted IDs.
 
 ## 4. Finish or hand off
 
 Follow WORKFLOW's completion contract **before the final response**. Update the affected task/evidence, STATE, and any changed SPEC/DESIGN/PLAN/capability/research record. Record tests/builds actually run, exact evidence, unresolved checks and one actionable next step. Use `awaiting_verification` when implementation exists but required runtime/hardware acceptance is open; never mark the whole feature done just because the build passes.
+
+Tell the user the outcome in plain language: what is ready, what is still open, and what this role or the receiving role can do next. Lead with meaningful task names; IDs/links are optional references. If another role is needed, provide a short natural-language request that works without a task ID. The next agent must discover the handoff in project records.
 
 Keep STATE around 1–2 pages, PLAN a short roadmap, and AGENTS practical. Retain useful technical history and link to it; do not grow a mandatory session transcript. No requirement to edit every document on every task. Documentation-only work needs review of affected links, facts and `git diff --check`, not a new checker framework or an app launch/hardware test.
 

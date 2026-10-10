@@ -1,8 +1,8 @@
 # Agent Workflow Setup
 
-A reusable Agent Skill for setting up or reviewing project context for coding and design agents. It supports new and existing macOS/iOS, web, backend, library and mixed projects by adapting to their actual stack and documents.
+A reusable Agent Skill for setting up or reviewing project context for development and design agents in new or existing projects. It adapts to any language, platform or engineering domain from the project's actual artifacts and tools. Apps, services, libraries, games, firmware, data/ML and infrastructure are examples, not a limit on its scope.
 
-It teaches an agent to inspect the repository, preserve existing work, select relevant reviewed skills, maintain a public README, establish current state/requirements/design/task handoffs, and verify the resulting workflow. It does not require every project to use the same filenames or install a catalog of skills.
+It teaches an agent to inspect the repository, preserve existing work, select relevant reviewed skills, maintain a public README, establish current state/requirements/contracts/task handoffs, adapt `.gitignore` and verify the resulting workflow. Visual design documents apply when needed. It does not require every project to use the same filenames or install a catalog of skills.
 
 ## Use
 
@@ -10,16 +10,20 @@ Copy this **whole folder**, including references, metadata and LICENSE, into the
 
 Example prompt:
 
-> Use $agent-workflow-setup to configure a modern development and design workflow in this project. Inspect the existing stack, implementation and documentation; preserve existing work, install relevant reviewed project-local skills where needed, and make it possible for a new agent to continue from current project records. Complete and verify the setup.
+> Use $agent-workflow-setup to configure an agent workflow for this project. Detect its domain, tools, artifacts and existing conventions; preserve existing work, adapt documentation and Git ignore rules, install relevant reviewed project-local skills where needed, and make it possible for a new agent to continue from current records. Complete and verify the setup.
 
-For an audit/update, specify that mode and existing constraints. For a brand-new project, also give the product goal and intended platform; the skill does not choose those for you.
+For an audit/update, specify that mode and existing constraints. For a brand-new project, also give the project goal and intended environment; the skill does not choose those for you.
 
-After setup, use the project's entry point for ordinary work: “Follow AGENTS.md and continue the next actionable unfinished slice.” Tell already-open chats to re-read updated instructions and current records while preserving their task. Rerun this skill for a workflow audit or migration, not every feature request.
+After setup, requests use ordinary language: ask to continue work in the relevant discipline or describe the feature you want. Wording is flexible; examples illustrate intent rather than defining commands or keywords. The agent follows the project entry point, resolves the role and matching task from intended action/outcome and context, checks actual artifacts and saves its result/next step. Tool/language qualifiers identify applicable sources/modules, not permission for a stack migration. Task IDs, filenames and previous-chat summaries are optional. Final reports explain readiness, open checks and what this role or the receiving role does next. A short request such as “Implement the prepared permissions flow” resolves its saved handoff.
+
+Tell already-open chats once to re-read updated project instructions and continue their task. Both roles need access to current project records and their working artifacts; setup does not create shared chat memory. Rerun this skill for a workflow audit or migration, not every feature request.
 
 Repository documentation and skill content use English by default. You can communicate with the agent in any language. Setup produces commit-ready technical records; raw transcripts, quoted replies, personal paths and local user data stay out of shared docs. Localized product content is preserved.
+
+Git rules are organized into relevant, commented sections derived from actual build/tools/output paths. Shared context stays versioned; generated output and local agent material are excluded narrowly. Existing rules/exceptions are preserved and checked, including already tracked files. See [repository hygiene](references/repository-hygiene.md).
 
 ## Checks and distribution
 
 This is an instruction-only skill: no scripts, runtime or package dependencies. See [validation](references/validation.md) for document and scenario review using existing project tools.
 
-Version **1.0.2**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host app or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.
+Version **1.2.0**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host project or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.

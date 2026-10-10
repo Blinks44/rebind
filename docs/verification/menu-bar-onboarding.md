@@ -4,7 +4,7 @@ Reviewed 2026-10-10. Scope: SPEC §§6–8, 10–11, S2, Phase 8. The Menu Bar a
 
 ## Live Sketch source
 
-Saved `Rebind.sketch` through Sketch MCP 2026.3.1 / API 2.0.0. Post-save document ID: `5E7440F8-E8FE-4C5B-9691-D1A211777C77`. Layer IDs remain stable. Pre-edit disk backup: `/tmp/rebind-menubar/Rebind-before.sketch`. Existing screens, brand sources, engine changes, rules, permissions and app settings were preserved.
+Saved `Rebind.sketch` through Sketch MCP 2026.3.1 / API 2.0.0. Latest post-save document ID: `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`; layer IDs remain stable. The layout repair below supersedes the initial visual review. Existing screens, brand sources, engine changes, rules, permissions and app settings were preserved.
 
 - **04 · Symbols → Rebind/Brand/Menu Bar Template**, `0F0BD265-F8D6-4405-8425-247D8DA43C06`.
 - **05 · Brand → 02 · Rebind / Menu Bar Template**, `EBAC2CD7-4F7F-4756-8BC4-AC1D43192933`.
@@ -51,13 +51,32 @@ Copy is concise and uses existing localized permission terminology. [Copy handof
 ## Verification
 
 - `scripts/dev.sh build` in the restricted environment failed because Xcode's macro plugin sandbox/asset renderer could not run. The approved ordinary build outside that sandbox succeeds; no project/security settings changed.
-- `scripts/dev.sh build` and `scripts/dev.sh release`: **BUILD SUCCEEDED**. Logs `/tmp/rebind-menubar/build-approved.log`, `/tmp/rebind-menubar/release.log`. Only the expected AppIntents metadata-skipped warning.
-- Native AppKit resource assertion `/tmp/rebind-menubar/check-asset.swift`: Debug and Release each load `RebindMenuBar` at **18 × 18 pt**, **isTemplate = true**, six representations. Used a temporary module cache. No app launch or remapping run.
+- `scripts/dev.sh build` and `scripts/dev.sh release`: **BUILD SUCCEEDED** in the original asset integration session. Only the expected AppIntents metadata-skipped warning. These builds were not rerun for the Sketch-only repair below.
+- Native AppKit resource assertion: Debug and Release each load `RebindMenuBar` at **18 × 18 pt**, **isTemplate = true**, six representations. Used a temporary module cache. No app launch or remapping run.
 - `codesign --verify --deep --strict`: Debug/Release pass.
-- All new appearance batches screenshot-reviewed. Latest captures confirm readable Light/Dark text, intact mark/counters, correct native labels, permission-dependent continuation, recovery state and German expansion. Post-save capture confirms the saved first-launch frame.
-- Saved Sketch ZIP CRC passes; all eight required new asset/board/screen IDs exist. **1,137 local layers, zero duplicate layer IDs, zero nonfinite frames, zero missing Symbol references**. Six PNG exports each measure 560 × 580.
+- Initial exported-frame screenshots did not expose negative text origins clipped on the live canvas or unanchored contents when resizing. The claim of a sufficient visual review is superseded by the scoped repair below; the PNG links above now show that repaired revision.
+- Original saved Sketch ZIP CRC passed; all eight required new asset/board/screen IDs existed. **1,137 local layers, zero duplicate layer IDs, zero nonfinite frames, zero missing Symbol references** in that initial revision. Six original PNG exports each measured 560 × 580. These structural checks did not prove correct canvas layout.
 - `git diff --check` passes. No behavioral engine/persistence code changed by this task, so no additional matcher tests were added or claimed. Other uncommitted engine work is outside this task's verification scope.
 
 Live Menu Bar rendering after user relaunch, macOS 26 runtime, selection/high-contrast/accessibility settings, keyboard/VoiceOver, native permission transitions and RU/FR layouts remain manual or implementation checks. The design is not evidence of a hardware/permission acceptance pass.
 
 Next: design the first empty bindings window with permission guidance and the permission section in Settings, then implement the approved onboarding using actual state checks. Menu contents/remaining Dark states can be composed from the existing native components without changing the engine.
+
+## Onboarding layout repair — 2026-10-10
+
+Scope: [UI-001](../tasks/UI-001-permissions-onboarding.md), existing frames 08–13 and four Light/Dark setup sources. Baseline Git `f549764` plus concurrent changes preserved; no app source or product copy changed. Reviewed live Sketch and actual canvas rendering after rereading the updated AGENTS, WORKFLOW, STATE, PLAN, DESIGN and affected SPEC sections.
+
+Confirmed findings and fixes:
+
+- Introduction titles had `y = -12.3` inside clipping Symbol Sources. Permission headings had `y = -5`; additional-permission headings had `y = -2`. Reset them inside the container and pin them to the top/leading edge.
+- The introduction icon was 48 × 42.24. Restore 48 × 48 and fix both dimensions so resizing preserves its proportions.
+- Unpinned additional-permission text shifted left when its instance narrowed. Pin leading text left, statuses right, and let descriptions fill the available width with natural text height. Reuse existing shared SF Pro styles and Color Variables.
+- Pin the content to top/left/right and footer to bottom/left/right. Keep native buttons at their intrinsic size; place permission actions in transparent horizontal Stacks with a 16 pt gap. Match the existing Dark frame's 16 pt window corners in Light.
+
+Observed checks: all six original frames screenshot-reviewed at 560 × 580; temporary duplicates reviewed at 520 × 560 and 720 × 680, then returned to 560 × 580. All six roundtrip geometry comparisons pass after `stackLayout.apply()`; zero ordinary child-frame overflow at the restored size. Introduction/other-permissions expanded symbol geometry was also inspected, including square icon, complete headings and German wrapping. API frame assignment needs Stack application before synchronous geometry reads; the first un-applied roundtrip probe returned stale child widths and was replaced by the explicit apply check.
+
+The actual Sketch canvas was inspected in addition to MCP frame captures, because the initial export missed clipping. Compact evidence: [Dark 520 × 560](onboarding/compact-dark-520x560.png), [German 520 × 560](onboarding/compact-german-520x560.png). Preferred size remains 560 × 580; the tested minimum is 520 × 560. Native implementation must preserve wrapping/fixed controls and use content scrolling if available height is insufficient, rather than scaling the whole screen.
+
+Saved revision: document `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`, SHA-256 `1fd30ff5ef06830fdb4ce6b8927133943e267b17a671218743a39f65b9915f4d`. ZIP CRC passes; **1,143 local layers**, six action-row containers added, no removed original nodes. Saved-node comparison against the pre-review backup found no content/style/geometry changes outside the ten owned frame/source subtrees; two unrelated layer-list disclosure flags changed, which are UI state. Shared text/layer styles are unchanged. All temporary probes were removed. Six refreshed exports are 560 × 580; two compact exports are 520 × 560. Post-save capture confirms the repaired Light frame. Layout work used the [public Sketch sizing/pinning/Stack API](https://developer.sketch.com/reference/api/).
+
+Affected document file links resolve and `git diff --check` passes. No native app build, launch, permission grant, remapping or behavioral test was performed for this design-only repair. Native sizing, RU/FR layout, keyboard/VoiceOver and accessibility-settings checks remain open. Next design slice remains the missing-permission main window and Settings → Permissions; the scoped layout repair is complete, the whole first-run feature is not.

@@ -31,7 +31,8 @@ xcuserdata/
 
 # Swift Package Manager
 .build/
-.swiftpm/cache/
-.swiftpm/security/
+# Cache/security state can exist at the root or in a standalone package.
+**/.swiftpm/cache/
+**/.swiftpm/security/
 
 # Package.swift and Package.resolved remain versioned; never ignore .swiftpm wholesale.

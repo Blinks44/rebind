@@ -6,6 +6,8 @@ Inspect skills already discoverable in the environment and project, including na
 
 Derive candidates from the detected stack and real gaps, not the project name. Read the candidate contents, relevant references and scripts before deciding to install it. Do not execute scripts merely to inspect them.
 
+The following examples are non-exhaustive. For unfamiliar domains, derive needs from actual languages, artifact formats, tools and verification gates; research relevant sources or retain general guidance when no suitable reviewed skill exists. Missing ecosystem-specific skills do not prevent useful workflow setup.
+
 | Detected need | Useful skill areas, subject to review |
 | --- | --- |
 | SwiftUI Apple app | SwiftUI, Swift concurrency, Swift Testing, applicable design/accessibility; AppKit or UIKit only where used |
@@ -13,6 +15,7 @@ Derive candidates from the detected stack and real gaps, not the project name. R
 | API/backend | Actual language/framework, schema/data migration, meaningful tests and API compatibility |
 | Full-stack/monorepo | Shared contracts plus each active module's skills; avoid duplicate overlapping guidance |
 | Library/CLI | Actual language, compatibility/public API, testing and relevant interface copy |
+| Firmware, games, data or infrastructure | Detected toolchain/engine/data formats/providers, reproducibility, target/runtime verification and relevant engineering contracts |
 
 For Swift/Apple discovery, the [Swift Agent Skills directory](https://github.com/twostraws/swift-agent-skills) is a useful index. It links independent source repositories; it is not a bundle to install wholesale or an endorsement. Revisit actual upstream sources at setup time. Other ecosystems need their own maintained, relevant sources rather than a prefilled list of unverified skill names.
 

@@ -6,6 +6,8 @@ Review affected local links/anchors, document-role consistency and skill metadat
 
 Review publishability as part of completion: shared files use the chosen repository language, contain technical summaries instead of quoted replies, and omit raw chat/tool logs, personal absolute paths, real user data and temporary artifacts. Confirm that relevant ignore rules cover local-only material without hiding shared project context.
 
+For Git projects, follow [repository hygiene](repository-hygiene.md): check representative excluded and kept paths with Git, inspect nested rules and tracked files matching exclusions, and preserve deliberate exceptions. Report unavailable Git checks rather than inventing results.
+
 This instruction-only skill adds no checker scripts, runtime, packages, CI job or test framework. Use meaningful existing build/test checks for actual code/assets when required by the project; documentation-only setup does not need an application launch.
 
 ## Semantic audit
@@ -21,6 +23,9 @@ Check the process against actual artifacts and evidence:
 - Did migration preserve previous information and uncommitted work? Will another run avoid duplicates/reinstalls/status resets?
 - Are public README claims honest and the installed skill set licensed, relevant and free of conflicting project rules?
 - Can an already-open chat adopt changed instructions without losing its task? Are root README, AGENTS and shared docs each populated with project-specific content rather than template placeholders?
+- Does the workflow fit the actual deliverable/toolchain even outside the example ecosystems? Are verification and contract handoffs appropriate without invented app/UI steps?
+- Are ignore rules organized, relevant and narrow, with shared context, required inputs and safe examples still visible?
+- Can the user simply continue development/design/the current task or name a feature, with role-aware selection and meaningful outcome reporting? Do handoffs resolve by name without asking for task/frame IDs or old transcripts?
 
 Fix concrete findings; do not claim a perfect or certified process from document completeness alone.
 
@@ -42,5 +47,17 @@ Use the following to challenge the configured workflow. Distinguish a written sc
 | Invoke setup again on unchanged project | No duplicate IDs/files/backlogs or repeated installs; improves only demonstrated gaps |
 | Informal success report with unknown build/conditions | Neutral scoped reported result, unknown fields retained, no quoted reply or broader verification/approval claim |
 | Workflow updated while a feature chat is open | Re-reads changed instructions/current records, reconciles actual edits, preserves task/ownership and continues without rerunning setup |
+| Unfamiliar firmware/game/data/engineering project | Inspects real inputs/tools/target and derives contracts/checks; no rejection based on an ecosystem list or invented UI workflow |
+| Existing ignore rules include required nested fixtures or shared agent files | Repairs only demonstrated rule conflicts, tests excluded and kept paths, preserves intentional tracked artifacts; no automatic untracking |
+| Local agent logs/private overrides alongside shared skills/config examples | Excludes actual local paths narrowly; shared instructions/tasks/skills and safe examples stay visible; no whole-client-directory exclusion |
+| Project has no Git repository | Adapts established VCS conventions or records pending Git hygiene; no implicit Git initialization or claimed Git checks |
+| “Continue the design”; top global priority is a hardware regression | Chooses the actionable design prerequisite, preserves hardware gate and role; no request for a task ID |
+| “Continue the task”; this chat has partial implementation | Resumes that outcome after reconciling actual edits; no switch to an unrelated top-priority task or destructive restart |
+| “Let's add [feature]”; related feature partly exists | Matches/reuses the outcome, retains work, derives bounded acceptance; asks only about material behavior ambiguity |
+| “Continue development”; design has saved initial frames and missing states | Uses a genuinely ready bounded handoff or independent engineering; no whole-flow readiness claim or forced role switch |
+| “Implement the prepared permissions flow”; no ID in request | Finds the named handoff, refreshes sources/version and implements its ready scope; records gaps without requiring user lookup |
+| First role-compatible item blocked and no independent work available | Reports the precise missing access/receiving role and open acceptance; no invented busywork or recreated completed asset |
+| Finish a design slice then start a fresh code chat | Saved name/version/scope/next-role handoff and plain-language final report let the user give a short request without relaying metadata |
+| Equivalent request in another language, with a tool/language qualifier | Selects by intended action/outcome and context, not literal wording; distinguishes design inspection from editing and respects module/tool constraints without installing or migrating implicitly |
 
 Task completion and release readiness are separate. For shipping, use the project's real supported-platform, compatibility, meaningful tests, rendered UX and operational/distribution gates. Setting up this skill does not certify the resulting application or prove all agent-client behaviors.
