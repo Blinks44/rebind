@@ -26,6 +26,7 @@ enum InputLabels {
     static func trigger(_ trigger: InputTrigger, modifiers: ModifierSet) -> String {
         let label: String
         switch trigger {
+        case .fourFingerTap: label = String(localized: .fourFingerTap)
         case .key(let code): label = key(code)
         case .mouseButton(let number): label = String(localized: .mouseButton(Int(number) + 1))
         case .mouseGesture(let button, let direction):
@@ -70,6 +71,34 @@ extension EngineStatus {
         case .tapFailed: .tapCreationFailed
         case .interrupted: .engineInterrupted
         case .outputFailed: .outputFailed
+        }
+    }
+}
+
+extension DeviceScope {
+    var title: LocalizedStringResource {
+        switch self {
+        case .allKeyboards: .allKeyboards
+        case .allMice: .allMice
+        case .builtInTrackpad: .builtInTrackpad
+        }
+    }
+    var symbol: String {
+        switch self {
+        case .allKeyboards: "keyboard"
+        case .allMice: "computermouse"
+        case .builtInTrackpad: "rectangle.and.hand.point.up.left"
+        }
+    }
+}
+
+extension TrackpadCaptureStatus {
+    var text: LocalizedStringResource {
+        switch self {
+        case .idle: .trackpadIdle
+        case .active: .trackpadActive
+        case .unavailable: .trackpadUnavailable
+        case .failed: .trackpadFailed
         }
     }
 }

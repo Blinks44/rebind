@@ -7,19 +7,27 @@ import CoreGraphics
     private let openApplication: (URL) async throws -> Void
     private let openDocument: (URL) async throws -> Void
     private let activateApplication: (ApplicationTarget) -> Bool
-    private let secureInput: () -> Bool
-    private let postingAllowed: () -> Bool
+    private let quitApplication: (ApplicationTarget, () -> Bool) -> WindowActionResult
+    private let previousApplication: (@escaping @Sendable () -> Bool) async -> WindowActionResult
+    private let secureInput: @Sendable () -> Bool
+    private let postingAllowed: @Sendable () -> Bool
 
     init(mailbox: EngineMailbox,
+         previousApplication: @escaping (@escaping @Sendable () -> Bool) async -> WindowActionResult,
          openApplication: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openApplication($0) },
          openDocument: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openDocument($0) },
          activateApplication: @escaping (ApplicationTarget) -> Bool = { NativeWorkspace.activateApplication($0) },
-         secureInput: @escaping () -> Bool = { IsSecureEventInputEnabled() },
-         postingAllowed: @escaping () -> Bool = { CGPreflightPostEventAccess() }) {
+         quitApplication: @escaping (ApplicationTarget, () -> Bool) -> WindowActionResult = {
+             ApplicationQuitExecutor.perform($0, canPerform: $1)
+         },
+         secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
+         postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
         self.mailbox = mailbox
         self.openApplication = openApplication
         self.openDocument = openDocument
         self.activateApplication = activateApplication
+        self.quitApplication = quitApplication
+        self.previousApplication = previousApplication
         self.secureInput = secureInput
         self.postingAllowed = postingAllowed
     }
@@ -36,6 +44,21 @@ import CoreGraphics
             switch request.target {
             case .application(let target, activateOnly: true): failed = !activateApplication(target)
             case .application(let target, activateOnly: false): try await openApplication(target.url)
+            case .quitApplication(let target):
+                let result = quitApplication(target) {
+                    !Task.isCancelled && self.mailbox.dispatchIsCurrent(request.dispatch)
+                        && self.postingAllowed() && !self.secureInput()
+                }
+                guard result != .cancelled else { return }
+                failed = result == .unavailable
+            case .previousApplication:
+                let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+                let result = await previousApplication {
+                    !Task.isCancelled && mailbox.dispatchIsCurrent(request.dispatch)
+                        && postingAllowed() && !secureInput()
+                }
+                guard result != .cancelled else { return }
+                failed = result == .unavailable
             case .document(let url): try await openDocument(url)
             }
         } catch is CancellationError {

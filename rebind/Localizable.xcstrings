@@ -5915,6 +5915,847 @@
           }
         }
       }
+    },
+    "lockScreenAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Screen (Experimental)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокировать экран (экспериментально)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm sperren (experimentell)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verrouiller l’écran (expérimental)"
+          }
+        }
+      }
+    },
+    "lockScreenFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not request screen locking. Lock the Mac manually."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось запросить блокировку экрана. Заблокируйте Mac вручную."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bildschirmsperre konnte nicht angefordert werden. Sperren Sie den Mac manuell."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de demander le verrouillage de l’écran. Verrouillez le Mac manuellement."
+          }
+        }
+      }
+    },
+    "lockScreenHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimental: requests the native Lock Screen through an undocumented macOS 26/27 API. It may stop working after a system update. No keyboard shortcut is sent; verify that the screen actually locks. Unlock through macOS as usual."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспериментально: запрашивает системную блокировку экрана через недокументированный API macOS 26/27. После обновления системы действие может перестать работать. Сочетание клавиш не отправляется; проверьте, что экран действительно заблокирован. Разблокируйте Mac обычным способом."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimentell: fordert die native Bildschirmsperre über eine undokumentierte API von macOS 26/27 an. Nach einem Systemupdate kann die Funktion ausfallen. Es wird kein Tastaturkurzbefehl gesendet; prüfen Sie die tatsächliche Sperre. Entsperren Sie den Mac wie gewohnt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expérimental : demande le verrouillage natif via une API non documentée de macOS 26/27. Une mise à jour du système peut empêcher son fonctionnement. Aucun raccourci clavier n’est envoyé ; vérifiez que l’écran est verrouillé. Déverrouillez le Mac comme d’habitude."
+          }
+        }
+      }
+    },
+    "lockScreenUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimental screen locking is unavailable on this macOS version or the system entry point could not be loaded."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспериментальная блокировка недоступна в этой версии macOS или системную функцию не удалось загрузить."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die experimentelle Bildschirmsperre ist in dieser macOS-Version nicht verfügbar oder die Systemfunktion konnte nicht geladen werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le verrouillage expérimental est indisponible sur cette version de macOS ou la fonction système n’a pas pu être chargée."
+          }
+        }
+      }
+    },
+    "openSystemSettingsAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть Системные настройки"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systemeinstellungen öffnen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir Réglages Système"
+          }
+        }
+      }
+    },
+    "openSystemSettingsFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System Settings could not be opened. The app may be unavailable or macOS may have rejected the request."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось открыть Системные настройки. Приложение может быть недоступно или macOS отклонила запрос."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Systemeinstellungen konnten nicht geöffnet werden. Die App ist möglicherweise nicht verfügbar oder macOS hat die Anfrage abgelehnt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’ouvrir Réglages Système. L’app peut être indisponible ou macOS peut avoir refusé la demande."
+          }
+        }
+      }
+    },
+    "openSystemSettingsHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the macOS System Settings app. No settings are changed. The app may reopen its last viewed pane."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открывает приложение «Системные настройки» macOS. Настройки не изменяются. Приложение может открыть последний просмотренный раздел."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die macOS-Systemeinstellungen. Einstellungen werden nicht geändert. Die App kann den zuletzt geöffneten Bereich anzeigen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre l’app Réglages Système de macOS. Aucun réglage n’est modifié. L’app peut rouvrir le dernier volet consulté."
+          }
+        }
+      }
+    },
+    "quitApplicationAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Selected Application"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершить выбранное приложение"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgewählte App beenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter l’application sélectionnée"
+          }
+        }
+      }
+    },
+    "quitApplicationFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The quit request could not be sent. Check that exactly one regular instance of the selected app copy is running and still available. Rebind cannot be quit by a rule."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось отправить запрос на завершение. Проверьте, что запущен ровно один обычный экземпляр выбранной копии приложения и он доступен. Правило не может завершить Rebind."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Anfrage zum Beenden konnte nicht gesendet werden. Prüfen Sie, ob genau eine normale Instanz der ausgewählten App-Kopie läuft und verfügbar ist. Eine Regel kann Rebind nicht beenden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La demande de fermeture n’a pas pu être envoyée. Vérifiez qu’une seule instance normale de la copie choisie fonctionne et reste disponible. Une règle ne peut pas quitter Rebind."
+          }
+        }
+      }
+    },
+    "quitApplicationHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requests a normal quit of the selected running app, including in the background. The app may ask to save changes or cancel quitting. Requires one running regular instance of the selected copy. Rebind is excluded."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запрашивает обычное завершение выбранного запущенного приложения, в том числе в фоне. Оно может предложить сохранить изменения или отменить выход. Требуется один запущенный обычный экземпляр выбранной копии. Rebind исключён."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fordert das normale Beenden der ausgewählten laufenden App an, auch im Hintergrund. Die App kann zum Speichern auffordern oder das Beenden abbrechen. Erfordert genau eine laufende normale Instanz der ausgewählten Kopie. Rebind ist ausgeschlossen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demande la fermeture normale de l’app sélectionnée en cours d’exécution, même en arrière-plan. L’app peut demander d’enregistrer les modifications ou annuler la fermeture. Une seule instance normale de la copie choisie doit fonctionner. Rebind est exclu."
+          }
+        }
+      }
+    },
+    "sleepSystemAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put Mac to Sleep"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевести Mac в режим сна"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac in den Ruhezustand versetzen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre le Mac en veille"
+          }
+        }
+      }
+    },
+    "sleepSystemFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sleep request was not accepted. Full system sleep may be unavailable or macOS may have refused access. Rebind does not change power settings or request administrator privileges."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запрос режима сна не принят. Полный сон системы может быть недоступен или macOS отказала в доступе. Rebind не меняет настройки питания и не запрашивает права администратора."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Ruhezustandsanfrage wurde nicht angenommen. Der vollständige Systemruhezustand ist möglicherweise nicht verfügbar oder macOS hat den Zugriff verweigert. Rebind ändert keine Energieeinstellungen und fordert keine Administratorrechte an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La demande de mise en veille n’a pas été acceptée. La veille complète peut être indisponible ou macOS peut avoir refusé l’accès. Rebind ne modifie pas les réglages d’énergie et ne demande pas de droits administrateur."
+          }
+        }
+      }
+    },
+    "sleepSystemHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requests system sleep through macOS. An accepted request clears queued actions; macOS controls the transition. New input may wake the Mac, including release of the trigger button. Password requirements follow your existing settings."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запрашивает режим сна через macOS. После принятия запроса очередь действий очищается; переходом управляет система. Новый ввод может разбудить Mac, в том числе отпускание кнопки триггера. Запрос пароля зависит от ваших настроек."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fordert den Systemruhezustand über macOS an. Nach Annahme werden wartende Aktionen verworfen; macOS steuert den Übergang. Neue Eingaben können den Mac wecken, auch das Loslassen der Auslösertaste. Die Passwortabfrage folgt Ihren bestehenden Einstellungen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demande la mise en veille via macOS. Après acceptation, les actions en attente sont supprimées ; macOS contrôle la transition. Une nouvelle entrée peut réveiller le Mac, y compris le relâchement du bouton déclencheur. Le mot de passe dépend de vos réglages actuels."
+          }
+        }
+      }
+    },
+    "sleepSystemUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full system sleep is unavailable on this Mac."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Полный режим сна недоступен на этом Mac."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der vollständige Systemruhezustand ist auf diesem Mac nicht verfügbar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La veille complète du système n’est pas disponible sur ce Mac."
+          }
+        }
+      }
+    },
+    "systemActions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Система"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Système"
+          }
+        }
+      }
+    },
+    "nextWindowAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next Window of Current App"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Следующее окно текущего приложения"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächstes Fenster der aktuellen App"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fenêtre suivante de l’app active"
+          }
+        }
+      }
+    },
+    "previousWindowAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Window of Current App"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предыдущее окно текущего приложения"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriges Fenster der aktuellen App"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fenêtre précédente de l’app active"
+          }
+        }
+      }
+    },
+    "windowCycleHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycles through the active app’s standard, non-minimized, non-modal windows in a stable circular order (up to 32 app-reported windows). One eligible window stays focused. macOS may switch Spaces. App switching, tabs and exact Command-` order are not included."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переключает обычные несвёрнутые немодальные окна активного приложения по кругу в устойчивом порядке (до 32 окон, сообщённых приложением). Если подходящее окно одно, фокус остаётся на нём. macOS может сменить рабочий стол. Переключение приложений, вкладок и точный порядок Command-` сюда не входят."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wechselt die normalen, nicht minimierten und nicht modalen Fenster der aktiven App in einer stabilen Kreisfolge (bis zu 32 von der App gemeldete Fenster). Bei nur einem geeigneten Fenster bleibt der Fokus dort. macOS kann den Space wechseln. App-Wechsel, Tabs und die genaue Reihenfolge von Command-` sind nicht enthalten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parcourt les fenêtres standard, non réduites et non modales de l’app active dans un ordre circulaire stable (jusqu’à 32 fenêtres signalées par l’app). Une seule fenêtre admissible conserve le focus. macOS peut changer de bureau. Le changement d’app, les onglets et l’ordre exact de Command-` ne sont pas inclus."
+          }
+        }
+      }
+    },
+    "windowCycleFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not switch the active app’s window. The app may not support window focusing, or its focus/windows may have changed."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось переключить окно активного приложения. Оно может не поддерживать фокусировку окон, либо фокус или список окон изменился."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Fenster der aktiven App konnte nicht gewechselt werden. Die App unterstützt möglicherweise keine Fensterfokussierung oder der Fokus bzw. die Fensterliste hat sich geändert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de changer de fenêtre dans l’app active. L’app peut ne pas prendre en charge le focus des fenêtres, ou le focus ou la liste des fenêtres a changé."
+          }
+        }
+      }
+    },
+    "previousApplicationAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Application"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предыдущее приложение"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorherige App"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App précédente"
+          }
+        }
+      }
+    },
+    "previousApplicationHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Returns to the last active app. Switch between two apps after starting Rebind. Rebind and background apps are skipped; closed apps are not reopened. macOS controls windows and Spaces."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Возвращает в последнее активное приложение. После запуска Rebind переключитесь между двумя приложениями. Rebind и фоновые приложения пропускаются; закрытые не запускаются заново. Окна и рабочие столы определяет macOS."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kehrt zur letzten aktiven App zurück. Wechseln Sie nach dem Start von Rebind zwischen zwei Apps. Rebind und Hintergrund-Apps werden übersprungen; beendete Apps werden nicht neu geöffnet. macOS bestimmt Fenster und Spaces."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revient à la dernière app active. Passez entre deux apps après le lancement de Rebind. Rebind et les apps d’arrière-plan sont ignorées ; les apps fermées ne sont pas relancées. macOS détermine les fenêtres et les bureaux."
+          }
+        }
+      }
+    },
+    "previousApplicationFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not return to the previous app. Visit two apps after starting Rebind. The previous app may have quit, focus may have changed, or macOS may have rejected activation."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось вернуться в предыдущее приложение. После запуска Rebind переключитесь между двумя приложениями. Предыдущее приложение могло завершиться, фокус мог измениться или macOS отклонила активацию."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die vorherige App konnte nicht aktiviert werden. Wechseln Sie nach dem Start von Rebind zwischen zwei Apps. Die vorherige App wurde möglicherweise beendet, der Fokus hat sich geändert oder macOS hat die Aktivierung abgelehnt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de revenir à l’app précédente. Passez entre deux apps après le lancement de Rebind. L’app précédente a pu se fermer, le focus a pu changer ou macOS a refusé l’activation."
+          }
+        }
+      }
+    },
+    "builtInTrackpad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in Trackpad"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Встроенный трекпад"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Integriertes Trackpad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad intégré"
+          }
+        }
+      }
+    },
+    "fourFingerTap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Four-finger tap"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тап четырьмя пальцами"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen mit vier Fingern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toucher à quatre doigts"
+          }
+        }
+      }
+    },
+    "trackpadTapHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimental: light four-finger tap on the built-in trackpad, without modifiers. Sends a keyboard shortcut after a 0.5-second click check. System gestures remain active; disable conflicting gestures in System Settings. Three-finger taps, clicks and double taps are not available yet."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспериментально: лёгкий тап четырьмя пальцами на встроенном трекпаде, без модификаторов. Сочетание отправляется после проверки клика в течение 0,5 с. Системные жесты остаются активны; отключите конфликтующие жесты в Системных настройках. Тапы тремя пальцами, клики и двойные тапы пока недоступны."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimentell: leichtes Tippen mit vier Fingern auf dem integrierten Trackpad, ohne Sondertasten. Das Tastenkürzel folgt nach einer Klickprüfung von 0,5 Sekunden. Systemgesten bleiben aktiv; deaktivieren Sie kollidierende Gesten in den Systemeinstellungen. Tippen mit drei Fingern, Klicks und Doppeltippen sind noch nicht verfügbar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expérimental : toucher léger à quatre doigts sur le trackpad intégré, sans touches de modification. Le raccourci est envoyé après une vérification des clics de 0,5 seconde. Les gestes système restent actifs ; désactivez les gestes en conflit dans Réglages Système. Les touchers à trois doigts, les clics et les doubles touchers ne sont pas encore disponibles."
+          }
+        }
+      }
+    },
+    "trackpadIdle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad capture is paused or no enabled trackpad rule is selected."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Захват трекпада приостановлен или в профиле нет включённого правила трекпада."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad-Erfassung pausiert oder kein aktiviertes Trackpad-Regelwerk ausgewählt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture du trackpad en pause ou aucune règle de trackpad active dans le profil."
+          }
+        }
+      }
+    },
+    "trackpadActive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimental trackpad capture active · wait 3 seconds after enabling, then tap."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспериментальный захват трекпада активен · после включения подождите 3 секунды, затем сделайте тап."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimentelle Trackpad-Erfassung aktiv · nach dem Aktivieren 3 Sekunden warten, dann tippen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture expérimentale du trackpad active · attendez 3 secondes après activation, puis touchez."
+          }
+        }
+      }
+    },
+    "trackpadUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in trackpad capture is unavailable on this Mac."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Захват встроенного трекпада недоступен на этом Mac."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfassung des integrierten Trackpads auf diesem Mac nicht verfügbar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La capture du trackpad intégré est indisponible sur ce Mac."
+          }
+        }
+      }
+    },
+    "trackpadFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad capture failed. Restart Rebind to try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось запустить захват трекпада. Перезапустите Rebind для повторной попытки."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad-Erfassung fehlgeschlagen. Starten Sie Rebind neu, um es erneut zu versuchen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de la capture du trackpad. Relancez Rebind pour réessayer."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

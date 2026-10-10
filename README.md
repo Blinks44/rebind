@@ -8,14 +8,19 @@ plain Button 4 retaining its behavior. The user also confirms Button 5 long pres
 → Command+A with a 1000 ms delay after cancellation fixes, and the requested
 Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
 double press, other gesture directions and full suppression/cancellation/lifecycle checks remain open.
-Multitouch is not implemented. Physical-device routing is outside the current scope.
+Phase 5 now integrates an **experimental built-in four-finger tap → keyboard
+shortcut** rule with a 500 ms click check. Three-finger taps, physical multi-finger
+clicks, double/corner taps and external trackpads are not yet available. Native
+gestures remain active; app delivery/lifecycle still need hardware validation.
+See the [trackpad walkthrough](docs/verification/phase-5-four-finger-tap.md).
+Physical-device routing is outside the current scope.
 
 Phase 3 uses **manual profiles**: create, copy, rename and delete named rule sets,
 then select one above the rules or from the Menu Bar **Profile** submenu. A profile
 covers all input categories; its name does not identify a physical mouse. Switching
 preserves pause and cancels the old profile's pending recognition/output/recording,
 while retaining already suppressed releases. Existing schemas 1–5 migrate into
-**Default** in memory, preserving all rules; the first successful edit saves the current schema (14).
+**Default** in memory, preserving all rules; the first successful edit saves the current schema (22).
 No HID inventory, device-specific routing or private event-source API remains.
 See the [profile walkthrough](docs/verification/profiles.md).
 
@@ -114,9 +119,59 @@ first/last-desktop retest with the existing Windows modifier remap. Exact
 individual cases and timings were not restated; broader safety/display checks remain. Ordinary shortcuts and the three
 Dock notifications retain their senders. Deployment remains macOS 26; the old private
 26.6/27 gesture-layout gate is removed. Typed Space actions and existing rules are preserved;
-schema 16 adds window layout after schema 15 media and schema 14 mouse output, and loading older schemas still never rewrites the file. See the
+schema 18 adds system sleep after schema 17 app commands, schema 16 window layout, schema 15 media and schema 14 mouse output, and loading older schemas still never rewrites the file. See the
 [Space walkthrough](docs/verification/phase-4-spaces.md) and
 [third-party notice](rebind/Resources/ThirdPartyNotices.txt).
+
+The catalog also offers **Quit Selected Application** with a native app picker,
+and **System → Open System Settings**. Quit requests a normal exit of exactly one
+regular running instance of the chosen app copy, including in the background.
+The app may show a save dialog or cancel exit; Rebind does not force, retry or
+confirm dialogs, and reports request acceptance rather than completed exit.
+Rebind itself and ambiguous/absent copies are refused. System Settings uses public
+bundle lookup/open and may restore its last viewed pane; no settings change.
+These actions are software-tested and the user confirms the requested actions work.
+Detailed guard checks remain open in the [application commands walkthrough](docs/verification/phase-4-application-commands.md).
+
+**Windows and Applications → Next/Previous Window of Current App** cycles the
+active app’s ordinary non-minimized, non-modal windows through public Accessibility
+Main/raise operations and checks the resulting focus. The circular order remains
+stable across raises; changed windows/app/configuration reset it. One window is a
+no-op; up to 32 app-reported windows, no persistent window history or keyboard
+shortcut. macOS may switch Spaces. The user confirms the requested happy path
+works (2026-10-09); detailed app-specific and safety checks remain open in the
+[window-cycle walkthrough](docs/verification/phase-4-window-cycle.md).
+
+**Windows and Applications → Previous Application** returns to the preceding
+observed regular app using public AppKit observation and Accessibility activation. Visit two apps after starting Rebind;
+repeated successful activations toggle between them. Rebind/background apps are
+skipped; from Rebind the action returns to the last external app. Only two running
+app handles are kept in memory and cleared on stop. A closed app is not relaunched.
+Activation runs off the UI thread and checks actual focus; macOS controls windows
+and Spaces. The user confirms the AX fix works after the original AppKit backend
+failed between Messages and Finder (2026-10-09). Detailed safety/platform checks
+remain open. See the manual
+check in the [application-switch walkthrough](docs/verification/phase-4-application-switch.md).
+
+**System → Put Mac to Sleep** uses public IOKit on the serial action worker.
+It checks full-sleep support, closes the power-management connection on every path
+and rechecks cancellation immediately before the request. An accepted request drops
+already queued actions/pending recognition; macOS owns actual sleep and wake.
+New input or trigger release may wake the Mac, and password behavior follows your
+existing settings. No power settings/privileges are changed. Software checks pass;
+the user confirms the requested sleep/wake check works (2026-10-09). Detailed
+safety, source-release and platform checks remain open in the
+[sleep walkthrough](docs/verification/phase-4-sleep.md).
+
+**System → Lock Screen (Experimental)** requests native locking through an
+isolated private `login.framework` entry point, as used by Hammerspoon/macOS lock
+utilities. No keyboard shortcut is sent. It is disabled when unavailable or on
+unreviewed macOS versions (currently limited to 26/27). A returned call does not
+prove locking; test the actual screen. Locked/inactive sessions suspend capture
+and clear recording/diagnostics; native state is rechecked before resuming.
+The user confirms the requested lock/unlock and existing-bindings check works
+(2026-10-09); individual cases were not restated. Detailed safety and compatibility
+checks remain open in the [lock walkthrough](docs/verification/phase-4-lock-screen.md).
 
 The UI is translated into English, Russian, German and French using a String
 Catalog and the system language. Manual language selection remains planned.
@@ -137,7 +192,8 @@ The [input-diagnostics walkthrough](docs/verification/phase-2-diagnostics.md) co
 the opt-in mouse metadata viewer and its remaining physical checks.
 
 Requirements and roadmap: [SPEC](docs/SPEC.md), [PLAN](docs/PLAN.md),
-[agent instructions](AGENTS.md). Design references remain in `docs/references/`.
+[agent instructions](AGENTS.md). The current design lives in Sketch and is inspected
+through MCP; `docs/references/` holds optional assets and historical exports.
 
 **Input Diagnostics** at the bottom of the main window shows numeric Quartz mouse
 button codes (zero-based), button phases, wheel direction, modifiers and the engine's
@@ -282,27 +338,31 @@ the file until the next successful save.
 
 ## Agent skills
 
-Four reviewed MIT skills are installed at project scope in `.agents/skills/`:
-**SwiftUI Pro**, **Swift Concurrency Pro**, **Swift Testing Pro**, and
-**AppKit Accessibility Auditor**. Their source revisions, licenses, checksums,
-installation method, and packaging exclusions are recorded in
-`.agents/skills/manifest.json` and `docs/PLAN.md`.
+Eleven reviewed coding and design skills live in `.agents/skills`. Their source
+repositories, pinned revisions, licenses and review notes are recorded in
+`manifest.json`; each skill includes its full MIT license. No checksum-validation
+script or global installation is needed. See [AGENTS.md](AGENTS.md) for when to
+use each skill and the macOS-specific overrides.
 
-Verify their installed metadata, hashes, references, licenses and Git visibility:
+Codex discovers project skills on the next turn. Invoke a relevant skill by its
+name, such as `$swiftui-pro`, `$swiftui-design-principles` or
+`$swiftui-accessibility-auditor`; read only its applicable references.
 
-```sh
-python3 scripts/verify-skills.py
-```
-
-Codex discovers project skills from `.agents/skills/` on the next turn. Invoke
-them with `$swiftui-pro`, `$swift-concurrency-pro`, `$swift-testing-pro`, or
-`$appkit-accessibility-auditor`, or ask for the named skill. If an agent's skill
-picker has not refreshed, start a new session; `AGENTS.md` also lists their
-direct paths. Project requirements and the installed SDK govern platform and
-API choices. [Codex skill documentation](https://learn.chatgpt.com/docs/build-skills).
+The design agent reads the current Rebind designs in Sketch through MCP, using
+relevant frames, layer/style information and screenshots. Sketch must be open
+with the intended document accessible to its MCP server. A static `design.png`
+is no longer required; app-icon assets in `docs/references/` remain independent.
 
 The repository has no runtime Swift packages yet. Use Xcode's package manager
 when a justified dependency is selected, and commit its `Package.resolved`.
 `swift build` / `swift test` are not applicable to this Xcode app without a
 `Package.swift`. Runtime candidates and hardware verification gates are in
 `docs/PLAN.md`; none have been installed for preparation.
+
+The separate [trackpad feasibility probe](tools/TrackpadProbe/README.md) checks
+private-API availability and supports explicit bounded contact diagnostics.
+A separate explicit one-shot four-finger Command-W mode checks action delivery
+in a disposable browser tab; ordinary capture modes remain passive.
+It is not bundled with Rebind. The app now has its own narrow experimental
+built-in four-finger tap adapter; the successful standalone probe does not prove
+app rule delivery, gesture suppression or recovery.

@@ -15,7 +15,8 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
         scope == trigger.scope && trigger.isSupported && action.isSupported
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
-            && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture))
+            && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture && !trigger.isTrackpad))
+            && (!trigger.isTrackpad || (modifiers.isEmpty && action.shortcut != nil))
             && (100...5000).contains(holdDurationMilliseconds)
     }
 }

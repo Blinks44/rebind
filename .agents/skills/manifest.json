@@ -1,6 +1,6 @@
 {
-  "reviewed_on": "2026-10-08",
-  "installation": "Bundled Codex skill-installer, pinned revisions, project .agents/skills",
+  "reviewed_on": "2026-10-09",
+  "installation": "Project-local reviewed skills; pinned source revisions, full licenses and review notes",
   "skills": [
     {
       "name": "swiftui-pro",
@@ -9,26 +9,7 @@
       "revision": "f9800713b24580bc444931949aad4519128605e8",
       "upstream_commit_date": "2026-10-07T13:39:09Z",
       "license": "MIT",
-      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills",
-      "sha256": {
-        "LICENSE": "b9b479e6df9f27cbc8e7abe91f771b396f3f0fa114d070c7c0b02c820c6b74dc",
-        "SKILL.md": "c88c396456ccd3e1feb18070283352fd8db1c92c0a64ae59d7fe0032674c0129",
-        "agents/openai.yaml": "429c39b71692d4dc86e2b616f28b7e7f56207361c5b5a0b06df4746af96d5fa3",
-        "assets/swiftui-pro-icon.png": "51a28a5834e6d251def3c562712db1e2124e6d67b62be89fe4c1ca628e37a70a",
-        "assets/swiftui-pro-icon.svg": "a15c0a3030f08ffcc442aed9b7f2f19840877e43f980ad4dfdef515e9aeb44b3",
-        "references/accessibility.md": "46f865d3e5cf63f4394e8d55628e06897bf9eec7409d69331931225eac69a198",
-        "references/api.md": "a12fb9dcc02093b560dd82e2882556d7cd2d6652edc0006eb24ebc14bc669448",
-        "references/data.md": "291a81fb0fc1befebcafe576d9e35cc8d47bb4d63baef50f6f2292300be797dd",
-        "references/design.md": "8f2d05504e4d51dc2a0d91d2b0a580457cd98d0145826e4c0bc35dc67f006793",
-        "references/hygiene.md": "18c945717a842912180c218c10e7e76b496c11a87a77c1be65a504c70850877c",
-        "references/localization.md": "54f1d15bd8f726409a72622964005d2732148da614dc022bf7729f68ab246571",
-        "references/navigation.md": "24b95bbaa01970ff0a6625a7a201d81191ab1746dbe317bd7583d1f3f7ce53a3",
-        "references/performance-plus.md": "b7c77ac07548f9f8b6440daab607b0fa22796fc498ca644e3fa9890ee7912068",
-        "references/performance.md": "82ee00cc74109dd7e6296dc872d410742a8584ad6d0bc4ae902fad0220392e38",
-        "references/resizability.md": "2e1a88a675fe2eaf326fb1a50fafae4123725e6b4278c311c875335651a60226",
-        "references/swift.md": "c21c2f906d902444ad41179cf4481fb1484679f8b2c61c87122e35648aee8cd9",
-        "references/views.md": "293e2ce342d28b10b00d0d053da8355378ad6701c85066c90e4da48bf553dac5"
-      }
+      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills"
     },
     {
       "name": "swift-concurrency-pro",
@@ -37,26 +18,7 @@
       "revision": "bee3f69ba17142da148d3c5406f148ed62592b69",
       "upstream_commit_date": "2026-05-17T16:07:46Z",
       "license": "MIT",
-      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills",
-      "sha256": {
-        "LICENSE": "b9b479e6df9f27cbc8e7abe91f771b396f3f0fa114d070c7c0b02c820c6b74dc",
-        "SKILL.md": "95d3098b038a38f163259cb7404070f786fed846a5e8b864e6b34fa7600247f9",
-        "agents/openai.yaml": "c9aeb1a570575ef05eecfabf4657236591081f7c13cb832d6029981f7d72e0dc",
-        "assets/swift-concurrency-pro-icon.png": "f1552e2844ae6382bd2575f40c48e0f199db2b42574aa1bdcb87ec92ddc901a1",
-        "assets/swift-concurrency-pro-icon.svg": "da92910ec6329966729d6e9bcd27bb2be8c079d95b779c1081641dd9b64a344a",
-        "references/actors.md": "7a77a0f06d0040a6813ec02cd4b1360df4bcfa501f93710bfb4296de9911d64f",
-        "references/async-streams.md": "589ba0dad544b28b158702e239fe6a4077b6d1484c83b8fd51290192bf1ffc9a",
-        "references/bridging.md": "c8eb60dcdd90f67cb3b8b1213fc55a56dd5c4a04f465d7aff7fdbd5c451e0498",
-        "references/bug-patterns.md": "2233f58e784a9b6cf13620133485fcf7e3150192a40e713369ebbddc820dec85",
-        "references/cancellation.md": "c83b4134b44ea5a0ee06e785bd0cb85616234469833f9677297b6fcddea1e1fa",
-        "references/diagnostics.md": "cc2debc6f430ed13fc3be3a7ce942e55bb1cf02a9804ebfb272f295b502c9569",
-        "references/hotspots.md": "199a9fa4beea4a550b3f63e07cddd441d72fd41d1e17e6f3255071a661ce1e6d",
-        "references/interop.md": "b86cd716bd22b38d718e86b37b3d7dd1225b5ce93a53f88842ff6993e93ca566",
-        "references/new-features.md": "c721a187b57e9d94112972c9685c57f7129187df2d36add4df1a9c9e9aa9e541",
-        "references/structured.md": "1655b610fd1dafb7cf42b61457ff8229117c06879d0e9cc40460f437ba97895b",
-        "references/testing.md": "4a1fc1aefb572bbdbd75a502a74df795af7e2212eec6836a4f353f9b725abffc",
-        "references/unstructured.md": "d8063edf18bbe5abc9c628548b0100c4dd8defe3340c017d6fa4936eca17c456"
-      }
+      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills"
     },
     {
       "name": "swift-testing-pro",
@@ -65,19 +27,7 @@
       "revision": "2d6bba14a3c8bf3694f218b92fffe617c41ae43e",
       "upstream_commit_date": "2026-05-17T15:49:43Z",
       "license": "MIT",
-      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills",
-      "sha256": {
-        "LICENSE": "b9b479e6df9f27cbc8e7abe91f771b396f3f0fa114d070c7c0b02c820c6b74dc",
-        "SKILL.md": "ad4f1bff44b5b7fce20b282481e651876efce024d13b16cb969bc433036ac059",
-        "agents/openai.yaml": "f7a35b0befd4eb136cf87047543379a63efebb4f0f7eb4490489325d09383c4f",
-        "assets/swift-testing-pro-icon.png": "13cbe2849191cc3fda400fc065d5fe6afa5b78f09e347d783bfa2b6d852a2b66",
-        "assets/swift-testing-pro-icon.svg": "92d3d0b2855da2404beaacd3ea574b79a26535c9d99a0739edfd5e35d764a9e0",
-        "references/async-tests.md": "bc6e0eabd10377b5796e9e554a4965a78b7d1aaba8f11021c2a63b6e8a9e669a",
-        "references/core-rules.md": "2271efdca6c2b7b3365501172147884b6e786bcee7bef680fb4f4718929d6180",
-        "references/migrating-from-xctest.md": "35b64812402ad1d15b496993e1721daaf4e80672bf9cce47078f772fd271f93f",
-        "references/new-features.md": "988df5cb556893c789f9aecdc4c8773fdbbda787ab1dad766bf1182a7b9a4819",
-        "references/writing-better-tests.md": "25da3455f6cec4f10d3dff0bf3e8e1372568c75691916541b4d517f451cb8bf1"
-      }
+      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills"
     },
     {
       "name": "appkit-accessibility-auditor",
@@ -86,12 +36,78 @@
       "revision": "64e5848d371b7774a4c27ffd430c02121d03e371",
       "upstream_commit_date": "2026-10-05T19:05:37Z",
       "license": "MIT",
-      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills",
-      "sha256": {
-        "LICENSE": "07bf6c0752f24eef905c4b2ff70b7f2561a084e314038d28de72b0177c5c6e82",
-        "SKILL.md": "cc6a48c8ef1430f71730dddffde7a4d94912f537de9832da6379f27f430b61a2",
-        "checklist.md": "c88312bdaea9138e6c1b980fc56156b5508405158a6828e9296fb4efc7095ca4"
-      }
+      "normalization": "Added upstream LICENSE; excluded Claude plugin packaging and nested duplicate skills"
+    },
+    {
+      "name": "swiftui-design-principles",
+      "repository": "https://github.com/arjitj2/swiftui-design-principles",
+      "source_path": ".",
+      "revision": "791d22d73f844167a3872530e3941185b730d8be",
+      "upstream_commit_date": "2026-03-16T03:50:20Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "swiftui-ui-patterns",
+      "repository": "https://github.com/Dimillian/Skills",
+      "source_path": "swiftui-ui-patterns",
+      "revision": "05ba982bfeb0d77d3c97d4542b0ee15034d05f84",
+      "upstream_commit_date": "2026-03-29T15:28:00Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "swiftui-performance-audit",
+      "repository": "https://github.com/Dimillian/Skills",
+      "source_path": "swiftui-performance-audit",
+      "revision": "05ba982bfeb0d77d3c97d4542b0ee15034d05f84",
+      "upstream_commit_date": "2026-03-29T15:28:00Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "swiftui-liquid-glass",
+      "repository": "https://github.com/Dimillian/Skills",
+      "source_path": "swiftui-liquid-glass",
+      "revision": "05ba982bfeb0d77d3c97d4542b0ee15034d05f84",
+      "upstream_commit_date": "2026-03-29T15:28:00Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "swift-api-design-guidelines-skill",
+      "repository": "https://github.com/Erikote04/Swift-API-Design-Guidelines-Agent-Skill",
+      "source_path": "swift-api-design-guidelines-skill",
+      "revision": "36cdc1b5680f5d6c5c52c353a6857d176f4929e8",
+      "upstream_commit_date": "2026-02-18T13:32:56Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "writing-for-interfaces",
+      "repository": "https://github.com/andrewgleave/skills",
+      "source_path": "writing-for-interfaces",
+      "revision": "d6c72b885a1902d4b74d4bd9beca80f2a1b96b51",
+      "upstream_commit_date": "2026-04-23T14:15:54Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts. Removed Claude-only context: fork metadata; no automatic delegation."
+    },
+    {
+      "name": "swiftui-accessibility-auditor",
+      "repository": "https://github.com/rgmez/apple-accessibility-skills",
+      "source_path": "skills/swiftui-accessibility-auditor",
+      "revision": "64e5848d371b7774a4c27ffd430c02121d03e371",
+      "upstream_commit_date": "2026-10-05T19:05:37Z",
+      "reviewed_on": "2026-10-09",
+      "license": "MIT",
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
     }
-  ]
+  ],
+  "design_source": "Current Rebind designs in Sketch via MCP; see AGENTS.md for document/frame inspection workflow"
 }

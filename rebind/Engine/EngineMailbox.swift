@@ -35,6 +35,10 @@ nonisolated final class EngineMailbox: Sendable {
         var recorded: RecordedInput?
         var matcher = InputMatcher()
         var pending: [RebindAction] = []
+        var trackpadDispatch: ActionDispatch?
+        var trackpadStatus: TrackpadCaptureStatus = .idle
+        var inputActivity: UInt64 = 0
+        var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?
         var workspaceClaimed = false
         var appleShortcutInProgress = false
@@ -49,6 +53,9 @@ nonisolated final class EngineMailbox: Sendable {
             actionRevision == dispatch.revision && status == .active && enabled
                 && !editing && !suspended && !stopped && recording == nil
                 && audioCapabilities.supports(dispatch.action)
+                && (dispatch.trackpadTarget.map {
+                    $0.pid == foregroundPID && $0.inputActivity == inputActivity
+                } ?? true)
         }
 
         mutating func resetCapture(status: EngineStatus) {
@@ -58,6 +65,7 @@ nonisolated final class EngineMailbox: Sendable {
             }
             actionRevision &+= 1
             pending.removeAll(keepingCapacity: true)
+            trackpadDispatch = nil
             matcher.resetAfterCaptureLoss()
             diagnostics.stop(clear: true)
             self.status = status
@@ -83,6 +91,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.enabled = configuration.isEnabled
             $0.pending.removeAll(keepingCapacity: true)
+            $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
         }
@@ -101,6 +110,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.actionRevision &+= 1
             $0.pending.removeAll(keepingCapacity: true)
+            $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
     }
@@ -112,8 +122,13 @@ nonisolated final class EngineMailbox: Sendable {
             if let request = $0.workspaceRequest, !$0.workspaceClaimed,
                !$0.dispatchIsCurrent(request.dispatch) { $0.workspaceRequest = nil }
             guard $0.status == .active, $0.enabled, !$0.editing, !$0.suspended,
-                  !$0.stopped, $0.recording == nil, !$0.pending.isEmpty,
+                  !$0.stopped, $0.recording == nil,
                   $0.workspaceRequest == nil else { return nil }
+            if let dispatch = $0.trackpadDispatch {
+                $0.trackpadDispatch = nil
+                if $0.dispatchIsCurrent(dispatch) { return dispatch }
+            }
+            guard !$0.pending.isEmpty else { return nil }
             return ActionDispatch(action: $0.pending.removeFirst(), revision: $0.actionRevision,
                                   deviceID: $0.audioCapabilities.deviceID)
         }
@@ -121,6 +136,19 @@ nonisolated final class EngineMailbox: Sendable {
 
     func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
         state.withLock { $0.dispatchIsCurrent(dispatch) }
+    }
+
+    func systemTransitionRequested(_ dispatch: ActionDispatch) {
+        state.withLock {
+            guard $0.actionRevision == dispatch.revision else { return }
+            // Do not run already queued work or delayed recognition during the
+            // transition to sleep/lock. Keep suppressed press ownership until up.
+            $0.diagnostics.stop(clear: true)
+            $0.actionRevision &+= 1
+            $0.pending.removeAll(keepingCapacity: true)
+            $0.trackpadDispatch = nil
+            $0.matcher.cancelPendingActivation()
+        }
     }
 
     func submitWorkspace(_ request: WorkspaceRequest) {
@@ -171,6 +199,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.recording = request
             $0.recorded = nil
             $0.pending.removeAll(keepingCapacity: true)
+            $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
     }
@@ -180,6 +209,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.actionRevision &+= 1
             $0.editing = editing
             $0.pending.removeAll(keepingCapacity: true)
+            $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
     }
@@ -210,7 +240,7 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
-        guard !event.isSynthetic else { return false }
+        guard !event.isSynthetic, !event.trigger.isTrackpad else { return false }
         return state.withLock { Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput) }
     }
 
@@ -229,6 +259,9 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     private static func handleAndDiagnose(_ event: InputEvent, state: inout State, secureInput: Bool) -> Bool {
+        // Any real key/button/wheel activity invalidates a delayed touch action.
+        // No key code/text is retained by the touch recognizer.
+        if event.phase != .drag { state.inputActivity &+= 1; state.trackpadDispatch = nil }
         let pendingCount = state.pending.count
         let suppressed = handle(event, state: &state, secureInput: secureInput)
         state.diagnostics.record(event, suppressed: suppressed, queued: state.pending.count > pendingCount)
@@ -261,6 +294,8 @@ nonisolated final class EngineMailbox: Sendable {
                 $0.resetCapture(status: secureInput ? .secureInput : .paused)
                 return
             }
+            $0.inputActivity &+= 1
+            $0.trackpadDispatch = nil
             $0.matcher.cancelHold()
             $0.diagnostics.append(kind: .unsupportedScroll, phase: .scroll, modifiers: modifiers,
                                   outcome: .passedThrough, at: now)
@@ -283,6 +318,7 @@ nonisolated final class EngineMailbox: Sendable {
             state.emergencyPause = true
             state.recording = nil
             state.pending.removeAll(keepingCapacity: true)
+            state.trackpadDispatch = nil
             state.diagnostics.stop(clear: true)
             return true
         }

@@ -69,7 +69,7 @@ nonisolated enum WindowActionExecutor {
     }
 }
 
-nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility {
+nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCyclingAccessibility {
     private let system = AXUIElementCreateSystemWide()
     private let startedAt = DispatchTime.now().uptimeNanoseconds
     private let budget: UInt64 = 450_000_000
@@ -149,6 +149,38 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility {
         guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0,
               let value = AXValueCreate(.cgSize, &size), prepare(element) else { return false }
         return AXUIElementSetAttributeValue(element, kAXSizeAttribute as CFString, value) == .success
+    }
+
+    func windows(of application: AXUIElement, limit: Int) -> [AXUIElement]? {
+        guard prepare(application) else { return nil }
+        var count = 0
+        guard AXUIElementGetAttributeValueCount(application, kAXWindowsAttribute as CFString, &count) == .success,
+              count >= 0, count <= limit else { return nil }
+        if count == 0 { return [] }
+        guard prepare(application) else { return nil }
+        var values: CFArray?
+        guard AXUIElementCopyAttributeValues(application, kAXWindowsAttribute as CFString, 0, count, &values) == .success,
+              let array = values as? [AnyObject], array.count == count,
+              array.allSatisfy({ CFGetTypeID($0) == AXUIElementGetTypeID() }) else { return nil }
+        return array.map { unsafeDowncast($0, to: AXUIElement.self) }
+    }
+
+    func isModal(_ element: AXUIElement) -> Bool? {
+        guard let value = value(kAXModalAttribute, of: element), CFGetTypeID(value) == CFBooleanGetTypeID() else { return nil }
+        return CFBooleanGetValue(unsafeDowncast(value, to: CFBoolean.self))
+    }
+
+    func canRaise(_ element: AXUIElement) -> Bool {
+        guard prepare(element) else { return false }
+        var actions: CFArray?
+        guard AXUIElementCopyActionNames(element, &actions) == .success,
+              let names = actions as? [String] else { return false }
+        return names.contains(kAXRaiseAction as String)
+    }
+
+    func raise(_ element: AXUIElement) -> Bool {
+        guard prepare(element) else { return false }
+        return AXUIElementPerformAction(element, kAXRaiseAction as CFString) == .success
     }
 
     private func value(_ attribute: String, of element: AXUIElement) -> CFTypeRef? {

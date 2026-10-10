@@ -4,7 +4,7 @@
 **Platform:** macOS only, initial target macOS 26+.  
 **Product:** Rebind, a lightweight, capable, native input remapper inspired by the useful parts of BetterTouchTool.  
 **Companion files:** `../AGENTS.md`, `PLAN.md`.  
-**References:** Put provided design images into `docs/references/`; the agent should inspect them before designing screens.
+**Design source:** Current Rebind designs in Sketch, inspected through MCP before designing or implementing screens. `docs/references/` holds optional assets/historical exports; a PNG reference is not required.
 
 ## 1. Product vision
 
@@ -148,16 +148,34 @@ Use associated-value enums or similarly clear models for trigger and action vari
 
 ### 3.4 Built-in trackpad and Magic Trackpad (RESEARCH-GATED)
 
-Desired gestures, supported only where reliably recognized:
+**Confirmed compact scope — 2026-10-09:** the user has a built-in trackpad and
+explicitly wants both a light tap and a physical click with 3/4 fingers. Retain
+previously requested double taps and corner taps. Supported only where reliably
+recognized:
 
-- Tap with 1, 2, 3, 4, or 5 fingers when hardware and framework permit.
-- Double tap, multi-finger hold.
-- Multi-finger swipe left/right/up/down; diagonal swipe as a later candidate.
-- Pinch in/out; rotate; Force Click if usable via supported capabilities.
-- Keyboard-modifier + trackpad gesture.
-- Per-gesture distance/duration/movement tolerance with safe defaults; advanced adjustments in Settings only where necessary.
+- Single tap with 3 or 4 fingers, without pressing the trackpad.
+- Double tap with 2, 3 or 4 fingers.
+- Physical click with 2, 3 or 4 contacts; do not treat contact count or a pressure
+  threshold alone as proof of a click. The two-finger click remains research-gated
+  because of the native Secondary Click conflict.
+- One-finger tap in each of the four corners.
+- Keyboard-modifier combinations only where modifier state is reliable.
+- Safe movement/duration/corner tolerances; expose advanced adjustments only when
+  necessary.
 
-**Key distinction:** observing raw contacts does not imply suppressing the OS gesture. Validate conflicts with Mission Control, Space switching, scrolling, zooming, App Exposé, and system gesture settings. If the OS original cannot be suppressed, do not present the rule as a clean replacement. Disclose double-effect risk and offer a safe configuration path when possible.
+General one/two-finger single taps, five-finger gestures, holds, swipes (including
+diagonals), pinch, rotation and Force Click are outside this trackpad scope.
+Leave ordinary scrolling and system navigation gestures alone. This does not
+change the separately research-gated Magic Mouse scope.
+
+**Key distinction:** observing raw contacts does not imply suppressing the OS gesture. Validate conflicts with Look Up/data detectors (three-finger tap), Mission Control, Space switching, scrolling, zooming, App Exposé, and system gesture settings. If the OS original cannot be suppressed, do not present the rule as a clean replacement. Disclose double-effect risk and offer a safe configuration path when possible.
+
+**Current experimental slice:** built-in four-finger unmodified single tap →
+configurable keyboard shortcut is integrated, with a 500 ms click-check delay.
+The editor offers this one preset rather than a gesture recorder. Full shared
+action-catalog support for touch, other gestures and Magic Trackpad remain required
+future slices. Native gestures remain active; integrated app delivery, exclusivity
+and recovery require hardware checks. See [implementation limits](verification/phase-5-four-finger-tap.md).
 
 **Acceptance T1:** On tested physical trackpad hardware, a four-finger tap can generate one `Command + W` in a supported setup, without unsafe duplicate behavior.  
 **Acceptance T2:** Gesture classification is debounced, produces no accidental extra actions, and respects user pause.
@@ -313,7 +331,7 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 - Distinct, readable panes; avoid glass-on-glass stacks and giant decorative cards.
 - Native button/menu/focus semantics; SF Symbols; polished hover/focus/pressed states.
 - Support Light/Dark, window resizing, accessibility, Reduce Motion, Increase Contrast, VoiceOver, full keyboard operation.
-- All design references provided later under `docs/references/` should be inspected. Use references as visual direction, not an excuse to sacrifice native behavior.
+- Inspect the relevant current Sketch frames, components/styles and screenshots via MCP. Use the user-identified design as visual direction while preserving native macOS behavior. Optional assets/exports in `docs/references/` do not replace the live design; if access or the target is missing, explain the limitation and request the document/frame.
 - **No generic AI slop:** no gratuitous purple gradients, excess blur, massive corner radii, fake analytics dashboards, or unrelated micro-illustrations.
 
 ### Application icon

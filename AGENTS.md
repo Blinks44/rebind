@@ -12,7 +12,7 @@ Before modifying code:
 
 1. Read `AGENTS.md`, `docs/SPEC.md`, and `docs/PLAN.md`.
 2. Inspect the actual repository, Xcode project, deployment target, dependencies, and current implementation. **Never assume this is an empty project.**
-3. Check `docs/references/` if present for user-provided UI references.
+3. For UI work, inspect the current Rebind design in Sketch through MCP. Use user-identified documents/frames; `docs/references/` contains optional assets and historical exports, not the current UI source of truth.
 4. Find the relevant specification IDs and plan phase for the work at hand.
 
 Document roles:
@@ -83,12 +83,25 @@ For every dependency record in `docs/PLAN.md`: purpose, source URL, license, sup
 
 ### Project-local skills and tooling
 
-Reviewed skills live in `.agents/skills/` and should be committed with their licenses and `manifest.json` (pinned sources and checksums). Codex discovers this location; newly installed skills are available on the next turn. Read only the relevant skill and references:
+Reviewed skills live in `.agents/skills/` with their licenses and a small `manifest.json` recording sources, revisions and review notes. No per-file checksum validator is required. Codex discovers this location; newly installed skills are available on the next turn. Read only the relevant skill and references:
 
 - `swiftui-pro/SKILL.md`: SwiftUI changes, UI code review, localization, and view performance.
 - `swift-concurrency-pro/SKILL.md`: isolation, shared state, asynchronous work, and Swift 6 diagnostics.
 - `swift-testing-pro/SKILL.md`: behavioral unit/integration tests; UI tests still use XCTest.
 - `appkit-accessibility-auditor/SKILL.md`: AppKit controls, focus, keyboard operation, and VoiceOver. This concerns UI accessibility, not TCC Accessibility permission.
+- `swift-api-design-guidelines-skill/SKILL.md`: new Swift interfaces and call-site clarity; apply locally, not as permission for mass renaming/documentation churn.
+- `swiftui-performance-audit/SKILL.md`: measured UI rendering/observation problems and Instruments evidence; separate from synchronous input-engine profiling.
+- `swiftui-ui-patterns/SKILL.md`: component references, sheets, previews, macOS Settings and menu commands; read only the relevant reference.
+- `swiftui-design-principles/SKILL.md`: visual hierarchy, spacing consistency, semantic colors and restrained native components.
+- `swiftui-liquid-glass/SKILL.md`: native glass API composition when the requested design benefits from it; check actual macOS availability first.
+- `swiftui-accessibility-auditor/SKILL.md`: SwiftUI semantics, keyboard/VoiceOver focus, contrast and motion; complements the AppKit auditor.
+- `writing-for-interfaces/SKILL.md`: action names, hints, errors, onboarding and empty states; preserve behavior and translate all four languages.
+
+For the design agent: read `docs/SPEC.md` UX/action status requirements and the affected existing views, then inspect the current Rebind designs in Sketch via MCP. Load Sketch's `get_guide` (`mcp`, then `use` for document inspection/work); use document info, layer structure/styles and screenshots of the relevant frames rather than an old PNG or memory. Resolve the user-identified document/frames and reuse existing symbols/styles. If MCP is unavailable or the target is ambiguous, explain what is missing and ask for the document/frame; do not silently fall back to `design.png` or invent the current design. Reading a design for implementation does not authorize editing its Sketch document. For authorized design edits, follow the MCP guide and visually verify the changed frames. Use SwiftUI Pro plus Design Principles for ordinary visual work; consult UI Patterns, Liquid Glass, Writing for Interfaces and the appropriate accessibility auditor selectively. Keep the current Sketch design’s desktop hierarchy and native `NavigationSplitView`/`List`/`Table`/`Form`, semantic SF Symbols, standard keyboard operation and readable localized text. Reuse current UI state/persistence; do not change engine behavior or present unimplemented inputs/actions as working. Design exploration does not authorize running remappings or altering the user's rules/permissions. If another agent is editing the same UI/catalog file, agree file ownership before editing; preserve existing uncommitted work.
+
+Upstream design skills contain iOS/widget examples and opinionated pixel/typography rules. Rebind's macOS controls, semantic fonts, native spacing and current Sketch design take precedence: no forced monospaced text, 44-point desktop rows, all-purpose 10-point cards, TabView/NavigationStack scaffold, UIKit colors or extra widgets. Check macOS 26 availability rather than accepting `#available(iOS 26, *)` as a macOS guard. Use glass for hierarchy/chrome when appropriate; keep content readable in light/dark appearance, Reduce Transparency, Increase Contrast and Reduce Motion. API-design documentation guidance applies to useful contracts, not boilerplate comments on every internal declaration. UI performance advice is a hypothesis until measured; avoid speculative caching/singletons.
+
+Product copy is calm, concise, direct and helpful. Name the action/result, then give one practical next step if needed. Use existing localized terminology for rules, profiles, triggers, permissions and actions; keep technical implementation details in documentation unless they help a user decide. Prefer native label semantics over adding duplicate accessibility announcements. Do not invent functionality to shorten a limitation. New skill metadata does not authorize automatic agent spawning, scripts, dependency installs or publishing.
 
 Resolve skill-relative paths from the installed folder. Rebind's macOS 26 minimum, actual installed SDK, and synchronous input-callback rules take precedence over upstream iOS examples, newer toolchain assumptions, and generic async advice. Do not install upstream plugin bundles or execute their scripts implicitly. See `docs/PLAN.md` for review decisions.
 

@@ -1,3 +1,3 @@
 nonisolated enum DeviceScope: String, Codable, Hashable, Sendable {
-    case allKeyboards, allMice
+    case allKeyboards, allMice, builtInTrackpad
 }

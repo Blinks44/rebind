@@ -2,6 +2,8 @@ nonisolated struct AudioOutputCapabilities: Equatable, Sendable {
     var deviceID: UInt32?
     var volume = false
     var mute = false
+    // Cached away from the tap; also keeps unavailable rules in passthrough.
+    var screenLock = ScreenLockExecutor.isAvailable
 
     func supports(_ action: SystemAction) -> Bool {
         guard deviceID != nil else { return false }
@@ -13,7 +15,8 @@ nonisolated struct AudioOutputCapabilities: Equatable, Sendable {
 
     func supports(_ action: RebindAction) -> Bool {
         switch action {
-        case .shortcut, .mouse, .media, .window, .windowLayout, .workspace, .appleShortcut: true
+        case .shortcut, .mouse, .media, .sleepSystem, .window, .windowLayout, .windowCycle, .workspace, .appleShortcut: true
+        case .lockScreen: screenLock
         case .desktop: false
         case .system(let action): supports(action)
         case .dock(let action): DockActions.isAvailable(for: action)

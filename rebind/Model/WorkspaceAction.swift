@@ -21,26 +21,31 @@ nonisolated struct ApplicationTarget: Codable, Equatable, Sendable {
 nonisolated enum WorkspaceAction: Codable, Equatable, Sendable {
     case openApplication(ApplicationTarget)
     case activateApplication(ApplicationTarget)
+    case quitApplication(ApplicationTarget)
+    case previousApplication
+    case openSystemSettings
     case openURL(URL)
     case openFile(URL)
 
     var application: ApplicationTarget? {
         switch self {
-        case .openApplication(let target), .activateApplication(let target): target
+        case .openApplication(let target), .activateApplication(let target), .quitApplication(let target): target
         default: nil
         }
     }
 
-    var url: URL {
+    var url: URL? {
         switch self {
-        case .openApplication(let target), .activateApplication(let target): target.url
+        case .openApplication(let target), .activateApplication(let target), .quitApplication(let target): target.url
         case .openURL(let url), .openFile(let url): url
+        case .openSystemSettings, .previousApplication: nil
         }
     }
 
     var isSupported: Bool {
         switch self {
-        case .openApplication(let target), .activateApplication(let target): target.isSupported
+        case .openApplication(let target), .activateApplication(let target), .quitApplication(let target): target.isSupported
+        case .openSystemSettings, .previousApplication: true
         case .openURL(let url): Self.webURL(url.absoluteString) != nil
         case .openFile(let url): Self.isLocalFile(url) && url.pathExtension.lowercased() != "app"
         }

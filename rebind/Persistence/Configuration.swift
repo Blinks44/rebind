@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 16
+    static let currentSchemaVersion = 22
     static let maximumProfiles = 20
     var schemaVersion: Int
     var isEnabled: Bool
@@ -48,6 +48,31 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
+        if schemaVersion < 22, profiles.flatMap(\.bindings).contains(where: { $0.trigger.isTrackpad }) {
+            throw ConfigurationError.invalid
+        }
+        if schemaVersion < 21, profiles.flatMap(\.bindings).contains(where: {
+            if case .workspace(.previousApplication) = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 20, profiles.flatMap(\.bindings).contains(where: {
+            if case .windowCycle = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 19, profiles.flatMap(\.bindings).contains(where: {
+            if case .lockScreen = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 18, profiles.flatMap(\.bindings).contains(where: {
+            if case .sleepSystem = $0.action { return true }
+            return false
+        }) { throw ConfigurationError.invalid }
+        if schemaVersion < 17, profiles.flatMap(\.bindings).contains(where: {
+            switch $0.action {
+            case .workspace(.quitApplication), .workspace(.openSystemSettings): true
+            default: false
+            }
+        }) { throw ConfigurationError.invalid }
         if schemaVersion < 16, profiles.flatMap(\.bindings).contains(where: {
             if case .windowLayout = $0.action { return true }
             return false
@@ -121,7 +146,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             result.schemaVersion = Self.currentSchemaVersion
         }
         if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...15).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...21).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         try result.validate()
         return result
     }

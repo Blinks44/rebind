@@ -6,6 +6,9 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     case mouseButton(UInt32)
     case mouseGesture(button: UInt32, direction: PointerDirection)
     case scroll(ScrollDirection)
+    case fourFingerTap
+
+    var isTrackpad: Bool { self == .fourFingerTap }
 
     var isPointerGesture: Bool {
         if case .mouseGesture = self { return true }
@@ -24,6 +27,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
 
     var scope: DeviceScope {
         switch self {
+        case .fourFingerTap: .builtInTrackpad
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll: .allMice
         }
@@ -34,7 +38,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .key(let code): KeyboardShortcut.isSupportedKey(code)
         case .mouseButton(let number): number >= 2
         case .mouseGesture(let number, _): number >= 2
-        case .scroll: true
+        case .scroll, .fourFingerTap: true
         }
     }
 }

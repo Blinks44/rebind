@@ -5,4 +5,5 @@ nonisolated struct ActionDispatch: Equatable, Sendable {
     var action: RebindAction
     var revision: UInt64
     var deviceID: UInt32?
+    var trackpadTarget: TrackpadDispatchTarget?
 }

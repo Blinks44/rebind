@@ -23,7 +23,8 @@ struct BindingEditor: View {
         self.scope = scope
         self.existing = existing
         profileID = model.configuration.selectedProfileID
-        _trigger = State(initialValue: existing.map { $0.matchKey.pressSource })
+        _trigger = State(initialValue: existing.map { $0.matchKey.pressSource }
+            ?? (scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil))
         _output = State(initialValue: existing?.action.shortcut)
         _actionKind = State(initialValue: existing.map { ActionKind(action: $0.action) } ?? .keyboardShortcut)
         let workspace: WorkspaceAction?
@@ -52,7 +53,8 @@ struct BindingEditor: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
-                Text(.recordingLimitations).foregroundStyle(.secondary)
+                Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadTapHint : .recordingLimitations)
+                    .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 GroupBox {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(.triggerTitle).font(.headline)
@@ -76,7 +78,7 @@ struct BindingEditor: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                        if scope == .allKeyboards || mouseRecordingTarget == .mouseTrigger {
+                        if scope == .allKeyboards || (scope == .allMice && mouseRecordingTarget == .mouseTrigger) {
                             Text(.activationTitle).font(.caption).foregroundStyle(.secondary)
                             Picker(.activationTitle, selection: $activation) {
                                 Text(.pressActivation).tag(PressActivation.press)
@@ -96,14 +98,18 @@ struct BindingEditor: View {
                             }
                         }
                         Text(trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? String(localized: .notRecorded)).font(.title3.monospaced())
-                        Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : mouseRecordingTarget) }
-                            .disabled(!model.canRecord || model.recording != nil)
+                        if scope != .builtInTrackpad {
+                            Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : mouseRecordingTarget) }
+                                .disabled(!model.canRecord || model.recording != nil)
+                        }
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
                 }
                 GroupBox {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(.actionTitle).font(.headline)
-                        ActionPickerView(model: model, selection: $actionKind)
+                        if scope == .builtInTrackpad {
+                            Text(.outputShortcut)
+                        } else { ActionPickerView(model: model, selection: $actionKind) }
                         if actionKind == .keyboardShortcut {
                             Text(output.map(InputLabels.shortcut) ?? String(localized: .notRecorded)).font(.title3.monospaced())
                             Button(.recordOutput) { model.beginRecording(.output) }.disabled(!model.canRecord || model.recording != nil)
@@ -130,6 +136,27 @@ struct BindingEditor: View {
                                     Text(.spaceActionUnavailable).foregroundStyle(.secondary)
                                 }
                             }
+                        } else if actionKind == .previousApplication {
+                            Text(.previousApplicationHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else if actionKind.windowCycleAction != nil {
+                            Text(.windowCycleHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else if actionKind == .lockScreen {
+                            Text(.lockScreenHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if !actionKind.isAvailable(with: model.audioCapabilities) {
+                                Text(.lockScreenUnavailable).font(.caption).foregroundStyle(.secondary)
+                            }
+                        } else if actionKind == .sleepSystem {
+                            Text(.sleepSystemHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if !actionKind.isAvailable(with: model.audioCapabilities) {
+                                Text(.sleepSystemUnavailable).font(.caption).foregroundStyle(.secondary)
+                            }
+                        } else if actionKind == .openSystemSettings {
+                            Text(.openSystemSettingsHint).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         } else if actionKind == .runAppleShortcut {
                             AppleShortcutParameters(target: $appleShortcut).disabled(model.recording != nil)
                         } else if actionKind.needsWorkspaceParameters {
@@ -164,7 +191,9 @@ struct BindingEditor: View {
                 if let error = model.error { Text(error).foregroundStyle(.red) }
                 HStack {
                     Button(.clearRecording) {
-                        model.cancelRecording(); trigger = nil; output = nil; actionKind = .keyboardShortcut
+                        model.cancelRecording()
+                        trigger = scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil
+                        output = nil; actionKind = .keyboardShortcut
                         application = nil; webAddress = ""; file = nil; appleShortcut = nil
                     }
                     Spacer()

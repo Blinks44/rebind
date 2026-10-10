@@ -25,7 +25,7 @@ import Testing
             performAudio: { _, _ in Issue.record("Workspace action reached audio"); return false },
             sendShortcut: { _ in Issue.record("Workspace action reached keyboard"); return false },
             performWindow: { _, _ in Issue.record("Workspace action reached AX"); return .unavailable },
-            prepareWorkspace: { action in .document(action.url) }, secureInput: { false }, postingAllowed: { true })
+            prepareWorkspace: { action in action.url.map { .document($0) } }, secureInput: { false }, postingAllowed: { true })
         worker.service(at: 0)
         #expect(mailbox.hasWorkspaceRequest)
         #expect(mailbox.state.withLock { $0.workspaceRequest?.target } == .document(url))
@@ -41,7 +41,7 @@ import Testing
                 prepareWorkspace: { action in
                     if fail { return nil }
                     mailbox.setEditing(true)
-                    return .document(action.url)
+                    return action.url.map { .document($0) }
                 }, secureInput: { false }, postingAllowed: { true })
             worker.service(at: 0)
             #expect(mailbox.hasWorkspaceRequest == false)
@@ -64,7 +64,9 @@ import Testing
         case 4: mailbox.suspend(true)
         default: mailbox.stop()
         }
-        let executor = WorkspaceActionExecutor(mailbox: mailbox,
+        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        },
             openApplication: { _ in Issue.record("Stale app opened") },
             openDocument: { _ in Issue.record("Stale file opened") },
             activateApplication: { _ in Issue.record("Stale app activated"); return true },
@@ -95,7 +97,9 @@ import Testing
     @Test(arguments: [true, false])
     func protectedContextsBetweenPreparationAndNativeRequestNeverOpen(_ secure: Bool) async throws {
         let (mailbox, _) = try queued()
-        let executor = WorkspaceActionExecutor(mailbox: mailbox,
+        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        },
             openDocument: { _ in Issue.record("Opened in protected context") },
             secureInput: { secure }, postingAllowed: { secure })
         await executor.service()
@@ -111,7 +115,9 @@ import Testing
         let target: WorkspaceTarget = kind == 2 ? .document(url) : .application(app, activateOnly: kind == 1)
         mailbox.submitWorkspace(WorkspaceRequest(dispatch: original.dispatch, target: target))
         var calls: [String] = []
-        let executor = WorkspaceActionExecutor(mailbox: mailbox,
+        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        },
             openApplication: { _ in calls.append("open app") }, openDocument: { _ in calls.append("open document") },
             activateApplication: { _ in calls.append("activate"); return false }, secureInput: { false }, postingAllowed: { true })
         await executor.service()
@@ -122,11 +128,15 @@ import Testing
 
     @Test func stateChangesAcrossAwaitIgnoreOldErrorsAndKeepAcceptedWorkSerialized() async throws {
         let (mailbox, _) = try queued()
-        let executor = WorkspaceActionExecutor(mailbox: mailbox, openDocument: { _ in
+        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        }, openDocument: { _ in
             mailbox.configure(Configuration(isEnabled: true))
             mailbox.state.withLock { $0.pending = [.window(.minimize)] }
             #expect(mailbox.nextAction() == nil)
-            await WorkspaceActionExecutor(mailbox: mailbox, openDocument: { _ in Issue.record("Second request started") }).service()
+            await WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        }, openDocument: { _ in Issue.record("Second request started") }).service()
             await Task.yield()
             #expect(mailbox.nextAction() == nil)
             throw NativeTestError.rejected
@@ -139,7 +149,9 @@ import Testing
     @Test(arguments: [true, false])
     func nativeErrorReportsOnceWhileCancellationDoesNotReportFailure(_ fail: Bool) async throws {
         let (mailbox, request) = try queued()
-        let executor = WorkspaceActionExecutor(mailbox: mailbox, openDocument: { _ in
+        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
+            Issue.record("Unrelated workspace action switched apps"); return .unavailable
+        }, openDocument: { _ in
             if fail { throw NativeTestError.rejected }
             throw CancellationError()
         }, secureInput: { false }, postingAllowed: { true })

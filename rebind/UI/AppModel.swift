@@ -21,13 +21,20 @@ import Dispatch
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
+    private(set) var trackpadStatus: TrackpadCaptureStatus = .idle
+    @ObservationIgnored private var trackpadCapture: TrackpadCapture?
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var workspaceTask: Task<Void, Never>?
     @ObservationIgnored private var lastPermissionCheck = Date.distantPast
     @ObservationIgnored private var workspaceSleeping = false
     @ObservationIgnored private var workspaceSessionInactive = false
+    @ObservationIgnored private var workspaceScreenLocked = false
+    @ObservationIgnored private let previousApplication = PreviousApplicationTracker()
+    @ObservationIgnored private let sessionAllowsInput: () -> Bool
 
-    init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true) {
+    init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true,
+         sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() }) {
+        self.sessionAllowsInput = sessionAllowsInput
         self.store = store
         super.init()
         guard loadConfiguration else { return }
@@ -37,15 +44,23 @@ import Dispatch
 
     func start() {
         guard timer == nil else { return }
+        previousApplication.start()
         configureEngine(configuration)
+        refreshSessionProtection()
         refreshWindowDisplays()
         EventTapWorker.start(mailbox: mailbox)
         ActionWorker.start(mailbox: mailbox)
+        trackpadCapture = TrackpadCapture(mailbox: mailbox)
+        trackpadCapture?.start()
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
+        for name in [ScreenLockSession.lockedNotification, ScreenLockSession.unlockedNotification] {
+            DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleScreenLockNotification(_:)),
+                                                               name: name, object: nil, suspensionBehavior: .deliverImmediately)
+        }
         for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
                      NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification] {
             NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceNotification(_:)),
@@ -54,8 +69,11 @@ import Dispatch
     }
 
     func stop() {
+        previousApplication.stop()
         cancelRecording()
         mailbox.stop()
+        trackpadCapture?.stop()
+        trackpadCapture = nil
         workspaceTask?.cancel()
         workspaceTask = nil
         workspaceActionInProgress = false
@@ -64,12 +82,14 @@ import Dispatch
         timer = nil
         NotificationCenter.default.removeObserver(self)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+        DistributedNotificationCenter.default().removeObserver(self)
     }
 
     @objc private func refreshWindowDisplays() { mailbox.updateWindowDisplays(.current()) }
 
     @objc func refresh() {
         if Date().timeIntervalSince(lastPermissionCheck) >= 0.5 {
+            refreshSessionProtection()
             permissions = .current()
             refreshWindowDisplays()
             lastPermissionCheck = Date()
@@ -81,6 +101,7 @@ import Dispatch
             state.emergencyPause = false
             return result
         }
+        trackpadStatus = mailbox.state.withLock { $0.trackpadStatus }
         status = update.0
         audioCapabilities = update.3
         workspaceActionInProgress = update.5
@@ -103,20 +124,29 @@ import Dispatch
             case .mouse: error = .mouseActionFailed
             case .media: error = .mediaActionFailed
             case .dock(let action): error = action.isSpaceNavigation ? .spaceActionFailed : .dockActionFailed
+            case .lockScreen: error = .lockScreenFailed
+            case .sleepSystem: error = .sleepSystemFailed
             case .system: error = .audioActionFailed
+            case .windowCycle: error = .windowCycleFailed
             case .windowLayout: error = .windowLayoutFailed
             case .window: error = .windowActionFailed
+            case .workspace(.previousApplication): error = .previousApplicationFailed
+            case .workspace(.quitApplication): error = .quitApplicationFailed
+            case .workspace(.openSystemSettings): error = .openSystemSettingsFailed
             case .workspace: error = .workspaceActionFailed
             case .appleShortcut: error = .appleShortcutFailed
             }
         }
         if workspaceTask == nil, mailbox.hasWorkspaceRequest {
             let mailbox = mailbox
+            let previousApplication = previousApplication
             // The timer bridges sync AppKit lifecycle to one async native call.
             // At most one task/slot exists; the event tap never creates tasks.
             workspaceTask = Task { [weak self] in
                 defer { self?.workspaceTask = nil }
-                await WorkspaceActionExecutor(mailbox: mailbox).service()
+                await WorkspaceActionExecutor(mailbox: mailbox, previousApplication: {
+                    await previousApplication.perform(canPerform: $0)
+                }).service()
             }
         }
     }
@@ -129,11 +159,30 @@ import Dispatch
         case NSWorkspace.sessionDidBecomeActiveNotification: workspaceSessionInactive = false
         default: return
         }
-        // Waking the machine does not necessarily reactivate this user's session.
-        let suspended = workspaceSleeping || workspaceSessionInactive
+        applySessionProtection()
+        lastPermissionCheck = .distantPast
+    }
+
+    @objc func handleScreenLockNotification(_ notification: Notification) {
+        guard notification.name == ScreenLockSession.lockedNotification
+            || notification.name == ScreenLockSession.unlockedNotification else { return }
+        // A lock hint suspends immediately. An unlock hint alone never grants input:
+        // reread native session state, then retain sleep/inactive-session guards.
+        workspaceScreenLocked = notification.name == ScreenLockSession.lockedNotification || !sessionAllowsInput()
+        applySessionProtection()
+        lastPermissionCheck = .distantPast
+    }
+
+    private func refreshSessionProtection() {
+        workspaceScreenLocked = !sessionAllowsInput()
+        applySessionProtection()
+    }
+
+    private func applySessionProtection() {
+        // Wake, screen unlock and active-user changes are independent conditions.
+        let suspended = workspaceSleeping || workspaceSessionInactive || workspaceScreenLocked
         if suspended { cancelRecording() }
         mailbox.suspend(suspended)
-        lastPermissionCheck = .distantPast
     }
 
     func setEnabled(_ enabled: Bool) {
@@ -162,7 +211,7 @@ import Dispatch
         recording = nil
         mailbox.record(nil)
     }
-    var canRecord: Bool { permissions.allowsRemapping }
+    var canRecord: Bool { permissions.allowsRemapping && mailbox.state.withLock { !$0.suspended && !$0.stopped } }
 
     var canStartDiagnostics: Bool {
         guard canRecord else { return false }

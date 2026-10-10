@@ -14,9 +14,9 @@ struct ContentView: View {
                 Section(.inputCategories) {
                     Label(.allKeyboards, systemImage: "keyboard").tag(DeviceScope.allKeyboards)
                     Label(.allMice, systemImage: "computermouse").tag(DeviceScope.allMice)
+                    Label(.builtInTrackpad, systemImage: "rectangle.and.hand.point.up.left").tag(DeviceScope.builtInTrackpad)
                 }
                 Section(.plannedInputs) {
-                    Label(.trackpadNotAvailable, systemImage: "rectangle.and.hand.point.up.left").disabled(true)
                     Label(.magicMouseNotAvailable, systemImage: "computermouse").disabled(true)
                 }.foregroundStyle(.secondary)
             }.navigationSplitViewColumnWidth(min: 180, ideal: 220)
@@ -51,7 +51,7 @@ struct ContentView: View {
             }.padding(.horizontal, 20).padding(.top, 16)
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(scope == .allKeyboards ? LocalizedStringResource.allKeyboards : .allMice).font(.title2.bold())
+                    Text(scope.title).font(.title2.bold())
                     Text(model.statusText).foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -60,6 +60,11 @@ struct ContentView: View {
                 }.disabled(model.storageLocked && !model.configuration.isEnabled)
                 Button(.addBinding, systemImage: "plus") { editor = EditorSelection(scope: scope, binding: nil) }.disabled(model.storageLocked)
             }.padding(20)
+            if scope == .builtInTrackpad {
+                Text(model.trackpadStatus.text).font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20).padding(.bottom, 12)
+            }
             Divider()
             if !model.canRecord { PermissionView(model: model); Divider() }
             if let error = model.error { Text(error).foregroundStyle(.red).padding() }
@@ -73,8 +78,8 @@ struct ContentView: View {
                                 Text(.holdDuration(Int(binding.holdDurationMilliseconds))).font(.caption)
                             }
                             Text("→ " + binding.action.label).foregroundStyle(.secondary)
-                            if !model.audioCapabilities.supports(binding.action) {
-                                Text(.audioActionUnavailable).font(.caption).foregroundStyle(.secondary)
+                            if !ActionKind(action: binding.action).isAvailable(with: model.audioCapabilities) {
+                                Text(ActionKind(action: binding.action).unavailableMessage).font(.caption).foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -90,16 +95,17 @@ struct ContentView: View {
                 }
             }.overlay {
                 if model.configuration.bindings.allSatisfy({ $0.scope != scope }) {
-                    ContentUnavailableView(.noBindings, systemImage: scope == .allKeyboards ? "keyboard" : "computermouse", description: Text(.addBindingHint))
+                    ContentUnavailableView(.noBindings, systemImage: scope.symbol, description: Text(.addBindingHint))
                 }
             }
             Divider()
             VStack(alignment: .leading, spacing: 5) {
-                Text(.phaseOneHint)
+                if scope != .builtInTrackpad { Text(.phaseOneHint) }
                 if model.workspaceActionInProgress { Text(.openingTargetStatus) }
                 if model.appleShortcutInProgress { Text(.runningAppleShortcutStatus) }
                 Text(.emergencyHint)
-                Text(.deviceScopeHint)
+                if scope == .builtInTrackpad { Text(.trackpadTapHint) }
+                else { Text(.deviceScopeHint) }
                 if scope == .allMice { Text(.wheelMappingHint) }
                 Button(.inputDiagnostics, systemImage: "waveform.path") { showingDiagnostics = true }
             }.font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(16)

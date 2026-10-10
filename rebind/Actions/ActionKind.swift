@@ -6,28 +6,33 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case leftClick, rightClick, middleClick, doubleLeftClick
     case closeWindow, minimizeWindow, toggleFullScreen, hideApplication
     case leftHalf, rightHalf, fillWindow, centerWindow
-    case openApplication, activateApplication, openURL, openFile
+    case nextWindow, previousWindow, previousApplication
+    case openApplication, activateApplication, quitApplication, openURL, openFile
+    case openSystemSettings, sleepSystem, lockScreen
     case runAppleShortcut
     case missionControl, applicationWindows, showDesktop, previousSpace, nextSpace
     var id: Self { self }
 
     enum Category: CaseIterable, Identifiable {
-        case keyboard, mouse, audio, windows, desktop, automation
+        case keyboard, mouse, audio, windows, desktop, system, automation
         var id: Self { self }
     }
 
     var category: Category {
+        if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen { return .system }
         if mouseAction != nil { return .mouse }
         if desktopAction != nil { return .desktop }
         if self == .runAppleShortcut { return .automation }
         if systemAction != nil || mediaAction != nil { return .audio }
-        if windowAction != nil || windowLayoutAction != nil { return .windows }
-        if needsWorkspaceParameters { return .windows }
+        if windowAction != nil || windowLayoutAction != nil || windowCycleAction != nil { return .windows }
+        if needsWorkspaceParameters || self == .previousApplication { return .windows }
         return .keyboard
     }
 
     init(action: RebindAction) {
         switch action {
+        case .lockScreen: self = .lockScreen
+        case .sleepSystem: self = .sleepSystem
         case .shortcut: self = .keyboardShortcut
         case .media(.playPause): self = .playPause
         case .media(.nextTrack): self = .nextTrack
@@ -39,6 +44,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .system(.volumeUp): self = .volumeUp
         case .system(.volumeDown): self = .volumeDown
         case .system(.toggleMute): self = .toggleMute
+        case .windowCycle(.next): self = .nextWindow
+        case .windowCycle(.previous): self = .previousWindow
         case .windowLayout(.leftHalf): self = .leftHalf
         case .windowLayout(.rightHalf): self = .rightHalf
         case .windowLayout(.fill): self = .fillWindow
@@ -49,6 +56,9 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .window(.hideApplication): self = .hideApplication
         case .workspace(.openApplication): self = .openApplication
         case .workspace(.activateApplication): self = .activateApplication
+        case .workspace(.quitApplication): self = .quitApplication
+        case .workspace(.previousApplication): self = .previousApplication
+        case .workspace(.openSystemSettings): self = .openSystemSettings
         case .workspace(.openURL): self = .openURL
         case .workspace(.openFile): self = .openFile
         case .appleShortcut: self = .runAppleShortcut
@@ -96,6 +106,14 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    var windowCycleAction: WindowCycleAction? {
+        switch self {
+        case .nextWindow: .next
+        case .previousWindow: .previous
+        default: nil
+        }
+    }
+
     var windowLayoutAction: WindowLayoutAction? {
         switch self {
         case .leftHalf: .leftHalf
@@ -118,7 +136,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
 
     var needsWorkspaceParameters: Bool {
         switch self {
-        case .openApplication, .activateApplication, .openURL, .openFile: true
+        case .openApplication, .activateApplication, .quitApplication, .openURL, .openFile: true
         default: false
         }
     }
@@ -137,6 +155,10 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     func configuredAction(shortcut: KeyboardShortcut?, application: ApplicationTarget? = nil,
                           webAddress: String = "", file: URL? = nil,
                           appleShortcut: AppleShortcutTarget? = nil) -> RebindAction? {
+        if self == .lockScreen { return .lockScreen }
+        if self == .sleepSystem { return .sleepSystem }
+        if self == .openSystemSettings { return .workspace(.openSystemSettings) }
+        if self == .previousApplication { return .workspace(.previousApplication) }
         if let mouseAction { return .mouse(mouseAction) }
         if let mediaAction { return .media(mediaAction) }
         if let desktopAction { return .dock(desktopAction) }
@@ -145,6 +167,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
             return .appleShortcut(appleShortcut)
         }
         if let systemAction { return .system(systemAction) }
+        if let windowCycleAction { return .windowCycle(windowCycleAction) }
         if let windowLayoutAction { return .windowLayout(windowLayoutAction) }
         if let windowAction { return .window(windowAction) }
         if needsWorkspaceParameters {
@@ -156,6 +179,9 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
             case .activateApplication:
                 guard let application else { return nil }
                 action = .activateApplication(application)
+            case .quitApplication:
+                guard let application else { return nil }
+                action = .quitApplication(application)
             case .openURL:
                 guard let url = WorkspaceAction.webURL(webAddress) else { return nil }
                 action = .openURL(url)
@@ -171,6 +197,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     }
 
     func isAvailable(with capabilities: AudioOutputCapabilities) -> Bool {
+        if self == .lockScreen { return capabilities.screenLock }
+        if self == .sleepSystem { return SystemSleepExecutor.isAvailable() }
         if let desktopAction { return DockActions.isAvailable(for: desktopAction) }
         return systemAction.map(capabilities.supports) ?? true
     }

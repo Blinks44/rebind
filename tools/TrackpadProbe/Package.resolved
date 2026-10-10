@@ -1,0 +1,32 @@
+{
+  "originHash" : "b8d3d142e36b9bdbe5237cd9ff0e3ef4c36739cbcb2a4fc40ee678fafc418afa",
+  "pins" : [
+    {
+      "identity" : "scribe",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SenpaiHunters/Scribe",
+      "state" : {
+        "branch" : "main",
+        "revision" : "658180864653457ce201917200bac67ee3eeac87"
+      }
+    },
+    {
+      "identity" : "subsurface",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mrkai77/Subsurface",
+      "state" : {
+        "revision" : "88eb16b0a6f7a44a898cecff9e283298aa413936"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

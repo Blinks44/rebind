@@ -9,7 +9,13 @@ struct WorkspaceActionParameters: View {
     @State private var showingPicker = false
     @State private var selectionFailed = false
 
-    private var pickingApplication: Bool { kind == .openApplication || kind == .activateApplication }
+    private var pickingApplication: Bool { kind == .openApplication || kind == .activateApplication || kind == .quitApplication }
+
+    private var hint: LocalizedStringResource {
+        if kind == .quitApplication { return .quitApplicationHint }
+        if kind == .activateApplication { return .activateApplicationHint }
+        return .openTargetHint
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -32,7 +38,7 @@ struct WorkspaceActionParameters: View {
                 }
                 if selectionFailed { Text(.targetSelectionFailed).foregroundStyle(.secondary) }
             }
-            Text(kind == .activateApplication ? LocalizedStringResource.activateApplicationHint : .openTargetHint)
+            Text(hint)
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
         .fileImporter(isPresented: $showingPicker,

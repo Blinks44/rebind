@@ -1,6 +1,13 @@
 import Foundation
 
 extension ActionKind {
+    var unavailableMessage: LocalizedStringResource {
+        if self == .lockScreen { return .lockScreenUnavailable }
+        if self == .sleepSystem { return .sleepSystemUnavailable }
+        if let desktopAction { return desktopAction.isSpaceNavigation ? .spaceActionUnavailable : .dockActionUnavailable }
+        return .audioActionUnavailable
+    }
+
     var title: LocalizedStringResource {
         switch self {
         case .keyboardShortcut: .outputShortcut
@@ -14,6 +21,9 @@ extension ActionKind {
         case .playPause: .playPauseAction
         case .nextTrack: .nextTrackAction
         case .previousTrack: .previousTrackAction
+        case .nextWindow: .nextWindowAction
+        case .previousWindow: .previousWindowAction
+        case .previousApplication: .previousApplicationAction
         case .leftHalf: .leftHalfAction
         case .rightHalf: .rightHalfAction
         case .fillWindow: .fillWindowAction
@@ -24,6 +34,10 @@ extension ActionKind {
         case .hideApplication: .hideApplicationAction
         case .openApplication: .openApplicationAction
         case .activateApplication: .activateApplicationAction
+        case .quitApplication: .quitApplicationAction
+        case .lockScreen: .lockScreenAction
+        case .sleepSystem: .sleepSystemAction
+        case .openSystemSettings: .openSystemSettingsAction
         case .openURL: .openURLAction
         case .openFile: .openFileAction
         case .runAppleShortcut: .runAppleShortcutAction
@@ -44,6 +58,7 @@ extension ActionKind.Category {
         case .audio: .audioActions
         case .windows: .windowActions
         case .automation: .automationActions
+        case .system: .systemActions
         case .desktop: .desktopActions
         }
     }
@@ -53,13 +68,14 @@ extension RebindAction {
     var label: String {
         switch self {
         case .shortcut(let shortcut): return InputLabels.shortcut(shortcut)
-        case .mouse, .media, .system, .window, .windowLayout, .dock: return String(localized: ActionKind(action: self).title)
+        case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock: return String(localized: ActionKind(action: self).title)
         case .appleShortcut(let target): return "\(String(localized: .runAppleShortcutAction)) — \(target.name)"
         case .desktop(_, let shortcut): return "\(String(localized: ActionKind(action: self).title)) — \(InputLabels.shortcut(shortcut))"
         case .workspace(let action):
             let detail: String
             if case .openURL(let url) = action { detail = url.host ?? "" }
-            else { detail = action.url.lastPathComponent }
+            else if let url = action.url { detail = url.lastPathComponent }
+            else { return String(localized: ActionKind(action: self).title) }
             return "\(String(localized: ActionKind(action: self).title)) — \(detail)"
         }
     }

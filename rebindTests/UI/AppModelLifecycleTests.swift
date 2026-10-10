@@ -4,7 +4,7 @@ import Testing
 
 @MainActor struct AppModelLifecycleTests {
     @Test(arguments: [true, false]) func overlappingSleepAndInactiveSessionRequireBothToRecover(wakeFirst: Bool) {
-        let model = AppModel(loadConfiguration: false)
+        let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.willSleepNotification))
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.sessionDidResignActiveNotification))
         model.handleWorkspaceNotification(Notification(name: wakeFirst ? NSWorkspace.didWakeNotification : NSWorkspace.sessionDidBecomeActiveNotification))
@@ -14,7 +14,7 @@ import Testing
     }
 
     @Test func duplicateAndUnrelatedWorkspaceNotificationsDoNotResumeSession() {
-        let model = AppModel(loadConfiguration: false)
+        let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.sessionDidResignActiveNotification))
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.sessionDidResignActiveNotification))
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.didWakeNotification))
@@ -25,7 +25,7 @@ import Testing
     }
 
     @Test func sleepCancelsUiRecorderWithoutChangingSavedEnablePreference() {
-        let model = AppModel(loadConfiguration: false)
+        let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         let request = RecordingRequest(target: .mouseTrigger)
         model.recording = request
         model.mailbox.record(request)
@@ -38,7 +38,7 @@ import Testing
     }
 
     @Test func stopEndsUiRecordingAndClearsQueuedAction() {
-        let model = AppModel(loadConfiguration: false)
+        let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         let request = RecordingRequest(target: .mouseTrigger)
         model.recording = request
         model.mailbox.record(request)
@@ -49,12 +49,12 @@ import Testing
     }
 
     @Test func captureLossCancellationReachesUiWithoutAnotherInputEvent() {
-        let model = AppModel(loadConfiguration: false)
+        let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         let request = RecordingRequest(target: .mouseTrigger)
         model.recording = request
         model.mailbox.record(request)
         model.mailbox.captureLost(status: .permissionRequired)
-        model.refresh() // Reads native permission state, without requesting/granting access.
+        model.refresh() // Session state is injected; actual permissions are read without requesting access.
         #expect(model.recording == nil)
         #expect(model.lastRecording?.request == request)
         #expect(model.lastRecording?.input == nil)

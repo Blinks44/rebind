@@ -8,15 +8,22 @@ import Synchronization
 // must never delay the synchronous tap's CFRunLoop or the UI. No second queue or
 // unbounded dispatch blocks are created. Workspace requests use one bounded
 // MainActor handoff slot, with at most one retained async operation.
+// App-switch AX IPC transfers owned handles to a structured concurrent call;
+// the Workspace slot still prevents another action from overtaking it.
 nonisolated final class ActionWorker {
     private let mailbox: EngineMailbox
     private let capabilities: @Sendable () -> AudioOutputCapabilities
     private let performAudio: @Sendable (SystemAction, UInt32) -> Bool
+    private let sendTrackpadShortcut: @Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult
     private let sendShortcut: @Sendable (KeyboardShortcut) -> Bool
+    private let requestLock: @Sendable (@Sendable () -> Bool) -> WindowActionResult
+    private let requestSleep: @Sendable (@Sendable () -> Bool) -> WindowActionResult
     private let performMouse: @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult
     private let performMedia: @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult
     private let performDock: @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult
     private let performWindow: @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult
+    private var windowCycle = WindowCycleState<AXUIElement>()
+    private let performWindowCycle: (@Sendable (WindowCycleAction, @Sendable () -> Bool) -> WindowActionResult)?
     private let performWindowLayout: @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult
     private let layoutClock: @Sendable () -> UInt64
     private let prepareWorkspace: @Sendable (WorkspaceAction) -> WorkspaceTarget?
@@ -28,7 +35,14 @@ nonisolated final class ActionWorker {
     init(mailbox: EngineMailbox,
          capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
          performAudio: @escaping @Sendable (SystemAction, UInt32) -> Bool = { CoreAudioOutput.perform($0, device: $1) },
+         sendTrackpadShortcut: @escaping @Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult = { ShortcutSender.send($0, to: $1, canPerform: $2) },
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
+         requestLock: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = { canPerform in
+             ScreenLockExecutor.perform(canPerform: { canPerform() && ScreenLockSession.allowsInput() })
+         },
+         requestSleep: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = {
+             SystemSleepExecutor.perform(canPerform: $0)
+         },
          performMouse: @escaping @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult = {
              MouseClickSender.perform($0, canPerform: $1)
          },
@@ -41,6 +55,7 @@ nonisolated final class ActionWorker {
          performWindow: @escaping @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult = {
              WindowActionExecutor.perform($0, canPerform: $1)
          },
+         performWindowCycle: (@Sendable (WindowCycleAction, @Sendable () -> Bool) -> WindowActionResult)? = nil,
          performWindowLayout: @escaping @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult = {
              WindowLayoutExecutor.perform($0, displays: $1, canPerform: $2)
          },
@@ -54,11 +69,15 @@ nonisolated final class ActionWorker {
         self.mailbox = mailbox
         self.capabilities = capabilities
         self.performAudio = performAudio
+        self.requestLock = requestLock
+        self.requestSleep = requestSleep
         self.sendShortcut = sendShortcut
+        self.sendTrackpadShortcut = sendTrackpadShortcut
         self.performMouse = performMouse
         self.performMedia = performMedia
         self.performDock = performDock
         self.performWindow = performWindow
+        self.performWindowCycle = performWindowCycle
         self.performWindowLayout = performWindowLayout
         self.layoutClock = layoutClock
         self.prepareWorkspace = prepareWorkspace
@@ -81,6 +100,7 @@ nonisolated final class ActionWorker {
     }
 
     func service(at now: UInt64) {
+        windowCycle.invalidate(ifRevisionDiffersFrom: mailbox.state.withLock { $0.actionRevision })
         guard !mailbox.state.withLock({ $0.stopped }) else { return }
         if lastCapabilitiesCheck == nil || now < (lastCapabilitiesCheck ?? 0)
             || now - (lastCapabilitiesCheck ?? 0) >= 1_000_000_000 {
@@ -97,7 +117,38 @@ nonisolated final class ActionWorker {
         guard mailbox.dispatchIsCurrent(dispatch) else { return }
         let success: Bool
         switch dispatch.action {
-        case .shortcut(let shortcut): success = sendShortcut(shortcut)
+        case .shortcut(let shortcut):
+            if let target = dispatch.trackpadTarget {
+                guard now <= target.expiresAt else { return }
+                let mailbox = mailbox
+                let postingAllowed = postingAllowed
+                let secureInput = secureInput
+                let result = sendTrackpadShortcut(shortcut, target) {
+                    mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+                }
+                guard result != .cancelled else { return }
+                success = result == .performed
+            } else { success = sendShortcut(shortcut) }
+        case .lockScreen:
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = requestLock {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            if result == .performed { mailbox.systemTransitionRequested(dispatch) }
+            else if result == .unavailable { mailbox.actionFailed(dispatch) }
+            return
+        case .sleepSystem:
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = requestSleep {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            if result == .performed { mailbox.systemTransitionRequested(dispatch) }
+            else if result == .unavailable { mailbox.actionFailed(dispatch) }
+            return
         case .media(let action):
             let mailbox = mailbox
             let postingAllowed = postingAllowed
@@ -136,6 +187,18 @@ nonisolated final class ActionWorker {
             let result = performWindow(action) {
                 mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
             }
+            guard result != .cancelled else { return }
+            success = result == .performed
+        case .windowCycle(let action):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let canPerform: @Sendable () -> Bool = {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            let result: WindowActionResult
+            if let performWindowCycle { result = performWindowCycle(action, canPerform) }
+            else { result = WindowCycleExecutor.perform(action, revision: dispatch.revision, state: &windowCycle, canPerform: canPerform) }
             guard result != .cancelled else { return }
             success = result == .performed
         case .windowLayout(let action):
