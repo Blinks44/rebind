@@ -62,9 +62,9 @@ result `build/Phase2LifecycleTests-Final.xcresult` (ignored).
 
 ## User-reported hardware result — 2026-10-08
 
-In response to the requested ordinary/hold/leftward-gesture regression after
-Pause/Resume and sleep/wake on the rebuilt app, the user reports: “Все отлично
-работает”. Record happy-path recovery evidence on the previously identified
+Manual test report, 2026-10-08: ordinary/hold/leftward-gesture bindings
+continued working after Pause/Resume and sleep/wake on the rebuilt app.
+Evidence source: tester report, not agent-observed input, on the previously identified
 G603 LIGHTSPEED with G HUB and macOS 27.0.1 (26A434). No separate held-source
 cancellation, timing, permission revocation, protected/session contexts, tap/output
 faults or disconnect results were reported. Full lifecycle verification remains open.

@@ -27,19 +27,32 @@ nonisolated enum ShortcutSender {
     // The touch action keeps its captured target even if foreground changes in
     // the final posting race. No retry/acknowledgement or global modifier events.
     static func send(_ shortcut: KeyboardShortcut, to target: TrackpadDispatchTarget,
-                     canPerform: @Sendable () -> Bool) -> WindowActionResult {
+                     canPerform: @Sendable () -> Bool,
+                     diagnose: @Sendable (TrackpadDiagnosticEvent) -> Void = { _ in }) -> WindowActionResult {
         let pid = target.pid
-        guard canPerform(), pid > 0, kill(pid, 0) == 0, AXIsProcessTrusted(), CGPreflightPostEventAccess(),
-              !IsSecureEventInputEnabled(), ScreenLockSession.allowsInput(),
-              CGEventSource.flagsState(.combinedSessionState).intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift, .maskSecondaryFn]).isEmpty,
-              !(0..<64).contains(where: { CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left) }),
-              !CGEventSource.keyState(.combinedSessionState, key: shortcut.keyCode) else { return .cancelled }
+        guard canPerform() else { diagnose(.runtimeChanged); return .cancelled }
+        guard pid > 0, kill(pid, 0) == 0 else { diagnose(.targetChanged); return .cancelled }
+        guard AXIsProcessTrusted(), CGPreflightPostEventAccess(),
+              !IsSecureEventInputEnabled(), ScreenLockSession.allowsInput() else {
+            diagnose(.protectedContext); return .cancelled
+        }
+        guard CGEventSource.flagsState(.combinedSessionState)
+            .intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift, .maskSecondaryFn]).isEmpty else {
+            diagnose(.heldModifier); return .cancelled
+        }
+        guard !(0..<64).contains(where: {
+            CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
+        }) else { diagnose(.heldButton); return .cancelled }
+        guard !CGEventSource.keyState(.combinedSessionState, key: shortcut.keyCode) else {
+            diagnose(.heldKey); return .cancelled
+        }
         guard let events = events(for: shortcut) else { return .unavailable }
         // Reuse the existing public AX client on the serial worker to verify
         // current focus even if MainActor's workspace notification is delayed.
         let client = AXWindowAccessibility()
         guard let app = client.application, client.processID(of: app) == pid,
-              canPerform(), DispatchTime.now().uptimeNanoseconds <= target.expiresAt else { return .cancelled }
+              canPerform() else { diagnose(.targetChanged); return .cancelled }
+        guard DispatchTime.now().uptimeNanoseconds <= target.expiresAt else { diagnose(.outputExpired); return .cancelled }
         for event in events { event.postToPid(pid) }
         return .performed
     }

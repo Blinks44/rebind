@@ -37,8 +37,8 @@ The user's ordinary G603 Control + Button 4 → Command+A result does not verify
 
 ## Verified
 
-- After the correction, the user reports “Да, все сочетания работают, задержка тоже”
-  in response to the requested TextEdit retest. Existing configuration: G603 Button 5,
+- Manual test report, 2026-10-08: configured shortcuts and long-press delay
+  worked in the requested TextEdit retest after the correction. Existing configuration: G603 Button 5,
   no modifiers, Long press 1000 ms → Command+A; Control + Button 4 ordinary shortcut.
   Device context: LIGHTSPEED with G HUB installed. This is user-performed verification
   of the configured output and perceived delay; the agent did not generate these inputs.
@@ -65,7 +65,7 @@ The user's ordinary G603 Control + Button 4 → Command+A result does not verify
   wheel hides modes/duration, Escape cancellation. Three-mode picker initially wrapped
   its label poorly; the final screenshot shows its label above full-width segments.
 - The user's existing ordinary Control + Button 4 → physical A shortcut is visible
-  intact after new-schema loading (A/Ф label follows current keyboard layout).
+  intact after new-schema loading (the physical A key label follows the current keyboard layout).
   The agent did not save/delete/change the user's configuration or grant permission.
 - During the initial UI check, the new locally signed bundle showed AX/post access
   unavailable after rebuilding and needed user authorization for hardware checks.

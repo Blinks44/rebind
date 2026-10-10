@@ -37,7 +37,7 @@ checks; **happy-path real-player delivery is user-confirmed** (2026-10-09): mous
 
 ## Software verification
 
-Commands/counts/toolchain and research/license decisions are recorded in PLAN.md.
+Commands/counts/toolchain and research/license decisions are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md).
 Tests construct real native events without posting, inspect their NSEvent round-trip,
 exact codes/phase/repeat/payload/flags/tag/source, and inject output for pair/tap,
 allocation failure, cancellation and release completion. Matcher/worker/migration

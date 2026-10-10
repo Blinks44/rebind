@@ -77,8 +77,8 @@ result `build/Phase2PointerGestureTests-Final.xcresult` (ignored). No dependency
 
 ## User-reported hardware result — 2026-10-08
 
-In response to the requested **Option + Button 4 + move Left → Command+A** check
-in TextEdit, the user reports: “да, круть, работает”. The device was previously
+Manual test report, 2026-10-08: **Option + Button 4 + move Left → Command+A**
+worked in TextEdit. Evidence source: tester report, not agent-observed input. The device was previously
 identified as Logitech G603 over LIGHTSPEED with G HUB installed. This confirms
 the requested configured happy path, not physical device attribution or all gesture
 directions. No separate cursor, suppression, one-shot/release, timing, cancellation,

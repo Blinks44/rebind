@@ -1,26 +1,37 @@
-# macOS
+# Repository policy: keep source, manifests/lockfiles, shared configuration,
+# design inputs, docs/tasks/evidence, AGENTS.md and .agents/skills versioned.
+# Exclude only reproducible output and workstation-local state.
+
+# macOS filesystem metadata
 .DS_Store
 .AppleDouble
 ._*
 
-# Xcode
+# Xcode build products and intermediates (including standalone tool output)
 DerivedData/
 build/
 Build/
-*.xcuserstate
-xcuserdata/
-*.xcresult/
 *.xcarchive/
 *.dSYM/
 *.hmap
-*.ipa
 
-# JetBrains
+# Xcode transient verification output; curated summaries/images stay in docs.
+*.xcresult/
+
+# Xcode per-user state; keep xcshareddata and shared schemes.
+*.xcuserstate
+xcuserdata/
+
+# JetBrains local project/workspace state; Rebind has no shared .idea contract.
 .idea/
+
+# Agent-local transcripts, scratch work, backups and workstation access hints.
+# Shared agent instructions, skills, state, tasks and evidence remain versioned.
+/.local/agent-context/
 
 # Swift Package Manager
 .build/
 .swiftpm/cache/
 .swiftpm/security/
 
-# Keep shared schemes, Package.resolved, docs, references, and .agents/skills tracked.
+# Package.swift and Package.resolved remain versioned; never ignore .swiftpm wholesale.

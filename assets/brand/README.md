@@ -8,7 +8,7 @@ Editable source: **04 · Symbols → Rebind/Brand/Menu Bar Template**, ID `0F0BD
 
 ## Dock / Finder
 
-The app uses `rebind/AppIcon.icon`, created and saved in Apple's Icon Composer on 2026-10-10. The synchronized `rebind` folder includes it in the app target; both configurations already select `AppIcon`. Final Debug/Release builds pass, and the extracted ICNS contains the new artwork. The older PNG catalog remains retained as historical artwork.
+The app uses `rebind/AppIcon.icon`, created and saved in Apple's Icon Composer on 2026-10-10. The synchronized `rebind` folder includes it in the app target; both configurations already select `AppIcon`. Final Debug/Release builds pass, and the extracted ICNS contains the new artwork. The obsolete PNG catalog and reference copy were removed on 2026-10-10; the native package is the only app-icon input.
 
 Sketch remains the editable geometry/visual reference: page **05 · Brand**, Frosted/Small sources on **04 · Symbols**. Composer owns delivery materials, system mask and appearance settings. See [integration verification](../../docs/verification/app-icon-composer.md).
 
@@ -22,4 +22,4 @@ The native package contains local copies of both SVG inputs; no external or temp
 
 For revisions, edit geometry in Sketch, export clean vectors, replace Composer layers, inspect appearances/small sizes, save `rebind/AppIcon.icon`, and run `scripts/dev.sh build` / `release`. Do not import the decorated static SVG as a foreground or bake a corner mask. [Apple's workflow](https://developer.apple.com/documentation/xcode/creating-your-app-icon-using-icon-composer).
 
-The pre-refinement PNGs in the app's asset catalog and `docs/references/Rebind-AppIcon.appiconset` are historical exports. Xcode generates representations from `.icon`. Finder was inspected on the development host; live Dock after relaunch, minimum-OS runtime and user's tint settings remain manual checks.
+The pre-refinement PNG sets formerly in the app asset catalog and `docs/references` were removed. Xcode generates representations from `.icon`; the clean inputs in `assets/brand/composer` byte-match the package’s local SVG copies. Finder was inspected on the development host; live Dock after relaunch, minimum-OS runtime and user's tint settings remain manual checks.

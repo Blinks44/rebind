@@ -20,6 +20,7 @@ nonisolated struct FourFingerTapGate: Sendable {
 
     private let startedAt: UInt64
     private var lastTime: UInt64?
+    private var lastPollTime: UInt64?
     private var neutral = false
     private var inContact = false
     private var strokeButtons: UInt64?
@@ -78,7 +79,15 @@ nonisolated struct FourFingerTapGate: Sendable {
     }
 
     mutating func takeReady(at time: UInt64, buttons: UInt64, observerReady: Bool) -> Bool {
-        guard validTime(time) else { return false }
+        // Receipt ordering and consumer polling are different timelines. A
+        // callback queued just before this check may be consumed next poll.
+        // Advancing the receipt clock here would reject that fresh callback.
+        guard time >= startedAt, lastTime.map({ time >= $0 }) ?? true,
+              lastPollTime.map({ time >= $0 }) ?? true else {
+            cancel(reason: .receiptTime)
+            return false
+        }
+        lastPollTime = time
         guard observerReady else { cancel(reason: .observerUnavailable); return false }
         guard let pendingAt else { return false }
         guard neutral, !inContact else { cancel(reason: .newContact); return false }

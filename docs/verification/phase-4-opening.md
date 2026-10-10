@@ -63,8 +63,8 @@ No new permissions or runtime dependencies.
 - Debug/universal Release and catalog/signature checks are in PLAN. Other locale
   layouts, keyboard/VoiceOver and native backend acceptance need manual verification.
 
-- User confirmation 2026-10-08: “Все работает как надо”, following the requested
-  G603 opening/activation/web/file checks. This supports successful ordinary
+- Manual test report, 2026-10-08: the requested G603 application opening/
+  activation, web and file actions completed successfully. This supports successful ordinary
   execution of the requested actions. Specific apps, files/folders, addresses,
   triggers, OS and closed-app behavior were not restated; remaining walkthrough
   cases are not marked passed on this general confirmation.

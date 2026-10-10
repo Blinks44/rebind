@@ -85,7 +85,7 @@ single taps, gaps/invalid/stale frames, click/activity/focus cancellation, armin
 delayed clicks at +12/+28/+59 ms, late poll, bounded buffer/pointer copy, schema/profile compatibility, duplicate
 rules, queue expiry and targeted dispatch with injected senders. No test creates
 or starts a native device, posts real input, changes permissions or writes user
-configuration. See docs/PLAN.md for exact final commands/counts/build evidence.
+configuration. See [the historical software-check register](../history/implementation-through-2026-10-10.md#historical-software-check-register) for exact prior commands/counts/build evidence; current work is indexed by [STATE](../STATE.md).
 
 Current Sketch Rebind document 10246E46-59D2-4110-95FB-7576E75168A9 and keyboard/
 editor frames were inspected read-only. Existing native sidebar/form conventions
@@ -120,3 +120,32 @@ compilation alone does not establish them.
 If a system gesture also fires, pause the test and inspect its System Settings
 assignment before testing again. Rebind never disables native settings itself.
 T1/T2 and production adapter lifecycle remain unchecked until these real checks.
+## Timing races, recovery and opt-in diagnostics — 2026-10-10
+
+Baseline `6c1a5be` plus uncommitted changes in Trackpad capture/gate/session/recognizer/diagnostics, EngineMailbox, ShortcutSender, ActionWorker and trackpad tests. Latest manual feedback reports very low recognition and possible physical-click output; exact tested bundle unknown. Hardware reliability/exclusivity is **not accepted**.
+
+Three deterministic regressions were reproduced before repair: a callback received before a poll decision but consumed afterward, a new contact queued during pending settling, and mouse-up after a known contact release without another idle zero callback. Each corresponding test failed before its fix. The consumer now samples time after dequeue (bounded to 64 frames/turn); poll and receipt clocks are independently monotonic. Activity-only updates retain known neutrality while cancelling pending output; active/uncertain contacts and foreground/rule changes do not retain it. Thresholds remain unchanged. Backwards clocks, stale/obsolete input and pending-click cancellation still have negative tests.
+
+Final checks on Apple Silicon/macOS 27.0.1, Xcode 27.0/Swift 6.4/SDK 27:
+
+- `scripts/dev.sh test -resultBundlePath build/TrackpadReliabilityFinalTests.xcresult`: **TEST SUCCEEDED**, 488 tests / 64 suites / zero failures. This includes Debug app compilation. Initial diagnostics builds exposed missing Synchronization import and default-MainActor extension isolation; both corrected before the final run.
+- `scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing unused AppIntents metadata extraction warning remains; no new compiler diagnostics. Test-host linkd/autoShortcut connection messages are nonfatal test-environment output, not evidence of gesture delivery.
+- `codesign --verify --deep --strict` passes for both bundles; Release `lipo -archs`: `x86_64 arm64`. Minimum macOS 26/Intel execution remains unverified.
+- Debug executable SHA-256 `a4390f1ccf5cbc01dcbd94bda83ccff719a85a90659d29f2e28d7de0bc9c2b3a`; Debug implementation dylib `dc551faa24087dd0708fb6b71bebe9231d5e52c238c10f9e650805c3f474b3f4`; Release executable `13b0f20317a45d9cd7950b3f37d86a18ad9ad21330f0d4305358a13d9e7f980c`. These identify current ignored local artifacts, not a committed revision.
+- No actual tap, Command-W output, rule/permission mutation or manual latency/click-exclusivity test performed by the agent.
+
+### User-assisted diagnostic run
+
+Quit existing Rebind copies and competing gesture remappers. From the repository, start the just-built packaged executable, with the existing test rule and disposable target tabs:
+
+```sh
+build/DerivedData/Build/Products/Debug/Rebind.app/Contents/MacOS/Rebind --diagnose-trackpad
+```
+
+Alternatively add `--diagnose-trackpad` under Xcode scheme → Run → Arguments, rebuild and use the debug console. Remove it after the check. Avoid simultaneously running the Terminal and Xcode copies.
+
+This is **the real app**, not the standalone probe: saved rules remain active. After the existing 3-second arming delay, perform 10–20 natural taps, then quick/held clicks and further taps. A click-only Command-W is a failed safety check. After 60 seconds, share only the `trackpad_diagnostics={...}` summary and observed success frequency/recovery.
+
+Counters are fixed safe reason names: frames, qualified taps, queueing/posting, recognition motion/contact/time/neutrality rejection, gate cancellation, buffer staleness/overflow, output held-input/target/deadline failures and capture availability. Rejections may count frames or completed sequences; do not interpret their sum as the number of gestures. `output-posted` is Quartz submission, not delivery acknowledgement. No text, coordinates, contact IDs, key/button codes, target identity or rules are included. Opt-in developer output is limited to a startup notice and one bounded aggregate JSON report; no diagnostic file is created. Aggregate collection expires after one minute and data is cleared on protected-context/access loss. Normal launch enables no report. Pure tests cover expiry, one-shot reporting and secure-context clearing. Acquisition/callback ownership and native-gesture passthrough remain unchanged.
+
+Next gate: rebuilt-app hardware frequency, click-only negatives and post-click recovery with this report. [Research decision](../research/trackpad-tap-reliability.md), [task](../tasks/INPUT-001-four-finger-tap.md). No broader gesture or BTT-equivalence claim.

@@ -18,6 +18,10 @@ import Dispatch
 
     func start() {
         guard timer == nil else { return }
+        if ProcessInfo.processInfo.arguments.contains("--diagnose-trackpad") {
+            mailbox.state.withLock { $0.trackpadDiagnostics = TrackpadDiagnostics(startedAt: DispatchTime.now().uptimeNanoseconds) }
+            FileHandle.standardError.write(Data("trackpad_diagnostics_started=60s; aggregate reasons only; existing rules remain active\n".utf8))
+        }
         timer = Timer(timeInterval: 0.01, target: self, selector: #selector(poll), userInfo: nil, repeats: true)
         if let timer { RunLoop.main.add(timer, forMode: .common) }
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(foregroundChanged),
@@ -28,6 +32,7 @@ import Dispatch
         timer?.invalidate(); timer = nil
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         stopCapture()
+        reportDiagnostics(finishing: true)
     }
 
     @objc private func foregroundChanged() {
@@ -50,8 +55,16 @@ import Dispatch
 
     @objc private func poll() {
         let now = DispatchTime.now().uptimeNanoseconds
-        guard let runtime = mailbox.trackpadRuntime(), !IsSecureEventInputEnabled(),
+        guard !IsSecureEventInputEnabled(),
               AXIsProcessTrusted(), CGPreflightPostEventAccess() else {
+            mailbox.state.withLock { $0.trackpadDiagnostics = nil }
+            stopCapture()
+            timer?.fireDate = Date().addingTimeInterval(0.1)
+            return
+        }
+        reportDiagnostics()
+        guard let runtime = mailbox.trackpadRuntime() else {
+            mailbox.recordTrackpadDiagnostic(.captureInactive)
             stopCapture()
             // Idle polling does not need the recognition cadence.
             timer?.fireDate = Date().addingTimeInterval(0.1)
@@ -62,23 +75,36 @@ import Dispatch
             if device == nil { device = NativeTrackpadDevice.acquire(mailbox: mailbox) }
             guard let device, device.start() else {
                 mailbox.state.withLock { $0.trackpadStatus = device?.failed == true ? .failed : .unavailable }
+                mailbox.recordTrackpadDiagnostic(device?.failed == true ? .captureFailed : .captureUnavailable)
                 // Latch this revision; a failing start is not retried every 10 ms.
                 revision = runtime.revision
                 return
             }
             revision = runtime.revision
+            mailbox.recordTrackpadDiagnostic(.captureRestarted)
             session = TrackpadTapSession(runtime: runtime, foreground: foregroundPID(), startedAt: now)
         }
         guard let device, session != nil else { return }
         let pid = foregroundPID()
-        session?.update(runtime: runtime, foreground: pid)
+        if let event = session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
         mailbox.updateTrackpadForeground(pid)
-        if device.buffer.takeOverflow() { session?.interrupt() }
-        while let frame = device.buffer.pop() { session?.consume(frame, at: now) }
+        if device.buffer.takeOverflow() { session?.interrupt(); mailbox.recordTrackpadDiagnostic(.overflow) }
+        let mailbox = mailbox
+        session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
+                                       diagnose: { mailbox.recordTrackpadDiagnostic($0) })
+        let decisionTime = DispatchTime.now().uptimeNanoseconds
         // A busy UI cancels rather than executing old actions after it unblocks.
-        if session?.takeReady(at: now) == true, let pid {
-            mailbox.submitTrackpad(runtime, pid: pid, at: now)
+        if session?.takeReady(at: decisionTime) == true, let pid {
+            let queued = mailbox.submitTrackpad(runtime, pid: pid, at: decisionTime)
+            mailbox.recordTrackpadDiagnostic(queued ? .queued : .queueUnavailable)
         }
+        if let event = session?.takeCancellation() { mailbox.recordTrackpadDiagnostic(event) }
         mailbox.state.withLock { $0.trackpadStatus = .active }
+    }
+
+    private func reportDiagnostics(finishing: Bool = false) {
+        if let report = mailbox.takeTrackpadDiagnosticReport(at: DispatchTime.now().uptimeNanoseconds, finishing: finishing) {
+            FileHandle.standardError.write(Data(("trackpad_diagnostics=" + report + "\n").utf8))
+        }
     }
 }

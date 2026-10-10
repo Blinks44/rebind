@@ -76,7 +76,7 @@ No live window was raised, modified or read by the agent for this slice.
   changes, partial/rejected operations/readback, eligibility, typed dispatch,
   source ownership/synthetic exclusion, stale errors and migration/atomic storage.
   Native windows are injected. Full suite: **391 tests in 54 suites pass**.
-- Debug/universal Release checks and toolchain/commands are recorded in PLAN.md.
+- Debug/universal Release checks and toolchain/commands are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md).
   Real applications, Spaces/fullscreen/sheets, latency, locales and access changes
   still require manual checks.
 

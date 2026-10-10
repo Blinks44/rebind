@@ -55,7 +55,7 @@ cached the first identity and caused two assertions to fail. Corrected to distin
 bundle paths rather than assuming metadata-cache invalidation, then full suite passed.
 The safe public lookup probe resolves System Settings at its installed path with the
 expected bundle ID/type; it did not launch the app. Debug/Release/toolchain/signing
-results and research/license decisions are recorded in PLAN.md.
+results and research/license decisions are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md).
 
 ## Manual check
 

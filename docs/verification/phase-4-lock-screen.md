@@ -65,7 +65,7 @@ The agent did not perform a lock request, password entry, permission grant or us
   and [MacLock](https://github.com/yumaitau/MacLock/blob/4828f92c82949817f9d1389e18e56c7569e13781/MacLock/ScreenLocker.swift)
   use the void lock entry point; MacLock also observes lock notifications/key.
   All full MIT licenses read; no external executable/package/source copied.
-  Maintenance/compatibility decisions are recorded in PLAN.md.
+  Maintenance/compatibility decisions are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md).
 - Safe `/tmp/rebind-lock-probe.swift` on Apple Silicon macOS 27.0.1 (26A434):
   framework opens, symbol resolves, unlocked lock key absent, console Boolean true.
   Probe closes its handle and never invokes the function; no locked-state evidence.
@@ -74,7 +74,7 @@ The agent did not perform a lock request, password entry, permission grant or us
   queue/diagnostic clearing, stale revisions, migration/atomic storage, boolean
   parsing, recording suspension and overlapping lifecycle conditions. Native
   requests are injected; the full suite passes 371 tests in 50 suites.
-- Debug and universal Release build checks are recorded in PLAN.md. Compilation,
+- Debug and universal Release build checks are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md). Compilation,
   symbol presence and mocked state transitions do not prove actual screen locking.
 
 ## Manual checks — happy path reported; detailed cases remain open

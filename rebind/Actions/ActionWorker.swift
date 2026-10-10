@@ -35,7 +35,7 @@ nonisolated final class ActionWorker {
     init(mailbox: EngineMailbox,
          capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
          performAudio: @escaping @Sendable (SystemAction, UInt32) -> Bool = { CoreAudioOutput.perform($0, device: $1) },
-         sendTrackpadShortcut: @escaping @Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult = { ShortcutSender.send($0, to: $1, canPerform: $2) },
+         sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
          requestLock: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = { canPerform in
              ScreenLockExecutor.perform(canPerform: { canPerform() && ScreenLockSession.allowsInput() })
@@ -72,7 +72,10 @@ nonisolated final class ActionWorker {
         self.requestLock = requestLock
         self.requestSleep = requestSleep
         self.sendShortcut = sendShortcut
-        self.sendTrackpadShortcut = sendTrackpadShortcut
+        self.sendTrackpadShortcut = sendTrackpadShortcut ?? { shortcut, target, canPerform in
+            ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
+                                diagnose: { mailbox.recordTrackpadDiagnostic($0) })
+        }
         self.performMouse = performMouse
         self.performMedia = performMedia
         self.performDock = performDock
@@ -119,12 +122,17 @@ nonisolated final class ActionWorker {
         switch dispatch.action {
         case .shortcut(let shortcut):
             if let target = dispatch.trackpadTarget {
-                guard now <= target.expiresAt else { return }
+                guard now <= target.expiresAt else { mailbox.recordTrackpadDiagnostic(.outputExpired); return }
                 let mailbox = mailbox
                 let postingAllowed = postingAllowed
                 let secureInput = secureInput
                 let result = sendTrackpadShortcut(shortcut, target) {
                     mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+                }
+                switch result {
+                case .performed: mailbox.recordTrackpadDiagnostic(.outputPosted)
+                case .cancelled: mailbox.recordTrackpadDiagnostic(.outputCancelled)
+                case .unavailable: mailbox.recordTrackpadDiagnostic(.outputUnavailable)
                 }
                 guard result != .cancelled else { return }
                 success = result == .performed

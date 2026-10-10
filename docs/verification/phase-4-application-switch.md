@@ -79,7 +79,7 @@ post-acceptance cancellation and Workspace ordering across awaits/profile change
 
 Initial full test run found an existing recorder-lifecycle test depending on live
 CGSession state. It now injects a known unlocked session, retaining production
-protection. Final commands/results are recorded in PLAN's session log. Software
+protection. Final commands/results are recorded in [the historical software-check register](../history/implementation-through-2026-10-10.md#historical-software-check-register). Software
 fakes prove dispatch/state behavior, not real native application activation.
 
 ## Detailed manual checks — remaining

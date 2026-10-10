@@ -1,6 +1,6 @@
 # Sketch design-system review — 2026-10-09
 
-Live source: `/Users/sergejvrenev/Documents/Rebind.sketch`, Sketch 2026.3.1. Final saved document ID: `4BAD1286-1909-460E-BAC4-4FDCBEBF41AC`. Scope: SPEC §10, capture/status contracts in §§4–5, PLAN Phase 8. User authorized review and correction of the current design system. No app source, rules, permissions or engine behavior changed.
+Live source: `Rebind.sketch`, Sketch 2026.3.1. Final saved document ID: `4BAD1286-1909-460E-BAC4-4FDCBEBF41AC`. Scope: SPEC §10, capture/status contracts in §§4–5, PLAN Phase 8. User authorized review and correction of the current design system. No app source, rules, permissions or engine behavior changed.
 
 ## Findings corrected
 

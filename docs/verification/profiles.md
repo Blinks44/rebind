@@ -55,14 +55,14 @@ Held-source cancellation, relaunch and both selection UI paths remain manual che
 - Debug and universal arm64/x86_64 Release, signature/privacy/project/catalog checks
   recorded in PLAN. Other locales' layout and VoiceOver remain manual checks.
 
-- User confirmation 2026-10-08: “Все отлично, изменил профиль - там свои бинды
-  работают”. This verifies selected-profile binding output on the existing G603
+- Manual test report, 2026-10-08: switching profiles changed the active binding
+  output as expected. This verifies that selected-profile happy path on the existing G603
   LIGHTSPEED/G HUB setup. Exact mappings, selection UI path and OS were not restated;
   it does not verify both UI paths, held-source cancellation or restart persistence.
 
 ## User checks
 
-1. Run one rebuilt Xcode copy (⌘R). Confirm Default / Основной contains your existing
+1. Run one rebuilt Xcode copy (⌘R). Confirm the Default profile (localized name) contains your existing
    three mouse rules and preserves pause. With rules paused, open **Manage Profiles**,
    copy Default to a second named profile; edit its actions to be visibly different.
 2. Select each via the main picker and menu-bar **Profile** submenu. Check the selected

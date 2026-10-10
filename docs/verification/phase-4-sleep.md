@@ -62,7 +62,7 @@ hold after sleep was queued, then full suite passed. No matcher policy changed.
 A safe native probe calls only support query and connection open/close: all return
 success on the development Apple Silicon macOS 27.0.1 host. This does not prove sleep
 request acceptance or wake recovery. Build/toolchain/signature/research evidence in
-PLAN.md; hardware latency, blockers, macOS 26/Intel remain open.
+[the historical evidence summary](../history/implementation-through-2026-10-10.md); hardware latency, blockers, macOS 26/Intel remain open.
 
 ## Manual check
 

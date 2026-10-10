@@ -7,6 +7,20 @@ struct AppShortContactTests {
         (0..<count).map { .init(id: Int32($0), x: 0.2 + Float($0) * 0.1 + offset, y: 0.5, pressure: 100) }
     }
 
+    @Test func diagnosticReasonsDistinguishMotionFromChangingContacts() {
+        for changedContacts in [false, true] {
+            var recognizer = ShortContactRecognizer()
+            _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+            _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(4))
+            _ = recognizer.consume(frame: 2, time: 0.03, contacts: contacts(changedContacts ? 3 : 4))
+            _ = recognizer.consume(frame: 3, time: 0.05,
+                                   contacts: contacts(4, offset: changedContacts ? 0 : 0.06))
+            let candidate = recognizer.consume(frame: 4, time: 0.07, contacts: [])
+            #expect(candidate == nil)
+            #expect(recognizer.rejection == (changedContacts ? .changedContacts : .travel))
+        }
+    }
+
     @Test(arguments: [3, 4]) func candidateOccursOnceAfterLift(fingers: Int) throws {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])

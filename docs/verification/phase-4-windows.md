@@ -59,7 +59,7 @@ targets, revoked access and latency still require manual checks.
   Release arm64/x86_64, strict/deep code-sign verification and project/product plist
   lint pass. Only the expected skipped AppIntents metadata warning.
 - Exact Debug bundle inspected in Russian: all four entries, category search
-  `окна`, full-row minimize selection, explanatory paragraph, hidden shortcut-only
+  the localized Windows query, full-row minimize selection, explanatory paragraph, hidden shortcut-only
   parameters and disabled Save with an empty trigger. Escape cancels the editor.
   The inspection copy has no AX/post grant; no grant or rule/profile save performed.
   User configuration bytes are unchanged before/after UI inspection; copy quit.
@@ -68,8 +68,8 @@ targets, revoked access and latency still require manual checks.
 
 ## User confirmation — 2026-10-08
 
-User reports: “Да, проверил все действия - все работает”, in response to the request
-for all four actions in Finder/TextEdit and especially full-screen entry/exit.
+Manual test report, 2026-10-08: all four requested window actions completed
+successfully in the Finder/TextEdit walkthrough, including full-screen entry/exit.
 This confirms ordinary execution of close, minimize, full-screen toggle and hide
 on the user's existing setup. Exact applications, trigger chords, macOS version
 and entry/exit details were not restated. Do not treat this as confirmation of

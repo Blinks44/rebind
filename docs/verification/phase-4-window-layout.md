@@ -65,7 +65,7 @@ freshness/geometry/lifecycle invalidation and unrelated queue retention. Tempora
 stores verify schema-15 byte retention until save and old-schema/inactive rejection.
 
 Debug and universal Release builds, toolchain and signing checks are recorded in
-PLAN.md. No real windows were used by these tests; app-specific AX support, visual
+[the historical evidence summary](../history/implementation-through-2026-10-10.md). No real windows were used by these tests; app-specific AX support, visual
 layout, event delivery and latency are manual gates.
 
 ## Manual check

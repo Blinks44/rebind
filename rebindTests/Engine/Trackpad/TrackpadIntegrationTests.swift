@@ -26,6 +26,105 @@ struct TrackpadIntegrationTests {
         }
     }
 
+    @Test func callbackReceivedBeforePollingDecisionCanBeConsumedOnNextPoll() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)
+        // The producer can enqueue a frame after the consumer drains, before
+        // its readiness check. Delivery time must not reorder receipt time.
+        let idle = session.takeReady(at: lift - 70_000_000)
+        #expect(idle == false)
+        session.consume(frame(1, count: 4, at: lift - 80_000_000), at: lift - 60_000_000)
+        session.consume(frame(2, count: 4, at: lift - 60_000_000), at: lift - 60_000_000)
+        session.consume(frame(3, count: 0, at: lift), at: lift)
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready)
+    }
+
+    @Test func newContactQueuedBeforePendingReadinessPollCancelsAndNextTapRecovers() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        let waiting = session.takeReady(at: lift + 30_000_000)
+        #expect(waiting == false)
+        session.consume(frame(4, count: 4, at: lift + 20_000_000), at: lift + 40_000_000)
+        session.consume(frame(5, count: 4, at: lift + 40_000_000), at: lift + 40_000_000)
+        session.consume(frame(6, count: 0, at: lift + 60_000_000), at: lift + 60_000_000)
+        let replacement = session.takeReady(at: lift + 120_000_000)
+        #expect(replacement)
+        let duplicate = session.takeReady(at: lift + 130_000_000)
+        #expect(duplicate == false)
+    }
+
+    @Test func bufferedConsumptionSamplesClockAfterDequeueAndReportsReasons() {
+        let mailbox = EngineMailbox()
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        for (id, count) in [0, 4, 4, 0].enumerated() {
+            let value = frame(Int32(id), count: count, at: lift - UInt64(3 - id) * 20_000_000)
+            buffer.state.withLock { $0.frames[id] = value; $0.count += 1 }
+        }
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        var clockCalls = 0
+        var events: [String] = []
+        session.consumeBufferedFrames(from: buffer, clock: { clockCalls += 1; return lift },
+                                      diagnose: { events.append($0.key) })
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready)
+        #expect(clockCalls == 4)
+        #expect(events.filter { $0 == "frames" }.count == 4)
+        #expect(events.contains("qualified-taps"))
+        #expect(events.contains("future-receipt") == false)
+    }
+
+    @Test func malformedStaleAndObsoleteFramesHaveDistinctDiagnosticReasons() {
+        for scenario in 0...3 {
+            var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+            var value = frame(0, count: 0, at: lift)
+            if scenario == 0 { value.valid = false }
+            if scenario == 1 { value.activity = 1 }
+            let now = scenario == 2 ? lift + 100_000_001 : scenario == 3 ? lift - 1 : lift
+            let reason = session.consume(value, at: now)
+            #expect(reason?.key == ["invalid-frame", "obsolete-frame", "stale-frame", "future-receipt"][scenario])
+            let ready = session.takeReady(at: lift + 160_000_000)
+            #expect(ready == false)
+        }
+    }
+
+    @Test func mouseUpAfterKnownReleaseDoesNotRequireAnotherEmptyCallback() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        var current = runtime
+        session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)
+        session.consume(frame(1, count: 4, at: lift - 80_000_000), at: lift - 80_000_000)
+        current.inputActivity = 1 // physical button-down
+        session.update(runtime: current, foreground: 100)
+        var release = frame(2, count: 0, at: lift)
+        release.activity = 1
+        session.consume(release, at: lift)
+        current.inputActivity = 2 // physical up after contact release
+        session.update(runtime: current, foreground: 100)
+        let click = session.takeReady(at: lift + 60_000_000)
+        #expect(click == false)
+        // The native stream can be silent while idle; no extra zero callback.
+        for (offset, count) in [4, 4, 0].enumerated() {
+            var value = frame(Int32(100 + offset), count: count, at: lift + 1_000_000_000 + UInt64(offset) * 20_000_000)
+            value.activity = 2
+            session.consume(value, at: value.receipt)
+        }
+        let nextTap = session.takeReady(at: lift + 1_100_000_000)
+        #expect(nextTap)
+    }
+
+    @Test(arguments: [false, true]) func backwardsReceiptOrPollingStillCancels(_ backwardsReceipt: Bool) {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        if backwardsReceipt {
+            session.consume(frame(4, count: 0, at: lift - 1), at: lift + 20_000_000)
+        } else {
+            _ = session.takeReady(at: lift + 30_000_000)
+            _ = session.takeReady(at: lift + 20_000_000)
+        }
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready == false)
+    }
+
     @Test func qualifiedReleaseSurvivesEmptyTailAndCanRepeat() {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         completed(&session, at: lift)

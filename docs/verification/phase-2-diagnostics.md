@@ -73,14 +73,14 @@ remain open.**
   inspection copy lacked AX/post access; the user's stable Xcode copy needs its own
   actual permission check. Earlier user-confirmed remaps do not verify this viewer.
 
-Build/signature/catalog results are recorded in PLAN.md. Logs
+Build/signature/catalog results are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md). Logs
 `/tmp/rebind-diagnostics-{doctor,tests,build-final,release-final}.log`;
 result `build/Phase2DiagnosticsTests.xcresult` (ignored).
 
 ## User hardware result — 2026-10-08
 
-The user reports “Да, все отлично” and supplies a populated panel screenshot for
-the previously reported G603 LIGHTSPEED/G HUB setup. It shows Button 4 → CG 3 and
+Manual test report, 2026-10-08: diagnostics collection succeeded. A supplied
+panel screenshot records the previously reported G603 LIGHTSPEED/G HUB setup. It shows Button 4 → CG 3 and
 Button 5 → CG 4, down/up pairs and Button 5 drag rows. Collection is active around
 31–33 seconds; rules are paused and the displayed decisions are passed through.
 This verifies basic collection and populated Russian table metadata. It does not

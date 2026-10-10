@@ -69,8 +69,8 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   Deployment stays macOS 26; Intel/macOS 26 execution, EN/DE/FR layout, VoiceOver,
   physical disabled-output behavior and all audio/cancellation variants remain unverified.
 
-- User confirmation 2026-10-08: “Да, все работает”, in response to the requested
-  volume-down mapping and old-shortcut regression check. Record that configured
+- Manual test report, 2026-10-08: the configured volume-down mapping and
+  existing shortcuts passed the requested regression check. Record that configured
   happy path on the existing G603 LIGHTSPEED/G HUB setup; exact actions, output,
   trigger and OS were not restated. This does not verify all three actions,
   mute/endpoint semantics, output changes or cancellation/fault cases below.

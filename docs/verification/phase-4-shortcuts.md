@@ -68,8 +68,8 @@ No runtime dependency, private API or permission grant was added.
 
 ## Manual checks
 
-User confirmation 2026-10-09: “Да, все сработало круто”, following the requested
-Apple Shortcut/side-button notification test. This supports the requested execution
+Manual test report, 2026-10-09: the configured side-button action executed
+the Apple Shortcut notification test successfully. This supports the requested execution
 happy path, not rename/delete, prompts, timeout or cancellation. The agent did not
 observe the actual output; specific workflow/trigger were not restated.
 

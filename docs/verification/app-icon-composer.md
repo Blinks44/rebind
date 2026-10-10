@@ -25,3 +25,30 @@ Foreground centered at 123%, preserving its proportion relative to the inset sta
 Tint previews use renderer defaults and do not guarantee contrast for every user hue/strength. Very dark tints reduce small-size contrast; user's actual tint remains a manual check. Actual Dock after relaunch and macOS 26/Intel execution unverified. No global cache resets or Dock restarts.
 
 Evidence: `/tmp/rebind-composer-integration/`, including pre-export brand backup, renderer outputs, source/package manifests and build logs. Next: rebuild the user's Xcode copy and inspect Dock after normal relaunch, then confirm minimum-OS appearance.
+
+## Sole-source cleanup and fresh artifact verification — 2026-10-10
+
+Baseline `6c1a5be` already includes the new native package and both configurations select `AppIcon`. The clean `assets/brand/composer` foreground/background SVGs byte-match the package copies. Read-only Sketch inspection resolved the current Rebind document and Frosted source `AA064C59-AD8E-40E1-A7DF-DF7F6949C136`; source screenshot and the brand preview confirm the existing white Command mark/blue background. No geometry, materials or Sketch content was edited.
+
+At the user's request, deleted the superseded `docs/references/Rebind-AppIcon.appiconset` and the duplicate `rebind/Assets.xcassets/AppIcon.appiconset` (11 files each). The native package is the sole icon input. The separate Menu Bar template and other brand sources are preserved; no project-setting change was needed.
+
+Fresh `scripts/dev.sh build` / `scripts/dev.sh release` both report **BUILD SUCCEEDED**. Asset compiler commands select `--app-icon AppIcon` with `rebind/AppIcon.icon`, with no icon warning or error. Only the existing unused AppIntents metadata extraction warning remains. Both bundles pass `codesign --verify --deep --strict`; Release is `x86_64 arm64`. Info.plist retains `blinks44.rebind`, icon name/file `AppIcon` and minimum OS `26.0`.
+
+Extracted each built `AppIcon.icns` with `iconutil -c iconset`. The 256-pixel rendition is named `icon_128x128@2x.png`; its appearance was inspected and the Debug/Release copies are byte-identical (SHA-256 `88c961bd98fbb1a69489701773eafb96cf982d8220f6f241ed7ee5ab9c003f66`). This confirms actual artifact delivery without relying on an old asset preview. `git diff --check` passes. Asset-only cleanup did not rerun behavioral tests or start the input engine; the previously recorded 479 tests are historical evidence.
+
+Dock/live Menu Bar after normal user relaunch, actual tint and macOS 26/Intel runtime remain open. No application launch, cache reset, Dock restart, rules/permissions changes or commits were performed for this cleanup. See [BRAND-001](../tasks/BRAND-001-icon-runtime.md).
+## Stale-icon report and scoped refresh — 2026-10-10
+
+The user reports an old icon despite sole-source delivery. Re-inspected actual artifacts rather than replacing artwork: clean brand/package SVGs still match, fresh repository/Xcode Debug copies have identical AppIcon.icns (SHA-256 `0642c4bbbde096b95b588c1f9880fdc161fcaf387df4fe20aef8233cf6d42d91`) and both bundle icon keys remain `AppIcon`. A separate older Xcode DerivedData bundle contains different icon resources; the previously tested running path was not supplied. Read-only process/app inventory found no active Rebind instance during this inspection.
+
+Finder Get Info for the repository Debug bundle visibly shows the delivered Command-mark icon in both header and preview. Bundle directory modification time still predated fresh internal-resource builds. Applied a scoped registration refresh:
+
+```sh
+touch build/DerivedData/Build/Products/Debug/Rebind.app
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f build/DerivedData/Build/Products/Debug/Rebind.app
+killall Dock
+```
+
+The same touch/force-registration operations were applied to the identified fresh Xcode Debug copy. Commands completed successfully. Dock was restarted once; no Dock preference/global icon-cache deletion, Xcode DerivedData removal, artwork change, app launch, input operation or permission mutation. Final Debug test build and Release build/signatures are recorded with [INPUT-001](../tasks/INPUT-001-four-finger-tap.md).
+
+This verifies new bundle resources/Finder and completion of the scoped refresh, **not** Dock's icon after a fresh Rebind launch. User confirmation of the exact running bundle/location remains required before declaring the stale-icon symptom resolved. [BRAND-001](../tasks/BRAND-001-icon-runtime.md).

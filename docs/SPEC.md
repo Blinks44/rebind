@@ -3,8 +3,9 @@
 **Status:** Product specification; implementation and hardware support must be independently verified.  
 **Platform:** macOS only, initial target macOS 26+.  
 **Product:** Rebind, a lightweight, capable, native input remapper inspired by the useful parts of BetterTouchTool.  
-**Companion files:** `../AGENTS.md`, `PLAN.md`.  
-**Design source:** Current Rebind designs in Sketch, inspected through MCP before designing or implementing screens. `docs/references/` holds optional assets/historical exports; a PNG reference is not required.
+**Companion files:** [AGENTS](../AGENTS.md), [STATE](STATE.md), [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [DESIGN](DESIGN.md). Requirements live here; implementation/evidence and recent changes live in STATE, task records and [CAPABILITIES](CAPABILITIES.md), not in the presence of a requirement.
+
+**Design source:** Current Rebind designs in Sketch, indexed in DESIGN and inspected through MCP before designing or implementing screens. `docs/references/` holds optional assets/historical exports; a PNG reference is not required.
 
 ## 1. Product vision
 
@@ -329,10 +330,11 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 
 ### Visual language
 
-- Native SwiftUI and macOS 26 Liquid Glass applied thoughtfully, restrained elevated elements, excellent typography, alignment, spacing, visual hierarchy, and contrast.
+- Design for **macOS 26+** with a distinctive contemporary native appearance: purposeful Liquid Glass, raised/elevated surfaces, subtle lighting/depth and intentional gradients, with excellent typography, alignment, spacing, hierarchy and contrast. Do not default to a legacy flat Settings presentation simply because it is convenient. Native controls retain their semantics while adopting the current material direction.
+- Use effects selectively where they clarify navigation, interaction or brand; dense content does not require glass on every row/field. Follow [DESIGN](DESIGN.md) and current Sketch styles/components; preserve opaque Reduce Transparency fallbacks.
 - Distinct, readable panes; avoid glass-on-glass stacks and giant decorative cards.
 - Native button/menu/focus semantics; SF Symbols; polished hover/focus/pressed states.
-- Support Light/Dark, window resizing, accessibility, Reduce Motion, Increase Contrast, VoiceOver, full keyboard operation.
+- Support Light/Dark, window resizing, accessibility, Reduce Transparency, Reduce Motion, Increase Contrast, VoiceOver, full keyboard operation.
 - Inspect the relevant current Sketch frames, components/styles and screenshots via MCP. Use the user-identified design as visual direction while preserving native macOS behavior. Optional assets/exports in `docs/references/` do not replace the live design; if access or the target is missing, explain the limitation and request the document/frame.
 - **No generic AI slop:** no gratuitous purple gradients, excess blur, massive corner radii, fake analytics dashboards, or unrelated micro-illustrations.
 
@@ -378,7 +380,7 @@ Check: click-through suppression, screen lock/unlock, login relaunch, window clo
 
 ## 13. Capability status policy
 
-Use this status vocabulary consistently in `PLAN.md` and, when relevant, the UI:
+Use this capability status vocabulary consistently in STATE, CAPABILITIES, verification records, PLAN and, when relevant, the UI. Task stages (design-ready, implementing, awaiting verification, etc.) are separate and defined in [WORKFLOW](WORKFLOW.md):
 
 - `Planned`: no implementation yet.
 - `Researching`: technical feasibility currently being established.
@@ -422,4 +424,4 @@ A release candidate should explicitly evaluate and record all of these, with hon
 
 ## 16. Definition of Done
 
-Rebind is **not done** merely because it has a beautiful SwiftUI UI, compiles, or passes isolated matcher tests. Done means the tested and claimed triggers run their actions in real applications, input remains safe, background/permissions work, settings persist, and the interface and translations are finished. Anything not hardware-verified must carry an accurate capability label and a corresponding entry in `docs/PLAN.md`.
+Rebind is **not done** merely because it has a beautiful SwiftUI UI, compiles, or passes isolated matcher tests. Done means the tested and claimed triggers run their actions in real applications, input remains safe, background/permissions work, settings persist, and the interface and translations are finished. Anything not hardware-verified must carry an accurate capability label and a corresponding capability/task verification entry, indexed by STATE and the relevant PLAN phase. Keep requirements here and dated implementation evidence in their owning records.

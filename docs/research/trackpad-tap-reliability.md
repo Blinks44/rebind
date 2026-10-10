@@ -1,0 +1,29 @@
+# Four-finger tap reliability — renewed audit, 2026-10-10
+
+Scope: [INPUT-001](../tasks/INPUT-001-four-finger-tap.md), SPEC T1/T2. Latest manual report describes very low recognition and possible output following physical clicks; the tested bundle was not identified. Previous happy-path output and mocked tests do not establish reliable tap/click separation.
+
+## Alternatives checked
+
+GitHub keyword/source searches, Apple touch-event documentation and Swift Package Index searches were repeated. The direct SPI `search?query=multitouch` request failed; no index build/compatibility result is claimed. GitHub API metadata and raw source were accessible. Downloaded source was read, not executed or incorporated.
+
+| Candidate | Current source/platform/license evidence | Decision |
+| --- | --- | --- |
+| [OpenMultitouchSupport](https://github.com/Kyome22/OpenMultitouchSupport/tree/15c6bb0c6a2d2858559493a28ab23f7ac58648a3) | Revision remains `15c6bb0`, 2026-05-28. MIT; tools 6.2, macOS 15+, Xcode 26.2+. Raw default-device contacts, binary XCFramework and AsyncAlgorithms. Prior pinned source/license audit retained. | Real Swift acquisition library, but no supplied complete tap/physical-click recognizer. Changing the acquisition wrapper cannot repair our consumer timing/cancellation bugs. Not adopted/built. |
+| [Subsurface](https://github.com/mrkai77/Subsurface/tree/88eb16b0a6f7a44a898cecff9e283298aa413936) | Revision remains `88eb16b`, 2026-09-30. Apache-2.0; tools 6.2/macOS 13+, Scribe dependency. Raw contacts, swipe/magnification/rotation and haptics. | Keep its previously audited ABI/probe reference. Its advertised ready-made recognizer covers movement gestures, not the required exclusive single tap/click. No app dependency added. |
+| [Sanne](https://github.com/anandghegde/Sanne/tree/53bee5b36ebae96a8b1228221e878de7acf79149) | Revision remains `53bee5b`, 2026-10-05. MIT; tools 5.9/macOS 13+, full application. GestureEngine and existing three/four-finger recognizer path rechecked. | Useful implementation reference, not a packaged gesture SDK. Its app-specific click monitoring/session/action machinery does not establish drop-in compatibility or hardware acceptance for Rebind. No additional source reused/built. |
+| [Touchy](https://github.com/gugahoi/touchy/tree/56b0e33f67ce72940528f53989799f30bb395824) | `56b0e33`, 2026-09-15. Tools 6.0/macOS 13+, executable in Swift 5 language mode and CMultitouch target; no external package. No LICENSE file in the inspected tree. Recognizer/engine/manifest read. | Full remapper, not SDK. Short-contact centroid/duration classification is permissive but does not independently prove physical-click exclusion; its source was not copied. No demonstrated modern strict-concurrency/hardware reliability evidence. |
+| [MultiTouch](https://github.com/Russell-Newton/MultiTouch/tree/9996726351693a907c525eae820a43c49f3985b9) | `9996726`, 2022-12-06. Full MIT license read; C/CMake library, not Swift/SPM, no declared macOS deployment baseline. README describes a device adapter and gesture state machines. | Generic recognizer, without a Mac physical-button correlation adapter. Multi-finger tap identification is listed as future work. Not adopted/built; no local Swift 6/macOS compatibility claim. |
+| [Official BetterTouchTool JS client](https://github.com/folivoraAI/bettertouchtool-js) | MIT-labelled JS/TS scripting client, Node 18+; README read. Connects to an installed BTT through its in-process/socket/web APIs. | Controls BTT rather than providing its recognition engine for embedding. No standalone Swift tap/click SDK established by this audit. Depending on a separately installed commercial app changes Rebind's product architecture. No adoption or claim about BTT's internal algorithm. |
+
+Apple's [Handling Trackpad Events](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/HandlingTouchEvents/HandlingTouchEvents.html) attaches touches to the view under the pointer. This is not a public global touch recognizer for other applications. Existing private acquisition remains isolated and Experimental.
+
+## Decision and concrete evidence
+
+Retain the bounded acquisition adapter while fixing **reproduced integration errors**. Do not broaden gesture scope or adjust duration/travel/pressure thresholds again without hardware rejection evidence.
+
+- Poll-entry time can precede receipts queued while draining. Sample the monotonic clock after each dequeue, with at most 64 frames per turn, and again before dispatch.
+- Poll time and callback receipt ordering must be independent. Two tests failed before separating those clocks and pass after the fix; genuinely backwards receipt/poll times still cancel.
+- A mouse-up arriving after an already observed neutral release must cancel pending output without demanding another empty callback. A third regression test failed before retaining known neutrality for activity-only updates. Active/uncertain strokes and focus/rule changes still reset it.
+- Add opt-in, one-minute aggregate rejection/output diagnostics so the next hardware check can identify which stage fails. No touch coordinates, identifiers, text, key codes, target app identity or rules are reported. No callback logging/serialization; output is a developer console report outside shared locks.
+
+This is a narrow evidence-driven repair, not proof that custom recognition is already equivalent to BTT. Physical-click false positives and natural-tap success frequency remain mandatory hardware gates. See [verification and reproduction](../verification/phase-5-four-finger-tap.md#timing-races-recovery-and-opt-in-diagnostics--2026-10-10).

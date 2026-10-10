@@ -37,6 +37,7 @@ nonisolated final class EngineMailbox: Sendable {
         var pending: [RebindAction] = []
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
+        var trackpadDiagnostics: TrackpadDiagnostics?
         var inputActivity: UInt64 = 0
         var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?
@@ -59,6 +60,9 @@ nonisolated final class EngineMailbox: Sendable {
         }
 
         mutating func resetCapture(status: EngineStatus) {
+            if status == .secureInput || status == .permissionRequired || status == .interrupted {
+                trackpadDiagnostics = nil
+            }
             if let request = recording {
                 recorded = RecordedInput(request: request, input: nil)
                 recording = nil

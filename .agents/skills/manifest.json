@@ -107,7 +107,17 @@
       "reviewed_on": "2026-10-09",
       "license": "MIT",
       "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+    },
+    {
+      "name": "agent-workflow-setup",
+      "origin": "Locally authored reusable workflow skill",
+      "source_path": ".agents/skills/agent-workflow-setup",
+      "version": "1.0.2",
+      "reviewed_on": "2026-10-10",
+      "license": "MIT",
+      "normalization": "Standalone English instructions/references and metadata only; commit-ready technical summaries, no scripts/runtime dependencies or redistributed external skills. MIT covers this folder only."
     }
   ],
-  "design_source": "Current Rebind designs in Sketch via MCP; see AGENTS.md for document/frame inspection workflow"
+  "design_source": "Current Rebind designs in Sketch via MCP; see AGENTS.md for document/frame inspection workflow",
+  "local_skills_reviewed_on": "2026-10-10"
 }
