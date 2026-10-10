@@ -20,8 +20,7 @@ nonisolated struct ShortContactRecognizer: Sendable {
         let started: Double
         var origins: [Int32: Contact] = [:]
         var peakCount = 0
-        var peakStarted: Double = 0
-        var peakLastSeen: Double = 0
+        var peakFrames = 0
         var previousCount = 0
         var previousIDs: Set<Int32> = []
         var firstLift: Double?
@@ -35,6 +34,12 @@ nonisolated struct ShortContactRecognizer: Sendable {
     private var previousTime: Double?
     private var needsNeutral = true
 
+    // Allow natural rolling placement/lift and slight fingertip movement.
+    // Keep individual-contact travel checks: a stable centroid can hide a pinch.
+    private static let maximumDuration = 0.4
+    private static let fingerSpread = 0.15
+    private static let maximumTravel: Float = 0.04
+
     // Unknown frame time/identity (including upstream empty arrays) cannot finish
     // a candidate safely. An empty frame still establishes contact neutrality.
     mutating func interrupt(isNeutral: Bool = false) {
@@ -45,7 +50,8 @@ nonisolated struct ShortContactRecognizer: Sendable {
         needsNeutral = !isNeutral
     }
 
-    mutating func consume(frame: Int32, time: Double, contacts: [Contact]) -> Candidate? {
+    mutating func consume(frame: Int32, time: Double, contacts: [Contact],
+                          allowIdleFrameGaps: Bool = true) -> Candidate? {
         guard time.isFinite, time >= 0, contacts.count <= 16,
               Set(contacts.map(\.id)).count == contacts.count,
               contacts.allSatisfy({
@@ -55,11 +61,18 @@ nonisolated struct ShortContactRecognizer: Sendable {
             interrupt()
             return nil
         }
-        if let previousFrame, let previousTime,
-           Int64(frame) != Int64(previousFrame) + 1 || time <= previousTime || (stroke != nil && time - previousTime > 0.05) {
-            continuity &+= 1
-            stroke = nil
-            needsNeutral = true
+        if let previousFrame, let previousTime {
+            // A forward gap after known release must not discard every new tap.
+            // Never bridge missing samples inside a stroke or a pending action;
+            // backwards/repeated native IDs and nonmonotonic time still cancel.
+            let idleGap = allowIdleFrameGaps && stroke == nil && !needsNeutral
+                && Int64(frame) > Int64(previousFrame) + 1
+            if (Int64(frame) != Int64(previousFrame) + 1 && !idleGap)
+                || time <= previousTime || (stroke != nil && time - previousTime > 0.05) {
+                continuity &+= 1
+                stroke = nil
+                needsNeutral = true
+            }
         }
         previousFrame = frame
         previousTime = time
@@ -68,9 +81,9 @@ nonisolated struct ShortContactRecognizer: Sendable {
             needsNeutral = false
             defer { stroke = nil }
             guard let stroke, stroke.valid, [3, 4].contains(stroke.peakCount), stroke.origins.count == stroke.peakCount,
-                  time - stroke.started >= 0.03, time - stroke.started <= 0.25,
-                  stroke.peakLastSeen - stroke.peakStarted >= 0.015,
-                  stroke.firstLift.map({ time - $0 <= 0.08 }) ?? true else { return nil }
+                  time - stroke.started >= 0.03, time - stroke.started <= Self.maximumDuration,
+                  stroke.peakFrames >= 2,
+                  stroke.firstLift.map({ time - $0 <= Self.fingerSpread }) ?? true else { return nil }
             return Candidate(fingers: stroke.peakCount,
                              durationMilliseconds: Int(((time - stroke.started) * 1000).rounded()),
                              peakPressure: stroke.pressure)
@@ -82,15 +95,17 @@ nonisolated struct ShortContactRecognizer: Sendable {
         if current.firstLift != nil, contacts.count > current.previousCount { current.valid = false }
         if contacts.count > current.peakCount {
             current.peakCount = contacts.count
-            current.peakStarted = time
+            current.peakFrames = 0
         }
-        if contacts.count == current.peakCount { current.peakLastSeen = time }
+        if contacts.count == current.peakCount {
+            current.peakFrames += 1
+        }
         for contact in contacts {
             if let origin = current.origins[contact.id] {
                 let dx = contact.x - origin.x, dy = contact.y - origin.y
-                if dx * dx + dy * dy > 0.02 * 0.02 { current.valid = false }
+                if dx * dx + dy * dy > Self.maximumTravel * Self.maximumTravel { current.valid = false }
             } else {
-                if time - current.started > 0.08 || current.firstLift != nil || current.origins.count >= 4 {
+                if time - current.started > Self.fingerSpread || current.firstLift != nil || current.origins.count >= 4 {
                     current.valid = false
                 }
                 // Keep memory bounded even for an invalid long/changing sequence.
@@ -98,7 +113,7 @@ nonisolated struct ShortContactRecognizer: Sendable {
             }
             current.pressure = max(current.pressure, contact.pressure)
         }
-        if time - current.started > 0.25 || current.firstLift.map({ time - $0 > 0.08 }) ?? false {
+        if time - current.started > Self.maximumDuration || current.firstLift.map({ time - $0 > Self.fingerSpread }) ?? false {
             current.valid = false
         }
         current.previousCount = contacts.count

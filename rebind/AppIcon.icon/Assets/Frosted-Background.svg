@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Background</title>
+    <defs>
+        <path d="M1024,1024 L0,1024 L0,0 L1024,0 Z" id="path-1"></path>
+        <linearGradient x1="15%" y1="0%" x2="85%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#AFC5DA" offset="0%"></stop>
+            <stop stop-color="#BDCFE0" offset="55%"></stop>
+            <stop stop-color="#A4BED7" offset="100%"></stop>
+        </linearGradient>
+        <radialGradient cx="8%" cy="96%" fx="8%" fy="96%" r="92%" id="radialGradient-3">
+            <stop stop-color="#246ED4" offset="0%"></stop>
+            <stop stop-color="#5291DD" stop-opacity="0.701960784" offset="40%"></stop>
+            <stop stop-color="#91B6DF" stop-opacity="0" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="Composer-background-export" stroke="none" fill="none" xlink:href="#path-1" fill-rule="evenodd">
+        <rect id="Frosted-base" fill="url(#linearGradient-2)" x="0" y="0" width="1024" height="1024"></rect>
+        <rect id="Blue-color-field" fill="url(#radialGradient-3)" x="0" y="0" width="1024" height="1024"></rect>
+    </g>
+</svg>

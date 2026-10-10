@@ -62,7 +62,7 @@ struct ContentView: View {
             }.padding(20)
             if scope == .builtInTrackpad {
                 Text(model.trackpadStatus.text).font(.caption).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20).padding(.bottom, 12)
             }
             Divider()

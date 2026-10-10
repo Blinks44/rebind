@@ -22,14 +22,23 @@ nonisolated struct NativeTrackpadFrame: Sendable {
     // Native memory validity/ABI remains a private-framework hardware assumption.
     // Validate the count before reading anything, including a nil/zero data pointer.
     static func read(_ data: UnsafeRawPointer?, count: Int32, receipt: UInt64,
-                     revision: UInt64, activity: UInt64) -> Self {
+                     revision: UInt64, activity: UInt64,
+                     callbackFrame: Int32? = nil, callbackTime: Double? = nil) -> Self {
         var result = Self(receipt: receipt, revision: revision, activity: activity)
         guard (0...16).contains(count), count == 0 || data != nil else { result.valid = false; return result }
+        // The callback has timing even when its contact array is empty. Use one
+        // native clock/frame sequence for both contact and zero-contact frames;
+        // local receipt time still independently bounds consumer staleness.
+        if callbackFrame != nil || callbackTime != nil {
+            guard let callbackFrame, let callbackTime, callbackTime.isFinite,
+                  callbackTime >= 0 else { result.valid = false; return result }
+            result.frame = callbackFrame
+            result.time = callbackTime
+        }
         guard count > 0, let data else { return result }
         let frame = data.loadUnaligned(as: Int32.self)
         let time = data.loadUnaligned(fromByteOffset: 8, as: Double.self)
-        result.frame = frame
-        result.time = time
+        if callbackFrame == nil { result.frame = frame; result.time = time }
         guard time.isFinite, time >= 0 else { result.valid = false; return result }
         for index in 0..<Int(count) {
             let pointer = data.advanced(by: index * 96)
@@ -76,7 +85,8 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
     let mailbox: EngineMailbox
     init(mailbox: EngineMailbox) { self.mailbox = mailbox }
 
-    func receive(_ data: UnsafeRawPointer?, count: Int32) {
+    func receive(_ data: UnsafeRawPointer?, count: Int32,
+                 callbackFrame: Int32? = nil, callbackTime: Double? = nil) {
         guard state.withLock({ $0.accepting }) else { return }
         let receipt = DispatchTime.now().uptimeNanoseconds
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
@@ -86,7 +96,8 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         }
         guard let snapshot else { return }
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
-                                            revision: snapshot.0, activity: snapshot.1)
+                                            revision: snapshot.0, activity: snapshot.1,
+                                            callbackFrame: callbackFrame, callbackTime: callbackTime)
         state.withLock {
             guard $0.accepting else { return }
             guard $0.count < $0.frames.count else { $0.clear(); $0.overflow = true; return }

@@ -7,7 +7,7 @@ struct rebindApp: App {
 
     var body: some Scene {
         Window(.rebindWindowTitle, id: "main") { ContentView(model: delegate.model) }
-        MenuBarExtra("Rebind", systemImage: "command.square") { RebindMenu(model: delegate.model) }
+        MenuBarExtra("Rebind", image: "RebindMenuBar") { RebindMenu(model: delegate.model) }
     }
 }
 

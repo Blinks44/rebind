@@ -6618,25 +6618,25 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Experimental: light four-finger tap on the built-in trackpad, without modifiers. Sends a keyboard shortcut after a 0.5-second click check. System gestures remain active; disable conflicting gestures in System Settings. Three-finger taps, clicks and double taps are not available yet."
+            "value": "Experimental: light four-finger tap on the built-in trackpad, without modifiers. Sends a keyboard shortcut after you lift your fingers, unless a click is detected. System gestures remain active; disable conflicting gestures in System Settings. Three-finger taps, clicks and double taps are not available yet."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Экспериментально: лёгкий тап четырьмя пальцами на встроенном трекпаде, без модификаторов. Сочетание отправляется после проверки клика в течение 0,5 с. Системные жесты остаются активны; отключите конфликтующие жесты в Системных настройках. Тапы тремя пальцами, клики и двойные тапы пока недоступны."
+            "value": "Экспериментально: лёгкий тап четырьмя пальцами на встроенном трекпаде, без модификаторов. Сочетание отправляется после отпускания пальцев, если не обнаружен клик. Системные жесты остаются активны; отключите конфликтующие жесты в Системных настройках. Тапы тремя пальцами, клики и двойные тапы пока недоступны."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Experimentell: leichtes Tippen mit vier Fingern auf dem integrierten Trackpad, ohne Sondertasten. Das Tastenkürzel folgt nach einer Klickprüfung von 0,5 Sekunden. Systemgesten bleiben aktiv; deaktivieren Sie kollidierende Gesten in den Systemeinstellungen. Tippen mit drei Fingern, Klicks und Doppeltippen sind noch nicht verfügbar."
+            "value": "Experimentell: leichtes Tippen mit vier Fingern auf dem integrierten Trackpad, ohne Sondertasten. Das Tastenkürzel wird nach dem Abheben der Finger gesendet, sofern kein Klick erkannt wird. Systemgesten bleiben aktiv; deaktivieren Sie kollidierende Gesten in den Systemeinstellungen. Tippen mit drei Fingern, Klicks und Doppeltippen sind noch nicht verfügbar."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Expérimental : toucher léger à quatre doigts sur le trackpad intégré, sans touches de modification. Le raccourci est envoyé après une vérification des clics de 0,5 seconde. Les gestes système restent actifs ; désactivez les gestes en conflit dans Réglages Système. Les touchers à trois doigts, les clics et les doubles touchers ne sont pas encore disponibles."
+            "value": "Expérimental : toucher léger à quatre doigts sur le trackpad intégré, sans touches de modification. Le raccourci est envoyé lorsque vous relevez les doigts, si aucun clic n’est détecté. Les gestes système restent actifs ; désactivez les gestes en conflit dans Réglages Système. Les touchers à trois doigts, les clics et les doubles touchers ne sont pas encore disponibles."
           }
         }
       }

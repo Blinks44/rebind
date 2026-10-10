@@ -1,25 +1,25 @@
 # Rebind app icon
 
-**2026-10-10:** the live Sketch Frosted/Small sources were refined for upper contrast and consistent materials. The SVG/PDF/PNG files in this repository still contain the prior appearance; refresh them directly from Sketch during the next export/integration pass. See `docs/verification/app-icon-review.md` for completed design changes and verification.
+## Menu Bar template
 
-The editable design lives in `Rebind.sketch`: page **05 · Brand**, with the two linked sources on **04 · Symbols**. Paths, gradients and elevation are vector geometry; there are no embedded images, live fonts or SVG filters.
+`Rebind-MenuBar.svg` is the monochrome optical mark from the live Sketch Small source, on an 18 × 18 pt transparent canvas with a 16 pt silhouette. The production vector PDF is in `rebind/Assets.xcassets/RebindMenuBar.imageset`, with template rendering and vector preservation enabled. `MenuBarExtra` now uses this named asset; macOS supplies its color. `Rebind-MenuBar-preview.png` shows actual-size light/dark contexts and enlarged geometry. This asset is independent of Icon Composer/Dock delivery.
 
-- `Rebind-AppIcon.svg` / `.pdf`: 1024 × 1024 canvas, frosted blue background and raised white Command mark.
-- `Rebind-AppIcon-Small.svg`: optical variant with wider counters and stronger contrast for the 16 and 32 pt AppIcon slots, at both 1× and 2×.
-- `composer/Background.svg`: opaque full-bleed background without a baked corner mask.
-- `composer/Command.svg`: outlined white foreground without baked lighting, for native effects in Icon Composer.
+Editable source: **04 · Symbols → Rebind/Brand/Menu Bar Template**, ID `0F0BD265-F8D6-4405-8425-247D8DA43C06`; review board: **05 · Brand → 02 · Rebind / Menu Bar Template**. Debug/Release builds and native AppKit resource checks pass (18 pt, `isTemplate == true`). Live menu after relaunch and macOS 26 remain manual checks. See [verification](../../docs/verification/menu-bar-onboarding.md).
 
-The application's currently selected asset is `rebind/Assets.xcassets/AppIcon.appiconset`, containing all ten macOS PNG slots of the pre-refinement artwork. `docs/references/Rebind-AppIcon.appiconset` mirrors those exports. The files under `assets/brand` are design/export resources; Xcode does not select them directly.
+## Dock / Finder
 
-## Export paths for Xcode
+The app uses `rebind/AppIcon.icon`, created and saved in Apple's Icon Composer on 2026-10-10. The synchronized `rebind` folder includes it in the app target; both configurations already select `AppIcon`. Final Debug/Release builds pass, and the extracted ICNS contains the new artwork. The older PNG catalog remains retained as historical artwork.
 
-For the existing static PNG workflow, export directly from the appropriate 1024-point Sketch source at `target pixels / 1024`; do not resize an earlier PNG. Keep the canvas untrimmed to preserve this artwork's 96-point body inset. That inset belongs to this static design and must not be copied into a full-bleed Icon Composer background.
+Sketch remains the editable geometry/visual reference: page **05 · Brand**, Frosted/Small sources on **04 · Symbols**. Composer owns delivery materials, system mask and appearance settings. See [integration verification](../../docs/verification/app-icon-composer.md).
 
-For a layered icon with controlled Liquid Glass effects and appearances, follow [Apple's Icon Composer workflow](https://developer.apple.com/documentation/xcode/creating-your-app-icon-using-icon-composer):
+- `Rebind-AppIcon.svg` / `.pdf`: refreshed static Frosted visual reference.
+- `Rebind-AppIcon-Small.svg`: refreshed optical reference; not a separately selected Composer rendition.
+- `composer/Command.svg`: transparent 1024-square canvas, clean white vector mark from current Sketch geometry; no lighting.
+- `composer/Background.svg`: opaque full-bleed current color gradients, no corner mask, white glaze, rim or shadow.
+- `preview.png`: native Default, generation 26, 256 pixels.
 
-1. Prepare square 1024 × 1024 SVG layers with clear vector edges and no baked corner mask. Keep foreground geometry, background and system-rendered effects separate.
-2. `composer/Command.svg` already supplies a clean, unlit outlined foreground; its geometry still matches the refined main mark. `composer/Background.svg` has a full-bleed opaque base, but its palette and white wash are from the old artwork. Refresh the palette and recreate lighting/opacity in Composer. Prefer Composer's background color/gradient controls where sufficient; an imported custom background must stay full-bleed and opaque.
-3. Import the clean foreground, set background/material/lighting in Composer and inspect default, dark, mono/clear/tinted and actual small-size previews. Align the mark using the current Apple template; do not import the fully decorated `Rebind-AppIcon.svg` as a single foreground layer.
-4. Save a file such as `AppIcon.icon`, add it to the Xcode target and select its filename without extension in the target's App Icon setting. A selected Composer file replaces the existing icon asset catalog for icon generation; Xcode renders the representations at build time.
+The native package contains local copies of both SVG inputs; no external or temporary-file dependency. Foreground group is centered at 123%, preserving the mark's proportion when replacing the static 96-point inset body with a full-bleed system background. Automatic specular, 30% neutral shadow; blur/refraction/translucency off. Background glass effects off, with zero image opacity in Dark/Mono; those variants use system backgrounds and System Light foregrounds.
 
-Apple supports both an [icon asset catalog and an Icon Composer file](https://developer.apple.com/documentation/xcode/preparing-your-app-for-distribution). The current PNG catalog is a valid static delivery path, but no `.icon` package has been created or integrated, and native appearance/Dock/Finder acceptance remains open. These preparation checks are not an Icon Composer import/build verification.
+For revisions, edit geometry in Sketch, export clean vectors, replace Composer layers, inspect appearances/small sizes, save `rebind/AppIcon.icon`, and run `scripts/dev.sh build` / `release`. Do not import the decorated static SVG as a foreground or bake a corner mask. [Apple's workflow](https://developer.apple.com/documentation/xcode/creating-your-app-icon-using-icon-composer).
+
+The pre-refinement PNGs in the app's asset catalog and `docs/references/Rebind-AppIcon.appiconset` are historical exports. Xcode generates representations from `.icon`. Finder was inspected on the development host; live Dock after relaunch, minimum-OS runtime and user's tint settings remain manual checks.

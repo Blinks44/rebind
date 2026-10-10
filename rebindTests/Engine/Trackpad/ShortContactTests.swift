@@ -49,16 +49,16 @@ struct AppShortContactTests {
         for moving in [true, false] {
             var recognizer = ShortContactRecognizer()
             _ = recognizer.consume(frame: 0, time: 0, contacts: [])
-            for frame in 1...16 {
+            for frame in 1...22 {
                 _ = recognizer.consume(frame: Int32(frame), time: Double(frame) * 0.02,
-                                       contacts: contacts(3, offset: moving ? 0.04 : 0))
+                                       contacts: contacts(3, offset: moving ? 0.06 : 0))
                 if moving {
                     _ = recognizer.consume(frame: Int32(frame + 1), time: Double(frame + 1) * 0.02,
                                            contacts: contacts(3))
                     break
                 }
             }
-            let candidate = recognizer.consume(frame: moving ? 3 : 17, time: moving ? 0.06 : 0.34, contacts: [])
+            let candidate = recognizer.consume(frame: moving ? 3 : 23, time: moving ? 0.06 : 0.46, contacts: [])
             #expect(candidate == nil)
         }
     }
@@ -68,18 +68,18 @@ struct AppShortContactTests {
             var recognizer = ShortContactRecognizer()
             _ = recognizer.consume(frame: 0, time: 0, contacts: [])
             _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(3))
-            for frame in 2...6 {
+            for frame in 2...10 {
                 var values = contacts(3)
                 if scenario == 0 && frame >= 3 {
                     values[0] = .init(id: 8, x: 0.2, y: 0.5, pressure: 100)
                 } else if scenario == 1 && frame == 3 {
                     values = contacts(2)
-                } else if scenario == 2 && frame >= 6 {
+                } else if scenario == 2 && frame >= 9 {
                     values = contacts(4)
                 }
                 _ = recognizer.consume(frame: Int32(frame), time: Double(frame) * 0.02, contacts: values)
             }
-            let candidate = recognizer.consume(frame: 7, time: 0.14, contacts: [])
+            let candidate = recognizer.consume(frame: 11, time: 0.22, contacts: [])
             #expect(candidate == nil)
         }
     }
@@ -140,5 +140,79 @@ struct AppShortContactTests {
         _ = recognizer.consume(frame: 2, time: 2.02, contacts: contacts(3))
         let candidate = recognizer.consume(frame: 3, time: 2.04, contacts: [])
         #expect(candidate?.fingers == 3)
+    }
+
+    @Test func forwardFrameGapAfterKnownNeutralDoesNotDiscardEveryNewTap() {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        for stroke in 1...3 {
+            let first = Int32(stroke * 100)
+            let start = Double(stroke)
+            _ = recognizer.consume(frame: first, time: start, contacts: contacts(4))
+            _ = recognizer.consume(frame: first + 1, time: start + 0.02, contacts: contacts(4))
+            let candidate = recognizer.consume(frame: first + 2, time: start + 0.04, contacts: [])
+            #expect(candidate?.fingers == 4)
+        }
+    }
+
+    @Test(arguments: [99, 100]) func idleFrameRegressionStillCancelsAndThenRecovers(_ id: Int32) {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 100, time: 1, contacts: [])
+        _ = recognizer.consume(frame: id, time: 2, contacts: contacts(4))
+        _ = recognizer.consume(frame: id + 1, time: 2.02, contacts: contacts(4))
+        let invalid = recognizer.consume(frame: id + 2, time: 2.04, contacts: [])
+        #expect(invalid == nil)
+        _ = recognizer.consume(frame: 200, time: 3, contacts: contacts(4))
+        _ = recognizer.consume(frame: 201, time: 3.02, contacts: contacts(4))
+        let recovered = recognizer.consume(frame: 202, time: 3.04, contacts: [])
+        #expect(recovered?.fingers == 4)
+    }
+
+    @Test func twoEightMillisecondPeakFramesRecognizeAFastTap() {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(3))
+        _ = recognizer.consume(frame: 2, time: 0.018, contacts: contacts(4))
+        _ = recognizer.consume(frame: 3, time: 0.026, contacts: contacts(4))
+        _ = recognizer.consume(frame: 4, time: 0.034, contacts: contacts(2))
+        let candidate = recognizer.consume(frame: 5, time: 0.042, contacts: [])
+        #expect(candidate?.fingers == 4 && candidate?.durationMilliseconds == 32)
+    }
+
+    @Test func rollingPlacementLiftAndSmallFingertipShiftAreAccepted() {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        // All fingers arrive over 120 ms, lift over 120 ms, and drift by 3%.
+        let counts = [1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 2, 2, 1, 1, 0]
+        var candidate: ShortContactRecognizer.Candidate?
+        for (index, count) in counts.enumerated() {
+            candidate = recognizer.consume(frame: Int32(index + 1), time: Double(index + 1) * 0.02,
+                                           contacts: contacts(count, offset: index >= 8 ? 0.03 : 0))
+            if index < counts.count - 1 { #expect(candidate == nil) }
+        }
+        #expect(candidate?.fingers == 4 && candidate?.durationMilliseconds == 320)
+    }
+
+    @Test func OpposingFingerMovementCannotHideBehindAStableCentroid() {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        _ = recognizer.consume(frame: 1, time: 0.02, contacts: contacts(4))
+        var values = contacts(4)
+        values[0] = .init(id: 0, x: 0.25, y: 0.5, pressure: 100)
+        values[3] = .init(id: 3, x: 0.45, y: 0.5, pressure: 100)
+        _ = recognizer.consume(frame: 2, time: 0.04, contacts: values)
+        let candidate = recognizer.consume(frame: 3, time: 0.06, contacts: [])
+        #expect(candidate == nil)
+    }
+
+    @Test func slowRollingLiftStillRejectsTheStroke() {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        for index in 1...11 {
+            _ = recognizer.consume(frame: Int32(index), time: Double(index) * 0.02,
+                                   contacts: contacts(index < 3 ? 4 : 3))
+        }
+        let candidate = recognizer.consume(frame: 12, time: 0.24, contacts: [])
+        #expect(candidate == nil)
     }
 }

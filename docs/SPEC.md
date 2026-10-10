@@ -171,11 +171,13 @@ change the separately research-gated Magic Mouse scope.
 **Key distinction:** observing raw contacts does not imply suppressing the OS gesture. Validate conflicts with Look Up/data detectors (three-finger tap), Mission Control, Space switching, scrolling, zooming, App Exposé, and system gesture settings. If the OS original cannot be suppressed, do not present the rule as a clean replacement. Disclose double-effect risk and offer a safe configuration path when possible.
 
 **Current experimental slice:** built-in four-finger unmodified single tap →
-configurable keyboard shortcut is integrated, with a 500 ms click-check delay.
+configurable keyboard shortcut is integrated, with a 60 ms click-check delay.
 The editor offers this one preset rather than a gesture recorder. Full shared
 action-catalog support for touch, other gestures and Magic Trackpad remain required
-future slices. Native gestures remain active; integrated app delivery, exclusivity
-and recovery require hardware checks. See [implementation limits](verification/phase-5-four-finger-tap.md).
+future slices. Native gestures remain active. The user confirms app delivery, but
+reported unreliable detection/delay, then loss of taps after physical clicks.
+Responsiveness and idle-frame-gap recovery fixes are software-tested. Revised
+tolerances/latency, exclusivity and recovery require hardware checks. See [implementation limits](verification/phase-5-four-finger-tap.md).
 
 **Acceptance T1:** On tested physical trackpad hardware, a four-finger tap can generate one `Command + W` in a supported setup, without unsafe duplicate behavior.  
 **Acceptance T2:** Gesture classification is debounced, produces no accidental extra actions, and respects user pause.
@@ -337,6 +339,10 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 ### Application icon
 
 Create a high-quality macOS icon asset suitable for Dock/Finder: white/light base, a memorable raised/embossed symbol suggesting a key, switching, or remapping; clean forms, subtle depth and lighting, legible small size, no text. Use currently recommended icon-asset tooling/format for the selected Xcode version. Icon is a deliverable, not just a placeholder SF Symbol in the Dock.
+
+### Menu Bar icon
+
+Provide a separate monochrome vector template derived from Rebind's brand mark, with transparent background and open counters at menu-bar size. macOS supplies the foreground color for light/dark and selected states; do not shrink the decorated Dock icon or bake a background, lighting, or shadow into this asset. Keep the accessible app name and display runtime/permission/pause status in the menu, with emergency pause always reachable (§§6, 8).
 
 ## 11. Localization (CORE)
 

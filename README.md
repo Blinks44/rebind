@@ -9,9 +9,11 @@ plain Button 4 retaining its behavior. The user also confirms Button 5 long pres
 Button 4 + move Left → Command+A gesture works.** Keyboard, wheel,
 double press, other gesture directions and full suppression/cancellation/lifecycle checks remain open.
 Phase 5 now integrates an **experimental built-in four-finger tap → keyboard
-shortcut** rule with a 500 ms click check. Three-finger taps, physical multi-finger
+shortcut** rule with a 60 ms click check. Three-finger taps, physical multi-finger
 clicks, double/corner taps and external trackpads are not yet available. Native
-gestures remain active; app delivery/lifecycle still need hardware validation.
+gestures remain active. The user confirms app delivery, but reported poor detection
+and a noticeable delay before the responsiveness fix. Its revised tolerances,
+latency, click separation and lifecycle still need hardware validation.
 See the [trackpad walkthrough](docs/verification/phase-5-four-finger-tap.md).
 Physical-device routing is outside the current scope.
 

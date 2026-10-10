@@ -30,13 +30,90 @@ struct TrackpadIntegrationTests {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         completed(&session, at: lift)
         session.consume(frame(nil, count: 0, at: lift + 20_000_000), at: lift + 20_000_000)
-        let early = session.takeReady(at: lift + 499_999_999)
-        let ready = session.takeReady(at: lift + 500_000_000)
-        let duplicate = session.takeReady(at: lift + 510_000_000)
+        let early = session.takeReady(at: lift + 59_999_999)
+        let ready = session.takeReady(at: lift + 60_000_000)
+        let duplicate = session.takeReady(at: lift + 70_000_000)
         #expect(!early && ready && !duplicate)
         completed(&session, at: lift + 1_000_000_000)
-        let second = session.takeReady(at: lift + 1_500_000_000)
+        let second = session.takeReady(at: lift + 1_060_000_000)
         #expect(second)
+    }
+
+    @Test func timestampedEmptyCallbackCompletesTapWithoutATerminalContactRecord() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        for (id, count) in [0, 4, 4].enumerated() {
+            let time = lift - UInt64(3 - id) * 20_000_000
+            session.consume(frame(Int32(id), count: count, at: time), at: time)
+        }
+        let empty = NativeTrackpadFrame.read(nil, count: 0, receipt: lift, revision: 1, activity: 0,
+                                            callbackFrame: 3, callbackTime: 0.06)
+        session.consume(empty, at: lift)
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready)
+    }
+
+    @Test(arguments: [12_000_000, 28_000_000, 59_000_000])
+    func delayedNativeClickCancelsBeforeFastDispatch(_ delay: UInt64) {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        let beforeClick = session.takeReady(at: lift + delay - 1)
+        #expect(!beforeClick)
+        var next = runtime; next.inputActivity = 1
+        session.update(runtime: next, foreground: 100)
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(!ready)
+    }
+
+    @Test func deliberateRepeatedTapsCanEachDispatchWithoutHalfSecondDeadTime() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        for tap in 0..<3 {
+            let end = lift + UInt64(tap) * 200_000_000
+            completed(&session, at: end)
+            let ready = session.takeReady(at: end + 60_000_000)
+            let duplicate = session.takeReady(at: end + 70_000_000)
+            #expect(ready && !duplicate)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func physicalClickThenIdleGapsRecoverForSubsequentTaps(_ lateMouseUp: Bool) {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        var current = runtime
+        func consume(_ id: Int32, count: Int, at time: UInt64, activity: UInt64) {
+            var value = frame(id, count: count, at: time)
+            value.activity = activity
+            session.consume(value, at: time)
+        }
+        consume(0, count: 0, at: lift - 100_000_000, activity: 0)
+        consume(1, count: 4, at: lift - 80_000_000, activity: 0)
+        current.inputActivity = 1 // physical down cancels this contact sequence
+        session.update(runtime: current, foreground: 100)
+        consume(2, count: 4, at: lift - 60_000_000, activity: 1)
+        if !lateMouseUp {
+            current.inputActivity = 2
+            session.update(runtime: current, foreground: 100)
+        }
+        consume(3, count: 0, at: lift, activity: current.inputActivity)
+        if lateMouseUp {
+            current.inputActivity = 2
+            session.update(runtime: current, foreground: 100)
+            // A buffered pre-up release cannot qualify output. A fresh neutral
+            // observation rearms without restarting the native device.
+            consume(4, count: 0, at: lift + 20_000_000, activity: 1)
+            consume(5, count: 0, at: lift + 40_000_000, activity: 2)
+        }
+        let clickOutput = session.takeReady(at: lift + 60_000_000)
+        #expect(!clickOutput)
+        for tap in 1...3 {
+            let start = lift + UInt64(tap) * 1_000_000_000
+            let id = Int32(tap * 100)
+            consume(id, count: 4, at: start, activity: 2)
+            consume(id + 1, count: 4, at: start + 20_000_000, activity: 2)
+            consume(id + 2, count: 0, at: start + 40_000_000, activity: 2)
+            let ready = session.takeReady(at: start + 100_000_000)
+            let duplicate = session.takeReady(at: start + 110_000_000)
+            #expect(ready && !duplicate)
+        }
     }
 
     @Test(arguments: 0...7) func waitingActionIsCancelled(_ scenario: Int) {
@@ -58,7 +135,7 @@ struct TrackpadIntegrationTests {
             session.update(runtime: next, foreground: 100)
         default: session.consume(frame(4, count: 0, at: lift + 20_000_000), at: lift + 200_000_000)
         }
-        let ready = session.takeReady(at: lift + 500_000_000)
+        let ready = session.takeReady(at: lift + 60_000_000)
         #expect(!ready)
     }
 
@@ -69,7 +146,7 @@ struct TrackpadIntegrationTests {
                 let time = lift - UInt64(3 - id) * 20_000_000
                 session.consume(frame(scenario == 0 && id == 3 ? nil : Int32(id), count: count, at: time), at: time)
             }
-            let ready = session.takeReady(at: lift + (scenario == 2 ? 600_000_001 : 500_000_000))
+            let ready = session.takeReady(at: lift + (scenario == 2 ? 160_000_001 : 60_000_000))
             #expect(!ready)
         }
     }
@@ -79,7 +156,7 @@ struct TrackpadIntegrationTests {
             var session = TrackpadTapSession(runtime: runtime, foreground: scenario == 0 ? nil : 100,
                                             startedAt: scenario == 0 ? 0 : lift - 1_000_000_000)
             completed(&session, at: lift)
-            let ready = session.takeReady(at: lift + 500_000_000)
+            let ready = session.takeReady(at: lift + 60_000_000)
             #expect(!ready)
         }
     }

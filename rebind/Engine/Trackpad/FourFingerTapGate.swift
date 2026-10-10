@@ -12,7 +12,10 @@ nonisolated struct FourFingerTapGate: Sendable {
         case latePoll = "late-poll", consumed = "already-consumed", sessionEnded = "session-ended"
     }
     static let armingDelay: UInt64 = 3_000_000_000
-    static let settlingDelay: UInt64 = 500_000_000
+    // The hardware probe saw a native button-down 12 ms after lift (up at
+    // 28 ms). Keep a short exclusion window, not a double-tap-sized delay.
+    // This is a hardware-tuned guard, not proof of universal click separation.
+    static let settlingDelay: UInt64 = 60_000_000
     static let maximumLateness: UInt64 = 100_000_000
 
     private let startedAt: UInt64

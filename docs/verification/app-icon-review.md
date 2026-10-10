@@ -4,6 +4,8 @@ Scope: SPEC §10 Application icon / PLAN Phase 8. Reviewed the live `Rebind.sket
 
 ## Follow-up — Sketch refinement completed 2026-10-10
 
+Subsequent authorized delivery: refined SVG/PDF exports are refreshed and integrated as native `rebind/AppIcon.icon`; Debug/Release builds and actual Finder preview pass. See [Composer verification](app-icon-composer.md). Historical PNGs retained; live Dock/minimum-OS/user-tint acceptance remains open.
+
 The user authorized refinement in Sketch. Corrected the first two P2 findings in the live sources: reduced the upper white wash, strengthened the pale blue surface behind the white mark, and synchronized base, blue light, rim and face through four shared Brand styles. Small retains wider counters and a 20% optical contrast compensation coat instead of its former unrelated saturated background. Reduced Frosted's raised edge from 12 to 8 source units and softened the two vector ambient-depth layers to opacity 0.064 / 0.104.
 
 Both source and symbol IDs remain stable; all ten linked placements update. Direct exports at 16/32/64/128 pixels, equal-size before/after diagnostics, and post-save live screenshots of the Brand board verify the result on pale and dark backdrops. Saved `/Users/sergejvrenev/Documents/Rebind.sketch`, final document ID `10246E46-59D2-4110-95FB-7576E75168A9`. Saved ZIP CRC, Symbol/shared-style references, local ID uniqueness, finite frames and finite opacity values pass. Sources remain editable vectors.

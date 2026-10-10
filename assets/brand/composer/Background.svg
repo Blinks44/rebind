@@ -1,1 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><defs><linearGradient id="frost" x1="0.15" y1="0" x2="0.85" y2="1"><stop stop-color="#EDF3F8"/><stop offset=".55" stop-color="#CAD8E6"/><stop offset="1" stop-color="#A8C0D7"/></linearGradient><radialGradient id="blue" cx=".08" cy=".96" r=".92"><stop stop-color="#086CED"/><stop offset=".40" stop-color="#4B91E9" stop-opacity=".84"/><stop offset="1" stop-color="#8BB5E5" stop-opacity="0"/></radialGradient><linearGradient id="light" x1="0.15" y1="0" x2=".8" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".62"/><stop offset=".55" stop-color="#FFFFFF" stop-opacity=".12"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs><rect width="1024" height="1024" fill="url(#frost)"/><rect width="1024" height="1024" fill="url(#blue)"/><rect width="1024" height="1024" fill="url(#light)"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Background</title>
+    <defs>
+        <path d="M1024,1024 L0,1024 L0,0 L1024,0 Z" id="path-1"></path>
+        <linearGradient x1="15%" y1="0%" x2="85%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#AFC5DA" offset="0%"></stop>
+            <stop stop-color="#BDCFE0" offset="55%"></stop>
+            <stop stop-color="#A4BED7" offset="100%"></stop>
+        </linearGradient>
+        <radialGradient cx="8%" cy="96%" fx="8%" fy="96%" r="92%" id="radialGradient-3">
+            <stop stop-color="#246ED4" offset="0%"></stop>
+            <stop stop-color="#5291DD" stop-opacity="0.701960784" offset="40%"></stop>
+            <stop stop-color="#91B6DF" stop-opacity="0" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="Composer-background-export" stroke="none" fill="none" xlink:href="#path-1" fill-rule="evenodd">
+        <rect id="Frosted-base" fill="url(#linearGradient-2)" x="0" y="0" width="1024" height="1024"></rect>
+        <rect id="Blue-color-field" fill="url(#radialGradient-3)" x="0" y="0" width="1024" height="1024"></rect>
+    </g>
+</svg>

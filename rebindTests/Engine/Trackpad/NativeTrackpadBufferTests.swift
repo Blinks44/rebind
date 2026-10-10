@@ -31,6 +31,36 @@ struct NativeTrackpadBufferTests {
         #expect(empty.valid && empty.count == 0 && empty.frame == nil && !invalid.valid)
     }
 
+    @Test func callbackTimingSurvivesAnEmptyContactArray() {
+        let empty = NativeTrackpadFrame.read(nil, count: 0, receipt: 20, revision: 2, activity: 5,
+                                            callbackFrame: 11, callbackTime: 1.02)
+        #expect(empty.valid && empty.count == 0 && empty.frame == 11 && empty.time == 1.02)
+        #expect(empty.receipt == 20 && empty.revision == 2 && empty.activity == 5)
+    }
+
+    @Test func callbackClockIsUsedConsistentlyWithAndWithoutContacts() {
+        let pointer = records(4)
+        defer { pointer.deallocate() }
+        let touching = NativeTrackpadFrame.read(pointer, count: 4, receipt: 0, revision: 0, activity: 0,
+                                               callbackFrame: 100, callbackTime: 2)
+        let released = NativeTrackpadFrame.read(nil, count: 0, receipt: 1, revision: 0, activity: 0,
+                                               callbackFrame: 101, callbackTime: 2.02)
+        #expect(touching.valid && touching.count == 4 && touching.frame == 100 && touching.time == 2)
+        #expect(released.valid && released.frame == 101 && released.time == 2.02)
+    }
+
+    @Test(arguments: [Double.nan, .infinity, -1]) func invalidCallbackTimeRejectsEvenAnEmptyArray(_ time: Double) {
+        let result = NativeTrackpadFrame.read(nil, count: 0, receipt: 0, revision: 0, activity: 0,
+                                             callbackFrame: 1, callbackTime: time)
+        #expect(!result.valid)
+    }
+
+    @Test func partialCallbackTimingIsRejected() {
+        let missingTime = NativeTrackpadFrame.read(nil, count: 0, receipt: 0, revision: 0, activity: 0, callbackFrame: 1)
+        let missingFrame = NativeTrackpadFrame.read(nil, count: 0, receipt: 0, revision: 0, activity: 0, callbackTime: 1)
+        #expect(!missingTime.valid && !missingFrame.valid)
+    }
+
     @Test(arguments: 0...7) func onlyMakingAndTouchingStatesCount(_ state: Int32) {
         let pointer = records(4, state: state)
         defer { pointer.deallocate() }

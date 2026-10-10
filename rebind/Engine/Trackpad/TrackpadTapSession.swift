@@ -37,7 +37,8 @@ nonisolated struct TrackpadTapSession: Sendable {
             return
         }
         let continuity = recognizer.continuity
-        let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts)
+        let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts,
+                                           allowIdleFrameGaps: !qualified)
         if continuity != recognizer.continuity { gate.cancel(isNeutral: frame.count == 0); qualified = false }
         if let candidate,
            gate.candidate(fingers: candidate.fingers, at: frame.receipt,

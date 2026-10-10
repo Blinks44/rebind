@@ -58,8 +58,9 @@ import Foundation
         stopFunction = stop
         // Permanent process-owned device retains the buffer independently of UI.
         let context = Unmanaged.passUnretained(buffer).toOpaque()
-        available = register(device, { _, data, count, _, _, context in
-            Unmanaged<NativeTrackpadBuffer>.fromOpaque(context).takeUnretainedValue().receive(data, count: count)
+        available = register(device, { _, data, count, time, frame, context in
+            Unmanaged<NativeTrackpadBuffer>.fromOpaque(context).takeUnretainedValue()
+                .receive(data, count: count, callbackFrame: frame, callbackTime: time)
         }, context)
     }
 
