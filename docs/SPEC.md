@@ -175,10 +175,11 @@ change the separately research-gated Magic Mouse scope.
 configurable keyboard shortcut is integrated, with a 60 ms click-check delay.
 The editor offers this one preset rather than a gesture recorder. Full shared
 action-catalog support for touch, other gestures and Magic Trackpad remain required
-future slices. Native gestures remain active. The user confirms app delivery, but
-reported unreliable detection/delay, then loss of taps after physical clicks.
-Responsiveness and idle-frame-gap recovery fixes are software-tested. Revised
-tolerances/latency, exclusivity and recovery require hardware checks. See [implementation limits](verification/phase-5-four-finger-tap.md).
+future slices. Native gestures remain active. Latest user retests confirm configured delivery,
+click-only exclusion/subsequent-tap recovery and the requested pause/resume,
+sleep/wake and mixed-input walkthrough. Earlier detection/output failures are
+historical; measured latency, quantified stress, full safety/native conflicts and
+additional platforms still require evidence. See [implementation limits](verification/phase-5-four-finger-tap.md).
 
 **Acceptance T1:** On tested physical trackpad hardware, a four-finger tap can generate one `Command + W` in a supported setup, without unsafe duplicate behavior.  
 **Acceptance T2:** Gesture classification is debounced, produces no accidental extra actions, and respects user pause.

@@ -201,3 +201,7 @@ Documentation-only evidence update: no source/assets/rules/permissions changed, 
 Follow-up user check, 2026-10-11: physical clicks alone did not send the configured Command-W, and taps afterward continued working. This directly confirms the requested negative/recovery scenario on the current built-in-trackpad setup and supersedes the earlier suspected click-only output for that scenario. Same configured binding/build context as the successful retest above; no new aggregate report, click count, hold durations or target-app list supplied. Do not infer every quick/held/mixed-input variant, pause/sleep recovery or universal click suppression from this confirmation.
 
 Recorded as a user-verified subset in the task/capability/roadmap. No implementation, build/test rerun, actual input action, permission/rule change or commit by the agent. Next hardware gate is deliberate pause/resume and sleep/wake; mixed-input/hold-duration stress and broader platform/native-conflict checks remain. Independent implementation can proceed without repeating the successful delivery/click-only scenario.
+
+## User lifecycle follow-up — 2026-10-11
+
+User reports successful pause/resume, sleep/wake and mixed-input checks in response to the pending walkthrough. No new exact artifact/device/OS identifiers, counts or timing measurements were supplied; no native actions were executed by the agent. This closes the reported walkthrough subset, while quantified stress, native conflicts/protected contexts and macOS 26/Intel remain open.

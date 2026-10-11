@@ -15,9 +15,9 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a modern design direction 
 - Actions for keyboard shortcuts, mouse clicks, volume/media controls, windows, application switching, opening apps/files/web addresses, Apple Shortcuts and system operations.
 - Named profiles with manual selection, independent rule sets and local persistence.
 - Menu-bar controls to open Rebind, select a profile, pause/resume bindings and quit. Closing the main window keeps the app running.
-- English, Russian, German and French translations using the system language.
+- English, Russian, German and French translations; System Default or manual selection, applied after quitting and reopening Rebind.
 
-Profiles apply to input categories rather than individual physical devices. Caps Lock/Fn remapping, held/repeating output, Magic Mouse gestures and external-trackpad support are not currently available. The integrated built-in four-finger tap is experimental, with recognition/recovery checks still open; native trackpad gestures remain active. First-run setup and permission recovery are implemented. Remaining Settings/About, Launch at Login and manual language selection are unfinished.
+Profiles apply to input categories rather than individual physical devices. Caps Lock/Fn remapping, held/repeating output, Magic Mouse gestures and external-trackpad support are not currently available. The integrated built-in four-finger tap is experimental, with recognition/recovery checks still open; native trackpad gestures remain active. First-run setup and permission recovery are implemented. General, Permissions, Input and Language settings are implemented, including Launch at Login through ServiceManagement and per-binding Hold timing; actual login/relaunch and complete localization/accessibility acceptance remain open. Advanced/About and import/export/reset are unfinished.
 
 ## Requirements
 

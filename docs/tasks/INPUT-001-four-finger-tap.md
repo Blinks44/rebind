@@ -1,6 +1,6 @@
 # INPUT-001 — reliable integrated four-finger tap
 
-- Updated: 2026-10-11, rebuilt delivery plus click-only exclusion and subsequent-tap recovery user-confirmed; broader lifecycle acceptance remains open.
+- Updated: 2026-10-11, rebuilt delivery plus click-only exclusion and subsequent-tap recovery user-confirmed; quantified stress and broader safety/platform acceptance remain open.
 - Stage: `awaiting_verification`
 - Owner: Unassigned; `/root` completed output-target validation/diagnostics and tests on 2026-10-11; no UI/catalog or Sketch edits.
 - Owned surfaces when claimed: `rebind/Engine/Trackpad/`, affected trackpad tests/copy and this record; coordinate any shared UI/catalog changes.
@@ -19,7 +19,8 @@ Existing fixes retain timed zero-contact releases, allow natural finger spread/t
 - [ ] Measure latency and verify repeat frequency over additional sessions/conditions; the reported estimate is not a measured failure-rate benchmark.
 - [x] User confirms physical clicks alone do not send Command-W and subsequent taps still work in the current built-in setup.
 - [ ] Verify separately documented quick/held durations, mixed-input timing and repeated-session stress; the confirmation did not enumerate these variants.
-- [ ] Repeat taps, modest rolling placement, motion/hold negatives and pause/profile/focus cancellation behave as specified.
+- [x] Requested pause/resume, sleep/wake and mixed-input walkthrough user-confirmed 2026-10-11; counts/timing not supplied.
+- [ ] Remaining repeat/rolling placement, motion/hold negatives, quantified mixed-input stress and profile/focus/protected cancellation have scoped evidence.
 - [ ] Sleep/wake/stop/recovery/protected-context/native-conflict checks have evidence before stronger capability claims; macOS 26/Intel remain separate checks.
 - [ ] Save exact app/revision, OS/device, rule and observed results; update capability/task/STATE without overstating user feedback.
 
@@ -40,3 +41,7 @@ Last software verification: `scripts/dev.sh test -resultBundlePath build/Trackpa
 ## Next handoff
 
 The delivery regression has a successful user-assisted retest; keep that result and the native target check. Click-only exclusion and subsequent tap now have user confirmation in the tested setup. Next verify pause/resume and sleep/wake, retaining separate quick/held-duration and mixed-input stress checks. Use diagnostics only if symptoms recur; do not demand another identical successful-delivery run or adjust thresholds without new evidence. Broader lifecycle/native conflicts/minimum-OS/Intel remain open. Do not launch another engine or change rules/permissions on the user's behalf.
+
+## User lifecycle follow-up — 2026-10-11
+
+The user reports the requested remaining four-finger-tap checks all work: pause/resume, sleep/wake and mixed input. This is user-reported acceptance of that bounded walkthrough; exact app digest, OS/device, counts, timing and individual stress variants were not restated. Preserve prior delivery/click-only evidence. No measured latency, minimum-OS/Intel, native-conflict or complete protected-context certification follows from this report. Do not repeat the confirmed scenarios without a new concern. Next: remaining quantified stress/platform/safety acceptance before stronger capability claims.

@@ -15,8 +15,15 @@ Build/
 *.dSYM/
 *.hmap
 
-# Xcode transient verification output; curated summaries/images stay in docs.
+# Xcode transient verification output; concise technical results stay in docs.
 *.xcresult/
+
+# Generated raster captures belong in .local/agent-context/verification/.
+# Scope this to verification output; app/brand assets and test fixtures stay visible.
+# A justified versioned image needs a documented purpose and a narrow exception here.
+/docs/verification/**/*.png
+/docs/verification/**/*.jpg
+/docs/verification/**/*.jpeg
 
 # Xcode per-user state; keep xcshareddata and shared schemes.
 *.xcuserstate
@@ -26,6 +33,7 @@ xcuserdata/
 .idea/
 
 # Agent-local transcripts, scratch work, backups and workstation access hints.
+# Verification screenshots/exports use .local/agent-context/verification/ by default.
 # Shared agent instructions, skills, state, tasks and evidence remain versioned.
 /.local/agent-context/
 

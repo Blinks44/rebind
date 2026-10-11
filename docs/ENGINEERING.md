@@ -33,6 +33,7 @@ Adopt the useful macOS-applicable conventions from SwiftAgents:
 - Respect light/dark appearance, Reduce Motion, Increase Contrast, and localization expansion.
 - Follow [DESIGN](DESIGN.md), the live Sketch design and macOS Human Interface Guidelines. Rebind deliberately uses modern macOS 26+ materials, appropriate Liquid Glass, depth and restrained gradients; native controls do not require a flat legacy Settings appearance. Give effects a hierarchy/interaction purpose and preserve accessible fallbacks.
 - Do not over-style: avoid gratuitous gradients, oversized radii, nested cards, mismatched typography, or decorative animation. Make the app feel hand-designed and native, not generic AI-generated UI.
+- In `NavigationSplitView`, vertically fixed text outside scrolling content can inflate the native split's minimum height during sizing. Keep pinned Settings/runtime text responsive to size proposals; do not fix overflow with clipping or per-locale heights. Check each added section inside the full main window, including native split/column bounds, resizing and transitions; a standalone page fixture or root hosting bounds alone cannot establish integration. See [General regression evidence](verification/general-main-window-repair.md).
 - Avoid iOS-only instructions from upstream SwiftAgents (UIKit, `UIScreen`, iOS-specific navigation assumptions) in this macOS project.
 
 ## 5. Global input engine: non-negotiable rules
@@ -95,7 +96,7 @@ Use `scripts/dev.sh doctor`, `build`, `release`, `build-for-testing`, `test`, `r
 
 ## 8. Verification and handoff
 
-Follow [WORKFLOW](WORKFLOW.md) for task-specific checks, evidence, status updates and handoff. Build after app code changes. Hardware acceptance is separate from compilation and mocked tests. Xcode MCP operations are preferred when available; otherwise use scripts/dev.sh.
+Follow [WORKFLOW](WORKFLOW.md) for task-specific checks, evidence, status updates and handoff, including its local-by-default screenshot policy for native visual checks. Build after app code changes. Hardware acceptance is separate from compilation and mocked tests. Xcode MCP operations are preferred when available; otherwise use scripts/dev.sh.
 
 ## 9. Scope control
 

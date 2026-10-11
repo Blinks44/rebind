@@ -13,13 +13,15 @@ Classify representative artifacts as shared inputs/contracts/evidence, reproduci
 Use short English headings and explain non-obvious rules. Include only categories that apply:
 
 - Build/generated output: actual intermediate/product directories, dependency caches, tool-generated files.
-- Verification output: transient test bundles, coverage/profiling output and logs; retain curated evidence and required baseline fixtures.
+- Verification output: transient test bundles, coverage/profiling output, logs and screenshots/exports stay local by default; version concise results and required baseline fixtures.
 - Editor/OS state: per-user workspace/session files and applicable OS metadata. Preserve shared settings/schemes/extensions configurations when the project uses them.
 - Local configuration/private data: identified developer overrides, credentials, user data or environment files; retain sanitized example configuration and schema files.
 - Local agent material: raw transcripts/tool dumps, scratch work, migration backups and workstation access hints in a dedicated narrow location. Reuse an existing location, or establish one when useful.
 - Required shared files: document the policy for instructions, project skills and licenses/provenance, STATE/tasks/technical evidence, source/design inputs, manifests/lockfiles and shared configuration.
 
 Comments do not enforce inclusion. Prefer exclusions narrow enough to avoid required inputs; use tested exceptions only when necessary. Do not add every possible language/tool pattern or gratuitous `!` rules. Do not ignore entire `.agents/`, `.codex/` or other client directories by name: inspect their contents and separate shared configuration/skills from local session state. Never ignore shared context because it was written by an agent.
+
+For visual checks, inspect the actual artifact without routinely exporting or retaining an image. Put any temporary screenshots in the project's narrowly ignored local output location. Commit an image only when its purpose is concrete: a requested deliverable, shipped asset, baseline consumed by a visual test, or specific defect evidence that a concise written result cannot adequately preserve. Record that purpose in the owning task/evidence note; “visual verification” alone is insufficient. Reports must preserve the tested artifact/environment, observed result and limits without depending on access to local screenshots. Existing images are not automatically deleted or untracked when adopting this policy.
 
 ## Preserve Git semantics
 

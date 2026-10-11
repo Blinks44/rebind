@@ -68,15 +68,15 @@ extension RebindAction {
     var label: String {
         switch self {
         case .shortcut(let shortcut): return InputLabels.shortcut(shortcut)
-        case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock: return String(localized: ActionKind(action: self).title)
-        case .appleShortcut(let target): return "\(String(localized: .runAppleShortcutAction)) — \(target.name)"
-        case .desktop(_, let shortcut): return "\(String(localized: ActionKind(action: self).title)) — \(InputLabels.shortcut(shortcut))"
+        case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock: return AppLocalization.string(ActionKind(action: self).title)
+        case .appleShortcut(let target): return "\(AppLocalization.string(.runAppleShortcutAction)) — \(target.name)"
+        case .desktop(_, let shortcut): return "\(AppLocalization.string(ActionKind(action: self).title)) — \(InputLabels.shortcut(shortcut))"
         case .workspace(let action):
             let detail: String
             if case .openURL(let url) = action { detail = url.host ?? "" }
             else if let url = action.url { detail = url.lastPathComponent }
-            else { return String(localized: ActionKind(action: self).title) }
-            return "\(String(localized: ActionKind(action: self).title)) — \(detail)"
+            else { return AppLocalization.string(ActionKind(action: self).title) }
+            return "\(AppLocalization.string(ActionKind(action: self).title)) — \(detail)"
         }
     }
 }

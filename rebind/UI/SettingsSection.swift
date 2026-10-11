@@ -2,12 +2,15 @@ import Foundation
 
 /// Implemented settings destinations; other sections remain separate deliveries.
 nonisolated enum SettingsSection: Hashable, CaseIterable {
-    case general, permissions
+    case general, permissions, input, language, advanced
 
     var title: LocalizedStringResource {
         switch self {
         case .general: .settingsGeneral
         case .permissions: .permissionsTitle
+        case .input: .settingsInput
+        case .language: .settingsLanguage
+        case .advanced: .settingsAdvanced
         }
     }
 }

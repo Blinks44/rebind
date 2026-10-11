@@ -3,7 +3,7 @@ name: agent-workflow-setup
 description: Set up, migrate, or audit durable agent workflows for development projects of any language, platform or discipline. Adapt project instructions, public documentation, current state, handoffs, relevant skills and Git ignore rules to the actual project. Use for configuring the workflow itself, rather than ordinary implementation under an existing workflow.
 license: MIT
 metadata:
-  version: "1.2.1"
+  version: "1.3.0"
 ---
 
 # Agent Workflow Setup
@@ -15,6 +15,12 @@ Configure a project so a fresh development or design agent can identify what exi
 Read [adoption](references/adoption.md) for setup, migration or audit. Inspect existing instructions (including nested/override files), public docs, source/assets/data, manifests/toolchains, verification configuration, task tracker, version control and design/engineering sources. Establish project intent, domain-specific constraints, usable tools and evidence. Separate requirements, implementation, observed verification and unknowns. Use applicable checks such as tests, builds, simulations, data validation or artifact inspection; do not invent app commands or UI requirements for other domains.
 
 Preserve existing user/contributor work and useful conventions. Adopt equivalent existing documents instead of creating competing sources of truth. For a new project, ask only for product/platform decisions needed to proceed; do not invent a stack or finished feature set from an empty directory. Report inaccessible code/design sources and continue independent setup.
+
+## Clarify decisions that inspection cannot resolve
+
+Use [guided initialization](references/adoption.md#guided-initialization-and-material-questions) when project intent, clients, source ownership or conflicting conventions remain materially unclear. Resolve facts from artifacts first; ask about consequential choices with a recommendation and tradeoffs. Reuse answers and existing authorization, keep questions small, and continue independent setup while awaiting a reply. Do not turn initialization into a mandatory questionnaire or silently settle a blocking product decision.
+
+Persist agreed decisions, evidence-based defaults and unresolved dependencies in their existing owning records. Keep dependent configuration pending until the required answer arrives; complete and verify everything else within scope.
 
 ## Build the smallest complete context system
 
@@ -34,7 +40,7 @@ All shared files created by setup must be suitable for committing. Use English f
 
 ## Adapt repository hygiene
 
-When Git is used or requested, read [repository hygiene](references/repository-hygiene.md) and create or improve `.gitignore` as part of setup. Inspect the project's tools, actual output paths, nested rules and tracked files first. Organize relevant rules into commented sections; explain non-obvious exclusions and preserve required exceptions. Exclude generated/local/private material while keeping shared agent instructions, skills, state, tasks and technical evidence versioned. Validate both excluded paths and representative files that must remain visible. Do not paste a universal multi-stack template, untrack files automatically or change global ignore settings.
+When Git is used or requested, read [repository hygiene](references/repository-hygiene.md) and create or improve `.gitignore` as part of setup. Inspect the project's tools, actual output paths, nested rules and tracked files first. Organize relevant rules into commented sections; explain non-obvious exclusions and preserve required exceptions. Keep shared instructions, skills, state, tasks and concise technical verification results versioned. Verification screenshots and exports stay in narrowly ignored local storage by default; retain images in Git only for a specific documented purpose, such as a requested deliverable, shipped asset, required visual-test baseline or defect evidence that a written result cannot adequately preserve. A visual check does not require an export or a committed image. Validate both excluded paths and representative files that must remain visible. Do not paste a universal multi-stack template, untrack files automatically or change global ignore settings.
 
 ## Select skills and tools deliberately
 

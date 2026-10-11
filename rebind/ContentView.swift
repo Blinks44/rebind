@@ -9,6 +9,11 @@ struct ContentView: View {
     @State private var showingProfiles = false
     @State private var setupPresentation = PermissionSetupPresentation()
 
+    init(model: AppModel, initialDestination: MainDestination = .input(.allKeyboards)) {
+        self.model = model
+        _selection = State(initialValue: initialDestination)
+    }
+
     var body: some View {
         NavigationSplitView {
             List(selection: $selection) {
@@ -50,6 +55,12 @@ struct ContentView: View {
         .onChange(of: model.configuration.selectedProfileID) {
             editor = nil
             pendingDeletion = nil
+        }
+        .onChange(of: model.configurationReplacementRevision) {
+            editor = nil
+            pendingDeletion = nil
+            showingProfiles = false
+            showingDiagnostics = false
         }
         .onAppear {
             setupPresentation.beginIfNeeded(needsSetup: model.needsPermissionSetup)

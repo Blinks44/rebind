@@ -1,5 +1,6 @@
 # Menu Bar template and first-launch design
 
+Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Reviewed 2026-10-10. Scope: SPEC §§6–8, 10–11, S2, Phase 8. The Menu Bar asset is integrated; the onboarding screens are design artifacts, not implemented native onboarding.
 
 ## Live Sketch source
@@ -14,12 +15,12 @@ New frames on **01 · Screens**, all 560 × 580 pt:
 
 | Frame | ID | Review export |
 | --- | --- | --- |
-| 08 · First Launch / Accessibility required · Light | `EDA6F1D6-D17F-4ABB-8A72-1DECF5EDE4F4` | [Light](onboarding/first-launch-light.png) |
-| 09 · First Launch / Accessibility required · Dark | `F0F88FE5-F6A1-4402-965E-96B83A27B732` | [Dark](onboarding/first-launch-dark.png) |
-| 10 · First Launch / Event sending required · Light | `18E3BEB1-9333-4C8E-97F1-F8233CAB8A95` | [Event sending](onboarding/event-sending-required.png) |
-| 11 · First Launch / Ready · Light | `B01D939A-7E79-4E5A-9385-3F494EF9CF80` | [Ready](onboarding/ready.png) |
-| 12 · Permissions / Access revoked · Light | `A2F08C1D-327C-4108-8C14-6AD6E320918F` | [Recovery](onboarding/access-revoked.png) |
-| 13 · First Launch / German text expansion | `E207327E-5664-496C-999A-2B7A69B61335` | [German](onboarding/german-expansion.png) |
+| 08 · First Launch / Accessibility required · Light | `EDA6F1D6-D17F-4ABB-8A72-1DECF5EDE4F4` | [Light](../DESIGN.md#screen-index-and-implementation-status) |
+| 09 · First Launch / Accessibility required · Dark | `F0F88FE5-F6A1-4402-965E-96B83A27B732` | [Dark](../DESIGN.md#screen-index-and-implementation-status) |
+| 10 · First Launch / Event sending required · Light | `18E3BEB1-9333-4C8E-97F1-F8233CAB8A95` | [Event sending](../DESIGN.md#screen-index-and-implementation-status) |
+| 11 · First Launch / Ready · Light | `B01D939A-7E79-4E5A-9385-3F494EF9CF80` | [Ready](../DESIGN.md#screen-index-and-implementation-status) |
+| 12 · Permissions / Access revoked · Light | `A2F08C1D-327C-4108-8C14-6AD6E320918F` | [Recovery](../DESIGN.md#screen-index-and-implementation-status) |
+| 13 · First Launch / German text expansion | `E207327E-5664-496C-999A-2B7A69B61335` | [German](../DESIGN.md#screen-index-and-implementation-status) |
 
 The current Sketch document remains authoritative; exports are review aids. Screens are not an interactive simulation of macOS permission prompts. No prototype links fabricate a successful grant or modify System Settings.
 
@@ -75,7 +76,7 @@ Confirmed findings and fixes:
 
 Observed checks: all six original frames screenshot-reviewed at 560 × 580; temporary duplicates reviewed at 520 × 560 and 720 × 680, then returned to 560 × 580. All six roundtrip geometry comparisons pass after `stackLayout.apply()`; zero ordinary child-frame overflow at the restored size. Introduction/other-permissions expanded symbol geometry was also inspected, including square icon, complete headings and German wrapping. API frame assignment needs Stack application before synchronous geometry reads; the first un-applied roundtrip probe returned stale child widths and was replaced by the explicit apply check.
 
-The actual Sketch canvas was inspected in addition to MCP frame captures, because the initial export missed clipping. Compact evidence: [Dark 520 × 560](onboarding/compact-dark-520x560.png), [German 520 × 560](onboarding/compact-german-520x560.png). Preferred size remains 560 × 580; the tested minimum is 520 × 560. Native implementation must preserve wrapping/fixed controls and use content scrolling if available height is insufficient, rather than scaling the whole screen.
+The actual Sketch canvas was inspected in addition to MCP frame captures, because the initial export missed clipping. Compact evidence: [Dark 520 × 560](../DESIGN.md#screen-index-and-implementation-status), [German 520 × 560](../DESIGN.md#screen-index-and-implementation-status). Preferred size remains 560 × 580; the tested minimum is 520 × 560. Native implementation must preserve wrapping/fixed controls and use content scrolling if available height is insufficient, rather than scaling the whole screen.
 
 Saved revision: document `A2DE362A-E026-47F5-8F3E-FBC3AF4353DD`, SHA-256 `1fd30ff5ef06830fdb4ce6b8927133943e267b17a671218743a39f65b9915f4d`. ZIP CRC passes; **1,143 local layers**, six action-row containers added, no removed original nodes. Saved-node comparison against the pre-review backup found no content/style/geometry changes outside the ten owned frame/source subtrees; two unrelated layer-list disclosure flags changed, which are UI state. Shared text/layer styles are unchanged. All temporary probes were removed. Six refreshed exports are 560 × 580; two compact exports are 520 × 560. Post-save capture confirms the repaired Light frame. Layout work used the [public Sketch sizing/pinning/Stack API](https://developer.sketch.com/reference/api/).
 
@@ -93,7 +94,7 @@ Added six shared layer styles derived from the existing rim/white-face styles an
 | Setup 48 pt | 0.09375 pt | 0.139272834375 pt |
 | About 80 pt | 0.15625 pt | 0.232121390625 pt |
 
-Observed MCP checks: all six permission frames, main Light/Dark/Compact and About reviewed after edits; the complete Dark main frame recaptured after its first capture showed stale rendering. Expanded icon trees confirm final border values; direct 32 pt captures agree in both appearances. Setup retains 48 × 48 proportions and the prior repaired text/footer layout. Evidence: [sidebar Light](screen-icons/sidebar-light.png), [sidebar Dark](screen-icons/sidebar-dark.png), [About](screen-icons/about.png); six onboarding exports refreshed at 560 × 580. Compact 520 × 560 exports above remain evidence of the earlier layout revision, not this icon-style revision.
+Observed MCP checks: all six permission frames, main Light/Dark/Compact and About reviewed after edits; the complete Dark main frame recaptured after its first capture showed stale rendering. Expanded icon trees confirm final border values; direct 32 pt captures agree in both appearances. Setup retains 48 × 48 proportions and the prior repaired text/footer layout. Evidence: [sidebar Light](../DESIGN.md#screen-index-and-implementation-status), [sidebar Dark](../DESIGN.md#screen-index-and-implementation-status), [About](../DESIGN.md#screen-index-and-implementation-status); six onboarding exports refreshed at 560 × 580. Compact 520 × 560 exports above remain evidence of the earlier layout revision, not this icon-style revision.
 
 Saved document `F370A2F1-FBA6-4BF9-A056-A1500D5C8688`, SHA-256 `2fecf2bbaa7a6673ea789826ef59bcd6d4c3162cfed77e72c3b756bc6aff22f0`. ZIP CRC passes; all 1,143 original local nodes retained, no additions/removals, only the six owned icon nodes changed (`overrideValues` only). Original 36 shared layer styles are unchanged; six size-specific styles added. Original Brand artwork/review board, native `.icon` package and Menu Bar template remain unchanged. No geometry, text, engine or localization changes; no app build/runtime/permission tests needed or claimed for this Sketch-only correction. `git diff --check` and affected local file links pass.
 

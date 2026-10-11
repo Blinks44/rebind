@@ -7,13 +7,18 @@ struct rebindApp: App {
     @State private var settingsSection: SettingsSection = .general
 
     var body: some Scene {
-        Window(.rebindWindowTitle, id: "main") { ContentView(model: delegate.model) }
+        Window(.rebindWindowTitle, id: "main") {
+            ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+        }
             .defaultSize(width: 1040, height: 640)
         Settings {
             SettingsView(model: delegate.model, selection: $settingsSection)
                 .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
+                .environment(\.locale, delegate.model.activeLanguage.locale)
         }
-        MenuBarExtra("Rebind", image: "RebindMenuBar") { RebindMenu(model: delegate.model) }
+        MenuBarExtra("Rebind", image: "RebindMenuBar") {
+            RebindMenu(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+        }
     }
 }
 
@@ -22,7 +27,21 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
             || NSClassFromString("XCTestCase") != nil
     }
-    let model = AppModel(loadConfiguration: !RebindAppDelegate.runningTests)
+    let model: AppModel
+
+    override init() {
+        let runningTests = Self.runningTests
+        model = AppModel(loadConfiguration: !runningTests, languagePreferenceSaved: { preference in
+            if !runningTests { AppLanguageDefaults(defaults: .standard).apply(preference) }
+        })
+        super.init()
+        if !runningTests {
+            AppLocalization.configureAtLaunch(model.activeLanguage)
+            if !model.storageLocked {
+                AppLanguageDefaults(defaults: .standard).apply(model.configuration.languagePreference)
+            }
+        }
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !Self.runningTests else { return }

@@ -22,7 +22,7 @@ Interpret short requests by their intended action/outcome and established contex
 | User's latest explicit instruction | Authorized outcome and scope; reconcile changed contracts in docs |
 | SPEC | Required product behavior, capability limits, acceptance criteria |
 | Root README / DEVELOPMENT | Public project overview / detailed build, local setup and contributor reference; keep agent state and session detail in docs |
-| DESIGN + live Sketch | Design direction and index; actual frames, components and styles |
+| DESIGN + live Sketch | Short source locator/direction; Sketch owns frames, components, styles, visual states, copy and interaction annotations |
 | Source code and actual app artifacts | What is implemented now |
 | Task records + verification + CAPABILITIES | Work status, evidence, limitations and handoffs |
 | STATE | Short current summary and active/next task index |
@@ -39,11 +39,11 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 - No typed-text collection, telemetry, secrets, root/SIP shortcuts or unrelated permissions. Verify actual grants; a button click is not permission evidence.
 - Input is category-wide within one manually selected profile. Physical-device inventory/attribution and automatic activation were withdrawn; do not reintroduce them without a new user request. Numeric additional mouse buttons remain unrestricted by a fixed enum.
 - Rebind's visual direction is modern macOS 26+ with purposeful Liquid Glass, elevation, subtle lighting and gradients. Read DESIGN; native semantics and accessibility coexist with distinctive materials.
-- Local versioned atomic configuration; no silent overwrite of corrupt/future files. All product copy supports EN/RU/DE/FR; manual locale selection remains a separate implementation task.
+- Local versioned atomic configuration; no silent overwrite of corrupt/future files. All product copy supports EN/RU/DE/FR; preserve the existing manual Language activation/reopen contract.
 - Research non-trivial capture/action mechanisms before adding custom implementations. Check native APIs, GitHub, Swift Package Index, maintenance and licensing. Read [research](docs/research/README.md); record refreshed decisions in the affected task/register. Report unavailable research access honestly. No blind dependency installs or copying GPL sources without an explicit licensing decision.
 - Preserve user changes. Coordinate ownership before editing the same code, catalog, docs section or Sketch source. Never stage/commit/reset/push unrelated work. Git commits and Sketch saves are separate operations; record both when actually performed.
 - Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR translations and purposeful Unicode/localization test data.
-- Commit technical outcomes and scoped verification evidence, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Summarize reported results with their evidence limits; see WORKFLOW's repository-content rules.
+- Commit technical outcomes and concise verification results, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Verification screenshots/exports stay local by default; version images only for a specific documented purpose under WORKFLOW. Summarize reported results with their evidence limits.
 - Follow the project's commented `.gitignore` policy. Keep shared instructions/skills, STATE/tasks/evidence, source/design inputs and lockfiles versioned. New tools/output paths need narrow exclusions checked with Git; never hide an entire agent directory or automatically untrack files.
 - This workflow does not authorize creating agents/chats, sending messages to other chats, executing remappings, changing real rules/permissions, editing Sketch, publishing or deploying. Proceed within the user's authorized scope without adding routine confirmation gates.
 
@@ -52,6 +52,8 @@ An explicit request to continue/create design authorizes scoped edits to the est
 ## 4. Finish or hand off
 
 Follow WORKFLOW's completion contract **before the final response**. Update the affected task/evidence, STATE, and any changed SPEC/DESIGN/PLAN/capability/research record. Record tests/builds actually run, exact evidence, unresolved checks and one actionable next step. Use `awaiting_verification` when implementation exists but required runtime/hardware acceptance is open; never mark the whole feature done just because the build passes.
+
+For design-only work, make the saved Sketch document self-contained and review it live. Keep repository completion notes short: source/date, ready scope, remaining work and next step. Do not routinely export PNGs, duplicate frame/style inventories or write a separate visual implementation manual. The implementation agent opens Sketch through MCP and inspects the current components, states and annotations directly. Keep behavioral requirements and concise native test/runtime results in the repository; apply WORKFLOW's image policy to both Sketch and native checks.
 
 Tell the user the outcome in plain language: what is ready, what is still open, and what this role or the receiving role can do next. Lead with meaningful task names; IDs/links are optional references. If another role is needed, provide a short natural-language request that works without a task ID. The next agent must discover the handoff in project records.
 

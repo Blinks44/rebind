@@ -64,9 +64,9 @@ PLAN owns priorities/dependencies and remaining phase/milestone gates. A milesto
 
 ## Design contract — docs/DESIGN.md when relevant
 
-Record the actual platform/brand direction, hierarchy, design system/tokens/components, source locations and version lookup, screen/surface index, delivery status and meaningful accessibility/responsive/localization states. Use relevant platform semantics. Do not prescribe macOS Liquid Glass to a website or copy a generic mobile density into a desktop app.
+Record the actual platform/brand direction, source locations and version lookup, ready scope and remaining coverage. Use relevant platform semantics. When agents can inspect the authoritative editable source directly, keep components, visual states, copy and interaction annotations there; the repository needs a short locator/readiness note rather than a mirrored inventory or visual implementation manual. Do not prescribe macOS Liquid Glass to a website or copy a generic mobile density into a desktop app.
 
-Document code ↔ design differences, reusable components, asset delivery roles and how agents obtain/save/version sources. A live document outside Git has its own saved revision; a screenshot is scoped evidence. Proposed designs, accepted design direction, integrated code and rendered verification have separate states.
+Document consequential code ↔ design differences, required asset delivery and how agents obtain/save/version sources. A live document outside Git has its own saved revision. Inspect and review it directly; screenshots are local by default under [repository hygiene](repository-hygiene.md), not a required handoff artifact. Proposed designs, accepted design direction, integrated code and rendered verification have separate states.
 
 ## Task and evidence contract
 
@@ -80,7 +80,7 @@ owner / scope / ownership checked / released or transferred
 requirements and current behavior / dependencies
 code baseline and actual implementation revision, or uncommitted files
 acceptance: observable result and required checks
-design handoff, if relevant: source/version/IDs/components/states/copy
+design handoff, if relevant: source/version, ready scope and access to states/copy/annotations
 implementation: changed artifacts and significant decisions
 verification: actual commands/results, tested revision/environment, evidence
 review: findings resolved or left open on the final artifact

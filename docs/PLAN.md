@@ -4,7 +4,7 @@ Updated 2026-10-11. Read [STATE](STATE.md) first for current facts and next task
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only exclusion and subsequent tap also user-confirmed; next pause/lifecycle recovery and mixed-input timing; full T1/T2 safety remains open. Do not substitute visual polish or blind threshold changes for this acceptance check.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and the pause/resume, sleep/wake, mixed-input walkthrough are user-confirmed; quantified timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
 2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; full main design remains open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
@@ -58,20 +58,24 @@ The checked items below describe only the stated software/artifact milestone. An
 
 - [x] Versioned atomic storage, corruption/future-file protection, actual permission checks and window-independent runtime foundation exist.
 - [x] Bounded first-run/recovery and Settings → Permissions integrated; actual-grant and full native acceptance remain open in [UI-001](tasks/UI-001-permissions-onboarding.md).
-- [ ] Implement remaining Settings/About with actual state, Launch at Login (SMAppService), validated import/export/reset and remaining settings. [General/background](tasks/UI-003-general-settings.md) and bounded [Input/hold timing](tasks/UI-004-input-settings.md) designs are ready; Language/Advanced and future justified gesture tuning remain.
+- [x] Bounded [General/background](tasks/UI-003-general-settings.md) with actual runtime, global pause and SMAppService integration; software/native fixture checks and [full-main overflow repair](verification/general-main-window-repair.md) pass; actual login/relaunch/accessibility acceptance remains open.
+- [x] Bounded [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) native integration, schema 24 and software/full-window/live fixture checks pass; actual input/relaunch/accessibility acceptance remains open in [native evidence](verification/input-language-native.md).
+- [x] Bounded [Advanced backup foundation](tasks/UI-008-advanced-storage.md): shared validated codec, in-memory legacy migration and size-bounded regular-file read; 553 tests / zero failures. Native flows remain separate.
+- [ ] Implement remaining Advanced/About, native import/export confirmation/replacement/reset and justified future gesture tuning; read the released UI-007 Advanced design directly in Sketch.
 - [ ] Verify window reopening/single engine, relaunch/login, revoked access, lock/sleep/recovery and deliberate paused state. [Permissions](verification/permissions.md), [UI-001](tasks/UI-001-permissions-onboarding.md).
 
 ### Phase 8 — Complete modern native UI and brand
 
 - [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
-- [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing.
+- [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The bounded [materials review](tasks/UI-006-material-design-review.md) is saved; shape/divider polish and Advanced compositions reviewed; native adoption remains open.
 - [ ] Finish keyboard/VoiceOver, Light/Dark, Reduce Transparency/Motion, Increase Contrast and usability acceptance.
 - [ ] Finish icon runtime checks. [BRAND-001](tasks/BRAND-001-icon-runtime.md).
 
 ### Phase 9 — Four-language UX
 
 - [x] Current app slice has EN/RU/DE/FR String Catalog translations; 53-key onboarding/permission handoff is integrated; four-language native fixtures reviewed.
-- [ ] Integrate remaining screen copy, implement System/EN/RU/DE/FR manual selection and verify complete layouts/errors/tooltips/accessibility in all languages.
+- [x] System/EN/RU/DE/FR manual preference, atomic failure/retry and launch/reopen activation path integrated; software/native fixture checks pass in [UI-005](tasks/UI-005-language-settings.md).
+- [ ] Verify actual language relaunch/native contexts and complete remaining screen copy/layouts/errors/tooltips/accessibility in all languages.
 
 ### Phase 10 — Reliability and distribution
 

@@ -1,5 +1,6 @@
 # Sketch alignment review — 2026-10-10
 
+Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Scope: UI-002, SPEC §10, design only. Reviewed all 22 current frames through live Sketch MCP; repaired desktop frames 01–03 and 14–22 plus their affected local sources. Frames 04–13 retain their authored layout. Git baseline `acce2f4`; prior permission-recovery records preserved, no app changes or Git commit.
 
 ## Saved source
@@ -23,7 +24,7 @@ No text, overrides, Symbol links or prototype flows changed. Zero original local
 
 ## Verification
 
-- All 22 authored-size frames inspected; twelve changed desktop frames recaptured after final layout processing. Final [Light main](alignment-review/main-light.png), [Dark main](alignment-review/main-dark.png), [compact main](alignment-review/main-compact.png), and all nine [permission-recovery exports](permission-recovery.md#saved-source-and-visual-checks) refreshed at 1×; all twelve PNG header dimensions match their indexed frames.
+- All 22 authored-size frames inspected; twelve changed desktop frames recaptured after final layout processing. Final [Light main](../DESIGN.md#screen-index-and-implementation-status), [Dark main](../DESIGN.md#screen-index-and-implementation-status), [compact main](../DESIGN.md#screen-index-and-implementation-status), and all nine [permission-recovery exports](permission-recovery.md#saved-source-and-visual-checks) refreshed at 1×; all twelve PNG header dimensions match their indexed frames.
 - Light main checked at 1200 × 740 and restored to 1040 × 640 after anchor repair. Dark main, compact recovery and German Settings checked at 1200 × 740, then restored to 1040 × 640, 880 × 600 and 880 × 640 respectively. Controls, columns, sidebar/footer anchors and wrapped card content remain aligned in the expanded views.
 - After the final three-frame roundtrip settled, all **553 screen-node frames** matched the pre-roundtrip geometry exactly. Partial rows at the compact viewport edge remain intentional scrolling content.
 - Explicit save succeeds; saved ZIP integrity, node retention, copy/overrides/flows, source scope and PNG dimensions checked. Public [Sketch API](https://developer.sketch.com/reference/api/) used for sizing, pins and Stacks. Process pending layout and inspect again in a separate call before accepting nested geometry; avoid full serialization of library-rich trees.

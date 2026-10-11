@@ -1,6 +1,6 @@
 # Rebind — shared development workflow
 
-Updated 2026-10-10. Applies to the human-directed code and Sketch agents. [AGENTS](../AGENTS.md) is the mandatory entry point; this document defines durable context and handoff. It does not create agents, send messages, change permissions or start the remapping engine automatically.
+Updated 2026-10-11. Applies to the human-directed code and Sketch agents. [AGENTS](../AGENTS.md) is the mandatory entry point; this document defines durable context and continuation. It does not create agents, send messages, change permissions or start the remapping engine automatically.
 
 ## Document responsibilities
 
@@ -10,13 +10,13 @@ Updated 2026-10-10. Applies to the human-directed code and Sketch agents. [AGENT
 | Root README / DEVELOPMENT | Public introduction, basic setup / detailed developer commands and local behavior | Public docs/setup changes; do not put session logs or agent instructions in the root README |
 | STATE | Current summary, recent meaningful changes, open/next task index | Every task/resume and dependent handoff |
 | SPEC | Required behavior and acceptance; change only when requirements change | Product orientation and affected sections |
-| DESIGN + live Sketch | Visual direction, document/frame/component index and design delivery status | UI/brand/design tasks |
+| DESIGN + live Sketch | Short direction/source locator and readiness; Sketch owns visual states, components, copy and annotations | UI/brand/design tasks |
 | ENGINEERING | Platform, Swift, input, security, dependency and skill conventions | App implementation/review |
 | PLAN | Phase goals and remaining exit gates | Select/align a slice, update phase evidence |
 | tasks | One outcome's scope, ownership, design/code/evidence and next step | Work spans agents/sessions or is substantial |
 | CAPABILITIES | Detailed real capability evidence and limits | Changing/advertising a capability |
 | research | Mechanism/dependency decisions, sources and licenses | Non-trivial engine/actions/dependency work |
-| verification | Detailed behavior checks and durable evidence | Run/document relevant acceptance |
+| verification | Concise technical check results, limits and justified durable evidence | Run/document relevant acceptance |
 | history | Short dated technical outcomes, reasons and earlier evidence | Need rationale or prior results |
 
 Do not duplicate a decision's full text in multiple files. Link to its owning record. Chat history and tool memories are supplementary. A requirement, design example, old unchecked box, screenshot or test count does not establish current implementation/support.
@@ -29,9 +29,11 @@ Commit stable requirements/design/engineering contracts, a concise current-state
 
 Keep raw chat/tool transcripts, migration backups, personal absolute paths, actual rules/configurations and temporary logs out of commits. Optional workstation-only material can live in ignored `.local/agent-context/`; published docs must not depend on it. Use portable design names/share links and freshly resolved IDs. Build products, DerivedData and result bundles remain ignored. Before publishing screenshots, check that they show only suitable test content.
 
+Verification screenshots and exports from Sketch, the native app or other tools stay local by default in ignored `.local/agent-context/verification/` (or temporary storage). A visual check does not require exporting or retaining an image. Git keeps concise results identifying the tested artifact/environment, checks, observed outcome and limits; these records must be useful without local screenshots. Version an image only for a concrete purpose: a requested deliverable, shipped asset, baseline consumed by a visual test, or specific defect evidence that a written result cannot adequately preserve. Record that purpose in the owning task/evidence note; a routine native regression check alone is not a reason. Preserve existing assets/baselines; policy adoption does not automatically delete or untrack existing files. Do not blanket-ignore image extensions.
+
 A confirmation records only the result it supports: “Tester reported the configured binding working; timing and recovery checks remain open.” Design acceptance records the accepted scope/version separately from runtime verification. If the tested build or conditions are unknown, say so; a vague confirmation does not close broader acceptance. Shared STATE/tasks/evidence remain versioned. If committing is requested, review the exact staged diff; an ignore rule does not remove previously tracked private content.
 
-The commented root `.gitignore` owns shared exclusion policy for Rebind's actual Xcode/SPM, editor and local-agent output. When introducing tools or output paths, inspect existing/nested rules and preserve source, shared configuration, lockfiles, design assets and curated evidence. Test excluded and kept paths with `git check-ignore -v --no-index`; inspect `git ls-files --cached --ignored --exclude-standard` for tracked-rule conflicts. Do not exclude entire client directories or untrack files automatically. The reusable skill's [repository hygiene guide](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md) details adaptation to other projects.
+The commented root `.gitignore` owns shared exclusion policy for Rebind's actual Xcode/SPM, editor and local-agent output. When introducing tools or output paths, inspect existing/nested rules and preserve source, shared configuration, lockfiles, design assets, concise verification records and specifically justified evidence. Test excluded and kept paths with `git check-ignore -v --no-index`; inspect `git ls-files --cached --ignored --exclude-standard` for tracked-rule conflicts. Do not exclude entire client directories or untrack files automatically. The reusable skill's [repository hygiene guide](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md) details adaptation to other projects.
 
 ## Start, resume and establish freshness
 
@@ -81,10 +83,10 @@ Record user acceptance only if actually supplied. Do not invent approval or impo
 
 1. The task states user outcome, relevant requirements, current behavior and acceptance.
 2. Design work inspects the current app/capability limits and Sketch. It covers applicable empty/loading/error/disabled/conflict/permission/appearance states and copy. Prototype examples must not advertise unsupported triggers/actions as implemented.
-3. The design handoff records saved document path or share link, freshly resolved document ID, stable frame/source IDs, saved revision/time or digest when available, reusable styles/components, behavior/copy and remaining questions. Record screenshots/exports as evidence, with date and scope; the live document remains the visual source.
-4. The implementation agent refreshes that handoff and live frames. It reuses current state/persistence/engine and implements the bounded slice. Record justified platform differences instead of silently approximating or inventing functionality.
+3. Make the saved Sketch source self-contained: reusable components, applicable states, product copy and interaction/native-control annotations belong beside the frames. Review changes using live MCP screenshots. Keep only a short repository note naming the source/date, ready scope, limits and next step. Routine PNG exports, mirrored frame/style inventories and separate visual implementation manuals are not required. Apply the repository image policy above to any exports.
+4. The implementation agent opens the current Sketch source through MCP and inspects its frames, components and annotations directly, even when a repository summary exists. It reuses current state/persistence/engine and implements the bounded slice. Record justified platform differences and behavior/test evidence; keep SPEC authoritative for required behavior.
 5. Run relevant software and native visual/accessibility checks, then hardware/permission checks when required and authorized. Review against the handed-off design; record differences and remaining gates. Neither a Sketch screenshot nor an Xcode build proves runtime effects.
-6. Complete the records below and hand off the specific next action. If design changes after implementation starts, note changed frame IDs/revision and which implemented surfaces require reconciliation.
+6. Complete the short status records below. If design changes after implementation starts, identify the affected surfaces/date and what needs reconciliation; there is no separate design-transfer ceremony.
 
 ## Concurrent work and synchronization
 
@@ -101,7 +103,7 @@ Record user acceptance only if actually supplied. Do not invent approval or impo
 Before the final answer or interruption handoff:
 
 1. Update the task with actual deliverables, artifact/revision references, checks run, failures/limits and a concrete next step. Keep `awaiting_verification` if required acceptance remains open.
-2. Save detailed behavior/build/hardware evidence in the relevant verification file when useful. Date it; specify tested code/design revision, OS/device/permissions, exact commands and result. Say whether a result is user-reported, agent-observed or an injected test. `/tmp` logs may expire: retain the meaningful result in the repo, and never make a temporary path the only handoff evidence.
+2. Save concise behavior/build/hardware results in the relevant task or verification file. Date them; specify tested revision, relevant OS/device/permissions, exact commands and result. Say whether a result is user-reported, agent-observed or an injected test. For design-only work, a saved/reviewed Sketch source and concise task note are sufficient; do not create a parallel visual specification or persist every MCP screenshot. Local logs/images may expire: retain meaningful results and limits in the repo, applying the image policy above rather than routinely committing screenshots.
 3. Update STATE's affected facts, recent changes and task rows. Keep roughly 1–2 pages, preferably under 8 KiB. Retain only a handful of recent meaningful changes; move old detail to history. Do not repeat the full capability matrix or daily tool transcript.
 4. Update SPEC only for changed requirements; DESIGN only for changed direction/index/delivery; PLAN only for phase gates/priorities; CAPABILITIES only for changed supported behavior/evidence; research only for a relevant decision. No requirement to touch every file.
 5. Add a concise dated history entry for substantive work: outcome, reason, task/evidence link, unresolved acceptance. If the task already contains detail, link rather than duplicating. Never relabel an old verification as a new run.
@@ -133,7 +135,7 @@ Open the same project/intended checkout. These are example short requests; equiv
 
 Task IDs/paths, acceptance details and constraints can help when the user has them; they are optional for continuing existing work. In a fresh chat, name a specific outcome only when intentionally selecting it. Give observable behavior for a genuinely new feature; the agent asks only about material ambiguity.
 
-Save the handoff automatically before finishing; the user should not need to remind the agent. An optional early interruption request is “Save the current result so we can continue later.”
+Save work and the smallest useful continuation note before finishing; the user should not need to remind the agent. For design this means saved Sketch plus source/readiness/next-step pointers, not a second design package in Git. An optional early interruption request is “Save the current result so we can continue later.”
 
 Existing chats that began before this workflow update should be told once: “Read the updated project instructions and continue your task.” They then use the same short requests. Use the setup skill for configuration/audit; ordinary product requests use the project entry point and relevant skills.
 

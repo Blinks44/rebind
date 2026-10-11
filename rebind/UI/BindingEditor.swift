@@ -5,6 +5,7 @@ struct BindingEditor: View {
     let scope: DeviceScope
     let existing: Binding?
     private let profileID: UUID
+    private let configurationRevision: UInt64
     @Environment(\.dismiss) private var dismiss
     @State private var trigger: MatchKey?
     @State private var output: KeyboardShortcut?
@@ -23,6 +24,7 @@ struct BindingEditor: View {
         self.scope = scope
         self.existing = existing
         profileID = model.configuration.selectedProfileID
+        configurationRevision = model.configurationReplacementRevision
         _trigger = State(initialValue: existing.map { $0.matchKey.pressSource }
             ?? (scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil))
         _output = State(initialValue: existing?.action.shortcut)
@@ -90,14 +92,12 @@ struct BindingEditor: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             if activation == .hold {
-                                Stepper(value: $holdDurationMilliseconds, in: 100...5000, step: 100) {
-                                    Text(.holdDuration(Int(holdDurationMilliseconds)))
-                                }
+                                HoldDurationRow(milliseconds: $holdDurationMilliseconds)
                                 Text(.holdHint).font(.caption).foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                        Text(trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? String(localized: .notRecorded)).font(.title3.monospaced())
+                        Text(trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
                         if scope != .builtInTrackpad {
                             Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : mouseRecordingTarget) }
                                 .disabled(!model.canRecord || model.recording != nil)
@@ -111,7 +111,7 @@ struct BindingEditor: View {
                             Text(.outputShortcut)
                         } else { ActionPickerView(model: model, selection: $actionKind) }
                         if actionKind == .keyboardShortcut {
-                            Text(output.map(InputLabels.shortcut) ?? String(localized: .notRecorded)).font(.title3.monospaced())
+                            Text(output.map(InputLabels.shortcut) ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
                             Button(.recordOutput) { model.beginRecording(.output) }.disabled(!model.canRecord || model.recording != nil)
                         } else if actionKind.mouseAction != nil {
                             Text(.mouseActionHint).font(.caption).foregroundStyle(.secondary)
@@ -188,7 +188,17 @@ struct BindingEditor: View {
                     Text(model.status.text).foregroundStyle(.secondary)
                 default: EmptyView()
                 }
-                if let error = model.error { Text(error).foregroundStyle(.red) }
+                if let error = model.error {
+                    if error == .storageWriteFailed {
+                        PermissionCard {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(.bindingSaveFailed).font(.headline)
+                                Text(.bindingSaveFailedDescription).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    } else { Text(error).foregroundStyle(.red) }
+                }
                 HStack {
                     Button(.clearRecording) {
                         model.cancelRecording()
@@ -205,6 +215,7 @@ struct BindingEditor: View {
         }.frame(width: 540).frame(maxHeight: 760)
         .onAppear { model.error = nil; model.beginEditing() }
         .onDisappear { model.endEditing() }
+        .onChange(of: model.configurationReplacementRevision) { dismiss() }
         .onChange(of: mouseRecordingTarget) {
             model.cancelRecording()
             trigger = nil
@@ -232,6 +243,7 @@ struct BindingEditor: View {
     }
 
     private func save() {
+        guard configurationRevision == model.configurationReplacementRevision else { dismiss(); return }
         guard let trigger, let action = configuredAction, actionKind.isAvailable(with: model.audioCapabilities) else { return }
         let source: InputTrigger
         if mouseRecordingTarget == .gestureTrigger, scope == .allMice {

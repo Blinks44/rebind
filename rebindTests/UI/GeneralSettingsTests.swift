@@ -46,7 +46,7 @@ import Testing
         #expect(try store.load().isEnabled == false)
     }
 
-    @Test func failedResumePreservesPauseAndFailedPauseStillCancelsInput() throws {
+    @Test func failedResumePreservesPause() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try FileManager.default.createDirectory(at: store.url, withIntermediateDirectories: true)
@@ -56,12 +56,27 @@ import Testing
         model.setEnabled(true)
         #expect(model.configuration.isEnabled == false && model.error != nil)
         #expect(model.mailbox.state.withLock { $0.enabled == false })
+    }
+
+    @Test func failedPauseStillCancelsOutputAndRetainsSuppressedReleaseOwnership() throws {
+        let store = store()
+        defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
+        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        try store.save(Configuration(isEnabled: true, bindings: [binding]))
+        let model = AppModel(store: store, loginItem: LoginItemModel(service: LoginItemServiceStub()))
+        model.mailbox.configure(model.configuration)
+        #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
+        #expect(model.mailbox.state.withLock { $0.pending.isEmpty == false })
+        try FileManager.default.removeItem(at: store.url)
+        try FileManager.default.createDirectory(at: store.url, withIntermediateDirectories: false)
         // Safety takes precedence over persistence rollback for an explicit pause.
-        model.mailbox.configure(Configuration(isEnabled: true))
-        model.mailbox.state.withLock { $0.pending = [.shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command))] }
         model.setEnabled(false)
         #expect(model.configuration.isEnabled == false && model.error != nil)
         #expect(model.mailbox.state.withLock { $0.enabled == false && $0.pending.isEmpty })
+        #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false))
+        #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false) == false)
+        #expect(model.mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false) == false)
     }
 
     @Test func explicitRetryChangesOnlyCaptureRetryAndNeverResumesPause() throws {

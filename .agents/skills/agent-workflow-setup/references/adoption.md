@@ -10,6 +10,27 @@ Reconcile proposed docs with code/assets and recent relevant changes. For each a
 
 Before restructuring large documents, preserve useful information through existing Git history or a local migration backup. Migrate current facts and decisions into their owners. Do not create a committed copy of a raw session log; publish only sanitized technical history when it is useful, with corrected links and an explicit historical notice. An archive is evidence, never part of routine startup. Avoid deleting files with unknown callers. Do not commit, reset or publish simply to facilitate migration.
 
+## Guided initialization and material questions
+
+Setup is a guided conversation when necessary, not a fixed intake form. Start with the request, established answers and repository inventory. Distinguish observed facts, decisions already made, reversible implementation choices and material unknowns. Inspect relevant sources before asking; do not ask the user to supply facts the repository can establish, such as its language, commands, existing task names or documented design source.
+
+Ask when the missing answer changes product scope, target environment, the authoritative source, client integration, compatibility, or a migration that could discard useful information. A request to configure the workflow does not choose a product or stack for an empty directory. A detected stack or recent edit does not settle contradictory product requirements. Explain the specific conflict and ask which current requirement/source should govern it.
+
+Useful decision areas, only when unresolved:
+
+| Missing decision | Question to resolve | Independent work that can proceed |
+| --- | --- | --- |
+| Empty project with no product intent | What should the project deliver, and where will it run? Offer plausible directions only if the request supports them. | Inventory the directory and existing instructions; prepare only justified repository hygiene. Do not invent SPEC, commands or a default stack. |
+| Agent clients or working roles | Which clients and disciplines need to use the shared context? | Reuse existing document roles and inspect available integrations. Do not claim discovery or install client adapters without evidence. |
+| Competing requirements, trackers or design sources | Which source is current and authoritative for this conflicting outcome? Describe the concrete discrepancy. | Preserve both sources and configure unaffected areas; avoid creating a second backlog or selecting an arbitrary latest file. |
+| Unclear compatibility or migration boundary | Which existing behavior, supported environments or conventions must remain compatible? | Inspect consumers, tests and Git history; retain current contracts while isolating proposed changes. |
+
+Use concise questions in the user's language, grouped by the decision that blocks the next step. Ask the smallest useful batch, usually one to three questions. For a real choice, offer a few distinct options, a recommendation grounded in observed needs and the practical consequence of each; allow a free-text answer. Avoid asking approval for routine file organization, record IDs or checks already authorized. Use an available user-input tool when suitable, otherwise ask directly in conversation. The workflow must also work in clients without interactive question tools.
+
+If an answer is required, keep dependent changes pending; silence or elapsed time is not a decision. Continue useful independent work and persist the exact missing decision plus its effect before handing off. For low-impact reversible choices, use the established convention or state a reasonable assumption and proceed; do not label it user-approved. Reuse prior answers rather than repeating intake after a restart or audit. If the user delegates a choice, make a supported recommendation within that delegation and record why.
+
+Record resolved technical decisions in the existing requirements, entry point, task or decision record that owns them. Record only consequential defaults and remaining questions; do not add a separate questionnaire file or store personal answers/chat transcripts. Unresolved product direction stays unresolved, and setup completion claims identify the usable scope and pending configuration. Once the user answers, reconcile those records and resume the same setup task rather than creating a new workflow.
+
 ## Scale the structure to the project
 
 - Small project: concise AGENTS, public README, current state and requirements/plan may be sufficient; design/task detail can be sections rather than directories.
@@ -49,7 +70,7 @@ If hardware/access, ownership or another role's work blocks the first item, reta
 
 Use the project's established source: live Sketch/Figma, repo-native components/tokens, or another named artifact. An accessible authoritative export can be used if it is explicitly the current design contract; label its version and limits. Do not insist on an external editor for a code-native UI, or invent a current visual source when the live document is inaccessible. Record proposed exploration separately from an accepted implementation contract.
 
-Handoff evidence identifies source link/path, saved version/revision/digest where available, stable frames/component IDs, applicable states, behavior/copy and changed scope. Local machine absolute paths need a portable share/access instruction for other machines. Re-resolve session-specific document IDs instead of treating them as permanent identity.
+Handoff evidence identifies the authoritative source, saved version/revision where available, ready scope and access to applicable states, behavior/copy and annotations. When the receiving agent can inspect that source directly, do not duplicate its frame/component inventory or routinely export screenshots. Local machine absolute paths need a portable share/access instruction for other machines. Re-resolve session-specific document IDs instead of treating them as permanent identity.
 
 Before implementing a changed design, reconcile affected code/capabilities and preserve real state/data behavior. After implementation, check the rendered interface against the same design revision and record justified platform differences. Later design revisions do not automatically change the native app.
 

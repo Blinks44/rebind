@@ -9,12 +9,13 @@ struct LoginItemSettingsRow: View {
             if model.showsToggle {
                 Toggle(isOn: loginEnabled) { label }
                     .toggleStyle(.switch)
+                    .accessibilityLabel(Text(.launchAtLogin))
+                    .accessibilityHint(Text(model.description))
             } else {
                 VStack(alignment: .leading, spacing: 12) {
                     label
                     if model.operation != nil {
-                        ProgressView().controlSize(.small)
-                            .accessibilityLabel(Text(model.description))
+                        ProgressView().controlSize(.small).accessibilityHidden(true)
                     } else {
                         ViewThatFits(in: .horizontal) {
                             HStack(spacing: 8) { recoveryActions }
@@ -32,6 +33,7 @@ struct LoginItemSettingsRow: View {
             Text(model.description).font(.callout).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder private var recoveryActions: some View {

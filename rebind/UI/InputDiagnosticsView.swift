@@ -6,54 +6,70 @@ struct InputDiagnosticsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(.inputDiagnostics).font(.title2.bold())
-            Text(.diagnosticsHint).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Text(.inputDiagnostics).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+            Text(.advancedDiagnosticsPrivacy).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             HStack {
-                Label(model.diagnostics.isRunning ? LocalizedStringResource.diagnosticsRunning : .diagnosticsStopped,
+                Label(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsRecording : .advancedDiagnosticsStopped,
                       systemImage: model.diagnostics.isRunning ? "record.circle" : "pause.circle")
                 Spacer()
-                Button(model.diagnostics.isRunning ? LocalizedStringResource.diagnosticsStop : .diagnosticsStart) {
+                Button(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsStop : .advancedDiagnosticsStart) {
                     if model.diagnostics.isRunning { model.stopDiagnostics() } else { model.startDiagnostics() }
                 }.disabled(!model.diagnostics.isRunning && !model.canStartDiagnostics)
-                Button(.clearRecording) { model.clearDiagnostics() }.disabled(model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0)
+                Button(.advancedDiagnosticsClear) { model.clearDiagnostics() }.disabled(model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0)
             }
-            Text(model.statusText).font(.caption).foregroundStyle(.secondary)
+            if !model.canStartDiagnostics && !model.diagnostics.isRunning {
+                Label(.advancedDiagnosticsUnavailableTitle, systemImage: "exclamationmark.circle")
+                    .font(.callout)
+                Text(blockedDescription).font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             Table(model.diagnostics.entries) {
-                TableColumn(String(localized: .diagnosticsTime)) { entry in
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnTime)) { entry in
                     Text(entry.elapsedMilliseconds, format: .number).monospacedDigit()
                 }.width(75)
-                TableColumn(String(localized: .diagnosticsInput)) { entry in Text(entry.inputLabel) }.width(min: 140, ideal: 170)
-                TableColumn(String(localized: .diagnosticsRawButton)) { entry in
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnInput)) { entry in Text(entry.inputLabel) }.width(min: 130, ideal: 160)
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnRaw)) { entry in
                     if case .button(let number) = entry.kind { Text(number, format: .number).monospacedDigit() }
                     else { Text(verbatim: "—") }
-                }.width(70)
-                TableColumn(String(localized: .diagnosticsPhase)) { entry in Text(entry.phaseLabel) }.width(min: 90, ideal: 125)
-                TableColumn(String(localized: .diagnosticsModifiers)) { entry in
+                }.width(min: 80, ideal: 95)
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnPhase)) { entry in Text(entry.phaseLabel) }.width(min: 90, ideal: 115)
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnModifiers)) { entry in
                     Text(entry.modifiers.glyphs + (entry.modifiers.contains(.function) ? "fn" : ""))
-                }.width(90)
-                TableColumn(String(localized: .diagnosticsOutcome)) { entry in Text(entry.outcomeLabel) }.width(min: 120, ideal: 150)
+                }.width(min: 95, ideal: 115)
+                TableColumn(AppLocalization.string(.advancedDiagnosticColumnOutcome)) { entry in Text(entry.outcomeLabel) }.width(min: 115, ideal: 140)
             }.overlay {
                 if model.diagnostics.entries.isEmpty {
-                    ContentUnavailableView(.diagnosticsEmpty, systemImage: "computermouse")
+                    VStack(spacing: 8) {
+                        Text(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsWait : .advancedDiagnosticsEmpty)
+                        Text(.advancedDiagnosticsStartHint).font(.callout).foregroundStyle(.secondary)
+                    }.padding().allowsHitTesting(false)
                 }
             }
-            Text(.diagnosticsOmitted(Int(clamping: model.diagnostics.omitted))).font(.caption).foregroundStyle(.secondary)
+            Text(.advancedDiagnosticCount(count1: model.diagnostics.entries.count, count2: Int(clamping: model.diagnostics.omitted)))
+                .font(.caption).foregroundStyle(.secondary)
             HStack {
-                Text(.diagnosticsLimits).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                Text(.advancedDiagnosticsLimits).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
             }
         }.padding(24).frame(width: 840, height: 570)
+            .background { PermissionCanvas() }
             .onDisappear { model.closeDiagnostics() }
+    }
+
+    private var blockedDescription: LocalizedStringResource {
+        if model.storageLocked { return .advancedDiagnosticsUnavailableBody }
+        if case .secureInput = model.status { return .advancedDiagnosticsSecureInput }
+        return .advancedDiagnosticsBlocked
     }
 }
 
 private extension InputDiagnostic {
     var inputLabel: String {
         switch kind {
-        case .button(let number): String(localized: .mouseButton(Int(number) + 1))
-        case .wheel(let direction): String(localized: direction.label)
-        case .unsupportedScroll: String(localized: .diagnosticsUnsupportedScroll)
+        case .button(let number): AppLocalization.string(.mouseButton(Int(number) + 1))
+        case .wheel(let direction): AppLocalization.string(direction.label)
+        case .unsupportedScroll: AppLocalization.string(.diagnosticsUnsupportedScroll)
         }
     }
     var phaseLabel: LocalizedStringResource {

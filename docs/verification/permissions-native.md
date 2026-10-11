@@ -1,5 +1,7 @@
 # First-run and permissions — native implementation
 
+Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
+
 2026-10-11, UI-001; SPEC §§6–8/10–11 and S2. Implementation is integrated and software-tested, **awaiting native permission/accessibility acceptance**. Baseline `main` / `acce2f4` plus existing uncommitted trackpad repair/design records and the permission implementation files below. No Git commit or Sketch edit/save was performed for this implementation.
 
 ## Implemented behavior
@@ -50,11 +52,11 @@ Reviewed 32 nonempty setup/permission/banner captures: three permission states �
 
 The complete main NavigationSplitView offscreen attempt was blank; it is excluded from accepted screenshot evidence. Main navigation/list/material/focus review must use an actual ordinary window. No global permission/preferences were changed to produce screenshots.
 
-Curated captures and locale/state contact sheets:
+Reviewed captures and locale/state contact sheets (now local):
 
-- [All setup locales/states](permissions-native/setup-montage.png), [all permission locales/states](permissions-native/settings-montage.png).
-- [English setup](permissions-native/setup-en-missing.png), [Russian event sending](permissions-native/setup-ru-posting.png), [French ready](permissions-native/setup-fr-ready.png).
-- [Compact German recovery, Dark](permissions-native/recovery-de-true.png), [English Settings](permissions-native/settings-en-missing.png), [German event-sending Settings](permissions-native/settings-de-posting.png), [Dark Settings](permissions-native/settings-wide-true.png), [French recovery banner](permissions-native/banner-fr-true.png).
+- All setup locales/states, all permission locales/states.
+- English setup, Russian event sending, French ready.
+- Compact German recovery, Dark, English Settings, German event-sending Settings, Dark Settings, French recovery banner.
 
 ## Remaining native acceptance and accessibility review
 
@@ -93,7 +95,7 @@ Computer Use screenshot and accessibility inspection confirmed:
 - A genuinely unacknowledged isolated configuration presents first-run setup. Clicking Set Up Later closes it, returns to the intact main window and persists acknowledgement while keeping global enabled false. The temporary host asserts both in-memory and saved values. The first attempt expired during an interruption before the click and failed those manual-action assertions; the repeated action/check completed successfully.
 - The final ordinary Debug bundle at `build/DerivedData/Build/Products/Debug/Rebind.app` was opened and screenshot-inspected after final tests/builds: the original blank-sidebar/clipping failure is absent. No configured action, rule edit or permission prompt was performed.
 
-Twenty-four additional native fixture captures covered compact setup/Settings locales, missing-posting/ready/recovery and Light/Dark main variants. Split-view cache captures contain incomplete composited backgrounds/text and are excluded from visual evidence; main-window claims above rely on on-screen Computer Use screenshots. Thirteen non-main captures were visually reviewed; curated [compact French setup](permissions-native/window-fix-setup-fr.png), [posting-required Settings](permissions-native/window-fix-permissions-posting.png) and [ready Dark Settings](permissions-native/window-fix-permissions-ready.png) remain. Temporary capture/manual-wait XCTest helpers were removed before the final run; only the self-verifying native geometry test remains. A temporary attempt to reinstate the faulty text modifier was interrupted; it is not a successful automated before/after check. Original measured geometry and final bounds checks provide the regression evidence.
+Twenty-four additional native fixture captures covered compact setup/Settings locales, missing-posting/ready/recovery and Light/Dark main variants. Split-view cache captures contain incomplete composited backgrounds/text and are excluded from visual evidence; main-window claims above rely on on-screen Computer Use screenshots. Thirteen non-main captures were visually reviewed; compact French setup, posting-required Settings and ready Dark Settings were inspected; their capture files are now local. Temporary capture/manual-wait XCTest helpers were removed before the final run; only the self-verifying native geometry test remains. A temporary attempt to reinstate the faulty text modifier was interrupted; it is not a successful automated before/after check. Original measured geometry and final bounds checks provide the regression evidence.
 
 Final checks on the repaired source, baseline `main` / `acce2f4` plus the existing uncommitted implementation:
 

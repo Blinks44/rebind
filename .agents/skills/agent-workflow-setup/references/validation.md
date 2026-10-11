@@ -26,8 +26,10 @@ Check the process against actual artifacts and evidence:
 - Are public README claims honest and the installed skill set licensed, relevant and free of conflicting project rules?
 - Was candidate discovery actually performed for the detected stack and upcoming work, with reviewed install/retain/skip decisions or a visible pending gap, even when setup changed only docs?
 - Can an already-open chat adopt changed instructions without losing its task? Are root README, AGENTS and shared docs each populated with project-specific content rather than template placeholders?
+- Are material setup questions grounded in an inspected gap, with usable choices and recommendations where appropriate? Are prior answers reused, assumptions explicit and dependent work still pending when a required answer is missing?
 - Does the workflow fit the actual deliverable/toolchain even outside the example ecosystems? Are verification and contract handoffs appropriate without invented app/UI steps?
 - Are ignore rules organized, relevant and narrow, with shared context, required inputs and safe examples still visible?
+- Do verification screenshots stay local by default, with concise durable results and a specific purpose for any versioned image? Are shipped assets and required visual-test baselines preserved?
 - Can the user simply continue development/design/the current task or name a feature, with role-aware selection and meaningful outcome reporting? Do handoffs resolve by name without asking for task/frame IDs or old transcripts?
 
 Fix concrete findings; do not claim a perfect or certified process from document completeness alone.
@@ -40,6 +42,11 @@ Use the following to challenge the configured workflow. Distinguish a written sc
 
 | Request / raw fixture | Expected observable result |
 | --- | --- |
+| Empty directory; request to configure an agent workflow without a product goal | Asks the needed outcome/target question; completes useful inspection/hygiene without invented stack, SPEC or development commands |
+| Existing repository with clear intent, clients and maintained contracts | Uses evidence and established conventions; no mandatory questionnaire or repeated request for known facts |
+| Two current trackers/design sources conflict on a requirement | Identifies the concrete conflict and asks which source governs it; preserves both and continues unaffected setup |
+| Required target/product decision receives no answer | Dependent changes remain pending, exact dependency is saved, independent work is completed; silence does not become approval |
+| Setup interrupted after a material decision was recorded | Reuses the decision, reconciles partial artifacts and resumes the same task; no repeated intake or reset |
 | “Set up this new SwiftUI app”; manifests and a few views | Detected Apple target; useful reviewed skills only; real build commands; no invented completed design/features |
 | “Configure this existing web repo”; CONTRIBUTING/ADR/task tracker, dirty files | Reuses owning docs; preserves dirty files and old evidence; no duplicate backlog or macOS rules |
 | “Set up backend agent work”; API/schema tests, no UI | API/data contract and relevant checks; no invented Sketch/design screen tree |
@@ -55,6 +62,7 @@ Use the following to challenge the configured workflow. Distinguish a written sc
 | Unfamiliar firmware/game/data/engineering project | Inspects real inputs/tools/target and derives contracts/checks; no rejection based on an ecosystem list or invented UI workflow |
 | Existing ignore rules include required nested fixtures or shared agent files | Repairs only demonstrated rule conflicts, tests excluded and kept paths, preserves intentional tracked artifacts; no automatic untracking |
 | Local agent logs/private overrides alongside shared skills/config examples | Excludes actual local paths narrowly; shared instructions/tasks/skills and safe examples stay visible; no whole-client-directory exclusion |
+| Native/browser/design visual review alongside shipped images and visual-test baselines | Reviews the actual artifact; temporary screenshots stay local, concise results stay versioned, required assets/baselines remain visible; any extra versioned image has a specific documented purpose |
 | Project has no Git repository | Adapts established VCS conventions or records pending Git hygiene; no implicit Git initialization or claimed Git checks |
 | “Continue the design”; top global priority is a hardware regression | Chooses the actionable design prerequisite, preserves hardware gate and role; no request for a task ID |
 | “Continue the task”; this chat has partial implementation | Resumes that outcome after reconciling actual edits; no switch to an unrelated top-priority task or destructive restart |

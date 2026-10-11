@@ -1,5 +1,6 @@
 # General settings — design delivery
 
+Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Saved and reviewed 2026-10-11. Scope: UI-003, SPEC §§6, 8, 10–11 / S1, design only. Git baseline `main` / `acce2f4`; prior permission/alignment work and concurrent trackpad engineering are preserved. `rebindApp.swift` and `AppModel` were inspected for window lifetime, Menu Bar, quit and enabled-state behavior. No app source, real configuration, login item or permissions changed.
 
 ## Saved source and preservation
@@ -12,16 +13,16 @@ Saved-model comparison with the preceding alignment revision (`50859f5…`) reta
 
 | Frame | Stable ID | Size | Evidence |
 | --- | --- | --- | --- |
-| 23 · General / Enabled · Light, login off | `2C9A6A68-F839-46C2-BF15-E672107FB024` | 1040 × 640 | [Light](general-settings/general-light.png) |
-| 24 · General / Paused · Dark, login on | `410A654D-4DF2-4810-9EA2-79242185FEC3` | 1040 × 640 | [Dark](general-settings/general-dark.png) |
-| 25 · Login approval required | `067A6C10-7A7D-406A-B26F-FABEDC1DA9DD` | 1040 × 640 | [Approval](general-settings/login-approval.png) |
-| 26 · Login enable failed | `4788D158-8D0B-4FF1-9606-CAA460194EFF` | 1040 × 640 | [Enable error](general-settings/login-enable-error.png) |
-| 27 · Required access missing, enabled intent retained | `10363873-FAC1-4DCA-9180-0315D7C493F9` | 1040 × 640 | [Missing access](general-settings/general-permissions-missing.png) |
-| 28 · General / German | `53A0F080-03E7-4FE8-A05E-8EB1AF8DF7AF` | 880 × 600 | [German](general-settings/general-german.png) |
-| 29 · General / Russian | `94510528-E1B3-403B-97AA-943B664B5D8D` | 880 × 600 | [Russian](general-settings/general-russian.png) |
-| 30 · General / French | `72D357F2-458E-432D-B344-DE9310F27F6C` | 880 × 600 | [French](general-settings/general-french.png) |
-| 31 · Login removal failed | `C9407364-ECD6-4C46-B051-EECF9BB7A031` | 1040 × 640 | [Removal error](general-settings/login-disable-error.png) |
-| 32 · Remapping could not start, enabled intent retained | `2BDAD1BE-0E66-42EB-82EC-EDFED6974A84` | 1040 × 640 | [Engine error](general-settings/general-engine-error.png) |
+| 23 · General / Enabled · Light, login off | `2C9A6A68-F839-46C2-BF15-E672107FB024` | 1040 × 640 | [Light](../DESIGN.md#screen-index-and-implementation-status) |
+| 24 · General / Paused · Dark, login on | `410A654D-4DF2-4810-9EA2-79242185FEC3` | 1040 × 640 | [Dark](../DESIGN.md#screen-index-and-implementation-status) |
+| 25 · Login approval required | `067A6C10-7A7D-406A-B26F-FABEDC1DA9DD` | 1040 × 640 | [Approval](../DESIGN.md#screen-index-and-implementation-status) |
+| 26 · Login enable failed | `4788D158-8D0B-4FF1-9606-CAA460194EFF` | 1040 × 640 | [Enable error](../DESIGN.md#screen-index-and-implementation-status) |
+| 27 · Required access missing, enabled intent retained | `10363873-FAC1-4DCA-9180-0315D7C493F9` | 1040 × 640 | [Missing access](../DESIGN.md#screen-index-and-implementation-status) |
+| 28 · General / German | `53A0F080-03E7-4FE8-A05E-8EB1AF8DF7AF` | 880 × 600 | [German](../DESIGN.md#screen-index-and-implementation-status) |
+| 29 · General / Russian | `94510528-E1B3-403B-97AA-943B664B5D8D` | 880 × 600 | [Russian](../DESIGN.md#screen-index-and-implementation-status) |
+| 30 · General / French | `72D357F2-458E-432D-B344-DE9310F27F6C` | 880 × 600 | [French](../DESIGN.md#screen-index-and-implementation-status) |
+| 31 · Login removal failed | `C9407364-ECD6-4C46-B051-EECF9BB7A031` | 1040 × 640 | [Removal error](../DESIGN.md#screen-index-and-implementation-status) |
+| 32 · Remapping could not start, enabled intent retained | `2BDAD1BE-0E66-42EB-82EC-EDFED6974A84` | 1040 × 640 | [Engine error](../DESIGN.md#screen-index-and-implementation-status) |
 
 All ten states inspected with explicit-ID MCP screenshots after their relevant edits. Ten final 1× PNG exports have matching header dimensions. New Permissions/About prototype links and missing-access CTA: **21 valid connections**, none launch System Settings or change actual login state. Existing frames' inbound navigation is unchanged. Prototype permissions destinations are design references; the native app must retain actual grants and current locale.
 
@@ -40,7 +41,7 @@ Glass stays on navigation/profile controls. Calm semantic content surfaces reuse
 
 ## Behavior and implementation handoff
 
-- **Global enabled:** bind to the existing persisted global enabled state, using its safe cancellation/passthrough path. Pausing retains rules/profile. Failed storage changes retain the prior state; respect configuration locking. Reuse the existing Menu Bar pause/resume control and keep all surfaces synchronized.
+- **Global enabled:** bind to the existing persisted global enabled state, using its safe cancellation/passthrough path. Pausing retains rules/profile. Failed resume retains paused state; explicit pause cancels output immediately and remains paused in memory even if saving fails, exposing the save error. A failed write does not establish durable pause after relaunch. Respect configuration locking. Reuse the existing Menu Bar pause/resume control and keep all surfaces synchronized.
 - **Actual runtime:** display Active only while runtime state reports running. Enabled intent can coexist with missing grants, a starting state or an engine error. Show permission recovery or bounded retry accordingly; never label the checkbox itself as proof of a running tap. Background/login changes must preserve deliberate pause.
 - **Login off/on:** use actual `SMAppService.mainApp.status`. `notRegistered` displays Off; `enabled` displays On. Register/unregister only following the corresponding explicit user action, then refresh real status. Do not overwrite OS state with a stale JSON boolean or change remapping enabled state when registering.
 - **Approval:** `requiresApproval` uses frame 25: explain approval, Open Login Items, Check Again, Turn Off. Open the public Login Items panel; re-check on focus/return and explicit Check Again. Turn Off cancels registration. Clicking Open Login Items is not approval evidence.
@@ -54,12 +55,12 @@ API basis refreshed 2026-10-11: Apple's [SMAppService](https://developer.apple.c
 
 ## Copy and verification limits
 
-[Copy handoff](general-settings-copy.json): **25 new keys × EN/RU/DE/FR**, plus existing Settings/common copy from [permissions handoff](permissions-onboarding-copy.json) and navigation/Quit Rebind from the app catalog. All four keys sets are complete and nonempty; the JSON is not app integration. German/Russian/French ordinary General layouts were inspected at 880 × 600. Recovery/error/progress translations are authored but their rendered/native localization remains open.
+[Copy handoff](general-settings-copy.json): **25 new keys × EN/RU/DE/FR**, plus existing Settings/common copy from [permissions handoff](permissions-onboarding-copy.json) and navigation/Quit Rebind from the app catalog. All four keys sets are complete and nonempty; all 25 keys are now integrated exactly in the app catalog; [native evidence](general-settings-native.md) records the subsequent implementation. German/Russian/French ordinary General layouts were inspected at 880 × 600. Recovery/error/progress translations are authored; subsequent native fixtures cover all four locales. Actual login and assistive-technology acceptance remains open.
 
 Expanded Light/Dark at **1280 × 800** preserve sidebar/footer anchors and control size. Russian at **850 × 560** retains readable controls and wrapping. Early minimum captures exposed deferred nested layout clipping; row edge anchors and explicit settled Stack recalculation corrected it. After final restoration, all **96 local screen-node frames** in Light/Dark/Russian match the pre-roundtrip geometry exactly. Sketch deferred recalculation required a fresh call/settling and gap invalidation before accepting restored nested widths; do not accept the first stale capture or serialize entire library-rich trees. This scoped check does not prove every possible size or native scrolling.
 
 Saved ZIP/digest/model preservation, export sizes, prototype targets, copy JSON, affected links/status and `git diff --check` were checked. No app build, launch, real login registration, grants, remapping, hardware or native accessibility checks in this design-only task. No Git commit made. Runtime/minimum-OS/locale/accessibility acceptance remains open for implementation.
 
-**Next code action:** implement the prepared General settings and background behavior using actual system/runtime state, existing persistence/Menu Bar and the first-run/permissions handoff. Test login off/on/approval/failures, external OS changes, relaunch/login while paused or missing grants, storage failure, window reopening, all locales and native accessibility on an identified bundle.
+**Current native handoff:** General is implemented/software-tested; [native evidence](general-settings-native.md) owns final artifacts, fixture checks and remaining actual login/relaunch/accessibility acceptance. Next independent code slice: Input overview and per-binding Hold timing.
 
-**Next design slice:** remaining Settings → Input, starting with controls backed by currently implemented gesture timing/thresholds. Preserve unsupported categories and the experimental trackpad boundary; Language and Advanced remain separate later slices.
+**Current design handoff:** Input and Language are delivered in UI-004/UI-005; next Settings slice is Advanced. Preserve unsupported categories and the experimental trackpad boundary.

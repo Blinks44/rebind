@@ -10,28 +10,28 @@ enum InputLabels {
         // Translate an explicitly configured physical key, never received typed text.
         guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
               let raw = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else {
-            return String(localized: .physicalKey(Int(code)))
+            return AppLocalization.string(.physicalKey(Int(code)))
         }
         let data = Unmanaged<CFData>.fromOpaque(raw).takeUnretainedValue()
-        guard let bytes = CFDataGetBytePtr(data) else { return String(localized: .physicalKey(Int(code))) }
+        guard let bytes = CFDataGetBytePtr(data) else { return AppLocalization.string(.physicalKey(Int(code))) }
         let layout = UnsafeRawPointer(bytes).assumingMemoryBound(to: UCKeyboardLayout.self)
         var deadKey: UInt32 = 0
         var length = 0
         var characters = [UniChar](repeating: 0, count: 8)
         let result = UCKeyTranslate(layout, code, UInt16(kUCKeyActionDisplay), 0, UInt32(LMGetKbdType()), OptionBits(kUCKeyTranslateNoDeadKeysBit), &deadKey, characters.count, &length, &characters)
-        guard result == noErr, length > 0 else { return String(localized: .physicalKey(Int(code))) }
+        guard result == noErr, length > 0 else { return AppLocalization.string(.physicalKey(Int(code))) }
         return String(utf16CodeUnits: characters, count: length).uppercased()
     }
 
     static func trigger(_ trigger: InputTrigger, modifiers: ModifierSet) -> String {
         let label: String
         switch trigger {
-        case .fourFingerTap: label = String(localized: .fourFingerTap)
+        case .fourFingerTap: label = AppLocalization.string(.fourFingerTap)
         case .key(let code): label = key(code)
-        case .mouseButton(let number): label = String(localized: .mouseButton(Int(number) + 1))
+        case .mouseButton(let number): label = AppLocalization.string(.mouseButton(Int(number) + 1))
         case .mouseGesture(let button, let direction):
-            label = String(localized: .mouseGesture(Int(button) + 1, String(localized: direction.label)))
-        case .scroll(let direction): label = String(localized: direction.label)
+            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label)))
+        case .scroll(let direction): label = AppLocalization.string(direction.label)
         }
         return modifiers.glyphs + label
     }

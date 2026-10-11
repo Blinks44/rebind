@@ -1,5 +1,5 @@
 {
-  "status": "Design handoff; not integrated into Localizable.xcstrings",
+  "status": "Integrated into Localizable.xcstrings; native acceptance recorded in input-language-native.md",
   "locales": [
     "en",
     "ru",
@@ -116,5 +116,8 @@
       "de": "Deine vorherige Belegung bleibt unverändert. Lass dieses Fenster geöffnet und versuche erneut zu speichern.",
       "fr": "Votre remappage précédent est inchangé. Gardez cette fenêtre ouverte et réessayez d’enregistrer."
     }
+  },
+  "catalogAliases": {
+    "builtInTrackpad": "inputBuiltInTrackpad"
   }
 }

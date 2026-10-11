@@ -1,5 +1,7 @@
 # Native app-icon integration — 2026-10-10
 
+Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
+
 Scope: SPEC §10 Application icon / PLAN Phase 8. User authorized delivery of the finished Sketch icon through Icon Composer and Xcode. No app logic, rules, configuration, permissions or engine behavior changed.
 
 ## Delivery
@@ -20,7 +22,7 @@ Foreground centered at 123%, preserving its proportion relative to the inset sta
 - Live Composer composition/appearance screenshots inspected. Finder Get Info for the actual Debug app shows new header and large preview. No app launch or engine activation.
 - JSON parses; local image references, copied SVG identity, platform/scale/shadow/appearance overrides pass. `plutil -lint` does not accept this JSON as a property list; JSON validation used instead. No behavioral tests for asset-only integration.
 
-![Native appearance exports](app-icon-composer-appearances.png)
+Appearance exports were inspected during the dated checks above; the capture copy is now local.
 
 Tint previews use renderer defaults and do not guarantee contrast for every user hue/strength. Very dark tints reduce small-size contrast; user's actual tint remains a manual check. Actual Dock after relaunch and macOS 26/Intel execution unverified. No global cache resets or Dock restarts.
 

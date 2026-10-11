@@ -8,10 +8,11 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 ## Existing pending handoffs
 
-- [INPUT-001](INPUT-001-four-finger-tap.md): existing built-in four-finger implementation awaiting revised hardware acceptance.
+- [INPUT-001](INPUT-001-four-finger-tap.md): built-in four-finger delivery/click recovery and requested lifecycle/mixed-input walkthrough user-confirmed; quantified stress/full safety/platform checks remain.
 - [UI-001](UI-001-permissions-onboarding.md): native first-run/recovery and Settings → Permissions integrated; reported window clipping repaired; 508 Swift Testing cases plus one native layout test pass. Native navigation/deferral checked; actual-grant/accessibility acceptance remains open.
-- [UI-003](UI-003-general-settings.md): General/background design ready; ten states, four reusable sources and four-language copy. Native login/runtime/accessibility checks pending.
-- [UI-004](UI-004-input-settings.md): Input overview and per-binding hold timing ready; seven frames, four sources and four-language copy. Native/editor locale/accessibility and save acceptance pending.
+- [UI-003](UI-003-general-settings.md): General/background implemented, awaiting verification; 532 tests / zero failures, full-main overflow repaired, 224 full Settings combinations and live Dark/compact navigation checked. AppKit warning isolated to OS sharing/inspection; actual login/relaunch/VoiceOver acceptance pending.
+- [UI-004](UI-004-input-settings.md): Input/Hold integrated; software/full-window and native Stepper/save retry pass. Physical timing and full editor/accessibility acceptance remain open.
+- [UI-005](UI-005-language-settings.md): native five-choice Language/atomic persistence/reopen feedback and schema 24 integrated; software/layout/live Apply/AX pass. Production relaunch/Cocoa repair and full accessibility remain open.
 - [BRAND-001](BRAND-001-icon-runtime.md): delivered icons awaiting remaining runtime/minimum-OS checks.
 
 These records were seeded from current artifacts/evidence on 2026-10-10. No running agent was assigned ownership. Claim a bounded surface when beginning authorized work, and release/transfer ownership in the saved handoff. Re-read before touching shared docs/styles/code; do not treat an old owner field as proof that a chat is still active.
@@ -21,3 +22,7 @@ Completed documentation migration: [DOC-001](DOC-001-agent-workflow.md). Its com
 Workflow review and reusable skill: [DOC-002](DOC-002-workflow-review-skill.md). This is process/tooling work; product acceptance remains separate.
 
 Completed Sketch alignment repair: [UI-002](UI-002-alignment-review.md), with current revision and verification in [alignment evidence](../verification/alignment-review.md).
+
+Completed bounded macOS materials/recent Settings review: [UI-006](UI-006-material-design-review.md). [Review and dated API evidence](../verification/material-design-review.md) accompany the current Sketch source; native adoption and accessibility remain separate.
+
+Advanced design is saved/reviewed and ready in [UI-007](UI-007-advanced-settings.md); read Screens 48–69 and its Foundations annotations directly in Sketch. Completed independent [UI-008 backup foundation](UI-008-advanced-storage.md), with [553-test/Debug evidence](../verification/advanced-backup-foundation.md), is ready for native confirmation/import/export/reset integration using that released design scope.

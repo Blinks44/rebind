@@ -7,18 +7,19 @@ struct GeneralSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            // Outside the scroll view, text must honor the split view's size proposals.
             VStack(alignment: .leading, spacing: 8) {
                 Text(model.generalRuntime.title).font(.headline).accessibilityAddTraits(.isHeader)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 if model.generalRuntime != .starting {
                     Text(model.generalRuntime.description).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
                 if model.generalRuntime == .missingAccess {
                     Button(.permissionsTitle, action: openPermissions).buttonStyle(.bordered)
                 } else if model.generalRuntime == .engineError {
                     Button(.tryAgain) { model.retryRemapping() }.buttonStyle(.bordered)
                 }
-            }.padding(.horizontal, 28)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 28)
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     PermissionCard {
@@ -26,6 +27,8 @@ struct GeneralSettingsView: View {
                             settingLabel(.enableRemapping, description: .enableRemappingDescription)
                         }
                         .toggleStyle(.switch)
+                        .accessibilityLabel(Text(.enableRemapping))
+                        .accessibilityHint(Text(.enableRemappingDescription))
                         .disabled(model.storageLocked && !model.configuration.isEnabled)
                     }
                     LoginItemSettingsRow(model: model.loginItem)
@@ -42,6 +45,7 @@ struct GeneralSettingsView: View {
                 .padding(.horizontal, 28).padding(.bottom, 28)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private var remappingEnabled: SwiftUI.Binding<Bool> {
@@ -57,5 +61,6 @@ struct GeneralSettingsView: View {
             Text(description).font(.callout).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

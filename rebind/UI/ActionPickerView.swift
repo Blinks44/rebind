@@ -38,8 +38,8 @@ struct ActionPickerView: View {
     private var matchingKinds: [ActionKind] {
         ActionKind.allCases.filter {
             return search.isEmpty
-                || String(localized: $0.title).localizedStandardContains(search)
-                || String(localized: $0.category.title).localizedStandardContains(search)
+                || AppLocalization.string($0.title).localizedStandardContains(search)
+                || AppLocalization.string($0.category.title).localizedStandardContains(search)
         }
     }
 

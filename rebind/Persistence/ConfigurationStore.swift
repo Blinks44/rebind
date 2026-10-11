@@ -13,17 +13,12 @@ nonisolated struct ConfigurationStore: Sendable {
 
     func load() throws -> Configuration {
         guard FileManager.default.fileExists(atPath: url.path) else { return Configuration() }
-        let data = try Data(contentsOf: url)
-        guard data.count <= Self.maximumBytes else { throw ConfigurationError.invalid }
-        let configuration = try JSONDecoder().decode(Configuration.self, from: data)
         // Migration is in memory. Preserve the original until a successful save.
-        return try configuration.migrated()
+        return try ConfigurationBackup(contentsOf: url).configuration
     }
 
     func save(_ configuration: Configuration) throws {
-        try configuration.validate()
-        let data = try JSONEncoder().encode(configuration)
-        guard data.count <= Self.maximumBytes else { throw ConfigurationError.invalid }
+        let data = try ConfigurationBackup(configuration: configuration).encoded()
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
                                                 withIntermediateDirectories: true)
         // If reading fails, the UI locks editing; never overwrite an unreadable file.

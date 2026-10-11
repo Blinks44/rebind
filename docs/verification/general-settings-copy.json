@@ -1,5 +1,5 @@
 {
-  "status": "Design handoff; not integrated into Localizable.xcstrings",
+  "status": "Integrated exactly into Localizable.xcstrings on 2026-10-11; native login/accessibility acceptance remains open",
   "locales": ["en", "ru", "de", "fr"],
   "sharedCopy": "permissions-onboarding-copy.json owns Settings title, description, section names, Permissions and Check Again; existing app catalog owns category names and Quit Rebind",
   "strings": {

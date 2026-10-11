@@ -11,6 +11,7 @@ import Dispatch
     private(set) var status: EngineStatus = .paused
     private(set) var permissions = InputPermissions()
     private(set) var storageLocked = false
+    private(set) var configurationReplacementRevision: UInt64 = 0
     var error: LocalizedStringResource?
     var recording: RecordingRequest?
     var lastRecording: RecordedInput?
@@ -19,6 +20,9 @@ import Dispatch
     private(set) var workspaceActionInProgress = false
     private(set) var appleShortcutInProgress = false
     let loginItem: LoginItemModel
+    let activeLanguage: AppLanguage
+    @ObservationIgnored private let systemLanguages: [String]
+    @ObservationIgnored private let languagePreferenceSaved: (AppLanguagePreference) -> Void
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
@@ -37,17 +41,71 @@ import Dispatch
     init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true,
          sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() },
          readPermissions: @escaping () -> InputPermissions = { .current() },
-         loginItem: LoginItemModel = LoginItemModel()) {
+         loginItem: LoginItemModel = LoginItemModel(),
+         preferredLanguages: [String] = AppLanguageDefaults.systemPreferredLanguages,
+         languagePreferenceSaved: @escaping (AppLanguagePreference) -> Void = { _ in }) {
         self.loginItem = loginItem
         self.sessionAllowsInput = sessionAllowsInput
         self.readPermissions = readPermissions
         self.store = store
+        systemLanguages = preferredLanguages
+        self.languagePreferenceSaved = languagePreferenceSaved
+        var loaded = Configuration()
+        var loadFailed = false
+        if loadConfiguration {
+            do { loaded = try store.load() }
+            catch { loadFailed = true }
+        }
+        activeLanguage = loaded.languagePreference.resolved(preferredLanguages: preferredLanguages)
         super.init()
         permissions = readPermissions()
-        if loadConfiguration {
-            do { configuration = try store.load() }
-            catch { storageLocked = true; self.error = .storageUnreadable }
+        configuration = loaded
+        if loadFailed { storageLocked = true; self.error = .storageUnreadable }
+    }
+
+    var requiresLanguageReopen: Bool {
+        configuration.languagePreference.resolved(preferredLanguages: systemLanguages) != activeLanguage
+    }
+
+    var configurationFileURL: URL { store.url }
+
+    /// A confirmed whole-document transaction. Persist before changing any runtime state.
+    func replaceConfiguration(with replacement: Configuration, expected: Configuration,
+                              revision: UInt64) throws {
+        guard !storageLocked else { throw ConfigurationReplacementError.protectedOriginal }
+        guard configuration == expected, configurationReplacementRevision == revision else {
+            throw ConfigurationReplacementError.staleReview
         }
+        // A file changed outside this process must be reviewed again, never overwritten.
+        guard try store.load() == expected else { throw ConfigurationReplacementError.staleReview }
+        var updated = replacement
+        updated.isEnabled = false
+        // Setup acknowledgement is local lifecycle state, not a backup preference.
+        updated.hasCompletedSetup = configuration.hasCompletedSetup
+        try store.save(updated)
+        let languageChanged = updated.languagePreference != configuration.languagePreference
+        recording = nil
+        lastRecording = nil
+        mailbox.record(nil)
+        closeDiagnostics()
+        workspaceTask?.cancel()
+        configuration = updated
+        configureEngine(updated)
+        status = .paused
+        error = nil
+        configurationReplacementRevision &+= 1
+        if languageChanged { languagePreferenceSaved(updated.languagePreference) }
+    }
+
+    /// A UI-only transaction: do not reconfigure/cancel/restart the input engine.
+    func saveLanguagePreference(_ preference: AppLanguagePreference) throws {
+        guard !storageLocked else { throw ConfigurationError.incompatible }
+        guard preference != configuration.languagePreference else { return }
+        var updated = configuration
+        updated.languagePreference = preference
+        try store.save(updated)
+        configuration = updated
+        languagePreferenceSaved(preference)
     }
 
     func start() {
@@ -236,7 +294,7 @@ import Dispatch
     var canRecord: Bool { permissions.allowsRemapping && mailbox.state.withLock { !$0.suspended && !$0.stopped } }
 
     var canStartDiagnostics: Bool {
-        guard canRecord else { return false }
+        guard !storageLocked, canRecord else { return false }
         if case .secureInput = status { return false }
         return mailbox.state.withLock { !$0.suspended && !$0.stopped }
     }

@@ -18,9 +18,9 @@
 - [ ] <Relevant software/native/hardware checks; distinguish those that require the user/device>
 - [ ] Task/evidence, STATE and affected contracts updated before final handoff.
 
-## Design handoff (when applicable)
+## Sketch source (when applicable)
 
-<Document path/share link; date/saved revision/digest if available; freshly resolved document ID; stable frame/source IDs; components/styles; copy; applicable states; user acceptance only if actually given. Design edits do not mean native implementation.>
+<Short source/date and ready-scope pointer. Components, visual states, copy and annotations live in Sketch; the receiving agent reads it directly through MCP. Do not mirror its inventory or export routine PNGs. Design edits do not mean native implementation. Record user acceptance only if supplied. Omit irrelevant template sections.>
 
 ## Implementation and verification
 
