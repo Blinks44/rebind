@@ -123,7 +123,7 @@ import Testing
         let bytes = try JSONEncoder().encode(legacy)
         try bytes.write(to: store.url)
         let loaded = try store.load()
-        #expect(loaded.schemaVersion == 24 && loaded.languagePreference == .system)
+        #expect(loaded.schemaVersion == Configuration.currentSchemaVersion && loaded.languagePreference == .system)
         #expect(loaded.hasCompletedSetup == (version != 23))
         #expect(try Data(contentsOf: store.url) == bytes)
     }

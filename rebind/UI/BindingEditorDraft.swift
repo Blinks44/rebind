@@ -9,6 +9,15 @@ nonisolated struct BindingEditorDraft {
     var holdDurationMilliseconds: UInt32
     var pointerDirection: PointerDirection
 
+    var trackpadPreset: TrackpadPreset? {
+        get { trigger.flatMap { TrackpadPreset(trigger: $0.trigger) } }
+        set {
+            guard let newValue else { return }
+            trigger = MatchKey(trigger: newValue.gesture.trigger, modifiers: [])
+            activation = .press
+        }
+    }
+
     init(scope: DeviceScope, existing: Binding?) {
         trigger = existing?.matchKey.pressSource
             ?? (scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil)

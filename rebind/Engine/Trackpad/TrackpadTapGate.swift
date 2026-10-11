@@ -1,6 +1,6 @@
 // Conservative reusable settling gate; it cannot suppress system gestures.
 // A button-free interval is a conservative test condition, not source proof.
-nonisolated struct FourFingerTapGate: Sendable {
+nonisolated struct TrackpadTapGate: Sendable {
     enum Reason: String, Encodable, Sendable {
         case buttonEvent = "button-event", newContact = "new-contact"
         case observerUnavailable = "observer-unavailable", invalidContacts = "invalid-contacts"
@@ -70,7 +70,7 @@ nonisolated struct FourFingerTapGate: Sendable {
         guard validTime(time) else { rejection = .receiptTime; return false }
         guard observerReady else { rejection = .observerUnavailable; return false }
         guard neutral, !inContact, buttons == completedButtons else { rejection = .noCompleteStroke; return false }
-        guard fingers == 4 else { rejection = .otherFingerCount; return false }
+        guard TrackpadSingleTap(rawValue: fingers) != nil else { rejection = .otherFingerCount; return false }
         guard time - startedAt >= Self.armingDelay else { rejection = .armingDelay; return false }
         guard time <= UInt64.max - Self.settlingDelay else { rejection = .deadlineOverflow; return false }
         pendingAt = time

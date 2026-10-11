@@ -9,6 +9,7 @@ struct BindingCaptureField: View {
     let record: () -> Void
     let cancel: () -> Void
     let clear: () -> Void
+    var wrapsControls = false
     @FocusState private var cancelFocused: Bool
     @FocusState private var recordFocused: Bool
 
@@ -27,17 +28,15 @@ struct BindingCaptureField: View {
                         .keyboardShortcut(.cancelAction)
                 }.frame(maxWidth: .infinity).padding(.vertical, 12)
             } else {
-                HStack(spacing: 12) {
-                    Text(value ?? AppLocalization.string(target == .output ? .mouseNoOutput : .mouseNoTrigger))
-                        .font(.headline).frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Button(target == .output ? LocalizedStringResource.recordOutput : .recordTrigger, action: record)
-                        .focused($recordFocused).disabled(!canRecord || recording != nil)
-                    Button(target == .output ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger,
-                           systemImage: "xmark", action: clear)
-                        .labelStyle(.iconOnly).buttonStyle(.borderless)
-                        .disabled(value == nil || recording != nil)
-                }
+                if wrapsControls {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 12) { captureValue; recordButton.fixedSize(); clearButton }
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack { captureValue; clearButton }
+                            recordButton.fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                } else { HStack(spacing: 12) { captureValue; recordButton; clearButton } }
             }
         }
         .onChange(of: isListening) { wasListening, listening in
@@ -46,6 +45,24 @@ struct BindingCaptureField: View {
                 AccessibilityNotification.Announcement(AppLocalization.string(prompt)).post()
             } else if wasListening { recordFocused = true }
         }
+    }
+
+    private var captureValue: some View {
+        Text(value ?? AppLocalization.string(target == .output ? .mouseNoOutput : .mouseNoTrigger))
+            .font(.headline).frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var recordButton: some View {
+        Button(target == .output ? LocalizedStringResource.recordOutput : .recordTrigger, action: record)
+            .focused($recordFocused).disabled(!canRecord || recording != nil)
+    }
+
+    private var clearButton: some View {
+        Button(target == .output ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger,
+               systemImage: "xmark", action: clear)
+            .labelStyle(.iconOnly).buttonStyle(.borderless)
+            .disabled(value == nil || recording != nil)
     }
 
     private var prompt: LocalizedStringResource {

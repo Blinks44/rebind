@@ -1,6 +1,6 @@
 # Rebind — design direction and live source index
 
-Updated 2026-10-11. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-12. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under [UI-013](tasks/UI-013-design-coverage-completion.md). Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
@@ -18,7 +18,7 @@ Use semantic colors and adaptive materials. Reduce Transparency preserves layout
 
 ## Resolve the current document
 
-Open **Rebind.sketch** through Sketch MCP. Load `mcp`, then `use`, resolve the open document by name, inspect relevant trees/styles and screenshots. Last successful save/review: **2026-10-11**, document ID `A610E1D4-B7CF-4D5D-9357-1292E3177726`, SHA-256 `fa4897163d679b783e139ef2ffc5c98a749e6c53a2f0efb7c9ceeb85c4349a46`. IDs are lookup hints: refresh after saving/reopening. The source has **89 screen/state frames**. The current feedback revision preserves all existing IDs/text, screen names/bounds and Brand; the preceding control revision refined Mouse editor heights/canvas spacing.
+Open **Rebind.sketch** through Sketch MCP. Load `mcp`, then `use`, resolve the open document by name, inspect relevant trees/styles and screenshots. Last successful save/review: **2026-10-12**, document ID `4B31A177-0924-4510-AC9B-D71EB9C06470`, SHA-256 `5250db199656efb0cba7757cde50758c5fd85ad361dbbb3483dbf5d098a4e3c8`. IDs are lookup hints: refresh after saving/reopening. The source has **125 screen/state frames**. UI-013 preserves all 89 baseline screen IDs/names/bounds and Brand, while replacing temporary capability copy and updating Input/About for the final product. The latest correction compacts the new canvas sections and centers shared Light/Dark keycaps.
 
 Sketch is saved separately from Git. If access is unavailable, request the missing connection/document and continue independent engineering; do not substitute an old PNG. Routine PNG exports and duplicate visual manuals are unnecessary. Native test results and shipped icon assets remain in Git; verification screenshots stay local by default under [WORKFLOW](WORKFLOW.md#repository-content-and-language).
 
@@ -32,7 +32,7 @@ Sketch is saved separately from Git. If access is unavailable, request the missi
 | 04 · Symbols | Live reusable Light/Dark sources |
 | 05 · Brand | Editable icon/Menu Bar artwork and review boards |
 
-Reuse existing sources, shared styles, Color Variables and **Apple macOS 26 UI Kit**. Keep imported components linked. Foundations **04 · Layout / Materials / Accessibility** owns the shape/material guidance; **05 · Advanced / Behavior & native implementation** and **06–10 · Advanced / Localization** own Advanced annotations/copy. **11 · Mouse / Behavior & accessibility** and **12–13 · Mouse / Localization** own Mouse interaction and EN/RU/DE/FR copy. **14 · Controls / Glass family & native states** owns the latest shared materials and spacing, including the superseding popup/tab treatment. **15 · Feedback / Semantic states & accessibility** owns current severity, paired reusable samples and native accessibility/persistence guidance. Native panels/alerts own exact macOS appearance, focus and adaptive sizing.
+Reuse existing sources, shared styles, Color Variables and **Apple macOS 26 UI Kit**. Keep imported components linked. Foundations **04 · Layout / Materials / Accessibility** owns the shape/material guidance; **05 · Advanced / Behavior & native implementation** and **06–10 · Advanced / Localization** own Advanced annotations/copy. **11 · Mouse / Behavior & accessibility** and **12–13 · Mouse / Localization** own Mouse interaction and EN/RU/DE/FR copy. **14 · Controls / Glass family & native states** owns the latest shared materials and spacing, including the superseding popup/tab treatment. **15 · Feedback / Semantic states & accessibility** owns current severity, paired reusable samples and native accessibility/persistence guidance. **16–22** own curated touch presets, action/profile recovery, new four-language copy and final runtime/menu/accessibility variants. Native panels/alerts own exact macOS appearance, focus and adaptive sizing.
 
 ## Screen index and implementation status
 
@@ -45,22 +45,15 @@ Reuse existing sources, shared styles, Color Variables and **Apple macOS 26 UI K
 | 40–47 | Language System/EN/RU/DE/FR, draft/apply/menu/failure/reopen | Integrated; production relaunch/accessibility remain in [UI-005](tasks/UI-005-language-settings.md) |
 | 48–69 | Advanced overview Light/Dark; RU/DE/FR compact; native import/reset confirmations; protected original/import/write/export failures; completed import/reset; validation progress; stopped/recording/unavailable/localized diagnostics | Design ready and native integration implemented in [UI-007](tasks/UI-007-advanced-settings.md), using UI-008's codec. [Software/native cancellation checks pass](verification/advanced-settings-native.md); restored-binding/runtime/accessibility acceptance remains |
 | 70–89 | Mouse list Light/Dark/compact DE, empty/search states; numeric button, discrete wheel, cardinal pointer and Hold editors; input/output recording, unavailable/conflict/save failure; Dark and RU/DE/FR editors | Integrated in [UI-009](tasks/UI-009-mouse-design.md); [software/native sizing and scoped live editor checks](verification/mouse-native.md) pass. Physical capture/cancellation, accessibility and adaptive materials remain open; the released UI-011 shared-material refinement needs native adoption |
+| 90–126 (98 removed) | Final Trackpad/Magic Mouse lists and preset editors/menus, shared action parameters/catalog/recovery, profile management, category empty/search states, Dark and localized variants | [UI-013](tasks/UI-013-design-coverage-completion.md) saved/reviewed and ready for native implementation; capability/runtime/accessibility acceptance remains separate |
 
-The earlier Keyboard Work example contains unsupported action/input examples. Mouse examples follow the current numeric-button/discrete-wheel/cardinal-gesture scope but do not verify hardware. Use source and CAPABILITIES to determine actual selectable functionality. Keep a compact profile control above categories, Settings/About below. No physical-device inventory or automatic profile activation.
+Keyboard and touch compositions depict the final planned interface, without claiming current engine support. Mouse examples follow the numeric-button/discrete-wheel/cardinal-gesture scope but do not verify hardware. Use SPEC for target behavior and CAPABILITIES for actual implementation/evidence. Keep a compact profile control above categories, Settings/About below. No physical-device inventory or automatic profile activation.
 
 The current [shared glass-control refinement](tasks/UI-011-control-unification.md) is ready for native adoption, revises the earlier [materials/consistency review](tasks/UI-006-material-design-review.md) and affects existing native Settings/navigation/editor surfaces. The subsequent [semantic-feedback revision](tasks/UI-012-semantic-feedback.md) also needs native adoption; prior native screenshots predate it. Inspect current Sketch before adopting either and preserve the completed full-main sizing repair. [Compile-only feasibility evidence](verification/material-design-review.md) is separate from native appearance/accessibility. Historical design records retain behavioral/resize evidence; their old PNG copies were removed. Integrated Input/Language evidence remains [here](verification/input-language-native.md).
 
-## Remaining design coverage
+## Design readiness
 
-Advanced and Mouse are released within their bounded design scopes. Roughly **three substantial packages** remain; frame count is not a completion percentage:
-
-| Package | Remaining outcome |
-| --- | --- |
-| **Trackpad / Magic Mouse — in progress** | Final planned gesture lists, one curated preset selector, shared actions and real compatibility/conflict/recovery states; no touch trigger recording or temporary implementation placeholders |
-| Editor/action validation | Action-specific app/URL/file/Shortcuts choices/failures and remaining unsupported/disabled states; Mouse trigger recording/conflict is released |
-| Empty/profile states and cross-screen review | Other categories' empty/search states, profile CRUD/limits/errors, remaining Dark/localized feedback, About and accessibility material variants |
-
-Reuse existing sources and inspect implementation before declaring behavior missing. Sketch review does not close native layout, actual permissions/input, localization/accessibility or distribution acceptance.
+[UI-013](tasks/UI-013-design-coverage-completion.md) closes the three remaining design packages: final touch preset editing, shared action parameters/recovery and profile/category states. The saved target interface is ready for native adoption together with UI-011/UI-012. Native integration may reveal justified platform adjustments; review them against the live source. Sketch review does not close native layout, actual permissions/input, localization/accessibility or distribution acceptance.
 
 ## Brand: existing source and delivered assets
 

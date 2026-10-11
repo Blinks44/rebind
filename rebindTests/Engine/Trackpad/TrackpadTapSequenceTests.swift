@@ -12,10 +12,10 @@ struct TrackpadTapSequenceTests {
 
     private func tap(_ sequence: inout Sequence, fingers: Int = 3, start: UInt64,
                      x: Float = 0.5, y: Float = 0.5, duration: UInt64 = 100_000_000,
-                     clickExcluded: Bool = true) -> [Gesture] {
+                     buttonActivityUnchanged: Bool = true) -> [Gesture] {
         let began = sequence.beginContact(at: start)
         let ended = sequence.finishContact(.init(fingers: fingers, x: x, y: y),
-                                           at: start + duration, clickExcluded: clickExcluded)
+                                           at: start + duration, buttonActivityUnchanged: buttonActivityUnchanged)
         return began + ended
     }
 
@@ -66,7 +66,7 @@ struct TrackpadTapSequenceTests {
         let began = sut.beginContact(at: 599_999_999)
         let duringContact = sut.poll(at: 650_000_000)
         let finished = sut.finishContact(.init(fingers: 3, x: 0.52, y: 0.5),
-                                         at: 700_000_000, clickExcluded: true)
+                                         at: 700_000_000, buttonActivityUnchanged: true)
         #expect(began.isEmpty && duringContact.isEmpty)
         #expect(finished == [.doubleTap(fingers: 3)])
     }
@@ -104,10 +104,10 @@ struct TrackpadTapSequenceTests {
         #expect(center.isEmpty && otherCorner.isEmpty)
     }
 
-    @Test func unknownClickExclusionCancelsBothCurrentAndPendingTap() throws {
+    @Test func observedButtonChangeCancelsBothCurrentAndPendingTap() throws {
         var sut = try sequence([.singleTap(fingers: 3), .doubleTap(fingers: 3)])
         _ = tap(&sut, start: 0)
-        let uncertain = tap(&sut, start: 200_000_000, clickExcluded: false)
+        let uncertain = tap(&sut, start: 200_000_000, buttonActivityUnchanged: false)
         let poll = sut.poll(at: 800_000_000)
         let newFirst = tap(&sut, start: 900_000_000)
         #expect(uncertain.isEmpty && poll.isEmpty && newFirst.isEmpty)
@@ -119,7 +119,7 @@ struct TrackpadTapSequenceTests {
         _ = sut.beginContact(at: 200_000_000)
         sut.cancel() // Same reset contract for a button, pause, loss or profile change.
         let lateRelease = sut.finishContact(.init(fingers: 3, x: 0.5, y: 0.5),
-                                            at: 300_000_000, clickExcluded: true)
+                                            at: 300_000_000, buttonActivityUnchanged: true)
         let expiry = sut.poll(at: 600_000_000)
         let first = tap(&sut, start: 700_000_000)
         #expect(lateRelease.isEmpty && expiry.isEmpty && first.isEmpty)
@@ -140,11 +140,11 @@ struct TrackpadTapSequenceTests {
         _ = sut.beginContact(at: 200_000_000)
         let held = sut.poll(at: 550_000_001)
         let release = sut.finishContact(.init(fingers: 3, x: 0.5, y: 0.5),
-                                        at: 560_000_000, clickExcluded: true)
+                                        at: 560_000_000, buttonActivityUnchanged: true)
         _ = sut.beginContact(at: 600_000_000)
         let duplicate = sut.beginContact(at: 610_000_000)
         let duplicateRelease = sut.finishContact(.init(fingers: 3, x: 0.5, y: 0.5),
-                                                 at: 700_000_000, clickExcluded: true)
+                                                 at: 700_000_000, buttonActivityUnchanged: true)
         #expect(held.isEmpty && release.isEmpty && duplicate.isEmpty && duplicateRelease.isEmpty)
     }
 

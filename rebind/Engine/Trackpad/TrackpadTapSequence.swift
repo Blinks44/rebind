@@ -1,6 +1,5 @@
-// Pure sequencing only. No native capture, source attribution, suppression or
-// action dispatch. The future adapter must validate motion/contact continuity
-// and independently exclude clicks before submitting a completed tap.
+// Pure sequencing only. The adapter validates motion/contact continuity and
+// independently settles clicks before dispatching any sequence result.
 nonisolated struct TrackpadTapSequence: Sendable {
     enum Gesture: Hashable, Sendable {
         case singleTap(fingers: Int)
@@ -30,9 +29,12 @@ nonisolated struct TrackpadTapSequence: Sendable {
 
     private let enabled: Set<Gesture>
     private let doubleTapInterval: UInt64
+    private let maximumContactDuration: UInt64
     private var pending: Pending?
     private var contactStartedAt: UInt64?
     private var lastTime: UInt64?
+    private var lastPollTime: UInt64?
+    var hasPending: Bool { pending != nil }
 
     static let minimumTapDuration: UInt64 = 20_000_000
     static let maximumTapDuration: UInt64 = 350_000_000
@@ -40,11 +42,14 @@ nonisolated struct TrackpadTapSequence: Sendable {
 
     // Inject a validated system interval (NSEvent.doubleClickInterval) when a
     // production adapter is wired. Never query AppKit on the contact path.
-    init?(enabled: Set<Gesture>, doubleTapIntervalNanoseconds: UInt64) {
+    init?(enabled: Set<Gesture>, doubleTapIntervalNanoseconds: UInt64,
+          maximumContactDurationNanoseconds: UInt64 = Self.maximumTapDuration) {
         guard enabled.allSatisfy(\.isSupported),
-              (1...2_000_000_000).contains(doubleTapIntervalNanoseconds) else { return nil }
+              (1...2_000_000_000).contains(doubleTapIntervalNanoseconds),
+              (Self.minimumTapDuration...500_000_000).contains(maximumContactDurationNanoseconds) else { return nil }
         self.enabled = enabled
         doubleTapInterval = doubleTapIntervalNanoseconds
+        maximumContactDuration = maximumContactDurationNanoseconds
     }
 
     // The adapter calls this once after neutral -> contact, using the same
@@ -57,10 +62,10 @@ nonisolated struct TrackpadTapSequence: Sendable {
         return expired
     }
 
-    mutating func finishContact(_ tap: Tap, at time: UInt64, clickExcluded: Bool) -> [Gesture] {
+    mutating func finishContact(_ tap: Tap, at time: UInt64, buttonActivityUnchanged: Bool) -> [Gesture] {
         guard advanceClock(to: time), let start = contactStartedAt,
-              time >= start, (Self.minimumTapDuration...Self.maximumTapDuration).contains(time - start),
-              clickExcluded, (1...4).contains(tap.fingers),
+              time >= start, (Self.minimumTapDuration...maximumContactDuration).contains(time - start),
+              buttonActivityUnchanged, (1...4).contains(tap.fingers),
               tap.x.isFinite, tap.y.isFinite, (0...1).contains(tap.x), (0...1).contains(tap.y)
         else { cancel(); return [] }
         contactStartedAt = nil
@@ -89,11 +94,15 @@ nonisolated struct TrackpadTapSequence: Sendable {
     }
 
     mutating func poll(at time: UInt64) -> [Gesture] {
-        guard advanceClock(to: time) else { return [] }
+        // Poll and receipt clocks are separate: a newly dequeued frame may have
+        // arrived just before the preceding poll. Never regress either clock.
+        guard lastTime.map({ time >= $0 }) ?? true,
+              lastPollTime.map({ time >= $0 }) ?? true else { cancel(); return [] }
+        lastPollTime = time
         if let start = contactStartedAt {
             // A lost release / held second chord must not deliver a stale first
             // action later. The adapter additionally resets on frame loss.
-            if time - start > Self.maximumTapDuration { cancel() }
+            if time - start > maximumContactDuration { cancel() }
             return []
         }
         return expire(at: time)
@@ -105,6 +114,7 @@ nonisolated struct TrackpadTapSequence: Sendable {
         pending = nil
         contactStartedAt = nil
         lastTime = nil
+        lastPollTime = nil
     }
 
     private mutating func advanceClock(to time: UInt64) -> Bool {
@@ -137,5 +147,26 @@ nonisolated struct TrackpadTapSequence: Sendable {
         // Provisional normalized centroid tolerance, not physical distance.
         let distance: Float = 0.08
         return x * x + y * y <= distance * distance
+    }
+}
+
+nonisolated extension TrackpadTapGesture {
+    var sequenceGesture: TrackpadTapSequence.Gesture {
+        switch self {
+        case .single(let tap): .singleTap(fingers: tap.rawValue)
+        case .double(let tap): .doubleTap(fingers: tap.rawValue)
+        }
+    }
+
+    init?(_ gesture: TrackpadTapSequence.Gesture) {
+        switch gesture {
+        case .singleTap(let fingers):
+            guard let tap = TrackpadSingleTap(rawValue: fingers) else { return nil }
+            self = .single(tap)
+        case .doubleTap(let fingers):
+            guard let tap = TrackpadSingleTap(rawValue: fingers) else { return nil }
+            self = .double(tap)
+        case .cornerTap: return nil
+        }
     }
 }

@@ -8,6 +8,14 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 ## Existing pending handoffs
 
+- [UI-014](UI-014-trackpad-presets.md): integrated three/four single/double preset editor and independent output recording, with conditional OS conflict guidance. Verify physical taps/coexistence, capture and accessibility; broader touch preset/action/list adoption stays open.
+
+- [INPUT-003](INPUT-003-double-tap-engine.md): three/four-finger single/double engine/data integration, schema 26; engine evidence retained. UI-014 connects the editor; physical timing/click/native-conflict verification remains open.
+
+- [INPUT-002](INPUT-002-three-finger-tap.md): three/four-finger engine/data routing and schema 25; engine evidence retained. UI-014 connects the editor; physical three-finger acceptance remains open.
+
+- [UI-013](UI-013-design-coverage-completion.md): final touch preset editing, action/profile recovery and four-language copy saved/reviewed in live Sketch, ready for native adoption alongside UI-011/UI-012. Native/hardware/accessibility acceptance remains open.
+
 - [INPUT-001](INPUT-001-four-finger-tap.md): built-in four-finger delivery/click recovery and requested lifecycle/mixed-input walkthrough user-confirmed; quantified stress/full safety/platform checks remain.
 - [UI-001](UI-001-permissions-onboarding.md): native first-run/recovery and Settings → Permissions integrated; reported window clipping repaired; 508 Swift Testing cases plus one native layout test pass. Native navigation/deferral checked; actual-grant/accessibility acceptance remains open.
 - [UI-003](UI-003-general-settings.md): General/background implemented, awaiting verification; 532 tests / zero failures, full-main overflow repaired, 224 full Settings combinations and live Dark/compact navigation checked. AppKit warning isolated to OS sharing/inspection; actual login/relaunch/VoiceOver acceptance pending.

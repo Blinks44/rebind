@@ -1,6 +1,35 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "fourFingerDoubleTap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Four-finger double tap"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Двойной тап четырьмя пальцами"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doppeltippen mit vier Fingern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double toucher à quatre doigts"
+          }
+        }
+      }
+    },
     "Rebind": {},
     "accessLost": {
       "extractionState": "manual",
@@ -11722,6 +11751,64 @@
         }
       }
     },
+    "threeFingerDoubleTap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three-finger double tap"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Двойной тап тремя пальцами"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doppeltippen mit drei Fingern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double toucher à trois doigts"
+          }
+        }
+      }
+    },
+    "threeFingerTap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three-finger tap"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тап тремя пальцами"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen mit drei Fingern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toucher à trois doigts"
+          }
+        }
+      }
+    },
     "toggleFullScreenAction": {
       "extractionState": "manual",
       "localizations": {
@@ -11809,6 +11896,66 @@
         }
       }
     },
+    "trackpadConflictHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose another gesture or edit the existing rule in this profile."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите другой жест или измените существующее правило в этом профиле."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie eine andere Geste oder bearbeiten Sie die vorhandene Regel in diesem Profil."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un autre geste ou modifiez la règle existante dans ce profil."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadEditorScope": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Built-in Trackpad"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Встроенный трекпад"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Integriertes Trackpad"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Trackpad intégré"
+          }
+        }
+      },
+      "comment": "Selected profile name followed by the built-in Trackpad category. %1$@ is the user-defined profile name."
+    },
     "trackpadFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -11837,6 +11984,96 @@
           }
         }
       }
+    },
+    "trackpadFourFingerDoubleTapHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap twice with 4 fingers without pressing the trackpad."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Коснитесь трекпада четырьмя пальцами дважды, не нажимая на него."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen Sie zweimal mit vier Fingern, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez deux fois avec quatre doigts sans appuyer sur le trackpad."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadFourFingerTapHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap once with 4 fingers without pressing the trackpad."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Коснитесь трекпада четырьмя пальцами один раз, не нажимая на него."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen Sie einmal mit vier Fingern, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez une fois avec quatre doigts sans appuyer sur le trackpad."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadGestureTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad gesture"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Жест трекпада"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad-Geste"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geste du trackpad"
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
     },
     "trackpadIdle": {
       "extractionState": "manual",
@@ -11896,6 +12133,36 @@
         }
       }
     },
+    "trackpadLookUpHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If three-finger Look Up is enabled, macOS may also respond. In System Settings → Trackpad → Point & Click, change Look up & data detectors, or choose another preset. Rebind does not suppress system gestures."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Если включен поиск касанием тремя пальцами, macOS тоже может отреагировать. Измените «Поиск и детекторы данных» в Системных настройках → Трекпад → Выбор и нажатие или выберите другой жест. Rebind не подавляет системные жесты."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn Nachschlagen mit drei Fingern aktiviert ist, kann macOS ebenfalls reagieren. Ändern Sie Nachschlagen & Datenerkennung unter Systemeinstellungen → Trackpad → Zeigen & Klicken oder wählen Sie eine andere Geste. Rebind unterdrückt Systemgesten nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si la recherche avec trois doigts est activée, macOS peut aussi réagir. Modifiez Recherche et détection de données dans Réglages Système → Trackpad → Pointer et cliquer, ou choisissez un autre geste. Rebind ne bloque pas les gestes système."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
     "trackpadNotAvailable": {
       "extractionState": "manual",
       "localizations": {
@@ -11925,34 +12192,185 @@
         }
       }
     },
+    "trackpadOutputHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Records the output only. No action runs while editing."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записывается только выходное сочетание. При редактировании действия не выполняются."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur das Ausgabekürzel wird aufgezeichnet. Beim Bearbeiten wird keine Aktion ausgeführt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seul le raccourci de sortie est enregistré. Aucune action ne s’exécute pendant la modification."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadSystemGestureHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind does not suppress system gestures. If macOS also responds, review Trackpad gestures in System Settings or choose another preset."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind не подавляет системные жесты. Если macOS тоже реагирует, проверьте жесты трекпада в Системных настройках или выберите другой жест."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind unterdrückt Systemgesten nicht. Wenn macOS ebenfalls reagiert, prüfen Sie die Trackpad-Gesten in den Systemeinstellungen oder wählen Sie eine andere Geste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebind ne bloque pas les gestes système. Si macOS réagit aussi, vérifiez les gestes du trackpad dans Réglages Système ou choisissez un autre geste."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadSystemGestureWarning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System gestures may also run"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системные жесты тоже могут сработать"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systemgesten können ebenfalls ausgeführt werden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les gestes système peuvent aussi se déclencher"
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
     "trackpadTapHint": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Experimental: light four-finger tap on the built-in trackpad, without modifiers. Sends a keyboard shortcut after you lift your fingers, unless a click is detected. System gestures remain active; disable conflicting gestures in System Settings. Three-finger taps, clicks and double taps are not available yet."
+            "value": "Single and double taps with 3 or 4 fingers send keyboard shortcuts on the built-in trackpad. System gestures remain active. If a double-tap rule is enabled, its single tap waits for the system double-click interval."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Экспериментально: лёгкий тап четырьмя пальцами на встроенном трекпаде, без модификаторов. Сочетание отправляется после отпускания пальцев, если не обнаружен клик. Системные жесты остаются активны; отключите конфликтующие жесты в Системных настройках. Тапы тремя пальцами, клики и двойные тапы пока недоступны."
+            "value": "Одиночные и двойные тапы тремя или четырьмя пальцами отправляют сочетания клавиш со встроенного трекпада. Системные жесты остаются активны. Если включено правило двойного тапа, одиночный тап ожидает системный интервал двойного клика."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Experimentell: leichtes Tippen mit vier Fingern auf dem integrierten Trackpad, ohne Sondertasten. Das Tastenkürzel wird nach dem Abheben der Finger gesendet, sofern kein Klick erkannt wird. Systemgesten bleiben aktiv; deaktivieren Sie kollidierende Gesten in den Systemeinstellungen. Tippen mit drei Fingern, Klicks und Doppeltippen sind noch nicht verfügbar."
+            "value": "Einfaches und doppeltes Tippen mit drei oder vier Fingern sendet Tastenkürzel über das integrierte Trackpad. Systemgesten bleiben aktiv. Bei aktivierter Doppeltipp-Regel wartet der einfache Tipp das Systemintervall für Doppelklicks ab."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Expérimental : toucher léger à quatre doigts sur le trackpad intégré, sans touches de modification. Le raccourci est envoyé lorsque vous relevez les doigts, si aucun clic n’est détecté. Les gestes système restent actifs ; désactivez les gestes en conflit dans Réglages Système. Les touchers à trois doigts, les clics et les doubles touchers ne sont pas encore disponibles."
+            "value": "Les touchers simples et doubles à trois ou quatre doigts envoient des raccourcis depuis le trackpad intégré. Les gestes système restent actifs. Si une règle de double toucher est activée, le toucher simple attend le délai système du double clic."
           }
         }
-      }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadThreeFingerDoubleTapHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap twice with 3 fingers without pressing the trackpad."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Коснитесь трекпада тремя пальцами дважды, не нажимая на него."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen Sie zweimal mit drei Fingern, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez deux fois avec trois doigts sans appuyer sur le trackpad."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
+    },
+    "trackpadThreeFingerTapHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap once with 3 fingers without pressing the trackpad."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Коснитесь трекпада тремя пальцами один раз, не нажимая на него."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen Sie einmal mit drei Fingern, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez une fois avec trois doigts sans appuyer sur le trackpad."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
     },
     "trackpadUnavailable": {
       "extractionState": "manual",
@@ -11982,6 +12400,36 @@
           }
         }
       }
+    },
+    "trackpadZoomHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If trackpad zoom is enabled, macOS may also respond. In System Settings → Accessibility → Zoom, review Use trackpad gesture to zoom, or choose another preset. Rebind does not suppress system gestures."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Если включено увеличение жестом трекпада, macOS тоже может отреагировать. Проверьте эту опцию в Системных настройках → Универсальный доступ → Увеличение или выберите другой жест. Rebind не подавляет системные жесты."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn Zoomen per Trackpad-Geste aktiviert ist, kann macOS ebenfalls reagieren. Prüfen Sie Trackpad-Geste zum Zoomen verwenden unter Systemeinstellungen → Bedienungshilfen → Zoom oder wählen Sie eine andere Geste. Rebind unterdrückt Systemgesten nicht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si le zoom par geste du trackpad est activé, macOS peut aussi réagir. Vérifiez Utiliser le geste du trackpad pour zoomer dans Réglages Système → Accessibilité → Zoom, ou choisissez un autre geste. Rebind ne bloque pas les gestes système."
+          }
+        }
+      },
+      "comment": "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings."
     },
     "triggerTitle": {
       "extractionState": "manual",

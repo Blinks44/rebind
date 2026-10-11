@@ -10,6 +10,8 @@ nonisolated struct ShortContactRecognizer: Sendable {
         case liftSpread = "lift-spread", fingerCount = "finger-count", transientPeak = "transient-peak"
     }
     private(set) var rejection: Rejection?
+    // Transient qualified origin only; excluded from Codable diagnostic payloads.
+    private(set) var origin: (x: Float, y: Float)?
     struct Contact: Sendable {
         let id: Int32
         let x: Float
@@ -53,6 +55,7 @@ nonisolated struct ShortContactRecognizer: Sendable {
     mutating func interrupt(isNeutral: Bool = false) {
         continuity &+= 1
         stroke = nil
+        origin = nil
         previousFrame = nil
         previousTime = nil
         needsNeutral = !isNeutral
@@ -61,6 +64,7 @@ nonisolated struct ShortContactRecognizer: Sendable {
     mutating func consume(frame: Int32, time: Double, contacts: [Contact],
                           allowIdleFrameGaps: Bool = true) -> Candidate? {
         rejection = nil
+        origin = nil
         guard time.isFinite, time >= 0, contacts.count <= 16,
               Set(contacts.map(\.id)).count == contacts.count,
               contacts.allSatisfy({
@@ -97,6 +101,8 @@ nonisolated struct ShortContactRecognizer: Sendable {
             guard time - stroke.started >= 0.03, time - stroke.started <= Self.maximumDuration else { rejection = .duration; return nil }
             guard stroke.peakFrames >= 2 else { rejection = .transientPeak; return nil }
             guard stroke.firstLift.map({ time - $0 <= Self.fingerSpread }) ?? true else { rejection = .liftSpread; return nil }
+            let sum = stroke.origins.values.reduce((x: Float(0), y: Float(0))) { ($0.x + $1.x, $0.y + $1.y) }
+            origin = (sum.x / Float(stroke.peakCount), sum.y / Float(stroke.peakCount))
             return Candidate(fingers: stroke.peakCount,
                              durationMilliseconds: Int(((time - stroke.started) * 1000).rounded()),
                              peakPressure: stroke.pressure)

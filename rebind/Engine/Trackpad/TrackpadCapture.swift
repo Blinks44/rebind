@@ -93,9 +93,9 @@ import Dispatch
                                        diagnose: { mailbox.recordTrackpadDiagnostic($0) })
         let decisionTime = DispatchTime.now().uptimeNanoseconds
         // A busy UI cancels rather than executing old actions after it unblocks.
-        if session?.takeReady(from: device.buffer, at: decisionTime,
-                              diagnose: { mailbox.recordTrackpadDiagnostic($0) }) == true, let pid {
-            let queued = mailbox.submitTrackpad(runtime, pid: pid, at: decisionTime)
+        if let gesture = session?.takeReadyGesture(from: device.buffer, at: decisionTime,
+                              diagnose: { mailbox.recordTrackpadDiagnostic($0) }), let pid {
+            let queued = mailbox.submitTrackpad(runtime, gesture: gesture, pid: pid, at: decisionTime)
             mailbox.recordTrackpadDiagnostic(queued ? .queued : .queueUnavailable)
         }
         if let event = session?.takeCancellation() { mailbox.recordTrackpadDiagnostic(event) }

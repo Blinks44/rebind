@@ -188,6 +188,12 @@ sleep/wake and mixed-input walkthrough. Earlier detection/output failures are
 historical; measured latency, quantified stress, full safety/native conflicts and
 additional platforms still require evidence. See [implementation limits](verification/phase-5-four-finger-tap.md).
 
+**Engine/data follow-up, 2026-10-11:** [INPUT-002](tasks/INPUT-002-three-finger-tap.md) connects distinct three/four-finger single-tap rules to the same guarded shortcut worker with schema 25. The current editor remains four-finger-only; preset selection/conflict guidance and physical three-finger/native Look Up acceptance are pending. This does not expand release support or imply suppression.
+
+**Engine/data follow-up, 2026-10-12:** [INPUT-003](tasks/INPUT-003-double-tap-engine.md) connects distinct three/four-finger double-tap rules through the same guarded worker, with schema 26 and delayed singles only when the matching double rule exists. Current editor exposure and physical/native conflict acceptance remain open; no new release support or suppression claim.
+
+**Editor follow-up, 2026-10-12:** [UI-014](tasks/UI-014-trackpad-presets.md) now exposes the four engine-backed single/double presets through one selector, independent output recording and conditional Look Up/Zoom guidance. This supersedes the earlier editor-exposure limitation. Physical/native/accessibility acceptance and the broader final preset/action pool remain open; no suppression or new hardware support claim.
+
 **Acceptance T1:** On tested physical trackpad hardware, a four-finger tap can generate one `Command + W` in a supported setup, without unsafe duplicate behavior.  
 **Acceptance T2:** Gesture classification is debounced, produces no accidental extra actions, and respects user pause.
 

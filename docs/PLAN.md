@@ -1,11 +1,11 @@
 # Rebind — roadmap
 
-Updated 2026-10-11. Read [STATE](STATE.md) first for current facts and next tasks; [WORKFLOW](WORKFLOW.md) defines how to work. Product requirements remain in [SPEC](SPEC.md). No whole product phase is declared complete by these bounded deliveries.
+Updated 2026-10-12. Read [STATE](STATE.md) first for current facts and next tasks; [WORKFLOW](WORKFLOW.md) defines how to work. Product requirements remain in [SPEC](SPEC.md). No whole product phase is declared complete by these bounded deliveries.
 
 ## Immediate priorities
 
 1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and pause/resume, sleep/wake, mixed input are user-confirmed. [Buffer-loss/readiness repair and 200 injected recovery cycles](verification/trackpad-buffer-safety.md) pass; measured physical timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
-2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; full main design remains open.
+2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; current Sketch material adoption remains open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
 These are recommended next items, not authorization to run hardware actions or start other agents. The user's next task may select a different slice. Independent design and input work can proceed with explicit ownership.
@@ -49,7 +49,10 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] Pinned standalone acquisition probe, software recognition/sequencing tests and experimental integrated built-in four-finger tap → shortcut subset exist.
 - [x] Rebuilt built-in four-finger tap → configured shortcut delivery user-confirmed with 25 queued/posted outputs; click-only exclusion and subsequent tap also user-confirmed in this setup.
 - [ ] Finish measured timing/mixed-input click exclusion and lifecycle/stop/native conflicts before production claims. [INPUT-001](tasks/INPUT-001-four-finger-tap.md).
-- [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, supported modifiers/actions and honest capture UX. Broader pure sequencing code is not native integration.
+- [x] Bounded [three-finger single-tap engine/storage](tasks/INPUT-002-three-finger-tap.md) integrated alongside four fingers, with distinct shortcut routing and schema 25; engine software checks pass. Physical verification remains open.
+- [x] [Three/four-finger double-tap engine/storage](tasks/INPUT-003-double-tap-engine.md) integrated with single/double arbitration and schema 26; engine software checks pass. Native/hardware acceptance remains open.
+- [x] Bounded [tap preset editor](tasks/UI-014-trackpad-presets.md) adopts live UI-013 selection/independent output recording and conditional conflict guidance for four engine-backed presets. [Software/native evidence](verification/trackpad-preset-editor.md); physical/coexistence/accessibility acceptance and broader final UI remain open.
+- [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, deliberately curated modifier variants/actions and preset editing/conflict UX. Two-finger doubles and corners still require native integration.
 - [ ] Verify external Magic Trackpad separately; raw contacts do not prove suppression. Swipes/pinch/rotation/five-finger gestures remain out of scope.
 
 ### Phase 6 — Magic Mouse
@@ -73,6 +76,7 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.
 
 - [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
+- [x] [Final design coverage](tasks/UI-013-design-coverage-completion.md) saved/reviewed: curated Trackpad/Magic Mouse selectors, action parameters/recovery, profile/category states and four-language copy. Temporary implementation placeholders removed; native implementation remains open.
 - [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The saved [glass controls](tasks/UI-011-control-unification.md) and [semantic feedback](tasks/UI-012-semantic-feedback.md) refine the earlier material review; use their shared roles in all further design. Native adoption remains open.
 - [ ] Finish keyboard/VoiceOver, Light/Dark, Reduce Transparency/Motion, Increase Contrast and usability acceptance.
 - [ ] Finish icon runtime checks. [BRAND-001](tasks/BRAND-001-icon-runtime.md).

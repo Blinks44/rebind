@@ -6,7 +6,7 @@ import Testing
 struct TrackpadIntegrationTests {
     private let shortcut = KeyboardShortcut(keyCode: 13, modifiers: .command)
     private let lift: UInt64 = 4_000_000_000
-    private var runtime: TrackpadRuntime { .init(revision: 1, inputActivity: 0, shortcut: shortcut) }
+    private var runtime: TrackpadRuntime { .init(revision: 1, inputActivity: 0, fourFingerShortcut: shortcut) }
     private var binding: rebind.Binding { .init(scope: .builtInTrackpad, trigger: .fourFingerTap, modifiers: [], action: .shortcut(shortcut)) }
 
     private func frame(_ id: Int32?, count: Int, at receipt: UInt64) -> NativeTrackpadFrame {
@@ -541,7 +541,7 @@ struct TrackpadIntegrationTests {
         mailbox.configure(configuration)
         #expect(mailbox.nextAction() == nil)
         let next = try #require(mailbox.trackpadRuntime())
-        #expect(next.shortcut.keyCode == 17 && next.revision != oldRuntime.revision)
+        #expect(next.fourFingerShortcut?.keyCode == 17 && next.revision != oldRuntime.revision)
         #expect(!mailbox.submitTrackpad(oldRuntime, pid: 100, at: 0))
         #expect(mailbox.submitTrackpad(next, pid: 100, at: 0))
     }

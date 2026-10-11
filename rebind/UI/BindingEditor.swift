@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct BindingEditor: View {
@@ -7,6 +8,7 @@ struct BindingEditor: View {
     private let profileID: UUID
     private let configurationRevision: UInt64
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @State private var draft: BindingEditorDraft
     @State private var recordingRequest: RecordingRequest?
     @State private var showingPermissions = false
@@ -37,17 +39,28 @@ struct BindingEditor: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
-                if scope == .allMice {
-                    Text(.mouseEditorScope(model.configuration.selectedProfile?.title ?? ""))
-                        .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: scope == .builtInTrackpad ? 32 : 20) {
+                if scope == .builtInTrackpad {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
+                        Text(.trackpadEditorScope(model.configuration.selectedProfile?.title ?? ""))
+                            .font(.subheadline).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 } else {
-                    Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadTapHint : .recordingLimitations)
-                        .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
+                    if scope == .allMice {
+                        Text(.mouseEditorScope(model.configuration.selectedProfile?.title ?? ""))
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text(.recordingLimitations)
+                            .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 if scope == .allMice {
                     MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
+                } else if scope == .builtInTrackpad {
+                    TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                 } else {
                     GroupBox {
                         VStack(alignment: .leading, spacing: 12) {
@@ -77,19 +90,26 @@ struct BindingEditor: View {
                         }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
                     }
                 }
-                BindingEditorSection(usesCard: scope != .allMice) {
+                BindingEditorSection(usesCard: scope == .allKeyboards) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(.actionTitle).font(.headline)
+                        Text(.actionTitle).font(.headline).accessibilityAddTraits(.isHeader)
                         if scope == .builtInTrackpad {
-                            Text(.outputShortcut)
+                            Label(.outputShortcut, systemImage: "command")
+                                .foregroundStyle(.primary)
+                                .padding(.horizontal, 12).frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
+                                .background {
+                                    if reduceTransparency { Capsule().fill(Color(.permissionSurface)) }
+                                }
+                                .glassEffect(reduceTransparency ? .identity : .regular, in: .capsule)
                         } else { ActionPickerView(model: model, selection: $actionKind) }
                         if actionKind == .keyboardShortcut {
-                            if scope == .allMice {
+                            if scope != .allKeyboards {
                                 BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
                                     recording: model.recording, canRecord: model.canRecord,
                                     record: { record(.output) }, cancel: model.cancelRecording,
-                                    clear: { draft.output = nil })
-                                Text(.mouseOutputHelp).font(.caption).foregroundStyle(.secondary)
+                                    clear: { draft.output = nil }, wrapsControls: scope == .builtInTrackpad)
+                                Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadOutputHelp : .mouseOutputHelp)
+                                    .font(.caption).foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             } else {
                                 Text(draft.output.map(InputLabels.shortcut) ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
@@ -152,9 +172,20 @@ struct BindingEditor: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(scope == .allMice ? 0 : 8)
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(scope == .allKeyboards ? 8 : 0)
                 }
-                if model.recording != nil && scope != .allMice {
+                if scope == .builtInTrackpad, let preset = draft.trackpadPreset {
+                    PermissionCard {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label(.trackpadSystemGestureWarning, systemImage: "exclamationmark.triangle")
+                                .font(.headline).foregroundStyle(Color(.permissionWarning))
+                            Text(preset.systemGestureHelp).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Button(.openSystemSettings, action: openSystemSettings)
+                        }
+                    }
+                }
+                if model.recording != nil && scope == .allKeyboards {
                     HStack {
                         Label(.listeningHint, systemImage: "record.circle").foregroundStyle(.tint)
                         Spacer()
@@ -178,6 +209,7 @@ struct BindingEditor: View {
                         PermissionCard {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(.bindingSaveFailed).font(.headline)
+                                    .foregroundStyle(scope == .builtInTrackpad ? Color.red : Color.primary)
                                 Text(.bindingSaveFailedDescription).foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -189,7 +221,8 @@ struct BindingEditor: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(.mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""))
                                 .font(.headline)
-                            Text(.mouseConflictHelp).foregroundStyle(.secondary)
+                                .foregroundStyle(scope == .builtInTrackpad ? Color(.permissionWarning) : Color.primary)
+                            Text(conflictHelp).foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -197,7 +230,7 @@ struct BindingEditor: View {
             }.padding(24)
         }.safeAreaInset(edge: .bottom, spacing: 0) {
             HStack {
-                if scope != .allMice {
+                if scope == .allKeyboards {
                     Button(.clearRecording) {
                         model.cancelRecording()
                         draft = BindingEditorDraft(scope: scope, existing: nil)
@@ -215,7 +248,7 @@ struct BindingEditor: View {
                         || !actionKind.isAvailable(with: model.audioCapabilities)
                         || model.recording != nil || model.storageLocked)
             }.padding(24).background(Color(.permissionCanvasBottom))
-        }.frame(width: scope == .allMice ? 512 : 540).frame(idealHeight: 640, maxHeight: 760)
+        }.frame(width: scope == .allKeyboards ? 540 : 512).frame(idealHeight: 640, maxHeight: 760)
         .background { PermissionCanvas() }
         .onExitCommand { if model.recording != nil { model.cancelRecording() } else { dismiss() } }
         .sheet(isPresented: $showingPermissions) { PermissionSetupView(model: model, context: .recovery) }
@@ -231,6 +264,10 @@ struct BindingEditor: View {
         .onChange(of: draft.activation) { model.cancelRecording() }
         .onChange(of: draft.holdDurationMilliseconds) { model.cancelRecording() }
         .onChange(of: draft.pointerDirection) { model.cancelRecording() }
+        .onChange(of: draft.trackpadPreset) {
+            model.cancelRecording()
+            recordingRequest = nil
+        }
         .onChange(of: model.lastRecording?.request.id) {
             guard let recorded = model.lastRecording else { return }
             draft.accept(recorded, for: recordingRequest, scope: scope)
@@ -243,7 +280,7 @@ struct BindingEditor: View {
         }
         .onChange(of: validationError) {
             if validationError == .conflict {
-                AccessibilityNotification.Announcement(AppLocalization.string(.mouseConflictHelp)).post()
+                AccessibilityNotification.Announcement(AppLocalization.string(conflictHelp)).post()
             }
         }
     }
@@ -264,6 +301,19 @@ struct BindingEditor: View {
     private var recordingUnavailableHint: LocalizedStringResource {
         if !model.permissions.allowsRemapping { return .mouseRecordingUnavailable }
         return model.recordingUnavailableHint
+    }
+
+    private var conflictHelp: LocalizedStringResource {
+        scope == .builtInTrackpad ? .trackpadConflictHelp : .mouseConflictHelp
+    }
+
+    private func openSystemSettings() {
+        model.cancelRecording()
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences"),
+              NSWorkspace.shared.open(url) else {
+            model.error = .openSystemSettingsFailed
+            return
+        }
     }
 
     private func record(_ target: RecordingTarget) {

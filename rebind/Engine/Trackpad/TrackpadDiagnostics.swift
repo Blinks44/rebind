@@ -28,7 +28,7 @@ nonisolated enum TrackpadDiagnosticEvent: Sendable {
     case heldModifier, heldButton, heldKey, protectedContext, targetChanged, activityChanged, outputTargetInactive
     case invalidFrame, obsoleteFrame, staleFrame, futureReceipt, overflow
     case recognition(ShortContactRecognizer.Rejection)
-    case gate(FourFingerTapGate.Reason)
+    case gate(TrackpadTapGate.Reason)
 
     var key: String {
         switch self {

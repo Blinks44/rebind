@@ -7,8 +7,18 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     case mouseGesture(button: UInt32, direction: PointerDirection)
     case scroll(ScrollDirection)
     case fourFingerTap
+    case threeFingerTap
+    case threeFingerDoubleTap
+    case fourFingerDoubleTap
 
-    var isTrackpad: Bool { self == .fourFingerTap }
+    var isTrackpad: Bool {
+        switch self {
+        case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap: true
+        default: false
+        }
+    }
+
+    var isTrackpadDoubleTap: Bool { self == .threeFingerDoubleTap || self == .fourFingerDoubleTap }
 
     var isPointerGesture: Bool {
         if case .mouseGesture = self { return true }
@@ -27,7 +37,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
 
     var scope: DeviceScope {
         switch self {
-        case .fourFingerTap: .builtInTrackpad
+        case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap: .builtInTrackpad
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll: .allMice
         }
@@ -38,7 +48,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .key(let code): KeyboardShortcut.isSupportedKey(code)
         case .mouseButton(let number): number >= 2
         case .mouseGesture(let number, _): number >= 2
-        case .scroll, .fourFingerTap: true
+        case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap: true
         }
     }
 }
