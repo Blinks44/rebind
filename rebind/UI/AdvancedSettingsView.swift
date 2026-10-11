@@ -9,7 +9,8 @@ struct AdvancedSettingsView: View {
     @State private var showingDiagnostics = false
     @State private var request: FileRequest?
     @State private var panel: NSSavePanel?
-    @State private var confirming = false
+    @State private var windowAnchor = NSView()
+    @State private var confirmation: NSAlert?
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var contrast
 
@@ -69,14 +70,16 @@ struct AdvancedSettingsView: View {
             else { editing.importPanelFailed() }
         }
         .sheet(isPresented: $showingDiagnostics) { InputDiagnosticsView(model: model) }
-        .alert(editing.review?.isReset == true ? LocalizedStringResource.advancedResetConfirmTitle : .advancedImportTitle,
-               isPresented: $confirming, presenting: editing.review) { review in
-            Button(.cancel, role: .cancel) { editing.cancelReview() }.keyboardShortcut(.defaultAction)
-            Button(review.isReset ? LocalizedStringResource.advancedResetAction : .advancedReplaceAction,
-                   role: .destructive) { editing.confirmReplacement() }
-        } message: { review in
-            if review.isReset { Text(.advancedResetConfirmBody) }
-            else { Text(.advancedImportBody(count1: review.profileCount, count2: review.bindingCount)) }
+        .background { AdvancedWindowAnchor(view: windowAnchor).frame(width: 0, height: 0).accessibilityHidden(true) }
+        .task(id: editing.review?.id) {
+            guard let review = editing.review, let window = windowAnchor.window else { return }
+            let alert = AdvancedConfirmationAlert.make(for: review, language: model.activeLanguage)
+            confirmation = alert
+            let response = await AdvancedConfirmationAlert.present(alert, for: window)
+            confirmation = nil
+            guard !Task.isCancelled, editing.review?.id == review.id else { return }
+            if response == .alertSecondButtonReturn { editing.confirmReplacement() }
+            else { editing.cancelReview() }
         }
         .task(id: request) {
             guard let current = request else { return }
@@ -86,11 +89,21 @@ struct AdvancedSettingsView: View {
         }
         .onDisappear {
             panel?.cancel(nil)
+            if let sheet = confirmation?.window, let parent = sheet.sheetParent {
+                parent.endSheet(sheet, returnCode: .abort)
+            }
             request = nil
             importing = false
             editing.cancelReview()
         }
-        .onChange(of: editing.review?.id) { confirming = editing.review != nil }
+        .onChange(of: model.configurationReplacementRevision) {
+            if let review = editing.review, review.revision != model.configurationReplacementRevision {
+                if let sheet = confirmation?.window, let parent = sheet.sheetParent {
+                    parent.endSheet(sheet, returnCode: .abort)
+                }
+                editing.cancelReview()
+            }
+        }
     }
 
     private var savedLanguageName: String {
@@ -181,4 +194,10 @@ struct AdvancedSettingsView: View {
         if case .incompatibleBackup = feedback { return true }
         return false
     }
+}
+
+private struct AdvancedWindowAnchor: NSViewRepresentable {
+    let view: NSView
+    func makeNSView(context: Context) -> NSView { view }
+    func updateNSView(_ nsView: NSView, context: Context) { }
 }

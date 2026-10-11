@@ -61,7 +61,8 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] Bounded [General/background](tasks/UI-003-general-settings.md) with actual runtime, global pause and SMAppService integration; software/native fixture checks and [full-main overflow repair](verification/general-main-window-repair.md) pass; actual login/relaunch/accessibility acceptance remains open.
 - [x] Bounded [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) native integration, schema 24 and software/full-window/live fixture checks pass; actual input/relaunch/accessibility acceptance remains open in [native evidence](verification/input-language-native.md).
 - [x] Bounded [Advanced backup foundation](tasks/UI-008-advanced-storage.md): shared validated codec, in-memory legacy migration and size-bounded regular-file read; 553 tests / zero failures. Native flows remain separate.
-- [ ] Implement remaining Advanced/About, native import/export confirmation/replacement/reset and justified future gesture tuning; read the released UI-007 Advanced design directly in Sketch.
+- [x] Bounded [Advanced native integration](tasks/UI-007-advanced-settings.md): import/export, safe confirmation, paused atomic replacement/reset, protected-original export and diagnostics; 570 tests / zero failures, Debug/native cancellation/layout checks pass. Restored-binding/runtime/accessibility acceptance remains open in [evidence](verification/advanced-settings-native.md).
+- [ ] Implement remaining About and justified future gesture tuning; complete Advanced SPEC §15.12 and broader Settings accessibility/runtime acceptance.
 - [ ] Verify window reopening/single engine, relaunch/login, revoked access, lock/sleep/recovery and deliberate paused state. [Permissions](verification/permissions.md), [UI-001](tasks/UI-001-permissions-onboarding.md).
 
 ### Phase 8 — Complete modern native UI and brand

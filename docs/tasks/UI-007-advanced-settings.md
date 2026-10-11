@@ -1,15 +1,15 @@
 # UI-007 — Advanced settings and safe configuration management
 
 - Updated: 2026-10-11.
-- Stage: `in_progress`; design released, native Advanced implementation underway.
-- Owner: `/root` native implementation, 2026-10-11; Sketch remains read-only.
-- Baseline: `main` / `b453d8d` plus independent General implementation and existing design deliveries.
+- Stage: `awaiting_verification`; native implementation integrated, software/native cancellation checks pass.
+- Owner: Unassigned; `/root` released native implementation on 2026-10-11. Sketch remained read-only.
+- Baseline: `main` / `bf36465` plus final Advanced alert/diagnostic/test refinements; no agent commit. HEAD advanced externally during implementation.
 - Requirements: SPEC §§7, 9–11, 15.12; PLAN Phases 7–9.
-- Ownership: new Advanced frames/components; existing shared style reuse only. Original screen IDs, Brand, app code and UI-003 records preserved.
+- Owned implementation surfaces: Advanced settings/model/file operations, scoped AppModel replacement/editor guards, diagnostics presentation, catalog additions and tests. Independent Mouse design and prior General/Input/Language work preserved.
 
 ## Outcome
 
-Deliver Settings → Advanced in the current macOS 26 design system: existing opt-in safe mouse diagnostics, validated configuration import/export, explicit replacement/reset confirmation, protected-file and failure states, Light/Dark and compact EN/RU/DE/FR copy. Import/export/reset are design requirements, not current implementation claims.
+Deliver Settings → Advanced in the current macOS 26 design system: existing opt-in safe mouse diagnostics, validated configuration import/export, explicit replacement/reset confirmation, protected-file and failure states, Light/Dark and compact EN/RU/DE/FR copy. Native implementation exists; required restored-binding runtime/accessibility acceptance remains open.
 
 ## Acceptance
 
@@ -17,6 +17,10 @@ Deliver Settings → Advanced in the current macOS 26 design system: existing op
 - [x] Completed overview, diagnostic, import/reset and protected/failure compositions.
 - [x] Reviewed Light/Dark, RU/DE/FR 880×600 overview and translated diagnostic sizing; fixed German footer clipping and blocked-state guidance.
 - [x] Saved and reviewed source; behavior and four-language copy are inside Sketch, ownership released. No routine exports or separate visual manual.
+- [x] Integrated native import/export panels, staged localized counts, safe confirmation, atomic paused replacement/reset and raw protected-original export.
+- [x] Verified rollback/retry, aliases, protected originals, cancellation/stale reviews, pending-output/source-release ownership and language/setup boundaries in authored software fixtures.
+- [x] Full suite: 570 tests / zero failures; Debug build/signature and native layout checks pass. Native Escape/Return cancellation checked after the alert fix.
+- [ ] Execute SPEC §15.12 with restored binding behavior on an identified build; complete keyboard/VoiceOver/accessibility-preference acceptance.
 
 ## Saved source and review
 
@@ -24,8 +28,10 @@ Open **Rebind.sketch** through MCP: Screens **48–69**, Foundations **05** (beh
 
 Native file panels, alerts, focus rings and accessibility adaptations use macOS controls; their actual Dark/localized rendering and transitions require app verification. Mock counts/events are authored examples. No app build/runtime/real import/reset test or Git commit by this design task.
 
+## Implementation and verification
+
+Read [native behavior, identified artifact, commands, review findings and limits](../verification/advanced-settings-native.md). UI-008's codec remains the storage foundation; no schema/dependency/capture-scope change. Native panels/NSAlert adapt the Sketch states; compact navigation falls back to a native menu when five segments exceed available width. Import/reset persist before runtime changes and always leave remapping paused. Setup acknowledgement stays local; language activation follows reopen. Protected originals cannot be silently overwritten. Escape required a sheet-scoped AppKit fix; final native cancellation and behavioral tests pass. Temporary interactive fixture removed before the final suite.
+
 ## Next
 
-Native ownership: Advanced settings/model/file operations, scoped AppModel replacement and stale-editor guards, diagnostics presentation, String Catalog additions, behavioral/native layout tests and affected status/evidence records. Preserve existing General/Input/Language work and independent design edits. Required checks: atomic replacement/reset rollback, protected originals and destination aliases, cancellation/stale review, paused import, language activation, native sizing/panels/confirmation and accessibility review.
-
-Implement Advanced from live Sketch using the completed UI-008 backup foundation and existing diagnostics/Language contracts; verify atomic replacement/reset, cancellation/protected originals, four languages and native accessibility. Next design package: Mouse rules and editor.
+Verify the Advanced export → reset → import → explicit resume walkthrough with disposable authored profiles on the identified build, then keyboard/VoiceOver and accessibility preferences using the evidence checklist. Production restart/login/language checks remain user-led. Mouse design is independently active in UI-009; consume only its released live Sketch scope when ready.

@@ -25,7 +25,7 @@ Dependency resolved 2026-10-11: UI-007 saved/reviewed and released Screens 48–
 
 ## Next handoff
 
-Integrate the released Advanced design with native file panels, explicit replacement/reset confirmation and runtime/storage transactions; preserve protected original files and four-language copy. Refresh UI-007 before UI implementation.
+Native integration subsequently landed in [UI-007](UI-007-advanced-settings.md); [current evidence](../verification/advanced-settings-native.md) supersedes the earlier next-step recommendation. The foundation remains done; full export/reset/import/restored-binding runtime and accessibility acceptance remain open in UI-007.
 
 ## Implementation, checks and review
 

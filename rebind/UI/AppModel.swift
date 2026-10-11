@@ -295,7 +295,10 @@ import Dispatch
 
     var canStartDiagnostics: Bool {
         guard !storageLocked, canRecord else { return false }
-        if case .secureInput = status { return false }
+        switch status {
+        case .permissionRequired, .secureInput, .tapFailed, .interrupted: return false
+        case .paused, .active, .outputFailed: break
+        }
         return mailbox.state.withLock { !$0.suspended && !$0.stopped }
     }
 

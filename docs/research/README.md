@@ -1,6 +1,6 @@
 # Rebind — current mechanism and dependency decisions
 
-Updated 2026-10-10: existing research reorganized, followed by a [focused renewed tap-library audit](trackpad-tap-reliability.md). No new hardware experiment or app dependency. Check dates/revisions when changing a mechanism. [Dependency/reference register](DEPENDENCIES.md) retains licenses, pinned sources, maintenance and prior decisions. [Historical research](../history/implementation-through-2026-10-10.md#research-findings--blockers) retains reasoning and superseded approaches.
+Updated 2026-10-11: native Advanced transaction decision added after the [renewed tap-library audit](trackpad-tap-reliability.md). No new hardware experiment or app dependency. Check dates/revisions when changing a mechanism. [Dependency/reference register](DEPENDENCIES.md) retains licenses, pinned sources, maintenance and prior decisions. [Historical research](../history/implementation-through-2026-10-10.md#research-findings--blockers) retains reasoning and superseded approaches.
 
 ## Current adoption and boundaries
 
@@ -17,6 +17,7 @@ Updated 2026-10-10: existing research reorganized, followed by a [focused renewe
 | Mission Control / lock | Isolated dynamic private Dock notifications/login-framework entry point; explicitly Experimental. | Platform/version compatibility and effect/lifecycle acceptance |
 | Spaces | Standard enabled Ctrl+arrow pair, secondary-Fn/HID posting, read-only settings validation. Failed session posting and instant Dock swipe were replaced. | Display/Reduce Motion/held modifiers/edges/latency/safety checks; no settings mutation |
 | Icons/UI | SF Symbols primary UI set; native Icon Composer app icon; named vector Menu Bar template. Optional icon packages were researched, not adopted. | Current Sketch implementation/runtime/accessibility acceptance |
+| Advanced backup/transactions | Native fileImporter/NSSavePanel/NSAlert, existing validated codec and Foundation atomic writes/raw-copy replacement; Swift Configuration evaluated, not adopted. [Decision](DEPENDENCIES.md#advanced-configuration-transactions--2026-10-11) | SPEC §15.12 restored-binding runtime and full accessibility acceptance |
 
 ## Current research risks
 

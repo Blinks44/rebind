@@ -10,7 +10,8 @@ import Testing
 
     private func fixture(_ store: ConfigurationStore,
                          projection: @escaping (AppLanguagePreference) -> Void = { _ in }) -> AppModel {
-        AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+        AppModel(store: store, sessionAllowsInput: { true },
+                 readPermissions: { InputPermissions(accessibility: true, posting: true) },
                  loginItem: LoginItemModel(service: LoginItemServiceStub()), preferredLanguages: ["en"],
                  languagePreferenceSaved: projection)
     }
@@ -219,5 +220,27 @@ import Testing
         if language == .de { #expect(singular.contains("1 Profil, 1 Belegung")) }
         if language == .fr { #expect(singular.contains("1 profil, 1 association")) }
         if language == .ru { #expect(singular.contains("профилей — 1, привязок — 1")) }
+    }
+
+    @Test(arguments: AppLanguage.allCases, [false, true])
+    func nativeConfirmationHasSafeDefaultAndLocalizedCounts(language: AppLanguage, isReset: Bool) throws {
+        let review = AdvancedSettingsModel.Review(replacement: Configuration(), expected: Configuration(),
+                                                  revision: 0, isReset: isReset)
+        let alert = AdvancedConfirmationAlert.make(for: review, language: language)
+        let cancel = try #require(alert.buttons.first)
+        #expect(cancel.title == AppLocalization.string(.cancel, language: language))
+        #expect(cancel.keyEquivalent == "\r")
+        #expect(alert.window.defaultButtonCell === cancel.cell)
+        #expect(alert.buttons[1].hasDestructiveAction && alert.buttons[1].keyEquivalent.isEmpty)
+        #expect(!alert.messageText.isEmpty && !alert.informativeText.contains("%"))
+    }
+
+    @Test(arguments: [(EngineStatus.paused, true), (.active, true), (.outputFailed, true),
+                      (.secureInput, false), (.tapFailed, false), (.interrupted, false), (.permissionRequired, false)])
+    func diagnosticStartRequiresAnAvailableCapture(_ sample: (EngineStatus, Bool)) {
+        let app = fixture(store())
+        app.mailbox.state.withLock { $0.status = sample.0 }
+        app.refresh()
+        #expect(app.canStartDiagnostics == sample.1)
     }
 }

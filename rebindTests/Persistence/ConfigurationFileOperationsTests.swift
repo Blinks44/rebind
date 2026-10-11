@@ -50,7 +50,7 @@ struct ConfigurationFileOperationsTests {
         #expect(try Data(contentsOf: destination) == previous)
     }
 
-    @Test func healthyExportRoundTripsAndCanceledExportPreservesDestination() async throws {
+    @MainActor @Test func healthyExportRoundTripsAndCanceledExportPreservesDestination() async throws {
         let directory = try directory()
         defer { try? FileManager.default.removeItem(at: directory) }
         let original = directory.appending(path: "configuration.json")
