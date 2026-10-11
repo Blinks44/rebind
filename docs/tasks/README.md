@@ -9,7 +9,9 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 ## Existing pending handoffs
 
 - [INPUT-001](INPUT-001-four-finger-tap.md): existing built-in four-finger implementation awaiting revised hardware acceptance.
-- [UI-001](UI-001-permissions-onboarding.md): saved onboarding design, additional permission surfaces and native implementation pending.
+- [UI-001](UI-001-permissions-onboarding.md): native first-run/recovery and Settings → Permissions integrated; reported window clipping repaired; 508 Swift Testing cases plus one native layout test pass. Native navigation/deferral checked; actual-grant/accessibility acceptance remains open.
+- [UI-003](UI-003-general-settings.md): General/background design ready; ten states, four reusable sources and four-language copy. Native login/runtime/accessibility checks pending.
+- [UI-004](UI-004-input-settings.md): Input overview and per-binding hold timing ready; seven frames, four sources and four-language copy. Native/editor locale/accessibility and save acceptance pending.
 - [BRAND-001](BRAND-001-icon-runtime.md): delivered icons awaiting remaining runtime/minimum-OS checks.
 
 These records were seeded from current artifacts/evidence on 2026-10-10. No running agent was assigned ownership. Claim a bounded surface when beginning authorized work, and release/transfer ownership in the saved handoff. Re-read before touching shared docs/styles/code; do not treat an old owner field as proof that a chat is still active.
@@ -17,3 +19,5 @@ These records were seeded from current artifacts/evidence on 2026-10-10. No runn
 Completed documentation migration: [DOC-001](DOC-001-agent-workflow.md). Its completion does not close any pending product task.
 
 Workflow review and reusable skill: [DOC-002](DOC-002-workflow-review-skill.md). This is process/tooling work; product acceptance remains separate.
+
+Completed Sketch alignment repair: [UI-002](UI-002-alignment-review.md), with current revision and verification in [alignment evidence](../verification/alignment-review.md).

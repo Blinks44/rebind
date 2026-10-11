@@ -131,9 +131,9 @@ or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close w
 quitting the app. Settings are stored at
 `~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
 file is preserved and locks editing instead of being overwritten. Configuration
-schema 22 reads schemas 1–21, preserving profiles, selection and existing actions/triggers,
+schema 23 reads schemas 1–22, preserving profiles, selection and existing actions/triggers,
 ordinary/wheel/double/long-press/gesture rules, IDs and enabled state. Legacy rules get the default long-press threshold without rewriting
-the file until the next successful save.
+the file until the next successful save. Schema 23 also stores explicit first-run setup acknowledgement; existing installations migrate with setup acknowledged. Grant recovery never changes saved pause or rule flags.
 
 
 ## Packages and research tools

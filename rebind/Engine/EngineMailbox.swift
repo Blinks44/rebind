@@ -78,6 +78,15 @@ nonisolated final class EngineMailbox: Sendable {
 
     let state = Mutex(State())
 
+    /// Explicit UI recovery only; no automatic retry or enable-state mutation.
+    func retryCapture() {
+        state.withLock {
+            guard $0.enabled, !$0.suspended, !$0.stopped,
+                  $0.status == .tapFailed || $0.status == .interrupted || $0.status == .outputFailed else { return }
+            $0.retryID &+= 1
+        }
+    }
+
     func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000) {
         let compiled = InputMatcher.compile(configuration.bindings)
         state.withLock {

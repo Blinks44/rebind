@@ -1,0 +1,63 @@
+import AppKit
+import SwiftUI
+import XCTest
+@testable import rebind
+
+/// Native layout coverage: isolated models never start capture or load user data.
+@MainActor final class MainWindowLayoutTests: XCTestCase {
+    func testPermissionNoticeDoesNotExpandNavigationBeyondTheWindow() async throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "RebindLayout-\(UUID())")
+        let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let sizes = [NSSize(width: 1040, height: 640), NSSize(width: 880, height: 600),
+                     NSSize(width: 1280, height: 800)]
+        let grants = [InputPermissions(), InputPermissions(accessibility: true),
+                      InputPermissions(accessibility: true, posting: true)]
+        for language in ["en", "ru", "de", "fr"] {
+            for permissions in grants {
+                for hasRules in [false, true] {
+                    var configuration = Configuration()
+                    configuration.hasCompletedSetup = true
+                    if hasRules {
+                        configuration.bindings = [rebind.Binding(scope: .allKeyboards,
+                            trigger: .key(0), modifiers: .control,
+                            action: .shortcut(KeyboardShortcut(keyCode: 1, modifiers: .command)))]
+                    }
+                    try store.save(configuration)
+                    let model = AppModel(store: store, readPermissions: { permissions })
+                    let controller = NSHostingController(rootView: ContentView(model: model)
+                        .environment(\.locale, Locale(identifier: language)))
+                    let window = NSWindow(contentViewController: controller)
+                    window.isReleasedWhenClosed = false
+                    defer { window.close() }
+                    for size in sizes {
+                        window.setContentSize(size)
+                        controller.view.layoutSubtreeIfNeeded()
+                        // Let AppKit attach and lay out the native split/list hierarchy.
+                        try await Task.sleep(for: .milliseconds(100))
+                        controller.view.layoutSubtreeIfNeeded()
+                        let split = try XCTUnwrap(firstSplitView(in: controller.view))
+                        let bounds = split.convert(split.bounds, to: controller.view)
+                        let viewport = controller.view.bounds
+                        let context = "\(language), grants=\(permissions), rules=\(hasRules), size=\(size)"
+                        XCTAssertEqual(viewport.width, size.width, accuracy: 1, context)
+                        XCTAssertEqual(viewport.height, size.height, accuracy: 1, context)
+                        XCTAssertGreaterThan(bounds.height, 0, context)
+                        XCTAssertGreaterThanOrEqual(bounds.minY, viewport.minY - 1, context)
+                        XCTAssertLessThanOrEqual(bounds.maxY, viewport.maxY + 1, context)
+                        XCTAssertGreaterThanOrEqual(bounds.minX, viewport.minX - 1, context)
+                        XCTAssertLessThanOrEqual(bounds.maxX, viewport.maxX + 1, context)
+                    }
+                }
+            }
+        }
+    }
+
+    private func firstSplitView(in view: NSView) -> NSSplitView? {
+        if let split = view as? NSSplitView { return split }
+        for child in view.subviews {
+            if let split = firstSplitView(in: child) { return split }
+        }
+        return nil
+    }
+}

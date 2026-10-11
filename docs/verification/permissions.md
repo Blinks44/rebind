@@ -67,5 +67,7 @@ that automation attempt. The later user report independently confirms capture.
 4. Check normal unmatched behavior, suppression/release, pause, permission loss
    and explicit retry. Then follow wheel and double-press checklists.
 
-Generic HID device/capability enumeration and reliable per-device source
-attribution remain unimplemented and require their own Phase 3 checks.
+Historical scope note: physical-device inventory/attribution was withdrawn on
+2026-10-08; Phase 3 now concerns manual profiles. The current native first-run
+and permission UI is covered by [2026-10-11 implementation evidence](permissions-native.md);
+the older checks above retain their original tested scope.

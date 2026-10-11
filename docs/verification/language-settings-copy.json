@@ -1,0 +1,113 @@
+{
+  "status": "Design handoff; not integrated into Localizable.xcstrings",
+  "locales": [
+    "en",
+    "ru",
+    "de",
+    "fr"
+  ],
+  "autonyms": {
+    "en": "English",
+    "ru": "Русский",
+    "de": "Deutsch",
+    "fr": "Français"
+  },
+  "strings": {
+    "languageTitle": {
+      "en": "Display language",
+      "ru": "Язык интерфейса",
+      "de": "Anzeigesprache",
+      "fr": "Langue d’affichage"
+    },
+    "languageDescription": {
+      "en": "Choose the language used by Rebind.",
+      "ru": "Выберите язык интерфейса Rebind.",
+      "de": "Wähle die Sprache für Rebind.",
+      "fr": "Choisissez la langue de Rebind."
+    },
+    "appLanguage": {
+      "en": "App language",
+      "ru": "Язык приложения",
+      "de": "App-Sprache",
+      "fr": "Langue de l’app"
+    },
+    "systemDefault": {
+      "en": "System Default",
+      "ru": "Как в системе",
+      "de": "Systemstandard",
+      "fr": "Par défaut du système"
+    },
+    "systemHelp": {
+      "en": "Uses your first supported system language. English is used if none is supported.",
+      "ru": "Используется первый поддерживаемый язык системы. Если такого нет, используется английский.",
+      "de": "Verwendet die erste unterstützte Systemsprache. Ist keine unterstützt, wird Englisch verwendet.",
+      "fr": "Utilise la première langue système prise en charge. Sinon, l’anglais est utilisé."
+    },
+    "manualHelp": {
+      "en": "This choice applies to Rebind. Your system language stays the same.",
+      "ru": "Выбор действует для Rebind. Язык системы остаётся прежним.",
+      "de": "Diese Auswahl gilt für Rebind. Die Systemsprache bleibt unverändert.",
+      "fr": "Ce choix s’applique à Rebind. La langue du système reste inchangée."
+    },
+    "activeLanguage": {
+      "en": "Currently displayed: %@",
+      "ru": "Текущий язык: %@",
+      "de": "Aktuell angezeigt: %@",
+      "fr": "Langue actuelle : %@"
+    },
+    "namesUnchanged": {
+      "en": "Profile names, shortcuts and file names stay as you entered them.",
+      "ru": "Названия профилей, сочетания клавиш и имена файлов сохраняются в исходном виде.",
+      "de": "Profilnamen, Tastenkombinationen und Dateinamen bleiben so, wie du sie eingegeben hast.",
+      "fr": "Les noms de profils, les raccourcis et les noms de fichiers restent tels que vous les avez saisis."
+    },
+    "applyLanguage": {
+      "en": "Apply Language",
+      "ru": "Применить язык",
+      "de": "Sprache anwenden",
+      "fr": "Appliquer la langue"
+    },
+    "languageSaveFailed": {
+      "en": "Could not save language",
+      "ru": "Не удалось сохранить язык",
+      "de": "Sprache konnte nicht gespeichert werden",
+      "fr": "Impossible d’enregistrer la langue"
+    },
+    "languageSaveFailedDescription": {
+      "en": "Your previous preference is unchanged. Try applying the selected language again.",
+      "ru": "Предыдущая настройка не изменилась. Попробуйте применить выбранный язык снова.",
+      "de": "Deine bisherige Einstellung bleibt unverändert. Versuche erneut, die gewählte Sprache anzuwenden.",
+      "fr": "Votre préférence précédente est inchangée. Réessayez d’appliquer la langue sélectionnée."
+    },
+    "reopenTitle": {
+      "en": "Reopen Rebind to change the language",
+      "ru": "Откройте Rebind заново для смены языка",
+      "de": "Rebind für den Sprachwechsel neu öffnen",
+      "fr": "Rouvrez Rebind pour changer de langue"
+    },
+    "reopenDescription": {
+      "en": "Saved: %@. Quit and reopen Rebind to apply it everywhere. Remapping stops while Rebind is closed.",
+      "ru": "Сохранено: %@. Завершите и откройте Rebind заново, чтобы применить язык везде. Пока Rebind закрыт, переназначения не работают.",
+      "de": "Gespeichert: %@. Beende und öffne Rebind erneut, um die Sprache überall anzuwenden. Belegungen sind währenddessen inaktiv.",
+      "fr": "Enregistré : %@. Quittez et rouvrez Rebind pour l’appliquer partout. Les remappages s’arrêtent quand Rebind est fermé."
+    },
+    "quitRebind": {
+      "en": "Quit Rebind",
+      "ru": "Завершить Rebind",
+      "de": "Rebind beenden",
+      "fr": "Quitter Rebind"
+    },
+    "languageSaving": {
+      "en": "Saving language…",
+      "ru": "Сохранение языка…",
+      "de": "Sprache wird gespeichert…",
+      "fr": "Enregistrement de la langue…"
+    },
+    "storageLockedLanguage": {
+      "en": "Language cannot be changed while configuration recovery is required.",
+      "ru": "Для смены языка сначала восстановите конфигурацию.",
+      "de": "Die Sprache kann erst nach der Wiederherstellung der Konfiguration geändert werden.",
+      "fr": "Rétablissez la configuration avant de changer de langue."
+    }
+  }
+}

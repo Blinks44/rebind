@@ -1,10 +1,12 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 22
+    static let currentSchemaVersion = 23
     static let maximumProfiles = 20
     var schemaVersion: Int
     var isEnabled: Bool
+    /// Records an explicit setup dismissal without changing remapping intent.
+    var hasCompletedSetup = false
     var profiles: [RuleProfile]
     var selectedProfileID: UUID
 
@@ -146,13 +148,15 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             result.schemaVersion = Self.currentSchemaVersion
         }
         if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...21).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...22).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        // Existing installations recover through the permission notice, not first-run setup.
+        if (1...22).contains(schemaVersion) { result.hasCompletedSetup = true }
         try result.validate()
         return result
     }
 
     private enum CodingKeys: String, CodingKey {
-        case schemaVersion, isEnabled, bindings, profiles, selectedProfileID
+        case schemaVersion, isEnabled, hasCompletedSetup, bindings, profiles, selectedProfileID
     }
 
     init(from decoder: any Decoder) throws {
@@ -170,12 +174,14 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             profiles = try values.decode([RuleProfile].self, forKey: .profiles)
             selectedProfileID = try values.decode(UUID.self, forKey: .selectedProfileID)
         }
+        hasCompletedSetup = version >= 23 ? try values.decode(Bool.self, forKey: .hasCompletedSetup) : true
     }
 
     func encode(to encoder: any Encoder) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(schemaVersion, forKey: .schemaVersion)
         try values.encode(isEnabled, forKey: .isEnabled)
+        if schemaVersion >= 23 { try values.encode(hasCompletedSetup, forKey: .hasCompletedSetup) }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
             try values.encode(bindings, forKey: .bindings)

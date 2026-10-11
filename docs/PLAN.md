@@ -1,11 +1,11 @@
 # Rebind — roadmap
 
-Updated 2026-10-10. Read [STATE](STATE.md) first for current facts and next tasks; [WORKFLOW](WORKFLOW.md) defines how to work. Product requirements remain in [SPEC](SPEC.md). No whole product phase is declared complete by this documentation migration.
+Updated 2026-10-11. Read [STATE](STATE.md) first for current facts and next tasks; [WORKFLOW](WORKFLOW.md) defines how to work. Product requirements remain in [SPEC](SPEC.md). No whole product phase is declared complete by these bounded deliveries.
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt-app hardware check after the buffered-release repair; latest user comparison still reports loss after clicks despite 8/10 initial taps. Use the opt-in one-minute diagnostic report to investigate low recognition and physical-click output; T1/T2 remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
-2. [UI-001](tasks/UI-001-permissions-onboarding.md): continue missing-permission main-window and Settings → Permissions design, then implement the onboarding slice with actual permission state. Saved first-launch frames are available; no native implementation claim.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only exclusion and subsequent tap also user-confirmed; next pause/lifecycle recovery and mixed-input timing; full T1/T2 safety remains open. Do not substitute visual polish or blind threshold changes for this acceptance check.
+2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; full main design remains open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
 These are recommended next items, not authorization to run hardware actions or start other agents. The user's next task may select a different slice. Independent design and input work can proceed with explicit ownership.
@@ -45,7 +45,8 @@ The checked items below describe only the stated software/artifact milestone. An
 ### Phase 5 — Compact trackpad scope
 
 - [x] Pinned standalone acquisition probe, software recognition/sequencing tests and experimental integrated built-in four-finger tap → shortcut subset exist.
-- [ ] Resolve integrated responsiveness/recovery and physical-click exclusivity; confirm lifecycle/stop/native conflicts before production claims. [INPUT-001](tasks/INPUT-001-four-finger-tap.md).
+- [x] Rebuilt built-in four-finger tap → configured shortcut delivery user-confirmed with 25 queued/posted outputs; click-only exclusion and subsequent tap also user-confirmed in this setup.
+- [ ] Finish measured timing/mixed-input click exclusion and lifecycle/stop/native conflicts before production claims. [INPUT-001](tasks/INPUT-001-four-finger-tap.md).
 - [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, supported modifiers/actions and honest capture UX. Broader pure sequencing code is not native integration.
 - [ ] Verify external Magic Trackpad separately; raw contacts do not prove suppression. Swipes/pinch/rotation/five-finger gestures remain out of scope.
 
@@ -56,7 +57,8 @@ The checked items below describe only the stated software/artifact milestone. An
 ### Phase 7 — Settings, storage, permissions, background
 
 - [x] Versioned atomic storage, corruption/future-file protection, actual permission checks and window-independent runtime foundation exist.
-- [ ] Implement saved onboarding/Settings/About with actual state, Launch at Login (SMAppService), validated import/export/reset and remaining settings.
+- [x] Bounded first-run/recovery and Settings → Permissions integrated; actual-grant and full native acceptance remain open in [UI-001](tasks/UI-001-permissions-onboarding.md).
+- [ ] Implement remaining Settings/About with actual state, Launch at Login (SMAppService), validated import/export/reset and remaining settings. [General/background](tasks/UI-003-general-settings.md) and bounded [Input/hold timing](tasks/UI-004-input-settings.md) designs are ready; Language/Advanced and future justified gesture tuning remain.
 - [ ] Verify window reopening/single engine, relaunch/login, revoked access, lock/sleep/recovery and deliberate paused state. [Permissions](verification/permissions.md), [UI-001](tasks/UI-001-permissions-onboarding.md).
 
 ### Phase 8 — Complete modern native UI and brand
@@ -68,7 +70,7 @@ The checked items below describe only the stated software/artifact milestone. An
 
 ### Phase 9 — Four-language UX
 
-- [x] Current app slice has EN/RU/DE/FR String Catalog translations; onboarding copy handoff exists separately.
+- [x] Current app slice has EN/RU/DE/FR String Catalog translations; 53-key onboarding/permission handoff is integrated; four-language native fixtures reviewed.
 - [ ] Integrate remaining screen copy, implement System/EN/RU/DE/FR manual selection and verify complete layouts/errors/tooltips/accessibility in all languages.
 
 ### Phase 10 — Reliability and distribution

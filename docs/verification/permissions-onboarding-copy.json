@@ -1,5 +1,5 @@
 {
-  "status": "Design handoff; not yet integrated into the app String Catalog",
+  "status": "Integrated into the app String Catalog on 2026-10-11; native permission acceptance pending",
   "locales": ["en", "ru", "de", "fr"],
   "strings": {
     "setupTitle": {"en":"Set up Rebind","ru":"Настройте Rebind","de":"Rebind einrichten","fr":"Configurer Rebind"},
@@ -29,6 +29,31 @@
     "accessLost": {"en":"Access lost","ru":"Доступ потерян","de":"Zugriff verloren","fr":"Accès perdu"},
     "accessLostPurpose": {"en":"Bindings are stopped. Your rules are still saved. Normal keyboard and mouse input remains available.","ru":"Правила остановлены, но сохранены. Клавиатура и мышь продолжают работать как обычно.","de":"Belegungen sind gestoppt. Deine Regeln bleiben gespeichert. Tastatur und Maus funktionieren weiterhin normal.","fr":"Les règles sont arrêtées, mais restent enregistrées. Le clavier et la souris continuent de fonctionner normalement."},
     "restoreSteps": {"en":"Turn on Rebind in Privacy & Security → Accessibility. Return here to check access.","ru":"Включите Rebind в разделе «Конфиденциальность и безопасность» → «Универсальный доступ». Вернитесь сюда, чтобы проверить доступ.","de":"Aktiviere Rebind unter Datenschutz & Sicherheit → Bedienungshilfen. Kehre zurück, um den Zugriff zu prüfen.","fr":"Activez Rebind dans Confidentialité et sécurité → Accessibilité. Revenez ici pour vérifier l’accès."},
-    "close": {"en":"Close","ru":"Закрыть","de":"Schließen","fr":"Fermer"}
+    "close": {"en":"Close","ru":"Закрыть","de":"Schließen","fr":"Fermer"},
+    "settingsTitle": {"en":"Settings","ru":"Настройки","de":"Einstellungen","fr":"Réglages"},
+    "settingsDescription": {"en":"Control how Rebind runs on this Mac.","ru":"Настройте работу Rebind на этом Mac.","de":"Lege fest, wie Rebind auf diesem Mac arbeitet.","fr":"Réglez le fonctionnement de Rebind sur ce Mac."},
+    "settingsGeneral": {"en":"General","ru":"Основные","de":"Allgemein","fr":"Général"},
+    "settingsInput": {"en":"Input","ru":"Ввод","de":"Eingabe","fr":"Entrée"},
+    "settingsLanguage": {"en":"Language","ru":"Язык","de":"Sprache","fr":"Langue"},
+    "settingsAdvanced": {"en":"Advanced","ru":"Дополнительно","de":"Erweitert","fr":"Avancé"},
+    "reviewPermissions": {"en":"Review Permissions","ru":"Проверить разрешения","de":"Berechtigungen prüfen","fr":"Vérifier les autorisations"},
+    "recoveryAccessibilityTitle": {"en":"Accessibility required","ru":"Требуется универсальный доступ","de":"Bedienungshilfen erforderlich","fr":"Accessibilité requise"},
+    "recoveryEventTitle": {"en":"Event sending required","ru":"Требуется отправка событий","de":"Senden von Ereignissen erforderlich","fr":"Envoi d’événements requis"},
+    "recoverySavedRules": {"en":"Remapping is stopped. Your saved rules can still be edited.","ru":"Переназначение остановлено. Сохранённые правила можно редактировать.","de":"Die Neubelegung ist gestoppt. Gespeicherte Regeln lassen sich weiter bearbeiten.","fr":"Le remappage est arrêté. Les règles enregistrées restent modifiables."},
+    "recoverySendingPurpose": {"en":"Accessibility is enabled. Allow event sending to use your bindings.","ru":"Универсальный доступ включён. Разрешите отправку событий для работы правил.","de":"Bedienungshilfen sind aktiviert. Erlaube das Senden von Ereignissen, um Belegungen zu nutzen.","fr":"L’accessibilité est activée. Autorisez l’envoi d’événements pour utiliser vos règles."},
+    "permissionsStopped": {"en":"Remapping stopped","ru":"Переназначение остановлено","de":"Neubelegung gestoppt","fr":"Remappage arrêté"},
+    "permissionsEnableAccessibility": {"en":"Enable Accessibility to use your bindings.","ru":"Включите универсальный доступ для работы правил.","de":"Aktiviere Bedienungshilfen, um deine Belegungen zu nutzen.","fr":"Activez l’accessibilité pour utiliser vos règles."},
+    "permissionsAllowSending": {"en":"Allow event sending to use your bindings.","ru":"Разрешите отправку событий для работы правил.","de":"Erlaube das Senden von Ereignissen, um Belegungen zu nutzen.","fr":"Autorisez l’envoi d’événements pour utiliser vos règles."},
+    "permissionsAccessEnabled": {"en":"Required access enabled","ru":"Необходимый доступ включён","de":"Erforderlicher Zugriff aktiviert","fr":"Accès requis activé"},
+    "permissionsRespectsPause": {"en":"Remapping follows your enabled or paused setting.","ru":"Переназначение учитывает выбранное состояние: включено или приостановлено.","de":"Die Neubelegung bleibt entsprechend deiner Einstellung aktiviert oder pausiert.","fr":"Le remappage respecte votre choix d’activation ou de pause."},
+    "permissionEnabled": {"en":"Enabled","ru":"Включено","de":"Aktiviert","fr":"Activé"},
+    "permissionsAccessibilityPurpose": {"en":"Recognize triggers and perform your chosen actions in other apps.","ru":"Распознавать триггеры и выполнять выбранные действия в других приложениях.","de":"Erkenne Auslöser und führe gewählte Aktionen in anderen Apps aus.","fr":"Reconnaître les déclencheurs et exécuter les actions choisies dans les autres apps."},
+    "permissionsAccessibilityEnabled": {"en":"Rebind can recognize triggers and perform your chosen actions in other apps.","ru":"Rebind может распознавать триггеры и выполнять выбранные действия в других приложениях.","de":"Rebind kann Auslöser erkennen und gewählte Aktionen in anderen Apps ausführen.","fr":"Rebind peut reconnaître les déclencheurs et exécuter les actions choisies dans les autres apps."},
+    "permissionsSendingPurpose": {"en":"Allow Rebind to send shortcuts and clicks to other apps.","ru":"Разрешите Rebind отправлять сочетания клавиш и щелчки в другие приложения.","de":"Erlaube Rebind, Tastenkombinationen und Klicks an andere Apps zu senden.","fr":"Autorisez Rebind à envoyer des raccourcis et clics aux autres apps."},
+    "permissionsSendingWaiting": {"en":"Send shortcuts and clicks to other apps. Enable Accessibility first.","ru":"Отправлять сочетания клавиш и щелчки в другие приложения. Сначала включите универсальный доступ.","de":"Sende Tastenkombinationen und Klicks an andere Apps. Aktiviere zuerst Bedienungshilfen.","fr":"Envoyer des raccourcis et clics aux autres apps. Activez d’abord l’accessibilité."},
+    "permissionsSendingEnabled": {"en":"Rebind can send shortcuts and clicks to other apps.","ru":"Rebind может отправлять сочетания клавиш и щелчки в другие приложения.","de":"Rebind kann Tastenkombinationen und Klicks an andere Apps senden.","fr":"Rebind peut envoyer des raccourcis et clics aux autres apps."},
+    "permissionsWaitingAccessibility": {"en":"Waiting for Accessibility","ru":"Ожидание универсального доступа","de":"Wartet auf Bedienungshilfen","fr":"En attente de l’accessibilité"},
+    "permissionsOtherPurpose": {"en":"Current bindings do not need separate Input Monitoring access. Automation is requested only when an action needs it.","ru":"Для текущих правил отдельный доступ к мониторингу ввода не нужен. Автоматизация запрашивается только для действий, которым она требуется.","de":"Aktuelle Belegungen benötigen keinen separaten Zugriff auf die Eingabeüberwachung. Automation wird nur angefragt, wenn eine Aktion sie braucht.","fr":"Les règles actuelles ne nécessitent aucun accès séparé à la surveillance de l’entrée. L’automatisation est demandée uniquement si une action en a besoin."},
+    "recoveryEngineStatus": {"en":"Remapping stopped · access required","ru":"Переназначение остановлено · требуется доступ","de":"Neubelegung gestoppt · Zugriff erforderlich","fr":"Remappage arrêté · accès requis"}
   }
 }

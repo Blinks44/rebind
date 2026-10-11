@@ -4,9 +4,15 @@ import SwiftUI
 @main
 struct rebindApp: App {
     @NSApplicationDelegateAdaptor(RebindAppDelegate.self) private var delegate
+    @State private var settingsSection: SettingsSection = .general
 
     var body: some Scene {
         Window(.rebindWindowTitle, id: "main") { ContentView(model: delegate.model) }
+            .defaultSize(width: 1040, height: 640)
+        Settings {
+            SettingsView(model: delegate.model, selection: $settingsSection)
+                .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
+        }
         MenuBarExtra("Rebind", image: "RebindMenuBar") { RebindMenu(model: delegate.model) }
     }
 }
@@ -39,6 +45,7 @@ private struct RebindMenu: View {
         Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
             model.setEnabled(!model.configuration.isEnabled)
         }.disabled(model.storageLocked && !model.configuration.isEnabled)
+        SettingsLink { Text(.settingsTitle) }
         Divider()
         Button(.quitRebind) { NSApp.terminate(nil) }.keyboardShortcut("q")
     }

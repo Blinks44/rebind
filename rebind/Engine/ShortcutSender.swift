@@ -2,6 +2,7 @@ import CoreGraphics
 import Dispatch
 import Carbon
 import ApplicationServices
+import AppKit
 
 nonisolated enum ShortcutSender {
     // Only our events carry this tag. Other apps' synthetic input remains eligible.
@@ -28,33 +29,53 @@ nonisolated enum ShortcutSender {
     // the final posting race. No retry/acknowledgement or global modifier events.
     static func send(_ shortcut: KeyboardShortcut, to target: TrackpadDispatchTarget,
                      canPerform: @Sendable () -> Bool,
-                     diagnose: @Sendable (TrackpadDiagnosticEvent) -> Void = { _ in }) -> WindowActionResult {
+                     diagnose: @Sendable (TrackpadDiagnosticEvent) -> Void = { _ in },
+                     allowsInput: () -> Bool = {
+                         AXIsProcessTrusted() && CGPreflightPostEventAccess()
+                             && !IsSecureEventInputEnabled() && ScreenLockSession.allowsInput()
+                     },
+                     blockedInput: (KeyboardShortcut) -> TrackpadDiagnosticEvent? = heldInput,
+                     targetIsActive: (Int32) -> Bool = applicationIsActive,
+                     clock: () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+                     post: (CGEvent, Int32) -> Void = { $0.postToPid($1) }) -> WindowActionResult {
         let pid = target.pid
         guard canPerform() else { diagnose(.runtimeChanged); return .cancelled }
-        guard pid > 0, kill(pid, 0) == 0 else { diagnose(.targetChanged); return .cancelled }
-        guard AXIsProcessTrusted(), CGPreflightPostEventAccess(),
-              !IsSecureEventInputEnabled(), ScreenLockSession.allowsInput() else {
+        guard pid > 0, pid != getpid(), targetIsActive(pid) else { diagnose(.outputTargetInactive); return .cancelled }
+        guard allowsInput() else {
             diagnose(.protectedContext); return .cancelled
         }
+        if let reason = blockedInput(shortcut) { diagnose(reason); return .cancelled }
+        guard let events = events(for: shortcut) else { return .unavailable }
+        // NSRunningApplication's atomic properties are documented thread-safe.
+        // Recheck the captured process without AX IPC to the target's UI tree.
+        // Main-run-loop caching still applies; mailbox focus/activity checks and
+        // PID-directed output preserve cancellation and never retarget the pair.
+        guard targetIsActive(pid) else { diagnose(.outputTargetInactive); return .cancelled }
+        guard canPerform() else { diagnose(.runtimeChanged); return .cancelled }
+        guard allowsInput() else { diagnose(.protectedContext); return .cancelled }
+        if let reason = blockedInput(shortcut) { diagnose(reason); return .cancelled }
+        guard clock() <= target.expiresAt else { diagnose(.outputExpired); return .cancelled }
+        for event in events { post(event, pid) }
+        return .performed
+    }
+
+    private static func applicationIsActive(_ pid: Int32) -> Bool {
+        guard let app = NSRunningApplication(processIdentifier: pid) else { return false }
+        return app.isActive && !app.isTerminated && app.activationPolicy == .regular
+    }
+
+    private static func heldInput(_ shortcut: KeyboardShortcut) -> TrackpadDiagnosticEvent? {
         guard CGEventSource.flagsState(.combinedSessionState)
             .intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift, .maskSecondaryFn]).isEmpty else {
-            diagnose(.heldModifier); return .cancelled
+            return .heldModifier
         }
         guard !(0..<64).contains(where: {
             CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
-        }) else { diagnose(.heldButton); return .cancelled }
+        }) else { return .heldButton }
         guard !CGEventSource.keyState(.combinedSessionState, key: shortcut.keyCode) else {
-            diagnose(.heldKey); return .cancelled
+            return .heldKey
         }
-        guard let events = events(for: shortcut) else { return .unavailable }
-        // Reuse the existing public AX client on the serial worker to verify
-        // current focus even if MainActor's workspace notification is delayed.
-        let client = AXWindowAccessibility()
-        guard let app = client.application, client.processID(of: app) == pid,
-              canPerform() else { diagnose(.targetChanged); return .cancelled }
-        guard DispatchTime.now().uptimeNanoseconds <= target.expiresAt else { diagnose(.outputExpired); return .cancelled }
-        for event in events { event.postToPid(pid) }
-        return .performed
+        return nil
     }
 
     static func send(_ shortcut: KeyboardShortcut) -> Bool {

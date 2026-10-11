@@ -25,7 +25,7 @@ nonisolated struct TrackpadDiagnostics: Sendable {
 nonisolated enum TrackpadDiagnosticEvent: Sendable {
     case frame, candidate, queued, queueUnavailable, outputPosted, outputCancelled, outputUnavailable, outputExpired
     case captureInactive, captureRestarted, captureUnavailable, captureFailed, runtimeChanged
-    case heldModifier, heldButton, heldKey, protectedContext, targetChanged, activityChanged
+    case heldModifier, heldButton, heldKey, protectedContext, targetChanged, activityChanged, outputTargetInactive
     case invalidFrame, obsoleteFrame, staleFrame, futureReceipt, overflow
     case recognition(ShortContactRecognizer.Rejection)
     case gate(FourFingerTapGate.Reason)
@@ -50,6 +50,7 @@ nonisolated enum TrackpadDiagnosticEvent: Sendable {
         case .heldKey: "output-held-key"
         case .protectedContext: "output-protected-context"
         case .targetChanged: "foreground-changed"
+        case .outputTargetInactive: "output-target-inactive"
         case .activityChanged: "input-activity-changed"
         case .invalidFrame: "invalid-frame"
         case .obsoleteFrame: "obsolete-frame"

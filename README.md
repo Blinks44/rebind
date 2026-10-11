@@ -17,7 +17,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a modern design direction 
 - Menu-bar controls to open Rebind, select a profile, pause/resume bindings and quit. Closing the main window keeps the app running.
 - English, Russian, German and French translations using the system language.
 
-Profiles apply to input categories rather than individual physical devices. Caps Lock/Fn remapping, held/repeating output, Magic Mouse gestures and external-trackpad support are not currently available. The integrated built-in four-finger tap is experimental, with recognition/recovery checks still open; native trackpad gestures remain active. Full Settings/onboarding, Launch at Login and manual language selection are unfinished.
+Profiles apply to input categories rather than individual physical devices. Caps Lock/Fn remapping, held/repeating output, Magic Mouse gestures and external-trackpad support are not currently available. The integrated built-in four-finger tap is experimental, with recognition/recovery checks still open; native trackpad gestures remain active. First-run setup and permission recovery are implemented. Remaining Settings/About, Launch at Login and manual language selection are unfinished.
 
 ## Requirements
 
@@ -51,7 +51,7 @@ The result is `build/DerivedData/Build/Products/Release/Rebind.app`. Distributio
 ## First launch
 
 1. Open Rebind. New configurations start paused with no bindings.
-2. Use its permission controls to open **System Settings → Privacy & Security → Accessibility** and enable the running Rebind copy. Refresh the status and relaunch if macOS requests it.
+2. Use first-run setup or **Settings → Permissions** to open **System Settings → Privacy & Security → Accessibility** and enable the running Rebind copy. Refresh the status and relaunch if macOS requests it.
 3. If Accessibility is granted but event sending remains unavailable, use **Allow Event Sending**, then refresh. Recording/remapping require the actual checks to succeed.
 4. Select an input category, add a binding, choose its trigger and action, save, and resume bindings.
 

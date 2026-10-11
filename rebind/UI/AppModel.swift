@@ -18,6 +18,7 @@ import Dispatch
     private(set) var audioCapabilities = AudioOutputCapabilities()
     private(set) var workspaceActionInProgress = false
     private(set) var appleShortcutInProgress = false
+    let loginItem: LoginItemModel
 
     @ObservationIgnored let mailbox = EngineMailbox()
     @ObservationIgnored private let store: ConfigurationStore
@@ -31,15 +32,22 @@ import Dispatch
     @ObservationIgnored private var workspaceScreenLocked = false
     @ObservationIgnored private let previousApplication = PreviousApplicationTracker()
     @ObservationIgnored private let sessionAllowsInput: () -> Bool
+    @ObservationIgnored private let readPermissions: () -> InputPermissions
 
     init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true,
-         sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() }) {
+         sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() },
+         readPermissions: @escaping () -> InputPermissions = { .current() },
+         loginItem: LoginItemModel = LoginItemModel()) {
+        self.loginItem = loginItem
         self.sessionAllowsInput = sessionAllowsInput
+        self.readPermissions = readPermissions
         self.store = store
         super.init()
-        guard loadConfiguration else { return }
-        do { configuration = try store.load() }
-        catch { storageLocked = true; self.error = .storageUnreadable }
+        permissions = readPermissions()
+        if loadConfiguration {
+            do { configuration = try store.load() }
+            catch { storageLocked = true; self.error = .storageUnreadable }
+        }
     }
 
     func start() {
@@ -56,6 +64,7 @@ import Dispatch
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshPermissions), name: NSApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
         for name in [ScreenLockSession.lockedNotification, ScreenLockSession.unlockedNotification] {
             DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleScreenLockNotification(_:)),
@@ -90,7 +99,7 @@ import Dispatch
     @objc func refresh() {
         if Date().timeIntervalSince(lastPermissionCheck) >= 0.5 {
             refreshSessionProtection()
-            permissions = .current()
+            permissions = readPermissions()
             refreshWindowDisplays()
             lastPermissionCheck = Date()
         }
@@ -111,6 +120,8 @@ import Dispatch
             lastRecording = captured
             recording = nil
         }
+        // Consume the worker's cancellation result before clearing any remaining recorder.
+        if !permissions.allowsRemapping { cancelRecording() }
         if update.2 {
             recording = nil
             var paused = configuration
@@ -192,6 +203,17 @@ import Dispatch
         trySave(updated)
     }
 
+    var generalRuntime: GeneralRuntimePresentation {
+        GeneralRuntimePresentation(isEnabled: configuration.isEnabled, permissions: permissions,
+            status: status, isSuspended: mailbox.state.withLock { $0.suspended }, storageLocked: storageLocked)
+    }
+
+    /// Retries failed capture without changing rules, persisted intent or pause.
+    func retryRemapping() {
+        guard configuration.isEnabled, !storageLocked, permissions.allowsRemapping else { return }
+        mailbox.retryCapture()
+    }
+
     func beginEditing() {
         mailbox.setEditing(true)
     }
@@ -244,6 +266,7 @@ import Dispatch
     }
 
     var statusText: LocalizedStringResource {
+        if !permissions.allowsRemapping { return .recoveryEngineStatus }
         if case .permissionRequired = status {
             if permissions.requirement == .eventPosting { return .eventPostingStatus }
             return permissionHint
@@ -361,7 +384,25 @@ import Dispatch
         refreshPermissions()
         if !permissions.posting { openPrivacyPane("Privacy_Accessibility") }
     }
-    func refreshPermissions() { lastPermissionCheck = .distantPast; refresh() }
+    @objc func refreshPermissions() { lastPermissionCheck = .distantPast; refresh() }
+
+    /// First-run guidance is needed only before acknowledgement and when access is missing.
+    var needsPermissionSetup: Bool {
+        !configuration.hasCompletedSetup && !permissions.allowsRemapping && !storageLocked
+    }
+
+    /// Atomically acknowledges setup without enabling, reconfiguring or replacing rules.
+    @discardableResult func completePermissionSetup() -> Bool {
+        guard !storageLocked else { error = .storageUnreadable; return false }
+        var updated = configuration
+        updated.hasCompletedSetup = true
+        do {
+            try store.save(updated)
+            configuration = updated
+            error = nil
+            return true
+        } catch { self.error = .storageWriteFailed; return false }
+    }
 
     func showApplicationInFinder() {
         NSWorkspace.shared.activateFileViewerSelecting([Bundle.main.bundleURL])

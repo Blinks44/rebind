@@ -354,7 +354,7 @@ struct TrackpadIntegrationTests {
         old.schemaVersion = 21
         let data = try JSONEncoder().encode(old)
         let decoded = try JSONDecoder().decode(Configuration.self, from: data).migrated()
-        #expect(decoded.schemaVersion == 22 && decoded.profiles == old.profiles)
+        #expect(decoded.schemaVersion == Configuration.currentSchemaVersion && decoded.profiles == old.profiles)
         #expect(decoded.selectedProfileID == old.selectedProfileID && decoded.isEnabled)
     }
 

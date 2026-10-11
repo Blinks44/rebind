@@ -1,0 +1,120 @@
+{
+  "status": "Design handoff; not integrated into Localizable.xcstrings",
+  "locales": [
+    "en",
+    "ru",
+    "de",
+    "fr"
+  ],
+  "sharedCopy": "Existing General/Permissions copy owns the Settings shell; existing editor catalog/sources own editor labels and actions. holdValue is formatted with the locale.",
+  "strings": {
+    "inputTitle": {
+      "en": "Timing and gestures",
+      "ru": "Время и жесты",
+      "de": "Zeitverhalten und Gesten",
+      "fr": "Délais et gestes"
+    },
+    "inputDescription": {
+      "en": "Set hold duration per binding. Other thresholds are managed automatically.",
+      "ru": "Удержание настраивается в привязке. Остальные пороги — автоматически.",
+      "de": "Haltedauer pro Belegung; andere Schwellen werden automatisch verwaltet.",
+      "fr": "Réglez le maintien par remappage. Les autres seuils sont automatiques."
+    },
+    "pressTiming": {
+      "en": "Press timing",
+      "ru": "Время нажатия",
+      "de": "Zeitverhalten beim Drücken",
+      "fr": "Délais d’appui"
+    },
+    "perBinding": {
+      "en": "Per binding",
+      "ru": "В каждой привязке",
+      "de": "Pro Belegung",
+      "fr": "Par remappage"
+    },
+    "pressTimingDescription": {
+      "en": "Set hold duration per binding: 100–5,000 ms. Double press uses the macOS double-click interval.",
+      "ru": "Удержание: 100–5 000 мс в каждой привязке. Двойное нажатие использует интервал двойного щелчка macOS.",
+      "de": "Haltedauer pro Belegung: 100–5.000 ms. Zweimaliges Drücken nutzt das macOS-Doppelklickintervall.",
+      "fr": "Durée de maintien par remappage : 100–5 000 ms. Le double appui utilise le délai de double-clic de macOS."
+    },
+    "mouseGestures": {
+      "en": "Mouse gestures",
+      "ru": "Жесты мыши",
+      "de": "Mausgesten",
+      "fr": "Gestes de souris"
+    },
+    "automatic": {
+      "en": "Automatic",
+      "ru": "Автоматически",
+      "de": "Automatisch",
+      "fr": "Automatique"
+    },
+    "mouseGesturesDescription": {
+      "en": "Hold a middle or extra button and move up, down, left or right. Movement thresholds are fixed.",
+      "ru": "Удерживайте среднюю или дополнительную кнопку и двигайте мышь вверх, вниз, влево или вправо. Пороги движения фиксированы.",
+      "de": "Halte die mittlere oder eine Zusatztaste und bewege die Maus nach oben, unten, links oder rechts. Bewegungsschwellen sind fest.",
+      "fr": "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris vers le haut, le bas, la gauche ou la droite. Les seuils sont fixes."
+    },
+    "builtInTrackpad": {
+      "en": "Built-in trackpad",
+      "ru": "Встроенный трекпад",
+      "de": "Integriertes Trackpad",
+      "fr": "Trackpad intégré"
+    },
+    "experimental": {
+      "en": "Experimental",
+      "ru": "Экспериментально",
+      "de": "Experimentell",
+      "fr": "Expérimental"
+    },
+    "trackpadInputDescription": {
+      "en": "Four-finger tap → shortcut, without modifiers. Native gestures remain active and may also respond. Other gestures are not available yet.",
+      "ru": "Касание четырьмя пальцами → сочетание клавиш, без модификаторов. Системные жесты остаются активными и могут сработать одновременно. Другие жесты пока недоступны.",
+      "de": "Tippen mit vier Fingern → Tastenkombination, ohne Zusatztasten. Systemgesten bleiben aktiv und können gleichzeitig reagieren. Andere Gesten sind noch nicht verfügbar.",
+      "fr": "Toucher avec quatre doigts → raccourci, sans touches de modification. Les gestes système restent actifs et peuvent aussi réagir. Les autres gestes ne sont pas encore disponibles."
+    },
+    "inputEditGuidance": {
+      "en": "Choose Keyboard or Mouse in the sidebar to edit a binding in the selected profile.",
+      "ru": "Изменяйте привязки выбранного профиля в разделе «Клавиатура» или «Мышь».",
+      "de": "Wähle Tastatur oder Maus in der Seitenleiste, um eine Belegung im ausgewählten Profil zu bearbeiten.",
+      "fr": "Choisissez Clavier ou Souris dans la barre latérale pour modifier un remappage du profil sélectionné."
+    },
+    "holdDurationTitle": {
+      "en": "Hold duration",
+      "ru": "Время удержания",
+      "de": "Haltedauer",
+      "fr": "Durée de maintien"
+    },
+    "holdDurationDescription": {
+      "en": "Keep pressed for this long to run the action once. Releasing earlier cancels the action.",
+      "ru": "Удерживайте столько времени, чтобы выполнить действие один раз. Если отпустить раньше, действие отменится.",
+      "de": "Halte so lange gedrückt, um die Aktion einmal auszuführen. Früheres Loslassen bricht sie ab.",
+      "fr": "Maintenez l’appui pendant cette durée pour exécuter l’action une fois. Relâcher plus tôt l’annule."
+    },
+    "holdValue": {
+      "en": "%d ms",
+      "ru": "%d мс",
+      "de": "%d ms",
+      "fr": "%d ms"
+    },
+    "holdRange": {
+      "en": "100–5,000 ms · 100 ms steps · This binding only",
+      "ru": "100–5 000 мс · Шаг 100 мс · Только эта привязка",
+      "de": "100–5.000 ms · Schritte von 100 ms · Nur diese Belegung",
+      "fr": "100–5 000 ms · Pas de 100 ms · Ce remappage uniquement"
+    },
+    "bindingSaveFailed": {
+      "en": "Could not save binding",
+      "ru": "Не удалось сохранить привязку",
+      "de": "Belegung konnte nicht gespeichert werden",
+      "fr": "Impossible d’enregistrer le remappage"
+    },
+    "bindingSaveFailedDescription": {
+      "en": "Your previous binding is unchanged. Keep this window open and try saving again.",
+      "ru": "Предыдущая привязка не изменилась. Оставьте это окно открытым и попробуйте сохранить снова.",
+      "de": "Deine vorherige Belegung bleibt unverändert. Lass dieses Fenster geöffnet und versuche erneut zu speichern.",
+      "fr": "Votre remappage précédent est inchangé. Gardez cette fenêtre ouverte et réessayez d’enregistrer."
+    }
+  }
+}
