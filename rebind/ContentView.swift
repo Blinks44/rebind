@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     let model: AppModel
+    @Environment(\.openWindow) private var openWindow
     @State private var selection: MainDestination = .input(.allKeyboards)
     @State private var editor: EditorSelection?
     @State private var pendingDeletion: Binding?
@@ -35,11 +36,22 @@ struct ContentView: View {
                         .padding(12)
                         .background(isShowingSettings ? Color.accentColor.opacity(0.15) : .clear,
                                     in: .rect(cornerRadius: 8))
+                    Button(.aboutTitle, systemImage: "info.circle") { openWindow(id: "about") }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .buttonStyle(.borderless)
+                        .padding(12)
                 }.padding(16)
             }
             .navigationSplitViewColumnWidth(min: 232, ideal: 232)
         } detail: {
             switch selection {
+            case .input(.allMice):
+                MouseBindingsView(model: model,
+                    add: { editor = EditorSelection(scope: .allMice, binding: nil) },
+                    edit: { editor = EditorSelection(scope: .allMice, binding: $0) },
+                    delete: { pendingDeletion = $0 }, manageProfiles: { showingProfiles = true },
+                    openPermissions: { selection = .settings(.permissions) },
+                    diagnostics: { showingDiagnostics = true })
             case .input(let scope): bindingsView(scope: scope)
             case .settings: SettingsView(model: model, selection: settingsSection)
             }

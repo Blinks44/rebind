@@ -7,17 +7,14 @@ struct BindingEditor: View {
     private let profileID: UUID
     private let configurationRevision: UInt64
     @Environment(\.dismiss) private var dismiss
-    @State private var trigger: MatchKey?
-    @State private var output: KeyboardShortcut?
+    @State private var draft: BindingEditorDraft
+    @State private var recordingRequest: RecordingRequest?
+    @State private var showingPermissions = false
     @State private var actionKind: ActionKind
     @State private var application: ApplicationTarget?
     @State private var webAddress: String
     @State private var file: URL?
     @State private var appleShortcut: AppleShortcutTarget?
-    @State private var mouseRecordingTarget: RecordingTarget
-    @State private var activation: PressActivation
-    @State private var holdDurationMilliseconds: UInt32
-    @State private var pointerDirection: PointerDirection
 
     init(model: AppModel, scope: DeviceScope, existing: Binding?) {
         self.model = model
@@ -25,9 +22,7 @@ struct BindingEditor: View {
         self.existing = existing
         profileID = model.configuration.selectedProfileID
         configurationRevision = model.configurationReplacementRevision
-        _trigger = State(initialValue: existing.map { $0.matchKey.pressSource }
-            ?? (scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil))
-        _output = State(initialValue: existing?.action.shortcut)
+        _draft = State(initialValue: BindingEditorDraft(scope: scope, existing: existing))
         _actionKind = State(initialValue: existing.map { ActionKind(action: $0.action) } ?? .keyboardShortcut)
         let workspace: WorkspaceAction?
         if case .workspace(let value) = existing?.action { workspace = value } else { workspace = nil }
@@ -38,81 +33,68 @@ struct BindingEditor: View {
         else { _file = State(initialValue: nil) }
         if case .appleShortcut(let target) = existing?.action { _appleShortcut = State(initialValue: target) }
         else { _appleShortcut = State(initialValue: nil) }
-        _activation = State(initialValue: existing?.activation ?? .press)
-        _holdDurationMilliseconds = State(initialValue: existing?.holdDurationMilliseconds ?? 500)
-        let target: RecordingTarget
-        if let existing, case .scroll = existing.trigger { target = .scrollTrigger }
-        else if let existing, case .mouseGesture = existing.trigger { target = .gestureTrigger }
-        else { target = .mouseTrigger }
-        _mouseRecordingTarget = State(initialValue: target)
-        let direction: PointerDirection
-        if let existing, case .mouseGesture(_, let value) = existing.trigger { direction = value }
-        else { direction = .left }
-        _pointerDirection = State(initialValue: direction)
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
-                Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadTapHint : .recordingLimitations)
-                    .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(.triggerTitle).font(.headline)
-                        if scope == .allMice {
-                            Picker(.mouseInputKind, selection: $mouseRecordingTarget) {
-                                Text(.mouseButtonInput).tag(RecordingTarget.mouseTrigger)
-                                Text(.mouseWheelInput).tag(RecordingTarget.scrollTrigger)
-                                Text(.pointerGestureInput).tag(RecordingTarget.gestureTrigger)
-                            }.pickerStyle(.menu)
-                            if mouseRecordingTarget == .scrollTrigger {
-                                Text(.wheelMappingHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            if mouseRecordingTarget == .gestureTrigger {
-                                Picker(.pointerDirectionTitle, selection: $pointerDirection) {
-                                    ForEach(PointerDirection.allCases, id: \.self) { direction in
-                                        Text(direction.label).tag(direction)
-                                    }
-                                }
-                                Text(.pointerGestureHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        if scope == .allKeyboards || (scope == .allMice && mouseRecordingTarget == .mouseTrigger) {
-                            Text(.activationTitle).font(.caption).foregroundStyle(.secondary)
-                            Picker(.activationTitle, selection: $activation) {
-                                Text(.pressActivation).tag(PressActivation.press)
-                                Text(.doublePressActivation).tag(PressActivation.doublePress)
-                                Text(.holdActivation).tag(PressActivation.hold)
-                            }.pickerStyle(.segmented).labelsHidden()
-                            if activation == .doublePress {
-                                Text(.doublePressHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            if activation == .hold {
-                                HoldDurationRow(milliseconds: $holdDurationMilliseconds)
-                                Text(.holdHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        Text(trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
-                        if scope != .builtInTrackpad {
-                            Button(.recordTrigger) { model.beginRecording(scope == .allKeyboards ? .keyboardTrigger : mouseRecordingTarget) }
-                                .disabled(!model.canRecord || model.recording != nil)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+                if scope == .allMice {
+                    Text(.mouseEditorScope(model.configuration.selectedProfile?.title ?? ""))
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadTapHint : .recordingLimitations)
+                        .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
-                GroupBox {
+                if scope == .allMice {
+                    MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
+                } else {
+                    GroupBox {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(.triggerTitle).font(.headline)
+                            if scope == .allKeyboards {
+                                Text(.activationTitle).font(.caption).foregroundStyle(.secondary)
+                                Picker(.activationTitle, selection: $draft.activation) {
+                                    Text(.pressActivation).tag(PressActivation.press)
+                                    Text(.doublePressActivation).tag(PressActivation.doublePress)
+                                    Text(.holdActivation).tag(PressActivation.hold)
+                                }.pickerStyle(.segmented).labelsHidden()
+                                if draft.activation == .doublePress {
+                                    Text(.doublePressHint).font(.caption).foregroundStyle(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                if draft.activation == .hold {
+                                    HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds)
+                                    Text(.holdHint).font(.caption).foregroundStyle(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                            Text(draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
+                            if scope != .builtInTrackpad {
+                                Button(.recordTrigger) { record(scope == .allKeyboards ? .keyboardTrigger : draft.mouseTarget) }
+                                    .disabled(!model.canRecord || model.recording != nil)
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+                    }
+                }
+                BindingEditorSection(usesCard: scope != .allMice) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(.actionTitle).font(.headline)
                         if scope == .builtInTrackpad {
                             Text(.outputShortcut)
                         } else { ActionPickerView(model: model, selection: $actionKind) }
                         if actionKind == .keyboardShortcut {
-                            Text(output.map(InputLabels.shortcut) ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
-                            Button(.recordOutput) { model.beginRecording(.output) }.disabled(!model.canRecord || model.recording != nil)
+                            if scope == .allMice {
+                                BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
+                                    recording: model.recording, canRecord: model.canRecord,
+                                    record: { record(.output) }, cancel: model.cancelRecording,
+                                    clear: { draft.output = nil })
+                                Text(.mouseOutputHelp).font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } else {
+                                Text(draft.output.map(InputLabels.shortcut) ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
+                                Button(.recordOutput) { record(.output) }.disabled(!model.canRecord || model.recording != nil)
+                            }
                         } else if actionKind.mouseAction != nil {
                             Text(.mouseActionHint).font(.caption).foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -170,9 +152,9 @@ struct BindingEditor: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(scope == .allMice ? 0 : 8)
                 }
-                if model.recording != nil {
+                if model.recording != nil && scope != .allMice {
                     HStack {
                         Label(.listeningHint, systemImage: "record.circle").foregroundStyle(.tint)
                         Spacer()
@@ -180,8 +162,11 @@ struct BindingEditor: View {
                     }
                 }
                 if !model.canRecord {
-                    Text(model.permissionHint).foregroundStyle(.secondary)
+                    Text(recordingUnavailableHint).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                    if !model.permissions.allowsRemapping {
+                        Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }
+                    }
                 }
                 switch model.status {
                 case .tapFailed, .interrupted, .outputFailed, .secureInput:
@@ -199,61 +184,96 @@ struct BindingEditor: View {
                         }
                     } else { Text(error).foregroundStyle(.red) }
                 }
-                HStack {
+                if validationError == .conflict {
+                    PermissionCard {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(.mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""))
+                                .font(.headline)
+                            Text(.mouseConflictHelp).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                } else if validationError != nil { Text(.bindingInvalid).foregroundStyle(.red) }
+            }.padding(24)
+        }.safeAreaInset(edge: .bottom, spacing: 0) {
+            HStack {
+                if scope != .allMice {
                     Button(.clearRecording) {
                         model.cancelRecording()
-                        trigger = scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil
-                        output = nil; actionKind = .keyboardShortcut
+                        draft = BindingEditorDraft(scope: scope, existing: nil)
+                        actionKind = .keyboardShortcut
                         application = nil; webAddress = ""; file = nil; appleShortcut = nil
                     }
-                    Spacer()
-                    Button(.cancel) { dismiss() }.keyboardShortcut(.cancelAction)
-                    Button(.saveBinding) { save() }.keyboardShortcut(.defaultAction)
-                        .disabled(trigger == nil || configuredAction == nil || !actionKind.isAvailable(with: model.audioCapabilities) || model.recording != nil || model.storageLocked)
                 }
-            }.padding(24)
-        }.frame(width: 540).frame(maxHeight: 760)
+                Spacer()
+                Button(.cancel) { model.cancelRecording(); dismiss() }
+                    .accessibilityIdentifier("binding-editor-cancel")
+                Button(.saveBinding, action: save).keyboardShortcut(.defaultAction)
+                    .accessibilityIdentifier("binding-editor-save")
+                    .buttonStyle(.borderedProminent)
+                    .disabled(candidate == nil || validationError != nil
+                        || !actionKind.isAvailable(with: model.audioCapabilities)
+                        || model.recording != nil || model.storageLocked)
+            }.padding(24).background(Color(.permissionCanvasBottom))
+        }.frame(width: scope == .allMice ? 512 : 540).frame(idealHeight: 640, maxHeight: 760)
+        .background { PermissionCanvas() }
+        .onExitCommand { if model.recording != nil { model.cancelRecording() } else { dismiss() } }
+        .sheet(isPresented: $showingPermissions) { PermissionSetupView(model: model, context: .recovery) }
         .onAppear { model.error = nil; model.beginEditing() }
         .onDisappear { model.endEditing() }
         .onChange(of: model.configurationReplacementRevision) { dismiss() }
-        .onChange(of: mouseRecordingTarget) {
+        .onChange(of: draft.mouseTarget) {
             model.cancelRecording()
-            trigger = nil
-            activation = .press
-            holdDurationMilliseconds = 500
-            pointerDirection = .left
+            recordingRequest = nil
+            draft.selectMouseTarget(draft.mouseTarget)
         }
-        .onChange(of: actionKind) {
-            model.cancelRecording()
-        }
-        .onChange(of: activation) { model.cancelRecording() }
-        .onChange(of: holdDurationMilliseconds) { model.cancelRecording() }
-        .onChange(of: pointerDirection) { model.cancelRecording() }
+        .onChange(of: actionKind) { model.cancelRecording() }
+        .onChange(of: draft.activation) { model.cancelRecording() }
+        .onChange(of: draft.holdDurationMilliseconds) { model.cancelRecording() }
+        .onChange(of: draft.pointerDirection) { model.cancelRecording() }
         .onChange(of: model.lastRecording?.request.id) {
-            guard let recording = model.lastRecording, let input = recording.input else { return }
-            if recording.request.target == .output, case .key(let code) = input.trigger {
-                output = KeyboardShortcut(keyCode: code, modifiers: input.modifiers)
-            } else { trigger = input }
+            guard let recorded = model.lastRecording else { return }
+            draft.accept(recorded, for: recordingRequest, scope: scope)
+            recordingRequest = nil
+        }
+        .onChange(of: model.recording?.id) {
+            if model.recording == nil, model.lastRecording?.request != recordingRequest {
+                recordingRequest = nil
+            }
+        }
+        .onChange(of: validationError) {
+            if validationError == .conflict {
+                AccessibilityNotification.Announcement(AppLocalization.string(.mouseConflictHelp)).post()
+            }
         }
     }
 
     private var configuredAction: RebindAction? {
-        actionKind.configuredAction(shortcut: output, application: application, webAddress: webAddress, file: file,
+        actionKind.configuredAction(shortcut: draft.output, application: application, webAddress: webAddress, file: file,
                                     appleShortcut: appleShortcut)
+    }
+
+    private var candidate: Binding? {
+        configuredAction.flatMap { draft.binding(scope: scope, action: $0, existing: existing) }
+    }
+
+    private var validationError: ConfigurationError? {
+        candidate.flatMap { BindingEditorValidation.error(for: $0, in: model.configuration) }
+    }
+
+    private var recordingUnavailableHint: LocalizedStringResource {
+        if !model.permissions.allowsRemapping { return .mouseRecordingUnavailable }
+        return model.recordingUnavailableHint
+    }
+
+    private func record(_ target: RecordingTarget) {
+        model.beginRecording(target)
+        recordingRequest = model.recording
     }
 
     private func save() {
         guard configurationRevision == model.configurationReplacementRevision else { dismiss(); return }
-        guard let trigger, let action = configuredAction, actionKind.isAvailable(with: model.audioCapabilities) else { return }
-        let source: InputTrigger
-        if mouseRecordingTarget == .gestureTrigger, scope == .allMice {
-            guard case .mouseButton(let button) = trigger.trigger else { return }
-            source = .mouseGesture(button: button, direction: pointerDirection)
-        } else { source = trigger.trigger }
-        var binding = Binding(scope: scope, trigger: source, modifiers: trigger.modifiers,
-                              action: action, activation: activation,
-                              holdDurationMilliseconds: holdDurationMilliseconds)
-        if let existing { binding.id = existing.id; binding.isEnabled = existing.isEnabled }
-        if model.saveBinding(binding, profileID: profileID) { dismiss() }
+        guard let candidate, validationError == nil, actionKind.isAvailable(with: model.audioCapabilities) else { return }
+        if model.saveBinding(candidate, profileID: profileID) { dismiss() }
     }
 }

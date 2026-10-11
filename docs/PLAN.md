@@ -62,10 +62,13 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] Bounded [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) native integration, schema 24 and software/full-window/live fixture checks pass; actual input/relaunch/accessibility acceptance remains open in [native evidence](verification/input-language-native.md).
 - [x] Bounded [Advanced backup foundation](tasks/UI-008-advanced-storage.md): shared validated codec, in-memory legacy migration and size-bounded regular-file read; 553 tests / zero failures. Native flows remain separate.
 - [x] Bounded [Advanced native integration](tasks/UI-007-advanced-settings.md): import/export, safe confirmation, paused atomic replacement/reset, protected-original export and diagnostics; 570 tests / zero failures, Debug/native cancellation/layout checks pass. Restored-binding/runtime/accessibility acceptance remains open in [evidence](verification/advanced-settings-native.md).
-- [ ] Implement remaining About and justified future gesture tuning; complete Advanced SPEC §15.12 and broader Settings accessibility/runtime acceptance.
+- [x] Bounded [About and licenses](tasks/UI-010-about.md) integrated with actual bundle identity and local native Find; software/native checks pass in [evidence](verification/about-native.md). Full keyboard/VoiceOver/accessibility preferences remain open.
+- [ ] Implement justified future gesture tuning; complete Advanced SPEC §15.12 and broader About/Settings accessibility/runtime acceptance.
 - [ ] Verify window reopening/single engine, relaunch/login, revoked access, lock/sleep/recovery and deliberate paused state. [Permissions](verification/permissions.md), [UI-001](tasks/UI-001-permissions-onboarding.md).
 
 ### Phase 8 — Complete modern native UI and brand
+
+- [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.
 
 - [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
 - [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The bounded [materials review](tasks/UI-006-material-design-review.md) is saved; shape/divider polish and Advanced compositions reviewed; native adoption remains open.

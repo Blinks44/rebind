@@ -291,7 +291,20 @@ import Dispatch
         recording = nil
         mailbox.record(nil)
     }
-    var canRecord: Bool { permissions.allowsRemapping && mailbox.state.withLock { !$0.suspended && !$0.stopped } }
+    var canRecord: Bool {
+        permissions.allowsRemapping && mailbox.state.withLock {
+            !$0.suspended && !$0.stopped && $0.status != .secureInput
+        }
+    }
+
+    var recordingUnavailableHint: LocalizedStringResource {
+        if !permissions.allowsRemapping { return permissionHint }
+        return mailbox.state.withLock {
+            if $0.suspended { return .remappingSessionSuspended }
+            if $0.stopped { return .engineInterrupted }
+            return $0.status.text
+        }
+    }
 
     var canStartDiagnostics: Bool {
         guard !storageLocked, canRecord else { return false }

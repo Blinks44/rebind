@@ -1,12 +1,12 @@
 # Rebind — current state
 
-Updated **2026-10-11**. HEAD `bf36465` plus final Advanced alert/diagnostic/test refinements and evidence. General/Permissions/Input/Language/Advanced integrated; full-main Settings overflow repaired. AppKit sharing-indicator warnings isolated. Broader runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-11**. HEAD `8daa97b` plus uncommitted About and Mouse implementation. General/Permissions/Input/Language/Advanced/About/Mouse integrated; full-main Settings overflow repaired. Broader runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
 Native macOS **26+**, SwiftUI/AppKit, one process/Menu Bar, local-only rules, one manually selected profile across categories. No physical-device attribution/inventory or automatic profile activation. Stable scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Last recorded environment: Xcode 27.0 / Swift 6.4 / SDK 27, Apple Silicon macOS 27.0.1; minimum-OS and Intel execution are **not verified**.
 
-Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining phases, [SPEC](SPEC.md) for required behavior, [CAPABILITIES](CAPABILITIES.md) for detailed evidence. Requirements and design examples do not imply implementation.
+Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining phases, [SPEC](SPEC.md) for required behavior, [CAPABILITIES](CAPABILITIES.md) for detailed evidence.
 
 ## What already exists
 
@@ -17,27 +17,22 @@ Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining 
 | Profiles/storage | Manual profile CRUD/copy/selection, atomic versioned JSON and corruption/future-file protection. Current schema **24**, migrations from 1–23, setup acknowledgement and language preference software-tested. Complete relaunch/held-input switching remains open. |
 | Actions | Shared searchable catalog: shortcuts, audio/media/mouse outputs, AX window/app operations/layouts/cycling, Previous Application, app/web/file opening, Apple Shortcuts, Spaces, sleep, experimental Dock actions/lock. Specific happy paths confirmed; broader guards and platform checks remain. |
 | Trackpad | Experimental built-in four-finger single tap → shortcut. Latest rebuilt retest: 25 qualified/queued/posted outputs, no output cancellation; user estimates 10/10 delivery. Public AppKit target check retained. Clicks alone send no shortcut and subsequent taps work, per user. Pause/resume, sleep/wake and mixed input are additionally user-confirmed (unquantified); measured latency and broader safety/platform acceptance remain open; no native suppression. Broader gestures remain unwired. |
-| UI/localization | Main/editor/profiles/diagnostics, native setup/recovery and all five Settings sections. Four-language copy, actual-state login, saved/active/reopen language, staged import/export and paused atomic reset/replacement implemented. Real login/language relaunch, restored-binding import acceptance, full accessibility and remaining Sketch main/About/materials remain open. |
+| UI/localization | Conditional Mouse list/editor/search, main/profiles/diagnostics, native setup/recovery, all five Settings sections and About with local searchable licenses. Four-language copy, actual-state login, saved/active/reopen language, staged import/export and paused atomic reset/replacement implemented. Real login/language relaunch, restored-binding import acceptance, full accessibility and remaining Sketch main/materials remain open. |
 | Brand | Refined Sketch geometry delivered as sole icon input **rebind/AppIcon.icon**; obsolete app/reference PNG sets removed. Separate **RebindMenuBar** vector template integrated. Build/resources and Finder evidence recorded; Dock/live menu/macOS 26/tint acceptance remains. Do not recreate these assets as missing. |
 
 ## Design source and recent changes
 
-- **2026-10-11:** [General/background](tasks/UI-003-general-settings.md) integrated; [overflow repair/native checks](verification/general-main-window-repair.md) pass. Login/VoiceOver remain open; [OS sharing-indicator cause](verification/appkit-sharing-indicator.md) isolated.
+- **2026-10-11:** Input/Language, Advanced and About integrated; bounded native/software checks pass. Production relaunch, restored-binding and accessibility acceptance remain open. [Input/Language](verification/input-language-native.md), [Advanced](verification/advanced-settings-native.md), [About](verification/about-native.md).
+- **2026-10-11:** [Mouse list/editor](tasks/UI-009-mouse-design.md) integrated with owned drafts, conditional trigger controls, search/conflict feedback and four-language copy. [586-test/Debug/native evidence](verification/mouse-native.md) passes; physical capture, accessibility and revised glass-material adoption remain open.
 
-- **2026-10-11:** [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) integrated; native Stepper/retry and Dark Apply/compact checks pass. [Evidence](verification/input-language-native.md); actual relaunch/accessibility open.
-
-- **2026-10-11:** [Materials/consistency](tasks/UI-006-material-design-review.md) design finished; Advanced Screens 48–69 saved/reviewed with behavior/four-language copy in Sketch. Full-main materials/accessibility remain separate.
-
-- **2026-10-11:** [Advanced native integration](tasks/UI-007-advanced-settings.md) implemented: validated import/export, paused atomic replacement/reset, protected originals and diagnostics. **570 tests / zero failures**, Debug/signature/layout pass; native Escape/Return cancellation fixed/checked. [Artifact, findings and open acceptance](verification/advanced-settings-native.md). Ownership released; restored-binding runtime and accessibility remain open.
-
-Live source: **Rebind.sketch**, last released 69 screen/state frames, saved 2026-10-11; Mouse design is independently in progress. Resolve current source through [DESIGN](DESIGN.md). Sketch owns visuals/copy; native results stay in Git. [Workflow skill 1.3.0](tasks/DOC-002-workflow-review-skill.md) adds guided setup. Verification images stay local; versioning needs a specific purpose. Earlier outcomes remain in [history](history/2026-10.md).
+Live source: **Rebind.sketch**, 89 frames, saved/reviewed 2026-10-11; [unified glass controls](tasks/UI-011-control-unification.md) and Foundations 14 are released. [Mouse rules/editor](tasks/UI-009-mouse-design.md) Screens 70–89 and behavior/four-language copy are integrated; [software/layout/live editor checks](verification/mouse-native.md) pass, hardware/accessibility remain open. The released UI-011 revision still needs native adoption. [DESIGN](DESIGN.md) locates the source. Sketch owns visuals/copy; native results stay in Git and verification images stay local. Earlier outcomes: [history](history/2026-10.md).
 
 ## Open work / next steps
 
 Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-aware-task-selection) defines task selection/access.
 
-- **Design:** Mouse rules/editor active in [UI-009](tasks/UI-009-mouse-design.md); consume only its released scope. Remaining coverage is in [DESIGN](DESIGN.md#remaining-design-coverage).
-- **Code:** Advanced integrated. Next verify SPEC §15.12 with disposable authored profiles and complete accessibility checks from [Advanced evidence](verification/advanced-settings-native.md). Production language/restart checks remain user-led; About and ready Mouse design can supply independent future work. Actual login/grants, trackpad/Magic Mouse gates remain separate.
+- **Design:** Shared glass controls released in [UI-011](tasks/UI-011-control-unification.md); Mouse rules/editor released in [UI-009](tasks/UI-009-mouse-design.md). Next Trackpad/Magic Mouse states within actual acquisition/support limits; remaining coverage is in [DESIGN](DESIGN.md#remaining-design-coverage).
+- **Code:** Advanced/About integrated. Mouse integration is released; adopt the shared glass controls from live Sketch and complete its remaining native acceptance. Advanced SPEC §15.12 restored-binding behavior and About/Settings accessibility remain open in their evidence checklists. Production language/restart, actual login/grants and input hardware gates remain separate.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
@@ -47,7 +42,9 @@ Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-a
 | [UI-004](tasks/UI-004-input-settings.md) | awaiting_verification | Unassigned; native integration released | Overview/Hold/save retry checked; verify physical timing/cancellation, remaining editor/accessibility states. |
 | [UI-005](tasks/UI-005-language-settings.md) | awaiting_verification | Unassigned; native integration released | Apply/storage/compact/AX checked; verify actual production relaunch, Cocoa projection repair and accessibility. |
 | [UI-007](tasks/UI-007-advanced-settings.md) | awaiting_verification | Unassigned; native integration released | Export/reset/import/explicit resume with restored binding behavior, then keyboard/VoiceOver/accessibility preferences. |
-| [UI-009](tasks/UI-009-mouse-design.md) | in_design | `/root` design, independent chat | Finish/save Mouse rules/editor in live Sketch and release bounded implementation scope. |
+| [UI-010](tasks/UI-010-about.md) | awaiting_verification | Unassigned; implementation released | Verify VoiceOver/license reading, full keyboard traversal and accessibility preferences; native entry/search/closing checks pass. |
+| [UI-009](tasks/UI-009-mouse-design.md) | awaiting_verification | Unassigned; native integration released | Verify capture/cancellation, physical timing and accessibility; adopt released UI-011 materials. |
+| [UI-011](tasks/UI-011-control-unification.md) | ready_for_implementation | Unassigned; design released | Adopt saved glass controls/spacing from live Sketch; check native adaptive materials and focus. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | awaiting_verification | Unassigned; scoped refresh saved | Check Dock/live Menu Bar from the explicitly identified fresh bundle; actual tint and macOS 26 remain separate. |
 
-Additional open gates: Magic Mouse acquisition/recognition; remaining compact trackpad scope; physical keyboard/wheel/double-press/safety checks; full localization/accessibility; stable signing/TCC persistence, macOS 26/Intel, performance and distribution. See PLAN rather than implementing all of them from this summary.
+Broader hardware, trackpad/Magic Mouse, localization/accessibility, signing/TCC, macOS 26/Intel, performance and distribution gates remain in PLAN.

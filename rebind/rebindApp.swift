@@ -11,6 +11,17 @@ struct rebindApp: App {
             ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
         }
             .defaultSize(width: 1040, height: 640)
+            .commands {
+                CommandGroup(replacing: .appInfo) {
+                    AboutCommand(language: delegate.model.activeLanguage)
+                }
+            }
+        Window(.aboutTitle, id: "about") {
+            AboutView().environment(\.locale, delegate.model.activeLanguage.locale)
+        }
+        .defaultSize(width: 440, height: 448)
+        .windowResizability(.contentSize)
+        .defaultLaunchBehavior(.suppressed)
         Settings {
             SettingsView(model: delegate.model, selection: $settingsSection)
                 .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
