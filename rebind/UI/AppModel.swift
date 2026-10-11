@@ -82,7 +82,7 @@ import Dispatch
         updated.isEnabled = false
         // Setup acknowledgement is local lifecycle state, not a backup preference.
         updated.hasCompletedSetup = configuration.hasCompletedSetup
-        try store.save(updated)
+        try persistConfiguration(updated)
         let languageChanged = updated.languagePreference != configuration.languagePreference
         recording = nil
         lastRecording = nil
@@ -103,7 +103,7 @@ import Dispatch
         guard preference != configuration.languagePreference else { return }
         var updated = configuration
         updated.languagePreference = preference
-        try store.save(updated)
+        try persistConfiguration(updated)
         configuration = updated
         languagePreferenceSaved(preference)
     }
@@ -408,6 +408,7 @@ import Dispatch
 
     private func showConfigurationError(_ error: any Error) {
         switch error {
+        case ConfigurationStoreError.protectedOriginal: self.error = .storageUnreadable
         case ConfigurationError.conflict: self.error = .bindingConflict
         case ConfigurationError.profileInvalid: self.error = .profileInvalid
         case ConfigurationError.profileLimit: self.error = .profileLimit
@@ -417,10 +418,20 @@ import Dispatch
         }
     }
 
+    /// Locks editing when an existing file becomes unreadable after launch.
+    private func persistConfiguration(_ updated: Configuration) throws {
+        do { try store.save(updated) }
+        catch ConfigurationStoreError.protectedOriginal {
+            storageLocked = true
+            error = .storageUnreadable
+            throw ConfigurationStoreError.protectedOriginal
+        }
+    }
+
     @discardableResult private func trySave(_ updated: Configuration) -> Bool {
         guard !storageLocked else { error = .storageUnreadable; return false }
         do {
-            try store.save(updated)
+            try persistConfiguration(updated)
             error = nil
             if configuration.selectedProfileID != updated.selectedProfileID {
                 recording = nil
@@ -471,11 +482,11 @@ import Dispatch
         var updated = configuration
         updated.hasCompletedSetup = true
         do {
-            try store.save(updated)
+            try persistConfiguration(updated)
             configuration = updated
             error = nil
             return true
-        } catch { self.error = .storageWriteFailed; return false }
+        } catch { showConfigurationError(error); return false }
     }
 
     func showApplicationInFinder() {

@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-11**. HEAD `9253799` plus independent uncommitted Trackpad work. General/Permissions/Input/Language/Advanced/About/Mouse integrated; full-main Settings overflow repaired. Broader runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-11**. HEAD `ed0b5d9` plus uncommitted protected-save work and independent Sketch records. General/Permissions/Input/Language/Advanced/About/Mouse integrated; full-main Settings overflow repaired. Broader runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -14,16 +14,16 @@ Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining 
 | --- | --- |
 | Keyboard/mouse | Public active Quartz tap, exact primary modifiers, numeric middle/extra buttons, one-shot shortcuts, discrete wheel, double/long press and four cardinal button-held pointer gestures. Configured G603 subsets user-confirmed; physical keyboard/full safety matrix still open. |
 | Runtime | Bounded synchronous capture/matcher/mailbox, separate action execution, synthetic tags, protected-session/pause/cancellation safeguards and opt-in memory-only mouse diagnostics. Measured callback/action performance and full fault/recovery acceptance remain open. |
-| Profiles/storage | Manual profile CRUD/copy/selection, atomic versioned JSON and corruption/future-file protection. Current schema **24**, migrations from 1–23, setup acknowledgement and language preference software-tested. Complete relaunch/held-input switching remains open. |
+| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **24**, migrations 1–23 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
 | Actions | Shared searchable catalog: shortcuts, audio/media/mouse outputs, AX window/app operations/layouts/cycling, Previous Application, app/web/file opening, Apple Shortcuts, Spaces, sleep, experimental Dock actions/lock. Specific happy paths confirmed; broader guards and platform checks remain. |
 | Trackpad | Experimental built-in four-finger single tap → shortcut. Latest rebuilt retest: 25 qualified/queued/posted outputs, no output cancellation; user estimates 10/10 delivery. Public AppKit target check retained. Clicks alone send no shortcut and subsequent taps work, per user. Pause/resume, sleep/wake and mixed input are additionally user-confirmed (unquantified); measured latency and broader safety/platform acceptance remain open; no native suppression. Broader gestures remain unwired. |
-| UI/localization | Conditional Mouse list/editor/search, main/profiles/diagnostics, native setup/recovery, all five Settings sections and About with local searchable licenses. Four-language copy, actual-state login, saved/active/reopen language, staged import/export and paused atomic reset/replacement implemented. Real login/language relaunch, restored-binding import acceptance, full accessibility and remaining Sketch main/materials remain open. |
+| UI/localization | Conditional Mouse list/editor/search, main/profiles/diagnostics, native setup/recovery, all five Settings sections and About with local searchable licenses. Four-language copy, actual-state login, saved/active/reopen language, staged import/export and paused atomic reset/replacement implemented. Real login/language relaunch, detailed import acceptance, full accessibility and remaining Sketch main/materials remain open. |
 | Brand | Refined Sketch geometry delivered as sole icon input **rebind/AppIcon.icon**; obsolete app/reference PNG sets removed. Separate **RebindMenuBar** vector template integrated. Build/resources and Finder evidence recorded; Dock/live menu/macOS 26/tint acceptance remains. Do not recreate these assets as missing. |
 
 ## Design source and recent changes
 
 - **2026-10-11:** [Trackpad buffer safety](verification/trackpad-buffer-safety.md) repaired loss/readiness races; 591 tests, Debug build and 200 injected recovery cycles pass. Physical timing/stress/safety remain open.
-- **2026-10-11:** [Mouse list/editor](tasks/UI-009-mouse-design.md) integrated with owned drafts, conditional trigger controls, search/conflict feedback and four-language copy. [586-test/Debug/native evidence](verification/mouse-native.md) passes; physical capture, accessibility and revised glass-material adoption remain open.
+- **2026-10-11:** [Protected saves/restoration](verification/protected-saves-and-restoration.md): protected originals survive; restoration/cancellation/retry pass. 596 tests / 1,544 executions, Debug/signature pass. Switching/restart/restoration happy paths user-confirmed; detailed runtime/login and broader cancellation/routes remain open.
 
 Live source: **Rebind.sketch**, 89 frames, saved/reviewed 2026-10-11; [glass controls](tasks/UI-011-control-unification.md) and [semantic feedback](tasks/UI-012-semantic-feedback.md), Foundations 14–15, are released. Native adoption is open. [DESIGN](DESIGN.md) locates the source. Sketch owns visuals/copy; native results stay in Git and verification images stay local. Earlier outcomes: [history](history/2026-10.md).
 
@@ -31,7 +31,7 @@ Live source: **Rebind.sketch**, 89 frames, saved/reviewed 2026-10-11; [glass con
 
 Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-aware-task-selection) defines task selection/access.
 
-- **Design:** Glass controls and semantic states released in [UI-011](tasks/UI-011-control-unification.md) / [UI-012](tasks/UI-012-semantic-feedback.md). Apply their shared rules to further design. Next Trackpad/Magic Mouse states within actual acquisition/support limits; remaining coverage is in [DESIGN](DESIGN.md#remaining-design-coverage).
+- **Design:** [UI-013](tasks/UI-013-design-coverage-completion.md) is active: final planned Trackpad/Magic Mouse, action and profile states. UI-011/UI-012 shared rules are released; native capability verification stays separate.
 - **Code:** Advanced/About integrated. Mouse integration is released; adopt the shared glass controls and semantic feedback from live Sketch and complete its remaining native acceptance. Advanced SPEC §15.12 restored-binding behavior and About/Settings accessibility remain open in their evidence checklists. Production language/restart, actual login/grants and input hardware gates remain separate.
 
 | Task | Stage | Owner | Concrete next step |
@@ -41,7 +41,7 @@ Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-a
 | [UI-003](tasks/UI-003-general-settings.md) | awaiting_verification | Unassigned; warning isolated | OS sharing indicator identified; user-led restart checks and VoiceOver remain open. |
 | [UI-004](tasks/UI-004-input-settings.md) | awaiting_verification | Unassigned; native integration released | Overview/Hold/save retry checked; verify physical timing/cancellation, remaining editor/accessibility states. |
 | [UI-005](tasks/UI-005-language-settings.md) | awaiting_verification | Unassigned; native integration released | Apply/storage/compact/AX checked; verify actual production relaunch, Cocoa projection repair and accessibility. |
-| [UI-007](tasks/UI-007-advanced-settings.md) | awaiting_verification | Unassigned; native integration released | Export/reset/import/explicit resume with restored binding behavior, then keyboard/VoiceOver/accessibility preferences. |
+| [UI-007](tasks/UI-007-advanced-settings.md) | awaiting_verification | Unassigned; native integration released | Restoration/navigation user-confirmed broadly; retain detailed runtime, VoiceOver/preferences and artifact-specific checks. |
 | [UI-010](tasks/UI-010-about.md) | awaiting_verification | Unassigned; implementation released | Verify VoiceOver/license reading, full keyboard traversal and accessibility preferences; native entry/search/closing checks pass. |
 | [UI-009](tasks/UI-009-mouse-design.md) | awaiting_verification | Unassigned; native integration released | Verify capture/cancellation, physical timing and accessibility; adopt released UI-011 materials. |
 | [UI-011](tasks/UI-011-control-unification.md) | ready_for_implementation | Unassigned; design released | Adopt saved glass controls/spacing from live Sketch; check native adaptive materials and focus. |

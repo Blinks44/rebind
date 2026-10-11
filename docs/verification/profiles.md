@@ -3,7 +3,7 @@
 Scope: SPEC §§2, 3.2–3.3, 8–12; D1/D2 and S1/S2/S3.
 Status: implemented, software-tested and Russian baseline UI inspected.
 The user confirms its own bindings work after changing the selected profile.
-Held-source cancellation, relaunch and both selection UI paths remain manual checks.
+The 2026-10-11 follow-ups confirm the requested switching scenario for one mouse button and restart persistence; separately identified selection paths and broader activation modes remain open.
 
 ## Contract
 
@@ -59,6 +59,16 @@ Held-source cancellation, relaunch and both selection UI paths remain manual che
   output as expected. This verifies that selected-profile happy path on the existing G603
   LIGHTSPEED/G HUB setup. Exact mappings, selection UI path and OS were not restated;
   it does not verify both UI paths, held-source cancellation or restart persistence.
+
+## User switching follow-up — 2026-10-11
+
+In response to the requested hold → switch → release → fresh press check, the tester reports that mouse Button 4 invokes distinct actions in two profiles (audio mute and window minimize), with no old action firing when switching. This is user-reported physical selected-profile output and a successful bounded switching scenario, not agent-observed timing/suppression evidence. Mouse model, activation mode/hold duration, individual main-window/Menu Bar routes, tested bundle/revision and OS were not restated; do not infer them from the requested procedure or earlier hardware reports. Full delayed Hold/Double Press/pointer cancellation, both route-specific checks and production relaunch remain open.
+
+### User restart follow-up — 2026-10-11
+
+In response to the requested application-restart check, the tester confirms that the selected profile, rules and pause state persist. This is user-reported restart persistence in the tested setup. The exact bundle/revision, OS, restart method and number of enabled/paused/profile combinations were not restated. It does not establish login launch, restored-backup output, language reopen or every lifecycle/permission combination.
+
+Next: complete disposable native export/reset/import/explicit resume with restored output in UI-007; retain the remaining route/activation/accessibility checks below.
 
 ## User checks
 

@@ -46,7 +46,7 @@
       "upstream_commit_date": "2026-03-16T03:50:20Z",
       "reviewed_on": "2026-10-09",
       "license": "MIT",
-      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts. Rebind-specific 2026-10-11 override: curated complete Trackpad/Magic Mouse presets, no touch trigger recording or gesture builder; preserve keyboard/mouse and independent output recording."
     },
     {
       "name": "swiftui-ui-patterns",

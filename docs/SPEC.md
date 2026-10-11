@@ -164,6 +164,13 @@ recognized:
 - Safe movement/duration/corner tolerances; expose advanced adjustments only when
   necessary.
 
+**Preset editing contract — 2026-10-11:** present one selector of curated,
+complete gestures, for example `Double tap · 3 fingers` or `Top-left corner tap`.
+Finger count, click/tap kind and corner belong to each preset; do not expose
+separate controls or record touch triggers. Any supported modifier variant must
+be an explicitly curated preset rather than a freely composed combination.
+The release pool must respect native macOS reservations and verified coexistence.
+
 General one/two-finger single taps, five-finger gestures, holds, swipes (including
 diagonals), pinch, rotation and Force Click are outside this trackpad scope.
 Leave ordinary scrolling and system navigation gestures alone. This does not
@@ -196,6 +203,13 @@ Treat Magic Mouse as a dedicated surface device, **not merely a two-button mouse
 
 Prefer sharing recognition logic with trackpad when contact data semantics match; use a dedicated acquisition adapter when they do not.
 
+Use the same preset-only editor contract as Trackpad: one Magic Mouse-specific
+gesture selector and the shared action selector. Each preset contains its complete
+finger count/direction/hold semantics. No touch trigger recorder or separate
+gesture-type/finger/direction controls. Curate the release pool against native
+macOS reservations and actual hardware evidence; never infer the pool from
+Trackpad or expose arbitrary gesture construction.
+
 **Acceptance G1:** Only gestures verified on a real Magic Mouse are marked supported.  
 **Acceptance G2:** Device disconnect/reconnect and gesture cancellation do not leave stuck input states.
 
@@ -204,14 +218,15 @@ Prefer sharing recognition logic with trackpad when contact data semantics match
 Provide a clear **Add Binding** flow:
 
 1. Select a profile and input category.
-2. Click **Record Trigger**; show a distinct listening state and Escape/cancel control.
-3. Capture key + modifiers, extra mouse button, or demonstrably supported gesture; show a human-readable summary.
+2. For Keyboard or conventional Mouse, click **Record Trigger**; show a distinct listening state and Escape/cancel control. For Trackpad or Magic Mouse, choose one complete gesture from the predefined category-specific selector.
+3. Capture key + modifiers or extra mouse button where recording applies; show a human-readable summary. Touch preset selection is immediate and does not execute an action.
 4. Choose from searchable, categorized actions or record an output keyboard shortcut.
 5. Adjust relevant options, review conflicts, and save.
 
 Requirements:
 
 - Differentiate trigger recorder from output shortcut recorder. Do not accidentally execute output during recording.
+- Touch input exposes only the curated gesture pool. Output keyboard-shortcut recording remains available to every category and is independent of trigger selection.
 - Always provide cancel/retry/clear; scope recording to the active prompt; suppress or neutralize recorded events only when safe and possible.
 - Avoid capturing keys used to dismiss the recorder without explicit handling.
 - Show disabled/unavailable input modes with explanations, not a fake gesture recorder.
@@ -416,7 +431,7 @@ A release candidate should explicitly evaluate and record all of these, with hon
 4. Connect mouse with additional OS-observable buttons beyond Button 5 and bind any observable one.
 5. Hold Button 4 + move left to perform exactly one chosen action.
 6. Record a real four-finger trackpad tap and trigger `Command + W` on compatible hardware without unexplained double effects.
-7. Record and use at least one genuine Magic Mouse touch gesture when hardware and APIs permit; otherwise record tested blocker.
+7. Select and use at least one predefined genuine Magic Mouse touch gesture on real hardware; document capture/coexistence evidence and any tested blocker before release.
 8. Close Rebind's window and continue running via Menu Bar.
 9. Restart/login, reload rules and enable state, respecting actual permissions.
 10. Remove permissions or toggle Pause; keyboard/mouse continue to work normally.

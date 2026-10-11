@@ -10,6 +10,8 @@ Updated 2026-10-11. Read [STATE](STATE.md) first for current facts and next task
 
 These are recommended next items, not authorization to run hardware actions or start other agents. The user's next task may select a different slice. Independent design and input work can proceed with explicit ownership.
 
+Target-release clarification, 2026-10-11: complete the planned product functionality, including Trackpad/Magic Mouse, before release. Sketch designs the final product; temporary implementation gaps are not release-interface states. [UI-013](tasks/UI-013-design-coverage-completion.md) removes such placeholders and closes remaining design coverage. Native implementation and verification gates below remain open.
+
 ## Phase status and exit gates
 
 The checked items below describe only the stated software/artifact milestone. An unchecked phase gate may have substantial existing implementation. Read [capability evidence](CAPABILITIES.md) and relevant verification before adding code.

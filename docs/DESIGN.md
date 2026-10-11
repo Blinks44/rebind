@@ -2,6 +2,8 @@
 
 Updated 2026-10-11. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
+Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under [UI-013](tasks/UI-013-design-coverage-completion.md). Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
+
 ## Direction: modern macOS 26+
 
 Use purposeful Liquid Glass for navigation/profile controls and overlays; raised opaque content surfaces, subtle lighting and gradients provide depth without obscuring dense rules. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density. Avoid indiscriminate blur, stacked glass and decorative animation. Do not flatten the agreed material direction into generic Settings merely because default styling is easier.
@@ -9,6 +11,8 @@ Use purposeful Liquid Glass for navigation/profile controls and overlays; raised
 Consistency is defined by control role and size. The saved [glass-control refinement](tasks/UI-011-control-unification.md) uses 36 pt capsule form/profile/action selectors, a compact 24 pt glass capsule for Settings Language, one glass Activation track and one inset glass Settings-tab track. Secondary actions share subtle glass lighting and semantic accent wash. Raised Settings/capture surfaces retain 12 pt corners, window/sidebar 16 pt and navigation selection 8 pt. Light/Dark share geometry, type and spacing; avoid stacking appearance materials. The refinement supersedes the earlier flat Medium-popup direction. Native control semantics and sizing remain required; see [Apple's design-system guidance](https://developer.apple.com/videos/play/wwdc2025/356/).
 
 The saved [semantic-feedback system](tasks/UI-012-semantic-feedback.md) makes failures red, prerequisites/conflicts amber, completed operations green and information/progress blue. Use a calm opaque state surface, native icon and explicit title; preserve readable body copy and accent-colored recovery controls. Deliberate pause, empty and disabled states remain neutral. Foundations 15 applies to all subsequent design, including remaining profile/action/gesture states.
+
+Trackpad and Magic Mouse use one glass selector of complete, curated gesture presets followed by the shared action editor. No touch trigger recording or separate type/finger/direction selectors. Keyboard/conventional Mouse keep their trigger recorders; output-shortcut recording is available to every category. This 2026-10-11 product decision supersedes the initial UI-013 touch recording compositions; SPEC and the project-local design skill carry the behavioral rule.
 
 Use semantic colors and adaptive materials. Reduce Transparency preserves layout with opaque surfaces; Increase Contrast strengthens text/edges; Reduce Motion removes decorative transitions. Keyboard/focus/VoiceOver, resizing and EN/RU/DE/FR expansion require native acceptance. Do not impose upstream iOS/widget metrics or custom shaders on this macOS utility.
 
@@ -52,7 +56,7 @@ Advanced and Mouse are released within their bounded design scopes. Roughly **th
 
 | Package | Remaining outcome |
 | --- | --- |
-| **Trackpad / Magic Mouse — next** | Available/experimental/unavailable presets and conflict/capture guidance based on actual acquisition/support; broader scope depends on research/hardware |
+| **Trackpad / Magic Mouse — in progress** | Final planned gesture lists, one curated preset selector, shared actions and real compatibility/conflict/recovery states; no touch trigger recording or temporary implementation placeholders |
 | Editor/action validation | Action-specific app/URL/file/Shortcuts choices/failures and remaining unsupported/disabled states; Mouse trigger recording/conflict is released |
 | Empty/profile states and cross-screen review | Other categories' empty/search states, profile CRUD/limits/errors, remaining Dark/localized feedback, About and accessibility material variants |
 

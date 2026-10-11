@@ -6,9 +6,9 @@ import XCTest
 @MainActor final class AdvancedSettingsLayoutTests: XCTestCase {
     func testAdvancedFeedbackAndProtectedStatesFitNativeSettings() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindAdvancedLayout-\(UUID())")
-        let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         defer { try? FileManager.default.removeItem(at: directory) }
         for state in ["overview", "imported", "reset", "invalid", "protected", "writeFailed", "exportFailed"] {
+            let store = ConfigurationStore(url: directory.appending(path: "\(state)/configuration.json"))
             var configuration = Configuration()
             configuration.hasCompletedSetup = true
             try store.save(configuration)

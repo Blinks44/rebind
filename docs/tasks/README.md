@@ -32,3 +32,5 @@ Advanced native integration is implemented in [UI-007](UI-007-advanced-settings.
 [Consistent glass controls](UI-011-control-unification.md) is saved/reviewed and ready for native adoption: Foundations 14 and shared selectors, activation, Settings tabs and secondary actions. Integrated Mouse controls must adopt this revision; native materials/accessibility acceptance remains separate.
 
 [Semantic feedback and state accents](UI-012-semantic-feedback.md) is saved/reviewed: Foundations 15 and live Light/Dark feedback styles/sources govern current and subsequent states. Native appearance/accessibility adoption remains open.
+
+Completed bounded [protected ordinary saves and software restoration](STORAGE-001-protected-saves.md): files changed after launch remain protected; export/reset/import/resume matches restored selected rules in injected tests. [596-test/Debug evidence](../verification/protected-saves-and-restoration.md) passes. Native/hardware/relaunch/accessibility acceptance stays open in UI-007/profiles.

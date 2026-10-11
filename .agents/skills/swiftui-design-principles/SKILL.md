@@ -11,6 +11,10 @@ This skill encodes design principles derived from comparing polished, production
 
 Apply these principles whenever building or modifying SwiftUI interfaces, WidgetKit widgets, or any native Apple UI.
 
+## Rebind project contract
+
+For this project, read `docs/DESIGN.md`, the affected `docs/SPEC.md` contracts and the live Sketch source before designing or implementing controls. Trackpad and Magic Mouse each use **one gesture selector containing a curated, predefined pool**. Every item names the complete gesture, including its finger count, direction or corner where applicable. Do not add a touch trigger recorder, separate finger/direction/type selectors, or freely configurable gesture combinations. Respect native macOS reservations and show genuine conflicts with recovery. Keyboard and conventional mouse trigger recording remain appropriate, including unrestricted numeric additional mouse buttons. Recording an output keyboard shortcut is a separate action editor and remains available to all input categories. Sketch depicts the final planned release, not temporary implementation gaps. This is a Rebind-specific override, not a general restriction on Apple interfaces.
+
 ## Core Philosophy
 
 **Restraint over decoration.** Every pixel must earn its place. A polished app uses fewer colors, fewer font sizes, fewer spacing values, and fewer words — but uses them consistently. Over-engineering visual elements (custom gradients, decorative borders, bespoke dividers) creates visual noise. Native components and system colors create harmony.

@@ -71,11 +71,11 @@ import XCTest
 
     func testSettingsDoesNotExpandNavigationBeyondTheWindow() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindMainSettings-\(UUID())")
-        let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         defer { try? FileManager.default.removeItem(at: directory) }
         let sizes = [NSSize(width: 880, height: 600), NSSize(width: 1040, height: 640),
                      NSSize(width: 1157, height: 750), NSSize(width: 1280, height: 800)]
         for fixture in SettingsFixture.allCases {
+            let store = ConfigurationStore(url: directory.appending(path: "\(fixture.rawValue)/configuration.json"))
             var configuration = Configuration(isEnabled: fixture != .paused)
             configuration.hasCompletedSetup = true
             try store.save(configuration)
