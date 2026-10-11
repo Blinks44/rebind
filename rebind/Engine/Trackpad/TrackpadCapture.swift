@@ -88,13 +88,13 @@ import Dispatch
         let pid = foregroundPID()
         if let event = session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
         mailbox.updateTrackpadForeground(pid)
-        if device.buffer.takeOverflow() { session?.interrupt(); mailbox.recordTrackpadDiagnostic(.overflow) }
         let mailbox = mailbox
         session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
                                        diagnose: { mailbox.recordTrackpadDiagnostic($0) })
         let decisionTime = DispatchTime.now().uptimeNanoseconds
         // A busy UI cancels rather than executing old actions after it unblocks.
-        if session?.takeReady(at: decisionTime) == true, let pid {
+        if session?.takeReady(from: device.buffer, at: decisionTime,
+                              diagnose: { mailbox.recordTrackpadDiagnostic($0) }) == true, let pid {
             let queued = mailbox.submitTrackpad(runtime, pid: pid, at: decisionTime)
             mailbox.recordTrackpadDiagnostic(queued ? .queued : .queueUnavailable)
         }

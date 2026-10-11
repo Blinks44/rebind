@@ -50,6 +50,8 @@ Detailed commands and original evidence are retained in [the historical plan](hi
 
 User additionally reports the requested pause/resume, sleep/wake and mixed-input walkthrough passes. This extends the confirmed experimental subset; it is not measured latency/stress or platform/safety certification. [Scoped evidence](verification/phase-5-four-finger-tap.md#user-lifecycle-follow-up--2026-10-11).
 
+The independent [buffer-loss/readiness repair](verification/trackpad-buffer-safety.md) passes 200 injected overflow/recovery cycles and 591 full-suite tests on macOS 27.0.1. This is software safety evidence; it does not extend physical gesture, latency, suppression or platform claims.
+
 ### Advanced backup foundation — 2026-10-11
 
 Validated staging/encoding and bounded regular-file reads are software-tested; local storage shares the codec. The bounded foundation passed **553 full-suite tests / zero failures** and Debug build. [Original evidence](verification/advanced-backup-foundation.md), [task](tasks/UI-008-advanced-storage.md). Subsequent UI-007 native integration is implemented as recorded above; SPEC §15.12 runtime acceptance remains open.

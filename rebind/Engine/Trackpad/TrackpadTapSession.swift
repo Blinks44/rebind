@@ -1,3 +1,5 @@
+import Synchronization
+
 // Pure session orchestration, shared by native capture and synthetic-frame tests.
 // An incomplete/uncertain release cannot create a tap. A qualified release can
 // survive the native stream's trailing empty arrays during its click check.
@@ -82,10 +84,33 @@ nonisolated struct TrackpadTapSession: Sendable {
         // each dequeue instead of comparing fresh receipts with poll-entry time.
         // Bound a turn even when the producer keeps adding frames.
         for _ in 0..<64 {
+            if buffer.takeOverflow() { interrupt(); diagnose(.overflow); return }
             guard let frame = buffer.pop() else { break }
             diagnose(.frame)
             if let event = consume(frame, at: clock()) { diagnose(event) }
         }
+        // Loss can occur after the last dequeue, including at the turn limit.
+        if buffer.takeOverflow() { interrupt(); diagnose(.overflow) }
+    }
+
+    /// Consumes a ready tap only while the accepting buffer is empty and has no unacknowledged loss.
+    mutating func takeReady(from buffer: NativeTrackpadBuffer, at now: UInt64,
+                            diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }) -> Bool {
+        // Commit readiness against the producer's queue in one short critical
+        // section. A queued contact must be consumed before a pending tap fires.
+        // Do not call clocks, diagnostics or mailbox operations under this lock.
+        let decision = buffer.state.withLock { state -> (ready: Bool, overflow: Bool) in
+            if state.overflow {
+                state.clear()
+                interrupt()
+                return (false, true)
+            }
+            guard state.accepting else { interrupt(); return (false, false) }
+            guard state.count == 0 else { return (false, false) }
+            return (takeReady(at: now), false)
+        }
+        if decision.overflow { diagnose(.overflow) }
+        return decision.ready
     }
 
     mutating func takeCancellation() -> TrackpadDiagnosticEvent? { gate.takeCancellation().map { .gate($0) } }

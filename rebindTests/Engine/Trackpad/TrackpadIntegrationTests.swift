@@ -74,6 +74,123 @@ struct TrackpadIntegrationTests {
         #expect(events.contains("future-receipt") == false)
     }
 
+    @Test(arguments: [false, true])
+    func bufferOverflowBeforeOrDuringDrainCancelsQualifiedTap(_ duringDrain: Bool) {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        if duringDrain {
+            for (id, count) in [0, 4, 4, 0].enumerated() {
+                buffer.state.withLock {
+                    $0.frames[id] = frame(Int32(id), count: count, at: lift - UInt64(3 - id) * 20_000_000)
+                    $0.count += 1
+                }
+            }
+        } else {
+            completed(&session, at: lift)
+            for _ in 0..<65 { buffer.receive(nil, count: 0) }
+        }
+        var clocks = 0
+        var events: [String] = []
+        session.consumeBufferedFrames(from: buffer, clock: {
+            clocks += 1
+            // Reproduce a producer losing frames after the consumer's last
+            // dequeue, before it classifies that terminal release.
+            if duringDrain && clocks == 4 {
+                for _ in 0..<65 { buffer.receive(nil, count: 0) }
+            }
+            return lift
+        }, diagnose: { events.append($0.key) })
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready == false)
+        #expect(events.filter { $0 == "buffer-overflow" }.count == 1)
+    }
+
+    @Test(arguments: 0...2)
+    func finalBufferCheckGuardsFramesLossAndStopAfterDrain(_ scenario: Int) {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        session.consumeBufferedFrames(from: buffer, clock: { lift })
+        switch scenario {
+        case 0:
+            buffer.state.withLock {
+                $0.frames[0] = frame(4, count: 4, at: lift + 20_000_000)
+                $0.count = 1
+            }
+        case 1: for _ in 0..<65 { buffer.receive(nil, count: 0) }
+        default: buffer.setAccepting(false)
+        }
+        var events: [String] = []
+        let ready = session.takeReady(from: buffer, at: lift + 60_000_000,
+                                      diagnose: { events.append($0.key) })
+        #expect(ready == false)
+        #expect(events.filter { $0 == "buffer-overflow" }.count == (scenario == 1 ? 1 : 0))
+        session.consumeBufferedFrames(from: buffer, clock: { lift + 60_000_000 })
+        let after = session.takeReady(from: buffer, at: lift + 70_000_000)
+        #expect(after == false)
+    }
+
+    @Test func continuouslyRefilledQueueBoundsDrainAndDefersReadiness() {
+        let buffer = NativeTrackpadBuffer(mailbox: EngineMailbox())
+        buffer.setAccepting(true)
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        func enqueue(_ id: Int32, count: Int) {
+            buffer.state.withLock {
+                $0.frames[($0.head + $0.count) % $0.frames.count] = frame(id, count: count, at: lift + 20_000_000)
+                $0.count += 1
+            }
+        }
+        enqueue(4, count: 0)
+        var clocks = 0
+        session.consumeBufferedFrames(from: buffer, clock: {
+            clocks += 1
+            enqueue(Int32(4 + clocks), count: clocks == 64 ? 4 : 0)
+            return lift + 20_000_000
+        })
+        #expect(clocks == 64)
+        #expect(buffer.state.withLock { $0.count } == 1)
+        let ready = session.takeReady(from: buffer, at: lift + 60_000_000)
+        #expect(ready == false)
+        session.consumeBufferedFrames(from: buffer, clock: { lift + 60_000_000 })
+        let afterContact = session.takeReady(from: buffer, at: lift + 70_000_000)
+        #expect(afterContact == false)
+    }
+
+    @Test func repeatedOverflowAndRecoveryProduceOnlyFreshSingleTaps() {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        var cancelledOutputs = 0
+        var recoveredOutputs = 0
+        var duplicates = 0
+        var overflows = 0
+        for cycle in 0..<200 {
+            let end = lift + UInt64(cycle) * 1_000_000_000
+            completed(&session, at: end)
+            for _ in 0..<65 { buffer.receive(nil, count: 0) }
+            session.consumeBufferedFrames(from: buffer, clock: { end }, diagnose: {
+                if $0.key == "buffer-overflow" { overflows += 1 }
+            })
+            if session.takeReady(from: buffer, at: end + 60_000_000) { cancelledOutputs += 1 }
+            completed(&session, at: end + 500_000_000)
+            if session.takeReady(from: buffer, at: end + 560_000_000) { recoveredOutputs += 1 }
+            if session.takeReady(from: buffer, at: end + 570_000_000) { duplicates += 1 }
+        }
+        #expect(cancelledOutputs == 0)
+        #expect(recoveredOutputs == 200)
+        #expect(duplicates == 0)
+        #expect(overflows == 200)
+    }
+
     @Test func malformedStaleAndObsoleteFramesHaveDistinctDiagnosticReasons() {
         for scenario in 0...3 {
             var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)

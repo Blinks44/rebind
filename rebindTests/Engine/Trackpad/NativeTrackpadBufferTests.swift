@@ -111,4 +111,22 @@ struct NativeTrackpadBufferTests {
         buffer.receive(pointer, count: 4)
         #expect(buffer.pop() == nil)
     }
+
+    @Test func overflowQuarantinesFramesUntilAcknowledged() throws {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        for _ in 0..<65 { buffer.receive(nil, count: 0) }
+        for id in 0..<100 {
+            buffer.receive(nil, count: 0, callbackFrame: Int32(id), callbackTime: Double(id))
+        }
+        #expect(buffer.pop() == nil)
+        #expect(buffer.takeOverflow())
+        #expect(buffer.takeOverflow() == false)
+        buffer.receive(nil, count: 0, callbackFrame: 200, callbackTime: 200)
+        let recovered = try #require(buffer.pop())
+        #expect(recovered.frame == 200)
+        #expect(buffer.pop() == nil)
+    }
 }

@@ -1,11 +1,11 @@
 # INPUT-001 — reliable integrated four-finger tap
 
-- Updated: 2026-10-11, rebuilt delivery plus click-only exclusion and subsequent-tap recovery user-confirmed; quantified stress and broader safety/platform acceptance remain open.
+- Updated: 2026-10-11, buffer-loss/readiness race repaired and injected stress verified; hardware timing and broader safety/platform acceptance remain open.
 - Stage: `awaiting_verification`
-- Owner: Unassigned; `/root` completed output-target validation/diagnostics and tests on 2026-10-11; no UI/catalog or Sketch edits.
+- Owner: Unassigned; `/root` released buffer-overflow/polling safety slice 2026-10-11. Native Trackpad buffer/session/capture and scoped tests only; no UI/catalog or Sketch edits.
 - Owned surfaces when claimed: `rebind/Engine/Trackpad/`, affected trackpad tests/copy and this record; coordinate any shared UI/catalog changes.
 - Requirements: SPEC §3.4, §§6–7/12, T1/T2, S1/S3; PLAN Phase 5.
-- Baseline inspected: `acce2f4` (`feat: ai workflow`); prior capture/recovery repairs are committed. ShortcutSender, TrackpadDiagnostics and new TrackpadShortcutSenderTests plus records are uncommitted. Preserve independent design work.
+- Code baseline: `main` / `9253799` plus uncommitted buffer safety changes; began at `8daa97b`, then independent Mouse/About/design work was committed externally. Earlier capture/output repairs are committed; historical evidence below retains its original revisions. No agent commit.
 
 ## Outcome and scope
 
@@ -36,12 +36,18 @@ Current output repair replaces target AX-tree focus lookup with the public threa
 
 Latest hardware evidence: [successful user-assisted retest](../verification/phase-5-four-finger-tap.md#successful-single-tap-retest--2026-10-11), with local Debug implementation digest matching the previous build. Target applications, tap/click phase counts and BTT process state were not independently recorded.
 
-Last software verification: `scripts/dev.sh test -resultBundlePath build/TrackpadOutputValidationTests.xcresult`: **493 tests / 65 suites / 0 failures**, including Debug compilation; `scripts/dev.sh release`: **BUILD SUCCEEDED**. Both strict/deep signature checks pass; Release is universal. Existing AppIntents metadata-skip warning remains. The agent performed no manual trackpad/output test; comparison and diagnostic evidence are user-reported. New injected tests exercise the sender itself, cancellation during preparation and 37 dispatches following real-button event pairs without native output. [Buffered-release evidence](../verification/phase-5-four-finger-tap.md#buffered-release-after-mouse-up--2026-10-10). [Renewed library audit](../research/trackpad-tap-reliability.md) adds Touchy/MultiTouch/BTT integration analysis; no dependency or upstream code added.
+Earlier output-target software verification: `scripts/dev.sh test -resultBundlePath build/TrackpadOutputValidationTests.xcresult`: **493 tests / 65 suites / 0 failures**, including Debug compilation; `scripts/dev.sh release`: **BUILD SUCCEEDED**. Both strict/deep signature checks pass; Release is universal. Existing AppIntents metadata-skip warning remains. The agent performed no manual trackpad/output test; comparison and diagnostic evidence are user-reported. New injected tests exercise the sender itself, cancellation during preparation and 37 dispatches following real-button event pairs without native output. [Buffered-release evidence](../verification/phase-5-four-finger-tap.md#buffered-release-after-mouse-up--2026-10-10). [Renewed library audit](../research/trackpad-tap-reliability.md) adds Touchy/MultiTouch/BTT integration analysis; no dependency or upstream code added.
 
 ## Next handoff
 
-The delivery regression has a successful user-assisted retest; keep that result and the native target check. Click-only exclusion and subsequent tap now have user confirmation in the tested setup. Next verify pause/resume and sleep/wake, retaining separate quick/held-duration and mixed-input stress checks. Use diagnostics only if symptoms recur; do not demand another identical successful-delivery run or adjust thresholds without new evidence. Broader lifecycle/native conflicts/minimum-OS/Intel remain open. Do not launch another engine or change rules/permissions on the user's behalf.
+Preserve the successful delivery/click-only recovery and pause/resume/sleep/wake/mixed-input confirmations. Next verify delayed/busy-consumer cancellation and fresh-tap recovery on an identified build, retaining separate measured latency, quick/held-duration and quantified mixed-input stress checks. Use diagnostics only if symptoms recur; do not repeat confirmed scenarios or adjust thresholds without new evidence. Broader protected-session/native conflicts/minimum-OS/Intel remain open. Do not launch another engine or change rules/permissions on the user's behalf.
 
 ## User lifecycle follow-up — 2026-10-11
 
 The user reports the requested remaining four-finger-tap checks all work: pause/resume, sleep/wake and mixed input. This is user-reported acceptance of that bounded walkthrough; exact app digest, OS/device, counts, timing and individual stress variants were not restated. Preserve prior delivery/click-only evidence. No measured latency, minimum-OS/Intel, native-conflict or complete protected-context certification follows from this report. Do not repeat the confirmed scenarios without a new concern. Next: remaining quantified stress/platform/safety acceptance before stronger capability claims.
+
+## Buffer loss and polling readiness — 2026-10-11
+
+Repaired loss during queue draining and readiness with queued contacts. Overflow quarantines new frames until acknowledged; recognition cancels on loss during/after the bounded turn. Final readiness checks queue/acceptance/loss under the existing buffer mutex, with clocks/diagnostics/mailbox operations outside. Thresholds, acquisition mechanism, output guards and experimental/no-suppression scope remain.
+
+Before-fix regressions failed; 40 targeted functions / 106 executions now pass. Full regression: **591 tests / 1,496 expanded executions / zero failures**, Debug build and local signature pass. Injected 200 overflow/recovery cycles produce 200 fresh readiness results, zero cancelled-candidate outputs and zero duplicates. Exact commands, artifact hashes, warning/review limits and remaining hardware gates: [buffer safety evidence](../verification/trackpad-buffer-safety.md). Independent saved design changes were preserved; task remains `awaiting_verification`, ownership released.

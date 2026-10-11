@@ -30,3 +30,5 @@ Advanced native integration is implemented in [UI-007](UI-007-advanced-settings.
 [About and bundled licenses](UI-010-about.md) is implemented with both entry points, actual bundle identity and local native Find. [Native/software evidence](../verification/about-native.md) passes; complete keyboard/VoiceOver/accessibility preferences remain open. Mouse implementation is released in UI-009; UI-011 shared-material design is released for native adoption.
 
 [Consistent glass controls](UI-011-control-unification.md) is saved/reviewed and ready for native adoption: Foundations 14 and shared selectors, activation, Settings tabs and secondary actions. Integrated Mouse controls must adopt this revision; native materials/accessibility acceptance remains separate.
+
+[Semantic feedback and state accents](UI-012-semantic-feedback.md) is saved/reviewed: Foundations 15 and live Light/Dark feedback styles/sources govern current and subsequent states. Native appearance/accessibility adoption remains open.

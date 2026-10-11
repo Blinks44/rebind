@@ -4,7 +4,7 @@ Updated 2026-10-11. Read [STATE](STATE.md) first for current facts and next task
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and the pause/resume, sleep/wake, mixed-input walkthrough are user-confirmed; quantified timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and pause/resume, sleep/wake, mixed input are user-confirmed. [Buffer-loss/readiness repair and 200 injected recovery cycles](verification/trackpad-buffer-safety.md) pass; measured physical timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
 2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; full main design remains open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
@@ -71,7 +71,7 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.
 
 - [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
-- [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The bounded [materials review](tasks/UI-006-material-design-review.md) is saved; shape/divider polish and Advanced compositions reviewed; native adoption remains open.
+- [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The saved [glass controls](tasks/UI-011-control-unification.md) and [semantic feedback](tasks/UI-012-semantic-feedback.md) refine the earlier material review; use their shared roles in all further design. Native adoption remains open.
 - [ ] Finish keyboard/VoiceOver, Light/Dark, Reduce Transparency/Motion, Increase Contrast and usability acceptance.
 - [ ] Finish icon runtime checks. [BRAND-001](tasks/BRAND-001-icon-runtime.md).
 

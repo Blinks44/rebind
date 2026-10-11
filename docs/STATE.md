@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-11**. HEAD `8daa97b` plus uncommitted About and Mouse implementation. General/Permissions/Input/Language/Advanced/About/Mouse integrated; full-main Settings overflow repaired. Broader runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-11**. HEAD `9253799` plus independent uncommitted Trackpad work. General/Permissions/Input/Language/Advanced/About/Mouse integrated; full-main Settings overflow repaired. Broader runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -22,21 +22,21 @@ Read [WORKFLOW](WORKFLOW.md) for startup/handoff, [PLAN](PLAN.md) for remaining 
 
 ## Design source and recent changes
 
-- **2026-10-11:** Input/Language, Advanced and About integrated; bounded native/software checks pass. Production relaunch, restored-binding and accessibility acceptance remain open. [Input/Language](verification/input-language-native.md), [Advanced](verification/advanced-settings-native.md), [About](verification/about-native.md).
+- **2026-10-11:** [Trackpad buffer safety](verification/trackpad-buffer-safety.md) repaired loss/readiness races; 591 tests, Debug build and 200 injected recovery cycles pass. Physical timing/stress/safety remain open.
 - **2026-10-11:** [Mouse list/editor](tasks/UI-009-mouse-design.md) integrated with owned drafts, conditional trigger controls, search/conflict feedback and four-language copy. [586-test/Debug/native evidence](verification/mouse-native.md) passes; physical capture, accessibility and revised glass-material adoption remain open.
 
-Live source: **Rebind.sketch**, 89 frames, saved/reviewed 2026-10-11; [unified glass controls](tasks/UI-011-control-unification.md) and Foundations 14 are released. [Mouse rules/editor](tasks/UI-009-mouse-design.md) Screens 70–89 and behavior/four-language copy are integrated; [software/layout/live editor checks](verification/mouse-native.md) pass, hardware/accessibility remain open. The released UI-011 revision still needs native adoption. [DESIGN](DESIGN.md) locates the source. Sketch owns visuals/copy; native results stay in Git and verification images stay local. Earlier outcomes: [history](history/2026-10.md).
+Live source: **Rebind.sketch**, 89 frames, saved/reviewed 2026-10-11; [glass controls](tasks/UI-011-control-unification.md) and [semantic feedback](tasks/UI-012-semantic-feedback.md), Foundations 14–15, are released. Native adoption is open. [DESIGN](DESIGN.md) locates the source. Sketch owns visuals/copy; native results stay in Git and verification images stay local. Earlier outcomes: [history](history/2026-10.md).
 
 ## Open work / next steps
 
 Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-aware-task-selection) defines task selection/access.
 
-- **Design:** Shared glass controls released in [UI-011](tasks/UI-011-control-unification.md); Mouse rules/editor released in [UI-009](tasks/UI-009-mouse-design.md). Next Trackpad/Magic Mouse states within actual acquisition/support limits; remaining coverage is in [DESIGN](DESIGN.md#remaining-design-coverage).
-- **Code:** Advanced/About integrated. Mouse integration is released; adopt the shared glass controls from live Sketch and complete its remaining native acceptance. Advanced SPEC §15.12 restored-binding behavior and About/Settings accessibility remain open in their evidence checklists. Production language/restart, actual login/grants and input hardware gates remain separate.
+- **Design:** Glass controls and semantic states released in [UI-011](tasks/UI-011-control-unification.md) / [UI-012](tasks/UI-012-semantic-feedback.md). Apply their shared rules to further design. Next Trackpad/Magic Mouse states within actual acquisition/support limits; remaining coverage is in [DESIGN](DESIGN.md#remaining-design-coverage).
+- **Code:** Advanced/About integrated. Mouse integration is released; adopt the shared glass controls and semantic feedback from live Sketch and complete its remaining native acceptance. Advanced SPEC §15.12 restored-binding behavior and About/Settings accessibility remain open in their evidence checklists. Production language/restart, actual login/grants and input hardware gates remain separate.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
-| [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | awaiting_verification | Unassigned; delivery retest recorded | Delivery/click-only recovery and lifecycle/mixed-input walkthrough user-confirmed; next quantified stress and remaining safety/platform checks. Do not repeat confirmed checks without a new concern. |
+| [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | awaiting_verification | Unassigned; buffer safety released | Injected loss/recovery checks pass; verify busy-consumer cancellation/recovery and measured physical timing/stress/safety. Preserve confirmed delivery/lifecycle subsets. |
 | [UI-001](tasks/UI-001-permissions-onboarding.md) | awaiting_verification | Unassigned; repair verified/released | Verify actual grants/revocation and accessibility; repaired window/native navigation/deferral and software checks pass. |
 | [UI-003](tasks/UI-003-general-settings.md) | awaiting_verification | Unassigned; warning isolated | OS sharing indicator identified; user-led restart checks and VoiceOver remain open. |
 | [UI-004](tasks/UI-004-input-settings.md) | awaiting_verification | Unassigned; native integration released | Overview/Hold/save retry checked; verify physical timing/cancellation, remaining editor/accessibility states. |
@@ -45,6 +45,7 @@ Resume compatible work by role; [WORKFLOW](WORKFLOW.md#short-requests-and-role-a
 | [UI-010](tasks/UI-010-about.md) | awaiting_verification | Unassigned; implementation released | Verify VoiceOver/license reading, full keyboard traversal and accessibility preferences; native entry/search/closing checks pass. |
 | [UI-009](tasks/UI-009-mouse-design.md) | awaiting_verification | Unassigned; native integration released | Verify capture/cancellation, physical timing and accessibility; adopt released UI-011 materials. |
 | [UI-011](tasks/UI-011-control-unification.md) | ready_for_implementation | Unassigned; design released | Adopt saved glass controls/spacing from live Sketch; check native adaptive materials and focus. |
+| [UI-012](tasks/UI-012-semantic-feedback.md) | ready_for_implementation | Unassigned; design released | Adopt saved semantic feedback from live Sketch; verify native adaptive appearance, reflow and VoiceOver. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | awaiting_verification | Unassigned; scoped refresh saved | Check Dock/live Menu Bar from the explicitly identified fresh bundle; actual tint and macOS 26 remain separate. |
 
 Broader hardware, trackpad/Magic Mouse, localization/accessibility, signing/TCC, macOS 26/Intel, performance and distribution gates remain in PLAN.

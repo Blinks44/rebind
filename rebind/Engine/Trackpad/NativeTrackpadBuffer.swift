@@ -100,6 +100,9 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
         state.withLock {
             guard $0.accepting else { return }
+            // Quarantine this discontinuous stream until the consumer has
+            // acknowledged the loss and cancelled its recognition state.
+            guard !$0.overflow else { return }
             guard $0.count < $0.frames.count else { $0.clear(); $0.overflow = true; return }
             $0.frames[($0.head + $0.count) % $0.frames.count] = frame
             $0.count += 1
