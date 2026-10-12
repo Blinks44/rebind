@@ -51,8 +51,9 @@ The checked items below describe only the stated software/artifact milestone. An
 - [ ] Finish measured timing/mixed-input click exclusion and lifecycle/stop/native conflicts before production claims. [INPUT-001](tasks/INPUT-001-four-finger-tap.md).
 - [x] Bounded [three-finger single-tap engine/storage](tasks/INPUT-002-three-finger-tap.md) integrated alongside four fingers, with distinct shortcut routing and schema 25; engine software checks pass. Physical verification remains open.
 - [x] [Three/four-finger double-tap engine/storage](tasks/INPUT-003-double-tap-engine.md) integrated with single/double arbitration and schema 26; engine software checks pass. Native/hardware acceptance remains open.
+- [x] [Two-finger double-tap engine/storage](tasks/INPUT-004-two-finger-double-tap.md) integrated through the same guarded worker with schema 27, no single fallback for lone two-finger contacts and injected pair/click-exclusion checks passing; editor preset exposure and physical acceptance remain open. [Evidence](verification/two-finger-double-tap-engine.md).
 - [x] Bounded [tap preset editor](tasks/UI-014-trackpad-presets.md) adopts live UI-013 selection/independent output recording and conditional conflict guidance for four engine-backed presets. [Software/native evidence](verification/trackpad-preset-editor.md); physical/coexistence/accessibility acceptance and broader final UI remain open.
-- [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, deliberately curated modifier variants/actions and preset editing/conflict UX. Two-finger doubles and corners still require native integration.
+- [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, deliberately curated modifier variants/actions and preset editing/conflict UX. Two-finger doubles are engine-ready (INPUT-004); preset exposure and corners still require native integration.
 - [ ] Verify external Magic Trackpad separately; raw contacts do not prove suppression. Swipes/pinch/rotation/five-finger gestures remain out of scope.
 
 ### Phase 6 — Magic Mouse

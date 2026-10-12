@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var showingDiagnostics = false
     @State private var showingProfiles = false
     @State private var setupPresentation = PermissionSetupPresentation()
+    @State private var titlebarInset: CGFloat?
 
     init(model: AppModel, initialDestination: MainDestination = .input(.allKeyboards)) {
         self.model = model
@@ -16,46 +17,32 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selection) {
-                Section(.inputCategories) {
-                    Label(.allKeyboards, systemImage: "keyboard").tag(MainDestination.input(.allKeyboards))
-                    Label(.allMice, systemImage: "computermouse").tag(MainDestination.input(.allMice))
-                    Label(.builtInTrackpad, systemImage: "rectangle.and.hand.point.up.left").tag(MainDestination.input(.builtInTrackpad))
+        HStack(spacing: 0) {
+            MainSidebar(model: model, selection: $selection,
+                manageProfiles: { showingProfiles = true }, showAbout: { openWindow(id: "about") })
+                .frame(width: 232)
+                .background { MainWindowSizing(titlebarInset: $titlebarInset).allowsHitTesting(false).accessibilityHidden(true) }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("main-sidebar")
+            Group {
+                switch selection {
+                case .input(.allMice):
+                    MouseBindingsView(model: model,
+                        add: { editor = EditorSelection(scope: .allMice, binding: nil) },
+                        edit: { editor = EditorSelection(scope: .allMice, binding: $0) },
+                        delete: { pendingDeletion = $0 },
+                        openPermissions: { selection = .settings(.permissions) },
+                        diagnostics: { showingDiagnostics = true })
+                case .input(let scope): bindingsView(scope: scope)
+                case .settings: SettingsView(model: model, selection: settingsSection)
                 }
-                Section(.plannedInputs) {
-                    Label(.magicMouseNotAvailable, systemImage: "computermouse").disabled(true)
-                }.foregroundStyle(.secondary)
-            }
-            .safeAreaInset(edge: .bottom) {
-                VStack(spacing: 12) {
-                    Divider()
-                    Button(.settingsTitle, systemImage: "gearshape") { selection = .settings(.general) }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .buttonStyle(.borderless)
-                        .padding(12)
-                        .background(isShowingSettings ? Color.accentColor.opacity(0.15) : .clear,
-                                    in: .rect(cornerRadius: 8))
-                    Button(.aboutTitle, systemImage: "info.circle") { openWindow(id: "about") }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .buttonStyle(.borderless)
-                        .padding(12)
-                }.padding(16)
-            }
-            .navigationSplitViewColumnWidth(min: 232, ideal: 232)
-        } detail: {
-            switch selection {
-            case .input(.allMice):
-                MouseBindingsView(model: model,
-                    add: { editor = EditorSelection(scope: .allMice, binding: nil) },
-                    edit: { editor = EditorSelection(scope: .allMice, binding: $0) },
-                    delete: { pendingDeletion = $0 }, manageProfiles: { showingProfiles = true },
-                    openPermissions: { selection = .settings(.permissions) },
-                    diagnostics: { showingDiagnostics = true })
-            case .input(let scope): bindingsView(scope: scope)
-            case .settings: SettingsView(model: model, selection: settingsSection)
-            }
-        }.frame(minWidth: 880, minHeight: 600)
+            }.frame(minWidth: 648, maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("main-detail")
+        }
+        .background { PermissionCanvas() }
+        .frame(minWidth: 880, minHeight: titlebarInset.map { max(0, 600 - $0) })
+        .ignoresSafeArea(.container, edges: .top)
         .sheet(item: $setupPresentation.context) { context in
             PermissionSetupView(model: model, context: context)
         }
@@ -95,15 +82,11 @@ struct ContentView: View {
     private func bindingsView(scope: DeviceScope) -> some View {
         VStack(spacing: 0) {
             HStack {
-                ProfilePicker(model: model, usesGlass: scope == .allKeyboards)
-                    .frame(maxWidth: scope == .allKeyboards ? 192 : 300)
-                Button(.manageProfiles, systemImage: "slider.horizontal.3") { showingProfiles = true }
-                    .disabled(model.storageLocked)
-                Spacer()
-            }.padding(.horizontal, 20).padding(.top, 16)
-            HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(scope.title).font(.title2.bold())
+                    Text(scope == .allKeyboards
+                         ? LocalizedStringResource("keyboardNavigationTitle", table: "Navigation")
+                         : LocalizedStringResource("trackpadNavigationTitle", table: "Navigation"))
+                        .font(EditorTypography.title).accessibilityAddTraits(.isHeader)
                     Text(model.statusText).foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -111,7 +94,7 @@ struct ContentView: View {
                     model.setEnabled(!model.configuration.isEnabled)
                 }.disabled(model.storageLocked && !model.configuration.isEnabled)
                 Button(.addBinding, systemImage: "plus") { editor = EditorSelection(scope: scope, binding: nil) }.disabled(model.storageLocked)
-            }.padding(20)
+            }.padding(.horizontal, 28).padding(.top, 32).padding(.bottom, 20)
             if scope == .builtInTrackpad {
                 Text(model.trackpadStatus.text).font(.caption).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -148,7 +131,8 @@ struct ContentView: View {
                             .labelStyle(.iconOnly).disabled(model.storageLocked)
                     }.padding(.vertical, 6)
                 }
-            }.overlay {
+            }.scrollContentBackground(.hidden)
+                .overlay {
                 if model.configuration.bindings.allSatisfy({ $0.scope != scope }) {
                     ContentUnavailableView(.noBindings, systemImage: scope.symbol, description: Text(.addBindingHint))
                 }
@@ -164,16 +148,11 @@ struct ContentView: View {
                 if scope == .allMice { Text(.wheelMappingHint) }
                 Button(.inputDiagnostics, systemImage: "waveform.path") { showingDiagnostics = true }
             }.font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(16)
-        }.navigationTitle("Rebind")
+        }.background { PermissionCanvas() }
     }
 
     private var deletionPresented: SwiftUI.Binding<Bool> {
         SwiftUI.Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } })
-    }
-
-    private var isShowingSettings: Bool {
-        if case .settings = selection { return true }
-        return false
     }
 
     private var settingsSection: SwiftUI.Binding<SettingsSection> {

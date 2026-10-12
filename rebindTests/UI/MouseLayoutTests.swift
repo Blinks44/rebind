@@ -22,20 +22,21 @@ import XCTest
                             initialDestination: .input(.allMice))
                             .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                         let window = NSWindow(contentViewController: controller)
+                        window.styleMask.insert(.fullSizeContentView)
+                        window.titleVisibility = .hidden
+                        window.titlebarAppearsTransparent = true
                         window.isReleasedWhenClosed = false
                         window.appearance = NSAppearance(named: appearance == .light ? .aqua : .darkAqua)
                         defer { window.close() }
+                        try await Task.sleep(for: .milliseconds(100))
                         for size in [NSSize(width: 880, height: 600), NSSize(width: 1040, height: 640)] {
-                            window.setContentSize(size)
+                            window.setFrame(NSRect(origin: window.frame.origin, size: size), display: false)
                             try await Task.sleep(for: .milliseconds(100))
                             controller.view.layoutSubtreeIfNeeded()
-                            let split = try XCTUnwrap(findSplit(controller.view))
                             let context = "\(language), \(appearance), rules=\(hasRules), access=\(hasAccess), \(size)"
                             XCTAssertEqual(controller.view.bounds.size.width, size.width, accuracy: 1, context)
                             XCTAssertEqual(controller.view.bounds.size.height, size.height, accuracy: 1, context)
-                            for view in [split] + split.subviews {
-                                assertInside(view.convert(view.bounds, to: controller.view), controller.view.bounds, context)
-                            }
+                            try MainWindowLayoutAssertions.verifyRegions(in: controller.view, context: context)
                             if language == "ru" && size.width == 1040 && hasRules && hasAccess {
                                 try attach(controller.view, name: "mouse-list-\(appearance)")
                             }
@@ -91,20 +92,6 @@ import XCTest
             rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 99, direction: .right), modifiers: [],
                 action: action, isEnabled: false)
         ]
-    }
-
-    private func findSplit(_ view: NSView) -> NSSplitView? {
-        if let split = view as? NSSplitView { return split }
-        return view.subviews.lazy.compactMap(findSplit).first
-    }
-
-    private func assertInside(_ frame: NSRect, _ bounds: NSRect, _ context: String,
-                              file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertGreaterThan(frame.height, 0, context, file: file, line: line)
-        XCTAssertGreaterThanOrEqual(frame.minX, bounds.minX - 1, context, file: file, line: line)
-        XCTAssertGreaterThanOrEqual(frame.minY, bounds.minY - 1, context, file: file, line: line)
-        XCTAssertLessThanOrEqual(frame.maxX, bounds.maxX + 1, context, file: file, line: line)
-        XCTAssertLessThanOrEqual(frame.maxY, bounds.maxY + 1, context, file: file, line: line)
     }
 
     private func attach(_ view: NSView, name: String) throws {

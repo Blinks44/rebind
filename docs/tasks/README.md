@@ -18,6 +18,8 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 - [INPUT-003](INPUT-003-double-tap-engine.md): three/four-finger single/double engine/data integration, schema 26; engine evidence retained. UI-014 connects the editor; physical timing/click/native-conflict verification remains open.
 
+- [INPUT-004](INPUT-004-two-finger-double-tap.md): two-finger double-tap engine/data integration, schema 27, no single fallback for lone two-finger contacts; injected pair/click-exclusion checks pass. Expose the "Double tap · 2 fingers" preset via UI-013 adoption, then verify physical pairs and secondary-click coexistence on a named build.
+
 - [INPUT-002](INPUT-002-three-finger-tap.md): three/four-finger engine/data routing and schema 25; engine evidence retained. UI-014 connects the editor; physical three-finger acceptance remains open.
 
 - [UI-013](UI-013-design-coverage-completion.md): final touch preset editing, action/profile recovery and four-language copy saved/reviewed in live Sketch, ready for native adoption alongside UI-011/UI-012. Native/hardware/accessibility acceptance remains open.

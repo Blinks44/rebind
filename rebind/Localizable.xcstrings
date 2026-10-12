@@ -13331,6 +13331,35 @@
         }
       }
     },
+    "twoFingerDoubleTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doppeltippen mit zwei Fingern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-finger double tap"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double toucher à deux doigts"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двойной тап двумя пальцами"
+          }
+        }
+      }
+    },
     "threeFingerTap" : {
       "extractionState" : "manual",
       "localizations" : {

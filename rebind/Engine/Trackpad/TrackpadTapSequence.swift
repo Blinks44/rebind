@@ -39,6 +39,9 @@ nonisolated struct TrackpadTapSequence: Sendable {
     static let minimumTapDuration: UInt64 = 20_000_000
     static let maximumTapDuration: UInt64 = 350_000_000
     static let maximumPollLateness: UInt64 = 100_000_000
+    /// Finger counts a classified short contact may carry into arbitration.
+    /// Mirrors the curated preset pool: singles 3–4, doubles 2–4.
+    static let candidateFingerCounts: ClosedRange<Int> = 2...4
 
     // Inject a validated system interval (NSEvent.doubleClickInterval) when a
     // production adapter is wired. Never query AppKit on the contact path.
@@ -155,6 +158,7 @@ nonisolated extension TrackpadTapGesture {
         switch self {
         case .single(let tap): .singleTap(fingers: tap.rawValue)
         case .double(let tap): .doubleTap(fingers: tap.rawValue)
+        case .twoFingerDouble: .doubleTap(fingers: 2)
         }
     }
 
@@ -163,6 +167,8 @@ nonisolated extension TrackpadTapGesture {
         case .singleTap(let fingers):
             guard let tap = TrackpadSingleTap(rawValue: fingers) else { return nil }
             self = .single(tap)
+        case .doubleTap(2):
+            self = .twoFingerDouble
         case .doubleTap(let fingers):
             guard let tap = TrackpadSingleTap(rawValue: fingers) else { return nil }
             self = .double(tap)

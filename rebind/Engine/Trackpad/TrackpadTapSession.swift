@@ -53,6 +53,7 @@ nonisolated struct TrackpadTapSession: Sendable {
                 && self.runtime.threeFingerShortcut == runtime.threeFingerShortcut
                 && self.runtime.threeFingerDoubleShortcut == runtime.threeFingerDoubleShortcut
                 && self.runtime.fourFingerDoubleShortcut == runtime.fourFingerDoubleShortcut
+                && self.runtime.twoFingerDoubleShortcut == runtime.twoFingerDoubleShortcut
                 && self.runtime.doubleTapIntervalNanoseconds == runtime.doubleTapIntervalNanoseconds
                 && self.foreground == foreground
             interrupt(isNeutral: preserveNeutral)
@@ -96,10 +97,10 @@ nonisolated struct TrackpadTapSession: Sendable {
         let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts,
                                            allowIdleFrameGaps: qualifiedGesture == nil && sequence?.hasPending != true)
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0) }
-        if let candidate, let tap = TrackpadSingleTap(rawValue: candidate.fingers),
-           runtime.recognizes(tap), let origin = recognizer.origin,
+        if let candidate, let admissible = runtime.admissibleGesture(fingers: candidate.fingers),
+           let origin = recognizer.origin,
            gate.candidate(fingers: candidate.fingers, at: frame.receipt,
-                          buttons: frame.activity, observerReady: true) {
+                           buttons: frame.activity, observerReady: true) {
             guard foreground != nil else { interrupt(isNeutral: true); return .targetChanged }
             // Retain a preliminary pair, but never dispatch before the final
             // release's independent 60 ms click settling. Activity cancels both.
@@ -109,10 +110,7 @@ nonisolated struct TrackpadTapSession: Sendable {
             settled = false
             // The native mailbox owns one bounded slot. Drop an older fallback
             // on a mismatched pair; only this release's identity is admissible.
-            qualifiedGesture = results.compactMap(TrackpadTapGesture.init).last.flatMap { gesture in
-                let admissible: TrackpadTapGesture = runtime.shortcut(for: .double(tap)) == nil ? .single(tap) : .double(tap)
-                return gesture == admissible ? gesture : nil
-            }
+            qualifiedGesture = results.compactMap(TrackpadTapGesture.init).last == admissible ? admissible : nil
             return .candidate
         }
         if let reason = recognizer.rejection { interrupt(isNeutral: frame.count == 0); return .recognition(reason) }

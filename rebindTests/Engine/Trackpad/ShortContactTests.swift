@@ -21,7 +21,7 @@ struct AppShortContactTests {
         }
     }
 
-    @Test(arguments: [3, 4]) func candidateOccursOnceAfterLift(fingers: Int) throws {
+    @Test(arguments: [2, 3, 4]) func candidateOccursOnceAfterLift(fingers: Int) throws {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         let began = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(fingers))
@@ -37,6 +37,22 @@ struct AppShortContactTests {
         #expect(Set(report.keys) == ["fingers", "durationMilliseconds", "peakPressure"])
     }
 
+    @Test func twoFingerStrokeQualifiesOnlyWhenStationary() throws {
+        var recognizer = ShortContactRecognizer()
+        _ = recognizer.consume(frame: 0, time: 0, contacts: [])
+        _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(2))
+        _ = recognizer.consume(frame: 2, time: 0.03, contacts: contacts(2))
+        let consumed = recognizer.consume(frame: 3, time: 0.05, contacts: [])
+        let candidate = try #require(consumed)
+        #expect(candidate.fingers == 2)
+        var scrolling = ShortContactRecognizer()
+        _ = scrolling.consume(frame: 0, time: 0, contacts: [])
+        _ = scrolling.consume(frame: 1, time: 0.01, contacts: contacts(2))
+        _ = scrolling.consume(frame: 2, time: 0.03, contacts: contacts(2, offset: 0.06))
+        #expect(scrolling.consume(frame: 3, time: 0.05, contacts: []) == nil)
+        #expect(scrolling.rejection == .travel)
+    }
+
     @Test func staggeredArrivalAndLiftUsePeakCount() throws {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
@@ -50,7 +66,7 @@ struct AppShortContactTests {
         #expect(candidate.fingers == 4)
     }
 
-    @Test(arguments: [1, 2, 5]) func unsupportedCountsNeverBecomeCandidates(fingers: Int) {
+    @Test(arguments: [1, 5]) func unsupportedCountsNeverBecomeCandidates(fingers: Int) {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(fingers))

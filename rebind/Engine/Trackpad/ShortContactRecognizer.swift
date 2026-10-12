@@ -97,7 +97,8 @@ nonisolated struct ShortContactRecognizer: Sendable {
             defer { stroke = nil }
             guard let stroke else { return nil }
             guard stroke.valid else { rejection = stroke.rejection; return nil }
-            guard [3, 4].contains(stroke.peakCount), stroke.origins.count == stroke.peakCount else { rejection = .fingerCount; return nil }
+            guard TrackpadTapSequence.candidateFingerCounts.contains(stroke.peakCount),
+                  stroke.origins.count == stroke.peakCount else { rejection = .fingerCount; return nil }
             guard time - stroke.started >= 0.03, time - stroke.started <= Self.maximumDuration else { rejection = .duration; return nil }
             guard stroke.peakFrames >= 2 else { rejection = .transientPeak; return nil }
             guard stroke.firstLift.map({ time - $0 <= Self.fingerSpread }) ?? true else { rejection = .liftSpread; return nil }

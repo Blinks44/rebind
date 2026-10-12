@@ -3,14 +3,14 @@ import Testing
 @testable import rebind
 
 struct TrackpadDoubleTapPersistenceTests {
-    private let doubles: [InputTrigger] = [.threeFingerDoubleTap, .fourFingerDoubleTap]
+    private let doubles: [InputTrigger] = [.threeFingerDoubleTap, .fourFingerDoubleTap, .twoFingerDoubleTap]
 
     private func binding(_ trigger: InputTrigger) -> rebind.Binding {
         .init(scope: .builtInTrackpad, trigger: trigger, modifiers: [],
               action: .shortcut(.init(keyCode: 13, modifiers: .command)))
     }
 
-    @Test func allFourRulesRoundTripWithoutColliding() throws {
+    @Test func allDoubleRulesRoundTripWithoutColliding() throws {
         let triggers: [InputTrigger] = [.threeFingerTap, .fourFingerTap] + doubles
         var config = Configuration(isEnabled: true, bindings: triggers.map(binding))
         config.hasCompletedSetup = true
@@ -38,6 +38,21 @@ struct TrackpadDoubleTapPersistenceTests {
         #expect(decoded == expected)
     }
 
+    @Test func schema26MigrationPreservesDoubleRulesAndRejectsTwoFingerDouble() throws {
+        var old = Configuration(isEnabled: false, bindings: [.threeFingerDoubleTap, .fourFingerDoubleTap].map(binding))
+        old.hasCompletedSetup = true
+        old.languagePreference = .de
+        try old.createProfile(name: "Other", copying: old.selectedProfileID)
+        old.schemaVersion = 26
+        let decoded = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(old)).migrated()
+        var expected = old
+        expected.schemaVersion = Configuration.currentSchemaVersion
+        #expect(decoded == expected)
+        old.profiles.append(RuleProfile(name: "Future", bindings: [binding(.twoFingerDoubleTap)]))
+        let rejected = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(old))
+        #expect(throws: ConfigurationError.invalid) { try rejected.migrated() }
+    }
+
     @Test(arguments: [.threeFingerDoubleTap, .fourFingerDoubleTap] as [InputTrigger], 1...25)
     func oldSchemasRejectNewPayloadEvenInInactiveProfile(_ trigger: InputTrigger, _ version: Int) throws {
         var old = Configuration(schemaVersion: version, bindings: version < 6 ? [binding(trigger)] : [])
@@ -46,7 +61,15 @@ struct TrackpadDoubleTapPersistenceTests {
         #expect(throws: ConfigurationError.invalid) { try decoded.migrated() }
     }
 
-    @Test(arguments: [.threeFingerDoubleTap, .fourFingerDoubleTap] as [InputTrigger], 0...4)
+    @Test(arguments: [.twoFingerDoubleTap] as [InputTrigger], 1...26)
+    func oldSchemasRejectTwoFingerDoublePayload(_ trigger: InputTrigger, _ version: Int) throws {
+        var old = Configuration(schemaVersion: version, bindings: version < 6 ? [binding(trigger)] : [])
+        if version >= 6 { old.profiles.append(RuleProfile(name: "Inactive", bindings: [binding(trigger)])) }
+        let decoded = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(old))
+        #expect(throws: ConfigurationError.invalid) { try decoded.migrated() }
+    }
+
+    @Test(arguments: [.threeFingerDoubleTap, .fourFingerDoubleTap, .twoFingerDoubleTap] as [InputTrigger], 0...4)
     func unsupportedModifiersActionsAndActivationStayInvalid(_ trigger: InputTrigger, _ variant: Int) {
         var invalid = binding(trigger)
         switch variant {
@@ -66,7 +89,7 @@ struct TrackpadDoubleTapPersistenceTests {
         let corrupt = text.replacingOccurrences(of: "threeFingerDoubleTap", with: "fiveFingerDoubleTap")
         #expect(throws: (any Error).self) { _ = try JSONDecoder().decode(Configuration.self, from: Data(corrupt.utf8)) }
         var future = config
-        future.schemaVersion = 27
+        future.schemaVersion = 28
         let encoded = try JSONEncoder().encode(future)
         #expect(throws: ConfigurationError.incompatible) { _ = try JSONDecoder().decode(Configuration.self, from: encoded) }
     }

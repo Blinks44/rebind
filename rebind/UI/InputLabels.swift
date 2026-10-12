@@ -30,6 +30,7 @@ enum InputLabels {
         case .threeFingerTap: label = AppLocalization.string(.threeFingerTap)
         case .threeFingerDoubleTap: label = AppLocalization.string(.threeFingerDoubleTap)
         case .fourFingerDoubleTap: label = AppLocalization.string(.fourFingerDoubleTap)
+        case .twoFingerDoubleTap: label = AppLocalization.string(.twoFingerDoubleTap)
         case .key(let code): label = key(code)
         case .mouseButton(let number): label = AppLocalization.string(.mouseButton(Int(number) + 1))
         case .mouseGesture(let button, let direction):

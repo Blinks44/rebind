@@ -15,9 +15,11 @@ struct TrackpadDoubleTapTests {
 
         init(singles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
              doubles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
+             twoFingerDouble: Bool = false,
              interval: UInt64 = 500_000_000) throws {
             mailbox = EngineMailbox()
             let gestures = singles.map(TrackpadTapGesture.single) + doubles.map(TrackpadTapGesture.double)
+                + (twoFingerDouble ? [TrackpadTapGesture.twoFingerDouble] : [])
             let rules = gestures.enumerated().map { index, gesture in
                 rebind.Binding(scope: .builtInTrackpad, trigger: gesture.trigger, modifiers: [],
                                action: .shortcut(.init(keyCode: UInt16(13 + index), modifiers: .command)))
@@ -56,6 +58,13 @@ struct TrackpadDoubleTapTests {
                           moved: Bool = false, gap: Bool = false) {
             consume(fingers: tap.rawValue, at: time - 40_000_000, offset: offset)
             consume(fingers: tap.rawValue, at: time - 20_000_000, offset: offset, moved: moved, gap: gap)
+            consume(fingers: 0, at: time)
+        }
+
+        mutating func tapTwoFinger(endingAt time: UInt64, offset: Float = 0,
+                                  moved: Bool = false, gap: Bool = false) {
+            consume(fingers: 2, at: time - 40_000_000, offset: offset)
+            consume(fingers: 2, at: time - 20_000_000, offset: offset, moved: moved, gap: gap)
             consume(fingers: 0, at: time)
         }
 
@@ -352,5 +361,128 @@ struct TrackpadDoubleTapTests {
         if tap == .threeFinger { spoofed.threeFingerDoubleShortcut = shortcut }
         else { spoofed.fourFingerDoubleShortcut = shortcut }
         #expect(h.mailbox.submitTrackpad(spoofed, gesture: .double(tap), pid: 100, at: lift) == false)
+    }
+
+    @Test(arguments: [2_000_000_001 as UInt64, UInt64.max])
+    func unsupportedSystemIntervalDisablesTwoFingerDoubleOnly(_ interval: UInt64) throws {
+        var h = try Harness(singles: [.threeFinger], doubles: [], twoFingerDouble: true, interval: interval)
+        #expect(h.runtime.shortcut(for: .twoFingerDouble) == nil)
+        h.tapTwoFinger(endingAt: lift)
+        h.tapTwoFinger(endingAt: lift + 90_000_000)
+        #expect(h.ready(at: lift + 150_000_000) == nil)
+        #expect(h.ready(at: lift + 500_000_000) == nil)
+        var spoofed = h.runtime
+        spoofed.twoFingerDoubleShortcut = h.runtime.threeFingerShortcut
+        #expect(h.mailbox.submitTrackpad(spoofed, gesture: .twoFingerDouble, pid: 100, at: lift) == false)
+        h.tap(.threeFinger, endingAt: lift + 700_000_000)
+        #expect(h.ready(at: lift + 760_000_000) == .single(.threeFinger))
+    }
+
+    @Test func twoFingerPairEmitsOneDoubleAndALoneTapNeverFallsBack() throws {
+        var h = try Harness(twoFingerDouble: true)
+        h.tapTwoFinger(endingAt: lift)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        h.tapTwoFinger(endingAt: lift + 90_000_000)
+        #expect(h.ready(at: lift + 149_999_999) == nil)
+        #expect(h.ready(at: lift + 150_000_000) == .twoFingerDouble)
+        #expect(h.ready(at: lift + 500_000_000) == nil)
+        h.tapTwoFinger(endingAt: lift + 700_000_000)
+        #expect(h.ready(at: lift + 760_000_000) == nil)
+        h.tapTwoFinger(endingAt: lift + 810_000_000)
+        #expect(h.ready(at: lift + 870_000_000) == .twoFingerDouble)
+        #expect(h.ready(at: lift + 900_000_000) == nil)
+        #expect(h.ready(at: lift + 1_700_000_000) == nil)
+    }
+
+    @Test func twoFingerPendingDropsOnOtherFingerTapsWithoutSingleFallback() throws {
+        var h = try Harness(twoFingerDouble: true)
+        h.tapTwoFinger(endingAt: lift)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        h.tap(.threeFinger, endingAt: lift + 250_000_000)
+        #expect(h.ready(at: lift + 310_000_000) == nil)
+        #expect(h.ready(at: lift + 750_000_000) == .single(.threeFinger))
+        #expect(h.ready(at: lift + 760_000_000) == nil)
+    }
+
+    @Test(arguments: [80_000_000 as UInt64, 500_000_000, 900_000_000])
+    func loneTwoFingerTapNeverBecomesOutputAtAnyInterval(_ interval: UInt64) throws {
+        var h = try Harness(singles: [], doubles: [], twoFingerDouble: true, interval: interval)
+        #expect(h.runtime.doubleTapIntervalNanoseconds == interval)
+        h.tapTwoFinger(endingAt: lift)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        #expect(h.ready(at: lift + interval) == nil)
+        h.tapTwoFinger(endingAt: lift + interval + 20_000_000)
+        #expect(h.ready(at: lift + interval + 80_000_000) == nil)
+        #expect(h.ready(at: lift + 2 * interval + 120_000_000) == nil)
+    }
+
+    @Test(arguments: [false, true])
+    func physicalClickAroundTwoFingerPairCancelsAllOutput(_ afterPair: Bool) throws {
+        var h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
+        h.tapTwoFinger(endingAt: lift)
+        if afterPair { h.tapTwoFinger(endingAt: lift + 90_000_000) }
+        _ = h.mailbox.handle(InputEvent(trigger: .mouseButton(0), phase: .down), secureInput: false)
+        h.runtime = try #require(h.mailbox.trackpadRuntime())
+        h.session.update(runtime: h.runtime, foreground: 100)
+        #expect(h.ready(at: lift + 150_000_000) == nil)
+        #expect(h.ready(at: lift + 700_000_000) == nil)
+        h.consume(fingers: 0, at: lift + 710_000_000)
+        h.tapTwoFinger(endingAt: lift + 800_000_000)
+        h.tapTwoFinger(endingAt: lift + 890_000_000)
+        #expect(h.ready(at: lift + 950_000_000) == .twoFingerDouble)
+    }
+
+    @Test func targetedWorkerDeliversTwoFingerDoubleAndNeverUsesGlobalSender() throws {
+        var h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
+        h.tapTwoFinger(endingAt: lift)
+        h.tapTwoFinger(endingAt: lift + 90_000_000)
+        let result = h.ready(at: lift + 150_000_000)
+        #expect(result == .twoFingerDouble)
+        let outputs = Mutex<[KeyboardShortcut]>([])
+        let worker = ActionWorker(mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
+            sendTrackpadShortcut: { shortcut, target, canPerform in
+                #expect(target.pid == 100 && canPerform())
+                outputs.withLock { $0.append(shortcut) }
+                return .performed
+            }, sendShortcut: { _ in Issue.record("Two-finger double used global output"); return false },
+            secureInput: { false }, postingAllowed: { true })
+        #expect(h.mailbox.submitTrackpad(h.runtime, gesture: .twoFingerDouble, pid: 100, at: lift + 150_000_000))
+        worker.service(at: lift + 160_000_000)
+        worker.service(at: lift + 170_000_000)
+        #expect(outputs.withLock { $0 } == [h.runtime.shortcut(for: .twoFingerDouble)].compactMap { $0 })
+    }
+
+    @Test func spoofedTwoFingerShortcutAndQuartzTriggerCannotDispatch() throws {
+        let h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
+        var spoofed = h.runtime
+        spoofed.twoFingerDoubleShortcut = .init(keyCode: 0, modifiers: .command)
+        #expect(h.mailbox.submitTrackpad(spoofed, gesture: .twoFingerDouble, pid: 100, at: lift) == false)
+        var stale = h.runtime
+        stale.doubleTapIntervalNanoseconds &+= 1
+        #expect(h.mailbox.submitTrackpad(stale, gesture: .twoFingerDouble, pid: 100, at: lift) == false)
+        #expect(h.mailbox.handle(InputEvent(trigger: .twoFingerDoubleTap, phase: .down), secureInput: false) == false)
+        #expect(h.mailbox.nextAction() == nil)
+    }
+
+    @Test func disabledTwoFingerDoubleRuleProducesNoOutputAndKeepsOtherRulesWorking() throws {
+        var h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
+        let shortcut = try #require(h.runtime.twoFingerDoubleShortcut)
+        var disabled = rebind.Binding(scope: .builtInTrackpad, trigger: .twoFingerDoubleTap, modifiers: [],
+                                      action: .shortcut(shortcut))
+        disabled.isEnabled = false
+        let single = rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [],
+                                    action: .shortcut(shortcut))
+        var config = Configuration(isEnabled: true, bindings: [single, disabled])
+        try config.validate()
+        h.mailbox.configure(config)
+        h.runtime = try #require(h.mailbox.trackpadRuntime())
+        h.session.update(runtime: h.runtime, foreground: 100)
+        h.consume(fingers: 0, at: lift - 60_000_000)
+        h.tapTwoFinger(endingAt: lift)
+        h.tapTwoFinger(endingAt: lift + 90_000_000)
+        #expect(h.ready(at: lift + 150_000_000) == nil)
+        #expect(h.mailbox.submitTrackpad(h.runtime, gesture: .twoFingerDouble, pid: 100, at: lift) == false)
+        h.tap(.threeFinger, endingAt: lift + 400_000_000)
+        #expect(h.ready(at: lift + 460_000_000) == .single(.threeFinger))
     }
 }

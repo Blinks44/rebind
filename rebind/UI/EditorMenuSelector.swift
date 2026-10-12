@@ -11,6 +11,8 @@ struct EditorMenuSelector<Selection: Hashable>: View {
     var distinctSurface = false
     var symbol: String?
     var singleLine = false
+    var menuActionTitle: LocalizedStringResource?
+    var menuAction: (() -> Void)?
     @Environment(\.locale) private var locale
     @Environment(\.isEnabled) private var isEnabled
     @State private var anchorView = NSView()
@@ -53,6 +55,10 @@ struct EditorMenuSelector<Selection: Hashable>: View {
         menu.autoenablesItems = false
         menu.minimumWidth = anchorView.bounds.width
         let target = EditorMenuSelectionTarget { index in
+            if index == choices.count, let menuAction {
+                menuAction()
+                return
+            }
             guard choices.indices.contains(index) else { return }
             selection = choices[index]
         }
@@ -64,6 +70,15 @@ struct EditorMenuSelector<Selection: Hashable>: View {
             item.target = target
             item.tag = index
             item.state = choice == selection ? .on : .off
+            menu.addItem(item)
+        }
+        if var title = menuActionTitle, menuAction != nil {
+            title.locale = locale
+            menu.addItem(.separator())
+            let item = NSMenuItem(title: String(localized: title),
+                                  action: #selector(EditorMenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+            item.target = target
+            item.tag = choices.count
             menu.addItem(item)
         }
         // A nil positioning item anchors the menu content frame, including its checkmark column.

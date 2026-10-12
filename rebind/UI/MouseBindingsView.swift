@@ -5,7 +5,6 @@ struct MouseBindingsView: View {
     let add: () -> Void
     let edit: (Binding) -> Void
     let delete: (Binding) -> Void
-    let manageProfiles: () -> Void
     let openPermissions: () -> Void
     let diagnostics: () -> Void
     @State private var search = ""
@@ -16,14 +15,8 @@ struct MouseBindingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                ProfilePicker(model: model).frame(maxWidth: 300)
-                Button(.manageProfiles, systemImage: "slider.horizontal.3", action: manageProfiles)
-                    .labelStyle(.iconOnly).disabled(model.storageLocked)
-                Spacer()
-            }
             VStack(alignment: .leading, spacing: 4) {
-                Text(.mouseTitle).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                Text(.mouseTitle).font(EditorTypography.title).accessibilityAddTraits(.isHeader)
                 Text(.mouseScopeDescription(profileName)).foregroundStyle(.secondary)
             }
             HStack(spacing: 16) {
@@ -81,7 +74,8 @@ struct MouseBindingsView: View {
                 Button(.inputDiagnostics, systemImage: "waveform.path", action: diagnostics)
                     .labelStyle(.iconOnly)
             }.font(.caption).help(Text(.emergencyHint))
-        }.padding(24).background { PermissionCanvas() }.navigationTitle("Rebind")
+        }.padding(.horizontal, 28).padding(.top, 32).padding(.bottom, 20)
+            .background { PermissionCanvas() }
             .onChange(of: model.configuration.selectedProfileID) { search = "" }
     }
 }

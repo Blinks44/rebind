@@ -21,14 +21,17 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
     var threeFingerShortcut: KeyboardShortcut? = nil
     var threeFingerDoubleShortcut: KeyboardShortcut? = nil
     var fourFingerDoubleShortcut: KeyboardShortcut? = nil
+    var twoFingerDoubleShortcut: KeyboardShortcut? = nil
     var doubleTapIntervalNanoseconds: UInt64 = 500_000_000
 
     var enabledGestures: Set<TrackpadTapSequence.Gesture> {
-        Set(TrackpadSingleTap.allCases.flatMap { tap in
+        var gestures = Set(TrackpadSingleTap.allCases.flatMap { tap in
             [TrackpadTapGesture.single(tap), .double(tap)].compactMap { gesture in
                 shortcut(for: gesture) == nil ? nil : gesture.sequenceGesture
             }
         })
+        if shortcut(for: .twoFingerDouble) != nil { gestures.insert(TrackpadTapGesture.twoFingerDouble.sequenceGesture) }
+        return gestures
     }
 
     func shortcut(for gesture: TrackpadTapGesture) -> KeyboardShortcut? {
@@ -36,11 +39,18 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
         case .single(let tap): shortcut(for: tap)
         case .double(.threeFinger): threeFingerDoubleShortcut
         case .double(.fourFinger): fourFingerDoubleShortcut
+        case .twoFingerDouble: twoFingerDoubleShortcut
         }
     }
 
-    func recognizes(_ tap: TrackpadSingleTap) -> Bool {
-        shortcut(for: .single(tap)) != nil || shortcut(for: .double(tap)) != nil
+    /// The only gesture identity a completed contact of this finger count may
+    /// produce under the configured rules; nil when none is configured. A
+    /// two-finger contact can never produce a single-tap output.
+    func admissibleGesture(fingers: Int) -> TrackpadTapGesture? {
+        if fingers == 2 { return shortcut(for: .twoFingerDouble) == nil ? nil : .twoFingerDouble }
+        guard let tap = TrackpadSingleTap(rawValue: fingers),
+              shortcut(for: .single(tap)) != nil || shortcut(for: .double(tap)) != nil else { return nil }
+        return shortcut(for: .double(tap)) == nil ? .single(tap) : .double(tap)
     }
 
     func shortcut(for tap: TrackpadSingleTap) -> KeyboardShortcut? {
@@ -64,10 +74,12 @@ extension EngineMailbox {
             let supportsDouble = (1...2_000_000_000).contains(interval)
             let doubleThree = supportsDouble ? $0.rules[MatchKey(trigger: .threeFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
             let doubleFour = supportsDouble ? $0.rules[MatchKey(trigger: .fourFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
-            guard four != nil || three != nil || doubleThree != nil || doubleFour != nil else { return nil }
+            let doubleTwo = supportsDouble ? $0.rules[MatchKey(trigger: .twoFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
+            guard four != nil || three != nil || doubleThree != nil || doubleFour != nil || doubleTwo != nil else { return nil }
             return TrackpadRuntime(revision: $0.actionRevision, inputActivity: $0.inputActivity,
                                    fourFingerShortcut: four, threeFingerShortcut: three,
                                    threeFingerDoubleShortcut: doubleThree, fourFingerDoubleShortcut: doubleFour,
+                                   twoFingerDoubleShortcut: doubleTwo,
                                    doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
         }
     }
@@ -96,7 +108,7 @@ extension EngineMailbox {
     @discardableResult nonisolated func submitTrackpad(_ runtime: TrackpadRuntime, gesture: TrackpadTapGesture,
                                                      pid: Int32, at now: UInt64) -> Bool {
         state.withLock {
-            if case .double = gesture {
+            if gesture.isDoubleTap {
                 guard (1...2_000_000_000).contains($0.matcher.doublePressIntervalNanoseconds),
                       runtime.doubleTapIntervalNanoseconds == $0.matcher.doublePressIntervalNanoseconds else { return false }
             }

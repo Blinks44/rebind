@@ -10,6 +10,7 @@ struct rebindApp: App {
         Window(.rebindWindowTitle, id: "main") {
             ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
         }
+            .windowStyle(.hiddenTitleBar)
             .defaultSize(width: 1040, height: 640)
             .commands {
                 CommandGroup(replacing: .appInfo) {

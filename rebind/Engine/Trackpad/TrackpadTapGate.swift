@@ -70,7 +70,9 @@ nonisolated struct TrackpadTapGate: Sendable {
         guard validTime(time) else { rejection = .receiptTime; return false }
         guard observerReady else { rejection = .observerUnavailable; return false }
         guard neutral, !inContact, buttons == completedButtons else { rejection = .noCompleteStroke; return false }
-        guard TrackpadSingleTap(rawValue: fingers) != nil else { rejection = .otherFingerCount; return false }
+        guard TrackpadTapSequence.candidateFingerCounts.contains(fingers) else {
+            rejection = .otherFingerCount; return false
+        }
         guard time - startedAt >= Self.armingDelay else { rejection = .armingDelay; return false }
         guard time <= UInt64.max - Self.settlingDelay else { rejection = .deadlineOverflow; return false }
         pendingAt = time
