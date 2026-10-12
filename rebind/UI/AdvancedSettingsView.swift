@@ -11,8 +11,6 @@ struct AdvancedSettingsView: View {
     @State private var panel: NSSavePanel?
     @State private var windowAnchor = NSView()
     @State private var confirmation: NSAlert?
-    @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.colorSchemeContrast) private var contrast
 
     private struct FileRequest: Equatable {
         let id = UUID()
@@ -29,35 +27,47 @@ struct AdvancedSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                actionCard(.advancedDiagnosticsTitle,
-                           description: model.storageLocked ? .advancedDiagnosticsUnavailableBody : .advancedDiagnosticsDescription) {
+                SettingsActionCard(title: .advancedDiagnosticsTitle,
+                                   description: model.storageLocked ? .advancedDiagnosticsUnavailableBody : .advancedDiagnosticsDescription) {
                     Button(.advancedDiagnosticsAction) { showingDiagnostics = true }
                 }
                 if model.storageLocked {
-                    actionCard(.advancedProtectedTitle, description: .advancedProtectedBody) {
+                    EditorFeedback(severity: .warning, title: .advancedProtectedTitle, message: .advancedProtectedBody) {
                         ViewThatFits(in: .horizontal) {
                             HStack { protectedActions }
                             VStack(alignment: .leading) { protectedActions }
                         }
                     }
-                    actionCard(.advancedResetUnavailableTitle, description: .advancedResetUnavailableBody) { EmptyView() }
+                    if let feedback = editing.feedback { feedbackCard(feedback) }
+                    SettingsActionCard(title: .advancedResetUnavailableTitle, description: .advancedResetUnavailableBody) { EmptyView() }
                 } else {
-                    actionCard(.advancedConfigurationTitle,
-                               description: editing.isValidating ? .advancedValidationDescription : .advancedConfigurationDescription) {
-                        if editing.isValidating { ProgressView().controlSize(.small) }
-                        ViewThatFits(in: .horizontal) {
-                            HStack { transferActions }
-                            VStack(alignment: .leading) { transferActions }
+                    if editing.isValidating {
+                        EditorFeedback(severity: .information, title: .advancedConfigurationTitle,
+                                       message: .advancedValidationDescription) {
+                            ProgressView().controlSize(.small)
+                        }
+                    } else {
+                        SettingsActionCard(title: .advancedConfigurationTitle,
+                                           description: .advancedConfigurationDescription) {
+                            ViewThatFits(in: .horizontal) {
+                                HStack { transferActions }
+                                VStack(alignment: .leading) { transferActions }
+                            }
                         }
                     }
-                    actionCard(.advancedResetTitle,
-                               description: editing.isValidating ? .advancedValidationResetDescription : .advancedResetDescription) {
+                    if let feedback = editing.feedback, !feedbackBelongsToReset {
+                        feedbackCard(feedback)
+                    }
+                    SettingsActionCard(title: .advancedResetTitle,
+                                       description: editing.isValidating ? .advancedValidationResetDescription : .advancedResetDescription) {
                         Button(.advancedResetAction) { editing.reviewReset() }.disabled(busy)
                     }
+                    if let feedback = editing.feedback, feedbackBelongsToReset {
+                        feedbackCard(feedback)
+                    }
                 }
-                if let feedback = editing.feedback { feedbackCard(feedback) }
                 if model.requiresLanguageReopen {
-                    actionCard(.reopenTitle, description: .reopenDescription(savedLanguageName)) {
+                    EditorFeedback(severity: .information, title: .reopenTitle, message: .reopenDescription(savedLanguageName)) {
                         Button(.quitRebind) { NSApp.terminate(nil) }
                     }
                 }
@@ -135,46 +145,30 @@ struct AdvancedSettingsView: View {
         await editing.export(to: url)
     }
 
-    private func actionCard<Actions: View>(_ title: LocalizedStringResource,
-                                          description: LocalizedStringResource,
-                                          @ViewBuilder actions: () -> Actions) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.headline).accessibilityAddTraits(.isHeader)
-            Text(description).font(.callout).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            actions().buttonStyle(.bordered).buttonBorderShape(.capsule)
+    private var feedbackBelongsToReset: Bool {
+        switch editing.feedback {
+        case .reset: true
+        case .writeFailed: editing.review?.isReset == true
+        default: false
         }
-        .padding(16).frame(maxWidth: .infinity, alignment: .leading)
-        .background {
-            RoundedRectangle(cornerRadius: 12).fill(Color(.permissionSurface))
-                .overlay {
-                    LinearGradient(colors: [.white.opacity(colorScheme == .dark ? 0.03 : 0.12), .clear],
-                                   startPoint: .top, endPoint: .bottom)
-                        .clipShape(.rect(cornerRadius: 12))
-                }
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 12).strokeBorder(
-                Color(nsColor: .separatorColor).opacity(contrast == .increased ? 1 : colorScheme == .dark ? 0.5 : 0.15))
-        }
-        .shadow(color: .black.opacity(colorScheme == .dark ? 0.15 : 0.06), radius: 5, y: 3)
     }
 
     @ViewBuilder private func feedbackCard(_ feedback: AdvancedSettingsModel.Feedback) -> some View {
         switch feedback {
         case .imported(let profiles, let bindings):
-            actionCard(.advancedImportSuccess, description: .advancedImportSuccessDescription(count1: profiles, count2: bindings)) { EmptyView() }
+            EditorFeedback(severity: .success, title: .advancedImportSuccess,
+                           message: .advancedImportSuccessDescription(count1: profiles, count2: bindings))
         case .reset:
-            actionCard(.advancedResetSuccess, description: .advancedResetSuccessDescription) { EmptyView() }
+            EditorFeedback(severity: .success, title: .advancedResetSuccess, message: .advancedResetSuccessDescription)
         case .exported:
-            PermissionCard { Label(.advancedExportSuccess, systemImage: "checkmark.circle") }
+            EditorFeedback(severity: .success, title: .advancedExportSuccess)
         case .invalidBackup, .incompatibleBackup:
-            actionCard(.advancedImportRejectedTitle,
-                       description: isIncompatible(feedback) ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
+            EditorFeedback(severity: .error, title: .advancedImportRejectedTitle,
+                           message: isIncompatible(feedback) ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
                 Button(.advancedChooseBackup) { importing = true }.disabled(busy)
             }
         case .writeFailed:
-            actionCard(.advancedWriteFailedTitle, description: .advancedWriteFailedBody) {
+            EditorFeedback(severity: .error, title: .advancedWriteFailedTitle, message: .advancedWriteFailedBody) {
                 Button(.advancedRetry) {
                     // A retry requests a fresh review; it never silently commits a stale one.
                     if editing.review?.isReset == true { editing.reviewReset() }
@@ -182,11 +176,11 @@ struct AdvancedSettingsView: View {
                 }.disabled(busy)
             }
         case .exportFailed:
-            actionCard(.advancedExportFailedTitle, description: .advancedExportFailedBody) {
+            EditorFeedback(severity: .error, title: .advancedExportFailedTitle, message: .advancedExportFailedBody) {
                 Button(.advancedRetry) { request = FileRequest(importURL: nil) }.disabled(busy)
             }
         case .staleReview:
-            actionCard(.advancedWriteFailedTitle, description: .advancedStaleReviewBody) { EmptyView() }
+            EditorFeedback(severity: .error, title: .advancedWriteFailedTitle, message: .advancedStaleReviewBody)
         }
     }
 

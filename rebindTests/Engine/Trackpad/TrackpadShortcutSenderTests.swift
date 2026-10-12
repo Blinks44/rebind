@@ -11,12 +11,19 @@ struct TrackpadShortcutSenderTests {
     @Test func activeTargetPostsOneTaggedBalancedPairWithoutReadingItsAXTree() {
         var activeChecks = 0
         var posted: [CGEvent] = []
+        let diagnostics = Mutex<[String]>([])
         let result = ShortcutSender.send(shortcut, to: target, canPerform: { true },
+            diagnose: { event in diagnostics.withLock { $0.append(event.key) } },
             allowsInput: { true }, blockedInput: { _ in nil },
             targetIsActive: { pid in activeChecks += 1; return pid == 100 }, clock: { 1 },
-            post: { event, pid in #expect(pid == 100); posted.append(event) })
+            post: { event, pid in
+                #expect(pid == 100)
+                #expect(diagnostics.withLock { $0.isEmpty })
+                posted.append(event)
+            })
         #expect(result == .performed)
         #expect(activeChecks == 2)
+        #expect(diagnostics.withLock { $0 } == ["posted-queue-age-le-10ms"])
         #expect(posted.map(\.type) == [.keyDown, .keyUp])
         #expect(posted.allSatisfy {
             $0.flags.contains(.maskCommand)

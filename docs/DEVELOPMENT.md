@@ -136,6 +136,12 @@ ordinary/wheel/double/long-press/gesture rules, IDs and enabled state. Legacy ru
 the file until the next successful save. Schema 23 also stores explicit first-run setup acknowledgement; existing installations migrate with setup acknowledged. Grant recovery never changes saved pause or rule flags.
 
 
+## Trackpad scheduling diagnostics
+
+For an explicitly authorized physical run, `--diagnose-trackpad` enables a one-minute aggregate console report; it uses existing rules and may execute their configured actions. It does not create a test rule or induce UI stalls. Quit the other Rebind copy before starting the identified bundle.
+
+Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue age and `posted-queue-age-*` records mailbox admission to the final pre-post time for balanced pairs actually posted. Buckets are disjoint: up to 10, 20, 60, 100 and 160 ms, then greater than 160 ms. Each boundary belongs to the lower bucket. Exact durations/timestamps, contacts, typed text and target identity are excluded. These counters do not measure physical finger-lift-to-visible-action latency, successful app delivery, or callback cost; use an external timing method for those. Missing buckets mean no samples, not zero latency. Report collection finishes once; protected-context/capture-loss paths clear it. [Scheduling checks and remaining acceptance](verification/trackpad-scheduling-timing.md).
+
 ## Packages and research tools
 
 The app target has no Swift package dependency. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../rebind/Resources/ThirdPartyNotices.txt).

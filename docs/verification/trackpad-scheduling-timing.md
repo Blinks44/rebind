@@ -1,0 +1,57 @@
+# Trackpad scheduling and aggregate timing — 2026-10-12
+
+[INPUT-001](../tasks/INPUT-001-four-finger-tap.md), SPEC §§3.4, 6, 12 / T1/T2/S1/S3. Engineering-only diagnostics and injected verification; no UI/Sketch change or capability expansion.
+
+## Deliverable and measurement limits
+
+The existing `--diagnose-trackpad` report now includes two fixed histograms:
+
+- `frame-age-*`: native receipt to clock sample after dequeue, before classification. Includes stale frames; future receipts are not subtracted. Cancellation counters remain separate.
+- `posted-queue-age-*`: mailbox admission to final pre-post clock sample, recorded after the balanced keyDown/keyUp pair. Cancelled/expired actions contribute no posted sample.
+
+Disjoint buckets: ≤10 ms, (10,20] ms, (20,60] ms, (60,100] ms, (100,160] ms, >160 ms. The output remains a dictionary of fixed string keys and counts; raw duration values are discarded. Queue admission time is transient in the existing dispatch target, never configuration or serialized diagnostics. One-minute opt-in lifetime, one-shot report and protected-context clearing are unchanged. Report encoding stays outside the mailbox lock; callback acquisition/ABI, 64-frame queue/drain budget, recognizer thresholds, settling/single-double deadlines, schema, synthetic tags and cancellation guards remain unchanged.
+
+These histograms distinguish consumer scheduling and admitted-output delay. They are **not** physical finger-lift-to-action latency, native callback profiling, delivery acknowledgement or target-visible completion. They also exclude recognition/settling and intentional single/double arbitration before mailbox admission. Aggregate instrumentation overhead has not been profiled. No new native mechanism/dependency or third-party code was added; retained existing Dispatch uptime clocks. An attempted Apple web reference refresh returned a JavaScript-only page and inaccessible Markdown; no new documentation claim relies on it.
+
+## Artifact and environment
+
+Baseline `main` / `e74ae71`, plus uncommitted changes to `ShortcutSender.swift`, Trackpad `TrackpadDiagnostics.swift`, `TrackpadRuntime.swift`, `TrackpadTapSession.swift`, scoped tests and completion records. Earlier callback/UI work is committed. The independent `.gitignore` edit appeared during this session and is preserved, outside this task. No agent commit.
+
+Development host: arm64, macOS 27.0.1 (26A434); `scripts/dev.sh doctor` reports Xcode 27.0 (27A266a), Swift 6.4, SDK 27. macOS 26/Intel remain unverified. Tests use synthetic frames, injected permissions/foreground/clock and a captured post closure; the app test host bypasses production input startup. No native acquisition, global shortcut posting, real rule/permission change or production app launch occurred.
+
+Final Debug bundle: `build/DerivedData/Build/Products/Debug/Rebind.app`.
+
+- Executable SHA-256: `91102ca9e12cbc132876876e6005bcac566f71e7b22f53dfec2c9722b3152c8e`.
+- `rebind.debug.dylib` SHA-256: `f0bad688cf06536370d75ebaa067cd342172c962d2905cac781af8d96b88b096`.
+
+Local logs/result bundles remain ignored under `build/`.
+
+## Initial checks and access limits
+
+1. Initial sandbox scoped invocation (`build/TrackpadTimingScoped.xcresult`) failed compilation because Swift macro subprocesses were blocked. An authorized outside-sandbox retry (`TrackpadTimingScopedRetry.xcresult`) exposed a new test-harness error: non-Copyable Mutex stored in a Copyable struct. Replaced it with a small Sendable reference holder using Mutex. Next compilation (`TrackpadTimingScopedFinal.xcresult`) exposed direct mutating calls inside Swift Testing assertions; comparisons now evaluate the mutating call outside the macro's captured receiver. No production ownership workaround or unchecked Sendable added.
+2. `scripts/dev.sh test -only-testing:rebindTests/TrackpadSchedulingTests -only-testing:rebindTests/TrackpadDiagnosticsTests -only-testing:rebindTests/TrackpadIntegrationTests -only-testing:rebindTests/TrackpadDoubleTapTests -only-testing:rebindTests/TrackpadShortcutSenderTests -resultBundlePath build/TrackpadTimingScopedChecked.xcresult`: **TEST SUCCEEDED; 61 functions / 5 suites**, as reported by the console. This artifact precedes the final diagnostic-order repair and its additional sender assertion; do not claim it as final-artifact acceptance.
+3. Scheduling suite covers both three/four-finger singles with stale-buffer cutoff, settling cutoff, worker expiry and expiry during sender preparation, including exact boundaries and 1 ns beyond. **200 injected cycles per finger count** alternate stale buffered input, late settling and late worker dispatch. All **400 cancelled strokes** produce zero posts; all **400 fresh recovery strokes** produce exactly one tagged balanced pair and no duplicate. This is simulated software recovery, not measured physical reliability. Existing double-tap/session suites also pass on that scoped artifact; no new hardware double-tap evidence.
+4. Final repair moves histogram recording after the balanced pair, preserving the final expiry-to-post window. Sender test asserts diagnostics are still empty at each post. `scripts/dev.sh test -resultBundlePath build/TrackpadTimingFull.xcresult` compiled final code and ran native fixtures, but stopped without a final result. Log ends in PermissionSettingsLayoutTests after successful About, General, Input/Language, main-window and Mouse fixtures. The command session was unavailable on resume; interruption cause/exit code is not established. **Full regression is not green.** Existing aggregate live-window and Apple Shortcuts service warnings appear; no production leak/performance claim follows.
+5. `scripts/dev.sh build > build/TrackpadTimingBuild.log 2>&1`: **BUILD SUCCEEDED**, final code. Repeated after the failed sandbox test attempt (`build/TrackpadTimingFinalBuild.log`) to remove test-host embedding: **BUILD SUCCEEDED**; artifact hashes above identify this ordinary final bundle. Xcode notes hardened runtime is disabled with ad-hoc signing; this is not distribution/signing acceptance. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app`: passes (local ad-hoc signing). Product/bundle/toolchain settings preserved.
+6. Final sandbox scoped retry (`build/TrackpadTimingSandboxFinal.xcresult`, same five suites) compiled but could not communicate with `com.apple.testmanagerd.control` (sandbox restriction), **TEST FAILED before execution**. Separate outside-sandbox xcresult summary access was rejected by automatic approval review because its usage limit prevented review, not because the action was judged unsafe. No final expanded-execution count or xcresult summary is claimed. No workaround for the approval restriction was used.
+7. Final source/docs review and `git diff --check`: pass; affected links resolve. Initial final-software acceptance was open; the user-run full regression below closes it.
+
+## Self-review
+
+Reviewed all changed declarations and call sites using the installed Swift Concurrency, Swift Testing and API Design guidance. Production Sendable/nonisolated boundaries and synchronous callbacks remain. Checked UInt64 subtraction guards, deadline boundaries, receipt/poll ordering, fixed report cardinality, opt-in expiry, one-slot dispatch and balanced tagged output. The final source differs from the green scoped artifact only by moving posted-age reporting after the pair; the additional sender assertion verifies this ordering in the final full regression below. No diagnostic lock is inserted between final expiry validation and posts. Frame-age diagnostics occur on the consumer, outside the buffer lock and native callback. Existing diagnostic locking adds some opt-in work and is not a performance benchmark.
+
+Reviewed test independence: each parameter has its own buffer/mailbox/worker and synchronized output holder; no sleeps, production posting or actual configuration. Recovery checks exercise production buffer publication, session, mailbox, worker and sender rather than a duplicate matcher. No actionable source defect remains from this review; **physical timing remains unresolved**, not waived; final runtime tests now pass as recorded below. The added dispatch timestamp is supplied at every production construction; its zero default is used only by the existing synthetic target fixture.
+
+## Final user-run regression reviewed — 2026-10-12
+
+The user launched `scripts/dev.sh test -resultBundlePath build/TrackpadTimingFinalVerified.xcresult` in Terminal. The agent observed the native fixtures progressing and inspected the finalized result bundle: test and build statuses **succeeded**, **659 unique test functions / 1,860 expanded executions**, **zero failures/skips**, zero errors/warnings/test-warning summaries in xcresult. Run interval 15:30:21–15:34:03 +03:00. Swift Testing console: **645 functions / 89 suites** pass; XCTest: **14 functions** pass. All 24 Scheduling executions, all three diagnostic functions and all ten sender executions pass, including the final post-before-diagnostics assertion and 400 injected recovery cycles. No source changed between the earlier review/build and this run. The tested app `rebind.debug.dylib` SHA-256 still matches the ordinary Debug artifact above. Test embedding can alter the signed launcher; the prior ordinary-build executable hash is not claimed as the test-host launcher hash.
+
+Environment independently recorded in xcresult: MacBook Air (Apple M3), arm64, macOS 27.0.1 (26A434), SDK 27. Test host remains synthetic/injected and does not establish hardware behavior. Console retains the previously recorded aggregate NSWindow count warning (101) during native fixture creation and Apple Shortcuts service-connection messages. These did not fail tests; this is not production leak/performance acceptance.
+
+The new summary subcommand could not create its external TestReport cache in the sandbox. Read-only `xcresulttool get object --legacy` successfully read the root/test tree, and `xcresulttool export diagnostics` wrote only to ignored `build/TrackpadTimingFinalDiagnostics`. Root metrics/status, every test status and exported console were cross-checked; all 1,860 metadata entries report Success. Local JSON/diagnostics stay in ignored build output. No external-access approval was needed for this read-only alternative, and no outside-sandbox command was run by the agent in this follow-up.
+
+Final diff/self-review: no new actionable issue; source unchanged. Affected documentation links and `git diff --check` pass. The bounded aggregate-timing/software-scheduling slice is complete; INPUT-001 remains `awaiting_verification` for physical/platform acceptance. No agent commit, production capture, real remapping or rule/permission change.
+
+## Next step
+
+For later authorized hardware measurement, use the identified ordinary bundle and existing rules with `--diagnose-trackpad`, keeping other remappers/copies closed. Collect one baseline report and separately document any controlled workload, counts, target, actual grants and timing method. This change does not induce a UI stall or launch capture. Do not repeat the user's confirmed ordinary delivery/pause/recovery scenario without a new concern. Physical busy-consumer scheduling, lift-to-visible-action latency, click-duration/mixed-input stress, protected/native-conflict and macOS 26/Intel gates remain open; Experimental status is unchanged. No repeat software run is needed without new changes or findings.

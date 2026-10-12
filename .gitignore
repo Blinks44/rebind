@@ -36,6 +36,7 @@ xcuserdata/
 # Verification screenshots/exports use .local/agent-context/verification/ by default.
 # Shared agent instructions, skills, state, tasks and evidence remain versioned.
 /.local/agent-context/
+kilo.json
 
 # Swift Package Manager
 .build/

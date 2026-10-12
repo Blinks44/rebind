@@ -4,7 +4,7 @@ Updated 2026-10-12. Read [STATE](STATE.md) first for current facts and next task
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): delivery/click recovery/lifecycle subsets user-confirmed; post-repair walkthrough reports 10/10 taps, no delayed pause outputs and 5/5 fresh recovery. [Buffer safety](verification/trackpad-buffer-safety.md) and [callback guards](verification/trackpad-callback-generation.md) have injected recovery evidence. Controlled busy-consumer latency, quantified stress and full T1/T2 safety remain open. Preserve confirmed scenarios; do not substitute polish or blind threshold changes for remaining acceptance.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): delivery/click recovery/lifecycle subsets user-confirmed; post-repair walkthrough reports 10/10 taps, no delayed pause outputs and 5/5 fresh recovery. [Buffer safety](verification/trackpad-buffer-safety.md) and [callback guards](verification/trackpad-callback-generation.md) have injected recovery evidence. [Timing diagnostics and injected scheduling checks](verification/trackpad-scheduling-timing.md) pass final user-run regression (659 functions / 1,860 executions), reviewed from xcresult. [Foreground round-trip cancellation](verification/trackpad-focus-cancellation.md) is repaired; final full regression passes 666 functions / 1,870 executions on `a6471db`. Requested focus-switching/fresh-tap walkthrough is user-confirmed. Busy-consumer latency, quantified stress and full T1/T2 safety remain open. Preserve confirmed scenarios; do not substitute polish or blind threshold changes for remaining acceptance.
 2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. [Settings feedback adoption](verification/permissions-feedback-adoption.md) passes bounded software/native checks. Actual grant/revocation/accessibility and remaining setup/main material adoption stay open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
@@ -88,6 +88,7 @@ The checked items below describe only the stated software/artifact milestone. An
 
 ### Phase 9 — Four-language UX
 
+- [x] [Plain-language design copy](tasks/UI-018-human-interface-copy.md) saved/reviewed across 125 Sketch screens and EN/RU/DE/FR specimens; native copy adoption and acceptance remain open.
 - [x] Current app slice has EN/RU/DE/FR String Catalog translations; 53-key onboarding/permission handoff is integrated; four-language native fixtures reviewed.
 - [x] System/EN/RU/DE/FR manual preference, atomic failure/retry and launch/reopen activation path integrated; software/native fixture checks pass in [UI-005](tasks/UI-005-language-settings.md).
 - [ ] Verify actual language relaunch/native contexts and complete remaining screen copy/layouts/errors/tooltips/accessibility in all languages.

@@ -23,6 +23,8 @@ nonisolated struct TrackpadDiagnostics: Sendable {
 }
 
 nonisolated enum TrackpadDiagnosticEvent: Sendable {
+    // Fixed histogram buckets only; precise timestamps/durations are discarded.
+    case frameAge(nanoseconds: UInt64), postedQueueAge(nanoseconds: UInt64)
     case frame, candidate, queued, queueUnavailable, outputPosted, outputCancelled, outputUnavailable, outputExpired
     case captureInactive, captureRestarted, captureUnavailable, captureFailed, runtimeChanged
     case heldModifier, heldButton, heldKey, protectedContext, targetChanged, activityChanged, outputTargetInactive
@@ -32,6 +34,8 @@ nonisolated enum TrackpadDiagnosticEvent: Sendable {
 
     var key: String {
         switch self {
+        case .frameAge(let nanoseconds): "frame-age-" + Self.ageBucket(nanoseconds)
+        case .postedQueueAge(let nanoseconds): "posted-queue-age-" + Self.ageBucket(nanoseconds)
         case .frame: "frames"
         case .candidate: "qualified-taps"
         case .queued: "queued"
@@ -59,6 +63,17 @@ nonisolated enum TrackpadDiagnosticEvent: Sendable {
         case .overflow: "buffer-overflow"
         case .recognition(let reason): "recognition-" + reason.rawValue
         case .gate(let reason): "gate-" + reason.rawValue
+        }
+    }
+
+    private static func ageBucket(_ nanoseconds: UInt64) -> String {
+        switch nanoseconds {
+        case ...10_000_000: "le-10ms"
+        case ...20_000_000: "le-20ms"
+        case ...60_000_000: "le-60ms"
+        case ...100_000_000: "le-100ms"
+        case ...160_000_000: "le-160ms"
+        default: "gt-160ms"
         }
     }
 }

@@ -8,6 +8,8 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 ## Existing pending handoffs
 
+- [UI-018](UI-018-human-interface-copy.md): plain-language copy saved/reviewed across all 125 Sketch screens and EN/RU/DE/FR specimens. Adopt current wording into the native catalog/labels/help, then verify compact layouts and accessibility.
+
 - [UI-019](UI-019-language-selector-contrast.md): compact Language refinement integrated; software/layout/Light checks pass. Verify native Dark/menu/focus/VoiceOver and adaptive preferences on the named build.
 
 - [UI-015](UI-015-production-design-review.md): full production design review saved/reviewed; adopt the current shared chip/alignment, menu, Dark-material/contrast and native-state corrections directly from Sketch. Native acceptance remains open.

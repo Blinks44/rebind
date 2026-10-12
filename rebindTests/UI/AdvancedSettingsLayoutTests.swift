@@ -7,21 +7,34 @@ import XCTest
     func testAdvancedFeedbackAndProtectedStatesFitNativeSettings() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindAdvancedLayout-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        for state in ["overview", "imported", "reset", "invalid", "protected", "writeFailed", "exportFailed"] {
+        for state in ["overview", "imported", "reset", "exported", "invalid", "incompatible", "protected",
+                      "writeFailed", "importWriteFailed", "exportFailed", "staleReview", "reopen"] {
             let store = ConfigurationStore(url: directory.appending(path: "\(state)/configuration.json"))
             var configuration = Configuration()
             configuration.hasCompletedSetup = true
             try store.save(configuration)
             if state == "protected" { try Data("protected".utf8).write(to: store.url) }
             let model = AppModel(store: store, readPermissions: { InputPermissions() },
-                loginItem: LoginItemModel(service: LoginItemServiceStub()))
+                loginItem: LoginItemModel(service: LoginItemServiceStub()),
+                languagePreferenceSaved: { _ in })
             let page = AdvancedSettingsModel(app: model)
             switch state {
             case "imported": await page.validateImport(at: store.url); page.confirmReplacement()
             case "reset": page.reviewReset(); page.confirmReplacement()
             case "invalid": await page.validateImport(at: directory.appending(path: "missing.json"))
-            case "writeFailed":
-                page.reviewReset()
+            case "exported": await page.export(to: directory.appending(path: "exported.json"))
+            case "incompatible":
+                let backup = directory.appending(path: "future.json")
+                try Data("{\"schemaVersion\":999}".utf8).write(to: backup)
+                await page.validateImport(at: backup)
+            case "staleReview":
+                await page.validateImport(at: store.url)
+                try model.saveLanguagePreference(.fr)
+                page.confirmReplacement()
+            case "reopen": try model.saveLanguagePreference(.de)
+            case "writeFailed", "importWriteFailed":
+                if state == "writeFailed" { page.reviewReset() }
+                else { await page.validateImport(at: store.url) }
                 try FileManager.default.removeItem(at: store.url)
                 try FileManager.default.createDirectory(at: store.url, withIntermediateDirectories: false)
                 page.confirmReplacement()
@@ -61,7 +74,9 @@ import XCTest
                     }
                 }
             }
-            if state == "writeFailed" { try FileManager.default.removeItem(at: store.url) }
+            if state == "writeFailed" || state == "importWriteFailed" {
+                try FileManager.default.removeItem(at: store.url)
+            }
         }
     }
 

@@ -37,7 +37,7 @@ import Dispatch
 
     @objc private func foregroundChanged() {
         session?.interrupt()
-        mailbox.updateTrackpadForeground(foregroundPID())
+        mailbox.updateTrackpadForeground(foregroundPID(), activationChanged: true)
     }
 
     private func foregroundPID() -> Int32? {
@@ -63,6 +63,10 @@ import Dispatch
             return
         }
         reportDiagnostics()
+        // Publish focus cancellation before snapshotting activity; otherwise
+        // this poll could classify pre-switch contacts with the old runtime.
+        let pid = foregroundPID()
+        mailbox.updateTrackpadForeground(pid)
         guard let runtime = mailbox.trackpadRuntime() else {
             mailbox.recordTrackpadDiagnostic(.captureInactive)
             stopCapture()
@@ -82,12 +86,10 @@ import Dispatch
             }
             revision = runtime.revision
             mailbox.recordTrackpadDiagnostic(.captureRestarted)
-            session = TrackpadTapSession(runtime: runtime, foreground: foregroundPID(), startedAt: now)
+            session = TrackpadTapSession(runtime: runtime, foreground: pid, startedAt: now)
         }
         guard let device, session != nil else { return }
-        let pid = foregroundPID()
         if let event = session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
-        mailbox.updateTrackpadForeground(pid)
         let mailbox = mailbox
         session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
                                        diagnose: { mailbox.recordTrackpadDiagnostic($0) })

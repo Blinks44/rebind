@@ -1,8 +1,9 @@
 # UI-007 — Advanced settings and safe configuration management
 
-- Updated: 2026-10-11.
+- Updated: 2026-10-12.
 - Stage: `awaiting_verification`; native implementation integrated, software/native cancellation checks pass.
-- Owner: Unassigned; `/root` released native implementation on 2026-10-11. Sketch remained read-only.
+- Owner: Unassigned; `/root` released bounded Advanced feedback/material adoption on 2026-10-12. Sketch read-only.
+- Ownership checked: `main` / `a6471db`; preserved Trackpad completion documents. Scope: Advanced view/action card, additive shared success feedback token, native layout fixtures and this task/evidence/STATE/history.
 - Baseline: `main` / `bf36465` plus final Advanced alert/diagnostic/test refinements; no agent commit. HEAD advanced externally during implementation.
 - Requirements: SPEC §§7, 9–11, 15.12; PLAN Phases 7–9.
 - Owned implementation surfaces: Advanced settings/model/file operations, scoped AppModel replacement/editor guards, diagnostics presentation, catalog additions and tests. Independent Mouse design and prior General/Input/Language work preserved.
@@ -41,3 +42,9 @@ Read [native behavior, identified artifact, commands, review findings and limits
 2026-10-11 software follow-up: [STORAGE-001 evidence](../verification/protected-saves-and-restoration.md) covers ordinary saves after launch and six temporary export/reset/import/resume scenarios through the real matcher/worker with injected output. Restored selection/options, paused import, old pending-output cancellation and held-source release ownership pass. This does not close the physical/native SPEC §15.12 or accessibility gate above.
 
 Verify the Advanced export → reset → import → explicit resume walkthrough with disposable authored profiles on the identified build, then keyboard/VoiceOver and accessibility preferences using the evidence checklist. Production restart/login/language checks remain user-led. Mouse design is independently active in UI-009; consume only its released live Sketch scope when ready.
+
+## Settings feedback and materials — 2026-10-12
+
+Shared raised cards/recovery controls and semantic error/warning/success/progress/reopen states adopted from live Sketch. Feedback now follows the affected backup/reset operation. [Evidence](../verification/advanced-feedback-adoption.md): 14 functions / 34 executions, 720 native viewports, Debug/signature and scoped live Light/Dark/German checks pass. Engine/model/storage/schema/translations/Sketch are unchanged; reviewed UI-018 copy remains separate. Work is uncommitted on `a6471db`; independent Trackpad notes and later focus-confirmation updates preserved.
+
+Bounded implementation/checks complete; broader task remains `awaiting_verification`. [User follow-up](../verification/advanced-feedback-adoption.md#user-verification-follow-up--2026-10-12): requested Advanced checks reported working; individual states/build/preferences were not restated. Preserve that bounded confirmation. Adaptive/platform and detailed §15.12 acceptance remain separate. Next implementation: remaining Input/settings surfaces and reviewed copy from live Sketch using the shared controls.

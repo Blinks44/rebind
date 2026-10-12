@@ -1,12 +1,13 @@
 import SwiftUI
 
 enum EditorFeedbackSeverity {
-    case error, warning, information
+    case error, warning, success, information
 
     var symbol: String {
         switch self {
         case .error: "exclamationmark.circle"
         case .warning: "exclamationmark.triangle"
+        case .success: "checkmark.circle"
         case .information: "info.circle"
         }
     }
@@ -15,6 +16,7 @@ enum EditorFeedbackSeverity {
         switch self {
         case .error: Color(.editorError)
         case .warning: Color(.editorWarning)
+        case .success: Color(.permissionSuccess)
         case .information: .accentColor
         }
     }
@@ -23,6 +25,7 @@ enum EditorFeedbackSeverity {
         switch self {
         case .error: Color(.editorErrorSurface)
         case .warning: Color(.editorWarningSurface)
+        case .success: Color(.editorSuccessSurface)
         case .information: Color(.editorInfoSurface)
         }
     }

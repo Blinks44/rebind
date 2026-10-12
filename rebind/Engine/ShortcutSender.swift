@@ -54,8 +54,14 @@ nonisolated enum ShortcutSender {
         guard canPerform() else { diagnose(.runtimeChanged); return .cancelled }
         guard allowsInput() else { diagnose(.protectedContext); return .cancelled }
         if let reason = blockedInput(shortcut) { diagnose(reason); return .cancelled }
-        guard clock() <= target.expiresAt else { diagnose(.outputExpired); return .cancelled }
+        let postingTime = clock()
+        guard postingTime <= target.expiresAt else { diagnose(.outputExpired); return .cancelled }
         for event in events { post(event, pid) }
+        // Reporting cannot insert a mailbox-lock wait between final expiry
+        // validation and the balanced pair; the sample is from before posting.
+        if postingTime >= target.queuedAt {
+            diagnose(.postedQueueAge(nanoseconds: postingTime - target.queuedAt))
+        }
         return .performed
     }
 

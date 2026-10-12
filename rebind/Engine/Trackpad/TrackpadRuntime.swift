@@ -9,6 +9,8 @@ nonisolated struct TrackpadDispatchTarget: Equatable, Sendable {
     var pid: Int32
     var inputActivity: UInt64
     var expiresAt: UInt64
+    /// Monotonic mailbox admission time; transient and never serialized.
+    var queuedAt: UInt64 = 0
 }
 
 nonisolated struct TrackpadRuntime: Equatable, Sendable {
@@ -70,9 +72,14 @@ extension EngineMailbox {
         }
     }
 
-    nonisolated func updateTrackpadForeground(_ pid: Int32?) {
+    /// Invalidates touch input on a changed target or an observed application activation.
+    nonisolated func updateTrackpadForeground(_ pid: Int32?, activationChanged: Bool = false) {
         state.withLock {
-            guard $0.foregroundPID != pid else { return }
+            guard activationChanged || $0.foregroundPID != pid else { return }
+            // A -> B -> A must not revive dequeued output or buffered contacts.
+            // Activation notifications can arrive after the final PID is already
+            // visible, so the notification itself also invalidates the snapshot.
+            $0.inputActivity &+= 1
             $0.foregroundPID = pid
             $0.trackpadDispatch = nil
         }
@@ -100,7 +107,7 @@ extension EngineMailbox {
                   $0.rules[MatchKey(trigger: gesture.trigger, modifiers: [])]?.action.shortcut == shortcut else { return false }
             let dispatch = ActionDispatch(action: .shortcut(shortcut), revision: runtime.revision,
                 trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
-                                                      expiresAt: now + 100_000_000))
+                                                      expiresAt: now + 100_000_000, queuedAt: now))
             guard $0.dispatchIsCurrent(dispatch) else { return false }
             $0.trackpadDispatch = dispatch
             return true

@@ -6260,25 +6260,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haltedauer pro Belegung; andere Schwellen werden automatisch verwaltet."
+            "value" : "Lege die Haltedauer für Tasten in jeder Regel fest."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set hold duration per binding. Other thresholds are managed automatically."
+            "value" : "Set the hold time for keys and buttons in each rule."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réglez le maintien par remappage. Les autres seuils sont automatiques."
+            "value" : "Réglez la durée de maintien des touches et boutons dans chaque règle."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удержание настраивается в привязке. Остальные пороги — автоматически."
+            "value" : "Время удержания клавиш и кнопок задаётся в каждом правиле."
           }
         }
       }
@@ -6318,25 +6318,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle Tastatur oder Maus in der Seitenleiste, um eine Belegung im ausgewählten Profil zu bearbeiten."
+            "value" : "Wähle links einen Gerätetyp, um seine Regeln in diesem Profil zu bearbeiten."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose Keyboard or Mouse in the sidebar to edit a binding in the selected profile."
+            "value" : "Select a device type in the sidebar to edit its rules in this profile."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez Clavier ou Souris dans la barre latérale pour modifier un remappage du profil sélectionné."
+            "value" : "Choisissez un type d’appareil à gauche pour modifier ses règles dans ce profil."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Изменяйте привязки выбранного профиля в разделе «Клавиатура» или «Мышь»."
+            "value" : "Выберите слева тип устройства, чтобы изменить его правила в этом профиле."
           }
         }
       }
@@ -6428,31 +6428,61 @@
         }
       }
     },
+    "inputFixedSensitivity" : {
+      "comment" : "Input overview status: mouse pointer gesture sensitivity is fixed, not automatically adjusted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixed sensitivity"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задана заранее"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feste Empfindlichkeit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensibilité fixe"
+          }
+        }
+      }
+    },
     "inputTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeitverhalten und Gesten"
+            "value" : "Tastendrücke und Gesten"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Timing and gestures"
+            "value" : "Presses and gestures"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Délais et gestes"
+            "value" : "Appuis et gestes"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Время и жесты"
+            "value" : "Нажатия и жесты"
           }
         }
       }
@@ -8100,25 +8130,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Halte die mittlere oder eine Zusatztaste und bewege die Maus nach oben, unten, links oder rechts. Bewegungsschwellen sind fest."
+            "value" : "Halte eine mittlere oder zusätzliche Maustaste und bewege die Maus in eine Richtung. Die Empfindlichkeit ist fest eingestellt."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hold a middle or extra button and move up, down, left or right. Movement thresholds are fixed."
+            "value" : "Hold a middle or extra mouse button and move up, down, left or right. Movement sensitivity is fixed."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris vers le haut, le bas, la gauche ou la droite. Les seuils sont fixes."
+            "value" : "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris dans une direction. La sensibilité est prédéfinie."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживайте среднюю или дополнительную кнопку и двигайте мышь вверх, вниз, влево или вправо. Пороги движения фиксированы."
+            "value" : "Удерживайте среднюю или дополнительную кнопку и двигайте мышь в нужную сторону. Чувствительность задана заранее."
           }
         }
       }
@@ -9493,25 +9523,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pro Belegung"
+            "value" : "In jeder Regel"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per binding"
+            "value" : "In each rule"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Par remappage"
+            "value" : "Dans chaque règle"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "В каждой привязке"
+            "value" : "В каждом правиле"
           }
         }
       }
@@ -10482,25 +10512,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeitverhalten beim Drücken"
+            "value" : "Tastendrücke"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Press timing"
+            "value" : "Keys and buttons"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Délais d’appui"
+            "value" : "Appuis"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Время нажатия"
+            "value" : "Нажатия"
           }
         }
       }
@@ -10511,25 +10541,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haltedauer pro Belegung: 100–5.000 ms. Zweimaliges Drücken nutzt das macOS-Doppelklickintervall."
+            "value" : "Wähle die Haltedauer: 100–5.000 ms. Doppeltes Drücken nutzt die Doppelklickgeschwindigkeit von macOS."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set hold duration per binding: 100–5,000 ms. Double press uses the macOS double-click interval."
+            "value" : "Hold time for keys and buttons: 100–5,000 ms. Double presses use the macOS double-click speed."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durée de maintien par remappage : 100–5 000 ms. Le double appui utilise le délai de double-clic de macOS."
+            "value" : "Choisissez la durée de maintien : 100–5 000 ms. Le double appui utilise la vitesse du double-clic de macOS."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удержание: 100–5 000 мс в каждой привязке. Двойное нажатие использует интервал двойного щелчка macOS."
+            "value" : "Задайте время удержания: 100–5 000 мс. Двойное нажатие зависит от скорости двойного щелчка в macOS."
           }
         }
       }
@@ -13626,30 +13656,31 @@
       }
     },
     "trackpadInputDescription" : {
+      "comment" : "Current experimental built-in Trackpad scope: four single/double tap presets send shortcuts; native macOS gestures are not suppressed. Do not advertise Magic Mouse or unimplemented presets.",
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen mit vier Fingern → Tastenkombination, ohne Zusatztasten. Systemgesten bleiben aktiv und können gleichzeitig reagieren. Andere Gesten sind noch nicht verfügbar."
+            "value" : "Wähle in jeder Regel einfaches oder doppeltes Tippen mit drei oder vier Fingern, um eine Tastenkombination zu senden. macOS-Gesten bleiben aktiv und können gleichzeitig reagieren."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Four-finger tap → shortcut, without modifiers. Native gestures remain active and may also respond. Other gestures are not available yet."
+            "value" : "Choose a single or double tap with three or four fingers in each rule to send a shortcut. macOS gestures remain active and may also respond."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toucher avec quatre doigts → raccourci, sans touches de modification. Les gestes système restent actifs et peuvent aussi réagir. Les autres gestes ne sont pas encore disponibles."
+            "value" : "Choisissez dans chaque règle un toucher simple ou double avec trois ou quatre doigts pour envoyer un raccourci. Les gestes macOS restent actifs et peuvent aussi réagir."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Касание четырьмя пальцами → сочетание клавиш, без модификаторов. Системные жесты остаются активными и могут сработать одновременно. Другие жесты пока недоступны."
+            "value" : "Выберите в каждом правиле одиночное или двойное касание тремя или четырьмя пальцами для отправки сочетания клавиш. Жесты macOS остаются активными и могут сработать одновременно."
           }
         }
       }

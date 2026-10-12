@@ -133,7 +133,9 @@ nonisolated struct TrackpadTapSession: Sendable {
             if buffer.takeOverflow() { interrupt(); diagnose(.overflow); return }
             guard let frame = buffer.pop() else { break }
             diagnose(.frame)
-            if let event = consume(frame, at: clock()) { diagnose(event) }
+            let now = clock()
+            if frame.receipt <= now { diagnose(.frameAge(nanoseconds: now - frame.receipt)) }
+            if let event = consume(frame, at: now) { diagnose(event) }
         }
         // Loss can occur after the last dequeue, including at the turn limit.
         if buffer.takeOverflow() { interrupt(); diagnose(.overflow) }

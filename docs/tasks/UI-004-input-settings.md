@@ -1,8 +1,8 @@
 # UI-004 — Input settings and per-binding hold timing
 
-- Updated: 2026-10-11.
+- Updated: 2026-10-12.
 - Stage: `awaiting_verification`; native integration/software/layout/live save-retry pass; hardware/accessibility acceptance open.
-- Owner: Unassigned; `/root` native Input/hold implementation released 2026-10-11 on `main` / `b453d8d`. Concurrent design preserved; Sketch read-only in this implementation.
+- Owner: `/root` — bounded Input material/copy adoption in progress. Prior native Input/hold implementation retained; Sketch read-only.
 - Ownership checked: 2026-10-11, `main` / `acce2f4`; prior design owners released, concurrent trackpad engineering and UI-001 native implementation preserved.
 - Owned surfaces: native InputSettingsView/HoldDurationRow/BindingEditor, tests and scoped catalog integration; shared Settings/task/evidence/index updates with UI-005. Saved Sketch sources remain historical design deliverables.
 - Requirements: SPEC §§3.1–3.4, 10–11; PLAN Phases 7–9.
@@ -36,6 +36,8 @@ Input overview/Hold row integrated with existing engine/Stepper/storage constrai
 Actual keyboard/mouse timing/cancellation, full keyboard/focus/spoken VoiceOver/accessibility preferences and remaining editor appearance/error states remain open. Layout/AX/software evidence does not certify hardware accuracy. Current material adoption is separate.
 
 ## Next handoff
+
+2026-10-12 continuation: ownership checked on `main` / `a6471db` with existing Advanced UI and Trackpad completion changes preserved. Scope: InputSettingsView, its EN/RU/DE/FR catalog entries and scoped native evidence/status. Inspect live Screens 33–39, shared Input sources and Foundations 04/14/15. Reuse raised PermissionCard and adaptive PermissionStatusLabel; preserve the existing Hold/save/retry controls. Adopt released Input copy where current capabilities match; keep the experimental built-in Trackpad scope accurate instead of advertising the final Magic Mouse pool. Required checks: Debug/signature, existing Input/Hold/localization/editor and full-main layout regressions, scoped no-engine native review, links/diff. Hardware and full assistive-technology acceptance remain open.
 
 - **Verification:** check actual Hold timing/cancellation and complete native accessibility/editor acceptance on the identified bundle. Preserve full-main coverage when adopting materials or adding Advanced; global tuning remains separate.
 - **Design:** Language is now delivered; continue Advanced separately. Preserve the delivered General/Permissions/Input/Language sources and capability limits.
