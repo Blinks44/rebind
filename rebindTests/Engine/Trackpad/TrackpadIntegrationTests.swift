@@ -191,6 +191,41 @@ struct TrackpadIntegrationTests {
         #expect(overflows == 200)
     }
 
+    @Test func repeatedCaptureRestartsDiscardDelayedStrokesAndAllowFreshTaps() {
+        let buffer = NativeTrackpadBuffer(mailbox: EngineMailbox())
+        buffer.setAccepting(true)
+        var obsoleteOutputs = 0
+        var freshOutputs = 0
+        var duplicates = 0
+        for cycle in 0..<200 {
+            let end = lift + UInt64(cycle) * 1_000_000_000
+            let oldGeneration = buffer.state.withLock { $0.generation }
+            let delayed = [0, 4, 4, 0].enumerated().map { id, count in
+                frame(Int32(id), count: count, at: end - UInt64(3 - id) * 20_000_000)
+            }
+            buffer.setAccepting(false)
+            buffer.setAccepting(true)
+            // Same runtime/activity and fresh timestamps: cancellation must
+            // come from buffer admission, not staleness or a rule revision.
+            var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+            for value in delayed { buffer.state.withLock { $0.append(value, generation: oldGeneration) } }
+            session.consumeBufferedFrames(from: buffer, clock: { end })
+            if session.takeReady(from: buffer, at: end + 60_000_000) { obsoleteOutputs += 1 }
+            let generation = buffer.state.withLock { $0.generation }
+            for (id, count) in [0, 4, 4, 0].enumerated() {
+                let value = frame(Int32(id + 4), count: count,
+                                  at: end + 500_000_000 - UInt64(3 - id) * 20_000_000)
+                buffer.state.withLock { $0.append(value, generation: generation) }
+            }
+            session.consumeBufferedFrames(from: buffer, clock: { end + 500_000_000 })
+            if session.takeReady(from: buffer, at: end + 560_000_000) { freshOutputs += 1 }
+            if session.takeReady(from: buffer, at: end + 570_000_000) { duplicates += 1 }
+        }
+        #expect(obsoleteOutputs == 0)
+        #expect(freshOutputs == 200)
+        #expect(duplicates == 0)
+    }
+
     @Test func malformedStaleAndObsoleteFramesHaveDistinctDiagnosticReasons() {
         for scenario in 0...3 {
             var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)

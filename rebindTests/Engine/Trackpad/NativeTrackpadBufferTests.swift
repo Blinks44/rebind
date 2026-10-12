@@ -129,4 +129,71 @@ struct NativeTrackpadBufferTests {
         #expect(recovered.frame == 200)
         #expect(buffer.pop() == nil)
     }
+
+    @Test(arguments: [1, 2, 10], [0, 4])
+    func inFlightFrameCannotCrossCaptureRestarts(_ restarts: Int, _ contacts: Int) throws {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        // Model a callback admitted before stop and finishing its copy after
+        // restart. Runtime revision/activity deliberately remain unchanged.
+        let admittedGeneration = buffer.state.withLock { $0.generation }
+        let pointer = records(contacts)
+        defer { pointer.deallocate() }
+        let delayed = NativeTrackpadFrame.read(pointer, count: Int32(contacts), receipt: 20,
+                                               revision: 0, activity: 0,
+                                               callbackFrame: 10, callbackTime: 1)
+        for _ in 0..<restarts { buffer.setAccepting(false); buffer.setAccepting(true) }
+        buffer.state.withLock { $0.append(delayed, generation: admittedGeneration) }
+        #expect(buffer.pop() == nil)
+        #expect(buffer.takeOverflow() == false)
+        buffer.receive(nil, count: 0, callbackFrame: 100, callbackTime: 2)
+        #expect(try #require(buffer.pop()).frame == 100)
+        #expect(buffer.pop() == nil)
+    }
+
+    @Test func resetWhileAcceptingInvalidatesInFlightFrames() {
+        let buffer = NativeTrackpadBuffer(mailbox: EngineMailbox())
+        buffer.setAccepting(true)
+        let generation = buffer.state.withLock { $0.generation }
+        let delayed = NativeTrackpadFrame(receipt: 20, revision: 0, activity: 0)
+        buffer.setAccepting(true)
+        buffer.state.withLock { $0.append(delayed, generation: generation) }
+        #expect(buffer.pop() == nil)
+    }
+
+    @Test func frameAdmittedBeforeOverflowCannotEnterRecoveredQueue() throws {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        let generation = buffer.state.withLock { $0.generation }
+        let delayed = NativeTrackpadFrame(receipt: 20, revision: 0, activity: 0)
+        for _ in 0..<65 { buffer.receive(nil, count: 0) }
+        #expect(buffer.takeOverflow())
+        buffer.receive(nil, count: 0, callbackFrame: 200, callbackTime: 2)
+        buffer.state.withLock { $0.append(delayed, generation: generation) }
+        #expect(try #require(buffer.pop()).frame == 200)
+        #expect(buffer.pop() == nil)
+        #expect(buffer.takeOverflow() == false)
+    }
+
+    @Test func obsoleteFrameCannotOverflowOrClearCurrentQueue() throws {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        let buffer = NativeTrackpadBuffer(mailbox: mailbox)
+        buffer.setAccepting(true)
+        let generation = buffer.state.withLock { $0.generation }
+        let delayed = NativeTrackpadFrame(receipt: 20, revision: 0, activity: 0)
+        buffer.setAccepting(false)
+        buffer.setAccepting(true)
+        for frame in 0..<64 {
+            buffer.receive(nil, count: 0, callbackFrame: Int32(frame), callbackTime: Double(frame))
+        }
+        buffer.state.withLock { $0.append(delayed, generation: generation) }
+        #expect(buffer.takeOverflow() == false)
+        for frame in 0..<64 { #expect(try #require(buffer.pop()).frame == Int32(frame)) }
+        #expect(buffer.pop() == nil)
+    }
 }

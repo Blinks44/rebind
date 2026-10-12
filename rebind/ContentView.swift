@@ -95,7 +95,8 @@ struct ContentView: View {
     private func bindingsView(scope: DeviceScope) -> some View {
         VStack(spacing: 0) {
             HStack {
-                ProfilePicker(model: model).frame(maxWidth: 300)
+                ProfilePicker(model: model, usesGlass: scope == .allKeyboards)
+                    .frame(maxWidth: scope == .allKeyboards ? 192 : 300)
                 Button(.manageProfiles, systemImage: "slider.horizontal.3") { showingProfiles = true }
                     .disabled(model.storageLocked)
                 Spacer()

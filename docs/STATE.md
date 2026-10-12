@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-12**. HEAD `59f5754` plus uncommitted implementation/design work. Shared controls and General/Permissions feedback integrated. Runtime/accessibility/safety/Dock gates remain open.
+Updated **2026-10-12**. HEAD `7921b98` plus uncommitted Trackpad callback guards, Language refinement and shared Keyboard profile selector. Runtime/accessibility/safety/Dock gates remain open.
 
 ## Product and baseline
 
@@ -22,8 +22,10 @@ Read [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md) and [CAPABILITIES
 
 ## Design source and recent changes
 
+- **2026-10-12:** [Trackpad callback guards](verification/trackpad-callback-generation.md): 653 tests/1,835 runs, Debug/signature and 200 injected restarts pass. User confirms 10/10 taps, no delayed pause outputs and 5/5 fresh recovery. Controlled busy-UI latency/full safety/platform gates remain open; initial Settings runner exit did not recur.
+- **2026-10-12:** [Profile comparison completed](tasks/UI-020-paper-profile-selector.md): user selected the existing Rebind control; Paper implementation/comparison removed. One shared Keyboard selector remains; final Debug/signature, six tests/72 viewports pass. Broader native acceptance stays open separately.
 - **2026-10-12:** [Permissions feedback](verification/permissions-feedback-adoption.md) integrated: 18 functions/656 viewports, Debug/signature and scoped Light/Dark live review pass; actual grants/VoiceOver/preferences remain open.
-- **2026-10-12:** [Language selector contrast](tasks/UI-019-language-selector-contrast.md) saved/reviewed across all eight Sketch states; ready for native adoption.
+- **2026-10-12:** [Language selector refinement](verification/language-selector-refinement.md) integrated from live Sketch: 12 functions/49 runs, 608 viewports, Debug/signature and scoped Light review pass. Dark/menu/focus/preferences review remains open after approval-service rate limits.
 - **2026-10-12:** [General feedback](verification/general-feedback-adoption.md) and [Settings navigation/Language](tasks/UI-017-settings-control-adoption.md) integrated; software/native checks pass. Login/focus/VoiceOver/preferences remain open.
 
 Live source: **Rebind.sketch**, 125 frames, saved/reviewed 2026-10-12; [DESIGN](DESIGN.md) locates released design. Sketch owns visuals/copy; Git owns native evidence. Images stay local; earlier outcomes: [history](history/2026-10.md).
@@ -31,17 +33,17 @@ Live source: **Rebind.sketch**, 125 frames, saved/reviewed 2026-10-12; [DESIGN](
 ## Open work / next steps
 
 - **Design:** Coverage/review released; review justified native differences against Sketch.
-- **Code:** Adopt Language selector refinement or remaining Settings/main/profile materials; verify taps through UI-014. Magic Mouse awaits hardware; reuse [touch audit](research/touch-library-audit.md).
+- **Code:** Verify the integrated Language selector or adopt remaining Settings/main/profile materials; verify taps through UI-014. Magic Mouse awaits hardware; reuse [touch audit](research/touch-library-audit.md).
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
-| [UI-019](tasks/UI-019-language-selector-contrast.md) | ready_for_implementation | Unassigned; selector design released | Implement the refined compact Language selector from live Sketch; verify native focus/adaptive materials. |
+| [UI-019](tasks/UI-019-language-selector-contrast.md) | awaiting_verification | Unassigned; refinement integrated | Review named build in Dark; verify menu/focus/VoiceOver/adaptive states. Light/build/layout checks pass. |
 | [UI-017](tasks/UI-017-settings-control-adoption.md) | awaiting_verification | Unassigned; navigation/Language integrated | User review of named build; verify tab focus/VoiceOver/preferences, then remaining Settings/main. |
 | [UI-016](tasks/UI-016-editor-design-adoption.md) | awaiting_verification | Unassigned; source components/copy adopted | Review final editors; verify recording/focus/VoiceOver/preferences, then Settings/main. |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture and keyboard/VoiceOver/adaptive preferences on a named build. |
 | [INPUT-003](tasks/INPUT-003-double-tap-engine.md) | awaiting_verification | Unassigned; engine/data released | Verify physical single/double timing, click exclusion and native conflicts through UI-014. |
 | [INPUT-002](tasks/INPUT-002-three-finger-tap.md) | awaiting_verification | Unassigned; engine/data released | Verify physical three/four taps and Look Up coexistence through UI-014. |
-| [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | awaiting_verification | Unassigned; buffer safety released | Injected loss/recovery checks pass; verify busy-consumer cancellation/recovery and measured physical timing/stress/safety. Preserve confirmed delivery/lifecycle subsets. |
+| [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | awaiting_verification | Unassigned; repair/recovery verified | Prepare controlled busy-consumer latency/safety checks; preserve user-confirmed 10/10 taps, no delayed pause outputs, 5/5 fresh recovery. |
 | [UI-001](tasks/UI-001-permissions-onboarding.md) | awaiting_verification | Unassigned; Settings feedback adopted | Verify actual grants/revocation, keyboard/VoiceOver/preferences; named build and native layout checks pass. |
 | [UI-003](tasks/UI-003-general-settings.md) | awaiting_verification | Unassigned; General feedback adopted | Review General on the named build; actual login/relaunch, VoiceOver/preferences remain open. |
 | [UI-004](tasks/UI-004-input-settings.md) | awaiting_verification | Unassigned; native integration released | Overview/Hold/save retry checked; verify physical timing/cancellation, remaining editor/accessibility states. |

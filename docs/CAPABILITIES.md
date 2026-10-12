@@ -54,6 +54,8 @@ User additionally reports the requested pause/resume, sleep/wake and mixed-input
 
 The independent [buffer-loss/readiness repair](verification/trackpad-buffer-safety.md) passes 200 injected overflow/recovery cycles and 591 full-suite tests on macOS 27.0.1. This is software safety evidence; it does not extend physical gesture, latency, suppression or platform claims.
 
+Follow-up 2026-10-12: [callback-generation guards](verification/trackpad-callback-generation.md) reject in-flight copies across queue reset/restart/overflow. Deterministic buffer regressions and 200 injected restart/recovery cycles pass. [User post-repair walkthrough](verification/trackpad-callback-generation.md#user-hardware-follow-up--2026-10-12) confirms 10/10 physical delivery, zero delayed pause/resume outputs and 5/5 fresh recovery. Controlled busy-consumer scheduling/latency, native conflicts/full safety and additional platforms remain open; Experimental status is unchanged.
+
 ### Advanced backup foundation — 2026-10-11
 
 Validated staging/encoding and bounded regular-file reads are software-tested; local storage shares the codec. The bounded foundation passed **553 full-suite tests / zero failures** and Debug build. [Original evidence](verification/advanced-backup-foundation.md), [task](tasks/UI-008-advanced-storage.md). Subsequent UI-007 native integration is implemented as recorded above; SPEC §15.12 runtime acceptance remains open.

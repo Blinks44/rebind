@@ -4,7 +4,7 @@ Updated 2026-10-12. Read [STATE](STATE.md) first for current facts and next task
 
 ## Immediate priorities
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and pause/resume, sleep/wake, mixed input are user-confirmed. [Buffer-loss/readiness repair and 200 injected recovery cycles](verification/trackpad-buffer-safety.md) pass; measured physical timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
+1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): delivery/click recovery/lifecycle subsets user-confirmed; post-repair walkthrough reports 10/10 taps, no delayed pause outputs and 5/5 fresh recovery. [Buffer safety](verification/trackpad-buffer-safety.md) and [callback guards](verification/trackpad-callback-generation.md) have injected recovery evidence. Controlled busy-consumer latency, quantified stress and full T1/T2 safety remain open. Preserve confirmed scenarios; do not substitute polish or blind threshold changes for remaining acceptance.
 2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. [Settings feedback adoption](verification/permissions-feedback-adoption.md) passes bounded software/native checks. Actual grant/revocation/accessibility and remaining setup/main material adoption stay open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
@@ -74,6 +74,7 @@ The checked items below describe only the stated software/artifact milestone. An
 ### Phase 8 — Complete modern native UI and brand
 
 - [x] Bounded [Settings navigation/Language control adoption](tasks/UI-017-settings-control-adoption.md): stable inset track, compact menu and semantic feedback; [software/native checks](verification/settings-control-adoption.md) pass. Remaining Settings/main materials and full accessibility/platform acceptance remain open.
+- [x] Bounded [Language selector refinement](tasks/UI-019-language-selector-contrast.md): opt-in source surface/edge/shadow integrated into shared controls; [49 runs/608 viewports, Debug/signature and Light review](verification/language-selector-refinement.md) pass. Dark/menu/focus/preferences acceptance remains open.
 
 - [x] Bounded [shared editor design adoption](tasks/UI-016-editor-design-adoption.md): Mouse/Trackpad glass selectors, capture/keycaps, native activation and semantic feedback integrated; [software/native sizing and scoped live evidence](verification/editor-design-adoption.md) pass. Full Keyboard/Settings/main adoption and active-recording/accessibility/preferences/platform acceptance remain open.
 - [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.

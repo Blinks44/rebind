@@ -24,7 +24,8 @@ struct LanguageSettingsView: View {
                             Text(.appLanguage).accessibilityHidden(true)
                             Spacer(minLength: 12)
                             EditorMenuSelector(selection: $editing.draft, title: .appLanguage,
-                                choices: AppLanguagePreference.allCases, label: languageTitle, compact: true)
+                                choices: AppLanguagePreference.allCases, label: languageTitle,
+                                compact: true, distinctSurface: true)
                             .accessibilityIdentifier("settings-language-selector")
                             .frame(width: 208, alignment: .trailing)
                             .disabled(model.storageLocked || editing.isSaving)

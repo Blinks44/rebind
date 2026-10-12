@@ -8,6 +8,9 @@ struct EditorMenuSelector<Selection: Hashable>: View {
     let choices: [Selection]
     let label: (Selection) -> LocalizedStringResource
     var compact = false
+    var distinctSurface = false
+    var symbol: String?
+    var singleLine = false
     @Environment(\.locale) private var locale
     @Environment(\.isEnabled) private var isEnabled
     @State private var anchorView = NSView()
@@ -19,12 +22,13 @@ struct EditorMenuSelector<Selection: Hashable>: View {
             let event = NSApp.currentEvent?.type
             requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
         } label: {
-            EditorSelectorLabel(title: label(selection), height: compact ? EditorMetrics.compactSelectorHeight : EditorMetrics.selectorHeight,
-                                horizontalInset: compact ? 12 : 16)
+            EditorSelectorLabel(title: label(selection), symbol: symbol,
+                                height: compact ? EditorMetrics.compactSelectorHeight : EditorMetrics.selectorHeight,
+                                horizontalInset: compact ? 12 : 16, singleLine: singleLine)
         }
             .buttonStyle(.plain)
             .background { EditorMenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
-            .modifier(EditorGlassSurface())
+            .modifier(EditorGlassSurface(distinctSurface: distinctSurface))
             .focused($focused)
             .accessibilityLabel(Text(title)).accessibilityValue(Text(label(selection)))
             .onKeyPress(.downArrow) {

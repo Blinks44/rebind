@@ -1,11 +1,11 @@
 # INPUT-001 — reliable integrated four-finger tap
 
-- Updated: 2026-10-11, buffer-loss/readiness race repaired and injected stress verified; hardware timing and broader safety/platform acceptance remain open.
+- Updated: 2026-10-12, callback guards software-verified; physical delivery 10/10, no delayed pause/resume outputs and fresh recovery 5/5 user-confirmed. Measured timing and broader safety/platform acceptance remain open.
 - Stage: `awaiting_verification`
-- Owner: Unassigned; `/root` released buffer-overflow/polling safety slice 2026-10-11. Native Trackpad buffer/session/capture and scoped tests only; no UI/catalog or Sketch edits.
+- Owner: Unassigned; `/root` released the callback-generation slice 2026-10-12 at `7921b98` plus scoped uncommitted changes. Existing UI work preserved.
 - Owned surfaces when claimed: `rebind/Engine/Trackpad/`, affected trackpad tests/copy and this record; coordinate any shared UI/catalog changes.
 - Requirements: SPEC §3.4, §§6–7/12, T1/T2, S1/S3; PLAN Phase 5.
-- Code baseline: `main` / `9253799` plus uncommitted buffer safety changes; began at `8daa97b`, then independent Mouse/About/design work was committed externally. Earlier capture/output repairs are committed; historical evidence below retains its original revisions. No agent commit.
+- Code baseline: `main` / `7921b98` plus uncommitted callback-generation changes and existing independent UI work. Earlier capture/output/buffer repairs are committed; historical evidence below retains its original revisions. No agent commit.
 
 ## Outcome and scope
 
@@ -15,6 +15,8 @@ Existing fixes retain timed zero-contact releases, allow natural finger spread/t
 
 ## Acceptance
 
+- [x] Software guard: callbacks admitted before reset/restart/overflow cannot publish into or overflow the recovered queue; 200 injected restarts produce only fresh readiness results.
+- [x] Post-repair physical walkthrough user-confirmed 2026-10-12: 10/10 ordinary taps, zero delayed pause/resume outputs, 5/5 fresh taps after resume. Controlled busy-UI/latency testing remains separate.
 - [x] Rebuilt built-in single four-finger tap → configured Command-W delivery is user-confirmed (~10/10), supported by 25 qualified/queued/posted outputs in one diagnostic run.
 - [ ] Measure latency and verify repeat frequency over additional sessions/conditions; the reported estimate is not a measured failure-rate benchmark.
 - [x] User confirms physical clicks alone do not send Command-W and subsequent taps still work in the current built-in setup.
@@ -26,7 +28,7 @@ Existing fixes retain timed zero-contact releases, allow natural finger spread/t
 
 ## Implementation and verification
 
-Existing implementation: `ShortContactRecognizer`, `FourFingerTapGate`, native bounded buffer/device/session/runtime, targeted existing-worker dispatch. Broader pure `TrackpadTapSequence`/corner components are software-tested but not integrated into production recognition.
+Existing implementation: `ShortContactRecognizer`, `TrackpadTapGate`, native bounded buffer/device/session/runtime, targeted existing-worker dispatch. INPUT-002/003 now integrate three/four-finger single/double `TrackpadTapSequence` arbitration, exposed through UI-014. Corner recognition remains software-tested without production integration.
 
 Prior repair samples processing time after dequeue, separates receipt/poll clocks and preserves already observed neutrality across activity-only changes while cancelling pending output. Three regressions failed before those fixes. The new repair handles a release buffered before mouse-up but consumed with the newer activity counter: output is cancelled, while a valid fresh same-revision zero-contact observation rearms the next stroke. The new parameterized regression failed in both cases before repair and passes afterward. Stale, future, malformed, active-contact and old-revision frames cannot rearm; negative tests verify recovery after a later valid release. Duration/travel/finger thresholds and the 60 ms click-check delay are unchanged. Focus/rule changes, uncertain/active contacts, stale frames and true backwards clocks still cancel.
 
@@ -34,13 +36,13 @@ Prior repair samples processing time after dequeue, separates receipt/poll clock
 
 Current output repair replaces target AX-tree focus lookup with the public thread-safe `NSRunningApplication.isActive`/termination/regular-policy check on the captured PID, checked twice. Main-run-loop caching and the final posting race remain; mailbox focus/activity/rule validation and PID-directed balanced output remain mandatory. Final permission/session/held-input checks are repeated before posting. `output-target-inactive` is separate from capture `foreground-changed`; runtime invalidation stays separate. Native input callbacks/thresholds are unchanged. [Research/evidence](../verification/phase-5-four-finger-tap.md#output-target-validation--2026-10-11).
 
-Latest hardware evidence: [successful user-assisted retest](../verification/phase-5-four-finger-tap.md#successful-single-tap-retest--2026-10-11), with local Debug implementation digest matching the previous build. Target applications, tap/click phase counts and BTT process state were not independently recorded.
+Latest hardware evidence: [post-generation-repair user walkthrough](../verification/trackpad-callback-generation.md#user-hardware-follow-up--2026-10-12): 10/10 delivery, zero delayed pause/resume outputs and 5/5 fresh recovery. Earlier [diagnostic delivery retest](../verification/phase-5-four-finger-tap.md#successful-single-tap-retest--2026-10-11) retains its aggregate evidence. Running digest/target/settings were not independently captured; current report supplies counts, not measured latency.
 
 Earlier output-target software verification: `scripts/dev.sh test -resultBundlePath build/TrackpadOutputValidationTests.xcresult`: **493 tests / 65 suites / 0 failures**, including Debug compilation; `scripts/dev.sh release`: **BUILD SUCCEEDED**. Both strict/deep signature checks pass; Release is universal. Existing AppIntents metadata-skip warning remains. The agent performed no manual trackpad/output test; comparison and diagnostic evidence are user-reported. New injected tests exercise the sender itself, cancellation during preparation and 37 dispatches following real-button event pairs without native output. [Buffered-release evidence](../verification/phase-5-four-finger-tap.md#buffered-release-after-mouse-up--2026-10-10). [Renewed library audit](../research/trackpad-tap-reliability.md) adds Touchy/MultiTouch/BTT integration analysis; no dependency or upstream code added.
 
 ## Next handoff
 
-Preserve the successful delivery/click-only recovery and pause/resume/sleep/wake/mixed-input confirmations. Next verify delayed/busy-consumer cancellation and fresh-tap recovery on an identified build, retaining separate measured latency, quick/held-duration and quantified mixed-input stress checks. Use diagnostics only if symptoms recur; do not repeat confirmed scenarios or adjust thresholds without new evidence. Broader protected-session/native conflicts/minimum-OS/Intel remain open. Do not launch another engine or change rules/permissions on the user's behalf.
+Preserve the successful delivery/click-only recovery and pause/resume/sleep/wake/mixed-input confirmations, including the quantified post-repair 10/10 delivery and 5/5 fresh recovery without delayed pause outputs. Next prepare controlled busy-consumer scheduling/latency measurement on an identified build; keep quick/held-duration and quantified mixed-input stress separate. Use diagnostics only if symptoms recur; do not repeat confirmed scenarios or adjust thresholds without new evidence. Broader protected-session/native conflicts/minimum-OS/Intel remain open. Do not launch another engine or change rules/permissions on the user's behalf.
 
 ## User lifecycle follow-up — 2026-10-11
 
@@ -51,3 +53,9 @@ The user reports the requested remaining four-finger-tap checks all work: pause/
 Repaired loss during queue draining and readiness with queued contacts. Overflow quarantines new frames until acknowledged; recognition cancels on loss during/after the bounded turn. Final readiness checks queue/acceptance/loss under the existing buffer mutex, with clocks/diagnostics/mailbox operations outside. Thresholds, acquisition mechanism, output guards and experimental/no-suppression scope remain.
 
 Before-fix regressions failed; 40 targeted functions / 106 executions now pass. Full regression: **591 tests / 1,496 expanded executions / zero failures**, Debug build and local signature pass. Injected 200 overflow/recovery cycles produce 200 fresh readiness results, zero cancelled-candidate outputs and zero duplicates. Exact commands, artifact hashes, warning/review limits and remaining hardware gates: [buffer safety evidence](../verification/trackpad-buffer-safety.md). Independent saved design changes were preserved; task remains `awaiting_verification`, ownership released.
+
+## In-flight callback generations — 2026-10-12
+
+Callbacks now retain the admitted queue generation and validate it before publication/capacity checks. Reset/restart/overflow advances the generation, preventing delayed frames from contaminating recognition or clearing a full fresh queue. Native reads remain outside locks; acquisition, thresholds, schema and output guards are unchanged. Scope covers admission before invalidation, not undocumented private-framework callback quiescence.
+
+Four deterministic regressions failed before repair. Final scoped checks: **46 functions / 117 executions**, including the Settings fixture retry; **200 injected restarts**, zero obsolete readiness results/duplicates and 200 fresh results. Final full retry: **653 functions / 1,835 executions / zero failures**; Debug/signature pass. The initial full run lost the Settings test runner (exit 0); isolated and full retries pass without source changes. Existing aggregate-window/service warnings and hardware/platform gates remain. [Exact evidence, limits and final artifact](../verification/trackpad-callback-generation.md). No agent commit or production capture launch; ownership released. Next: measured physical busy-consumer cancellation/fresh-tap recovery on that artifact, preserving prior user-confirmed subsets.

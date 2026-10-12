@@ -72,13 +72,28 @@ nonisolated struct NativeTrackpadFrame: Sendable {
 nonisolated final class NativeTrackpadBuffer: Sendable {
     struct State: Sendable {
         var accepting = false
+        // Admission is separate from publication; reset/loss invalidates copies
+        // still in flight without holding a lock while reading native memory.
+        var generation: UInt64 = 0
         var frames = [NativeTrackpadFrame?](repeating: nil, count: 64)
         var head = 0
         var count = 0
         var overflow = false
         mutating func clear() {
+            generation &+= 1
             for index in frames.indices { frames[index] = nil }
             head = 0; count = 0; overflow = false
+        }
+
+        /// Publishes a copied frame only into the queue generation that admitted its callback.
+        mutating func append(_ frame: NativeTrackpadFrame, generation: UInt64) {
+            guard accepting, self.generation == generation else { return }
+            // Quarantine this discontinuous stream until the consumer has
+            // acknowledged the loss and cancelled its recognition state.
+            guard !overflow else { return }
+            guard count < frames.count else { clear(); overflow = true; return }
+            frames[(head + count) % frames.count] = frame
+            count += 1
         }
     }
     let state = Mutex(State())
@@ -87,7 +102,7 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
 
     func receive(_ data: UnsafeRawPointer?, count: Int32,
                  callbackFrame: Int32? = nil, callbackTime: Double? = nil) {
-        guard state.withLock({ $0.accepting }) else { return }
+        guard let generation = state.withLock({ $0.accepting ? $0.generation : nil }) else { return }
         let receipt = DispatchTime.now().uptimeNanoseconds
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
             guard state.status == .active, state.enabled, !state.editing, !state.suspended,
@@ -98,15 +113,7 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
-        state.withLock {
-            guard $0.accepting else { return }
-            // Quarantine this discontinuous stream until the consumer has
-            // acknowledged the loss and cancelled its recognition state.
-            guard !$0.overflow else { return }
-            guard $0.count < $0.frames.count else { $0.clear(); $0.overflow = true; return }
-            $0.frames[($0.head + $0.count) % $0.frames.count] = frame
-            $0.count += 1
-        }
+        state.withLock { $0.append(frame, generation: generation) }
     }
 
     func setAccepting(_ accepting: Bool) { state.withLock { $0.clear(); $0.accepting = accepting } }
