@@ -23,9 +23,9 @@ struct InputSettingsView: View {
 
     private func information(_ title: LocalizedStringResource, status: LocalizedStringResource,
                              description: LocalizedStringResource) -> some View {
-        PermissionCard {
+        Card {
             VStack(alignment: .leading, spacing: 12) {
-                PermissionStatusLabel(title: title, status: status)
+                StatusLabel(title: title, status: status)
                 Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }

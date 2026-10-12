@@ -6,14 +6,14 @@ struct MouseTriggerEditor: View {
     let record: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: EditorMetrics.fieldSpacing) {
+        VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.triggerTitle)
-            HStack(spacing: EditorMetrics.fieldSpacing) {
-                Text(.mouseInputKind).font(EditorTypography.caption).foregroundStyle(Theme.textPrimary)
+            HStack(spacing: 12) {
+                Text(.mouseInputKind).font(Theme.caption).foregroundStyle(Theme.textPrimary)
                 Spacer(minLength: 8)
-                EditorMenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
+                MenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
                     choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger], label: inputKindTitle)
-                    .frame(maxWidth: EditorMetrics.mouseSelectorWidth)
+                    .frame(maxWidth: 224)
                     .accessibilityIdentifier("mouse-input-selector")
                     .disabled(model.recording != nil)
             }
@@ -23,30 +23,30 @@ struct MouseTriggerEditor: View {
                 record: record, cancel: model.cancelRecording, clear: { draft.trigger = nil })
 
             if draft.mouseTarget == .mouseTrigger {
-                Text(.activationTitle).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
-                EditorActivationPicker(selection: $draft.activation)
+                Text(.activationTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                ActivationPicker(selection: $draft.activation)
                     .frame(maxWidth: .infinity)
                     .disabled(model.recording != nil)
                 if draft.activation == .hold {
                     HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
-                    Text(.holdHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                    Text(.holdHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } else if draft.activation == .doublePress {
-                    Text(.doublePressHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                    Text(.doublePressHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             } else if draft.mouseTarget == .gestureTrigger {
-                HStack(spacing: EditorMetrics.fieldSpacing) {
-                    Text(.pointerDirectionTitle).font(EditorTypography.caption).foregroundStyle(Theme.textPrimary)
+                HStack(spacing: 12) {
+                    Text(.pointerDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textPrimary)
                     Spacer(minLength: 8)
-                    EditorMenuSelector(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
+                    MenuSelector(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
                         choices: PointerDirection.allCases, label: { $0.label })
-                        .frame(maxWidth: EditorMetrics.mouseSelectorWidth)
+                        .frame(maxWidth: 224)
                         .accessibilityIdentifier("mouse-direction-selector")
                         .disabled(model.recording != nil)
                 }
             }
-            Text(help).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+            Text(help).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

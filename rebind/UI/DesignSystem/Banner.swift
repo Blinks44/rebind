@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct EditorFeedback<Actions: View>: View {
-    let severity: EditorFeedbackSeverity
+struct Banner<Actions: View>: View {
+    let severity: BannerSeverity
     let title: LocalizedStringResource
     var message: LocalizedStringResource?
     @ViewBuilder var actions: Actions
@@ -18,7 +18,7 @@ struct EditorFeedback<Actions: View>: View {
                     Text(message).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                actions.modifier(EditorSecondaryButton()).padding(.top, 6)
+                actions.padding(.top, 6)
             }
         }
         .padding(.horizontal, 18).padding(.vertical, 14).frame(maxWidth: .infinity, alignment: .leading)
@@ -31,12 +31,47 @@ struct EditorFeedback<Actions: View>: View {
     }
 }
 
-extension EditorFeedback where Actions == EmptyView {
-    init(severity: EditorFeedbackSeverity, title: LocalizedStringResource,
+extension Banner where Actions == EmptyView {
+    init(severity: BannerSeverity, title: LocalizedStringResource,
          message: LocalizedStringResource? = nil) {
         self.severity = severity
         self.title = title
         self.message = message
         actions = EmptyView()
     }
+}
+enum BannerSeverity {
+    case error, warning, success, information, neutral
+
+    var symbol: String {
+        switch self {
+        case .error: "xmark.circle"
+        case .warning: "exclamationmark.triangle"
+        case .success: "checkmark.circle"
+        case .information: "info.circle"
+        case .neutral: "pause.circle"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .error: Theme.danger
+        case .warning: Theme.warning
+        case .success: Theme.success
+        case .information: Theme.accent
+        case .neutral: Theme.neutral
+        }
+    }
+
+    var textColor: Color {
+        switch self {
+        case .error: Theme.dangerText
+        case .warning: Theme.warningText
+        case .success: Theme.successText
+        case .information: Theme.accent
+        case .neutral: Theme.textPrimary
+        }
+    }
+
+    var surface: Color { color.opacity(0.12) }
 }

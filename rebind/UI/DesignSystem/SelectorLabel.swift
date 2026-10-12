@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct EditorSelectorLabel: View {
+struct SelectorLabel: View {
     let title: LocalizedStringResource
     var symbol: String?
-    var height: CGFloat = EditorMetrics.selectorHeight
+    var height: CGFloat = Theme.controlHeight
     var horizontalInset: CGFloat = 16
     var singleLine = false
 
@@ -17,7 +17,7 @@ struct EditorSelectorLabel: View {
             Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold))
                 .foregroundStyle(Theme.iconSecondary).accessibilityHidden(true)
         }
-        .font(EditorTypography.label)
+        .font(Theme.bodyStrong)
         .foregroundStyle(Theme.textPrimary)
         .padding(.horizontal, horizontalInset)
         .frame(maxWidth: .infinity, minHeight: height)

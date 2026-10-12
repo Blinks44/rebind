@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 /// Supplies the selector's actual local bounds to AppKit's menu placement.
-struct EditorMenuAnchorView: NSViewRepresentable {
+struct MenuAnchorView: NSViewRepresentable {
     let view: NSView
 
     func makeNSView(context: Context) -> NSView {

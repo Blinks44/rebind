@@ -15,7 +15,7 @@ struct BindingRow: View {
         if !isAvailable { return AppLocalization.string(kind.unavailableMessage) }
         let category = AppLocalization.string(kind.category.title)
         guard binding.activation != .press else { return category }
-        return category + " · " + AppLocalization.string(MouseBindingList.detail(for: binding))
+        return category + " · " + AppLocalization.string(BindingList.detail(for: binding))
     }
 
     var body: some View {
@@ -39,24 +39,17 @@ struct BindingRow: View {
             Toggle(isOn: SwiftUI.Binding(get: { binding.isEnabled }, set: { _ in model.toggle(binding) })) {
                 Text(.mouseBindingEnabled(input, binding.action.label))
             }.toggleStyle(ThemeSwitchStyle()).labelsHidden().padding(.trailing, 12)
-            Menu {
-                Button(.editBinding, systemImage: "pencil", action: edit)
-                Button(.deleteBinding, systemImage: "trash", role: .destructive, action: delete)
-            } label: {
-                Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
-            }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            .keyboardFocusRing(Circle())
-            .accessibilityLabel(Text(.mouseBindingOptions(input)))
+            OptionsMenu(label: .mouseBindingOptions(input)) { actions }
         }
         .disabled(model.storageLocked)
         .padding(.leading, 20).padding(.trailing, 16).frame(height: Theme.rowHeight)
         .contentShape(.rect)
-        .contextMenu {
-            Button(.editBinding, systemImage: "pencil", action: edit)
-            Button(.deleteBinding, systemImage: "trash", role: .destructive, action: delete)
-        }
+        .contextMenu { actions }
+    }
+
+    @ViewBuilder private var actions: some View {
+        Button(.editBinding, systemImage: "pencil", action: edit)
+        Button(.deleteBinding, systemImage: "trash", role: .destructive, action: delete)
     }
 
     /// Modifier keycaps followed by the key, mouse button or gesture chip.

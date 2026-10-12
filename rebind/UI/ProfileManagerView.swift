@@ -18,7 +18,7 @@ struct ProfileManagerView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 28).padding(.top, 26)
             ScrollView {
-                PermissionCard(insets: EdgeInsets()) {
+                Card(insets: EdgeInsets()) {
                     VStack(spacing: 0) {
                         ForEach(model.configuration.profiles) { profile in
                             row(profile).overlay(alignment: .top) {
@@ -39,10 +39,10 @@ struct ProfileManagerView: View {
             Theme.separator.frame(height: 1)
             HStack(spacing: 10) {
                 Button(.newProfile, systemImage: "plus") { editing = .create }
-                    .modifier(EditorSecondaryButton()).disabled(model.storageLocked || atLimit)
+                    .secondaryButton().disabled(model.storageLocked || atLimit)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
-                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                    .primaryButton()
             }
             .controlSize(.large).padding(.horizontal, 28).padding(.vertical, 20)
         }
@@ -70,19 +70,14 @@ struct ProfileManagerView: View {
             if isSelected {
                 Label(.profileSelected, systemImage: "checkmark").font(Theme.calloutStrong).foregroundStyle(Theme.successText)
             } else {
-                Button(.selectProfile) { model.selectProfile(profile.id) }.modifier(EditorSecondaryButton())
+                Button(.selectProfile) { model.selectProfile(profile.id) }.secondaryButton()
             }
-            Menu {
+            OptionsMenu(label: .profileOptions) {
                 Button(.duplicateProfile) { editing = .duplicate(profile.id) }.disabled(atLimit)
                 Button(.renameProfile) { editing = .rename(profile.id) }
                 Button(.deleteProfile, role: .destructive) { pendingDeletion = profile }
                     .disabled(model.configuration.profiles.count <= 1)
-            } label: {
-                Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
             }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            .keyboardFocusRing(Circle()).accessibilityLabel(Text(.profileOptions))
         }
         .disabled(model.storageLocked)
         .padding(.leading, 20).padding(.trailing, 16).frame(minHeight: 64)

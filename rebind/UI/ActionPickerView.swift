@@ -7,11 +7,10 @@ struct ActionPickerView: View {
     @State private var presented = false
     @State private var search = ""
     @State private var hovered: ActionKind?
-    @FocusState private var searchFocused: Bool
 
     var body: some View {
         Button { search = ""; presented = true } label: {
-            EditorSelectorLabel(title: selection.title, symbol: selection.symbol)
+            SelectorLabel(title: selection.title, symbol: selection.symbol)
         }
         .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing()
         .accessibilityLabel(Text(.chooseAction)).accessibilityValue(Text(selection.title))
@@ -21,20 +20,9 @@ struct ActionPickerView: View {
 
     private var list: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass").font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(Theme.iconSecondary).accessibilityHidden(true)
-                TextField(text: $search, prompt: Text(.searchActions).foregroundStyle(Theme.textTertiary)) {
-                    Text(.searchActions)
-                }
-                .textFieldStyle(.plain).font(Theme.body).foregroundStyle(Theme.textPrimary)
-                .focused($searchFocused).focusEffectDisabled()
-                .onSubmit { if let first = matchingKinds.first(where: isAvailable) { choose(first) } }
-            }
-            .padding(.horizontal, 14).frame(height: Theme.controlHeight)
-            .background(Theme.insetSurface, in: .capsule)
-            .overlay { Capsule(style: .circular).strokeBorder(searchFocused ? Theme.accent : Theme.borderSubtle, lineWidth: searchFocused ? 1.5 : 1) }
-            .padding(8)
+            ThemeTextField(title: .searchActions, text: $search, symbol: "magnifyingglass", autofocus: true,
+                           onSubmit: { if let first = matchingKinds.first(where: isAvailable) { choose(first) } })
+                .padding(8)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(ActionKind.Category.allCases) { category in
@@ -52,7 +40,6 @@ struct ActionPickerView: View {
             }
         }
         .frame(width: 360, height: 420)
-        .onAppear { searchFocused = true }
     }
 
     private var matchingKinds: [ActionKind] {

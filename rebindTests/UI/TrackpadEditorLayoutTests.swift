@@ -35,7 +35,7 @@ import XCTest
                     window.isReleasedWhenClosed = false
                     window.appearance = NSAppearance(named: appearance == .light ? .aqua : .darkAqua)
                     for height in [488.0, 640.0] {
-                        window.setContentSize(NSSize(width: 512, height: height))
+                        window.setContentSize(NSSize(width: 520, height: height))
                         try await Task.sleep(for: .milliseconds(80))
                         if scenario == 8 {
                             model.error = .storageWriteFailed
@@ -47,7 +47,7 @@ import XCTest
                         let viewport = controller.view.bounds
                         let scrollFrame = scroll.convert(scroll.bounds, to: controller.view)
                         let context = "\(language), \(appearance), scenario=\(scenario), \(height)"
-                        XCTAssertEqual(viewport.width, 512, accuracy: 1, context)
+                        XCTAssertEqual(viewport.width, 520, accuracy: 1, context)
                         XCTAssertEqual(viewport.height, height, accuracy: 1, context)
                         XCTAssertGreaterThan(scrollFrame.height, 0, context)
                         XCTAssertGreaterThanOrEqual(scrollFrame.minY, viewport.minY - 1, context)

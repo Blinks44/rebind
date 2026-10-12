@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 /// A glass selector with a native menu anchored to its leading edge rather than its selected label.
-struct EditorMenuSelector<Selection: Hashable>: View {
+struct MenuSelector<Selection: Hashable>: View {
     @SwiftUI.Binding var selection: Selection
     let title: LocalizedStringResource
     let choices: [Selection]
@@ -23,12 +23,12 @@ struct EditorMenuSelector<Selection: Hashable>: View {
             let event = NSApp.currentEvent?.type
             requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
         } label: {
-            EditorSelectorLabel(title: label(selection), symbol: symbol,
-                                height: compact ? EditorMetrics.compactSelectorHeight : EditorMetrics.selectorHeight,
+            SelectorLabel(title: label(selection), symbol: symbol,
+                                height: compact ? Theme.compactControlHeight : Theme.controlHeight,
                                 horizontalInset: compact ? 12 : 16, singleLine: singleLine)
         }
             .buttonStyle(.plain)
-            .background { EditorMenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
+            .background { MenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
             .modifier(ControlSurface())
             .focused($focused)
             .keyboardFocusRing()
@@ -54,7 +54,7 @@ struct EditorMenuSelector<Selection: Hashable>: View {
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.minimumWidth = anchorView.bounds.width
-        let target = EditorMenuSelectionTarget { index in
+        let target = MenuSelectionTarget { index in
             if index == choices.count, let menuAction {
                 menuAction()
                 return
@@ -66,7 +66,7 @@ struct EditorMenuSelector<Selection: Hashable>: View {
             var resource = label(choice)
             resource.locale = locale
             let item = NSMenuItem(title: String(localized: resource),
-                                  action: #selector(EditorMenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+                                  action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
             item.target = target
             item.tag = index
             item.state = choice == selection ? .on : .off
@@ -76,7 +76,7 @@ struct EditorMenuSelector<Selection: Hashable>: View {
             title.locale = locale
             menu.addItem(.separator())
             let item = NSMenuItem(title: String(localized: title),
-                                  action: #selector(EditorMenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+                                  action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
             item.target = target
             item.tag = choices.count
             menu.addItem(item)

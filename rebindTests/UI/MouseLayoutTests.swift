@@ -67,12 +67,12 @@ import XCTest
                     window.appearance = NSAppearance(named: appearance == .light ? .aqua : .darkAqua)
                     defer { window.close() }
                     for height in [600.0, 760.0] {
-                        window.setContentSize(NSSize(width: 512, height: height))
+                        window.setContentSize(NSSize(width: 520, height: height))
                         try await Task.sleep(for: .milliseconds(100))
                         controller.view.layoutSubtreeIfNeeded()
                         let context = "\(language), \(appearance), \(String(describing: existing?.trigger)), \(height)"
                         XCTAssertEqual(controller.view.bounds.height, height, accuracy: 1, context)
-                        XCTAssertEqual(controller.view.bounds.width, 512, accuracy: 1, context)
+                        XCTAssertEqual(controller.view.bounds.width, 520, accuracy: 1, context)
                         if language == "de" && height == 600 && existing?.activation == .hold {
                             try attach(controller.view, name: "mouse-hold-de-\(appearance)")
                         }

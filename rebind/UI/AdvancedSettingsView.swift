@@ -29,10 +29,10 @@ struct AdvancedSettingsView: View {
             VStack(alignment: .leading, spacing: 16) {
                 SettingsActionCard(title: .advancedDiagnosticsTitle,
                                    description: model.storageLocked ? .advancedDiagnosticsUnavailableBody : .advancedDiagnosticsDescription) {
-                    Button(.advancedDiagnosticsAction) { showingDiagnostics = true }
+                    Button(.advancedDiagnosticsAction) { showingDiagnostics = true }.secondaryButton()
                 }
                 if model.storageLocked {
-                    EditorFeedback(severity: .warning, title: .advancedProtectedTitle, message: .advancedProtectedBody) {
+                    Banner(severity: .warning, title: .advancedProtectedTitle, message: .advancedProtectedBody) {
                         ViewThatFits(in: .horizontal) {
                             HStack { protectedActions }
                             VStack(alignment: .leading) { protectedActions }
@@ -42,7 +42,7 @@ struct AdvancedSettingsView: View {
                     SettingsActionCard(title: .advancedResetUnavailableTitle, description: .advancedResetUnavailableBody) { EmptyView() }
                 } else {
                     if editing.isValidating {
-                        EditorFeedback(severity: .information, title: .advancedConfigurationTitle,
+                        Banner(severity: .information, title: .advancedConfigurationTitle,
                                        message: .advancedValidationDescription) {
                             ProgressView().controlSize(.small)
                         }
@@ -57,15 +57,15 @@ struct AdvancedSettingsView: View {
                     }
                     SettingsActionCard(title: .advancedResetTitle,
                                        description: editing.isValidating ? .advancedValidationResetDescription : .advancedResetDescription) {
-                        Button(.advancedResetAction) { editing.reviewReset() }.disabled(busy)
+                        Button(.advancedResetAction) { editing.reviewReset() }.disabled(busy).secondaryButton()
                     }
                     if let feedback = editing.feedback, feedbackBelongsToReset {
                         feedbackCard(feedback)
                     }
                 }
                 if model.requiresLanguageReopen {
-                    EditorFeedback(severity: .information, title: .reopenTitle, message: .reopenDescription(savedLanguageName)) {
-                        Button(.quitRebind) { NSApp.terminate(nil) }
+                    Banner(severity: .information, title: .reopenTitle, message: .reopenDescription(savedLanguageName)) {
+                        Button(.quitRebind) { NSApp.terminate(nil) }.secondaryButton()
                     }
                 }
             }
@@ -120,13 +120,13 @@ struct AdvancedSettingsView: View {
     }
 
     @ViewBuilder private var transferActions: some View {
-        Button(.advancedConfigurationAction) { request = FileRequest(importURL: nil) }.disabled(busy)
-        Button(.advancedConfigurationSecondaryAction) { importing = true }.disabled(busy)
+        Button(.advancedConfigurationAction) { request = FileRequest(importURL: nil) }.disabled(busy).secondaryButton()
+        Button(.advancedConfigurationSecondaryAction) { importing = true }.disabled(busy).secondaryButton()
     }
 
     @ViewBuilder private var protectedActions: some View {
-        Button(.advancedRevealOriginal) { NSWorkspace.shared.activateFileViewerSelecting([model.configurationFileURL]) }
-        Button(.advancedExportOriginal) { request = FileRequest(importURL: nil) }.disabled(busy)
+        Button(.advancedRevealOriginal) { NSWorkspace.shared.activateFileViewerSelecting([model.configurationFileURL]) }.secondaryButton()
+        Button(.advancedExportOriginal) { request = FileRequest(importURL: nil) }.disabled(busy).secondaryButton()
     }
 
     private func exportWithPanel() async {
@@ -153,31 +153,31 @@ struct AdvancedSettingsView: View {
     @ViewBuilder private func feedbackCard(_ feedback: AdvancedSettingsModel.Feedback) -> some View {
         switch feedback {
         case .imported(let profiles, let bindings):
-            EditorFeedback(severity: .success, title: .advancedImportSuccess,
+            Banner(severity: .success, title: .advancedImportSuccess,
                            message: .advancedImportSuccessDescription(count1: profiles, count2: bindings))
         case .reset:
-            EditorFeedback(severity: .success, title: .advancedResetSuccess, message: .advancedResetSuccessDescription)
+            Banner(severity: .success, title: .advancedResetSuccess, message: .advancedResetSuccessDescription)
         case .exported:
-            EditorFeedback(severity: .success, title: .advancedExportSuccess)
+            Banner(severity: .success, title: .advancedExportSuccess)
         case .invalidBackup, .incompatibleBackup:
-            EditorFeedback(severity: .error, title: .advancedImportRejectedTitle,
+            Banner(severity: .error, title: .advancedImportRejectedTitle,
                            message: isIncompatible(feedback) ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
-                Button(.advancedChooseBackup) { importing = true }.disabled(busy)
+                Button(.advancedChooseBackup) { importing = true }.disabled(busy).secondaryButton()
             }
         case .writeFailed:
-            EditorFeedback(severity: .error, title: .advancedWriteFailedTitle, message: .advancedWriteFailedBody) {
+            Banner(severity: .error, title: .advancedWriteFailedTitle, message: .advancedWriteFailedBody) {
                 Button(.advancedRetry) {
                     // A retry requests a fresh review; it never silently commits a stale one.
                     if editing.review?.isReset == true { editing.reviewReset() }
                     else { editing.cancelReview(); importing = true }
-                }.disabled(busy)
+                }.disabled(busy).secondaryButton()
             }
         case .exportFailed:
-            EditorFeedback(severity: .error, title: .advancedExportFailedTitle, message: .advancedExportFailedBody) {
-                Button(.advancedRetry) { request = FileRequest(importURL: nil) }.disabled(busy)
+            Banner(severity: .error, title: .advancedExportFailedTitle, message: .advancedExportFailedBody) {
+                Button(.advancedRetry) { request = FileRequest(importURL: nil) }.disabled(busy).secondaryButton()
             }
         case .staleReview:
-            EditorFeedback(severity: .error, title: .advancedWriteFailedTitle, message: .advancedStaleReviewBody)
+            Banner(severity: .error, title: .advancedWriteFailedTitle, message: .advancedStaleReviewBody)
         }
     }
 

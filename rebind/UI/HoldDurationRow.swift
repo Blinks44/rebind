@@ -5,7 +5,7 @@ struct HoldDurationRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            PermissionCard {
+            Card {
                 VStack(alignment: .leading, spacing: 12) {
                     Stepper(value: $milliseconds, in: 100...5000, step: 100) {
                         HStack(spacing: 12) {

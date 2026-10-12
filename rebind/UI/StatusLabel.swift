@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A readable grant status that remains meaningful without color.
-struct PermissionStatusLabel: View {
+struct StatusLabel: View {
     let title: LocalizedStringResource
     let status: LocalizedStringResource
     var isWarning = false

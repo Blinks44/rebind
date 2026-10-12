@@ -63,6 +63,7 @@ enum Theme {
 
     // Typography
     static let largeTitle = Font.system(size: 30, weight: .semibold)
+    static let title = Font.system(size: 22, weight: .semibold)
     static let headline = Font.system(size: 15, weight: .medium)
     static let body = Font.system(size: 14)
     static let bodyStrong = Font.system(size: 14, weight: .medium)
@@ -75,6 +76,8 @@ enum Theme {
 
     // Geometry
     static let controlHeight: CGFloat = 36
+    static let smallControlHeight: CGFloat = 28
+    static let compactControlHeight: CGFloat = 24
     static let rowHeight: CGFloat = 72
     static let cardRadius: CGFloat = 22
 }

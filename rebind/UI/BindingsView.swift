@@ -10,10 +10,9 @@ struct BindingsView: View {
     let manageProfiles: () -> Void
     let openPermissions: () -> Void
     @State private var search = ""
-    @FocusState private var searchFocused: Bool
 
     private var bindings: [Binding] { model.configuration.bindings.filter { $0.scope == scope } }
-    private var visible: [Binding] { bindings.filter { MouseBindingList.matches($0, search: search) } }
+    private var visible: [Binding] { bindings.filter { BindingList.matches($0, search: search) } }
 
     private var title: LocalizedStringResource {
         switch scope {
@@ -62,11 +61,11 @@ struct BindingsView: View {
             if !model.permissions.allowsRemapping {
                 PermissionRecoveryBanner(model: model, reviewPermissions: openPermissions).padding(.top, 24)
             } else if !model.configuration.isEnabled {
-                EditorFeedback(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
-                    Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked)
+                Banner(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
+                    Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked).secondaryButton()
                 }.padding(.top, 24)
             } else if scope == .builtInTrackpad && !bindings.isEmpty {
-                EditorFeedback(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
+                Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
                     .padding(.top, 24)
             }
             if let error = model.error {
@@ -77,6 +76,16 @@ struct BindingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    private var addButton: some View {
+        Button(action: add) {
+            HStack(spacing: 8) {
+                Image(systemName: "plus").font(.system(size: 12, weight: .heavy))
+                Text(.addBinding).lineLimit(1)
+            }
+        }
+        .primaryButton().disabled(model.storageLocked)
+    }
+
     private var header: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
@@ -85,25 +94,10 @@ struct BindingsView: View {
                 Text(subtitle).font(Theme.body).foregroundStyle(Theme.textSecondary).lineLimit(2)
             }
             Spacer(minLength: 12)
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass").font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(Theme.iconSecondary).accessibilityHidden(true)
-                TextField(text: $search, prompt: Text(.mouseSearchBindings).foregroundStyle(Theme.textTertiary)) {
-                    Text(.mouseSearchBindings)
-                }.textFieldStyle(.plain).font(Theme.body).foregroundStyle(Theme.textPrimary)
-                    .focused($searchFocused).focusEffectDisabled()
-                    .accessibilityIdentifier("bindings-search")
-            }
-            .padding(.horizontal, 14).frame(height: Theme.controlHeight)
-            .frame(minWidth: 140, idealWidth: 220, maxWidth: 220)
-            .modifier(ControlSurface(isFocused: searchFocused))
-            Button(action: add) {
-                HStack(spacing: 8) {
-                    Image(systemName: "plus").font(.system(size: 12, weight: .heavy))
-                    Text(.addBinding).lineLimit(1)
-                }
-            }
-            .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing().fixedSize().disabled(model.storageLocked)
+            ThemeTextField(title: .mouseSearchBindings, text: $search, symbol: "magnifyingglass")
+                .frame(minWidth: 140, idealWidth: 220, maxWidth: 220)
+                .accessibilityIdentifier("bindings-search")
+            addButton.fixedSize()
         }
     }
 
@@ -133,7 +127,7 @@ struct BindingsView: View {
             .accessibilityLabel(Text(.profileTitle))
             .accessibilityIdentifier("bindings-profile")
 
-            Text("\(AppLocalization.string(.mouseBindingCount(bindings.count))), \(AppLocalization.string(.mouseEnabledCount(bindings.filter(\.isEnabled).count)))")
+            Text(verbatim: "\(AppLocalization.string(.mouseBindingCount(bindings.count))), \(AppLocalization.string(.mouseEnabledCount(bindings.filter(\.isEnabled).count)))")
                 .font(Theme.callout).foregroundStyle(Theme.textSecondary).lineLimit(1)
             Spacer(minLength: 0)
             Button {
@@ -180,12 +174,7 @@ struct BindingsView: View {
             if bindings.isEmpty {
                 Text(.addBindingHint).font(Theme.body).foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center).frame(maxWidth: 420).padding(.top, 8)
-                Button(action: add) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "plus").font(.system(size: 12, weight: .heavy))
-                        Text(.addBinding)
-                    }
-                }.buttonStyle(PrimaryButtonStyle()).keyboardFocusRing().disabled(model.storageLocked).padding(.top, 24)
+                addButton.padding(.top, 24)
             } else {
                 Button(.mouseClearSearch) { search = "" }.buttonStyle(.plain)
                     .font(Theme.bodyStrong).foregroundStyle(Theme.accent).padding(.top, 20)

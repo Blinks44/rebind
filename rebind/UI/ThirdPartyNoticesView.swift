@@ -12,7 +12,7 @@ struct ThirdPartyNoticesView: View {
                 Text(.aboutLicenses).font(Theme.titleSmall).accessibilityAddTraits(.isHeader)
                 Spacer()
                 if text != nil {
-                    Button(.aboutFind, systemImage: "magnifyingglass") { findRequest += 1 }
+                    Button(.aboutFind, systemImage: "magnifyingglass") { findRequest += 1 }.secondaryButton()
                         .keyboardShortcut("f", modifiers: .command)
                 }
             }
@@ -25,12 +25,13 @@ struct ThirdPartyNoticesView: View {
             }
             HStack {
                 Spacer()
-                Button(.aboutDone) { dismiss() }.buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                Button(.aboutDone) { dismiss() }.primaryButton()
                     .keyboardShortcut(.defaultAction)
             }
         }
         .padding(24)
         .frame(minWidth: 560, idealWidth: 640, minHeight: 400, idealHeight: 520)
+        .background(Theme.sheetSurface)
         .onExitCommand { dismiss() }
     }
 }

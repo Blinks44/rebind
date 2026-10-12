@@ -29,7 +29,7 @@ struct AboutView: View {
                     Theme.separator.frame(width: 200, height: 1)
                     VStack(spacing: 12) {
                         Text(.aboutCredits).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                        Button(.aboutLicenses) { showingLicenses = true }.modifier(EditorSecondaryButton())
+                        Button(.aboutLicenses) { showingLicenses = true }.secondaryButton()
                     }
                 }
                 .multilineTextAlignment(.center)
@@ -39,7 +39,7 @@ struct AboutView: View {
             }
             HStack {
                 Spacer()
-                Button(.aboutDone) { dismiss() }.buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                Button(.aboutDone) { dismiss() }.primaryButton()
                     .keyboardShortcut(.defaultAction)
             }.padding(24)
         }

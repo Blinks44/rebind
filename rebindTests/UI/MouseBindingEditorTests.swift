@@ -110,11 +110,11 @@ import Testing
         let wheel = rebind.Binding(scope: .allMice, trigger: .scroll(.up), modifiers: [], action: .system(.volumeUp))
         let keyboard = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [], action: action)
         let bindings = [button, wheel, keyboard]
-        #expect(MouseBindingList.matching(bindings, search: "  \n ") == [button, wheel])
-        #expect(MouseBindingList.matching(bindings, search: "100") == [button])
-        #expect(MouseBindingList.matching(bindings, search: "1500") == [button])
-        #expect(MouseBindingList.matching(bindings, search: wheel.action.label.uppercased()) == [wheel])
-        #expect(MouseBindingList.matching(bindings, search: "unknown query") == [])
+        #expect(BindingList.matching(bindings, search: "  \n ") == [button, wheel])
+        #expect(BindingList.matching(bindings, search: "100") == [button])
+        #expect(BindingList.matching(bindings, search: "1500") == [button])
+        #expect(BindingList.matching(bindings, search: wheel.action.label.uppercased()) == [wheel])
+        #expect(BindingList.matching(bindings, search: "unknown query") == [])
     }
 
     @Test func secureInputBlocksCaptureWhilePauseAloneDoesNot() {

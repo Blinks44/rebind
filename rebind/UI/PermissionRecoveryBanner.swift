@@ -7,16 +7,16 @@ struct PermissionRecoveryBanner: View {
 
     var body: some View {
         if let requirement = model.permissions.requirement {
-            EditorFeedback(severity: .warning,
+            Banner(severity: .warning,
                 title: requirement == .accessibility ? .recoveryAccessibilityTitle : .recoveryEventTitle,
                 message: requirement == .accessibility ? .recoverySavedRules : .recoverySendingPurpose) {
                 HStack(spacing: 10) {
                     if requirement == .accessibility {
-                        Button(.openSystemSettings) { model.requestAccessibility() }
+                        Button(.openSystemSettings) { model.requestAccessibility() }.secondaryButton()
                     } else {
-                        Button(.allowEventSending) { model.requestEventPosting() }
+                        Button(.allowEventSending) { model.requestEventPosting() }.secondaryButton()
                     }
-                    Button(.reviewPermissions, action: reviewPermissions)
+                    Button(.reviewPermissions, action: reviewPermissions).secondaryButton()
                 }
             }
         }

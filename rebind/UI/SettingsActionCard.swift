@@ -8,7 +8,7 @@ struct SettingsActionCard<Actions: View>: View {
     @ViewBuilder var actions: Actions
 
     var body: some View {
-        PermissionCard {
+        Card {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 16) {
                     label
@@ -20,7 +20,6 @@ struct SettingsActionCard<Actions: View>: View {
                     HStack(spacing: 8) { actions }
                 }
             }
-            .modifier(EditorSecondaryButton())
         }
     }
 

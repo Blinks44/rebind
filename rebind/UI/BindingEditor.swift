@@ -43,9 +43,9 @@ struct BindingEditor: View {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding)
-                            .font(EditorTypography.title).foregroundStyle(Theme.textPrimary)
+                            .font(Theme.titleSmall).foregroundStyle(Theme.textPrimary)
                             .accessibilityAddTraits(.isHeader)
-                        Text(scopeCaption).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                        Text(scopeCaption).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     switch scope {
@@ -61,22 +61,22 @@ struct BindingEditor: View {
             HStack(spacing: 10) {
                 if existing != nil {
                     Button(.deleteBinding, systemImage: "trash") { model.cancelRecording(); confirmingDeletion = true }
-                        .buttonStyle(DestructiveButtonStyle()).keyboardFocusRing()
+                        .destructiveButton()
                         .disabled(model.recording != nil || model.storageLocked)
                 }
                 Spacer()
                 Button(.cancel) { model.cancelRecording(); dismiss() }
                     .accessibilityIdentifier("binding-editor-cancel")
-                    .modifier(EditorSecondaryButton()).controlSize(.large)
+                    .secondaryButton().controlSize(.large)
                 Button(.editorSaveBinding, action: save).keyboardShortcut(.defaultAction)
                     .accessibilityIdentifier("binding-editor-save")
-                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                    .primaryButton()
                     .disabled(candidate == nil || validationError != nil
                         || !actionKind.isAvailable(with: model.audioCapabilities)
                         || model.recording != nil || model.storageLocked)
             }.padding(.horizontal, 28).padding(.vertical, 20)
         }
-        .frame(width: 512).frame(idealHeight: 640, maxHeight: 760)
+        .frame(width: 520).frame(idealHeight: 640, maxHeight: 760)
         .background(Theme.sheetSurface)
         .alert(.deleteBinding, isPresented: $confirmingDeletion) {
             Button(.cancel, role: .cancel) { }
@@ -137,17 +137,17 @@ struct BindingEditor: View {
                 target: .keyboardTrigger, recording: model.recording, canRecord: model.canRecord,
                 record: { record(.keyboardTrigger) }, cancel: model.cancelRecording,
                 clear: { draft.trigger = nil }, shortcut: keyboardTriggerShortcut)
-            Text(.recordingLimitations).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+            Text(.recordingLimitations).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
             SectionLabel(.activationTitle).padding(.top, 8)
-            EditorActivationPicker(selection: $draft.activation).frame(maxWidth: .infinity)
+            ActivationPicker(selection: $draft.activation).frame(maxWidth: .infinity)
                 .disabled(model.recording != nil)
             if draft.activation == .hold {
                 HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
             }
             if draft.activation != .press {
                 Text(draft.activation == .hold ? LocalizedStringResource.holdHint : .doublePressHint)
-                    .font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                    .font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -162,7 +162,7 @@ struct BindingEditor: View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.actionTitle)
             if scope == .builtInTrackpad {
-                EditorSelectorLabel(title: .outputShortcut, symbol: "command").modifier(ControlSurface())
+                SelectorLabel(title: .outputShortcut, symbol: "command").modifier(ControlSurface())
                     .accessibilityElement(children: .combine)
             } else { ActionPickerView(model: model, selection: $actionKind) }
             if actionKind == .keyboardShortcut {
@@ -177,11 +177,11 @@ struct BindingEditor: View {
                     .disabled(model.recording != nil)
             }
             if let actionHint {
-                Text(actionHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                Text(actionHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             if !actionKind.isAvailable(with: model.audioCapabilities) {
-                Text(actionKind.unavailableMessage).font(EditorTypography.caption).foregroundStyle(Theme.warningText)
+                Text(actionKind.unavailableMessage).font(Theme.caption).foregroundStyle(Theme.warningText)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -208,34 +208,34 @@ struct BindingEditor: View {
 
     @ViewBuilder private var feedback: some View {
         if scope == .builtInTrackpad, let preset = draft.trackpadPreset {
-            EditorFeedback(severity: .warning, title: .trackpadSystemGestureWarning,
+            Banner(severity: .warning, title: .trackpadSystemGestureWarning,
                            message: preset.systemGestureHelp) {
-                Button(.openSystemSettings, action: openSystemSettings)
+                Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
             }
         }
         if !model.canRecord {
-            EditorFeedback(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
+            Banner(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
                            message: recordingUnavailableHint) {
                 if !model.permissions.allowsRemapping {
-                    Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }
+                    Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }.secondaryButton()
                 }
             }
         }
         switch model.status {
         case .tapFailed, .interrupted, .outputFailed, .secureInput:
-            EditorFeedback(severity: model.status == .secureInput ? .warning : .error, title: model.status.text)
+            Banner(severity: model.status == .secureInput ? .warning : .error, title: model.status.text)
         default: EmptyView()
         }
         if let error = model.error {
             if error == .storageWriteFailed {
-                EditorFeedback(severity: .error, title: .bindingSaveFailed, message: .bindingSaveFailedDescription)
-            } else { EditorFeedback(severity: .error, title: error) }
+                Banner(severity: .error, title: .bindingSaveFailed, message: .bindingSaveFailedDescription)
+            } else { Banner(severity: .error, title: error) }
         }
         if validationError == .conflict {
-            EditorFeedback(severity: .warning,
+            Banner(severity: .warning,
                 title: .mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""),
                 message: conflictHelp)
-        } else if validationError != nil { EditorFeedback(severity: .error, title: .bindingInvalid) }
+        } else if validationError != nil { Banner(severity: .error, title: .bindingInvalid) }
     }
 
     private var configuredAction: RebindAction? {

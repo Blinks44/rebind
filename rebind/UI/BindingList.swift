@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum MouseBindingList {
+enum BindingList {
     static func matching(_ bindings: [Binding], search: String) -> [Binding] {
         bindings.filter { $0.scope == .allMice && matches($0, search: search) }
     }

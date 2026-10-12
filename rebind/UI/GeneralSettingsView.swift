@@ -11,7 +11,7 @@ struct GeneralSettingsView: View {
                 // Expanded feedback belongs in scrolling content so localized copy
                 // cannot inflate the NavigationSplitView's minimum height.
                 runtimeStatus
-                PermissionCard {
+                Card {
                     Toggle(isOn: remappingEnabled) {
                         settingLabel(.enableRemapping, description: .enableRemappingDescription)
                     }
@@ -21,13 +21,13 @@ struct GeneralSettingsView: View {
                     .disabled(model.storageLocked && !model.configuration.isEnabled)
                 }
                 LoginItemSettingsRow(model: model.loginItem)
-                PermissionCard {
+                Card {
                     settingLabel(.backgroundTitle, description: .backgroundDescription)
                 }
                 Text(.quitGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 if let error = model.error, model.generalRuntime != .storageLocked {
-                    EditorFeedback(severity: .error, title: error)
+                    Banner(severity: .error, title: error)
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -39,17 +39,17 @@ struct GeneralSettingsView: View {
     @ViewBuilder private var runtimeStatus: some View {
         switch model.generalRuntime {
         case .missingAccess:
-            EditorFeedback(severity: .warning, title: model.generalRuntime.title,
+            Banner(severity: .warning, title: model.generalRuntime.title,
                            message: model.generalRuntime.description) {
-                Button(.permissionsTitle, action: openPermissions)
+                Button(.permissionsTitle, action: openPermissions).secondaryButton()
             }
         case .engineError:
-            EditorFeedback(severity: .error, title: model.generalRuntime.title,
+            Banner(severity: .error, title: model.generalRuntime.title,
                            message: model.generalRuntime.description) {
-                Button(.tryAgain, action: model.retryRemapping)
+                Button(.tryAgain, action: model.retryRemapping).secondaryButton()
             }
         case .storageLocked:
-            EditorFeedback(severity: .warning, title: model.generalRuntime.title,
+            Banner(severity: .warning, title: model.generalRuntime.title,
                            message: model.generalRuntime.description)
         case .active, .paused, .starting, .secureInput, .suspended:
             VStack(alignment: .leading, spacing: 8) {

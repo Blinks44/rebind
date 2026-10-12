@@ -44,7 +44,7 @@ import XCTest
                         action: .workspace(.openSystemSettings), activation: .hold, holdDurationMilliseconds: duration)
                     try await check(BindingEditor(model: model, scope: .allMice, existing: binding),
                         name: "hold-\(duration)", language: language, appearance: appearance,
-                        sizes: [NSSize(width: 512, height: 600), NSSize(width: 512, height: 760)])
+                        sizes: [NSSize(width: 520, height: 600), NSSize(width: 520, height: 760)])
                 }
             }
         }

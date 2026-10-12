@@ -105,7 +105,7 @@ import XCTest
             try await attach(ContentView(model: model, initialDestination: .input(.allMice)), size: size,
                              mainWindow: true, appearance: appearance, name: "main-empty")
             try await attach(BindingEditor(model: model, scope: .allKeyboards, existing: configuration.bindings[1]),
-                             size: NSSize(width: 512, height: 640), appearance: appearance, name: "editor-keyboard")
+                             size: NSSize(width: 520, height: 640), appearance: appearance, name: "editor-keyboard")
             try await attach(ProfileManagerView(model: model), size: NSSize(width: 560, height: 480),
                              appearance: appearance, name: "profiles")
             try await attach(PermissionSetupView(model: model, context: .firstRun), size: NSSize(width: 560, height: 580),

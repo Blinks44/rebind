@@ -6,14 +6,14 @@ struct LoginItemSettingsRow: View {
 
     var body: some View {
         if model.showsToggle {
-            PermissionCard {
+            Card {
                 Toggle(isOn: loginEnabled) { label }
                     .toggleStyle(ThemeSwitchStyle())
                     .accessibilityLabel(Text(.launchAtLogin))
                     .accessibilityHint(Text(model.description))
             }
         } else {
-            EditorFeedback(severity: feedbackSeverity, title: .launchAtLogin, message: model.description) {
+            Banner(severity: feedbackSeverity, title: .launchAtLogin, message: model.description) {
                 if model.operation != nil {
                     ProgressView().controlSize(.small).accessibilityHidden(true)
                 } else {
@@ -26,7 +26,7 @@ struct LoginItemSettingsRow: View {
         }
     }
 
-    private var feedbackSeverity: EditorFeedbackSeverity {
+    private var feedbackSeverity: BannerSeverity {
         if model.operation != nil { return .information }
         if model.status == .unavailable { return .warning }
         return model.failedOperation == nil ? .warning : .error
@@ -42,14 +42,14 @@ struct LoginItemSettingsRow: View {
     }
 
     @ViewBuilder private var recoveryActions: some View {
-        Button(.openLoginItems) { model.openLoginItems() }
-        Button(.checkAgain) { model.refresh() }
+        Button(.openLoginItems) { model.openLoginItems() }.secondaryButton()
+        Button(.checkAgain) { model.refresh() }.secondaryButton()
         if model.status != .unavailable {
             if model.failedOperation != nil {
-                Button(.tryAgain) { Task { await model.retry() } }
+                Button(.tryAgain) { Task { await model.retry() } }.secondaryButton()
             }
             if model.status == .requiresApproval {
-                Button(.turnOff) { Task { await model.setEnabled(false) } }
+                Button(.turnOff) { Task { await model.setEnabled(false) } }.secondaryButton()
             }
         }
     }

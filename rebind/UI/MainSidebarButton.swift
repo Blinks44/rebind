@@ -32,7 +32,7 @@ struct MainSidebarButton: View {
             }
             .contentShape(.rect)
         }
-        .buttonStyle(MainSidebarButtonStyle())
+        .buttonStyle(.plain)
         .keyboardFocusRing(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onHover { isHovered = $0 }

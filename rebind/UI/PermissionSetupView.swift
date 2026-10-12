@@ -13,7 +13,7 @@ struct PermissionSetupView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     introduction
                     requiredAccess
-                    PermissionCard(insets: EdgeInsets()) {
+                    Card(insets: EdgeInsets()) {
                         VStack(spacing: 0) {
                             if model.permissions.requirement == .accessibility {
                                 row(.eventSendingTitle, status: .permissionsWaitingAccessibility, isWarning: true,
@@ -33,17 +33,17 @@ struct PermissionSetupView: View {
             HStack(spacing: 12) {
                 Spacer(minLength: 0)
                 if context == .recovery {
-                    Button(.close) { dismiss() }.keyboardShortcut(.cancelAction).modifier(EditorSecondaryButton())
+                    Button(.close) { dismiss() }.keyboardShortcut(.cancelAction).secondaryButton()
                 } else {
                     if !model.permissions.allowsRemapping {
-                        Button(.setUpLater) { finishSetup() }.keyboardShortcut(.cancelAction).modifier(EditorSecondaryButton())
+                        Button(.setUpLater) { finishSetup() }.keyboardShortcut(.cancelAction).secondaryButton()
                     }
                     Button(.`continue`) {
                         model.refreshPermissions()
                         guard model.permissions.allowsRemapping else { return }
                         finishSetup()
                     }
-                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                    .primaryButton()
                     .keyboardShortcut(.defaultAction)
                     .disabled(!model.permissions.allowsRemapping)
                 }
@@ -62,7 +62,7 @@ struct PermissionSetupView: View {
                 .resizable().frame(width: 48, height: 48).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 8) {
                 Text(context == .recovery ? LocalizedStringResource.restoreTitle : .setupTitle)
-                    .font(Theme.largeTitle).accessibilityAddTraits(.isHeader)
+                    .font(Theme.title).foregroundStyle(Theme.textPrimary).accessibilityAddTraits(.isHeader)
                 Text(context == .recovery ? LocalizedStringResource.restorePurpose : .setupPurpose)
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -72,7 +72,7 @@ struct PermissionSetupView: View {
     @ViewBuilder private var requiredAccess: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let requirement = model.permissions.requirement {
-                EditorFeedback(severity: .warning,
+                Banner(severity: .warning,
                     title: requirement == .accessibility ? .accessibilityTitle : .eventSendingTitle,
                     message: context == .recovery ? .accessLostPurpose
                         : requirement == .accessibility ? .accessibilityPurpose : .eventSendingPurpose)
@@ -81,9 +81,9 @@ struct PermissionSetupView: View {
                      : context == .recovery ? .restoreSteps : .accessibilitySteps)
                     .font(Theme.callout).foregroundStyle(Theme.textSecondary)
             } else {
-                EditorFeedback(severity: .success, title: .ready,
+                Banner(severity: .success, title: .ready,
                     message: context == .recovery ? .permissionsRespectsPause : .readyPurpose) {
-                    Button(.checkAgain) { model.refreshPermissions() }
+                    Button(.checkAgain) { model.refreshPermissions() }.secondaryButton()
                 }
                 Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
@@ -93,7 +93,7 @@ struct PermissionSetupView: View {
     private func row(_ title: LocalizedStringResource, status: LocalizedStringResource, isWarning: Bool = false,
                      description: LocalizedStringResource) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            PermissionStatusLabel(title: title, status: status, isWarning: isWarning)
+            StatusLabel(title: title, status: status, isWarning: isWarning)
             Text(description).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }

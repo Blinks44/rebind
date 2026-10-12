@@ -17,12 +17,12 @@ struct PermissionAccessControls: View {
     @ViewBuilder private var buttons: some View {
         if requirement == .accessibility {
             Button(.openSystemSettings) { model.requestAccessibility() }
-                .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                .primaryButton()
         } else {
             Button(.allowEventSending) { model.requestEventPosting() }
-                .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                .primaryButton()
                 .disabled(model.permissions.requirement != .eventPosting)
         }
-        Button(.checkAgain, action: model.refreshPermissions).modifier(EditorSecondaryButton())
+        Button(.checkAgain, action: model.refreshPermissions).secondaryButton()
     }
 }

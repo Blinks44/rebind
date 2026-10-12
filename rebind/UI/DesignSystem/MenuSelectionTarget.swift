@@ -1,6 +1,6 @@
 import AppKit
 
-final class EditorMenuSelectionTarget: NSObject {
+final class MenuSelectionTarget: NSObject {
     let select: (Int) -> Void
 
     init(select: @escaping (Int) -> Void) { self.select = select }

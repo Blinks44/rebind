@@ -18,9 +18,9 @@ struct PermissionView: View {
                 VStack(spacing: 16) {
                     accessibilityCard
                     eventSendingCard
-                    PermissionCard {
+                    Card {
                         VStack(alignment: .leading, spacing: 12) {
-                            PermissionStatusLabel(title: .inputMonitoringTitle, status: .notRequired)
+                            StatusLabel(title: .inputMonitoringTitle, status: .notRequired)
                             Text(.permissionsOtherPurpose).foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -28,7 +28,7 @@ struct PermissionView: View {
                 Text(.privacyAssurance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 VStack(alignment: .leading, spacing: 12) {
                     Button(.showApplicationInFinder, action: model.showApplicationInFinder)
-                        .modifier(EditorSecondaryButton())
+                        .secondaryButton()
                     Text(.signingHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -65,7 +65,7 @@ struct PermissionView: View {
     }
 
     private var checkAgain: some View {
-        Button(.checkAgain, action: model.refreshPermissions).modifier(EditorSecondaryButton())
+        Button(.checkAgain, action: model.refreshPermissions).secondaryButton()
     }
 
     private var statusExplanation: LocalizedStringResource {
@@ -77,9 +77,9 @@ struct PermissionView: View {
     }
 
     private var accessibilityCard: some View {
-        PermissionCard(severity: model.permissions.accessibility ? nil : .warning) {
+        Card(severity: model.permissions.accessibility ? nil : .warning) {
             VStack(alignment: .leading, spacing: 12) {
-                PermissionStatusLabel(title: .accessibilityTitle,
+                StatusLabel(title: .accessibilityTitle,
                                       status: model.permissions.accessibility ? .permissionEnabled : .notEnabled,
                                       isWarning: !model.permissions.accessibility, isPrimary: !model.permissions.accessibility,
                                       isVerified: model.permissions.accessibility)
@@ -94,9 +94,9 @@ struct PermissionView: View {
     }
 
     private var eventSendingCard: some View {
-        PermissionCard(severity: model.permissions.requirement == .eventPosting ? .warning : nil) {
+        Card(severity: model.permissions.requirement == .eventPosting ? .warning : nil) {
             VStack(alignment: .leading, spacing: 12) {
-                PermissionStatusLabel(title: .eventSendingTitle, status: postingStatus,
+                StatusLabel(title: .eventSendingTitle, status: postingStatus,
                                       isWarning: !model.permissions.posting,
                                       isPrimary: model.permissions.requirement == .eventPosting,
                                       isVerified: model.permissions.posting)

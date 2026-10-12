@@ -14,8 +14,8 @@ struct InputDiagnosticsView: View {
                 Spacer()
                 Button(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsStop : .advancedDiagnosticsStart) {
                     if model.diagnostics.isRunning { model.stopDiagnostics() } else { model.startDiagnostics() }
-                }.disabled(!model.diagnostics.isRunning && !model.canStartDiagnostics)
-                Button(.advancedDiagnosticsClear) { model.clearDiagnostics() }.disabled(model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0)
+                }.disabled(!model.diagnostics.isRunning && !model.canStartDiagnostics).secondaryButton()
+                Button(.advancedDiagnosticsClear) { model.clearDiagnostics() }.disabled(model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0).secondaryButton()
             }
             if !model.canStartDiagnostics && !model.diagnostics.isRunning {
                 Label(.advancedDiagnosticsUnavailableTitle, systemImage: "exclamationmark.circle")
@@ -50,10 +50,10 @@ struct InputDiagnosticsView: View {
             HStack {
                 Text(.advancedDiagnosticsLimits).font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
                 Spacer()
-                Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
+                Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction).secondaryButton()
             }
         }.padding(24).frame(width: 840, height: 570)
-            .background { ThemeCanvas() }
+            .background(Theme.sheetSurface)
             .onDisappear { model.closeDiagnostics() }
     }
 

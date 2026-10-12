@@ -19,7 +19,7 @@ struct AppleShortcutParameters: View {
                 }
             }.disabled(loading)
             HStack {
-                Button(.refreshAppleShortcuts) { refreshID += 1 }.disabled(loading)
+                Button(.refreshAppleShortcuts) { refreshID += 1 }.disabled(loading).secondaryButton()
                 if loading { ProgressView().controlSize(.small) }
             }
             if failed { Text(.appleShortcutsListFailed).foregroundStyle(Theme.textSecondary) }

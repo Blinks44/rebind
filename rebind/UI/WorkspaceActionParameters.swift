@@ -20,9 +20,7 @@ struct WorkspaceActionParameters: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if kind == .openURL {
-                TextField(.webAddressTitle, text: $webAddress, prompt: Text(verbatim: "https://example.com"))
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityLabel(Text(.webAddressTitle))
+                ThemeTextField(title: .webAddressTitle, text: $webAddress, prompt: Text(verbatim: "https://example.com"))
                 if !webAddress.isEmpty && WorkspaceAction.webURL(webAddress) == nil {
                     Text(.webAddressInvalid).foregroundStyle(Theme.textSecondary)
                 }
@@ -35,7 +33,7 @@ struct WorkspaceActionParameters: View {
                 Button(pickingApplication ? LocalizedStringResource.chooseApplication : .chooseFile) {
                     selectionFailed = false
                     showingPicker = true
-                }
+                }.secondaryButton()
                 if selectionFailed { Text(.targetSelectionFailed).foregroundStyle(Theme.textSecondary) }
             }
             Text(hint)

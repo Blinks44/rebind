@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// Raised content card of the design system; a severity tints it as a state surface.
-struct PermissionCard<Content: View>: View {
+struct Card<Content: View>: View {
     @Environment(\.colorSchemeContrast) private var contrast
     var insets = EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20)
-    var severity: EditorFeedbackSeverity?
+    var severity: BannerSeverity?
     @ViewBuilder var content: Content
 
     var body: some View {

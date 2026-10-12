@@ -52,32 +52,6 @@ struct ActionTile: View {
     }
 }
 
-/// Accent capsule for the one primary action of a screen: 36 pt, or 28 pt with `.controlSize(.small)`.
-struct PrimaryButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.controlSize) private var controlSize
-
-    func makeBody(configuration: ButtonStyleConfiguration) -> some View {
-        let isSmall = controlSize == .small || controlSize == .mini
-        configuration.label
-            .font(isSmall ? Theme.calloutStrong : Theme.bodyBold).foregroundStyle(.white)
-            .padding(.horizontal, isSmall ? 14 : 17)
-            .frame(height: isSmall ? EditorMetrics.buttonHeight : Theme.controlHeight)
-            .background {
-                Capsule(style: .circular).fill(Theme.accentFill)
-                    .overlay {
-                        Capsule(style: .circular).fill(LinearGradient(stops: [.init(color: .white.opacity(0.24), location: 0),
-                                                              .init(color: .white.opacity(0), location: 0.55)],
-                                                      startPoint: .top, endPoint: .bottom))
-                    }
-                    .shadow(color: Theme.accentGlow, radius: 8, y: 6)
-            }
-            .overlay { Capsule(style: .circular).strokeBorder(.white.opacity(0.3)) }
-            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
-            .contentShape(.capsule)
-    }
-}
-
 /// The design-system switch: 38 × 22 track with an 18 pt knob, after its label.
 struct ThemeSwitchStyle: ToggleStyle {
     @Environment(\.isEnabled) private var isEnabled
@@ -165,18 +139,92 @@ struct SectionLabel: View {
     }
 }
 
-/// Soft red capsule for a destructive action that still asks for confirmation.
-struct DestructiveButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
+/// Capsule text field of the design system, optionally with a leading symbol (search).
+struct ThemeTextField: View {
+    let title: LocalizedStringResource
+    @SwiftUI.Binding var text: String
+    var prompt: Text?
+    var symbol: String?
+    var autofocus = false
+    var onSubmit: () -> Void = { }
+    @FocusState private var isFocused: Bool
 
-    func makeBody(configuration: ButtonStyleConfiguration) -> some View {
-        configuration.label
-            .font(Theme.bodyStrong).foregroundStyle(Theme.dangerText)
-            .padding(.horizontal, 18).frame(height: Theme.controlHeight)
-            .background {
-                Capsule(style: .circular).fill(Theme.danger.opacity(0.12)).strokeBorder(Theme.danger.opacity(0.25))
+    var body: some View {
+        HStack(spacing: 10) {
+            if let symbol {
+                Image(systemName: symbol).font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Theme.iconSecondary).accessibilityHidden(true)
             }
-            .opacity(isEnabled ? (configuration.isPressed ? 0.7 : 1) : 0.45)
-            .contentShape(.capsule)
+            TextField(text: $text, prompt: (prompt ?? Text(title)).foregroundStyle(Theme.textTertiary)) { Text(title) }
+                .textFieldStyle(.plain).font(Theme.body).foregroundStyle(Theme.textPrimary)
+                .focused($isFocused).focusEffectDisabled().onSubmit(onSubmit)
+        }
+        .padding(.horizontal, symbol == nil ? 16 : 14).frame(height: Theme.controlHeight)
+        .modifier(ControlSurface(isFocused: isFocused))
+        .onAppear { if autofocus { isFocused = true } }
+    }
+}
+
+/// The "…" menu at the end of a row.
+struct OptionsMenu<Content: View>: View {
+    let label: LocalizedStringResource
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        Menu { content } label: {
+            Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
+        }
+        .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+        .keyboardFocusRing(Circle()).accessibilityLabel(Text(label))
+    }
+}
+
+/// Segmented control: inset track with one raised segment. Arrow keys move the selection;
+/// assistive technologies see a native picker.
+struct SegmentedPicker<Value: Hashable>: View {
+    @SwiftUI.Binding var selection: Value
+    let title: LocalizedStringResource
+    let options: [Value]
+    let label: (Value) -> LocalizedStringResource
+    /// Equal segments across the available width instead of content-sized ones.
+    var fillsWidth = false
+    @Environment(\.isEnabled) private var isEnabled
+    @FocusState private var focused: Value?
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { option in
+                Button { selection = option } label: {
+                    Text(label(option)).font(Theme.calloutStrong).lineLimit(1)
+                        .foregroundStyle(selection == option ? Theme.textPrimary : Theme.textSecondary)
+                        .padding(.horizontal, 16)
+                        .frame(maxWidth: fillsWidth ? .infinity : nil, minHeight: Theme.smallControlHeight)
+                        .contentShape(.capsule)
+                        .background { if selection == option { Color.clear.modifier(ControlSurface()) } }
+                }
+                .buttonStyle(.plain).focused($focused, equals: option).keyboardFocusRing()
+            }
+        }
+        .padding(4)
+        .background(Theme.insetSurface, in: .capsule)
+        .overlay { Capsule(style: .circular).strokeBorder(Theme.borderSubtle) }
+        .transaction { $0.animation = nil }
+        .onKeyPress(.leftArrow) { move(by: -1) }
+        .onKeyPress(.rightArrow) { move(by: 1) }
+        .onChange(of: selection) { if focused != nil { focused = selection } }
+        .accessibilityRepresentation {
+            Picker(title, selection: $selection) {
+                ForEach(options, id: \.self) { Text(label($0)).tag($0) }
+            }.pickerStyle(.radioGroup)
+        }
+    }
+
+    private func move(by offset: Int) -> KeyPress.Result {
+        guard isEnabled, let index = options.firstIndex(of: focused ?? selection) else { return .ignored }
+        let next = options[min(max(index + offset, 0), options.count - 1)]
+        selection = next
+        focused = next
+        return .handled
     }
 }

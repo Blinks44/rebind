@@ -29,7 +29,7 @@ struct BindingCaptureField: View {
                     Spacer(minLength: 8)
                     Button(.cancelRecording, action: cancel).focused($cancelFocused)
                         .keyboardShortcut(.cancelAction)
-                        .modifier(EditorSecondaryButton())
+                        .secondaryButton()
                 }
             } else {
                 if wrapsControls {
@@ -71,14 +71,14 @@ struct BindingCaptureField: View {
                     }
                 }
             }
-        }.font(EditorTypography.body)
-            .frame(minHeight: EditorMetrics.keycapHeight)
+        }.font(Theme.body)
+            .frame(minHeight: Theme.controlHeight)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var recordButton: some View {
         Button(target == .output ? LocalizedStringResource.editorRecordOutput : .editorRecordTrigger, action: record)
-            .modifier(EditorSecondaryButton())
+            .secondaryButton()
             .accessibilityLabel(Text(target == .output ? LocalizedStringResource.recordOutput : .recordTrigger))
             .focused($recordFocused).disabled(!canRecord || recording != nil)
     }

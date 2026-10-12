@@ -18,12 +18,12 @@ struct LanguageSettingsView: View {
                     Text(.languageTitle).font(Theme.headline).accessibilityAddTraits(.isHeader)
                     Text(.languageDescription).foregroundStyle(Theme.textSecondary)
                 }
-                PermissionCard {
+                Card {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 16) {
                             Text(.appLanguage).accessibilityHidden(true)
                             Spacer(minLength: 12)
-                            EditorMenuSelector(selection: $editing.draft, title: .appLanguage,
+                            MenuSelector(selection: $editing.draft, title: .appLanguage,
                                 choices: AppLanguagePreference.allCases, label: languageTitle,
                                 compact: true)
                             .accessibilityIdentifier("settings-language-selector")
@@ -37,7 +37,7 @@ struct LanguageSettingsView: View {
                         if editing.isSaving { Text(.languageSaving).foregroundStyle(Theme.textSecondary) }
                         if editing.hasChanges {
                             Button(.applyLanguage) { editing.apply() }
-                                .modifier(EditorSecondaryButton())
+                                .secondaryButton()
                                 .disabled(model.storageLocked || editing.isSaving)
                         }
                     }
@@ -48,9 +48,9 @@ struct LanguageSettingsView: View {
                     feedback(.languageSaveFailed, description: .languageSaveFailedDescription)
                 }
                 if model.requiresLanguageReopen {
-                    EditorFeedback(severity: .information, title: .reopenTitle,
+                    Banner(severity: .information, title: .reopenTitle,
                                    message: .reopenDescription(savedPreferenceName)) {
-                        Button(.quitRebind) { NSApp.terminate(nil) }
+                        Button(.quitRebind) { NSApp.terminate(nil) }.secondaryButton()
                     }
                 }
                 Text(.namesUnchanged).font(Theme.callout).foregroundStyle(Theme.textSecondary)
@@ -78,6 +78,6 @@ struct LanguageSettingsView: View {
 
     private func feedback(_ title: LocalizedStringResource,
                           description: LocalizedStringResource) -> some View {
-        EditorFeedback(severity: .error, title: title, message: description)
+        Banner(severity: .error, title: title, message: description)
     }
 }
