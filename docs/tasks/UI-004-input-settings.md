@@ -2,7 +2,7 @@
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; native integration/software/layout/live save-retry pass; hardware/accessibility acceptance open.
-- Owner: `/root` — bounded Input material/copy adoption in progress. Prior native Input/hold implementation retained; Sketch read-only.
+- Owner: Unassigned; `/root` released bounded Input material/copy adoption on 2026-10-12. Sketch read-only.
 - Ownership checked: 2026-10-11, `main` / `acce2f4`; prior design owners released, concurrent trackpad engineering and UI-001 native implementation preserved.
 - Owned surfaces: native InputSettingsView/HoldDurationRow/BindingEditor, tests and scoped catalog integration; shared Settings/task/evidence/index updates with UI-005. Saved Sketch sources remain historical design deliverables.
 - Requirements: SPEC §§3.1–3.4, 10–11; PLAN Phases 7–9.
@@ -10,7 +10,7 @@
 
 ## Outcome and scope
 
-Implement Settings → Input as an honest overview of existing timing: per-binding hold duration, system double-press interval and fixed pointer recognition. Add a focused hold-editor composition using the existing 100–5,000 ms range and 100 ms step. Experimental trackpad copy describes only the built-in unmodified four-finger tap → shortcut and retained native gestures. No global threshold override or unsupported recorder is introduced.
+Implement Settings → Input as an honest overview of existing timing: per-binding hold duration, system double-press interval and fixed pointer recognition. Add a focused hold-editor composition using the existing 100–5,000 ms range and 100 ms step. Current experimental Trackpad copy describes the built-in three/four-finger single/double tap → shortcut pool and retained native gestures. No global threshold override or unsupported recorder is introduced.
 
 ## Acceptance
 
@@ -37,8 +37,8 @@ Actual keyboard/mouse timing/cancellation, full keyboard/focus/spoken VoiceOver/
 
 ## Next handoff
 
-2026-10-12 continuation: ownership checked on `main` / `a6471db` with existing Advanced UI and Trackpad completion changes preserved. Scope: InputSettingsView, its EN/RU/DE/FR catalog entries and scoped native evidence/status. Inspect live Screens 33–39, shared Input sources and Foundations 04/14/15. Reuse raised PermissionCard and adaptive PermissionStatusLabel; preserve the existing Hold/save/retry controls. Adopt released Input copy where current capabilities match; keep the experimental built-in Trackpad scope accurate instead of advertising the final Magic Mouse pool. Required checks: Debug/signature, existing Input/Hold/localization/editor and full-main layout regressions, scoped no-engine native review, links/diff. Hardware and full assistive-technology acceptance remain open.
+2026-10-12 [Input material/copy adoption](../verification/input-feedback-adoption.md) is complete: raised shared cards/adaptive headings, nine scoped EN/RU/DE/FR entries and accurate current tap-preset guidance. Live Sketch shared sources/states inspected; English Light/Dark components and compact German full-main reviewed. Final **20 functions / 74 executions**, **608 native viewports**, Debug/signature pass. Implementation committed externally in `2bc4b97`; no agent commit. Existing Advanced/Trackpad work preserved. Hardware, spoken VoiceOver/focus/system preferences and macOS 26/Intel remain open.
 
 - **Verification:** check actual Hold timing/cancellation and complete native accessibility/editor acceptance on the identified bundle. Preserve full-main coverage when adopting materials or adding Advanced; global tuning remains separate.
-- **Design:** Language is now delivered; continue Advanced separately. Preserve the delivered General/Permissions/Input/Language sources and capability limits.
+- **Implementation:** continue remaining main/profile/action materials and reviewed copy from live Sketch using existing components. Preserve the delivered Settings surfaces and capability limits.
 - User-facing handoff name: **Input settings and per-binding hold timing**. No task ID or previous chat is required to continue verification.

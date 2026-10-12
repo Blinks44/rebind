@@ -26,3 +26,5 @@ Final self-review covered all 125 screen compositions through MCP screenshots an
 No app code/catalog edits, build/runtime/hardware checks, routine image exports or agent Git commit. Native copy still needs reconciliation; design review does not verify actual permissions, gesture support, VoiceOver or native text expansion.
 
 Next: **Adopt the prepared plain-language interface copy from live Sketch into the EN/RU/DE/FR String Catalog and affected native labels/help.** Preserve localized count forms and the existing language activation contract, then verify native compact layouts and accessibility on the resulting artifact.
+
+2026-10-12 native subset: [Input adoption](../verification/input-feedback-adoption.md) integrates nine scoped catalog entries with four-language layout checks. Current experimental Trackpad wording follows actual three/four-finger single/double shortcut presets rather than the final Magic Mouse pool. Remaining screen copy and full accessibility acceptance stay open.
