@@ -40,3 +40,15 @@ Logs, result bundles and images stay ignored/local under build; no screenshot is
 ## Remaining acceptance and next step
 
 On an identified normal build and an authorized test profile, verify real three/four-finger single/double taps, capture/output cancellation, click exclusion, pair timing, native Look Up/Zoom coexistence and safety/lifecycle recovery. Keep prior INPUT-001 user-confirmed subsets separate. Complete keyboard/VoiceOver, adaptive preferences, all production locale contexts and minimum-OS/Intel checks. UI-014 remains `awaiting_verification`; broader touch engine/action/list adoption remains in PLAN.
+
+## Direct menu and full-area hit testing follow-up
+
+2026-10-12: the custom Menu label's expanded visual frame lacked a matching hit shape; a default Picker nested inside Menu produced an intervening category submenu. Add a rectangular content shape after the full-width/minimum-height label frame and use an inline, labels-hidden Picker. Preserve native selected-item semantics, accessibility purpose/value, recording-disabled state and existing glass composition.
+
+Live isolated fixture `blinks44.rebind.verification.trackpadmenufix` used temporary authored rules and a no-load/no-start guard. Pointer checks on left label, empty center and right chevrons opened the same four direct items; Escape closed the list. Selecting the four-finger double tap updated explanation/guidance and preserved the shortcut. No configured output or real configuration changes. Temporary scene/delegate changes were restored before normal product checks.
+
+The fresh Sketch tree request did not respond and was stopped. No new visual direction or Sketch edit; this interaction correction follows the explicit product requirement and previously inspected source. Reconcile separate UI-015 refinements when released.
+
+- `scripts/dev.sh test -only-testing:rebindTests/TrackpadBindingEditorTests -only-testing:rebindTests/TrackpadEditorLayoutTests -resultBundlePath build/TrackpadMenuFixTests.xcresult`: **8 functions / 23 executions**, zero failures/skips, **TEST SUCCEEDED**. The native function covers 160 viewport combinations. Earlier 647-function regression is retained, not rerun for this control-only fix.
+- `scripts/dev.sh build`: **BUILD SUCCEEDED**; strict/deep ad-hoc signature passes. Current normal Debug product: bundle ID `blinks44.rebind`, executable SHA-256 `4d2f444bf56ea5e613f34a8a826307188deb7b8a1647f0df5642ae4517d0ee6e`, implementation dylib SHA-256 `26da3aff29d8618eb829a6ca1923553dbb2b9afd18d67330f73ee94a3ce6cde8`. This supersedes the earlier artifact for runtime checks.
+- `git diff --check` passes. No engine/catalog/project setting change or agent commit; broader physical/accessibility gates remain open.

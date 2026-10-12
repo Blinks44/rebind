@@ -60,7 +60,7 @@ external Magic Trackpad remain separate implementation/hardware gates.
   AX client rechecks current application PID on the action thread before posting,
   covering delayed MainActor focus notifications. No delivery ack/retry.
 - A button-free 60 ms interval is a conservative condition, not physical-source
-  proof or universal tap/click exclusivity. Native gestures cannot be suppressed.
+  proof or universal tap/click exclusivity. The current contact-observer path does not suppress native gestures; [selective suppression feasibility](../research/native-gesture-suppression.md) remains unestablished.
   System conflicts/double effects remain possible and are disclosed in the UI.
 
 ## Software verification — 2026-10-09–10

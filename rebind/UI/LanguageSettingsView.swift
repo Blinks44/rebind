@@ -23,13 +23,9 @@ struct LanguageSettingsView: View {
                         HStack(spacing: 16) {
                             Text(.appLanguage).accessibilityHidden(true)
                             Spacer(minLength: 12)
-                            Picker(.appLanguage, selection: $editing.draft) {
-                                Text(.systemDefault).tag(AppLanguagePreference.system)
-                                ForEach(AppLanguage.allCases, id: \.self) { language in
-                                    Text(verbatim: language.autonym).tag(preference(for: language))
-                                }
-                            }
-                            .pickerStyle(.menu).labelsHidden()
+                            EditorMenuSelector(selection: $editing.draft, title: .appLanguage,
+                                choices: AppLanguagePreference.allCases, label: languageTitle, compact: true)
+                            .accessibilityIdentifier("settings-language-selector")
                             .frame(width: 208, alignment: .trailing)
                             .disabled(model.storageLocked || editing.isSaving)
                         }
@@ -40,6 +36,7 @@ struct LanguageSettingsView: View {
                         if editing.isSaving { Text(.languageSaving).foregroundStyle(.secondary) }
                         if editing.hasChanges {
                             Button(.applyLanguage) { editing.apply() }
+                                .modifier(EditorSecondaryButton())
                                 .disabled(model.storageLocked || editing.isSaving)
                         }
                     }
@@ -50,13 +47,9 @@ struct LanguageSettingsView: View {
                     feedback(.languageSaveFailed, description: .languageSaveFailedDescription)
                 }
                 if model.requiresLanguageReopen {
-                    PermissionCard {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(.reopenTitle).font(.headline)
-                            Text(.reopenDescription(savedPreferenceName)).foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            Button(.quitRebind) { NSApp.terminate(nil) }
-                        }
+                    EditorFeedback(severity: .information, title: .reopenTitle,
+                                   message: .reopenDescription(savedPreferenceName)) {
+                        Button(.quitRebind) { NSApp.terminate(nil) }
                     }
                 }
                 Text(.namesUnchanged).font(.callout).foregroundStyle(.secondary)
@@ -77,23 +70,13 @@ struct LanguageSettingsView: View {
         return model.configuration.languagePreference.resolved(preferredLanguages: []).autonym
     }
 
-    private func preference(for language: AppLanguage) -> AppLanguagePreference {
-        switch language {
-        case .en: .en
-        case .ru: .ru
-        case .de: .de
-        case .fr: .fr
-        }
+    private func languageTitle(_ preference: AppLanguagePreference) -> LocalizedStringResource {
+        if preference == .system { return .systemDefault }
+        return LocalizedStringResource(stringLiteral: preference.resolved(preferredLanguages: []).autonym)
     }
 
     private func feedback(_ title: LocalizedStringResource,
                           description: LocalizedStringResource) -> some View {
-        PermissionCard {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(title).font(.headline)
-                Text(description).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        EditorFeedback(severity: .error, title: title, message: description)
     }
 }

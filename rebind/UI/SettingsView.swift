@@ -14,10 +14,7 @@ struct SettingsView: View {
                     // Vertical fixedSize here can expand and displace the entire main window.
                     Text(.settingsDescription).foregroundStyle(.secondary)
                 }
-                ViewThatFits(in: .horizontal) {
-                    sectionPicker.pickerStyle(.segmented)
-                    sectionPicker.pickerStyle(.menu)
-                }
+                SettingsSectionPicker(selection: $selection)
             }.padding(28)
             switch selection {
             case .general:
@@ -42,11 +39,4 @@ struct SettingsView: View {
         }
     }
 
-    private var sectionPicker: some View {
-        Picker(.settingsTitle, selection: $selection) {
-            ForEach(SettingsSection.allCases, id: \.self) { section in
-                Text(section.title).tag(section)
-            }
-        }.labelsHidden()
-    }
 }

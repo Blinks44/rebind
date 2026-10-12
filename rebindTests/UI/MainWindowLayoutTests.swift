@@ -55,12 +55,14 @@ import XCTest
 
     private enum SettingsFixture: String, CaseIterable {
         case paused, active, missingAccess, engineError, approval, permissionsMissing, permissionsAllowed
+        case permissionsPosting, permissionsPaused, permissionsEngineError
         case input, language, languageReopen, languageLocked
         case advanced, advancedLocked
 
         var destination: MainDestination {
             switch self {
-            case .permissionsMissing, .permissionsAllowed: .settings(.permissions)
+            case .permissionsMissing, .permissionsAllowed, .permissionsPosting, .permissionsPaused, .permissionsEngineError:
+                .settings(.permissions)
             case .input: .settings(.input)
             case .language, .languageReopen, .languageLocked: .settings(.language)
             case .advanced, .advancedLocked: .settings(.advanced)
@@ -76,20 +78,22 @@ import XCTest
                      NSSize(width: 1157, height: 750), NSSize(width: 1280, height: 800)]
         for fixture in SettingsFixture.allCases {
             let store = ConfigurationStore(url: directory.appending(path: "\(fixture.rawValue)/configuration.json"))
-            var configuration = Configuration(isEnabled: fixture != .paused)
+            var configuration = Configuration(isEnabled: fixture != .paused && fixture != .permissionsPaused)
             configuration.hasCompletedSetup = true
             try store.save(configuration)
             if fixture == .languageLocked || fixture == .advancedLocked {
                 try Data("protected future/corrupt fixture".utf8).write(to: store.url)
             }
             let grants = fixture == .missingAccess || fixture == .permissionsMissing
-                ? InputPermissions() : InputPermissions(accessibility: true, posting: true)
+                ? InputPermissions() : InputPermissions(accessibility: true, posting: fixture != .permissionsPosting)
             let service = LoginItemServiceStub(status: fixture == .approval ? .requiresApproval : .off)
             let model = AppModel(store: store, readPermissions: { grants },
                 loginItem: LoginItemModel(service: service), preferredLanguages: ["en"])
             if fixture == .languageReopen { try model.saveLanguagePreference(.fr) }
             model.mailbox.configure(configuration)
-            model.mailbox.state.withLock { $0.status = fixture == .engineError ? .tapFailed : .active }
+            model.mailbox.state.withLock {
+                $0.status = fixture == .engineError || fixture == .permissionsEngineError ? .tapFailed : .active
+            }
             model.refresh()
             for language in ["en", "ru", "de", "fr"] {
                 for appearance in [ColorScheme.light, .dark] {

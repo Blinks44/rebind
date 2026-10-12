@@ -6,42 +6,56 @@ struct MouseTriggerEditor: View {
     let record: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(.triggerTitle).font(.headline).accessibilityAddTraits(.isHeader)
-            Picker(.mouseInputKind, selection: $draft.mouseTarget) {
-                Text(.mouseButtonInput).tag(RecordingTarget.mouseTrigger)
-                Text(.mouseWheelInput).tag(RecordingTarget.scrollTrigger)
-                Text(.pointerGestureInput).tag(RecordingTarget.gestureTrigger)
-            }.pickerStyle(.menu).disabled(model.recording != nil)
+        VStack(alignment: .leading, spacing: EditorMetrics.fieldSpacing) {
+            Text(.triggerTitle).font(EditorTypography.section).accessibilityAddTraits(.isHeader)
+            HStack(spacing: EditorMetrics.fieldSpacing) {
+                Text(.mouseInputKind).font(EditorTypography.caption).foregroundStyle(Color(.editorTextPrimary))
+                Spacer(minLength: 8)
+                EditorMenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
+                    choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger], label: inputKindTitle)
+                    .frame(maxWidth: EditorMetrics.mouseSelectorWidth)
+                    .accessibilityIdentifier("mouse-input-selector")
+                    .disabled(model.recording != nil)
+            }
 
             BindingCaptureField(value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
                 target: draft.mouseTarget, recording: model.recording, canRecord: model.canRecord,
                 record: record, cancel: model.cancelRecording, clear: { draft.trigger = nil })
 
             if draft.mouseTarget == .mouseTrigger {
-                Text(.activationTitle).font(.caption).foregroundStyle(.secondary)
-                Picker(.activationTitle, selection: $draft.activation) {
-                    Text(.pressActivation).tag(PressActivation.press)
-                    Text(.doublePressActivation).tag(PressActivation.doublePress)
-                    Text(.holdActivation).tag(PressActivation.hold)
-                }.pickerStyle(.segmented).labelsHidden().disabled(model.recording != nil)
+                Text(.activationTitle).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
+                EditorActivationPicker(selection: $draft.activation)
+                    .frame(maxWidth: .infinity).frame(height: EditorMetrics.buttonHeight)
+                    .disabled(model.recording != nil)
                 if draft.activation == .hold {
                     HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
-                    Text(.holdHint).font(.caption).foregroundStyle(.secondary)
+                    Text(.holdHint).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
                         .fixedSize(horizontal: false, vertical: true)
                 } else if draft.activation == .doublePress {
-                    Text(.doublePressHint).font(.caption).foregroundStyle(.secondary)
+                    Text(.doublePressHint).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
                         .fixedSize(horizontal: false, vertical: true)
                 }
             } else if draft.mouseTarget == .gestureTrigger {
-                Picker(.pointerDirectionTitle, selection: $draft.pointerDirection) {
-                    ForEach(PointerDirection.allCases, id: \.self) { direction in
-                        Text(direction.label).tag(direction)
-                    }
-                }.pickerStyle(.menu).disabled(model.recording != nil)
+                HStack(spacing: EditorMetrics.fieldSpacing) {
+                    Text(.pointerDirectionTitle).font(EditorTypography.caption).foregroundStyle(Color(.editorTextPrimary))
+                    Spacer(minLength: 8)
+                    EditorMenuSelector(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
+                        choices: PointerDirection.allCases, label: { $0.label })
+                        .frame(maxWidth: EditorMetrics.mouseSelectorWidth)
+                        .accessibilityIdentifier("mouse-direction-selector")
+                        .disabled(model.recording != nil)
+                }
             }
-            Text(help).font(.caption).foregroundStyle(.secondary)
+            Text(help).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func inputKindTitle(_ target: RecordingTarget) -> LocalizedStringResource {
+        switch target {
+        case .scrollTrigger: .mouseWheelInput
+        case .gestureTrigger: .pointerGestureInput
+        default: .mouseButtonInput
         }
     }
 

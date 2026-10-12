@@ -36,7 +36,11 @@ enum InputLabels {
             label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label)))
         case .scroll(let direction): label = AppLocalization.string(direction.label)
         }
-        return modifiers.glyphs + label
+        switch trigger {
+        case .mouseButton, .mouseGesture, .scroll:
+            return modifiers.glyphs.isEmpty ? label : modifiers.glyphs + " " + label
+        default: return modifiers.glyphs + label
+        }
     }
 
     static func shortcut(_ shortcut: KeyboardShortcut) -> String { trigger(.key(shortcut.keyCode), modifiers: shortcut.modifiers) }

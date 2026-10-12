@@ -1,8 +1,10 @@
 # UI-001 — coherent first-run and permission recovery
 
-- Updated: 2026-10-11, after the main-window layout repair and native transition/final artifact checks.
+- Updated: 2026-10-12, after bounded Settings feedback adoption and final checks.
 - Stage: `awaiting_verification`; first-run/recovery/Settings integrated and the reported rendering failure repaired. Actual grant/revocation and broader accessibility acceptance remain open.
-- Owner: Unassigned; `/root` released the bounded window repair/native verification on 2026-10-11. Repaired recovery text sizing and added a native geometry regression; preserved prior implementation, independent trackpad work and General/Input designs. No Sketch edits.
+- Owner: Unassigned; `/root` released bounded Settings → Permissions adoption on 2026-10-12. Earlier window repair is preserved; no Sketch edits.
+- Owned surfaces: PermissionView, opt-in presentation in PermissionCard/PermissionStatusLabel/PermissionAccessControls, native permission layout checks and this task/evidence/status. Existing default setup/banner presentation, engine, catalog and production grants/configuration are outside the change.
+- Ownership baseline: `main` / `59f5754` plus preserved uncommitted editor/Settings/design work, checked 2026-10-12.
 - Reviewed surfaces: Frames 08–13/setup sources, three sidebar icon instances and About; six new size-specific shared styles. Original Brand masters/styles are preserved. Design review ownership was separate; native implementation scope is recorded above.
 - Requirements: SPEC §§6–8/10–11, S2; PLAN Phases 7–9; DESIGN's modern macOS 26+ direction.
 - Code baseline: prior inspection `6c1a5be`; current design session started at `365db64` and ends at `acce2f4`. Actual permission checks/guidance were refreshed; new design records are uncommitted.
@@ -65,8 +67,16 @@ Removed forced vertical sizing from the recovery description: minimum-size probi
 
 Actual grants/revocation, VoiceOver/preferences and complete main Sketch styling remain open. This bounded repair does not finish the product or remaining input capabilities.
 
+## Settings feedback adoption — 2026-10-12
+
+Permissions adopts current shared amber warning/green verified status, compact recovery controls and opt-in raised opaque Light/Dark cards. Shared defaults keep setup/banner/other Settings presentation intact. Actual grant requests/checks, rules/pause, engine, four-language catalog and schema are unchanged. Status/recheck placement follows live Sketch; existing Finder/signing help remains reachable by scrolling.
+
+[Final evidence](../verification/permissions-feedback-adoption.md): **18 selected functions, 656 native viewports, zero failures**, final Debug/signature and scoped English/German Light/Dark live review pass. Grant/revocation, complete spoken VoiceOver/keyboard/preferences and macOS 26/Intel remain open. Intermittent approval-service rate limits prevented additional live state selection; native/software coverage and observed-state limits are explicit. This bounded adoption is implemented; the whole UI-001 acceptance remains `awaiting_verification`.
+
+Next implementation: adopt the separately released [Language selector refinement](UI-019-language-selector-contrast.md) from fresh Sketch or continue remaining Settings/main/profile materials. Reconcile [UI-018](UI-018-human-interface-copy.md) copy when that independent design work is released. No agent commit or Sketch save.
+
 ## Next handoff
 
-- **Code — verification handoff:** verify actual grant/revocation and accessibility for integrated first-run/permission recovery on the repaired native bundle, following [native evidence](../verification/permissions-native.md). The user must control actual grant/revocation and configured input. Keep those gates open when unavailable; General/background in UI-003 remains ready; the bounded window repair is verified.
-- **Design — independent next slice:** General/background behavior is delivered separately in [UI-003](UI-003-general-settings.md); Input/hold timing is delivered in UI-004; Language and Advanced remain. Do not expand UI-001 into all Settings. Native integration checks remain with implementation.
+- **Code — verification handoff:** verify actual grant/revocation and accessibility for integrated first-run/permission recovery and current Settings feedback on the named bundle, following [current evidence](../verification/permissions-feedback-adoption.md) and the earlier [onboarding walkthrough](../verification/permissions-native.md). The user controls actual grants and configured input; keep unavailable gates open. General/Input/Language/Advanced already have native implementations in their owning records.
+- **Design — independent next slice:** continue released-source review/copy under its own task, then hand off affected native reconciliation. Do not expand UI-001 into all Settings; native integration checks remain with implementation.
 - User-facing handoff name: **first-run and permissions**. “Implement the prepared first-run and permissions design” resolves here without a task ID. No automatic agent messaging or extra design-approval gate is implied.

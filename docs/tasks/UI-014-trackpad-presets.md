@@ -29,4 +29,6 @@ Completion freshness check discovered concurrent [UI-015](UI-015-production-desi
 
 ## Next step
 
+2026-10-12 selector follow-up: corrected hit testing over the whole capsule and made the Picker inline, removing the unintended category submenu. Live pointer checks on label/empty center/chevrons expose four direct items; selection and Escape preserve output. Eight targeted functions / 23 executions, including the 160-viewport matrix, pass; normal Debug/strict signature pass. The earlier broad regression is retained as dated evidence. Fresh Sketch inspection did not respond; this independent interaction correction preserves the previously reviewed visual source. Ownership released; [latest artifact/evidence](../verification/trackpad-preset-editor.md#direct-menu-and-full-area-hit-testing-follow-up).
+
 Verify physical three/four single/double taps, timing/click exclusion, Look Up/Zoom coexistence and capture cancellation on the identified ordinary build in the evidence. Complete keyboard/VoiceOver/adaptive preferences and production locale contexts. Continue remaining touch engine/action/list slices independently; do not mark Phase 5 or the final design adoption complete.

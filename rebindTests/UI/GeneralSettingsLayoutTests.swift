@@ -7,14 +7,14 @@ import XCTest
 @MainActor final class GeneralSettingsLayoutTests: XCTestCase {
     private enum Fixture: String, CaseIterable {
         case active, paused, approval, enableFailed, removalFailed, approvalRemovalFailed
-        case unavailable, missingAccess, engineError, secureInput, busy
+        case unavailable, missingAccess, engineError, secureInput, busy, storageLocked, saveFailed
     }
 
     func testGeneralStatesFitSettingsViewportInAllLanguagesAndAppearances() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindGeneralLayout-\(UUID())")
-        let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         defer { try? FileManager.default.removeItem(at: directory) }
         for fixture in Fixture.allCases {
+            let store = ConfigurationStore(url: directory.appending(path: "\(fixture.rawValue)/configuration.json"))
             let service = LoginItemServiceStub(status: fixture == .removalFailed || fixture == .busy ? .enabled : .off)
             let login = LoginItemModel(service: service)
             switch fixture {
@@ -31,6 +31,9 @@ import XCTest
             default: break
             }
             try store.save(Configuration(isEnabled: fixture != .paused))
+            if fixture == .storageLocked {
+                try Data("protected configuration fixture".utf8).write(to: store.url)
+            }
             let grants = InputPermissions(accessibility: fixture != .missingAccess, posting: fixture != .missingAccess)
             let model = AppModel(store: store, sessionAllowsInput: { true }, readPermissions: { grants }, loginItem: login)
             model.mailbox.configure(model.configuration)
@@ -38,6 +41,7 @@ import XCTest
                 $0.status = fixture == .engineError ? .tapFailed : fixture == .secureInput ? .secureInput : .active
             }
             model.refresh()
+            if fixture == .saveFailed { model.error = .storageWriteFailed }
             if fixture == .busy {
                 service.onRemoval = {
                     do { try await self.verifyLayout(model, fixture: fixture) }
@@ -58,6 +62,7 @@ import XCTest
                     .environment(\.locale, Locale(identifier: language))
                     .preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
+                window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
                 window.isReleasedWhenClosed = false
                 defer { window.close() }
                 for size in sizes {

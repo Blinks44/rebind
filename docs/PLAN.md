@@ -5,7 +5,7 @@ Updated 2026-10-12. Read [STATE](STATE.md) first for current facts and next task
 ## Immediate priorities
 
 1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): rebuilt single-tap delivery user-confirmed (~10/10; 25 queued/posted outputs). Click-only recovery and pause/resume, sleep/wake, mixed input are user-confirmed. [Buffer-loss/readiness repair and 200 injected recovery cycles](verification/trackpad-buffer-safety.md) pass; measured physical timing/stress and full T1/T2 safety remain open. Do not substitute visual polish or blind threshold changes for this acceptance check.
-2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. Next actual grant/revocation and accessibility acceptance for first-run/recovery/Settings; current Sketch material adoption remains open.
+2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. [Settings feedback adoption](verification/permissions-feedback-adoption.md) passes bounded software/native checks. Actual grant/revocation/accessibility and remaining setup/main material adoption stay open.
 3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
 
 These are recommended next items, not authorization to run hardware actions or start other agents. The user's next task may select a different slice. Independent design and input work can proceed with explicit ownership.
@@ -63,7 +63,7 @@ The checked items below describe only the stated software/artifact milestone. An
 
 - [x] Versioned atomic storage, corruption/future-file protection, actual permission checks and window-independent runtime foundation exist.
 - [x] Bounded first-run/recovery and Settings → Permissions integrated; actual-grant and full native acceptance remain open in [UI-001](tasks/UI-001-permissions-onboarding.md).
-- [x] Bounded [General/background](tasks/UI-003-general-settings.md) with actual runtime, global pause and SMAppService integration; software/native fixture checks and [full-main overflow repair](verification/general-main-window-repair.md) pass; actual login/relaunch/accessibility acceptance remains open.
+- [x] Bounded [General/background](tasks/UI-003-general-settings.md) with actual runtime, global pause and SMAppService integration; software/native fixture checks and [full-main overflow repair](verification/general-main-window-repair.md) pass; [General shared feedback](verification/general-feedback-adoption.md) also has software/native checks; actual login/relaunch/accessibility acceptance remains open.
 - [x] Bounded [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) native integration, schema 24 and software/full-window/live fixture checks pass; actual input/relaunch/accessibility acceptance remains open in [native evidence](verification/input-language-native.md).
 - [x] Bounded [Advanced backup foundation](tasks/UI-008-advanced-storage.md): shared validated codec, in-memory legacy migration and size-bounded regular-file read; 553 tests / zero failures. Native flows remain separate.
 - [x] Bounded [Advanced native integration](tasks/UI-007-advanced-settings.md): import/export, safe confirmation, paused atomic replacement/reset, protected-original export and diagnostics; 570 tests / zero failures, Debug/native cancellation/layout checks pass. Restored-binding/runtime/accessibility acceptance remains open in [evidence](verification/advanced-settings-native.md).
@@ -73,10 +73,14 @@ The checked items below describe only the stated software/artifact milestone. An
 
 ### Phase 8 — Complete modern native UI and brand
 
+- [x] Bounded [Settings navigation/Language control adoption](tasks/UI-017-settings-control-adoption.md): stable inset track, compact menu and semantic feedback; [software/native checks](verification/settings-control-adoption.md) pass. Remaining Settings/main materials and full accessibility/platform acceptance remain open.
+
+- [x] Bounded [shared editor design adoption](tasks/UI-016-editor-design-adoption.md): Mouse/Trackpad glass selectors, capture/keycaps, native activation and semantic feedback integrated; [software/native sizing and scoped live evidence](verification/editor-design-adoption.md) pass. Full Keyboard/Settings/main adoption and active-recording/accessibility/preferences/platform acceptance remain open.
 - [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.
 
 - [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
 - [x] [Final design coverage](tasks/UI-013-design-coverage-completion.md) saved/reviewed: curated Trackpad/Magic Mouse selectors, action parameters/recovery, profile/category states and four-language copy. Temporary implementation placeholders removed; native implementation remains open.
+- [x] [Production design review](tasks/UI-015-production-design-review.md) covers all 125 screens and 28 source boards; reusable geometry, menu, Dark-appearance and state corrections saved/reviewed. Native adoption and acceptance remain open.
 - [ ] Implement current Sketch desktop hierarchy and purposeful macOS 26+ Liquid Glass/elevation/gradients per [DESIGN](DESIGN.md), including all functional states and window resizing. The saved [glass controls](tasks/UI-011-control-unification.md) and [semantic feedback](tasks/UI-012-semantic-feedback.md) refine the earlier material review; use their shared roles in all further design. Native adoption remains open.
 - [ ] Finish keyboard/VoiceOver, Light/Dark, Reduce Transparency/Motion, Increase Contrast and usability acceptance.
 - [ ] Finish icon runtime checks. [BRAND-001](tasks/BRAND-001-icon-runtime.md).

@@ -32,3 +32,7 @@ Save callback succeeded; ZIP CRC passes, all baseline layer IDs remain, 89 scree
 Implementation: adopt the saved shared glass controls and editor spacing from live Sketch, including the integrated Mouse implementation. This revision supersedes the earlier flat Medium-popup treatment; earlier native screenshots do not verify these revised materials. Preserve native semantics, pinned actions and the full-main sizing repair. Native focus/VoiceOver, adaptive materials and four-language resizing remain open.
 
 Design: continue Trackpad/Magic Mouse coverage within actual acquisition/support limits.
+
+2026-10-12 native follow-up: [UI-016](UI-016-editor-design-adoption.md) adopts the bounded Mouse/Trackpad editor portion and shared action/feedback. [Software/native evidence](../verification/editor-design-adoption.md) records its checks and the superseding stable SwiftUI activation correction. Other screens and full accessibility/preferences acceptance remain open; the design-wide handoff is not complete.
+
+2026-10-12 Settings follow-up: [UI-017](UI-017-settings-control-adoption.md) integrates shared navigation/compact Language controls and Language error/reopen feedback. [Final native/software evidence](../verification/settings-control-adoption.md) passes; broader Settings/main and full accessibility/preferences acceptance remain open.

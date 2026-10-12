@@ -8,12 +8,10 @@ struct ActionPickerView: View {
 
     var body: some View {
         Button { search = ""; presented = true } label: {
-            HStack {
-                Text(selection.title)
-                Spacer()
-                Image(systemName: "chevron.up.chevron.down").accessibilityHidden(true)
-            }
-        }.accessibilityLabel(Text(.chooseAction)).accessibilityValue(Text(selection.title))
+            EditorSelectorLabel(title: selection.title,
+                symbol: selection == .keyboardShortcut ? "command" : nil)
+        }.buttonStyle(.plain).modifier(EditorGlassSurface())
+            .accessibilityLabel(Text(.chooseAction)).accessibilityValue(Text(selection.title))
             .disabled(model.recording != nil)
             .sheet(isPresented: $presented) {
                 VStack(alignment: .leading, spacing: 16) {

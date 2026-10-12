@@ -4925,13 +4925,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Double press"
+            "value": "Double Press"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Double pression"
+            "value": "Double appui"
           }
         },
         "ru": {
@@ -5557,25 +5557,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Langes Drücken"
+            "value": "Halten"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Long press"
+            "value": "Hold"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Appui prolongé"
+            "value": "Maintien"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Длительное нажатие"
+            "value": "Удержание"
           }
         }
       }
@@ -7162,25 +7162,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mauseingabe"
+            "value": "Eingabetyp"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mouse Input"
+            "value": "Input type"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entrée de la souris"
+            "value": "Type d’entrée"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ввод мыши"
+            "value": "Тип ввода"
           }
         }
       }
@@ -7197,7 +7197,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Wheel"
+            "value": "Mouse Wheel"
           }
         },
         "fr": {
@@ -7917,25 +7917,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auszugebende Tastenkombination"
+            "value": "Tastenkombination"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Output Keyboard Shortcut"
+            "value": "Keyboard Shortcut"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Raccourci clavier de sortie"
+            "value": "Raccourci clavier"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Выходное сочетание клавиш"
+            "value": "Сочетание клавиш"
           }
         }
       }
@@ -8796,7 +8796,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Button + movement"
+            "value": "Pointer Gesture"
           }
         },
         "fr": {
@@ -8935,25 +8935,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Beim Drücken"
+            "value": "Drücken"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On press"
+            "value": "Press"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "À la pression"
+            "value": "Appui"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "При нажатии"
+            "value": "Нажатие"
           }
         }
       }
@@ -10736,25 +10736,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach unten scrollen"
+            "value": "Mausrad nach unten"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Down"
+            "value": "Wheel down"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défiler vers le bas"
+            "value": "Molette vers le bas"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка вниз"
+            "value": "Колесо вниз"
           }
         }
       }
@@ -10766,25 +10766,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach links scrollen"
+            "value": "Mausrad nach links"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Left"
+            "value": "Wheel left"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défiler vers la gauche"
+            "value": "Molette vers la gauche"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка влево"
+            "value": "Колесо влево"
           }
         }
       }
@@ -10796,25 +10796,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach rechts scrollen"
+            "value": "Mausrad nach rechts"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Right"
+            "value": "Wheel right"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défiler vers la droite"
+            "value": "Molette vers la droite"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка вправо"
+            "value": "Колесо вправо"
           }
         }
       }
@@ -10826,25 +10826,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nach oben scrollen"
+            "value": "Mausrad nach oben"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scroll Up"
+            "value": "Wheel up"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défiler vers le haut"
+            "value": "Molette vers le haut"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Прокрутка вверх"
+            "value": "Колесо вверх"
           }
         }
       }
@@ -14320,6 +14320,94 @@
           "stringUnit": {
             "state": "translated",
             "value": "Actif"
+          }
+        }
+      }
+    },
+    "+": {},
+    "editorRecordTrigger": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record Trigger"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записать"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfassen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "editorRecordOutput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record Output"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записать"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfassen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "editorSaveBinding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Binding"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
           }
         }
       }

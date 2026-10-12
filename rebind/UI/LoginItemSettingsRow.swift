@@ -5,26 +5,31 @@ struct LoginItemSettingsRow: View {
     let model: LoginItemModel
 
     var body: some View {
-        PermissionCard {
-            if model.showsToggle {
+        if model.showsToggle {
+            PermissionCard {
                 Toggle(isOn: loginEnabled) { label }
                     .toggleStyle(.switch)
                     .accessibilityLabel(Text(.launchAtLogin))
                     .accessibilityHint(Text(model.description))
-            } else {
-                VStack(alignment: .leading, spacing: 12) {
-                    label
-                    if model.operation != nil {
-                        ProgressView().controlSize(.small).accessibilityHidden(true)
-                    } else {
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 8) { recoveryActions }
-                            VStack(alignment: .leading, spacing: 8) { recoveryActions }
-                        }.buttonStyle(.bordered)
+            }
+        } else {
+            EditorFeedback(severity: feedbackSeverity, title: .launchAtLogin, message: model.description) {
+                if model.operation != nil {
+                    ProgressView().controlSize(.small).accessibilityHidden(true)
+                } else {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 8) { recoveryActions }
+                        VStack(alignment: .leading, spacing: 8) { recoveryActions }
                     }
                 }
             }
         }
+    }
+
+    private var feedbackSeverity: EditorFeedbackSeverity {
+        if model.operation != nil { return .information }
+        if model.status == .unavailable { return .warning }
+        return model.failedOperation == nil ? .warning : .error
     }
 
     private var label: some View {

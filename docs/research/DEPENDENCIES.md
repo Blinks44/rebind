@@ -1,10 +1,12 @@
 # Rebind — dependency and reference register
 
-Last migrated 2026-10-10; review dates in individual entries are historical unless explicitly refreshed. [Renewed tap audit](trackpad-tap-reliability.md) records current pinned OpenMultitouchSupport/Subsurface/Sanne metadata, new Touchy/MultiTouch alternatives, licensing/platform limits and the decision to fix reproduced consumer bugs without a new dependency.
+Last migrated 2026-10-10; [twelve-candidate touch audit](touch-library-audit.md) refreshed 2026-10-12 with full pinned revisions, available licenses, manifests, maintenance and source findings. Review dates in individual entries are historical unless explicitly refreshed. [Renewed tap audit](trackpad-tap-reliability.md) records current pinned OpenMultitouchSupport/Subsurface/Sanne metadata, new Touchy/MultiTouch alternatives, licensing/platform limits and the decision to fix reproduced consumer bugs without a new dependency.
 
 The app has no Swift package dependency. It does contain credited source adaptations and isolated private-API adapters; the standalone TrackpadProbe has its own pinned packages. See the current adoption summary in [research](README.md), the actual [probe manifest](../../tools/TrackpadProbe/Package.swift), its lockfile, and [bundled notices](../../rebind/Resources/ThirdPartyNotices.txt). Candidate rows describe the scope at their review date; consult the current summary before reusing an old decision. Maintenance dates are evidence, not compatibility guarantees.
 
 For each new dependency/reference record purpose, URL/revision, license, OS/Swift support, maintenance, limitations, native alternatives and decision. Reuse a relevant prior audit and refresh uncertain/version-sensitive facts before changing the mechanism. No automatic installs.
+
+2026-10-12: [seven-candidate Liquid Glass and skill audit](liquid-glass-library-audit.md) records pinned revisions, licenses/platform/source limits and the native/shared-component decision for editor fidelity. No package, shader, copied source or new skill installed.
 
 | Candidate / source | Purpose, compatibility and maintenance | License / limits / decision |
 |---|---|---|
@@ -69,6 +71,10 @@ Swift Package Index was searched: [KeyboardShortcuts](https://swiftpackageindex.
 
 Update this table when a package is actually installed or rejected. Don't present candidate names as installed dependencies.
 
+## Trackpad selective suppression — 2026-10-12
+
+Scoped follow-up: [scoped source/API refresh](native-gesture-suppression.md) distinguishes active Quartz filtering from raw-contact observation. Native global NSEvent monitoring and the reviewed default-device touch stream do not establish selective suppression. No new dependency/filter or OS setting change; named-hardware acquisition/coexistence evidence is the next gate.
+
 ## Advanced configuration transactions — 2026-10-11
 
 UI-007 retains native SwiftUI fileImporter, AppKit [NSSavePanel.begin](https://developer.apple.com/documentation/appkit/nssavepanel/begin(completionhandler:)) / NSAlert sheets, Foundation Codable, atomic Data writes and [FileManager replacement](https://developer.apple.com/documentation/foundation/filemanager/replaceitemat(_:withitemat:backupitemname:options:)). NSSavePanel allows original-path/symlink/hard-link validation before writing; protected originals use a raw copy through a destination-volume replacement directory rather than decoding or loading an oversized file into Data. No input callback performs this work. The final alert's local Escape monitor is scoped to that UI sheet and removed after dismissal; it is not global capture.
@@ -86,3 +92,7 @@ Retain the existing native acquisition, bounded buffer and short-contact classif
 ## Three/four-finger double-tap sequencing — 2026-10-12
 
 [INPUT-003 research/evidence](../verification/double-tap-engine.md) refreshes Apple system timing/Zoom reservation, GitHub MultiTouch and SPI discovery. Reuse the existing private acquisition and pure sequence; no package or source copied. Earlier pinned license/maintenance audit remains authoritative where current metadata/raw license requests failed. Native physical click qualification, system conflicts and platform acceptance remain open.
+
+## Touch acquisition and reusable recognition — 2026-10-12
+
+[Current candidate register and decision](touch-library-audit.md) supersede older touch candidate metadata where explicitly refreshed. Subsurface and OpenMultitouchSupport are real acquisition packages; CalmMouseCore exports pure tap/scroll logic; MagicBind/Sanne contain internal targets rather than ready library products, and MouseToucherLib excludes acquisition. Limited scroll/click filtering is distinct from selective native-gesture cancellation. MIT/Apache reuse candidates require a bounded adapter and named-hardware tests. GPL sources remain conceptual; Touchy has no identified license. No app/probe package, lockfile, source or bundled notice changed. Next evaluate a small isolated Magic Mouse acquisition/coexistence path while retaining the existing Trackpad engine; the smaller initial preset pool remains a proposal, not a changed release requirement.

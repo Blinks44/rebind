@@ -6,6 +6,7 @@ struct PermissionStatusLabel: View {
     let status: LocalizedStringResource
     var isWarning = false
     var isPrimary = false
+    var isVerified = false
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
@@ -25,7 +26,8 @@ struct PermissionStatusLabel: View {
 
     private var statusText: some View {
         Text(status).font(.callout)
-            .foregroundStyle(isWarning ? Color(.permissionWarning) : Color.secondary)
+            .foregroundStyle(isWarning ? Color(.permissionWarning)
+                             : isVerified ? Color(.permissionSuccess) : Color.secondary)
             .fixedSize(horizontal: false, vertical: true)
     }
 }

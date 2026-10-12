@@ -36,6 +36,14 @@ Adopt the useful macOS-applicable conventions from SwiftAgents:
 - In `NavigationSplitView`, vertically fixed text outside scrolling content can inflate the native split's minimum height during sizing. Keep pinned Settings/runtime text responsive to size proposals; do not fix overflow with clipping or per-locale heights. Check each added section inside the full main window, including native split/column bounds, resizing and transitions; a standalone page fixture or root hosting bounds alone cannot establish integration. See [General regression evidence](verification/general-main-window-repair.md).
 - Avoid iOS-only instructions from upstream SwiftAgents (UIKit, `UIScreen`, iOS-specific navigation assumptions) in this macOS project.
 
+### Translating the live design into SwiftUI
+
+Inspect the relevant Sketch composition **and** its shared symbols, Foundations and state annotations before changing a control. Use logical points, not dimensions inferred from a zoomed screenshot. Map colors to adaptive assets, text roles to shared typography and repeated geometry to scoped metrics. Sketch remains the source; these are executable implementation tokens, not a second visual specification.
+
+Build repeated controls once as small SwiftUI views, `ButtonStyle` or `ViewModifier` implementations. Keep `Button`, native menu tracking, bindings, disabled behavior and system keyboard focus. Screens compose the same selector, capture, keycap, selection-track and feedback components; avoid a new style per screen. Reuse an existing component before introducing another abstraction.
+
+Review a UI-only component specimen first, then the actual editor/window in the same state, language, appearance and logical size as Sketch. Keep previews independent of `AppModel`, persistent user data and input interception. Check active/inactive, enabled/disabled, focus, localized expansion and adaptive preferences separately. A layout test proves bounds; compilation does not prove materials. Fix observed differences before expanding adoption and record any native-renderer limitation explicitly. Never describe a custom wash as native Liquid Glass or claim full-screen fidelity from a component-only review.
+
 ## 5. Global input engine: non-negotiable rules
 
 - Keep global interception, low-level event capture, input matching, action dispatch, persistence, and UI presentation separate enough to test, but avoid unnecessary interface layers.

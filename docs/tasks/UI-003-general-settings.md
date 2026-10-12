@@ -1,12 +1,12 @@
 # UI-003 — General settings and background behavior
 
-- Updated: 2026-10-11.
-- Stage: `awaiting_verification`; reported full-main Settings overflow reproduced/repaired; actual login/relaunch/accessibility acceptance remains open.
-- Owner: Unassigned; `/root` AppKit warning investigation released 2026-10-11. Warning traced to the OS window-sharing indicator during Computer Use; no production layout patch. Production restart checks are user-led.
-- Ownership checked: 2026-10-11, `main` / `acce2f4`; delivered General owner released, actual source/diff inspected. No active conflicting ownership identified in project records. Live General Light and approval frames/styles refreshed through MCP; document ID `E50CA3D9-82B1-44C0-AC97-39F1A9663700`.
-- Owned surfaces: new General/login/settings Swift files and tests; bounded integration in ContentView, MainDestination, AppModel, PermissionView, rebindApp and Localizable.xcstrings; this task and affected evidence/STATE/index/history sections. Existing uncommitted permission/trackpad work is preserved. Sketch is read-only.
+- Updated: 2026-10-12.
+- Stage: `awaiting_verification`; General feedback adopted; actual login/relaunch/accessibility acceptance remains open.
+- Owner: Unassigned; `/root` released bounded General feedback adoption on 2026-10-12. Real login/restart checks remain user-led.
+- Ownership checked: 2026-10-12, `main` / `59f5754`; inspected actual source/diff and released UI-016/UI-017 ownership. Preserved uncommitted editor/design work; current Sketch document resolved directly through MCP.
+- Owned surfaces: GeneralSettingsView, LoginItemSettingsRow, GeneralSettingsLayoutTests and affected task/evidence/status sections for the current slice. No shared-component, Sketch, engine, login-service or catalog edits.
 - Requirements: SPEC §§6, 8, 10–11, S1; PLAN Phases 7–9.
-- Code baseline: `acce2f4`; external commit advanced HEAD to `b453d8d` during work and captured the first General implementation. Final refinements/evidence remain uncommitted; no agent commit made.
+- Initial code baseline: `acce2f4`; external commit `b453d8d` captured the first General implementation. Current feedback slice is `59f5754` plus the files above and preserved uncommitted work; no agent commit.
 
 ## Outcome and scope
 
@@ -51,11 +51,16 @@ Native Russian General → Permissions → rules → Settings transitions checke
 ## Next handoff
 
 - **Verification:** on an explicitly identified bundle, perform the six actual login/lifecycle/accessibility checks in the native evidence. Real user login/permission changes remain user-controlled.
-- **Layout follow-up:** isolate the native view emitting negative-size AppKit warnings during visible Dark transitions/resizing; the reported overflow did not recur in this inspection.
-- **Code:** next independent bounded slice is [Input overview and per-binding Hold timing](UI-004-input-settings.md); Language is also design-ready in [UI-005](UI-005-language-settings.md).
-- **Design:** next Settings → Advanced; preserve completed General/Input/Language sources.
+- **Code:** continue remaining Settings → Permissions feedback/material adoption from current live Sketch and existing components. Input, Language and Advanced already have native implementation; do not recreate them from historical next-step notes.
+- **Design:** review justified native feedback arrangement/scrolling differences against the saved source; existing design remains released.
 - User-facing name: **General settings and background behavior**. General implementation is available; required native acceptance remains open.
 
 ## AppKit warning isolation — 2026-10-11
 
-[Captured stacks and controlled runs](../verification/appkit-sharing-indicator.md) attribute the warning to NSWindowSharingSessionRecipientIndicator receiving (-1, -1) during selective sharing/inspection. The same actual-main fixture without Computer Use emits zero such warnings. No production control/layout workaround was added; temporary instrumentation removed. The warning investigation is complete on this host; real login/relaunch and accessibility acceptance remain open. Next implementation slice: [Advanced backup foundation](UI-008-advanced-storage.md), then released Advanced UI-007 design.
+[Captured stacks and controlled runs](../verification/appkit-sharing-indicator.md) attribute the warning to NSWindowSharingSessionRecipientIndicator receiving (-1, -1) during selective sharing/inspection. The same actual-main fixture without Computer Use emits zero such warnings. No production control/layout workaround was added; temporary instrumentation removed. The warning investigation is complete on this host; real login/relaunch and accessibility acceptance remain open. The then-next Advanced slices have since been implemented in UI-008/UI-007; current next work is listed below.
+
+## General feedback adoption — 2026-10-12
+
+Adopted existing shared semantic feedback/recovery controls from live General and Foundations 04/14/15. Runtime/login failures, missing access/protected configuration, approval/unavailable and busy states retain actual-state behavior and four-language copy. Neutral pause remains neutral. General status scrolls with content to accommodate expanded messages without the old split-view minimum-height failure; protected-file guidance is shown once.
+
+[Final evidence](../verification/general-feedback-adoption.md): 23 selected functions pass, 728 native viewports, final Debug/strict signature and isolated live English Light/German Dark compact review. Temporary test-store isolation and unsupported accessibility Environment override attempts are documented with their limits. No actual login/input/permission/configuration/Sketch change or agent commit. Required runtime/accessibility/minimum-OS checks remain open; ownership released. Next independent slice: Settings → Permissions feedback/material adoption.

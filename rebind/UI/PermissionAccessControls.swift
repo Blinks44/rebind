@@ -4,13 +4,14 @@ import SwiftUI
 struct PermissionAccessControls: View {
     let model: AppModel
     let requirement: InputPermissionRequirement
+    var usesCompactStyle = false
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
             HStack(spacing: 16) { buttons }
             VStack(alignment: .leading, spacing: 12) { buttons }
         }
-        .controlSize(.large)
+        .controlSize(usesCompactStyle ? .regular : .large)
         .buttonBorderShape(.capsule)
     }
 
@@ -23,6 +24,10 @@ struct PermissionAccessControls: View {
                 .buttonStyle(.borderedProminent)
                 .disabled(model.permissions.requirement != .eventPosting)
         }
-        Button(.checkAgain) { model.refreshPermissions() }.buttonStyle(.bordered)
+        if usesCompactStyle {
+            Button(.checkAgain, action: model.refreshPermissions).modifier(EditorSecondaryButton())
+        } else {
+            Button(.checkAgain, action: model.refreshPermissions).buttonStyle(.bordered)
+        }
     }
 }

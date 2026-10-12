@@ -8,6 +8,10 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 ## Existing pending handoffs
 
+- [UI-019](UI-019-language-selector-contrast.md): compact Language selector contrast saved/reviewed in Sketch; adopt the revised materials within the existing UI-017 control and verify native focus/adaptive appearance.
+
+- [UI-015](UI-015-production-design-review.md): full production design review saved/reviewed; adopt the current shared chip/alignment, menu, Dark-material/contrast and native-state corrections directly from Sketch. Native acceptance remains open.
+
 - [UI-014](UI-014-trackpad-presets.md): integrated three/four single/double preset editor and independent output recording, with conditional OS conflict guidance. Verify physical taps/coexistence, capture and accessibility; broader touch preset/action/list adoption stays open.
 
 - [INPUT-003](INPUT-003-double-tap-engine.md): three/four-finger single/double engine/data integration, schema 26; engine evidence retained. UI-014 connects the editor; physical timing/click/native-conflict verification remains open.
@@ -18,7 +22,7 @@ IDs are agent-maintained references. Users may continue work or name an outcome 
 
 - [INPUT-001](INPUT-001-four-finger-tap.md): built-in four-finger delivery/click recovery and requested lifecycle/mixed-input walkthrough user-confirmed; quantified stress/full safety/platform checks remain.
 - [UI-001](UI-001-permissions-onboarding.md): native first-run/recovery and Settings → Permissions integrated; reported window clipping repaired; 508 Swift Testing cases plus one native layout test pass. Native navigation/deferral checked; actual-grant/accessibility acceptance remains open.
-- [UI-003](UI-003-general-settings.md): General/background implemented, awaiting verification; 532 tests / zero failures, full-main overflow repaired, 224 full Settings combinations and live Dark/compact navigation checked. AppKit warning isolated to OS sharing/inspection; actual login/relaunch/VoiceOver acceptance pending.
+- [UI-003](UI-003-general-settings.md): General/background implemented, awaiting verification; 532 tests / zero failures, full-main overflow repaired, 224 full Settings combinations and live Dark/compact navigation checked. AppKit warning isolated to OS sharing/inspection. [General feedback follow-up](../verification/general-feedback-adoption.md): 23 functions/728 viewports and live review pass; actual login/relaunch/VoiceOver acceptance pending.
 - [UI-004](UI-004-input-settings.md): Input/Hold integrated; software/full-window and native Stepper/save retry pass. Physical timing and full editor/accessibility acceptance remain open.
 - [UI-005](UI-005-language-settings.md): native five-choice Language/atomic persistence/reopen feedback and schema 24 integrated; software/layout/live Apply/AX pass. Production relaunch/Cocoa repair and full accessibility remain open.
 - [BRAND-001](BRAND-001-icon-runtime.md): delivered icons awaiting remaining runtime/minimum-OS checks.
@@ -42,3 +46,11 @@ Advanced native integration is implemented in [UI-007](UI-007-advanced-settings.
 [Semantic feedback and state accents](UI-012-semantic-feedback.md) is saved/reviewed: Foundations 15 and live Light/Dark feedback styles/sources govern current and subsequent states. Native appearance/accessibility adoption remains open.
 
 Completed bounded [protected ordinary saves and software restoration](STORAGE-001-protected-saves.md): files changed after launch remain protected; export/reset/import/resume matches restored selected rules in injected tests. [596-test/Debug evidence](../verification/protected-saves-and-restoration.md) passes. Native/hardware/relaunch/accessibility acceptance stays open in UI-007/profiles.
+
+[Shared binding-editor design adoption](UI-016-editor-design-adoption.md) integrates the released controls/capture/keycaps/feedback in Mouse/Trackpad editors, with full-width native activation. [Final software/native evidence](../verification/editor-design-adoption.md) passes; active recording, full keyboard/VoiceOver, adaptive preferences and broader Settings/main adoption remain open. Implementation ownership released.
+
+Completed bounded [touch-library source audit](RESEARCH-001-touch-library-audit.md): twelve pinned candidates and a proposed initial tap pool; [reuse decision](../research/touch-library-audit.md) ready for isolated hardware/coexistence evaluation. No engine integration, dependency or new capability claim.
+
+[Settings navigation/Language adoption](UI-017-settings-control-adoption.md) is integrated: stable inset glass tabs, compact anchored language menu and semantic save/reopen feedback. [Native/software evidence](../verification/settings-control-adoption.md) passes; full keyboard/VoiceOver/preferences/minimum-OS acceptance remains. Magic Mouse is deferred until hardware is available.
+
+[Settings Permissions feedback](UI-001-permissions-onboarding.md#settings-feedback-adoption--2026-10-12) is integrated with shared states/recovery and opt-in raised cards. [Final evidence](../verification/permissions-feedback-adoption.md): native/software and scoped live checks pass; actual grants and full keyboard/VoiceOver/preferences acceptance stay open.

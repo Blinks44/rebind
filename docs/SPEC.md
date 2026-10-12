@@ -231,6 +231,7 @@ Provide a clear **Add Binding** flow:
 
 Requirements:
 
+- The entire Trackpad selector (label, empty space and chevrons) opens its curated presets directly, without an intervening category submenu.
 - Differentiate trigger recorder from output shortcut recorder. Do not accidentally execute output during recording.
 - Touch input exposes only the curated gesture pool. Output keyboard-shortcut recording remains available to every category and is independent of trigger selection.
 - Always provide cancel/retry/clear; scope recording to the active prompt; suppress or neutralize recorded events only when safe and possible.
