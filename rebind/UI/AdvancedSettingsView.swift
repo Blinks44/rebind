@@ -73,7 +73,7 @@ struct AdvancedSettingsView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 28).padding(.bottom, 28)
+            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
         }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { request = FileRequest(importURL: url) }

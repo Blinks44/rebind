@@ -15,7 +15,7 @@ struct GeneralSettingsView: View {
                     Toggle(isOn: remappingEnabled) {
                         settingLabel(.enableRemapping, description: .enableRemappingDescription)
                     }
-                    .toggleStyle(.switch)
+                    .toggleStyle(ThemeSwitchStyle())
                     .accessibilityLabel(Text(.enableRemapping))
                     .accessibilityHint(Text(.enableRemappingDescription))
                     .disabled(model.storageLocked && !model.configuration.isEnabled)
@@ -24,14 +24,14 @@ struct GeneralSettingsView: View {
                 PermissionCard {
                     settingLabel(.backgroundTitle, description: .backgroundDescription)
                 }
-                Text(.quitGuidance).font(.callout).foregroundStyle(.secondary)
+                Text(.quitGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 if let error = model.error, model.generalRuntime != .storageLocked {
                     EditorFeedback(severity: .error, title: error)
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 28).padding(.bottom, 28)
+            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
@@ -53,9 +53,9 @@ struct GeneralSettingsView: View {
                            message: model.generalRuntime.description)
         case .active, .paused, .starting, .secureInput, .suspended:
             VStack(alignment: .leading, spacing: 8) {
-                Text(model.generalRuntime.title).font(.headline).accessibilityAddTraits(.isHeader)
+                Text(model.generalRuntime.title).font(Theme.headline).accessibilityAddTraits(.isHeader)
                 if model.generalRuntime != .starting {
-                    Text(model.generalRuntime.description).foregroundStyle(.secondary)
+                    Text(model.generalRuntime.description).foregroundStyle(Theme.textSecondary)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -69,9 +69,9 @@ struct GeneralSettingsView: View {
 
     private func settingLabel(_ title: LocalizedStringResource,
                               description: LocalizedStringResource) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-            Text(description).font(.callout).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+            Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

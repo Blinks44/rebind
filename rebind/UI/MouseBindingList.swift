@@ -2,15 +2,17 @@ import SwiftUI
 
 enum MouseBindingList {
     static func matching(_ bindings: [Binding], search: String) -> [Binding] {
+        bindings.filter { $0.scope == .allMice && matches($0, search: search) }
+    }
+
+    /// Search over the visible trigger, activation and action text of any rule.
+    static func matches(_ binding: Binding, search: String) -> Bool {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        return bindings.filter { binding in
-            guard binding.scope == .allMice else { return false }
-            return query.isEmpty
-                || InputLabels.trigger(binding.trigger, modifiers: binding.modifiers).localizedStandardContains(query)
-                || AppLocalization.string(detail(for: binding)).localizedStandardContains(query)
-                || (binding.activation == .hold && String(binding.holdDurationMilliseconds).contains(query))
-                || binding.action.label.localizedStandardContains(query)
-        }
+        return query.isEmpty
+            || InputLabels.trigger(binding.trigger, modifiers: binding.modifiers).localizedStandardContains(query)
+            || AppLocalization.string(detail(for: binding)).localizedStandardContains(query)
+            || (binding.activation == .hold && String(binding.holdDurationMilliseconds).contains(query))
+            || binding.action.label.localizedStandardContains(query)
     }
 
     static func detail(for binding: Binding) -> LocalizedStringResource {

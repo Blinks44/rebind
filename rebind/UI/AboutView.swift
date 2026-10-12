@@ -20,16 +20,16 @@ struct AboutView: View {
                             .resizable().frame(width: 80, height: 80)
                             .accessibilityHidden(true)
                         VStack(spacing: 4) {
-                            Text("Rebind").font(.largeTitle.bold()).accessibilityAddTraits(.isHeader)
-                            Text(information.versionLabel).font(.caption).foregroundStyle(.secondary)
+                            Text("Rebind").font(Theme.largeTitle).accessibilityAddTraits(.isHeader)
+                            Text(information.versionLabel).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                                 .textSelection(.enabled)
                         }
                     }
-                    Text(.aboutDescription).foregroundStyle(.secondary)
+                    Text(.aboutDescription).foregroundStyle(Theme.textSecondary)
                     Divider().frame(maxWidth: 200)
                     VStack(spacing: 12) {
-                        Text(.aboutCredits).font(.callout).foregroundStyle(.secondary)
-                        Button(.aboutLicenses) { showingLicenses = true }.buttonStyle(.bordered)
+                        Text(.aboutCredits).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                        Button(.aboutLicenses) { showingLicenses = true }.modifier(EditorSecondaryButton())
                     }
                 }
                 .multilineTextAlignment(.center)
@@ -39,11 +39,11 @@ struct AboutView: View {
             }
             HStack {
                 Spacer()
-                Button(.aboutDone) { dismiss() }.buttonStyle(.borderedProminent)
+                Button(.aboutDone) { dismiss() }.buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
                     .keyboardShortcut(.defaultAction)
             }.padding(24)
         }
-        .background(PermissionCanvas())
+        .background { ThemeCanvas() }
         .frame(minWidth: 440, idealWidth: 440, minHeight: 448, idealHeight: 448)
         .sheet(isPresented: $showingLicenses) {
             ThirdPartyNoticesView(text: information.notices)

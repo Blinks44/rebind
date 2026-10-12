@@ -8,7 +8,7 @@ struct LoginItemSettingsRow: View {
         if model.showsToggle {
             PermissionCard {
                 Toggle(isOn: loginEnabled) { label }
-                    .toggleStyle(.switch)
+                    .toggleStyle(ThemeSwitchStyle())
                     .accessibilityLabel(Text(.launchAtLogin))
                     .accessibilityHint(Text(model.description))
             }
@@ -33,9 +33,9 @@ struct LoginItemSettingsRow: View {
     }
 
     private var label: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(.launchAtLogin)
-            Text(model.description).font(.callout).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 4) {
+            Text(.launchAtLogin).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+            Text(model.description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

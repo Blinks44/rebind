@@ -15,9 +15,9 @@ struct PermissionSetupView: View {
                     requiredAccess
                     VStack(alignment: .leading, spacing: 12) {
                         PermissionStatusLabel(title: .inputMonitoringTitle, status: .notRequired)
-                        Text(.otherPermissionsPurpose).foregroundStyle(.secondary)
+                        Text(.otherPermissionsPurpose).foregroundStyle(Theme.textSecondary)
                     }
-                    Text(.privacyAssurance).font(.callout).foregroundStyle(.secondary)
+                    Text(.privacyAssurance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     if let error = model.error { Text(error).foregroundStyle(.red) }
                 }
                 .fixedSize(horizontal: false, vertical: true)
@@ -37,7 +37,7 @@ struct PermissionSetupView: View {
                         guard model.permissions.allowsRemapping else { return }
                         finishSetup()
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
                     .keyboardShortcut(.defaultAction)
                     .disabled(!model.permissions.allowsRemapping)
                 }
@@ -47,7 +47,7 @@ struct PermissionSetupView: View {
             .padding(.horizontal, 32).padding(.bottom, 32).padding(.top, 16)
         }
         .frame(minWidth: 520, idealWidth: 560, minHeight: 560, idealHeight: 580)
-        .background { PermissionCanvas() }
+        .background { ThemeCanvas() }
         .interactiveDismissDisabled(context == .firstRun)
     }
 
@@ -57,9 +57,9 @@ struct PermissionSetupView: View {
                 .resizable().frame(width: 48, height: 48).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 8) {
                 Text(context == .recovery ? LocalizedStringResource.restoreTitle : .setupTitle)
-                    .font(.title.bold()).accessibilityAddTraits(.isHeader)
+                    .font(Theme.largeTitle).accessibilityAddTraits(.isHeader)
                 Text(context == .recovery ? LocalizedStringResource.restorePurpose : .setupPurpose)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.textSecondary)
             }
         }.frame(minHeight: 88, alignment: .top)
     }
@@ -71,18 +71,18 @@ struct PermissionSetupView: View {
                                       status: context == .recovery ? .accessLost : .notEnabled, isWarning: true, isPrimary: true)
                 Text(context == .recovery ? LocalizedStringResource.accessLostPurpose
                      : requirement == .accessibility ? .accessibilityPurpose : .eventSendingPurpose)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.textSecondary)
                 PermissionAccessControls(model: model, requirement: requirement)
                 Text(requirement == .eventPosting ? LocalizedStringResource.eventSendingSteps
                      : context == .recovery ? .restoreSteps : .accessibilitySteps)
-                    .font(.callout).foregroundStyle(.secondary)
+                    .font(Theme.callout).foregroundStyle(Theme.textSecondary)
             } else {
                 PermissionStatusLabel(title: .permissionsTitle, status: .ready, isPrimary: true)
                 Text(context == .recovery ? LocalizedStringResource.permissionsRespectsPause : .readyPurpose)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.textSecondary)
                 Button(.checkAgain) { model.refreshPermissions() }
-                    .buttonStyle(.bordered).controlSize(.large).buttonBorderShape(.capsule)
-                Text(.backgroundHint).font(.callout).foregroundStyle(.secondary)
+                    .modifier(EditorSecondaryButton()).controlSize(.large).buttonBorderShape(.capsule)
+                Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
         }
     }

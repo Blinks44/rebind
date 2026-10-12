@@ -1,22 +1,42 @@
 # Rebind — design direction and live source index
 
-Updated 2026-10-12. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-12 (soft design system). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under [UI-013](tasks/UI-013-design-coverage-completion.md). Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
-## Direction: modern macOS 26+
+## Direction: soft, opaque-first macOS 26+ (2026-10-12)
 
-Use purposeful Liquid Glass for navigation/profile controls and overlays; raised opaque content surfaces, subtle lighting and gradients provide depth without obscuring dense rules. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density. Avoid indiscriminate blur, stacked glass and decorative animation. Do not flatten the agreed material direction into generic Settings merely because default styling is easier.
+User decision 2026-10-12: the calm look of **Rebind - new.sketch** replaces the Liquid Glass direction. Surfaces are opaque-first with soft shadows and 1 pt hairlines; controls are 36 pt capsules (28 pt small); lists sit on one raised card with 72 pt rows; raised SF Pro Rounded keycaps are the brand motif; one blue accent, and other color only for state. Only the sidebar and menus may use a system material. Light and Dark share geometry, type and spacing. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density.
 
-Consistency is defined by control role and size. The saved [glass-control refinement](tasks/UI-011-control-unification.md) uses 36 pt capsule form/profile/action selectors, a compact 24 pt glass capsule for Settings Language, one glass Activation track and one inset glass Settings-tab track. Secondary actions share subtle glass lighting and semantic accent wash. Raised Settings/capture surfaces retain 12 pt corners, window/sidebar 16 pt and navigation selection 8 pt. Light/Dark share geometry, type and spacing; avoid stacking appearance materials. The refinement supersedes the earlier flat Medium-popup direction. Native control semantics and sizing remain required; see [Apple's design-system guidance](https://developer.apple.com/videos/play/wwdc2025/356/).
+## Current source: Rebind - new.sketch
+
+Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-12**, SHA-256 `a628d7c9cef37315cb3c92f8d5f1265f9549bb561fdf9a0cd4be31071179756e`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+
+| Page | Content |
+| --- | --- |
+| 01 · Screens | 15 screens, each Light and Dark, built only from components |
+| 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
+| 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
+| 05 · Brand | App icon artwork (the three Icon Composer layers), 32 pt in-app logo, Menu Bar template |
+| 99 · Archive | The two original hand-drawn Keyboard frames |
+
+Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
+
+Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
+
+Covered screens: Keyboard, Mouse and Trackpad lists; Magic Mouse empty state; permission-needed and paused states; Keyboard editor (recording, conflict, action picker); Trackpad editor with the curated gesture menu; all five Settings tabs. Not yet redrawn: first-run onboarding, profile management, About, remaining Mouse/Magic Mouse editors and compact-width variants.
+
+## Previous source: Rebind.sketch (behavior, states and copy reference)
+
+The sections below describe the earlier 125-frame Liquid Glass source. Its **visual** treatment is superseded. Until the new source covers a surface, use the earlier frames only for required states, reviewed EN/RU/DE/FR copy and interaction annotations, restyled with the new components.
 
 The saved [semantic-feedback system](tasks/UI-012-semantic-feedback.md) makes failures red, prerequisites/conflicts amber, completed operations green and information/progress blue. Use a calm opaque state surface, native icon and explicit title; preserve readable body copy and accent-colored recovery controls. Deliberate pause, empty and disabled states remain neutral. Foundations 15 applies to all subsequent design, including remaining profile/action/gesture states.
 
-Trackpad and Magic Mouse use one glass selector of complete, curated gesture presets followed by the shared action editor. No touch trigger recording or separate type/finger/direction selectors. Keyboard/conventional Mouse keep their trigger recorders; output-shortcut recording is available to every category. This 2026-10-11 product decision supersedes the initial UI-013 touch recording compositions; SPEC and the project-local design skill carry the behavioral rule.
+Trackpad and Magic Mouse use one selector of complete, curated gesture presets followed by the shared action editor. No touch trigger recording or separate type/finger/direction selectors. Keyboard/conventional Mouse keep their trigger recorders; output-shortcut recording is available to every category. This 2026-10-11 product decision supersedes the initial UI-013 touch recording compositions; SPEC and the project-local design skill carry the behavioral rule.
 
 Use semantic colors and adaptive materials. Reduce Transparency preserves layout with opaque surfaces; Increase Contrast strengthens text/edges; Reduce Motion removes decorative transitions. Keyboard/focus/VoiceOver, resizing and EN/RU/DE/FR expansion require native acceptance. Do not impose upstream iOS/widget metrics or custom shaders on this macOS utility.
 
-## Resolve the current document
+## Resolve the previous document
 
 Open **Rebind.sketch** through Sketch MCP. Load `mcp`, then `use`, resolve the open document by name, inspect relevant trees/styles and screenshots. Last successful save/review: **2026-10-12**, document ID `C7326969-08D8-4B1C-8899-AA9277A9763D`, SHA-256 `350bfd7cfdeb2ef9b1a2be55c748c8c224bb465c72698c15eb88fd663b565902`. IDs are lookup hints: refresh after saving/reopening. The source has **125 screen/state frames**. UI-013 completes final coverage and corrects the canvas/keycaps. The subsequent [production design review](tasks/UI-015-production-design-review.md) preserves all 125 screen IDs/names/positions and Brand, fixes reusable chips/alignment and Dark appearance, and compacts both gesture menus without redundant category headings. [Language selector contrast](tasks/UI-019-language-selector-contrast.md) subsequently refines its reusable Light/Dark materials and Foundations 14 annotation; [native adoption is integrated](verification/language-selector-refinement.md), with remaining Dark/menu/focus/adaptive acceptance open.
 
@@ -59,11 +79,9 @@ The current [shared glass-control refinement](tasks/UI-011-control-unification.m
 
 [Plain-language copy](tasks/UI-018-human-interface-copy.md) is saved/reviewed across all 125 screens and the reusable EN/RU/DE/FR specimens. Use the current rule terminology, recording instructions, backup/recovery messages and localized diagnostics help. Existing native copy requires reconciliation with this revision; native localization/layout/accessibility acceptance remains open.
 
-## Brand: existing source and delivered assets
+## Brand
 
-Editable Brand sources remain on Symbols/Brand: Frosted app-icon `AA064C59-AD8E-40E1-A7DF-DF7F6949C136`, Small optical version `5E88F8C5-D3D4-40EB-AD5B-D459FFECFD54`, Menu Bar `0F0BD265-F8D6-4405-8425-247D8DA43C06`. Keep size-specific UI border styles when using existing icons at 32/48/80 pt.
-
-[AppIcon.icon](../rebind/AppIcon.icon/) is the sole native app-icon input; [RebindMenuBar.imageset](../rebind/Assets.xcassets/RebindMenuBar.imageset/) is the separate monochrome template. Sketch owns geometry; Icon Composer owns delivery materials/masking/appearances. Assets are delivered; remaining Dock/tint/minimum-OS checks in [BRAND-001](tasks/BRAND-001-icon-runtime.md) do not mean the icons need recreating. Details: [brand README](../assets/brand/README.md).
+The app icon is itself a full-bleed blue keycap with two opposing white arrows, following the macOS 26 icon grid (no inner margin). Editable geometry lives on page `05 · Brand`. [AppIcon.icon](../rebind/AppIcon.icon/) is the sole app-icon input (deep-blue fill plus `Key` and `Glyph` SVG layers composed by Icon Composer); [RebindMenuBar.imageset](../rebind/Assets.xcassets/RebindMenuBar.imageset/) is the monochrome template; the sidebar shows the running app's own icon. Details: [brand README](../assets/brand/README.md). Earlier Dock/tint checks in [BRAND-001](tasks/BRAND-001-icon-runtime.md) apply to the previous artwork and must be repeated.
 
 ## Updating this design contract
 

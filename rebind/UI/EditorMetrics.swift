@@ -9,5 +9,5 @@ enum EditorMetrics {
     static let compactSelectorHeight: CGFloat = 24
     static let mouseSelectorWidth: CGFloat = 224
     static let buttonHeight: CGFloat = 28
-    static let keycapHeight: CGFloat = 34
+    static let keycapHeight: CGFloat = 36
 }

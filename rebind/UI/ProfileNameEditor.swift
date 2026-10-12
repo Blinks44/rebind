@@ -21,9 +21,9 @@ struct ProfileNameEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(operation.title).font(.title2.bold())
+            Text(operation.title).font(Theme.titleSmall)
             TextField(.profileName, text: $name).focused($focused)
-            Text(.profileNamingHint).font(.caption).foregroundStyle(.secondary)
+            Text(.profileNamingHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
             if let error = model.error { Text(error).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
             HStack {

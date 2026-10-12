@@ -1,11 +1,25 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@" : {
-
+    "%@\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@\n%2$@"
+          }
+        }
+      }
     },
-    "+" : {
-
+    "%@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
     },
     "aboutBuild" : {
       "extractionState" : "manual",
@@ -6341,6 +6355,36 @@
         }
       }
     },
+    "inputFixedSensitivity" : {
+      "comment" : "Input overview status: mouse pointer gesture sensitivity is fixed, not automatically adjusted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feste Empfindlichkeit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixed sensitivity"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensibilité fixe"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задана заранее"
+          }
+        }
+      }
+    },
     "inputMonitoringNotRequiredHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6428,36 +6472,6 @@
         }
       }
     },
-    "inputFixedSensitivity" : {
-      "comment" : "Input overview status: mouse pointer gesture sensitivity is fixed, not automatically adjusted.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fixed sensitivity"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Задана заранее"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feste Empfindlichkeit"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sensibilité fixe"
-          }
-        }
-      }
-    },
     "inputTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6512,6 +6526,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Клавиатура"
+          }
+        }
+      }
+    },
+    "keyboardSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Festlegen, was jede Taste oder Tastenkombination bewirkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what each key or shortcut does."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez l’action de chaque touche ou raccourci."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите, что делает каждая клавиша или сочетание."
           }
         }
       }
@@ -8584,6 +8627,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Попробуйте другое название триггера или действия либо очистите поиск, чтобы увидеть все правила мыши."
+          }
+        }
+      }
+    },
+    "mouseSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Festlegen, was jede Taste, jeder Mausradschritt oder jede Bewegung bewirkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what each button, scroll or movement does."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez l’action de chaque bouton, défilement ou mouvement."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите, что делает каждая кнопка, прокрутка или движение."
           }
         }
       }
@@ -13041,6 +13113,122 @@
         }
       }
     },
+    "statusPaused" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pause"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пауза"
+          }
+        }
+      }
+    },
+    "statusPermissionNeeded" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zugriff erforderlich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permission needed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisation requise"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нужен доступ"
+          }
+        }
+      }
+    },
+    "statusRemappingOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belegungen aktiv"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remapping on"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remappage activé"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правила включены"
+          }
+        }
+      }
+    },
+    "statusStopped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belegungen gestoppt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remapping stopped"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remappage arrêté"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правила остановлены"
+          }
+        }
+      }
+    },
     "storageLockedLanguage" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13327,35 +13515,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Двойной тап тремя пальцами"
-          }
-        }
-      }
-    },
-    "twoFingerDoubleTap" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen mit zwei Fingern"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Two-finger double tap"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Double toucher à deux doigts"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Двойной тап двумя пальцами"
           }
         }
       }
@@ -13803,6 +13962,35 @@
         }
       }
     },
+    "trackpadSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Festlegen, was jedes Tippen bewirkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what each tap does."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez l’action de chaque toucher."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите, что делает каждое касание."
+          }
+        }
+      }
+    },
     "trackpadSystemGestureHelp" : {
       "comment" : "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings.",
       "extractionState" : "manual",
@@ -14095,6 +14283,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отключить"
+          }
+        }
+      }
+    },
+    "twoFingerDoubleTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doppeltippen mit zwei Fingern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-finger double tap"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double toucher à deux doigts"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двойной тап двумя пальцами"
           }
         }
       }

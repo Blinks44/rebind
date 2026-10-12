@@ -11,23 +11,18 @@ struct PermissionAccessControls: View {
             HStack(spacing: 16) { buttons }
             VStack(alignment: .leading, spacing: 12) { buttons }
         }
-        .controlSize(usesCompactStyle ? .regular : .large)
-        .buttonBorderShape(.capsule)
+        .controlSize(usesCompactStyle ? .small : .large)
     }
 
     @ViewBuilder private var buttons: some View {
         if requirement == .accessibility {
             Button(.openSystemSettings) { model.requestAccessibility() }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
         } else {
             Button(.allowEventSending) { model.requestEventPosting() }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
                 .disabled(model.permissions.requirement != .eventPosting)
         }
-        if usesCompactStyle {
-            Button(.checkAgain, action: model.refreshPermissions).modifier(EditorSecondaryButton())
-        } else {
-            Button(.checkAgain, action: model.refreshPermissions).buttonStyle(.bordered)
-        }
+        Button(.checkAgain, action: model.refreshPermissions).modifier(EditorSecondaryButton())
     }
 }

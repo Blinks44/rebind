@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-12**. HEAD `8e8a06e`; uncommitted: INPUT-004 two-finger double-tap engine/storage (Kilo agent) and UI-021 main-window shell work (`/root` agent). Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `ca02747`; uncommitted: UI-022 documentation and UI-023 main-window code. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -18,25 +18,31 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 | Actions | Searchable catalog: shortcuts, audio/media/mouse, AX window/app/layout/cycling, Previous Application, app/web/file, Apple Shortcuts, Spaces, sleep, experimental Dock/lock. Happy-path subsets confirmed; broader guards/platform checks remain. |
 | Trackpad | Four-finger delivery/click recovery/lifecycle are user-confirmed subsets. Three/four single/double and two-finger double engine/storage are integrated ([INPUT-004](tasks/INPUT-004-two-finger-double-tap.md); preset editor exposure open). [Tap preset editor](tasks/UI-014-trackpad-presets.md) exposes the four 3/4 presets. Hardware/native conflicts, timing/safety/platform checks remain open. No suppression. Two-finger preset exposure, physical clicks 2/3/4 and corners remain unwired. |
 | UI/localization | Main/editors/profiles/diagnostics, setup, five Settings sections and About exist with EN/RU/DE/FR, language reopen and backup flows. Shared controls/feedback integrated; production login/relaunch, detailed import, accessibility and remaining Sketch adoption stay open. |
-| Brand | **rebind/AppIcon.icon** and **RebindMenuBar** vector template exist. Build/Finder evidence recorded; Dock/live menu/macOS 26/tint acceptance remains. |
+| Brand | New keycap-and-arrows **rebind/AppIcon.icon** and **RebindMenuBar** template (2026-10-13). Rendered icon inspected from the Debug build; Dock/live menu/Dark/tint acceptance must be repeated. |
 
 ## Design source and recent changes
 
+- **2026-10-13:** [Settings and shared cards restyled](tasks/UI-023-main-window-soft-adoption.md#follow-up-6--2026-10-13-settings); Sketch has all five Settings tabs. Full suite passes (15 XCTest + 663 Swift Testing). Open: a residual search-field outline defect, Advanced tab layout versus Sketch.
+- **2026-10-13:** Direction accepted by the user. [Follow-up](tasks/UI-023-main-window-soft-adoption.md#follow-up-2026-10-13): native window-button placement, sidebar brand row, new app icon/Menu Bar template, restyled binding editor; Sketch icons are now SF Symbols and screens are English-only.
+- **2026-10-13:** [Main window in the soft design system](tasks/UI-023-main-window-soft-adoption.md): shared tokens/components and one rules list for Keyboard/Mouse/Trackpad follow Sketch screen 01; build and layout render pass. Running-app review by the user is open.
+- **2026-10-12:** [Soft design system](tasks/UI-022-soft-design-system.md): variables, styles, 192 components and 12 Light/Dark screens saved in Rebind - new.sketch; direction recorded in AGENTS/SPEC §10/DESIGN. User review, remaining screens and native adoption open.
 - **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27, no single fallback for lone two-finger contacts, pair/click-exclusion/integration checks pass (full module **663 tests / 90 suites**); preset exposure and physical acceptance open.
 - **2026-10-12:** [Trackpad focus cancellation](verification/trackpad-focus-cancellation.md): A → B → A no longer revives old contacts/output. Full **666 functions / 1,870 executions**, Debug/signature pass on `a6471db`; focus-switching user-confirmed; measured timing remains open.
 - **2026-10-12:** Shared [Keyboard profile selector](tasks/UI-020-paper-profile-selector.md), [Permissions](verification/permissions-feedback-adoption.md), [General](verification/general-feedback-adoption.md) and [Language](verification/language-selector-refinement.md) integrated with scoped checks; native/accessibility/preferences gates remain.
 
 - **2026-10-12:** [Advanced](verification/advanced-feedback-adoption.md) shared cards/states integrated; requested Advanced checks user-confirmed. [Input materials/copy](verification/input-feedback-adoption.md) integrated; **20 functions / 74 executions**, 608 viewports, Debug/signature/Light/Dark review pass. Adaptive/platform/runtime gates remain.
 
-Source: **Rebind.sketch**, 125 frames, reviewed 2026-10-12; [EN/RU/DE/FR copy](tasks/UI-018-human-interface-copy.md) ready. [DESIGN](DESIGN.md) locates Sketch; native adoption open. Images local; [history](history/2026-10.md).
+Source: **Rebind - new.sketch** (soft design system, 12 screens × Light/Dark, saved 2026-10-12) is the current visual direction; Liquid Glass is withdrawn by user decision. **Rebind.sketch** (125 frames) remains the state/copy reference until redrawn; [EN/RU/DE/FR copy](tasks/UI-018-human-interface-copy.md) ready. [DESIGN](DESIGN.md) locates both; native adoption open. Images local; [history](history/2026-10.md).
 
 ## Open work / next steps
 
-- **Design:** Coverage/review released; review justified native differences against Sketch.
+- **Design:** [Soft design system](tasks/UI-022-soft-design-system.md) awaits user review; then redraw onboarding, remaining Settings tabs, profiles, About and localized variants with its components.
 - **Code:** Measure physical Trackpad scheduling through UI-014; focus-switching walkthrough confirmed. Remaining Settings/main materials and Magic Mouse hardware stay separate.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
+| [UI-023](tasks/UI-023-main-window-soft-adoption.md) | implementing | Unassigned; main window and editor integrated | Restyle Settings, action picker, onboarding, profiles and About; user reviews window buttons, icon and editor in the running app. |
+| [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Design chat; released | User reviews the saved soft design system; then redraw remaining screens and plan native adoption. |
 | [UI-021](tasks/UI-021-main-window-layout.md) | implementing | `/root`; checkpoint saved | Inset native window buttons, verify latest minimum-size repair and final build/layout matrix; approval-review usage limit currently prevents escalated checks. |
 | [UI-019](tasks/UI-019-language-selector-contrast.md) | awaiting_verification | Unassigned; refinement integrated | Verify Dark/menu/focus/VoiceOver/preferences; Light/build/layout pass. |
 | [UI-017](tasks/UI-017-settings-control-adoption.md) | awaiting_verification | Unassigned | User review of named build; verify tab focus/VoiceOver/preferences, then remaining Settings/main. |

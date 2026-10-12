@@ -8,7 +8,6 @@ struct EditorMenuSelector<Selection: Hashable>: View {
     let choices: [Selection]
     let label: (Selection) -> LocalizedStringResource
     var compact = false
-    var distinctSurface = false
     var symbol: String?
     var singleLine = false
     var menuActionTitle: LocalizedStringResource?
@@ -30,8 +29,9 @@ struct EditorMenuSelector<Selection: Hashable>: View {
         }
             .buttonStyle(.plain)
             .background { EditorMenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
-            .modifier(EditorGlassSurface(distinctSurface: distinctSurface))
+            .modifier(ControlSurface())
             .focused($focused)
+            .keyboardFocusRing()
             .accessibilityLabel(Text(title)).accessibilityValue(Text(label(selection)))
             .onKeyPress(.downArrow) {
                 guard isEnabled else { return .ignored }

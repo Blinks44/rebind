@@ -7,10 +7,10 @@ struct SettingsActionCard<Actions: View>: View {
     @ViewBuilder var actions: Actions
 
     var body: some View {
-        PermissionCard(isRaised: true) {
+        PermissionCard {
             VStack(alignment: .leading, spacing: 8) {
-                Text(title).font(.headline).accessibilityAddTraits(.isHeader)
-                Text(description).font(.callout).foregroundStyle(.secondary)
+                Text(title).font(Theme.headline).accessibilityAddTraits(.isHeader)
+                Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 actions.modifier(EditorSecondaryButton())
             }

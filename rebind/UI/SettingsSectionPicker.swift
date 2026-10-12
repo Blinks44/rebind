@@ -4,7 +4,6 @@ import SwiftUI
 struct SettingsSectionPicker: View {
     @SwiftUI.Binding var selection: SettingsSection
     @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.colorSchemeContrast) private var contrast
     @FocusState private var focused: SettingsSection?
 
     var body: some View {
@@ -18,27 +17,27 @@ struct SettingsSectionPicker: View {
     }
 
     private var track: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 0) {
             ForEach(SettingsSection.allCases, id: \.self) { section in
                 Button { selection = section } label: {
-                    Text(section.title)
-                        .foregroundStyle(Color(.editorAccentText))
+                    Text(section.title).font(Theme.calloutStrong)
+                        .foregroundStyle(selection == section ? Theme.textPrimary : Theme.textSecondary)
                         .padding(.horizontal, 12)
-                        .frame(minWidth: minimumWidth(for: section), minHeight: 27)
+                        .frame(minWidth: minimumWidth(for: section), minHeight: 28)
                         .contentShape(.capsule)
                         .background {
-                            if selection == section {
-                                Capsule().fill(Color.accentColor.opacity(contrast == .increased ? 0.28 : 0.14))
-                            }
+                            if selection == section { Color.clear.modifier(ControlSurface()) }
                         }
                 }
                 .buttonStyle(.plain)
                 .focused($focused, equals: section)
+                .keyboardFocusRing()
             }
         }
         .padding(4)
         .fixedSize(horizontal: true, vertical: false)
-        .modifier(EditorGlassSurface(interactive: false))
+        .background(Theme.insetSurface, in: .capsule)
+        .overlay { Capsule(style: .circular).strokeBorder(Theme.borderSubtle) }
         .transaction { $0.animation = nil }
         .onKeyPress(.leftArrow) { moveSelection(by: -1) }
         .onKeyPress(.rightArrow) { moveSelection(by: 1) }

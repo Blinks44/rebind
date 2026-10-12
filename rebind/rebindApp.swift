@@ -10,8 +10,8 @@ struct rebindApp: App {
         Window(.rebindWindowTitle, id: "main") {
             ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
         }
-            .windowStyle(.hiddenTitleBar)
-            .defaultSize(width: 1040, height: 640)
+            .windowToolbarStyle(.unified(showsTitle: false))
+            .defaultSize(width: 1080, height: 720)
             .commands {
                 CommandGroup(replacing: .appInfo) {
                     AboutCommand(language: delegate.model.activeLanguage)
@@ -26,6 +26,7 @@ struct rebindApp: App {
         Settings {
             SettingsView(model: delegate.model, selection: $settingsSection)
                 .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
+                .background { ThemeCanvas() }
                 .environment(\.locale, delegate.model.activeLanguage.locale)
         }
         MenuBarExtra("Rebind", image: "RebindMenuBar") {

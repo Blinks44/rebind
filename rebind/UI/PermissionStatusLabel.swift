@@ -25,9 +25,9 @@ struct PermissionStatusLabel: View {
     }
 
     private var statusText: some View {
-        Text(status).font(.callout)
-            .foregroundStyle(isWarning ? Color(.permissionWarning)
-                             : isVerified ? Color(.permissionSuccess) : Color.secondary)
+        Text(status).font(Theme.callout)
+            .foregroundStyle(isWarning ? Theme.warningText
+                             : isVerified ? Theme.successText : Color.secondary)
             .fixedSize(horizontal: false, vertical: true)
     }
 }

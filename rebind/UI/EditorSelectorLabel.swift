@@ -10,14 +10,15 @@ struct EditorSelectorLabel: View {
     var body: some View {
         HStack(spacing: 12) {
             if let symbol {
-                Image(systemName: symbol).foregroundStyle(Color(.editorAccentText)).accessibilityHidden(true)
+                Image(systemName: symbol).foregroundStyle(Theme.accent).accessibilityHidden(true)
             }
             Text(title).lineLimit(singleLine ? 1 : nil).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 8)
-            Image(systemName: "chevron.up.chevron.down").accessibilityHidden(true)
+            Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold))
+                .foregroundStyle(Theme.iconSecondary).accessibilityHidden(true)
         }
         .font(EditorTypography.label)
-        .foregroundStyle(Color(.editorTextPrimary))
+        .foregroundStyle(Theme.textPrimary)
         .padding(.horizontal, horizontalInset)
         .frame(maxWidth: .infinity, minHeight: height)
         .contentShape(.rect)

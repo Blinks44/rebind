@@ -24,22 +24,22 @@ struct WorkspaceActionParameters: View {
                     .textFieldStyle(.roundedBorder)
                     .accessibilityLabel(Text(.webAddressTitle))
                 if !webAddress.isEmpty && WorkspaceAction.webURL(webAddress) == nil {
-                    Text(.webAddressInvalid).foregroundStyle(.secondary)
+                    Text(.webAddressInvalid).foregroundStyle(Theme.textSecondary)
                 }
             } else {
                 if let url = pickingApplication ? application?.url : file {
                     Text(url.lastPathComponent).lineLimit(2)
-                    Text(url.path).font(.caption).foregroundStyle(.secondary)
+                    Text(url.path).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                         .lineLimit(3).help(url.path)
-                } else { Text(.targetNotSelected).foregroundStyle(.secondary) }
+                } else { Text(.targetNotSelected).foregroundStyle(Theme.textSecondary) }
                 Button(pickingApplication ? LocalizedStringResource.chooseApplication : .chooseFile) {
                     selectionFailed = false
                     showingPicker = true
                 }
-                if selectionFailed { Text(.targetSelectionFailed).foregroundStyle(.secondary) }
+                if selectionFailed { Text(.targetSelectionFailed).foregroundStyle(Theme.textSecondary) }
             }
             Text(hint)
-                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                .font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
         }
         .fileImporter(isPresented: $showingPicker,
                       allowedContentTypes: pickingApplication ? [.applicationBundle] : [.item, .folder]) { result in

@@ -80,3 +80,42 @@ extension RebindAction {
         }
     }
 }
+
+extension ActionKind {
+    /// SF Symbol shown on the action tile of a rule.
+    var symbol: String {
+        switch self {
+        case .keyboardShortcut: "command"
+        case .volumeUp: "speaker.wave.3"
+        case .volumeDown: "speaker.wave.1"
+        case .toggleMute: "speaker.slash"
+        case .playPause: "playpause"
+        case .nextTrack: "forward.end"
+        case .previousTrack: "backward.end"
+        case .leftClick, .rightClick, .middleClick: "cursorarrow.click"
+        case .doubleLeftClick: "cursorarrow.click.2"
+        case .closeWindow: "xmark.square"
+        case .minimizeWindow: "minus.square"
+        case .toggleFullScreen: "arrow.up.left.and.arrow.down.right"
+        case .hideApplication: "eye.slash"
+        case .leftHalf: "rectangle.lefthalf.filled"
+        case .rightHalf: "rectangle.righthalf.filled"
+        case .fillWindow: "rectangle.inset.filled"
+        case .centerWindow: "rectangle.center.inset.filled"
+        case .nextWindow, .previousWindow, .applicationWindows: "macwindow.on.rectangle"
+        case .previousApplication: "arrow.uturn.backward.square"
+        case .openApplication, .activateApplication: "app"
+        case .quitApplication: "xmark.app"
+        case .openURL: "link"
+        case .openFile: "doc"
+        case .openSystemSettings: "gearshape"
+        case .sleepSystem: "moon"
+        case .lockScreen: "lock"
+        case .runAppleShortcut: "bolt"
+        case .missionControl: "rectangle.3.group"
+        case .showDesktop: "desktopcomputer"
+        case .previousSpace: "arrow.left.square"
+        case .nextSpace: "arrow.right.square"
+        }
+    }
+}

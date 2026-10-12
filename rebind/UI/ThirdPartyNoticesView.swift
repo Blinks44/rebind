@@ -9,7 +9,7 @@ struct ThirdPartyNoticesView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text(.aboutLicenses).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                Text(.aboutLicenses).font(Theme.titleSmall).accessibilityAddTraits(.isHeader)
                 Spacer()
                 if text != nil {
                     Button(.aboutFind, systemImage: "magnifyingglass") { findRequest += 1 }
@@ -19,13 +19,13 @@ struct ThirdPartyNoticesView: View {
             if let text {
                 ReadOnlyNoticesText(text: text, findRequest: findRequest)
             } else {
-                Text(.aboutLicensesUnavailable).foregroundStyle(.secondary)
+                Text(.aboutLicensesUnavailable).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
             }
             HStack {
                 Spacer()
-                Button(.aboutDone) { dismiss() }.buttonStyle(.borderedProminent)
+                Button(.aboutDone) { dismiss() }.buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
                     .keyboardShortcut(.defaultAction)
             }
         }

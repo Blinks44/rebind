@@ -39,12 +39,13 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 - No typed-text collection, telemetry, secrets, root/SIP shortcuts or unrelated permissions. Verify actual grants; a button click is not permission evidence.
 - Input is category-wide within one manually selected profile. Physical-device inventory/attribution and automatic activation were withdrawn; do not reintroduce them without a new user request. Numeric additional mouse buttons remain unrestricted by a fixed enum.
 - Trackpad and Magic Mouse use one selector of curated, complete gesture presets; no touch trigger recorder or separate type/finger/direction controls. Preserve keyboard/conventional mouse trigger recording and the independent output-shortcut recorder. See SPEC §§3.4–4.
-- Rebind's visual direction is modern macOS 26+ with purposeful Liquid Glass, elevation, subtle lighting and gradients. Read DESIGN; native semantics and accessibility coexist with distinctive materials.
+- Rebind's visual direction (user decision 2026-10-12) is the calm, soft, opaque-first look of the current Sketch design system: raised keycaps, soft shadows and hairlines, capsule controls and one accent. No Liquid Glass. Read DESIGN; native semantics and accessibility remain required.
 - Local versioned atomic configuration; no silent overwrite of corrupt/future files. All product copy supports EN/RU/DE/FR; preserve the existing manual Language activation/reopen contract.
 - No overengineering: prefer the simplest working solution; keep code understandable and readable.
 - Prefer an existing, maintained library, system API or add-on over a custom implementation whenever it satisfies the need; write custom code only when no suitable ready solution exists.
 - No hacks or workarounds: fix the actual cause or record the limitation explicitly; do not mask symptoms.
 - Research non-trivial capture/action mechanisms before adding custom implementations. Check native APIs, GitHub, Swift Package Index, maintenance and licensing. Read [research](docs/research/README.md); record refreshed decisions in the affected task/register. Report unavailable research access honestly. No blind dependency installs or copying GPL sources without an explicit licensing decision.
+- Sketch screens are drawn in English only; RU/DE/FR are translated and verified in the app. Sketch icons are SF Symbols exported with `tools/sf-symbol-svg.swift` and named after the symbol used in code.
 - Preserve user changes. Coordinate ownership before editing the same code, catalog, docs section or Sketch source. Never stage/commit/reset/push unrelated work. Git commits and Sketch saves are separate operations; record both when actually performed.
 - Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR translations and purposeful Unicode/localization test data.
 - Commit technical outcomes and concise verification results, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Verification screenshots/exports stay local by default; version images only for a specific documented purpose under WORKFLOW. Summarize reported results with their evidence limits.
@@ -70,7 +71,7 @@ Read only relevant `.agents/skills/<name>/SKILL.md` and its required references.
 - Ordinary SwiftUI/UI work: `swiftui-pro` + `swiftui-design-principles`.
 - Concurrency/callback ownership: `swift-concurrency-pro`; behavioral Swift Testing: `swift-testing-pro`.
 - New Swift contracts: `swift-api-design-guidelines-skill` locally, without mass renaming.
-- Liquid Glass composition: `swiftui-liquid-glass` when needed; check **macOS**, not iOS, availability.
+- System materials (sidebar/menu only): `swiftui-liquid-glass` when a system material is genuinely needed; check **macOS**, not iOS, availability. Do not add glass to controls or content.
 - Product copy: `writing-for-interfaces`, preserving behavior and all four languages.
 - Accessibility: `swiftui-accessibility-auditor` / `appkit-accessibility-auditor` for the affected controls.
 - Component guidance: `swiftui-ui-patterns` selectively; `swiftui-performance-audit` for measured rendering problems, separate from input-path profiling.

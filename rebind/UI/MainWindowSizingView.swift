@@ -42,24 +42,6 @@ final class MainWindowSizingView: NSView {
                 reportedTitlebarInset = inset
                 onTitlebarInsetChange?(inset)
             }
-            positionWindowButtons(in: window)
-        }
-    }
-
-    private func positionWindowButtons(in window: NSWindow) {
-        guard !window.styleMask.contains(.fullScreen) else { return }
-        let buttons = [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton]
-            .compactMap { window.standardWindowButton($0) }
-        guard let first = buttons.first else { return }
-        let leading = first.frame.minX
-        let offsets = buttons.map { $0.frame.minX - leading }
-        for (button, offset) in zip(buttons, offsets) {
-            guard let parent = button.superview else { continue }
-            // Screen 01: 20 pt leading; 18 pt top. Preserve native button size and spacing.
-            let origin = NSPoint(x: bounds.minX + 20 + offset,
-                                 y: bounds.maxY - 18 - button.frame.height)
-            let position = parent.convert(origin, from: self)
-            if button.frame.origin != position { button.setFrameOrigin(position) }
         }
     }
 }

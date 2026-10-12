@@ -6,27 +6,27 @@ struct InputSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(.inputTitle).font(.headline).accessibilityAddTraits(.isHeader)
-                    Text(.inputDescription).foregroundStyle(.secondary)
+                    Text(.inputTitle).font(Theme.headline).accessibilityAddTraits(.isHeader)
+                    Text(.inputDescription).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 information(.pressTiming, status: .perBinding, description: .pressTimingDescription)
                 information(.mouseGestures, status: .inputFixedSensitivity, description: .mouseGesturesDescription)
                 information(.inputBuiltInTrackpad, status: .experimental, description: .trackpadInputDescription)
-                Text(.inputEditGuidance).font(.callout).foregroundStyle(.secondary)
+                Text(.inputEditGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 28).padding(.bottom, 28)
+            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
         }
     }
 
     private func information(_ title: LocalizedStringResource, status: LocalizedStringResource,
                              description: LocalizedStringResource) -> some View {
-        PermissionCard(isRaised: true) {
+        PermissionCard {
             VStack(alignment: .leading, spacing: 12) {
                 PermissionStatusLabel(title: title, status: status)
-                Text(description).font(.callout).foregroundStyle(.secondary)
+                Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }

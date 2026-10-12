@@ -51,6 +51,96 @@ import XCTest
         }
     }
 
+    /// Renders Sketch screen 01 and the Keyboard editor with matching rules for review in Light and Dark.
+    func testKeyboardScreensRenderAtSketchSize() async throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "RebindKeyboard-\(UUID())")
+        let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
+        defer { try? FileManager.default.removeItem(at: directory) }
+        func rule(_ key: UInt16, _ modifiers: ModifierSet, _ action: RebindAction, enabled: Bool = true) -> rebind.Binding {
+            rebind.Binding(scope: .allKeyboards, trigger: .key(key), modifiers: modifiers, action: action, isEnabled: enabled)
+        }
+        let language = AppLocalization.language
+        AppLocalization.configureAtLaunch(.en)
+        defer { AppLocalization.configureAtLaunch(language) }
+        var configuration = Configuration(isEnabled: true, bindings: [
+            rule(113, [], .shortcut(KeyboardShortcut(keyCode: 53, modifiers: []))),
+            rule(38, [.control, .option], .dock(.nextSpace)),
+            rule(40, [.control, .option], .dock(.previousSpace)),
+            rule(105, [], .dock(.missionControl)),
+            rule(13, .option, .window(.close)),
+            rule(49, [.control, .option], .dock(.showDesktop)),
+            rule(107, [], .media(.playPause), enabled: false)
+        ])
+        configuration.hasCompletedSetup = true
+        try store.save(configuration)
+        let model = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+                             preferredLanguages: ["en"])
+        model.mailbox.configure(configuration)
+        model.mailbox.state.withLock { $0.status = .active }
+        model.refresh()
+        for appearance in [ColorScheme.light, .dark] {
+            let controller = NSHostingController(rootView: ContentView(model: model)
+                .environment(\.locale, Locale(identifier: "en")).preferredColorScheme(appearance))
+            let window = NSWindow(contentViewController: controller)
+            configureMainWindow(window)
+            window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
+            window.isReleasedWhenClosed = false
+            defer { window.close() }
+            let size = NSSize(width: 1080, height: 720)
+            window.setFrame(NSRect(origin: window.frame.origin, size: size), display: false)
+            try await Task.sleep(for: .milliseconds(200))
+            controller.view.layoutSubtreeIfNeeded()
+            let viewport = controller.view.bounds
+            XCTAssertEqual(viewport.width, size.width, accuracy: 1)
+            XCTAssertEqual(viewport.height, size.height, accuracy: 1)
+            try MainWindowLayoutAssertions.verifyRegions(in: controller.view, context: "keyboard \(appearance)")
+            let bitmap = try XCTUnwrap(controller.view.bitmapImageRepForCachingDisplay(in: viewport))
+            controller.view.cacheDisplay(in: viewport, to: bitmap)
+            let png = try XCTUnwrap(bitmap.representation(using: .png, properties: [:]))
+            let attachment = XCTAttachment(data: png, uniformTypeIdentifier: "public.png")
+            attachment.name = "main-keyboard-\(appearance)"
+            attachment.lifetime = .keepAlways
+            add(attachment)
+
+            let empty = NSHostingController(rootView: ContentView(model: model, initialDestination: .input(.allMice))
+                .environment(\.locale, Locale(identifier: "en")).preferredColorScheme(appearance))
+            let emptyWindow = NSWindow(contentViewController: empty)
+            configureMainWindow(emptyWindow)
+            emptyWindow.appearance = window.appearance
+            emptyWindow.isReleasedWhenClosed = false
+            defer { emptyWindow.close() }
+            emptyWindow.setFrame(NSRect(origin: window.frame.origin, size: size), display: false)
+            try await Task.sleep(for: .milliseconds(200))
+            empty.view.layoutSubtreeIfNeeded()
+            let emptyBitmap = try XCTUnwrap(empty.view.bitmapImageRepForCachingDisplay(in: empty.view.bounds))
+            empty.view.cacheDisplay(in: empty.view.bounds, to: emptyBitmap)
+            let emptyImage = XCTAttachment(data: try XCTUnwrap(emptyBitmap.representation(using: .png, properties: [:])),
+                                           uniformTypeIdentifier: "public.png")
+            emptyImage.name = "main-empty-\(appearance)"
+            emptyImage.lifetime = .keepAlways
+            add(emptyImage)
+
+            let editor = NSHostingController(rootView: BindingEditor(model: model, scope: .allKeyboards,
+                existing: configuration.bindings[1]).environment(\.locale, Locale(identifier: "en"))
+                .preferredColorScheme(appearance))
+            let sheet = NSWindow(contentViewController: editor)
+            sheet.appearance = window.appearance
+            sheet.isReleasedWhenClosed = false
+            defer { sheet.close() }
+            sheet.setContentSize(NSSize(width: 512, height: 640))
+            try await Task.sleep(for: .milliseconds(200))
+            editor.view.layoutSubtreeIfNeeded()
+            XCTAssertEqual(editor.view.bounds.width, 512, accuracy: 1)
+            let editorBitmap = try XCTUnwrap(editor.view.bitmapImageRepForCachingDisplay(in: editor.view.bounds))
+            editor.view.cacheDisplay(in: editor.view.bounds, to: editorBitmap)
+            let editorImage = XCTAttachment(data: try XCTUnwrap(editorBitmap.representation(using: .png, properties: [:])),
+                                            uniformTypeIdentifier: "public.png")
+            editorImage.name = "editor-keyboard-\(appearance)"
+            editorImage.lifetime = .keepAlways
+            add(editorImage)
+        }
+    }
+
     private enum SettingsFixture: String, CaseIterable {
         case paused, active, missingAccess, engineError, approval, permissionsMissing, permissionsAllowed
         case permissionsPosting, permissionsPaused, permissionsEngineError

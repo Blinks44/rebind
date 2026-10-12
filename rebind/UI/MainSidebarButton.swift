@@ -10,38 +10,30 @@ struct MainSidebarButton: View {
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
     @State private var isHovered = false
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Image(systemName: symbol)
-                    .font(EditorTypography.body)
-                    .frame(width: 18, height: 18).accessibilityHidden(true)
-                Text(title).font(isSelected ? EditorTypography.label : EditorTypography.body).lineLimit(1)
+                Image(systemName: symbol).font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(isSelected ? Theme.accent : Theme.iconSecondary)
+                    .frame(width: 20, height: 20).accessibilityHidden(true)
+                Text(title).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary).lineLimit(1)
                 Spacer(minLength: 0)
             }
-            .foregroundStyle(isEnabled ? Color(isSelected ? .editorAccentText : .editorTextPrimary) : Color(nsColor: .secondaryLabelColor))
-            .padding(.horizontal, 12)
+            .opacity(isEnabled ? 1 : 0.45)
+            .padding(.horizontal, 14)
             .frame(maxWidth: .infinity).frame(height: 40)
-            .background(isSelected ? Color(.editorAccentWash) : isHovered && isEnabled ? Color(.navigationHover) : .clear,
-                        in: .rect(cornerRadius: 8))
+            .background(isSelected ? Theme.accentSoft : isHovered && isEnabled ? Theme.hoverSurface : .clear,
+                        in: .rect(cornerRadius: 14, style: .continuous))
             .overlay {
-                if isFocused || isSelected && (contrast == .increased || differentiateWithoutColor) {
-                    RoundedRectangle(cornerRadius: 8).strokeBorder(Color(.editorAccentText), lineWidth: isFocused ? 2 : 1)
+                if isSelected && (contrast == .increased || differentiateWithoutColor) {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.accent)
                 }
             }
             .contentShape(.rect)
         }
         .buttonStyle(MainSidebarButtonStyle())
-        .focusable()
-        .focused($isFocused)
-        .focusEffectDisabled()
-        .onKeyPress(.space, phases: .down) { _ in
-            guard isEnabled else { return .ignored }
-            action()
-            return .handled
-        }
+        .keyboardFocusRing(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onHover { isHovered = $0 }
         .transaction { $0.animation = nil }

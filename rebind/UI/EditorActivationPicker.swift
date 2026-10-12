@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Fixed segment geometry and one passive glass track; selection never scales or morphs the control.
+/// Segmented control: inset track with one raised white segment.
 struct EditorActivationPicker: View {
     @SwiftUI.Binding var selection: PressActivation
     @Environment(\.isEnabled) private var isEnabled
@@ -12,19 +12,22 @@ struct EditorActivationPicker: View {
                 Button {
                     selection = choice
                 } label: {
-                    Text(title(for: choice)).font(EditorTypography.label)
-                        .foregroundStyle(selection == choice ? Color.white : Color(.editorTextPrimary))
+                    Text(title(for: choice)).font(Theme.calloutStrong)
+                        .foregroundStyle(selection == choice ? Theme.textPrimary : Theme.textSecondary)
                         .frame(maxWidth: .infinity, minHeight: EditorMetrics.buttonHeight)
                         .contentShape(.capsule)
                         .background {
-                            if selection == choice { Capsule().fill(Color(.editorSelection)) }
+                            if selection == choice { Color.clear.modifier(ControlSurface()) }
                         }
                 }
                 .buttonStyle(.plain)
                 .focused($focused, equals: choice)
+                .keyboardFocusRing()
             }
         }
-        .modifier(EditorGlassSurface(interactive: false))
+        .padding(4)
+        .background(Theme.insetSurface, in: .capsule)
+        .overlay { Capsule(style: .circular).strokeBorder(Theme.borderSubtle) }
         .transaction { $0.animation = nil }
         .onKeyPress(.leftArrow) { moveSelection(by: -1) }
         .onKeyPress(.rightArrow) { moveSelection(by: 1) }

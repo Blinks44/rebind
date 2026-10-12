@@ -5,7 +5,7 @@ enum EditorFeedbackSeverity {
 
     var symbol: String {
         switch self {
-        case .error: "exclamationmark.circle"
+        case .error: "xmark.circle"
         case .warning: "exclamationmark.triangle"
         case .success: "checkmark.circle"
         case .information: "info.circle"
@@ -14,19 +14,21 @@ enum EditorFeedbackSeverity {
 
     var color: Color {
         switch self {
-        case .error: Color(.editorError)
-        case .warning: Color(.editorWarning)
-        case .success: Color(.permissionSuccess)
-        case .information: .accentColor
+        case .error: Theme.danger
+        case .warning: Theme.warning
+        case .success: Theme.success
+        case .information: Theme.accent
         }
     }
 
-    var surface: Color {
+    var textColor: Color {
         switch self {
-        case .error: Color(.editorErrorSurface)
-        case .warning: Color(.editorWarningSurface)
-        case .success: Color(.editorSuccessSurface)
-        case .information: Color(.editorInfoSurface)
+        case .error: Theme.dangerText
+        case .warning: Theme.warningText
+        case .success: Theme.successText
+        case .information: Theme.accent
         }
     }
+
+    var surface: Color { color.opacity(0.12) }
 }

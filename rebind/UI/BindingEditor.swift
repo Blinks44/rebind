@@ -37,210 +37,41 @@ struct BindingEditor: View {
     }
 
     var body: some View {
-        ScrollView {
-            GlassEffectContainer(spacing: 8) {
-                VStack(alignment: .leading, spacing: scope == .allKeyboards ? 20 : EditorMetrics.sectionSpacing) {
-                    if scope != .allKeyboards {
-                        HStack(spacing: 16) {
-                            Image(systemName: scope.symbol).foregroundStyle(.tint).accessibilityHidden(true)
-                                .frame(width: 40, height: 40)
-                                .background(Color(.permissionSurface), in: .rect(cornerRadius: 12))
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(EditorTypography.title)
-                                Text(scope == .allMice
-                                     ? LocalizedStringResource.mouseEditorScope(model.configuration.selectedProfile?.title ?? "")
-                                     : .trackpadEditorScope(model.configuration.selectedProfile?.title ?? ""))
-                                    .font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                    } else {
-                        Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding).font(.title2.bold())
-                        Text(.recordingLimitations)
-                            .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding)
+                            .font(EditorTypography.title).foregroundStyle(Theme.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                        Text(scopeCaption).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    if scope == .allMice {
-                        MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
-                    } else if scope == .builtInTrackpad {
-                        TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
-                    } else {
-                        GroupBox {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text(.triggerTitle).font(.headline)
-                                if scope == .allKeyboards {
-                                    Text(.activationTitle).font(.caption).foregroundStyle(.secondary)
-                                    EditorActivationPicker(selection: $draft.activation)
-                                        .frame(maxWidth: .infinity).frame(height: 28)
-                                        .disabled(model.recording != nil)
-                                    if draft.activation == .doublePress {
-                                        Text(.doublePressHint).font(.caption).foregroundStyle(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                    if draft.activation == .hold {
-                                        HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds)
-                                        Text(.holdHint).font(.caption).foregroundStyle(.secondary)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                }
-                                Text(draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) } ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
-                                if scope != .builtInTrackpad {
-                                    Button(.recordTrigger) { record(scope == .allKeyboards ? .keyboardTrigger : draft.mouseTarget) }
-                                        .disabled(!model.canRecord || model.recording != nil)
-                                }
-                            }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
-                        }
+                    switch scope {
+                    case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
+                    case .builtInTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
+                    case .allKeyboards: keyboardTrigger
                     }
-                    BindingEditorSection(usesCard: scope == .allKeyboards) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(.actionTitle).font(scope == .allKeyboards ? .headline : EditorTypography.section)
-                                .accessibilityAddTraits(.isHeader)
-                            if scope == .builtInTrackpad {
-                                Label { Text(.outputShortcut) } icon: {
-                                    Image(systemName: "command").foregroundStyle(Color(.editorAccentText))
-                                }
-                                    .font(EditorTypography.label).foregroundStyle(Color(.editorTextPrimary))
-                                    .padding(.horizontal, 16).frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
-                                    .modifier(EditorGlassSurface(interactive: false))
-                            } else { ActionPickerView(model: model, selection: $actionKind) }
-                            if actionKind == .keyboardShortcut {
-                                if scope != .allKeyboards {
-                                    BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
-                                        recording: model.recording, canRecord: model.canRecord,
-                                        record: { record(.output) }, cancel: model.cancelRecording,
-                                        clear: { draft.output = nil }, wrapsControls: true, shortcut: draft.output)
-                                    Text(scope == .builtInTrackpad ? LocalizedStringResource.trackpadOutputHelp : .mouseOutputHelp)
-                                        .font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
-                                        .fixedSize(horizontal: false, vertical: true)
-                                } else {
-                                    Text(draft.output.map(InputLabels.shortcut) ?? AppLocalization.string(.notRecorded)).font(.title3.monospaced())
-                                    Button(.recordOutput) { record(.output) }.disabled(!model.canRecord || model.recording != nil)
-                                }
-                            } else if actionKind.mouseAction != nil {
-                                Text(.mouseActionHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if actionKind.windowLayoutAction != nil {
-                                Text(.windowLayoutHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if actionKind.mediaAction != nil {
-                                Text(.mediaActionHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if let desktop = actionKind.desktopAction {
-                                if desktop.dockNotification != nil {
-                                    Text(.dockActionHint).font(.caption).foregroundStyle(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                    if !actionKind.isAvailable(with: model.audioCapabilities) {
-                                        Text(.dockActionUnavailable).foregroundStyle(.secondary)
-                                    }
-                                } else {
-                                    Text(.spaceActionHint).font(.caption).foregroundStyle(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                    if !actionKind.isAvailable(with: model.audioCapabilities) {
-                                        Text(.spaceActionUnavailable).foregroundStyle(.secondary)
-                                    }
-                                }
-                            } else if actionKind == .previousApplication {
-                                Text(.previousApplicationHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if actionKind.windowCycleAction != nil {
-                                Text(.windowCycleHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if actionKind == .lockScreen {
-                                Text(.lockScreenHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if !actionKind.isAvailable(with: model.audioCapabilities) {
-                                    Text(.lockScreenUnavailable).font(.caption).foregroundStyle(.secondary)
-                                }
-                            } else if actionKind == .sleepSystem {
-                                Text(.sleepSystemHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if !actionKind.isAvailable(with: model.audioCapabilities) {
-                                    Text(.sleepSystemUnavailable).font(.caption).foregroundStyle(.secondary)
-                                }
-                            } else if actionKind == .openSystemSettings {
-                                Text(.openSystemSettingsHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if actionKind == .runAppleShortcut {
-                                AppleShortcutParameters(target: $appleShortcut).disabled(model.recording != nil)
-                            } else if actionKind.needsWorkspaceParameters {
-                                WorkspaceActionParameters(kind: actionKind, application: $application, webAddress: $webAddress, file: $file)
-                                    .disabled(model.recording != nil)
-                            } else {
-                                Text(actionKind.windowAction == nil ? LocalizedStringResource.audioActionHint : .windowActionHint).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if !actionKind.isAvailable(with: model.audioCapabilities) {
-                                    Text(.audioActionUnavailable).foregroundStyle(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-                        }.frame(maxWidth: .infinity, alignment: .leading).padding(scope == .allKeyboards ? 8 : 0)
-                    }
-                    if scope == .builtInTrackpad, let preset = draft.trackpadPreset {
-                        EditorFeedback(severity: .warning, title: .trackpadSystemGestureWarning,
-                                       message: preset.systemGestureHelp) {
-                            Button(.openSystemSettings, action: openSystemSettings)
-                        }
-                    }
-                    if model.recording != nil && scope == .allKeyboards {
-                        HStack {
-                            Label(.listeningHint, systemImage: "record.circle").foregroundStyle(.tint)
-                            Spacer()
-                            Button(.cancelRecording) { model.cancelRecording() }
-                        }
-                    }
-                    if !model.canRecord {
-                        EditorFeedback(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
-                                       message: recordingUnavailableHint) {
-                            if !model.permissions.allowsRemapping {
-                                Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }
-                            }
-                        }
-                    }
-                    switch model.status {
-                    case .tapFailed, .interrupted, .outputFailed, .secureInput:
-                        EditorFeedback(severity: model.status == .secureInput ? .warning : .error,
-                                       title: model.status.text)
-                    default: EmptyView()
-                    }
-                    if let error = model.error {
-                        if error == .storageWriteFailed {
-                            EditorFeedback(severity: .error, title: .bindingSaveFailed,
-                                           message: .bindingSaveFailedDescription)
-                        } else { EditorFeedback(severity: .error, title: error) }
-                    }
-                    if validationError == .conflict {
-                        EditorFeedback(severity: .warning,
-                            title: .mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""),
-                            message: conflictHelp)
-                    } else if validationError != nil { EditorFeedback(severity: .error, title: .bindingInvalid) }
-                }.padding(24)
+                    action
+                    feedback
+                }.padding(28)
             }
-        }.safeAreaInset(edge: .bottom, spacing: 0) {
-            GlassEffectContainer(spacing: 8) {
-                HStack {
-                    if scope == .allKeyboards {
-                        Button(.clearRecording) {
-                            model.cancelRecording()
-                            draft = BindingEditorDraft(scope: scope, existing: nil)
-                            actionKind = .keyboardShortcut
-                            application = nil; webAddress = ""; file = nil; appleShortcut = nil
-                        }
-                    }
-                    Spacer()
-                    Button(.cancel) { model.cancelRecording(); dismiss() }
-                        .accessibilityIdentifier("binding-editor-cancel")
-                        .modifier(EditorSecondaryButton())
-                    Button(.editorSaveBinding, action: save).keyboardShortcut(.defaultAction)
-                        .accessibilityIdentifier("binding-editor-save")
-                        .buttonStyle(.borderedProminent).buttonBorderShape(.capsule)
-                        .disabled(candidate == nil || validationError != nil
-                            || !actionKind.isAvailable(with: model.audioCapabilities)
-                            || model.recording != nil || model.storageLocked)
-                }.font(EditorTypography.body)
-                    .tint(Color(.editorSelection))
-                    .padding(24).background(Color(.permissionCanvasBottom))
-            }
-        }.frame(width: scope == .allKeyboards ? 540 : 512).frame(idealHeight: 640, maxHeight: 760)
-        .background { PermissionCanvas() }
+            Theme.separator.frame(height: 1)
+            HStack(spacing: 10) {
+                Spacer()
+                Button(.cancel) { model.cancelRecording(); dismiss() }
+                    .accessibilityIdentifier("binding-editor-cancel")
+                    .modifier(EditorSecondaryButton()).controlSize(.large)
+                Button(.editorSaveBinding, action: save).keyboardShortcut(.defaultAction)
+                    .accessibilityIdentifier("binding-editor-save")
+                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
+                    .disabled(candidate == nil || validationError != nil
+                        || !actionKind.isAvailable(with: model.audioCapabilities)
+                        || model.recording != nil || model.storageLocked)
+            }.padding(.horizontal, 28).padding(.vertical, 20)
+        }
+        .frame(width: 512).frame(idealHeight: 640, maxHeight: 760)
+        .background(Theme.sheetSurface)
         .onExitCommand { if model.recording != nil { model.cancelRecording() } else { dismiss() } }
         .sheet(isPresented: $showingPermissions) { PermissionSetupView(model: model, context: .recovery) }
         .onAppear { model.error = nil; model.beginEditing() }
@@ -274,6 +105,121 @@ struct BindingEditor: View {
                 AccessibilityNotification.Announcement(AppLocalization.string(conflictHelp)).post()
             }
         }
+    }
+
+    private var scopeCaption: LocalizedStringResource {
+        let profile = model.configuration.selectedProfile?.title ?? ""
+        switch scope {
+        case .allMice: return .mouseEditorScope(profile)
+        case .builtInTrackpad: return .trackpadEditorScope(profile)
+        case .allKeyboards: return .recordingLimitations
+        }
+    }
+
+    private var keyboardTrigger: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel(.triggerTitle)
+            BindingCaptureField(value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
+                target: .keyboardTrigger, recording: model.recording, canRecord: model.canRecord,
+                record: { record(.keyboardTrigger) }, cancel: model.cancelRecording,
+                clear: { draft.trigger = nil }, shortcut: keyboardTriggerShortcut)
+            SectionLabel(.activationTitle).padding(.top, 8)
+            EditorActivationPicker(selection: $draft.activation).frame(maxWidth: .infinity)
+                .disabled(model.recording != nil)
+            if draft.activation == .hold {
+                HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
+            }
+            if draft.activation != .press {
+                Text(draft.activation == .hold ? LocalizedStringResource.holdHint : .doublePressHint)
+                    .font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var keyboardTriggerShortcut: KeyboardShortcut? {
+        guard let trigger = draft.trigger, case .key(let code) = trigger.trigger else { return nil }
+        return KeyboardShortcut(keyCode: code, modifiers: trigger.modifiers)
+    }
+
+    private var action: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel(.actionTitle)
+            if scope == .builtInTrackpad {
+                EditorSelectorLabel(title: .outputShortcut, symbol: "command").modifier(ControlSurface())
+                    .accessibilityElement(children: .combine)
+            } else { ActionPickerView(model: model, selection: $actionKind) }
+            if actionKind == .keyboardShortcut {
+                BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
+                    recording: model.recording, canRecord: model.canRecord,
+                    record: { record(.output) }, cancel: model.cancelRecording,
+                    clear: { draft.output = nil }, wrapsControls: true, shortcut: draft.output)
+            } else if actionKind == .runAppleShortcut {
+                AppleShortcutParameters(target: $appleShortcut).disabled(model.recording != nil)
+            } else if actionKind.needsWorkspaceParameters {
+                WorkspaceActionParameters(kind: actionKind, application: $application, webAddress: $webAddress, file: $file)
+                    .disabled(model.recording != nil)
+            }
+            if let actionHint {
+                Text(actionHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if !actionKind.isAvailable(with: model.audioCapabilities) {
+                Text(actionKind.unavailableMessage).font(EditorTypography.caption).foregroundStyle(Theme.warningText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var actionHint: LocalizedStringResource? {
+        if actionKind == .keyboardShortcut {
+            return scope == .allMice ? .mouseOutputHelp : scope == .builtInTrackpad ? .trackpadOutputHelp : nil
+        }
+        if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
+        if actionKind.mouseAction != nil { return .mouseActionHint }
+        if actionKind.windowLayoutAction != nil { return .windowLayoutHint }
+        if actionKind.mediaAction != nil { return .mediaActionHint }
+        if let desktop = actionKind.desktopAction {
+            return desktop.dockNotification != nil ? .dockActionHint : .spaceActionHint
+        }
+        if actionKind == .previousApplication { return .previousApplicationHint }
+        if actionKind.windowCycleAction != nil { return .windowCycleHint }
+        if actionKind == .lockScreen { return .lockScreenHint }
+        if actionKind == .sleepSystem { return .sleepSystemHint }
+        if actionKind == .openSystemSettings { return .openSystemSettingsHint }
+        return actionKind.windowAction == nil ? .audioActionHint : .windowActionHint
+    }
+
+    @ViewBuilder private var feedback: some View {
+        if scope == .builtInTrackpad, let preset = draft.trackpadPreset {
+            EditorFeedback(severity: .warning, title: .trackpadSystemGestureWarning,
+                           message: preset.systemGestureHelp) {
+                Button(.openSystemSettings, action: openSystemSettings)
+            }
+        }
+        if !model.canRecord {
+            EditorFeedback(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
+                           message: recordingUnavailableHint) {
+                if !model.permissions.allowsRemapping {
+                    Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }
+                }
+            }
+        }
+        switch model.status {
+        case .tapFailed, .interrupted, .outputFailed, .secureInput:
+            EditorFeedback(severity: model.status == .secureInput ? .warning : .error, title: model.status.text)
+        default: EmptyView()
+        }
+        if let error = model.error {
+            if error == .storageWriteFailed {
+                EditorFeedback(severity: .error, title: .bindingSaveFailed, message: .bindingSaveFailedDescription)
+            } else { EditorFeedback(severity: .error, title: error) }
+        }
+        if validationError == .conflict {
+            EditorFeedback(severity: .warning,
+                title: .mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""),
+                message: conflictHelp)
+        } else if validationError != nil { EditorFeedback(severity: .error, title: .bindingInvalid) }
     }
 
     private var configuredAction: RebindAction? {

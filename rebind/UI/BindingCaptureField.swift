@@ -17,18 +17,20 @@ struct BindingCaptureField: View {
     private var isListening: Bool { recording?.target == target }
 
     var body: some View {
-        PermissionCard(insets: EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 4)) {
+        Group {
             if isListening {
-                VStack(spacing: 12) {
-                    Image(systemName: target == .output ? "keyboard" : "computermouse")
-                        .font(.title2).foregroundStyle(.tint).accessibilityHidden(true)
-                    Text(prompt).font(.headline)
-                    Text(target == .output ? LocalizedStringResource.mouseOutputListeningHelp : .mouseListeningHelp)
-                        .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 12) {
+                    Circle().fill(Theme.danger).frame(width: 12, height: 12).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(prompt).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                        Text(target == .output ? LocalizedStringResource.mouseOutputListeningHelp : .mouseListeningHelp)
+                            .font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                    }.fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 8)
                     Button(.cancelRecording, action: cancel).focused($cancelFocused)
                         .keyboardShortcut(.cancelAction)
                         .modifier(EditorSecondaryButton())
-                }.frame(maxWidth: .infinity).padding(.vertical, 12).padding(.trailing, 8)
+                }
             } else {
                 if wrapsControls {
                     ViewThatFits(in: .horizontal) {
@@ -41,8 +43,12 @@ struct BindingCaptureField: View {
                 } else { HStack(spacing: 12) { captureValue; recordButton; clearButton } }
             }
         }
+        .padding(.leading, 14).padding(.trailing, 10).padding(.vertical, 12)
+        .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+        .background(isListening ? Theme.accentTint : Theme.insetSurface, in: .rect(cornerRadius: 16, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 12).strokeBorder(Color(.editorTextPrimary).opacity(0.08))
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(isListening ? Theme.accent : Theme.borderSubtle, lineWidth: isListening ? 1.5 : 1)
         }
         .onChange(of: isListening) { wasListening, listening in
             if listening {
@@ -57,16 +63,15 @@ struct BindingCaptureField: View {
             if let shortcut { ShortcutKeycaps(shortcut: shortcut) }
             else {
                 HStack(spacing: 12) {
-                    if value != nil {
-                        Image(systemName: "computermouse").accessibilityHidden(true)
-                            .font(.system(size: 16)).frame(width: 20, height: 20)
+                    if let value {
+                        TriggerChip(label: value, symbol: target == .keyboardTrigger ? "keyboard" : "computermouse")
+                    } else {
+                        Text(target == .output ? LocalizedStringResource.mouseNoOutput : .mouseNoTrigger)
+                            .foregroundStyle(Theme.textTertiary)
                     }
-                    Text(value ?? AppLocalization.string(target == .output ? .mouseNoOutput : .mouseNoTrigger))
-                        .fixedSize(horizontal: false, vertical: true)
-                }.padding(.leading, 4)
+                }
             }
         }.font(EditorTypography.body)
-            .foregroundStyle(Color(.editorTextPrimary))
             .frame(minHeight: EditorMetrics.keycapHeight)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -80,10 +85,10 @@ struct BindingCaptureField: View {
 
     private var clearButton: some View {
         Button(action: clear) {
-            Image(systemName: "xmark").font(.system(size: 16))
+            Image(systemName: "xmark.circle.fill").font(.system(size: 15)).foregroundStyle(Theme.iconTertiary)
                 .frame(width: 28, height: 28).contentShape(.rect)
         }
-            .buttonStyle(.borderless)
+            .buttonStyle(.plain)
             .accessibilityLabel(Text(target == .output ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
             .disabled(value == nil || recording != nil)
     }

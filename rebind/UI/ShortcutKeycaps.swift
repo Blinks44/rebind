@@ -5,19 +5,10 @@ struct ShortcutKeycaps: View {
     let shortcut: KeyboardShortcut
 
     var body: some View {
-        HStack(spacing: 8) {
-            if !shortcut.modifiers.glyphs.isEmpty {
-                keycap(shortcut.modifiers.glyphs)
-                Text("+").accessibilityHidden(true)
-            }
-            keycap(InputLabels.key(shortcut.keyCode))
+        HStack(spacing: 6) {
+            ForEach(Array(shortcut.modifiers.glyphs), id: \.self) { Keycap(label: String($0)) }
+            Keycap(label: InputLabels.key(shortcut.keyCode))
         }
         .accessibilityRepresentation { Text(InputLabels.shortcut(shortcut)) }
-    }
-
-    private func keycap(_ title: String) -> some View {
-        Text(title).font(EditorTypography.label)
-            .padding(.horizontal, 12).frame(minHeight: EditorMetrics.keycapHeight)
-            .background(Color(.editorKeycap), in: .rect(cornerRadius: 8))
     }
 }

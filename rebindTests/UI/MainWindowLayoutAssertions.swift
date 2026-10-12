@@ -11,14 +11,9 @@ import XCTest
         let viewport = view.bounds
         let sidebarBounds = sidebar.convert(sidebar.bounds, to: view)
         XCTAssertEqual(sidebarBounds.minX, viewport.minX, accuracy: 1, context, file: file, line: line)
-        XCTAssertEqual(sidebarBounds.width, 232, accuracy: 1, context, file: file, line: line)
+        XCTAssertEqual(sidebarBounds.width, 240, accuracy: 1, context, file: file, line: line)
         XCTAssertEqual(sidebarBounds.height, viewport.height, accuracy: 1, context, file: file, line: line)
         XCTAssertEqual(sidebarBounds.minY, viewport.minY, accuracy: 1, context, file: file, line: line)
-        let close = try XCTUnwrap(view.window?.standardWindowButton(.closeButton), context, file: file, line: line)
-        let buttonBounds = close.convert(close.bounds, to: view)
-        let topInset = view.isFlipped ? buttonBounds.minY - viewport.minY : viewport.maxY - buttonBounds.maxY
-        XCTAssertEqual(buttonBounds.minX - viewport.minX, 20, accuracy: 1, context, file: file, line: line)
-        XCTAssertEqual(topInset, 18, accuracy: 1, context, file: file, line: line)
         let content = views.filter { $0 is NSScrollView }
         XCTAssertFalse(content.isEmpty, context, file: file, line: line)
         for child in content {

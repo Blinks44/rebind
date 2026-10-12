@@ -15,8 +15,8 @@ struct LanguageSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(.languageTitle).font(.headline).accessibilityAddTraits(.isHeader)
-                    Text(.languageDescription).foregroundStyle(.secondary)
+                    Text(.languageTitle).font(Theme.headline).accessibilityAddTraits(.isHeader)
+                    Text(.languageDescription).foregroundStyle(Theme.textSecondary)
                 }
                 PermissionCard {
                     VStack(alignment: .leading, spacing: 12) {
@@ -25,16 +25,16 @@ struct LanguageSettingsView: View {
                             Spacer(minLength: 12)
                             EditorMenuSelector(selection: $editing.draft, title: .appLanguage,
                                 choices: AppLanguagePreference.allCases, label: languageTitle,
-                                compact: true, distinctSurface: true)
+                                compact: true)
                             .accessibilityIdentifier("settings-language-selector")
                             .frame(width: 208, alignment: .trailing)
                             .disabled(model.storageLocked || editing.isSaving)
                         }
                         Text(editing.draft == .system ? LocalizedStringResource.systemHelp : .manualHelp)
-                            .font(.callout).foregroundStyle(.secondary)
+                            .font(Theme.callout).foregroundStyle(Theme.textSecondary)
                         Text(.activeLanguage(model.activeLanguage.autonym))
-                            .font(.callout).foregroundStyle(.secondary)
-                        if editing.isSaving { Text(.languageSaving).foregroundStyle(.secondary) }
+                            .font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                        if editing.isSaving { Text(.languageSaving).foregroundStyle(Theme.textSecondary) }
                         if editing.hasChanges {
                             Button(.applyLanguage) { editing.apply() }
                                 .modifier(EditorSecondaryButton())
@@ -53,11 +53,11 @@ struct LanguageSettingsView: View {
                         Button(.quitRebind) { NSApp.terminate(nil) }
                     }
                 }
-                Text(.namesUnchanged).font(.callout).foregroundStyle(.secondary)
+                Text(.namesUnchanged).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 28).padding(.bottom, 28)
+            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
         }
         .onChange(of: model.configuration.languagePreference) {
             editing.draft = model.configuration.languagePreference

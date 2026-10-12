@@ -8,17 +8,17 @@ struct ProfileManagerView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(.manageProfiles).font(.title2.bold())
-            Text(.profilesHint).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Text(.manageProfiles).font(Theme.titleSmall)
+            Text(.profilesHint).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
             List(model.configuration.profiles) { profile in
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(verbatim: profile.title).font(.headline)
-                        Text(.profileRuleCount(profile.bindings.count)).font(.caption).foregroundStyle(.secondary)
+                        Text(verbatim: profile.title).font(Theme.headline)
+                        Text(.profileRuleCount(profile.bindings.count)).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     }
                     Spacer()
                     if profile.id == model.configuration.selectedProfileID {
-                        Label(.profileSelected, systemImage: "checkmark.circle.fill").foregroundStyle(.secondary)
+                        Label(.profileSelected, systemImage: "checkmark.circle.fill").foregroundStyle(Theme.textSecondary)
                     } else {
                         Button(.selectProfile) { model.selectProfile(profile.id) }.disabled(model.storageLocked)
                     }

@@ -355,13 +355,13 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 
 ### Visual language
 
-- Design for **macOS 26+** with a distinctive contemporary native appearance: purposeful Liquid Glass, raised/elevated surfaces, subtle lighting/depth and intentional gradients, with excellent typography, alignment, spacing, hierarchy and contrast. Do not default to a legacy flat Settings presentation simply because it is convenient. Native controls retain their semantics while adopting the current material direction.
-- Use effects selectively where they clarify navigation, interaction or brand; dense content does not require glass on every row/field. Follow [DESIGN](DESIGN.md) and current Sketch styles/components; preserve opaque Reduce Transparency fallbacks.
-- Distinct, readable panes; avoid glass-on-glass stacks and giant decorative cards.
+- Design for **macOS 26+** with a distinctive, calm and soft native appearance (user decision 2026-10-12, superseding the earlier Liquid Glass direction): opaque-first raised surfaces, soft shadows and hairlines, capsule controls, raised keycaps as the brand motif and one accent color, with excellent typography, alignment, spacing, hierarchy and contrast. No Liquid Glass. Native controls retain their semantics while adopting the design-system tokens.
+- Only the sidebar and menus may use a system material. Follow [DESIGN](DESIGN.md) and the current Sketch variables/styles/components; preserve opaque Reduce Transparency fallbacks.
+- Distinct, readable panes; avoid stacked translucency and giant decorative cards.
 - Native button/menu/focus semantics; SF Symbols; polished hover/focus/pressed states.
 - Support Light/Dark, window resizing, accessibility, Reduce Transparency, Reduce Motion, Increase Contrast, VoiceOver, full keyboard operation.
 - Inspect the relevant current Sketch frames, components/styles and screenshots via MCP. Use the user-identified design as visual direction while preserving native macOS behavior. Optional assets/exports in `docs/references/` do not replace the live design; if access or the target is missing, explain the limitation and request the document/frame.
-- **No generic AI slop:** no gratuitous purple gradients, excess blur, massive corner radii, fake analytics dashboards, or unrelated micro-illustrations.
+- **No generic AI slop:** no gratuitous purple gradients, blur effects, massive corner radii, fake analytics dashboards, or unrelated micro-illustrations.
 
 ### Application icon
 

@@ -4,7 +4,7 @@
 
 A native macOS utility for mapping keyboard and mouse input to shortcuts and system actions. Create a binding, choose its trigger and action, and keep it running from the menu bar while you work in other apps.
 
-Rebind targets **macOS 26+**, with SwiftUI/AppKit and a modern design direction using Liquid Glass, depth and restrained gradients. Rules stay on your Mac; no account, cloud backend or analytics are required.
+Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
 
 **Status:** under active development. Keyboard/mouse remapping and many action paths are implemented; full hardware, reliability and UI acceptance are still in progress. Trackpad support is experimental. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
 

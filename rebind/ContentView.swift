@@ -6,7 +6,6 @@ struct ContentView: View {
     @State private var selection: MainDestination = .input(.allKeyboards)
     @State private var editor: EditorSelection?
     @State private var pendingDeletion: Binding?
-    @State private var showingDiagnostics = false
     @State private var showingProfiles = false
     @State private var setupPresentation = PermissionSetupPresentation()
     @State private var titlebarInset: CGFloat?
@@ -18,38 +17,40 @@ struct ContentView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            MainSidebar(model: model, selection: $selection,
-                manageProfiles: { showingProfiles = true }, showAbout: { openWindow(id: "about") })
-                .frame(width: 232)
+            MainSidebar(selection: $selection, showAbout: { openWindow(id: "about") })
+                .frame(width: 240)
                 .background { MainWindowSizing(titlebarInset: $titlebarInset).allowsHitTesting(false).accessibilityHidden(true) }
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("main-sidebar")
             Group {
                 switch selection {
-                case .input(.allMice):
-                    MouseBindingsView(model: model,
-                        add: { editor = EditorSelection(scope: .allMice, binding: nil) },
-                        edit: { editor = EditorSelection(scope: .allMice, binding: $0) },
+                case .input(let scope):
+                    BindingsView(model: model, scope: scope,
+                        add: { editor = EditorSelection(scope: scope, binding: nil) },
+                        edit: { editor = EditorSelection(scope: scope, binding: $0) },
                         delete: { pendingDeletion = $0 },
-                        openPermissions: { selection = .settings(.permissions) },
-                        diagnostics: { showingDiagnostics = true })
-                case .input(let scope): bindingsView(scope: scope)
-                case .settings: SettingsView(model: model, selection: settingsSection)
+                        manageProfiles: { showingProfiles = true },
+                        openPermissions: { selection = .settings(.permissions) })
+                case .settings: SettingsView(model: model, selection: settingsSection).padding(.top, 28)
                 }
-            }.frame(minWidth: 648, maxWidth: .infinity, maxHeight: .infinity)
+            }.frame(minWidth: 640, maxWidth: .infinity, maxHeight: .infinity)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("main-detail")
         }
-        .background { PermissionCanvas() }
+        .background { ThemeCanvas() }
         .frame(minWidth: 880, minHeight: titlebarInset.map { max(0, 600 - $0) })
         .ignoresSafeArea(.container, edges: .top)
+        // An empty unified toolbar gives the window the tall titlebar of a sidebar app, so macOS
+        // itself places the window buttons inside the sidebar panel. Content starts below that strip.
+        .toolbar { ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1) }.sharedBackgroundVisibility(.hidden) }
+        .toolbar(removing: .title)
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .sheet(item: $setupPresentation.context) { context in
             PermissionSetupView(model: model, context: context)
         }
         .sheet(item: $editor) { selection in
             BindingEditor(model: model, scope: selection.scope, existing: selection.binding)
         }
-        .sheet(isPresented: $showingDiagnostics) { InputDiagnosticsView(model: model) }
         .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
         .onChange(of: model.configuration.selectedProfileID) {
             editor = nil
@@ -59,7 +60,6 @@ struct ContentView: View {
             editor = nil
             pendingDeletion = nil
             showingProfiles = false
-            showingDiagnostics = false
         }
         .onAppear {
             setupPresentation.beginIfNeeded(needsSetup: model.needsPermissionSetup)
@@ -68,7 +68,7 @@ struct ContentView: View {
             // Recover once while idle. Active editors and later revocations keep the inline notice.
             setupPresentation.permissionsChanged(wasAllowed: wasAllowed, isAllowed: isAllowed,
                 canPresent: NSApp.isActive && editor == nil && pendingDeletion == nil
-                    && !showingProfiles && !showingDiagnostics)
+                    && !showingProfiles)
         }
         .alert(.deleteBinding, isPresented: deletionPresented) {
             Button(.cancel, role: .cancel) { pendingDeletion = nil }
@@ -77,78 +77,6 @@ struct ContentView: View {
                 pendingDeletion = nil
             }
         } message: { Text(.deleteBindingConfirmation) }
-    }
-
-    private func bindingsView(scope: DeviceScope) -> some View {
-        VStack(spacing: 0) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(scope == .allKeyboards
-                         ? LocalizedStringResource("keyboardNavigationTitle", table: "Navigation")
-                         : LocalizedStringResource("trackpadNavigationTitle", table: "Navigation"))
-                        .font(EditorTypography.title).accessibilityAddTraits(.isHeader)
-                    Text(model.statusText).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
-                    model.setEnabled(!model.configuration.isEnabled)
-                }.disabled(model.storageLocked && !model.configuration.isEnabled)
-                Button(.addBinding, systemImage: "plus") { editor = EditorSelection(scope: scope, binding: nil) }.disabled(model.storageLocked)
-            }.padding(.horizontal, 28).padding(.top, 32).padding(.bottom, 20)
-            if scope == .builtInTrackpad {
-                Text(model.trackpadStatus.text).font(.caption).foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20).padding(.bottom, 12)
-            }
-            Divider()
-            if !model.permissions.allowsRemapping {
-                PermissionRecoveryBanner(model: model) { selection = .settings(.permissions) }
-                    .padding(.horizontal, 28).padding(.vertical, 16)
-            }
-            if let error = model.error { Text(error).foregroundStyle(.red).padding() }
-            List {
-                ForEach(model.configuration.bindings.filter { $0.scope == scope }) { binding in
-                    HStack(spacing: 16) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(InputLabels.trigger(binding.trigger, modifiers: binding.modifiers)).font(.headline)
-                            if binding.activation == .doublePress { Text(.doublePressActivation).font(.caption) }
-                            if binding.activation == .hold {
-                                Text(.holdDuration(Int(binding.holdDurationMilliseconds))).font(.caption)
-                            }
-                            Text("→ " + binding.action.label).foregroundStyle(.secondary)
-                            if !ActionKind(action: binding.action).isAvailable(with: model.audioCapabilities) {
-                                Text(ActionKind(action: binding.action).unavailableMessage).font(.caption).foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        Spacer()
-                        Button(binding.isEnabled ? LocalizedStringResource.disableBinding : .enableBinding,
-                               systemImage: binding.isEnabled ? "checkmark.circle.fill" : "circle") { model.toggle(binding) }
-                            .labelStyle(.iconOnly).disabled(model.storageLocked)
-                        Button(.editBinding, systemImage: "pencil") { editor = EditorSelection(scope: scope, binding: binding) }
-                            .labelStyle(.iconOnly).disabled(model.storageLocked)
-                        Button(.deleteBinding, systemImage: "trash", role: .destructive) { pendingDeletion = binding }
-                            .labelStyle(.iconOnly).disabled(model.storageLocked)
-                    }.padding(.vertical, 6)
-                }
-            }.scrollContentBackground(.hidden)
-                .overlay {
-                if model.configuration.bindings.allSatisfy({ $0.scope != scope }) {
-                    ContentUnavailableView(.noBindings, systemImage: scope.symbol, description: Text(.addBindingHint))
-                }
-            }
-            Divider()
-            VStack(alignment: .leading, spacing: 5) {
-                if scope != .builtInTrackpad { Text(.phaseOneHint) }
-                if model.workspaceActionInProgress { Text(.openingTargetStatus) }
-                if model.appleShortcutInProgress { Text(.runningAppleShortcutStatus) }
-                Text(.emergencyHint)
-                if scope == .builtInTrackpad { Text(.trackpadTapHint) }
-                else { Text(.deviceScopeHint) }
-                if scope == .allMice { Text(.wheelMappingHint) }
-                Button(.inputDiagnostics, systemImage: "waveform.path") { showingDiagnostics = true }
-            }.font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(16)
-        }.background { PermissionCanvas() }
     }
 
     private var deletionPresented: SwiftUI.Binding<Bool> {

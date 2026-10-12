@@ -6,8 +6,8 @@ struct InputDiagnosticsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(.inputDiagnostics).font(.title2.bold()).accessibilityAddTraits(.isHeader)
-            Text(.advancedDiagnosticsPrivacy).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Text(.inputDiagnostics).font(Theme.titleSmall).accessibilityAddTraits(.isHeader)
+            Text(.advancedDiagnosticsPrivacy).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
             HStack {
                 Label(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsRecording : .advancedDiagnosticsStopped,
                       systemImage: model.diagnostics.isRunning ? "record.circle" : "pause.circle")
@@ -19,8 +19,8 @@ struct InputDiagnosticsView: View {
             }
             if !model.canStartDiagnostics && !model.diagnostics.isRunning {
                 Label(.advancedDiagnosticsUnavailableTitle, systemImage: "exclamationmark.circle")
-                    .font(.callout)
-                Text(blockedDescription).font(.caption).foregroundStyle(.secondary)
+                    .font(Theme.callout)
+                Text(blockedDescription).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Table(model.diagnostics.entries) {
@@ -41,19 +41,19 @@ struct InputDiagnosticsView: View {
                 if model.diagnostics.entries.isEmpty {
                     VStack(spacing: 8) {
                         Text(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsWait : .advancedDiagnosticsEmpty)
-                        Text(.advancedDiagnosticsStartHint).font(.callout).foregroundStyle(.secondary)
+                        Text(.advancedDiagnosticsStartHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     }.padding().allowsHitTesting(false)
                 }
             }
             Text(.advancedDiagnosticCount(count1: model.diagnostics.entries.count, count2: Int(clamping: model.diagnostics.omitted)))
-                .font(.caption).foregroundStyle(.secondary)
+                .font(Theme.caption).foregroundStyle(Theme.textSecondary)
             HStack {
-                Text(.advancedDiagnosticsLimits).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                Text(.advancedDiagnosticsLimits).font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
             }
         }.padding(24).frame(width: 840, height: 570)
-            .background { PermissionCanvas() }
+            .background { ThemeCanvas() }
             .onDisappear { model.closeDiagnostics() }
     }
 

@@ -10,34 +10,33 @@ struct PermissionView: View {
             VStack(alignment: .leading, spacing: 24) {
                 if showsSettingsHeader {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(.settingsTitle).font(.largeTitle.bold()).accessibilityAddTraits(.isHeader)
-                        Text(.settingsDescription).foregroundStyle(.secondary)
+                        Text(.settingsTitle).font(Theme.largeTitle).accessibilityAddTraits(.isHeader)
+                        Text(.settingsDescription).foregroundStyle(Theme.textSecondary)
                     }
                 }
                 accessStatus
                 VStack(spacing: 16) {
                     accessibilityCard
                     eventSendingCard
-                    PermissionCard(isRaised: true) {
+                    PermissionCard {
                         VStack(alignment: .leading, spacing: 12) {
                             PermissionStatusLabel(title: .inputMonitoringTitle, status: .notRequired)
-                            Text(.permissionsOtherPurpose).foregroundStyle(.secondary)
+                            Text(.permissionsOtherPurpose).foregroundStyle(Theme.textSecondary)
                         }
                     }
                 }
-                Text(.privacyAssurance).font(.callout).foregroundStyle(.secondary)
+                Text(.privacyAssurance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 VStack(alignment: .leading, spacing: 12) {
                     Button(.showApplicationInFinder, action: model.showApplicationInFinder)
                         .modifier(EditorSecondaryButton())
-                    Text(.signingHint).font(.callout).foregroundStyle(.secondary)
+                    Text(.signingHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 28).padding(.bottom, 28)
+            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
             .padding(.top, showsSettingsHeader ? 28 : 0)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background { PermissionCanvas() }
         .navigationTitle(.settingsTitle)
     }
 
@@ -54,14 +53,14 @@ struct PermissionView: View {
                     if model.permissions.allowsRemapping { checkAgain }
                 }
             }
-            Text(statusExplanation).foregroundStyle(.secondary)
+            Text(statusExplanation).foregroundStyle(Theme.textSecondary)
         }
     }
 
     private var accessStatusTitle: some View {
         Text(model.permissions.allowsRemapping ? LocalizedStringResource.permissionsAccessEnabled : .permissionsStopped)
-            .font(.headline)
-            .foregroundStyle(model.permissions.allowsRemapping ? Color(.permissionSuccess) : Color(.permissionWarning))
+            .font(Theme.headline)
+            .foregroundStyle(model.permissions.allowsRemapping ? Theme.successText : Theme.warningText)
             .accessibilityAddTraits(.isHeader)
     }
 
@@ -78,33 +77,33 @@ struct PermissionView: View {
     }
 
     private var accessibilityCard: some View {
-        PermissionCard(severity: model.permissions.accessibility ? nil : .warning, isRaised: true) {
+        PermissionCard(severity: model.permissions.accessibility ? nil : .warning) {
             VStack(alignment: .leading, spacing: 12) {
                 PermissionStatusLabel(title: .accessibilityTitle,
                                       status: model.permissions.accessibility ? .permissionEnabled : .notEnabled,
                                       isWarning: !model.permissions.accessibility, isPrimary: !model.permissions.accessibility,
                                       isVerified: model.permissions.accessibility)
                 Text(model.permissions.accessibility ? LocalizedStringResource.permissionsAccessibilityEnabled : .permissionsAccessibilityPurpose)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.textSecondary)
                 if !model.permissions.accessibility {
                     PermissionAccessControls(model: model, requirement: .accessibility, usesCompactStyle: true)
-                    Text(.accessibilitySteps).font(.callout).foregroundStyle(.secondary)
+                    Text(.accessibilitySteps).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 }
             }
         }
     }
 
     private var eventSendingCard: some View {
-        PermissionCard(severity: model.permissions.requirement == .eventPosting ? .warning : nil, isRaised: true) {
+        PermissionCard(severity: model.permissions.requirement == .eventPosting ? .warning : nil) {
             VStack(alignment: .leading, spacing: 12) {
                 PermissionStatusLabel(title: .eventSendingTitle, status: postingStatus,
                                       isWarning: !model.permissions.posting,
                                       isPrimary: model.permissions.requirement == .eventPosting,
                                       isVerified: model.permissions.posting)
-                Text(postingExplanation).foregroundStyle(.secondary)
+                Text(postingExplanation).foregroundStyle(Theme.textSecondary)
                 if model.permissions.requirement == .eventPosting {
                     PermissionAccessControls(model: model, requirement: .eventPosting, usesCompactStyle: true)
-                    Text(.eventSendingSteps).font(.callout).foregroundStyle(.secondary)
+                    Text(.eventSendingSteps).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                 }
             }
         }

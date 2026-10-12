@@ -7,9 +7,9 @@ struct MouseTriggerEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: EditorMetrics.fieldSpacing) {
-            Text(.triggerTitle).font(EditorTypography.section).accessibilityAddTraits(.isHeader)
+            SectionLabel(.triggerTitle)
             HStack(spacing: EditorMetrics.fieldSpacing) {
-                Text(.mouseInputKind).font(EditorTypography.caption).foregroundStyle(Color(.editorTextPrimary))
+                Text(.mouseInputKind).font(EditorTypography.caption).foregroundStyle(Theme.textPrimary)
                 Spacer(minLength: 8)
                 EditorMenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
                     choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger], label: inputKindTitle)
@@ -23,21 +23,21 @@ struct MouseTriggerEditor: View {
                 record: record, cancel: model.cancelRecording, clear: { draft.trigger = nil })
 
             if draft.mouseTarget == .mouseTrigger {
-                Text(.activationTitle).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
+                Text(.activationTitle).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
                 EditorActivationPicker(selection: $draft.activation)
-                    .frame(maxWidth: .infinity).frame(height: EditorMetrics.buttonHeight)
+                    .frame(maxWidth: .infinity)
                     .disabled(model.recording != nil)
                 if draft.activation == .hold {
                     HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
-                    Text(.holdHint).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
+                    Text(.holdHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } else if draft.activation == .doublePress {
-                    Text(.doublePressHint).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
+                    Text(.doublePressHint).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             } else if draft.mouseTarget == .gestureTrigger {
                 HStack(spacing: EditorMetrics.fieldSpacing) {
-                    Text(.pointerDirectionTitle).font(EditorTypography.caption).foregroundStyle(Color(.editorTextPrimary))
+                    Text(.pointerDirectionTitle).font(EditorTypography.caption).foregroundStyle(Theme.textPrimary)
                     Spacer(minLength: 8)
                     EditorMenuSelector(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
                         choices: PointerDirection.allCases, label: { $0.label })
@@ -46,7 +46,7 @@ struct MouseTriggerEditor: View {
                         .disabled(model.recording != nil)
                 }
             }
-            Text(help).font(EditorTypography.caption).foregroundStyle(Color(.editorTextSecondary))
+            Text(help).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

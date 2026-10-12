@@ -1,21 +1,17 @@
 import SwiftUI
 
-/// Raised navigation glass from Sketch Foundations 04, with an opaque adaptive fallback.
+/// Raised sidebar panel from the Sketch design system (Surface/Sidebar).
 struct MainSidebarSurface: View {
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(reduceTransparency ? Color(.navigationOpaqueSurface) : Color(.navigationGlassTint))
-            .glassEffect(reduceTransparency ? .identity : .regular,
-                         in: .rect(cornerRadius: 16))
+        RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(Theme.sidebarSurface)
+            .shadow(color: Theme.shadowRaised, radius: 15, y: 10)
             .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(contrast == .increased ? Color(.editorTextPrimary) : Color(.navigationRim),
-                                  lineWidth: 1)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(contrast == .increased ? Theme.borderStrong : Theme.borderHighlight)
             }
-            .shadow(color: Color(.navigationShadow), radius: 10, y: 6)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
