@@ -51,7 +51,7 @@ import XCTest
         }
     }
 
-    /// Renders Sketch screen 01 and the Keyboard editor with matching rules for review in Light and Dark.
+    /// Renders the main window and the sheets with fixture rules for review against Sketch in Light and Dark.
     func testKeyboardScreensRenderAtSketchSize() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindKeyboard-\(UUID())")
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
@@ -102,43 +102,39 @@ import XCTest
             attachment.lifetime = .keepAlways
             add(attachment)
 
-            let empty = NSHostingController(rootView: ContentView(model: model, initialDestination: .input(.allMice))
-                .environment(\.locale, Locale(identifier: "en")).preferredColorScheme(appearance))
-            let emptyWindow = NSWindow(contentViewController: empty)
-            configureMainWindow(emptyWindow)
-            emptyWindow.appearance = window.appearance
-            emptyWindow.isReleasedWhenClosed = false
-            defer { emptyWindow.close() }
-            emptyWindow.setFrame(NSRect(origin: window.frame.origin, size: size), display: false)
-            try await Task.sleep(for: .milliseconds(200))
-            empty.view.layoutSubtreeIfNeeded()
-            let emptyBitmap = try XCTUnwrap(empty.view.bitmapImageRepForCachingDisplay(in: empty.view.bounds))
-            empty.view.cacheDisplay(in: empty.view.bounds, to: emptyBitmap)
-            let emptyImage = XCTAttachment(data: try XCTUnwrap(emptyBitmap.representation(using: .png, properties: [:])),
-                                           uniformTypeIdentifier: "public.png")
-            emptyImage.name = "main-empty-\(appearance)"
-            emptyImage.lifetime = .keepAlways
-            add(emptyImage)
-
-            let editor = NSHostingController(rootView: BindingEditor(model: model, scope: .allKeyboards,
-                existing: configuration.bindings[1]).environment(\.locale, Locale(identifier: "en"))
-                .preferredColorScheme(appearance))
-            let sheet = NSWindow(contentViewController: editor)
-            sheet.appearance = window.appearance
-            sheet.isReleasedWhenClosed = false
-            defer { sheet.close() }
-            sheet.setContentSize(NSSize(width: 512, height: 640))
-            try await Task.sleep(for: .milliseconds(200))
-            editor.view.layoutSubtreeIfNeeded()
-            XCTAssertEqual(editor.view.bounds.width, 512, accuracy: 1)
-            let editorBitmap = try XCTUnwrap(editor.view.bitmapImageRepForCachingDisplay(in: editor.view.bounds))
-            editor.view.cacheDisplay(in: editor.view.bounds, to: editorBitmap)
-            let editorImage = XCTAttachment(data: try XCTUnwrap(editorBitmap.representation(using: .png, properties: [:])),
-                                            uniformTypeIdentifier: "public.png")
-            editorImage.name = "editor-keyboard-\(appearance)"
-            editorImage.lifetime = .keepAlways
-            add(editorImage)
+            try await attach(ContentView(model: model, initialDestination: .input(.allMice)), size: size,
+                             mainWindow: true, appearance: appearance, name: "main-empty")
+            try await attach(BindingEditor(model: model, scope: .allKeyboards, existing: configuration.bindings[1]),
+                             size: NSSize(width: 512, height: 640), appearance: appearance, name: "editor-keyboard")
+            try await attach(ProfileManagerView(model: model), size: NSSize(width: 560, height: 480),
+                             appearance: appearance, name: "profiles")
+            try await attach(PermissionSetupView(model: model, context: .firstRun), size: NSSize(width: 560, height: 580),
+                             appearance: appearance, name: "setup")
+            try await attach(AboutView(), size: NSSize(width: 440, height: 448), appearance: appearance, name: "about")
         }
+    }
+
+    /// Hosts a view in an offscreen window of the given size and attaches its rendering.
+    private func attach(_ view: some View, size: NSSize, mainWindow: Bool = false,
+                        appearance: ColorScheme, name: String) async throws {
+        let controller = NSHostingController(rootView: view.environment(\.locale, Locale(identifier: "en"))
+            .preferredColorScheme(appearance))
+        let window = NSWindow(contentViewController: controller)
+        if mainWindow { configureMainWindow(window) }
+        window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
+        window.isReleasedWhenClosed = false
+        defer { window.close() }
+        if mainWindow { window.setFrame(NSRect(origin: window.frame.origin, size: size), display: false) }
+        else { window.setContentSize(size) }
+        try await Task.sleep(for: .milliseconds(200))
+        controller.view.layoutSubtreeIfNeeded()
+        let bitmap = try XCTUnwrap(controller.view.bitmapImageRepForCachingDisplay(in: controller.view.bounds))
+        controller.view.cacheDisplay(in: controller.view.bounds, to: bitmap)
+        let attachment = XCTAttachment(data: try XCTUnwrap(bitmap.representation(using: .png, properties: [:])),
+                                       uniformTypeIdentifier: "public.png")
+        attachment.name = "\(name)-\(appearance)"
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     private enum SettingsFixture: String, CaseIterable {

@@ -49,10 +49,7 @@ struct AdvancedSettingsView: View {
                     } else {
                         SettingsActionCard(title: .advancedConfigurationTitle,
                                            description: .advancedConfigurationDescription) {
-                            ViewThatFits(in: .horizontal) {
-                                HStack { transferActions }
-                                VStack(alignment: .leading) { transferActions }
-                            }
+                            transferActions
                         }
                     }
                     if let feedback = editing.feedback, !feedbackBelongsToReset {

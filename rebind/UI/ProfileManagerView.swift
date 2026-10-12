@@ -6,48 +6,86 @@ struct ProfileManagerView: View {
     @State private var pendingDeletion: RuleProfile?
     @Environment(\.dismiss) private var dismiss
 
+    private var atLimit: Bool { model.configuration.profiles.count >= Configuration.maximumProfiles }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(.manageProfiles).font(Theme.titleSmall)
-            Text(.profilesHint).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
-            List(model.configuration.profiles) { profile in
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(verbatim: profile.title).font(Theme.headline)
-                        Text(.profileRuleCount(profile.bindings.count)).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                    }
-                    Spacer()
-                    if profile.id == model.configuration.selectedProfileID {
-                        Label(.profileSelected, systemImage: "checkmark.circle.fill").foregroundStyle(Theme.textSecondary)
-                    } else {
-                        Button(.selectProfile) { model.selectProfile(profile.id) }.disabled(model.storageLocked)
-                    }
-                    Menu {
-                        Button(.duplicateProfile) { editing = .duplicate(profile.id) }
-                            .disabled(model.configuration.profiles.count >= Configuration.maximumProfiles)
-                        Button(.renameProfile) { editing = .rename(profile.id) }
-                        Button(.deleteProfile, role: .destructive) { pendingDeletion = profile }
-                            .disabled(model.configuration.profiles.count <= 1)
-                    } label: { Label(.profileOptions, systemImage: "ellipsis") }
-                        .labelStyle(.iconOnly).disabled(model.storageLocked)
-                }.padding(.vertical, 4)
+        VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(.manageProfiles).font(Theme.titleSmall).foregroundStyle(Theme.textPrimary)
+                    .accessibilityAddTraits(.isHeader)
+                Text(.profilesHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            if let error = model.error { Text(error).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
-            HStack {
+            .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 28).padding(.top, 26)
+            ScrollView {
+                PermissionCard(insets: EdgeInsets()) {
+                    VStack(spacing: 0) {
+                        ForEach(model.configuration.profiles) { profile in
+                            row(profile).overlay(alignment: .top) {
+                                if profile.id != model.configuration.profiles.first?.id {
+                                    Theme.separator.frame(height: 1).padding(.horizontal, 20)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 28).padding(.vertical, 20)
+            }
+            if let error = model.error {
+                Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 28).padding(.bottom, 12)
+            }
+            Theme.separator.frame(height: 1)
+            HStack(spacing: 10) {
                 Button(.newProfile, systemImage: "plus") { editing = .create }
-                    .disabled(model.storageLocked || model.configuration.profiles.count >= Configuration.maximumProfiles)
+                    .modifier(EditorSecondaryButton()).disabled(model.storageLocked || atLimit)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
+                    .buttonStyle(PrimaryButtonStyle()).keyboardFocusRing()
             }
-        }.padding(24).frame(width: 620, height: 450)
-            .sheet(item: $editing) { ProfileNameEditor(model: model, operation: $0) }
-            .alert(.deleteProfile, isPresented: deletionPresented) {
-                Button(.cancel, role: .cancel) { pendingDeletion = nil }
-                Button(.deleteProfile, role: .destructive) {
-                    if let profile = pendingDeletion { model.deleteProfile(profile.id) }
-                    pendingDeletion = nil
-                }
-            } message: { Text(.deleteProfileConfirmation(pendingDeletion?.title ?? "")) }
+            .controlSize(.large).padding(.horizontal, 28).padding(.vertical, 20)
+        }
+        .frame(width: 560, height: 480)
+        .background(Theme.sheetSurface)
+        .sheet(item: $editing) { ProfileNameEditor(model: model, operation: $0) }
+        .alert(.deleteProfile, isPresented: deletionPresented) {
+            Button(.cancel, role: .cancel) { pendingDeletion = nil }
+            Button(.deleteProfile, role: .destructive) {
+                if let profile = pendingDeletion { model.deleteProfile(profile.id) }
+                pendingDeletion = nil
+            }
+        } message: { Text(.deleteProfileConfirmation(pendingDeletion?.title ?? "")) }
+    }
+
+    private func row(_ profile: RuleProfile) -> some View {
+        let isSelected = profile.id == model.configuration.selectedProfileID
+        return HStack(spacing: 12) {
+            ActionTile(symbol: "square.on.square")
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: profile.title).font(Theme.headline).foregroundStyle(Theme.textPrimary).lineLimit(1)
+                Text(.profileRuleCount(profile.bindings.count)).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+            }
+            Spacer(minLength: 12)
+            if isSelected {
+                Label(.profileSelected, systemImage: "checkmark").font(Theme.calloutStrong).foregroundStyle(Theme.successText)
+            } else {
+                Button(.selectProfile) { model.selectProfile(profile.id) }.modifier(EditorSecondaryButton())
+            }
+            Menu {
+                Button(.duplicateProfile) { editing = .duplicate(profile.id) }.disabled(atLimit)
+                Button(.renameProfile) { editing = .rename(profile.id) }
+                Button(.deleteProfile, role: .destructive) { pendingDeletion = profile }
+                    .disabled(model.configuration.profiles.count <= 1)
+            } label: {
+                Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
+            }
+            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+            .keyboardFocusRing(Circle()).accessibilityLabel(Text(.profileOptions))
+        }
+        .disabled(model.storageLocked)
+        .padding(.leading, 20).padding(.trailing, 16).frame(minHeight: 64)
     }
 
     private var deletionPresented: SwiftUI.Binding<Bool> {

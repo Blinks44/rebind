@@ -10,21 +10,21 @@ User decision 2026-10-12: the calm look of **Rebind - new.sketch** replaces the 
 
 ## Current source: Rebind - new.sketch
 
-Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-12**, SHA-256 `a628d7c9cef37315cb3c92f8d5f1265f9549bb561fdf9a0cd4be31071179756e`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-12**, SHA-256 `52e80c82f3f4ce3d75e6fda3e1f6282abef843babb27a888272de6b3e48fad4d`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 15 screens, each Light and Dark, built only from components |
+| 01 · Screens | 18 screens, each Light and Dark, built only from components |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
-| 05 · Brand | App icon artwork (the three Icon Composer layers), 32 pt in-app logo, Menu Bar template |
+| 05 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
 | 99 · Archive | The two original hand-drawn Keyboard frames |
 
 Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 
-Covered screens: Keyboard, Mouse and Trackpad lists; Magic Mouse empty state; permission-needed and paused states; Keyboard editor (recording, conflict, action picker); Trackpad editor with the curated gesture menu; all five Settings tabs. Not yet redrawn: first-run onboarding, profile management, About, remaining Mouse/Magic Mouse editors and compact-width variants.
+Covered screens: Keyboard, Mouse and Trackpad lists; Magic Mouse empty state; permission-needed and paused states; Keyboard editor (recording, conflict, action picker); Trackpad editor with the curated gesture menu; all five Settings tabs; profile management; first-run setup; About. Not yet redrawn: Mouse and Magic Mouse editors, action parameters, the profile-name sheet, diagnostics and compact-width variants.
 
 ## Previous source: Rebind.sketch (behavior, states and copy reference)
 

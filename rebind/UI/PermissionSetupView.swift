@@ -18,7 +18,7 @@ struct PermissionSetupView: View {
                         Text(.otherPermissionsPurpose).foregroundStyle(Theme.textSecondary)
                     }
                     Text(.privacyAssurance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                    if let error = model.error { Text(error).foregroundStyle(.red) }
+                    if let error = model.error { Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText) }
                 }
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(32)
@@ -27,10 +27,10 @@ struct PermissionSetupView: View {
             HStack(spacing: 12) {
                 Spacer(minLength: 0)
                 if context == .recovery {
-                    Button(.close) { dismiss() }.keyboardShortcut(.cancelAction)
+                    Button(.close) { dismiss() }.keyboardShortcut(.cancelAction).modifier(EditorSecondaryButton())
                 } else {
                     if !model.permissions.allowsRemapping {
-                        Button(.setUpLater) { finishSetup() }.keyboardShortcut(.cancelAction)
+                        Button(.setUpLater) { finishSetup() }.keyboardShortcut(.cancelAction).modifier(EditorSecondaryButton())
                     }
                     Button(.`continue`) {
                         model.refreshPermissions()
@@ -43,11 +43,10 @@ struct PermissionSetupView: View {
                 }
             }
             .controlSize(.large)
-            .buttonBorderShape(.capsule)
             .padding(.horizontal, 32).padding(.bottom, 32).padding(.top, 16)
         }
         .frame(minWidth: 520, idealWidth: 560, minHeight: 560, idealHeight: 580)
-        .background { ThemeCanvas() }
+        .background(Theme.sheetSurface)
         .interactiveDismissDisabled(context == .firstRun)
     }
 
@@ -81,7 +80,7 @@ struct PermissionSetupView: View {
                 Text(context == .recovery ? LocalizedStringResource.permissionsRespectsPause : .readyPurpose)
                     .foregroundStyle(Theme.textSecondary)
                 Button(.checkAgain) { model.refreshPermissions() }
-                    .modifier(EditorSecondaryButton()).controlSize(.large).buttonBorderShape(.capsule)
+                    .modifier(EditorSecondaryButton()).controlSize(.large)
                 Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
         }

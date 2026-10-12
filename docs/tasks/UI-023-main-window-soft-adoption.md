@@ -105,6 +105,16 @@ Checks: build succeeds. Main-window, Permission and General layout tests pass; R
 
 Still open from the user's review: the search-field focus outline improved with circular capsules but still shows a defect.
 
+## Follow-up 7 — 2026-10-13: remaining surfaces
+
+- **Advanced** rows now show the title and description with their actions trailing (stacked when space is short), matching Sketch apart from Export and Import sharing one row.
+- **Profile manager** rebuilt as a sheet with one card of profile rows (tile, name, count, Active mark or Select, options menu) and a footer; the **profile-name sheet** has a themed field and primary/secondary buttons, and Return saves.
+- **First-run setup** and **About** use the sheet surface and themed buttons.
+- Sketch gained screens 16–18 (Profiles, first-run setup, About). The app-icon component is drawn as paths so it scales cleanly and now also serves as the in-app logo.
+- The render test now attaches the profile, setup and About sheets alongside the main window and editor.
+
+Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests. Light/Dark renders of the profile manager, setup and About were reviewed. None of these surfaces was seen in the running app by the agent.
+
 ## Open checks / dependency
 
 - The offscreen `cacheDisplay` capture draws shadow offsets upward, so shadow direction, keycap ledge and button glow were not verified by image. They need a look in the running app.

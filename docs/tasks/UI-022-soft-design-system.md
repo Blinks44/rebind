@@ -39,6 +39,10 @@ No build, test, app launch or hardware check was run; none applies to this chang
 
 Icons were replaced with real SF Symbols outlines (80 components, names equal to the symbols used in code). A brand row (logo + app name) was added to every sidebar, and page `05 · Brand` holds the new app icon, 32 pt logo and Menu Bar template. Screens stay English-only; localized duplicates are no longer planned.
 
+## Update 2026-10-13 (later)
+
+Screens 13–18 added: Settings Input, Language, Advanced; profile management; first-run setup; About. The titlebar strip is native, so every screen's content starts 56 pt from the top and the traffic lights use the system size.
+
 ## Open checks / dependency
 
 - User has not yet reviewed or accepted the design.

@@ -26,7 +26,7 @@ struct AboutView: View {
                         }
                     }
                     Text(.aboutDescription).foregroundStyle(Theme.textSecondary)
-                    Divider().frame(maxWidth: 200)
+                    Theme.separator.frame(width: 200, height: 1)
                     VStack(spacing: 12) {
                         Text(.aboutCredits).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                         Button(.aboutLicenses) { showingLicenses = true }.modifier(EditorSecondaryButton())
