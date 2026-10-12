@@ -164,3 +164,19 @@ struct SectionLabel: View {
             .accessibilityAddTraits(.isHeader)
     }
 }
+
+/// Soft red capsule for a destructive action that still asks for confirmation.
+struct DestructiveButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: ButtonStyleConfiguration) -> some View {
+        configuration.label
+            .font(Theme.bodyStrong).foregroundStyle(Theme.dangerText)
+            .padding(.horizontal, 18).frame(height: Theme.controlHeight)
+            .background {
+                Capsule(style: .circular).fill(Theme.danger.opacity(0.12)).strokeBorder(Theme.danger.opacity(0.25))
+            }
+            .opacity(isEnabled ? (configuration.isPressed ? 0.7 : 1) : 0.45)
+            .contentShape(.capsule)
+    }
+}

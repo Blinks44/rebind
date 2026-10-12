@@ -11,6 +11,7 @@ struct BindingEditor: View {
     @State private var draft: BindingEditorDraft
     @State private var recordingRequest: RecordingRequest?
     @State private var showingPermissions = false
+    @State private var confirmingDeletion = false
     @State private var actionKind: ActionKind
     @State private var application: ApplicationTarget?
     @State private var webAddress: String
@@ -58,6 +59,11 @@ struct BindingEditor: View {
             }
             Theme.separator.frame(height: 1)
             HStack(spacing: 10) {
+                if existing != nil {
+                    Button(.deleteBinding, systemImage: "trash") { model.cancelRecording(); confirmingDeletion = true }
+                        .buttonStyle(DestructiveButtonStyle()).keyboardFocusRing()
+                        .disabled(model.recording != nil || model.storageLocked)
+                }
                 Spacer()
                 Button(.cancel) { model.cancelRecording(); dismiss() }
                     .accessibilityIdentifier("binding-editor-cancel")
@@ -72,6 +78,14 @@ struct BindingEditor: View {
         }
         .frame(width: 512).frame(idealHeight: 640, maxHeight: 760)
         .background(Theme.sheetSurface)
+        .alert(.deleteBinding, isPresented: $confirmingDeletion) {
+            Button(.cancel, role: .cancel) { }
+            Button(.deleteBinding, role: .destructive) {
+                guard let existing, configurationRevision == model.configurationReplacementRevision else { dismiss(); return }
+                model.delete(existing.id)
+                dismiss()
+            }
+        } message: { Text(.deleteBindingConfirmation) }
         .onExitCommand { if model.recording != nil { model.cancelRecording() } else { dismiss() } }
         .sheet(isPresented: $showingPermissions) { PermissionSetupView(model: model, context: .recovery) }
         .onAppear { model.error = nil; model.beginEditing() }
@@ -112,7 +126,7 @@ struct BindingEditor: View {
         switch scope {
         case .allMice: return .mouseEditorScope(profile)
         case .builtInTrackpad: return .trackpadEditorScope(profile)
-        case .allKeyboards: return .recordingLimitations
+        case .allKeyboards: return .keyboardEditorScope(profile)
         }
     }
 
@@ -123,6 +137,8 @@ struct BindingEditor: View {
                 target: .keyboardTrigger, recording: model.recording, canRecord: model.canRecord,
                 record: { record(.keyboardTrigger) }, cancel: model.cancelRecording,
                 clear: { draft.trigger = nil }, shortcut: keyboardTriggerShortcut)
+            Text(.recordingLimitations).font(EditorTypography.caption).foregroundStyle(Theme.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
             SectionLabel(.activationTitle).padding(.top, 8)
             EditorActivationPicker(selection: $draft.activation).frame(maxWidth: .infinity)
                 .disabled(model.recording != nil)

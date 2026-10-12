@@ -115,6 +115,26 @@ Still open from the user's review: the search-field focus outline improved with 
 
 Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests. Light/Dark renders of the profile manager, setup and About were reviewed. None of these surfaces was seen in the running app by the agent.
 
+## Follow-up 8 — 2026-10-13: design and app reconciled
+
+Requested: bring Sketch and the app into agreement before new functionality. Each difference was resolved toward whichever side was better.
+
+App moved to Sketch:
+
+- Rules list shows a neutral "paused" banner with a resume button, and an information banner about system gestures on Trackpad.
+- Binding editor: profile-and-scope caption for Keyboard (new string `keyboardEditorScope`, four languages), recording limits moved under the capture field, and a Delete Binding button with confirmation when editing.
+- First-run setup: warning or success banner, access buttons and steps, then one card listing the other permissions.
+
+Sketch moved to the app:
+
+- Editor sheets: titles Add/Edit Binding with a scope caption, no close button, "Activation" label, Save Binding/Delete Binding; capture-field components show the Record Trigger and Cancel Recording buttons and the empty text.
+- Settings General and Permissions redrawn to the app's structure (status heading, one card per setting or permission; no "Active profile" row). Input and Language gained their section heading; Advanced shows one card per action group with Export and Import together.
+- Counts read "N bindings, N enabled"; the paused banner button reads "Enable Bindings"; the Trackpad banner has no action.
+
+Deliberately not reconciled: the Trackpad gesture selector stays a native menu (Sketch shows a drawing of it); Sketch still shows planned gestures the engine does not have (three-finger click, corner taps, mouse double-click) and an active Magic Mouse section; the action picker has no per-action captions because those strings do not exist.
+
+Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests; the Keyboard editor render and the revised Sketch editor and Permissions frames were reviewed. Not seen in the running app by the agent.
+
 ## Open checks / dependency
 
 - The offscreen `cacheDisplay` capture draws shadow offsets upward, so shadow direction, keycap ledge and button glow were not verified by image. They need a look in the running app.

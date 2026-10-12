@@ -6530,6 +6530,35 @@
         }
       }
     },
+    "keyboardEditorScope" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Alle Tastaturen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · All keyboards"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Tous les claviers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Все клавиатуры"
+          }
+        }
+      }
+    },
     "keyboardSubtitle" : {
       "extractionState" : "manual",
       "localizations" : {

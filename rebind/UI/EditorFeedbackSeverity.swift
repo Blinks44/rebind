@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum EditorFeedbackSeverity {
-    case error, warning, success, information
+    case error, warning, success, information, neutral
 
     var symbol: String {
         switch self {
@@ -9,6 +9,7 @@ enum EditorFeedbackSeverity {
         case .warning: "exclamationmark.triangle"
         case .success: "checkmark.circle"
         case .information: "info.circle"
+        case .neutral: "pause.circle"
         }
     }
 
@@ -18,6 +19,7 @@ enum EditorFeedbackSeverity {
         case .warning: Theme.warning
         case .success: Theme.success
         case .information: Theme.accent
+        case .neutral: Theme.neutral
         }
     }
 
@@ -27,6 +29,7 @@ enum EditorFeedbackSeverity {
         case .warning: Theme.warningText
         case .success: Theme.successText
         case .information: Theme.accent
+        case .neutral: Theme.textPrimary
         }
     }
 

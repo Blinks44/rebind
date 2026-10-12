@@ -13,9 +13,15 @@ struct PermissionSetupView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     introduction
                     requiredAccess
-                    VStack(alignment: .leading, spacing: 12) {
-                        PermissionStatusLabel(title: .inputMonitoringTitle, status: .notRequired)
-                        Text(.otherPermissionsPurpose).foregroundStyle(Theme.textSecondary)
+                    PermissionCard(insets: EdgeInsets()) {
+                        VStack(spacing: 0) {
+                            if model.permissions.requirement == .accessibility {
+                                row(.eventSendingTitle, status: .permissionsWaitingAccessibility, isWarning: true,
+                                    description: .permissionsSendingWaiting)
+                                Theme.separator.frame(height: 1).padding(.horizontal, 20)
+                            }
+                            row(.inputMonitoringTitle, status: .notRequired, description: .otherPermissionsPurpose)
+                        }
                     }
                     Text(.privacyAssurance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     if let error = model.error { Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText) }
@@ -66,24 +72,32 @@ struct PermissionSetupView: View {
     @ViewBuilder private var requiredAccess: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let requirement = model.permissions.requirement {
-                PermissionStatusLabel(title: requirement == .accessibility ? .accessibilityTitle : .eventSendingTitle,
-                                      status: context == .recovery ? .accessLost : .notEnabled, isWarning: true, isPrimary: true)
-                Text(context == .recovery ? LocalizedStringResource.accessLostPurpose
-                     : requirement == .accessibility ? .accessibilityPurpose : .eventSendingPurpose)
-                    .foregroundStyle(Theme.textSecondary)
+                EditorFeedback(severity: .warning,
+                    title: requirement == .accessibility ? .accessibilityTitle : .eventSendingTitle,
+                    message: context == .recovery ? .accessLostPurpose
+                        : requirement == .accessibility ? .accessibilityPurpose : .eventSendingPurpose)
                 PermissionAccessControls(model: model, requirement: requirement)
                 Text(requirement == .eventPosting ? LocalizedStringResource.eventSendingSteps
                      : context == .recovery ? .restoreSteps : .accessibilitySteps)
                     .font(Theme.callout).foregroundStyle(Theme.textSecondary)
             } else {
-                PermissionStatusLabel(title: .permissionsTitle, status: .ready, isPrimary: true)
-                Text(context == .recovery ? LocalizedStringResource.permissionsRespectsPause : .readyPurpose)
-                    .foregroundStyle(Theme.textSecondary)
-                Button(.checkAgain) { model.refreshPermissions() }
-                    .modifier(EditorSecondaryButton()).controlSize(.large)
+                EditorFeedback(severity: .success, title: .ready,
+                    message: context == .recovery ? .permissionsRespectsPause : .readyPurpose) {
+                    Button(.checkAgain) { model.refreshPermissions() }
+                }
                 Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
         }
+    }
+
+    private func row(_ title: LocalizedStringResource, status: LocalizedStringResource, isWarning: Bool = false,
+                     description: LocalizedStringResource) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            PermissionStatusLabel(title: title, status: status, isWarning: isWarning)
+            Text(description).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 20).padding(.vertical, 14).frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func finishSetup() {

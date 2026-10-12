@@ -61,6 +61,13 @@ struct BindingsView: View {
             statusRow.padding(.top, 30)
             if !model.permissions.allowsRemapping {
                 PermissionRecoveryBanner(model: model, reviewPermissions: openPermissions).padding(.top, 24)
+            } else if !model.configuration.isEnabled {
+                EditorFeedback(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
+                    Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked)
+                }.padding(.top, 24)
+            } else if scope == .builtInTrackpad && !bindings.isEmpty {
+                EditorFeedback(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
+                    .padding(.top, 24)
             }
             if let error = model.error {
                 Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText).padding(.top, 12)

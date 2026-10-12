@@ -22,6 +22,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** [Sketch and app reconciled](tasks/UI-023-main-window-soft-adoption.md#follow-up-8--2026-10-13-design-and-app-reconciled) screen by screen; remaining differences are deliberate and listed there. Next is functionality, starting with the Magic Mouse feasibility check.
 - **2026-10-13:** [Settings and shared cards restyled](tasks/UI-023-main-window-soft-adoption.md#follow-up-6--2026-10-13-settings); Sketch has all five Settings tabs. Profiles, first-run setup and About followed; Sketch has 18 screens. Full suite passes (15 XCTest + 663 Swift Testing). Open: a residual search-field outline defect; Mouse/Magic Mouse editors, action parameters and diagnostics are not redrawn.
 - **2026-10-13:** Direction accepted by the user. [Follow-up](tasks/UI-023-main-window-soft-adoption.md#follow-up-2026-10-13): native window-button placement, sidebar brand row, new app icon/Menu Bar template, restyled binding editor; Sketch icons are now SF Symbols and screens are English-only.
 - **2026-10-13:** [Main window in the soft design system](tasks/UI-023-main-window-soft-adoption.md): shared tokens/components and one rules list for Keyboard/Mouse/Trackpad follow Sketch screen 01; build and layout render pass. Running-app review by the user is open.
