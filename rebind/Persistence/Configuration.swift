@@ -1,13 +1,18 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 32
+    static let currentSchemaVersion = 33
     static let maximumProfiles = 20
     var schemaVersion: Int
     var isEnabled: Bool
     /// Records an explicit setup dismissal without changing remapping intent.
     var hasCompletedSetup = false
     var languagePreference: AppLanguagePreference = .system
+    /// Where Rebind is visible. With both off, opening the app again shows its window.
+    var showsDockIcon = true
+    var showsMenuBarIcon = true
+    /// Whether launching Rebind (including at login) opens its main window.
+    var opensWindowAtLaunch = true
     var profiles: [RuleProfile]
     var selectedProfileID: UUID
 
@@ -56,6 +61,9 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
+        if schemaVersion < 33, languagePreference == .es || languagePreference == .zhHans {
+            throw ConfigurationError.invalid
+        }
         if schemaVersion < 32, profiles.flatMap(\.bindings).contains(where: { $0.scope == .magicTrackpad }) {
             throw ConfigurationError.invalid
         }
@@ -190,7 +198,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             result.schemaVersion = Self.currentSchemaVersion
         }
         if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...31).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...32).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         // Existing installations recover through the permission notice, not first-run setup.
         if (1...22).contains(schemaVersion) { result.hasCompletedSetup = true }
         try result.validate()
@@ -199,6 +207,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, isEnabled, hasCompletedSetup, languagePreference, bindings, profiles, selectedProfileID
+        case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch
     }
 
     init(from decoder: any Decoder) throws {
@@ -219,6 +228,11 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         hasCompletedSetup = version >= 23 ? try values.decode(Bool.self, forKey: .hasCompletedSetup) : true
         languagePreference = version >= 24
             ? try values.decode(AppLanguagePreference.self, forKey: .languagePreference) : .system
+        if version >= 33 {
+            showsDockIcon = try values.decode(Bool.self, forKey: .showsDockIcon)
+            showsMenuBarIcon = try values.decode(Bool.self, forKey: .showsMenuBarIcon)
+            opensWindowAtLaunch = try values.decode(Bool.self, forKey: .opensWindowAtLaunch)
+        }
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -227,6 +241,11 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         try values.encode(isEnabled, forKey: .isEnabled)
         if schemaVersion >= 23 { try values.encode(hasCompletedSetup, forKey: .hasCompletedSetup) }
         if schemaVersion >= 24 { try values.encode(languagePreference, forKey: .languagePreference) }
+        if schemaVersion >= 33 {
+            try values.encode(showsDockIcon, forKey: .showsDockIcon)
+            try values.encode(showsMenuBarIcon, forKey: .showsMenuBarIcon)
+            try values.encode(opensWindowAtLaunch, forKey: .opensWindowAtLaunch)
+        }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
             try values.encode(bindings, forKey: .bindings)

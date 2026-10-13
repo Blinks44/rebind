@@ -330,6 +330,10 @@ Required runtime behavior:
 
 ## 10. Interface and design (CORE)
 
+### Presence (2026-10-13)
+
+General settings let the user hide the Dock icon, hide the Menu Bar icon and start without opening the window (including at login). With both icons hidden, opening Rebind again shows its window. Rebind's windows open on the Space the user is on rather than switching back to the Space where they were first shown.
+
 ### Information architecture
 
 Use a compact macOS desktop layout, preferably `NavigationSplitView`:
@@ -378,7 +382,7 @@ Provide a separate monochrome vector template derived from Rebind's brand mark, 
 
 ## 11. Localization (CORE)
 
-- App languages: **English**, **Russian**, **German**, **French**. Select system-preferred supported locale by default; English fallback.
+- App languages: **English**, **Russian**, **German**, **French**, **Spanish** and **Simplified Chinese** (the last two added 2026-10-13 by user request). Select system-preferred supported locale by default; English fallback.
 - Manual language selection includes **System Default**. If switching requires relaunch for a correct native UI, explain clearly instead of presenting a broken live toggle.
 - Use String Catalogs; localize every visible label, action name, hint, onboarding message, error, About/Settings screen, and accessibility label.
 - Localize keyboard/modifier display where appropriate without corrupting familiar macOS key glyphs (`⌘`, `⌥`, `⌃`, `⇧`).

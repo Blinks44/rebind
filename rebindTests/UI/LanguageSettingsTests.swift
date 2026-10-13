@@ -8,9 +8,9 @@ import Testing
             .appending(path: "RebindLanguage-\(UUID())/configuration.json"))
     }
 
-    @Test(arguments: [(["es-MX", "de-CH", "ru"], AppLanguage.de),
+    @Test(arguments: [(["it-IT", "de-CH", "ru"], AppLanguage.de),
                       (["ru-RU", "en"], .ru), (["fr_CA", "de"], .fr),
-                      (["ja", "zh-Hans"], .en), ([], .en)])
+                      (["ja", "ko"], .en), ([], .en)])
     func orderedSystemResolution(_ sample: ([String], AppLanguage)) {
         #expect(AppLanguage.resolve(preferredLanguages: sample.0) == sample.1)
         #expect(AppLanguagePreference.system.resolved(preferredLanguages: sample.0) == sample.1)
@@ -128,7 +128,7 @@ import Testing
         #expect(try Data(contentsOf: store.url) == bytes)
     }
 
-    @Test(arguments: ["null", "7", "\"es\"", "{}"])
+    @Test(arguments: ["null", "7", "\"it\"", "{}"])
     func malformedCurrentPreferenceIsRejected(_ raw: String) throws {
         var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(Configuration())) as? [String: Any])
         object["languagePreference"] = try JSONSerialization.jsonObject(with: Data(raw.utf8), options: .fragmentsAllowed)

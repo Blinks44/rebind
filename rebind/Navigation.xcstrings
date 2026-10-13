@@ -27,6 +27,18 @@
             "state" : "translated",
             "value" : "Clavier"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teclado"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘"
+          }
         }
       }
     },
@@ -55,6 +67,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trackpad"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trackpad"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控板"
           }
         }
       }
@@ -85,6 +109,18 @@
             "state" : "translated",
             "value" : "Magic Mouse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "妙控鼠标"
+          }
         }
       }
     },
@@ -113,6 +149,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Magic Trackpad"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Trackpad"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "妙控板"
           }
         }
       }

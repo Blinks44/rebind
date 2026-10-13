@@ -108,6 +108,18 @@ import Dispatch
         languagePreferenceSaved(preference)
     }
 
+    /// Dock, Menu Bar and launch-window preferences: a UI-only save, like the language.
+    func setPresencePreference(_ keyPath: WritableKeyPath<Configuration, Bool>, to value: Bool) {
+        guard !storageLocked, configuration[keyPath: keyPath] != value else { return }
+        var updated = configuration
+        updated[keyPath: keyPath] = value
+        do {
+            try persistConfiguration(updated)
+            configuration = updated
+            error = nil
+        } catch { self.error = .storageWriteFailed }
+    }
+
     func start() {
         guard timer == nil else { return }
         previousApplication.start()
