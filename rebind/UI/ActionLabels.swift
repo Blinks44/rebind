@@ -11,6 +11,8 @@ extension ActionKind {
     var title: LocalizedStringResource {
         switch self {
         case .keyboardShortcut: .outputShortcut
+        case .navigateBack: .navigateBackAction
+        case .navigateForward: .navigateForwardAction
         case .leftClick: .leftClickAction
         case .rightClick: .rightClickAction
         case .middleClick: .middleClickAction
@@ -75,7 +77,9 @@ extension ActionKind.Category {
 extension RebindAction {
     var label: String {
         switch self {
-        case .shortcut(let shortcut): return InputLabels.shortcut(shortcut)
+        case .shortcut(let shortcut):
+            let kind = ActionKind(action: self)
+            return kind == .keyboardShortcut ? InputLabels.shortcut(shortcut) : AppLocalization.string(kind.title)
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock: return AppLocalization.string(ActionKind(action: self).title)
         case .appleShortcut(let target): return "\(AppLocalization.string(.runAppleShortcutAction)) — \(target.name)"
         case .desktop(_, let shortcut): return "\(AppLocalization.string(ActionKind(action: self).title)) — \(InputLabels.shortcut(shortcut))"
@@ -104,8 +108,9 @@ extension ActionKind {
         case .brightnessDown: "sun.min"
         case .leftClick, .rightClick, .middleClick: "cursorarrow.click"
         case .doubleLeftClick: "cursorarrow.click.2"
-        case .backClick: "chevron.backward"
-        case .forwardClick: "chevron.forward"
+        case .navigateBack: "chevron.backward"
+        case .navigateForward: "chevron.forward"
+        case .backClick, .forwardClick: "computermouse"
         case .scrollUp: "arrow.up"
         case .scrollDown: "arrow.down"
         case .scrollLeft: "arrow.left"

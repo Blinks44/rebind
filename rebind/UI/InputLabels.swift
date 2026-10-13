@@ -36,7 +36,7 @@ enum InputLabels {
         case .key(let code): label = key(code)
         case .mouseButton(let number): label = AppLocalization.string(.mouseButton(Int(number) + 1))
         case .mouseGesture(let button, let direction):
-            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label)))
+            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label).lowercased()))
         case .scroll(let direction): label = AppLocalization.string(direction.label)
         }
         switch trigger {

@@ -80,9 +80,13 @@ import Testing
         candidate.id = UUID()
         candidate.activation = .hold
         #expect(BindingEditorValidation.error(for: candidate, in: configuration) == .conflict)
+        // A gesture may share its button with a plain press rule, not with a hold.
         candidate.trigger = .mouseGesture(button: 8, direction: .left)
         candidate.activation = .press
+        #expect(BindingEditorValidation.error(for: candidate, in: configuration) == nil)
+        configuration.bindings[0].activation = .hold
         #expect(BindingEditorValidation.error(for: candidate, in: configuration) == .conflict)
+        configuration.bindings[0].activation = .press
         candidate.modifiers = .option
         #expect(BindingEditorValidation.error(for: candidate, in: configuration) == nil)
         candidate.modifiers = .control

@@ -190,6 +190,7 @@ struct BindingEditor: View {
             return scope == .allMice ? .mouseOutputHelp : scope.isTrackpad ? .trackpadOutputHelp : nil
         }
         if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
+        if actionKind.fixedShortcut != nil { return .navigationActionHint }
         if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }
         if actionKind.windowLayoutAction != nil { return .windowLayoutHint }
         if let media = actionKind.mediaAction { return media.isBrightness ? .brightnessActionHint : .mediaActionHint }

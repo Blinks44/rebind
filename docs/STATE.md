@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-13**. HEAD `64dadc3`; uncommitted: Back/Forward and scroll actions, Magic Trackpad section (schema 32), compact gesture names, diagnostics table restyle, rule-row switch fix. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `582fb28`; uncommitted: click on a gesture button, universal Back/Forward actions. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -22,6 +22,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** A mouse button with gestures clicks again when released without movement and may also carry a press rule; Back/Forward actions send ⌘[ / ⌘]. Software-tested only.
 - **2026-10-13:** Copy review of every string in four languages (plain wording, one term per language), Back/Forward output on its own held button fixed, Sketch completed with screens 27–28 and repaired dark icon tints.
 - **2026-10-13:** [Magic Trackpad section](tasks/INPUT-008-magic-trackpad.md): own rules, same presets and editor as the built-in trackpad (schema 32); no device was connected, so everything about the external surface is unverified. Gesture names use the compact Sketch form ("Tap · 4 fingers"); the diagnostics table uses design-system rows; Sketch gains the sidebar item and screens 21–23.
 - **2026-10-13:** Back/Forward mouse-button and scroll actions added (schema 31); the rule row no longer draws its switch label. Outputs untested on hardware.

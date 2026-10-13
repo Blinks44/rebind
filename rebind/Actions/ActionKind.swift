@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
-    case keyboardShortcut, volumeUp, volumeDown, toggleMute
+    case keyboardShortcut, navigateBack, navigateForward, volumeUp, volumeDown, toggleMute
     case playPause, nextTrack, previousTrack
     case leftClick, rightClick, middleClick, doubleLeftClick, backClick, forwardClick
     case scrollUp, scrollDown, scrollLeft, scrollRight
@@ -27,7 +27,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         if self == .runAppleShortcut { return .automation }
         if systemAction != nil || mediaAction != nil { return .audio }
         if windowAction != nil || windowLayoutAction != nil || windowCycleAction != nil { return .windows }
-        if needsWorkspaceParameters || self == .previousApplication { return .windows }
+        if needsWorkspaceParameters || self == .previousApplication || fixedShortcut != nil { return .windows }
         return .keyboard
     }
 
@@ -35,7 +35,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         switch action {
         case .lockScreen: self = .lockScreen
         case .sleepSystem: self = .sleepSystem
-        case .shortcut: self = .keyboardShortcut
+        case .shortcut(let shortcut):
+            self = [.navigateBack, .navigateForward].first { $0.fixedShortcut == shortcut } ?? .keyboardShortcut
         case .media(.playPause): self = .playPause
         case .media(.nextTrack): self = .nextTrack
         case .media(.previousTrack): self = .previousTrack
@@ -147,9 +148,19 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Back and Forward are the standard ⌘[ and ⌘] shortcuts, which most apps understand.
+    var fixedShortcut: KeyboardShortcut? {
+        switch self {
+        case .navigateBack: KeyboardShortcut(keyCode: 33, modifiers: .command)
+        case .navigateForward: KeyboardShortcut(keyCode: 30, modifiers: .command)
+        default: nil
+        }
+    }
+
     func configuredAction(shortcut: KeyboardShortcut?, application: ApplicationTarget? = nil,
                           webAddress: String = "", file: URL? = nil,
                           appleShortcut: AppleShortcutTarget? = nil) -> RebindAction? {
+        if let fixedShortcut { return .shortcut(fixedShortcut) }
         if self == .lockScreen { return .lockScreen }
         if self == .sleepSystem { return .sleepSystem }
         if self == .openSystemSettings { return .workspace(.openSystemSettings) }

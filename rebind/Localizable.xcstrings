@@ -7281,25 +7281,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maustaste %1$lld halten + Bewegung %2$@"
+            "value" : "Maustaste %1$lld + %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hold Mouse Button %1$lld + move %2$@"
+            "value" : "Mouse Button %1$lld + %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maintenir le bouton %1$lld + mouvement %2$@"
+            "value" : "Bouton de souris %1$lld + %2$@"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживать кнопку мыши %1$lld + движение %2$@"
+            "value" : "Кнопка мыши %1$lld + %2$@"
           }
         }
       }
@@ -7774,25 +7774,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auslöser bereits in %@ verwendet"
+            "value" : "Wird im Profil „%@“ bereits verwendet"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trigger already used in %@"
+            "value" : "Already used in the “%@” profile"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déclencheur déjà utilisé dans %@"
+            "value" : "Déjà utilisé dans le profil « %@ »"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Триггер уже используется в %@"
+            "value" : "Уже используется в профиле «%@»"
           }
         }
       }
@@ -13750,25 +13750,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Back (Mouse Button 4)"
+            "value" : "Mouse Button 4 Click"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Назад (кнопка мыши 4)"
+            "value" : "Клик кнопкой мыши 4"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zurück (Maustaste 4)"
+            "value" : "Klick mit Maustaste 4"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Précédent (bouton de souris 4)"
+            "value" : "Clic du bouton de souris 4"
           }
         }
       }
@@ -13779,25 +13779,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Forward (Mouse Button 5)"
+            "value" : "Mouse Button 5 Click"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вперёд (кнопка мыши 5)"
+            "value" : "Клик кнопкой мыши 5"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorwärts (Maustaste 5)"
+            "value" : "Klick mit Maustaste 5"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suivant (bouton de souris 5)"
+            "value" : "Clic du bouton de souris 5"
           }
         }
       }
@@ -13972,6 +13972,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ · Magic Trackpad"
+          }
+        }
+      }
+    },
+    "navigateBackAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Précédent"
+          }
+        }
+      }
+    },
+    "navigateForwardAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forward"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вперёд"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorwärts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivant"
+          }
+        }
+      }
+    },
+    "navigationActionHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends ⌘[ or ⌘], which most apps use for Back and Forward: Finder, Safari and other browsers, Xcode and more."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправляет ⌘[ или ⌘] — так «Назад» и «Вперёд» работают в большинстве приложений: Finder, Safari и других браузерах, Xcode и не только."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendet ⌘[ oder ⌘] – damit funktionieren „Zurück“ und „Vorwärts“ in den meisten Apps: Finder, Safari und anderen Browsern, Xcode und weiteren."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoie ⌘[ ou ⌘], que la plupart des apps utilisent pour Précédent et Suivant : Finder, Safari et les autres navigateurs, Xcode, etc."
           }
         }
       }

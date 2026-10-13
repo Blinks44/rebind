@@ -120,6 +120,7 @@ Use associated-value enums or similarly clear models for trigger and action vari
 - USB and Bluetooth mice from various vendors, including Logitech G603, MX Master, G502, and compatible alternatives.
 - Left/right/middle; X buttons; all additional button indices actually surfaced by the OS; vertical/horizontal wheel; mouse-button hold, double/triple click where reliably distinguishable.
 - Keyboard modifiers + any supported mouse button; combinations of mouse buttons only if safely captured.
+- A button that carries pointer gestures still clicks: released without movement, it runs its plain press rule or, without one, its ordinary click (middle, fourth and fifth buttons); the click is delivered on release (2026-10-13).
 - Button-hold + pointer movement in exactly four directions: left, right, up and down. This is the complete intended set for mouse pointer gestures; diagonal, circular/spiral and multi-stroke shapes are out of scope (user decision 2026-10-08). Ambiguous movement cancels rather than selecting an unintended direction. Ensure no repeated firing and avoid accidental dragging/click-through. This decision does not change the separate multitouch requirements.
 - Modifier + vertical/horizontal scroll mapping; define sensible units and throttling for continuous wheel input.
 - Interactive **Record Mouse Button** UI. Never require users to type button codes.

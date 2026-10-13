@@ -51,7 +51,8 @@ struct PointerGesturePersistenceTests {
         #expect(throws: ConfigurationError.conflict) { try Configuration(bindings: rules + [duplicate]).validate() }
     }
 
-    @Test(arguments: PressActivation.allCases)
+    /// A plain press shares the button with its gestures; see GestureButtonClickTests.
+    @Test(arguments: [PressActivation.hold, .doublePress])
     func pressModesConflictWithGestureFamilyAndCompileFailOpen(_ activation: PressActivation) {
         let rules = PointerDirection.allCases.map { binding($0) }
         let ordinary = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,

@@ -70,8 +70,10 @@ nonisolated struct InputMatcher: Sendable {
         var gestureSources: Set<MatchKey> = []
         var ordinarySources: Set<MatchKey> = []
         for binding in bindings where binding.isEnabled && binding.isValid {
+            // A plain press rule may share its button with gestures: it runs on a
+            // click without movement. Hold and double press would be ambiguous.
             if binding.trigger.isPointerGesture { gestureSources.insert(binding.matchKey.pressSource) }
-            else { ordinarySources.insert(binding.matchKey.pressSource) }
+            else if binding.activation != .press { ordinarySources.insert(binding.matchKey.pressSource) }
             if rules[binding.matchKey] != nil { conflicts.insert(binding.matchKey) }
             rules[binding.matchKey] = CompiledBinding(action: binding.action, activation: binding.activation,
                                                       holdDurationNanoseconds: UInt64(binding.holdDurationMilliseconds) * 1_000_000)
@@ -102,9 +104,19 @@ nonisolated struct InputMatcher: Sendable {
         if event.trigger.isPointerGesture { return MatchDecision() }
         if case .scroll = event.trigger { return MatchDecision() }
         if event.phase == .up {
-            if pointerGesture?.key.trigger == event.trigger { pointerGesture = nil }
+            var click: RebindAction?
+            if let candidate = pointerGesture, candidate.key.trigger == event.trigger {
+                // Released before any stroke was recognized or cancelled: this was a
+                // click. Run the button's press rule, or give the click back to the system.
+                if candidate.recognizing, enabled, canDispatch, candidate.key.modifiers == event.modifiers,
+                   suppressed.contains(event.trigger) {
+                    click = rules[candidate.key]?.action ?? Self.passthroughClick(for: event.trigger)
+                }
+                pointerGesture = nil
+            }
             if hold?.key.trigger == event.trigger { hold = nil }
             let owned = suppressed.remove(event.trigger) != nil
+            if click != nil { doublePress = nil; return MatchDecision(suppress: owned, action: click) }
             if let candidate = doublePress, candidate.key.trigger == event.trigger {
                 if owned, candidate.key.modifiers == event.modifiers,
                    event.timestamp >= candidate.startedAt,
@@ -149,17 +161,19 @@ nonisolated struct InputMatcher: Sendable {
             doublePress = nil
             return MatchDecision()
         }
+        // A button with gesture rules waits for movement; its click is decided on release.
+        if case .mouseButton(let button) = event.trigger, pointerGesture == nil,
+           PointerDirection.allCases.contains(where: {
+               rules[MatchKey(trigger: .mouseGesture(button: button, direction: $0), modifiers: event.modifiers)] != nil
+           }) {
+            doublePress = nil
+            let now = event.receivedAt ?? event.timestamp
+            pointerGesture = PointerGesture(key: key, startedAt: now, lastReceivedAt: now)
+            suppressed.insert(event.trigger)
+            return MatchDecision(suppress: true)
+        }
         guard let rule = rules[key] else {
             doublePress = nil
-            if case .mouseButton(let button) = event.trigger, pointerGesture == nil,
-               PointerDirection.allCases.contains(where: {
-                   rules[MatchKey(trigger: .mouseGesture(button: button, direction: $0), modifiers: event.modifiers)] != nil
-               }) {
-                let now = event.receivedAt ?? event.timestamp
-                pointerGesture = PointerGesture(key: key, startedAt: now, lastReceivedAt: now)
-                suppressed.insert(event.trigger)
-                return MatchDecision(suppress: true)
-            }
             return MatchDecision()
         }
         if rule.activation == .hold {
@@ -189,6 +203,18 @@ nonisolated struct InputMatcher: Sendable {
         doublePress = nil
         suppressed.insert(event.trigger)
         return MatchDecision(suppress: true, action: rule.action)
+    }
+
+    /// The ordinary click of a gesture button that has no press rule. Only the
+    /// middle, fourth and fifth buttons can be given back; higher ones stay silent.
+    private static func passthroughClick(for trigger: InputTrigger) -> RebindAction? {
+        guard case .mouseButton(let button) = trigger else { return nil }
+        switch button {
+        case 2: return .mouse(.middleClick)
+        case 3: return .mouse(.backClick)
+        case 4: return .mouse(.forwardClick)
+        default: return nil
+        }
     }
 
     mutating func consume(_ event: InputEvent) {

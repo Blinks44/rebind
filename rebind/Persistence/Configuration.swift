@@ -40,10 +40,15 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         guard allBindings.count <= 1000, Set(allBindings.map(\.id)).count == allBindings.count,
               allBindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
         for profile in profiles {
-            let keys = profile.bindings.filter(\.isEnabled).map(\.matchKey)
+            let enabled = profile.bindings.filter(\.isEnabled)
+            let keys = enabled.map(\.matchKey)
             guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
             let gestures = Set(keys.filter { $0.trigger.isPointerGesture }.map(\.pressSource))
-            guard !keys.contains(where: { !$0.trigger.isPointerGesture && gestures.contains($0.pressSource) }) else {
+            // A plain press rule may share a button with its gestures (it runs on a click
+            // without movement); hold and double press on that button stay ambiguous.
+            guard !enabled.contains(where: {
+                !$0.trigger.isPointerGesture && $0.activation != .press && gestures.contains($0.matchKey.pressSource)
+            }) else {
                 throw ConfigurationError.conflict
             }
         }
