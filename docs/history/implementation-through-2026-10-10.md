@@ -52,9 +52,9 @@ Each recorded **465 tests / 63 suites / 0 failures**; Debug/Release builds passe
 
 ### 2026-10-10 — App icon and permission designs
 
-Native [Icon Composer delivery](../verification/app-icon-composer.md) passed Debug/Release resource/signature checks and Finder preview inspection. The separate menu-bar template was integrated. Dock/live Menu Bar/minimum-OS/tint checks remain open.
+Native Icon Composer delivery passed Debug/Release resource/signature checks and Finder preview inspection. The separate menu-bar template was integrated. Dock/live Menu Bar/minimum-OS/tint checks remain open.
 
-Six first-launch/permission frames were saved and reviewed in Sketch. Their state/copy handoff is indexed in [DESIGN](../DESIGN.md) and [menu-bar/onboarding verification](../verification/menu-bar-onboarding.md). Saved frames are not native onboarding implementation.
+Six first-launch/permission frames were saved and reviewed in Sketch. Their state/copy handoff is indexed in [DESIGN](../DESIGN.md) and menu-bar/onboarding verification. Saved frames are not native onboarding implementation.
 
 ### 2026-10-08–09 — Keyboard, mouse, profiles and actions
 

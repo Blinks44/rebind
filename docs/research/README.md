@@ -4,7 +4,7 @@ Updated 2026-10-12: [twelve-candidate touch-library audit](touch-library-audit.m
 
 ## Current adoption and boundaries
 
-[Liquid Glass / design-transfer audit](liquid-glass-library-audit.md): seven library candidates and additional skills reviewed for macOS editor fidelity; no dependency installed. Shared native controls and authored source tokens are retained, with optical limits recorded separately from runtime acceptance.
+Liquid Glass / design-transfer audit: seven library candidates and additional skills reviewed for macOS editor fidelity; no dependency installed. Shared native controls and authored source tokens are retained, with optical limits recorded separately from runtime acceptance.
 
 | Area | Current decision / evidence | Next uncertainty |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ Updated 2026-10-12: [twelve-candidate touch-library audit](touch-library-audit.m
 | Device scope | User withdrew physical-device inventory/source attribution on 2026-10-08; category-wide input and manual profiles retained. Removed private sender probe stays removed. | Revisit only on a new explicit product request |
 | Trackpad app adapter | Isolated private observer, bounded callback handoff/process-lifetime ownership and macOS major 26/27 gate. No app package. [Contract](../verification/phase-5-four-finger-tap.md), [suppression feasibility refresh](native-gesture-suppression.md). | Actual usability/click separation/recovery, macOS 26/Intel; no selective suppression route established |
 | Trackpad recognizers | Narrow three/four-finger engine path; three-finger editor/hardware gates remain open in [INPUT-002](../tasks/INPUT-002-three-finger-tap.md); Sanne MIT corner adaptation credited, [three/four double sequencing](../tasks/INPUT-003-double-tap-engine.md) is integrated; two-finger/corner paths remain unwired. Original 500 ms settling notes are superseded by source's 60 ms guard and responsiveness/idle-gap fixes. | [INPUT-001](../tasks/INPUT-001-four-finger-tap.md); rest of compact scope |
-| Standalone probe | `tools/TrackpadProbe` has pinned Subsurface/Scribe/SwiftSyntax dependencies separately; not bundled in Rebind.app. | Probe success does not prove app runtime/suppression |
+| Standalone probe | `tools/TrackpadProbe` (pinned Subsurface/Scribe/SwiftSyntax, never bundled) was removed on 2026-10-13 after integration; see Git history. `tools/magic-mouse-probe.swift` has no dependencies. | Probe success does not prove app runtime/suppression |
 | Tap/click alternatives | [Current source audit](touch-library-audit.md): Subsurface/OpenMultitouchSupport acquisition, MagicBind MIT reader and CalmMouseCore pure tap/scroll logic are bounded candidates; no complete selective native-gesture cancellation established. No new dependency/source reuse. | Compare isolated acquisition/coexistence on named hardware before integration |
 | Actions | Core Audio, AppKit/NSWorkspace, public AX, IOKit sleep, public media/Quartz HID outputs. Shared catalog only advertises available implementations. | Target/device/permission/error/cancellation/latency checks per action |
 | Mission Control / lock | Isolated dynamic private Dock notifications/login-framework entry point; explicitly Experimental. | Platform/version compatibility and effect/lifecycle acceptance |

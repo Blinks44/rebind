@@ -62,7 +62,7 @@ The Light popup is the imported native medium popup. The Dark popup derives from
 
 ## Copy, accessibility and native acceptance
 
-[Copy handoff](language-settings-copy.json): **16 new keys × EN/RU/DE/FR**, structurally checked, non-empty; subsequently integrated into `Localizable.xcstrings` in the native delivery. Existing Settings/navigation copy is reused. Applied language overview is visually reviewed in all four languages; pending Dark and error/reopen/menu are English references. Translated/Dark feedback, busy/protected-storage and accessibility variations are specified here but still require rendered native verification. Copy follows the `writing-for-interfaces` skill and established utility voice.
+Copy handoff: **16 new keys × EN/RU/DE/FR**, structurally checked, non-empty; subsequently integrated into `Localizable.xcstrings` in the native delivery. Existing Settings/navigation copy is reused. Applied language overview is visually reviewed in all four languages; pending Dark and error/reopen/menu are English references. Translated/Dark feedback, busy/protected-storage and accessibility variations are specified here but still require rendered native verification. Copy follows the `writing-for-interfaces` skill and established utility voice.
 
 Receiving implementation must verify:
 

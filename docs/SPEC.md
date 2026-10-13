@@ -5,7 +5,7 @@
 **Product:** Rebind, a lightweight, capable, native input remapper inspired by the useful parts of BetterTouchTool.  
 **Companion files:** [AGENTS](../AGENTS.md), [STATE](STATE.md), [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [DESIGN](DESIGN.md). Requirements live here; implementation/evidence and recent changes live in STATE, task records and [CAPABILITIES](CAPABILITIES.md), not in the presence of a requirement.
 
-**Design source:** Current Rebind designs in Sketch, indexed in DESIGN and inspected through MCP before designing or implementing screens. `docs/references/` holds optional assets/historical exports; a PNG reference is not required.
+**Design source:** Current Rebind designs in Sketch, indexed in DESIGN and inspected through MCP before designing or implementing screens. A PNG reference is not required.
 
 ## 1. Product vision
 
@@ -364,7 +364,7 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 - Distinct, readable panes; avoid stacked translucency and giant decorative cards.
 - Native button/menu/focus semantics; SF Symbols; polished hover/focus/pressed states.
 - Support Light/Dark, window resizing, accessibility, Reduce Transparency, Reduce Motion, Increase Contrast, VoiceOver, full keyboard operation.
-- Inspect the relevant current Sketch frames, components/styles and screenshots via MCP. Use the user-identified design as visual direction while preserving native macOS behavior. Optional assets/exports in `docs/references/` do not replace the live design; if access or the target is missing, explain the limitation and request the document/frame.
+- Inspect the relevant current Sketch frames, components/styles and screenshots via MCP. Use the user-identified design as visual direction while preserving native macOS behavior. Exported images do not replace the live design; if access or the target is missing, explain the limitation and request the document/frame.
 - **No generic AI slop:** no gratuitous purple gradients, blur effects, massive corner radii, fake analytics dashboards, or unrelated micro-illustrations.
 
 ### Application icon

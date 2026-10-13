@@ -29,7 +29,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 - **2026-10-13:** [Physical 2/3/4-finger clicks](tasks/INPUT-006-trackpad-clicks.md) replace the click with their rule (schema 29, three editor presets); injected tests pass, physical acceptance open.
 - **2026-10-13:** [One-finger corner taps](tasks/INPUT-005-corner-taps.md) integrated through the tap engine with schema 28 and four editor presets; the click Tap to click makes from a configured corner is consumed so the rule replaces it. Injected tests pass and the happy path is user-confirmed with Tap to click on; other corners/options and palm false positives are open.
 - **2026-10-13:** Two-finger double-tap preset exposed in the Trackpad editor; Mouse gesture direction is a segmented control (Sketch screen 19, Light/Dark); `tools/magic-mouse-probe.swift` prepared for the Phase 6 hardware check. Scoped editor/layout tests pass.
-- **2026-10-13:** [Code and design review](tasks/UI-024-code-design-review.md): design-system code consolidated under `rebind/UI/DesignSystem`, legacy names and 48 unused strings removed, secondary text contrast raised, unused Sketch styles deleted. Full suite passes.
+- **2026-10-13:** Code and design review: design-system code consolidated under `rebind/UI/DesignSystem`, legacy names and 48 unused strings removed, secondary text contrast raised, unused Sketch styles deleted. Full suite passes.
 - **2026-10-13:** [Whole app restyled and reconciled with Sketch](tasks/UI-023-main-window-soft-adoption.md): main window, editor, Settings, profiles, setup and About use the soft design system; new app icon and Menu Bar template.
 - **2026-10-12:** [Soft design system](tasks/UI-022-soft-design-system.md) replaces the Liquid Glass direction by user decision.
 - **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27; preset exposure and physical acceptance open.
@@ -41,11 +41,9 @@ Source: **Rebind - new.sketch** (28 screens × Light/Dark, English only) is the 
 
 - **Next:** run `tools/magic-mouse-probe.swift` with the Magic Mouse switched on (paired, was not connected on 2026-10-13); its contact counts decide which Magic Mouse presets are feasible and whether the sidebar section becomes real.
 - **Open from review:** a residual search-field focus outline defect; running-app checks of keyboard focus, VoiceOver and RU/DE/FR at minimum width; Dock/tint acceptance of the new icon.
-- Tasks that only adopted the withdrawn glass design (UI-006, UI-011–UI-013, UI-015–UI-021) are superseded by UI-022/UI-023; their behavioral notes remain in the task files.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
-| [UI-024](tasks/UI-024-code-design-review.md) | done | Released | — |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths; fix the search-field outline. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Draw screens for new functionality as it is built (Mouse/Magic Mouse editors, action parameters, diagnostics). |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture, keyboard/VoiceOver/preferences. |
@@ -66,4 +64,4 @@ Source: **Rebind - new.sketch** (28 screens × Light/Dark, English only) is the 
 | [UI-009](tasks/UI-009-mouse-design.md) | awaiting_verification | Unassigned | Editor materials adopted in UI-016; verify capture/timing/accessibility and remaining list materials. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | awaiting_verification | Unassigned; scoped refresh saved | Check Dock/live Menu Bar from the explicitly identified fresh bundle; actual tint and macOS 26 remain separate. |
 
-Broader hardware, accessibility and release gates remain in PLAN.
+Release gates are listed in [PLAN](PLAN.md).

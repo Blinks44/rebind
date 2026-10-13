@@ -3,14 +3,14 @@
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
 - Owner: Kilo code agent (this chat); engine/data ownership released.
-- Ownership checked: 2026-10-12 / `main` `8e8a06e`; concurrent `/root` agent owns uncommitted [UI-021](UI-021-main-window-layout.md) main-shell surfaces (ContentView/rebindApp/MainSidebar*/Navigation.xcstrings/EditorMenuSelector/ProfilePicker/MouseBindingsView and their layout tests). No file overlap; both uncommitted work preserved.
+- Ownership checked: 2026-10-12 / `main` `8e8a06e`; concurrent `/root` agent owns uncommitted UI-021 main-shell surfaces (ContentView/rebindApp/MainSidebar*/Navigation.xcstrings/EditorMenuSelector/ProfilePicker/MouseBindingsView and their layout tests). No file overlap; both uncommitted work preserved.
 - Owned surfaces: trackpad recognizer/gate/session/runtime/mailbox, typed trigger model, schema/migration, compile-necessary trigger label, engine/persistence/label tests and affected status/evidence sections. No editor preset exposure, Sketch edits or real configuration/permission edits.
 - Requirements: SPEC §§3.4, 4, 6, 9, 12; PLAN Phase 5.
 - Code baseline: `main` `8e8a06e`; uncommitted on top; no agent commit.
 
 ## Outcome and scope
 
-Connect a two-finger double tap to guarded shortcut output, completing the SPEC §3.4 "double tap with 2, 3 or 4 fingers" row for the light-tap engine. A general two-finger single tap stays out of scope and must never become output. Reuse the pure `TrackpadTapSequence` (already models `doubleTap(2)`), the click-exclusion settling gate and the guarded worker unchanged in architecture. Physical clicks (2/3/4), corners and curated modifier variants remain separate slices; editor exposure of the new preset belongs to the design-adoption agent ([UI-013](UI-013-design-coverage-completion.md) final selector; the saved pool already contains "Double tap · 2 fingers").
+Connect a two-finger double tap to guarded shortcut output, completing the SPEC §3.4 "double tap with 2, 3 or 4 fingers" row for the light-tap engine. A general two-finger single tap stays out of scope and must never become output. Reuse the pure `TrackpadTapSequence` (already models `doubleTap(2)`), the click-exclusion settling gate and the guarded worker unchanged in architecture. Physical clicks (2/3/4), corners and curated modifier variants remain separate slices; editor exposure of the new preset belongs to the design-adoption agent (UI-013 final selector; the saved pool already contains "Double tap · 2 fingers").
 
 ## Acceptance
 
@@ -38,7 +38,7 @@ Agent-observed on macOS 27.0.1 (26A434) / arm64, Xcode 27.0 / Swift 6.4 / SDK 27
 
 **2026-10-13:** the preset is exposed in the Trackpad editor (`TrackpadPreset.twoFingerDoubleTap`, Smart Zoom guidance in four languages); editor suites and the localized layout test pass. The exposure dependency below is closed; physical acceptance remains.
 
-Physical/hardware acceptance requires the user on a named build. Editor preset exposure requires the design-adoption agent ([UI-013](UI-013-design-coverage-completion.md) final selector; saved pool already contains "Double tap · 2 fingers" with four-language copy). The Settings matrix failure is UI-021's open item, not this engine slice.
+Physical/hardware acceptance requires the user on a named build. Editor preset exposure requires the design-adoption agent (UI-013 final selector; saved pool already contains "Double tap · 2 fingers" with four-language copy). The Settings matrix failure is UI-021's open item, not this engine slice.
 
 ## Next handoff
 

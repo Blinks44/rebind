@@ -50,7 +50,7 @@ Requested after the first review and integrated:
 
 - **Window buttons no longer jump on resize.** The custom repositioning was removed; an empty unified toolbar gives the window a tall titlebar and macOS places the buttons itself.
 - **Brand row** (app icon + name) between the window buttons and navigation; it shows the running app's own icon.
-- **New app icon and Menu Bar template** in the soft style; see [brand README](../../assets/brand/README.md).
+- **New app icon and Menu Bar template** in the soft style; see [brand README](../DESIGN.md#brand).
 - **Binding editor restyled** with the same tokens: one layout for all three categories, keycaps in capture fields, segmented activation, banner-style feedback, primary/secondary capsule buttons. The Keyboard editor now uses the shared capture field; its separate Clear button and listening row were removed. `EditorGlassSurface`, `BindingEditorSection` and the preview specimen file were deleted.
 - Settings tabs and selectors pick up the new surfaces through the shared controls; the Settings pages themselves are not restyled yet.
 

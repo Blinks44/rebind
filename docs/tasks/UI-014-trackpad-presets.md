@@ -25,7 +25,7 @@ Live MCP inspection on 2026-10-12: Rebind.sketch, document `4B31A177-0924-4510-A
 
 This adopts only the four engine-backed tap presets and shortcut action. Other gestures/shared actions, final lists/keycaps and broader UI-011/012/013 adoption remain separate. Missing hardware does not prevent preset editing; only output capture needs actual permissions/runtime availability. System Settings opens through public app lookup, without a private pane URL or setting writes.
 
-Completion freshness check discovered concurrent [UI-015](UI-015-production-design-review.md) in design, refining shared Sketch sources without native code ownership. This integration uses the released UI-013 revision inspected above; reconcile any subsequently released control/capture refinement before claiming final visual adoption. No UI-015/Sketch source was edited by this task.
+Completion freshness check discovered concurrent UI-015 in design, refining shared Sketch sources without native code ownership. This integration uses the released UI-013 revision inspected above; reconcile any subsequently released control/capture refinement before claiming final visual adoption. No UI-015/Sketch source was edited by this task.
 
 ## Next step
 

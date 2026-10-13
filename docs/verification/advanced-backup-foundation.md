@@ -2,7 +2,7 @@
 
 ## Implemented scope
 
-[UI-008](../tasks/UI-008-advanced-storage.md) adds an immutable validated ConfigurationBackup. It stages current/legacy local JSON, migrates in memory, supplies profile/rule counts and serializes a validated schema-24 backup. ConfigurationStore reuses the same codec and bounded file reader, retaining missing-file defaults and atomic writes.
+UI-008 adds an immutable validated ConfigurationBackup. It stages current/legacy local JSON, migrates in memory, supplies profile/rule counts and serializes a validated schema-24 backup. ConfigurationStore reuses the same codec and bounded file reader, retaining missing-file defaults and atomic writes.
 
 The file reader rejects remote/non-regular sources and reads at most **2,000,001 bytes**, enforcing the existing **2,000,000-byte** limit before JSON decoding. Legacy bytes remain unchanged; future schema, duplicate IDs, invalid selection and enabled-rule conflicts are rejected. No new schema/dependency, real configuration change, rule activation or file-panel operation was introduced.
 

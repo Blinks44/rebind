@@ -1,114 +1,34 @@
 # Rebind — roadmap
 
-Updated 2026-10-12. Read [STATE](STATE.md) first for current facts and next tasks; [WORKFLOW](WORKFLOW.md) defines how to work. Product requirements remain in [SPEC](SPEC.md). No whole product phase is declared complete by these bounded deliveries.
+Updated 2026-10-13. Read [STATE](STATE.md) first for current facts and the task table; [WORKFLOW](WORKFLOW.md) defines how to work; requirements are in [SPEC](SPEC.md); per-capability evidence is in [CAPABILITIES](CAPABILITIES.md). Nothing here is declared complete by a passing build alone.
 
-## Immediate priorities
+## Where the product stands
 
-1. [INPUT-001](tasks/INPUT-001-four-finger-tap.md): delivery/click recovery/lifecycle subsets user-confirmed; post-repair walkthrough reports 10/10 taps, no delayed pause outputs and 5/5 fresh recovery. [Buffer safety](verification/trackpad-buffer-safety.md) and [callback guards](verification/trackpad-callback-generation.md) have injected recovery evidence. [Timing diagnostics and injected scheduling checks](verification/trackpad-scheduling-timing.md) pass final user-run regression (659 functions / 1,860 executions), reviewed from xcresult. [Foreground round-trip cancellation](verification/trackpad-focus-cancellation.md) is repaired; final full regression passes 666 functions / 1,870 executions on `a6471db`. Requested focus-switching/fresh-tap walkthrough is user-confirmed. Busy-consumer latency, quantified stress and full T1/T2 safety remain open. Preserve confirmed scenarios; do not substitute polish or blind threshold changes for remaining acceptance.
-2. [UI-001](tasks/UI-001-permissions-onboarding.md): main-window clipping repaired; native layout/navigation/deferral and schema 23 pass. [Settings feedback adoption](verification/permissions-feedback-adoption.md) passes bounded software/native checks. Actual grant/revocation/accessibility and remaining setup/main material adoption stay open.
-3. [BRAND-001](tasks/BRAND-001-icon-runtime.md): finish Dock/live Menu Bar/minimum-OS/tint acceptance. The icon and Menu Bar asset already exist; recreation is not the next step.
+All planned functionality except Magic Mouse is implemented in software: keyboard and mouse rules, profiles, the action catalog, the full trackpad preset pool on the built-in trackpad and an external Magic Trackpad, Settings, onboarding, four languages and the soft design system. Much of it still needs physical or running-app acceptance.
 
-These are recommended next items, not authorization to run hardware actions or start other agents. The user's next task may select a different slice. Independent design and input work can proceed with explicit ownership.
+Out of scope by user decision: Caps Lock, Fn/Globe and left/right modifier distinction; primary and secondary mouse buttons as triggers; physical-device inventory and automatic profile activation; swipes, pinch and rotation.
 
-Target-release clarification, 2026-10-11: complete the planned product functionality, including Trackpad/Magic Mouse, before release. Sketch designs the final product; temporary implementation gaps are not release-interface states. [UI-013](tasks/UI-013-design-coverage-completion.md) removes such placeholders and closes remaining design coverage. Native implementation and verification gates below remain open.
+## Next
 
-## Phase status and exit gates
+1. **Hardware acceptance of 2026-10-13 work** — built-in trackpad after the adapter refactor, Magic Trackpad discovery and gestures, Back/Forward, scroll and brightness actions, non-shortcut actions from trackpad rules. Tasks INPUT-005 … INPUT-008.
+2. **Magic Mouse** — run `tools/magic-mouse-probe.swift` on the real device, then decide the supported presets, implement them and draw the screens. No implementation or hardware claim yet (SPEC §3.5).
+3. **Review pass** — code, design and copy once the hardware findings are in; German and French proofreading by a fluent reader.
+4. **Release preparation** — see the gates below.
 
-The checked items below describe only the stated software/artifact milestone. An unchecked phase gate may have substantial existing implementation. Read [capability evidence](CAPABILITIES.md) and relevant verification before adding code.
+## Release gates
 
-### Phase 0 — Inventory, feasibility, dependencies
+- [ ] SPEC §15 acceptance walkthroughs with named OS and devices; every `awaiting_verification` task in STATE closed or explicitly limited.
+- [ ] Safety: release/suppression ownership, Secure Input, permission revocation, sleep/lock recovery, emergency pause; measured callback and action latency.
+- [ ] Accessibility: full keyboard navigation, VoiceOver, Increase Contrast, Reduce Motion/Transparency; EN/RU/DE/FR at minimum window width.
+- [ ] Known defect: residual search-field focus outline.
+- [ ] Brand: live Dock tile and Menu Bar icon, tinted/clear appearances ([BRAND-001](tasks/BRAND-001-icon-runtime.md)).
+- [ ] Platforms: macOS 26 execution; Intel only if claimed.
+- [ ] Distribution: Developer ID signing, notarization and a stable identity for TCC grants; license file; website.
 
-- [x] Existing Xcode project/toolchain inspected; native-first baseline and reviewed skills prepared.
-- [ ] Finish input/action feasibility and actual hardware/performance/suppression evidence for supported claims. Physical-device routing is withdrawn, not a remaining gate.
+## Evidence routing
 
-### Phase 1 — First global remapping slice
-
-- [x] Category-wide ordinary key/middle-extra mouse matching, bounded active tap, tagged one-shot shortcut output, editor, persistence and software tests exist.
-- [x] User confirms G603 Control + Button 4 → Command+A in TextEdit and plain Button 4 passthrough.
-- [ ] Verify physical keyboard delivery and the full release/suppression/permission/background safety walkthrough. [Evidence](verification/phase-1.md).
-
-### Phase 2 — Robust keyboard/mouse
-
-- [x] Software slices: discrete four-direction wheel, exclusive double/long press, four cardinal button-held pointer gestures, capture lifecycle, bounded opt-in mouse diagnostics.
-- [x] Configured G603 hold/left gesture and basic pause/sleep/diagnostics happy paths are user-confirmed subsets.
-- [ ] Finish hardware timing, other directions/modifiers, rapid events, cancellation/release/overflow, Secure Input/revocation and callback profiling. Caps Lock, Fn, left/right modifiers, held/repeating output remain deferred. [Capability evidence](CAPABILITIES.md).
-
-### Phase 3 — Manual profiles
-
-- [x] Independent rule sets, selection, CRUD/copy, atomic rollback/migrations and Menu Bar/main pickers; selected-profile output user-confirmed.
-- [ ] Verify both selection routes, held-input switching, relaunch/paused state and other-language/accessibility checks. [Walkthrough](verification/profiles.md).
-- Physical-device inventory, sender attribution and automatic profile activation remain outside scope.
-
-### Phase 4 — Shared action catalog and system actions
-
-- [x] Shared searchable catalog and real dispatch: shortcuts, audio/media/mouse output, AX windows/apps, selected app/web/file opening, Apple Shortcuts, Spaces and system operations. Specific happy paths are user-confirmed; private Dock/lock paths remain Experimental.
-- [ ] Complete each advertised action's failure/cancellation, modifier/focus/player/display, protected-session, latency and macOS 26/Intel checks. Add remaining system actions only after their own capability research. [Evidence matrix](CAPABILITIES.md).
-
-### Phase 5 — Compact trackpad scope
-
-- [x] Pinned standalone acquisition probe, software recognition/sequencing tests and experimental integrated built-in four-finger tap → shortcut subset exist.
-- [x] Rebuilt built-in four-finger tap → configured shortcut delivery user-confirmed with 25 queued/posted outputs; click-only exclusion and subsequent tap also user-confirmed in this setup.
-- [ ] Finish measured timing/mixed-input click exclusion and lifecycle/stop/native conflicts before production claims. [INPUT-001](tasks/INPUT-001-four-finger-tap.md).
-- [x] Bounded [three-finger single-tap engine/storage](tasks/INPUT-002-three-finger-tap.md) integrated alongside four fingers, with distinct shortcut routing and schema 25; engine software checks pass. Physical verification remains open.
-- [x] [Three/four-finger double-tap engine/storage](tasks/INPUT-003-double-tap-engine.md) integrated with single/double arbitration and schema 26; engine software checks pass. Native/hardware acceptance remains open.
-- [x] [Two-finger double-tap engine/storage](tasks/INPUT-004-two-finger-double-tap.md) integrated through the same guarded worker with schema 27, no single fallback for lone two-finger contacts and injected pair/click-exclusion checks passing; editor preset exposure and physical acceptance remain open. [Evidence](verification/two-finger-double-tap-engine.md).
-- [x] Bounded [tap preset editor](tasks/UI-014-trackpad-presets.md) adopts live UI-013 selection/independent output recording and conditional conflict guidance for four engine-backed presets. [Software/native evidence](verification/trackpad-preset-editor.md); physical/coexistence/accessibility acceptance and broader final UI remain open.
-- [x] [One-finger corner taps](tasks/INPUT-005-corner-taps.md) and the two-finger double preset are integrated in engine and editor (schema 28); injected checks pass, physical/Tap to click acceptance open.
-- [x] [Physical 2/3/4-finger clicks](tasks/INPUT-006-trackpad-clicks.md) integrated in engine and editor (schema 29); injected checks pass, physical acceptance open.
-- [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, deliberately curated modifier variants/actions and preset editing/conflict UX. Two-finger doubles are engine-ready (INPUT-004); preset exposure and corners still require native integration.
-- [x] [Magic Trackpad section](tasks/INPUT-008-magic-trackpad.md) implemented in engine, storage and UI (schema 32); no hardware evidence yet.
-- [ ] Verify external Magic Trackpad separately; raw contacts do not prove suppression. Swipes/pinch/rotation/five-finger gestures remain out of scope.
-
-### Phase 6 — Magic Mouse
-
-- [ ] Research/acquire on real hardware, establish touch/click/scroll coexistence, implement and verify only supported gestures. No current implementation or hardware claim.
-
-### Phase 7 — Settings, storage, permissions, background
-
-- [x] Versioned atomic storage, corruption/future-file protection, actual permission checks and window-independent runtime foundation exist.
-- [x] Bounded first-run/recovery and Settings → Permissions integrated; actual-grant and full native acceptance remain open in [UI-001](tasks/UI-001-permissions-onboarding.md).
-- [x] Bounded [General/background](tasks/UI-003-general-settings.md) with actual runtime, global pause and SMAppService integration; software/native fixture checks and [full-main overflow repair](verification/general-main-window-repair.md) pass; [General shared feedback](verification/general-feedback-adoption.md) also has software/native checks; actual login/relaunch/accessibility acceptance remains open.
-- [x] Bounded [Input/hold](tasks/UI-004-input-settings.md) and [Language](tasks/UI-005-language-settings.md) native integration, schema 24 and software/full-window/live fixture checks pass; actual input/relaunch/accessibility acceptance remains open in [native evidence](verification/input-language-native.md).
-- [x] Bounded [Advanced backup foundation](tasks/UI-008-advanced-storage.md): shared validated codec, in-memory legacy migration and size-bounded regular-file read; 553 tests / zero failures. Native flows remain separate.
-- [x] Bounded [Advanced native integration](tasks/UI-007-advanced-settings.md): import/export, safe confirmation, paused atomic replacement/reset, protected-original export and diagnostics; 570 tests / zero failures, Debug/native cancellation/layout checks pass. Restored-binding/runtime/accessibility acceptance remains open in [evidence](verification/advanced-settings-native.md).
-- [x] Bounded [About and licenses](tasks/UI-010-about.md) integrated with actual bundle identity and local native Find; software/native checks pass in [evidence](verification/about-native.md). Full keyboard/VoiceOver/accessibility preferences remain open.
-- [ ] Implement justified future gesture tuning; complete Advanced SPEC §15.12 and broader About/Settings accessibility/runtime acceptance.
-- [ ] Verify window reopening/single engine, relaunch/login, revoked access, lock/sleep/recovery and deliberate paused state. [Permissions](verification/permissions.md), [UI-001](tasks/UI-001-permissions-onboarding.md).
-
-### Phase 8 — Complete modern native UI and brand
-
-- [x] Bounded [Settings navigation/Language control adoption](tasks/UI-017-settings-control-adoption.md): stable inset track, compact menu and semantic feedback; [software/native checks](verification/settings-control-adoption.md) pass. Remaining Settings/main materials and full accessibility/platform acceptance remain open.
-- [x] Bounded [Language selector refinement](tasks/UI-019-language-selector-contrast.md): opt-in source surface/edge/shadow integrated into shared controls; [49 runs/608 viewports, Debug/signature and Light review](verification/language-selector-refinement.md) pass. Dark/menu/focus/preferences acceptance remains open.
-
-- [x] Bounded [shared editor design adoption](tasks/UI-016-editor-design-adoption.md): Mouse/Trackpad glass selectors, capture/keycaps, native activation and semantic feedback integrated; [software/native sizing and scoped live evidence](verification/editor-design-adoption.md) pass. Full Keyboard/Settings/main adoption and active-recording/accessibility/preferences/platform acceptance remain open.
-- [x] Bounded [Mouse list/conditional editor](tasks/UI-009-mouse-design.md) integrated using existing capture/matching; draft/conflict/search and four-language size/live editor checks pass in [evidence](verification/mouse-native.md). Physical capture, accessibility and UI-011 material reconciliation remain open.
-
-- [x] Live Sketch foundations/components and main/editor/profiles/About/first-launch designs exist; app icon and Menu Bar template are integrated artifacts; native `.icon` is the sole app-icon input after removal of superseded PNG sets.
-- [x] [Final design coverage](tasks/UI-013-design-coverage-completion.md) saved/reviewed: curated Trackpad/Magic Mouse selectors, action parameters/recovery, profile/category states and four-language copy. Temporary implementation placeholders removed; native implementation remains open.
-- [x] [Production design review](tasks/UI-015-production-design-review.md) covers all 125 screens and 28 source boards; reusable geometry, menu, Dark-appearance and state corrections saved/reviewed. Native adoption and acceptance remain open.
-- [x] [Soft design system](tasks/UI-022-soft-design-system.md) saved/reviewed in **Rebind - new.sketch**: variables, styles, components and 12 Light/Dark screens. It supersedes the Liquid Glass direction (user decision 2026-10-12); remaining screen coverage and native adoption are open.
-- [ ] Implement the current Sketch desktop hierarchy and soft opaque-first appearance per [DESIGN](DESIGN.md), including all functional states and window resizing. The earlier [glass controls](tasks/UI-011-control-unification.md) are superseded visually; [semantic feedback](tasks/UI-012-semantic-feedback.md) severity roles still apply. Native adoption remains open.
-- [ ] Finish keyboard/VoiceOver, Light/Dark, Reduce Transparency/Motion, Increase Contrast and usability acceptance.
-- [ ] Finish icon runtime checks. [BRAND-001](tasks/BRAND-001-icon-runtime.md).
-
-### Phase 9 — Four-language UX
-
-- [x] [Plain-language design copy](tasks/UI-018-human-interface-copy.md) saved/reviewed across 125 Sketch screens and EN/RU/DE/FR specimens; native copy adoption and acceptance remain open.
-- [x] Current app slice has EN/RU/DE/FR String Catalog translations; 53-key onboarding/permission handoff is integrated; four-language native fixtures reviewed.
-- [x] System/EN/RU/DE/FR manual preference, atomic failure/retry and launch/reopen activation path integrated; software/native fixture checks pass in [UI-005](tasks/UI-005-language-settings.md).
-- [ ] Verify actual language relaunch/native contexts and complete remaining screen copy/layouts/errors/tooltips/accessibility in all languages.
-
-### Phase 10 — Reliability and distribution
-
-- [ ] Execute SPEC §15 acceptance with named OS/device evidence; measure input/action/UI performance, verify long-run safety and regression coverage.
-- [ ] Complete macOS 26 and Intel execution where claimed, stable signing/TCC tests and distribution signing/notarization with real credentials. Universal compilation does not prove either runtime.
-
-## Evidence and decision routing
-
-- [CAPABILITIES](CAPABILITIES.md): detailed implemented/experimental/user-verified subsets and remaining checks.
-- [research](research/README.md), [dependency register](research/DEPENDENCIES.md): current decisions and pinned sources/licenses.
-- [tasks](tasks/README.md): owners, state, design/code revisions, handoffs and next action.
-- [verification](verification/): behavior contracts, commands, manual walkthroughs and screenshots.
-- [history](history/README.md): concise technical outcomes, research decisions and scoped earlier evidence. Historical scope/status claims can be superseded; raw local backups are not part of repository documentation.
-
-Update a milestone only when its stated evidence exists. Keep this roadmap short; put execution detail in the relevant task, not a growing session log here.
+- [CAPABILITIES](CAPABILITIES.md): implemented, experimental and user-verified subsets with remaining checks.
+- [research](research/README.md) and the [dependency register](research/DEPENDENCIES.md): mechanism decisions, sources and licenses.
+- [tasks](tasks/README.md): open records with owners and next actions.
+- [verification](verification/): behavior contracts, commands and walkthrough results that are still current.
+- [history](history/README.md): dated outcomes and reasons; may describe superseded work.

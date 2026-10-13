@@ -71,7 +71,7 @@ build-script sandboxing are enabled. Release disables Xcode base-entitlement
 injection; Debug retains Xcode's debugger/test-runner entitlements. No custom
 entitlements, helpers or drivers are added. The app has no Swift package dependency;
 isolated dynamic private APIs are used for explicitly experimental trackpad/Dock/lock
-paths. The standalone TrackpadProbe has separate pinned packages. See the
+paths. See the
 [current mechanism decisions](research/README.md) and bundled third-party notices.
 
 For repeatable permission persistence tests, prefer a suitable existing Apple
@@ -146,7 +146,7 @@ Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue
 
 The app target has no Swift package dependency. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../rebind/Resources/ThirdPartyNotices.txt).
 
-The separate [TrackpadProbe](../tools/TrackpadProbe/README.md) has pinned packages and is not bundled with Rebind. Its ordinary acquisition modes are passive; an explicit one-shot mode posts Command-W. Follow its documented scope and authorization before collecting contacts or executing output. Probe success does not prove app gesture suppression or recovery.
+The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
 
 ## Contribution workflow
 

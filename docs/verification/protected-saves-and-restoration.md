@@ -1,6 +1,6 @@
 # Protected ordinary saves and restored rules — 2026-10-11
 
-[STORAGE-001](../tasks/STORAGE-001-protected-saves.md); SPEC §§3.3, 9, 12, 15.12. Engineering-only change on `main` / `ed0b5d9` plus ConfigurationStore, scoped AppModel persistence handling, three new test files and isolated Advanced/Main layout fixtures. Independent Sketch work is preserved. No new schema, dependency, product copy, visual design, capture mechanism or native action.
+STORAGE-001; SPEC §§3.3, 9, 12, 15.12. Engineering-only change on `main` / `ed0b5d9` plus ConfigurationStore, scoped AppModel persistence handling, three new test files and isolated Advanced/Main layout fixtures. Independent Sketch work is preserved. No new schema, dependency, product copy, visual design, capture mechanism or native action.
 
 ## Defect and repair
 

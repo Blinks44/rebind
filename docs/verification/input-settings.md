@@ -67,7 +67,7 @@ Fifteen outbound prototype routes from the five Input screens are valid: General
 
 ## Copy, accessibility and remaining checks
 
-[Copy handoff](input-settings-copy.json): **18 new keys × EN/RU/DE/FR**, all locale entries non-empty and structurally checked. Settings shell/category/editor labels reuse earlier handoffs/current catalog. Copy uses the established calm, direct utility voice and the `writing-for-interfaces` skill. Input overview is visually reviewed in all four languages. Hold/error editor translations are authored but their native/Dark/localized rendered compositions remain to be verified during integration; do not claim all editor locale layouts passed.
+Copy handoff: **18 new keys × EN/RU/DE/FR**, all locale entries non-empty and structurally checked. Settings shell/category/editor labels reuse earlier handoffs/current catalog. Copy uses the established calm, direct utility voice and the `writing-for-interfaces` skill. Input overview is visually reviewed in all four languages. Hold/error editor translations are authored but their native/Dark/localized rendered compositions remain to be verified during integration; do not claim all editor locale layouts passed.
 
 Native acceptance for the receiving implementation:
 

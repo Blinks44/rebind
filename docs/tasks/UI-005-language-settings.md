@@ -21,11 +21,11 @@ Complete Settings → Language: System Default and EN/RU/DE/FR choices, clear ac
 
 ## Saved design and checks
 
-Current visual revision: [materials/alignment review](../verification/material-design-review.md), saved 2026-10-11. Shared Language card/profile/sidebar materials, Dark section controls and compact body offsets supersede affected original exports below; draft/save/activation/copy contracts remain valid.
+Current visual revision: materials/alignment review, saved 2026-10-11. Shared Language card/profile/sidebar materials, Dark section controls and compact body offsets supersede affected original exports below; draft/save/activation/copy contracts remain valid.
 
 `Rebind.sketch`, 2026-10-11; document ID `C93BE2C5-55E6-4493-9B4B-FD998F2DE986` (resolve again). SHA-256 `ac799cf544157aeb6efee53213eccd87eb2c848a40408b2479c4ffd818fee5d2`. Successful save callback observed; 47 screens total.
 
-[Delivery](../verification/language-settings.md) owns eight frame IDs (40–47), six sources in live Sketch and the draft/save/native activation contract. [Copy](../verification/language-settings-copy.json): 16 four-language keys, now integrated into the app catalog.
+[Delivery](../verification/language-settings.md) owns eight frame IDs (40–47), six sources in live Sketch and the draft/save/native activation contract. Copy: 16 four-language keys, now integrated into the app catalog.
 
 All final frames and three resize views screenshot-inspected; 91 screen-node frames restore exactly. Saved ZIP preserves all 2,047 preceding local nodes and existing shared styles; adds 276 local nodes. PNG dimensions/signatures, copy structure and 32 outbound routes checked. Native menu/activation/persistence/accessibility and rendered translated/Dark feedback remain open. No app/rule/grant/runtime change or Git commit performed by this task.
 

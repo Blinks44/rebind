@@ -1,6 +1,6 @@
 # Touch-library and native-coexistence audit
 
-Reviewed 2026-10-12 for [RESEARCH-001](../tasks/RESEARCH-001-touch-library-audit.md), baseline `59f5754` plus uncommitted editor work. Source audit only: no new dependency, third-party execution, input experiment, OS setting or stored rule change.
+Reviewed 2026-10-12 for RESEARCH-001, baseline `59f5754` plus uncommitted editor work. Source audit only: no new dependency, third-party execution, input experiment, OS setting or stored rule change.
 
 ## Result
 

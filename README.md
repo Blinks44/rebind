@@ -1,6 +1,6 @@
 # Rebind
 
-<img src="assets/brand/preview.png" alt="Rebind app icon" width="96" height="96">
+<img src="docs/images/app-icon.png" alt="Rebind app icon" width="96" height="96">
 
 A native macOS utility for mapping keyboard and mouse input to shortcuts and system actions. Create a binding, choose its trigger and action, and keep it running from the menu bar while you work in other apps.
 

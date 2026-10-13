@@ -21,11 +21,11 @@ Implement Settings → Input as an honest overview of existing timing: per-bindi
 
 ## Saved design and verification
 
-Current visual revision: [materials/alignment review](../verification/material-design-review.md), saved 2026-10-11. Shared Input card/profile/sidebar materials and Dark section controls supersede affected original exports below; behavior/copy contracts remain valid.
+Current visual revision: materials/alignment review, saved 2026-10-11. Shared Input card/profile/sidebar materials and Dark section controls supersede affected original exports below; behavior/copy contracts remain valid.
 
 `Rebind.sketch`, saved 2026-10-11, document ID `E50CA3D9-82B1-44C0-AC97-39F1A9663700` (resolve again). SHA-256 `9d37daa77514e03e0160141ea7dec33c2e234d32973596bd01e96ba33758f774`.
 
-[Delivery](../verification/input-settings.md) owns seven frames (33–39), four new sources in live Sketch, behavior/native acceptance and 18-key four-language [copy](../verification/input-settings-copy.json). Input is screenshot-reviewed in EN/RU/DE/FR and Light/Dark; hold/editor failure layouts are reviewed in English, with translated rendered acceptance remaining native work. Three-frame resize restoration matches all 96 local screen-node frames; saved ZIP comparison preserves all 1,838 original local nodes and adds 209. Fifteen outbound routes valid. No app source change, new build/runtime/hardware check or Git commit.
+[Delivery](../verification/input-settings.md) owns seven frames (33–39), four new sources in live Sketch, behavior/native acceptance and 18-key four-language copy. Input is screenshot-reviewed in EN/RU/DE/FR and Light/Dark; hold/editor failure layouts are reviewed in English, with translated rendered acceptance remaining native work. Three-frame resize restoration matches all 96 local screen-node frames; saved ZIP comparison preserves all 1,838 original local nodes and adds 209. Fifteen outbound routes valid. No app source change, new build/runtime/hardware check or Git commit.
 
 Existing per-binding duration, macOS double-click interval and fixed recognition remain the behavior source. Global adjustable gesture thresholds are not introduced; remaining advanced tuning does not become complete through this bounded overview. Native accessibility, save transitions, editor locales/Dark and physical input acceptance remain open.
 
@@ -37,7 +37,7 @@ Actual keyboard/mouse timing/cancellation, full keyboard/focus/spoken VoiceOver/
 
 ## Next handoff
 
-2026-10-12 [Input material/copy adoption](../verification/input-feedback-adoption.md) is complete: raised shared cards/adaptive headings, nine scoped EN/RU/DE/FR entries and accurate current tap-preset guidance. Live Sketch shared sources/states inspected; English Light/Dark components and compact German full-main reviewed. Final **20 functions / 74 executions**, **608 native viewports**, Debug/signature pass. Implementation committed externally in `2bc4b97`; no agent commit. Existing Advanced/Trackpad work preserved. Hardware, spoken VoiceOver/focus/system preferences and macOS 26/Intel remain open.
+2026-10-12 Input material/copy adoption is complete: raised shared cards/adaptive headings, nine scoped EN/RU/DE/FR entries and accurate current tap-preset guidance. Live Sketch shared sources/states inspected; English Light/Dark components and compact German full-main reviewed. Final **20 functions / 74 executions**, **608 native viewports**, Debug/signature pass. Implementation committed externally in `2bc4b97`; no agent commit. Existing Advanced/Trackpad work preserved. Hardware, spoken VoiceOver/focus/system preferences and macOS 26/Intel remain open.
 
 - **Verification:** check actual Hold timing/cancellation and complete native accessibility/editor acceptance on the identified bundle. Preserve full-main coverage when adopting materials or adding Advanced; global tuning remains separate.
 - **Implementation:** continue remaining main/profile/action materials and reviewed copy from live Sketch using existing components. Preserve the delivered Settings surfaces and capability limits.

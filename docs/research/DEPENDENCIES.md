@@ -2,11 +2,11 @@
 
 Last migrated 2026-10-10; [twelve-candidate touch audit](touch-library-audit.md) refreshed 2026-10-12 with full pinned revisions, available licenses, manifests, maintenance and source findings. Review dates in individual entries are historical unless explicitly refreshed. [Renewed tap audit](trackpad-tap-reliability.md) records current pinned OpenMultitouchSupport/Subsurface/Sanne metadata, new Touchy/MultiTouch alternatives, licensing/platform limits and the decision to fix reproduced consumer bugs without a new dependency.
 
-The app has no Swift package dependency. It does contain credited source adaptations and isolated private-API adapters; the standalone TrackpadProbe has its own pinned packages. See the current adoption summary in [research](README.md), the actual [probe manifest](../../tools/TrackpadProbe/Package.swift), its lockfile, and [bundled notices](../../rebind/Resources/ThirdPartyNotices.txt). Candidate rows describe the scope at their review date; consult the current summary before reusing an old decision. Maintenance dates are evidence, not compatibility guarantees.
+The app has no Swift package dependency. It does contain credited source adaptations and isolated private-API adapters; the standalone TrackpadProbe with its own pinned packages was removed on 2026-10-13 (Git history keeps it). See the current adoption summary in [research](README.md), the actual [probe manifest](../DEVELOPMENT.md), its lockfile, and [bundled notices](../../rebind/Resources/ThirdPartyNotices.txt). Candidate rows describe the scope at their review date; consult the current summary before reusing an old decision. Maintenance dates are evidence, not compatibility guarantees.
 
 For each new dependency/reference record purpose, URL/revision, license, OS/Swift support, maintenance, limitations, native alternatives and decision. Reuse a relevant prior audit and refresh uncertain/version-sensitive facts before changing the mechanism. No automatic installs.
 
-2026-10-12: [seven-candidate Liquid Glass and skill audit](liquid-glass-library-audit.md) records pinned revisions, licenses/platform/source limits and the native/shared-component decision for editor fidelity. No package, shader, copied source or new skill installed.
+2026-10-12: seven-candidate Liquid Glass and skill audit records pinned revisions, licenses/platform/source limits and the native/shared-component decision for editor fidelity. No package, shader, copied source or new skill installed.
 
 | Candidate / source | Purpose, compatibility and maintenance | License / limits / decision |
 |---|---|---|

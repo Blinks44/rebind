@@ -2,7 +2,7 @@
 
 Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
 
-Updated 2026-10-11. **Full-main-window correction:** the later reported overflow was reproduced and repaired; [current repair/artifact evidence](general-main-window-repair.md) supersedes the initial layout acceptance below. Scope: [UI-003](../tasks/UI-003-general-settings.md), SPEC §§6, 8, 10–11 / S1. General is implemented; actual login/relaunch, native assistive-technology and minimum-OS acceptance remain open.
+Updated 2026-10-11. **Full-main-window correction:** the later reported overflow was reproduced and repaired; current repair/artifact evidence supersedes the initial layout acceptance below. Scope: [UI-003](../tasks/UI-003-general-settings.md), SPEC §§6, 8, 10–11 / S1. General is implemented; actual login/relaunch, native assistive-technology and minimum-OS acceptance remain open.
 
 ## Implementation and source
 
