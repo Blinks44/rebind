@@ -734,19 +734,22 @@ button.sidebar-item:hover:not([aria-pressed='true']) {
   margin-right: 12px;
 }
 
-/* Stats */
+/* Stats: one raised card, like a list in the app */
 
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  margin-top: clamp(56px, 8vw, 88px);
+  margin-top: clamp(40px, 6vw, 64px);
+  padding: 8px 0;
 }
 
 .stat {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 6px;
-  padding: 4px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  align-items: center;
+  gap: 14px 12px;
+  padding: 20px 24px;
 }
 
 .stat + .stat {
@@ -754,14 +757,16 @@ button.sidebar-item:hover:not([aria-pressed='true']) {
 }
 
 .stat dd {
-  font: 650 clamp(36px, 5vw, 52px) / 1 var(--font-rounded);
+  order: 1;
+  font: 650 40px/1 var(--font-rounded);
   letter-spacing: -0.02em;
-  color: var(--accent);
 }
 
 .stat dt {
+  order: 2;
+  grid-column: 1 / -1;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.45;
   color: var(--text-secondary);
 }
 
@@ -1074,12 +1079,14 @@ button.sidebar-item:hover:not([aria-pressed='true']) {
 
   .stats {
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px 0;
   }
 
   .stat:nth-child(odd) {
     border-left: 0;
-    padding-left: 0;
+  }
+
+  .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--separator);
   }
 
   .why-item,

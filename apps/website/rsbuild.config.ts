@@ -3,9 +3,9 @@ import { defineConfig } from '@rsbuild/core'
 import { pluginReact } from '@rsbuild/plugin-react'
 import { tanstackStart } from '@tanstack/react-start/plugin/rsbuild'
 
-// URL prefix of every language except Russian, which lives at `/`.
+// URL prefix of every language except English, which lives at `/`.
 const prefixes: [locale: string, prefix: string][] = [
-  ['en', '/en'],
+  ['ru', '/ru'],
   ['de', '/de'],
   ['fr', '/fr'],
   ['es', '/es'],
@@ -26,8 +26,8 @@ export default defineConfig({
           // The URL alone decides the language.
           strategy: ['url', 'baseLocale'],
           urlPatterns: [
-            { pattern: '/', localized: [...prefixes, ['ru', '/']] },
-            { pattern: rest, localized: [...prefixes.map(([locale, prefix]): [string, string] => [locale, prefix + rest]), ['ru', rest]] },
+            { pattern: '/', localized: [...prefixes, ['en', '/']] },
+            { pattern: rest, localized: [...prefixes.map(([locale, prefix]): [string, string] => [locale, prefix + rest]), ['en', rest]] },
           ],
         }),
       ],

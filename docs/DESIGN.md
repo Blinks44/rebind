@@ -14,7 +14,7 @@ Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 28 screens, each Light and Dark, built only from components |
+| 01 · Screens | 33 screens, each Light and Dark, built only from components |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |

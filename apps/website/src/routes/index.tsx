@@ -11,7 +11,7 @@ import { Button } from '@moduix/react/button'
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@moduix/react/card'
 import { Marquee, MarqueeContent, MarqueeItem, MarqueeViewport } from '@moduix/react/marquee'
 import { createFileRoute } from '@tanstack/react-router'
-import { BadgeCheck, Download, Layers, LockKeyhole, Mouse, Pause, Sparkles } from 'lucide-react'
+import { BadgeCheck, Download, Keyboard, Languages, Layers, LockKeyhole, Mouse, Pause, ShieldCheck, Sparkles, Tag } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { actions } from '~/actions'
@@ -146,11 +146,11 @@ function Landing() {
 
         <section className="container">
           <Reveal>
-            <dl className="stats">
-              <Stat value={m.stat_price_value()} label={m.stat_price_label()} />
-              <Stat value={m.stat_data_value()} label={m.stat_data_label()} />
-              <Stat value={m.stat_inputs_value()} label={m.stat_inputs_label()} />
-              <Stat value={m.stat_languages_value()} label={m.stat_languages_label()} />
+            <dl className="card stats">
+              <Stat icon={Tag} value={m.stat_price_value()} label={m.stat_price_label()} />
+              <Stat icon={ShieldCheck} value={m.stat_data_value()} label={m.stat_data_label()} />
+              <Stat icon={Keyboard} value={m.stat_inputs_value()} label={m.stat_inputs_label()} />
+              <Stat icon={Languages} value={m.stat_languages_value()} label={m.stat_languages_label()} />
             </dl>
           </Reveal>
         </section>
@@ -262,9 +262,10 @@ function SectionHeading({ title, lead }: { title: string; lead?: string }) {
   )
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Stat({ icon, value, label }: { icon: Action['icon']; value: string; label: string }) {
   return (
     <div className="stat">
+      <Tile icon={icon} />
       <dt>{label}</dt>
       <dd>{value}</dd>
     </div>

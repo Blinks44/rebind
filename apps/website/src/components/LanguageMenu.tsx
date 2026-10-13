@@ -5,8 +5,8 @@ import { m } from '~/paraglide/messages.js'
 import { type Locale, getLocale, locales, localizeHref, setLocale } from '~/paraglide/runtime.js'
 
 const names: Record<Locale, string> = {
-  ru: 'Русский',
   en: 'English',
+  ru: 'Русский',
   de: 'Deutsch',
   fr: 'Français',
   es: 'Español',
