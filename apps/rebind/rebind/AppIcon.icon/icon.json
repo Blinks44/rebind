@@ -14,7 +14,7 @@
       "name" : "Glyph",
       "shadow" : {
         "kind" : "neutral",
-        "opacity" : 0.2
+        "opacity" : 0.5
       },
       "translucency" : {
         "enabled" : false,
