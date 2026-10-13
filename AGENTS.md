@@ -49,7 +49,7 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 - Research non-trivial capture/action mechanisms before adding custom implementations. Check native APIs, GitHub, Swift Package Index, maintenance and licensing. Read [research](docs/research/README.md); record refreshed decisions in the affected task/register. Report unavailable research access honestly. No blind dependency installs or copying GPL sources without an explicit licensing decision.
 - Sketch screens are drawn in English only; the other languages are translated and verified in the app. Sketch icons are SF Symbols exported with `apps/rebind/tools/sf-symbol-svg.swift` and named after the symbol used in code.
 - Preserve user changes. Coordinate ownership before editing the same code, catalog, docs section or Sketch source. Never stage/commit/reset/push unrelated work. Git commits and Sketch saves are separate operations; record both when actually performed.
-- Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR translations and purposeful Unicode/localization test data.
+- Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR/ES/Simplified Chinese translations and purposeful Unicode/localization test data.
 - Commit technical outcomes and concise verification results, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Verification screenshots/exports stay local by default; version images only for a specific documented purpose under WORKFLOW. Summarize reported results with their evidence limits.
 - Follow the project's commented `.gitignore` policy. Keep shared instructions/skills, STATE/tasks/evidence, source/design inputs and lockfiles versioned. New tools/output paths need narrow exclusions checked with Git; never hide an entire agent directory or automatically untrack files.
 - This workflow does not authorize creating agents/chats, sending messages to other chats, executing remappings, changing real rules/permissions, editing Sketch, publishing or deploying. Proceed within the user's authorized scope without adding routine confirmation gates.
@@ -74,7 +74,7 @@ Read only relevant `.agents/skills/<name>/SKILL.md` and its required references.
 - Concurrency/callback ownership: `swift-concurrency-pro`; behavioral Swift Testing: `swift-testing-pro`.
 - New Swift contracts: `swift-api-design-guidelines-skill` locally, without mass renaming.
 - System materials (sidebar/menu only): `swiftui-liquid-glass` when a system material is genuinely needed; check **macOS**, not iOS, availability. Do not add glass to controls or content.
-- Product copy: `writing-for-interfaces`, preserving behavior and all four languages.
+- Product copy: `writing-for-interfaces`, preserving behavior and all six languages.
 - Accessibility: `swiftui-accessibility-auditor` / `appkit-accessibility-auditor` for the affected controls.
 - Component guidance: `swiftui-ui-patterns` selectively; `swiftui-performance-audit` for measured rendering problems, separate from input-path profiling.
 - Workflow setup/review/export: `agent-workflow-setup`; it configures project context rather than activating on ordinary feature implementation.

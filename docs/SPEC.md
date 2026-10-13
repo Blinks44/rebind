@@ -462,7 +462,7 @@ A release candidate should explicitly evaluate and record all of these, with hon
 8. Close Rebind's window and continue running via Menu Bar.
 9. Restart/login, reload rules and enable state, respecting actual permissions.
 10. Remove permissions or toggle Pause; keyboard/mouse continue to work normally.
-11. Choose each of EN/RU/DE/FR, open every primary screen, and verify no broken layout/untranslated core UI.
+11. Choose each of EN/RU/DE/FR/ES/Simplified Chinese, open every primary screen, and verify no broken layout/untranslated core UI.
 12. Export bindings, reset, import, and observe restored behavior.
 
 ## 16. Definition of Done

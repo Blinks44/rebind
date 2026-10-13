@@ -77,8 +77,8 @@ paths. See the
 For repeatable permission persistence tests, prefer a suitable existing Apple
 Development identity/team in Xcode and keep bundle identity and launch location
 stable. A locally signed build can be tested after granting access, but ad-hoc
-rebuilds can invalidate TCC grants. Developer ID signing and
-notarization require real credentials before distribution. Permission requests
+rebuilds can invalidate TCC grants. Releases are signed with one stable self-signed certificate and are not
+notarized; see [Releasing without notarization](#releasing-without-notarization). Permission requests
 are explicit UI actions; status uses actual AX and Quartz preflight checks. The engine starts only when the configuration is enabled or
 recording is requested and required access is available. Grant access explicitly to the copy you intend to run; do not reset TCC as a build step.
 

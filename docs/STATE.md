@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-13**. HEAD `99b2ad6`; uncommitted: [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) feature work, sidebar brand, website. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `0216061` contains all work to date ([INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md), sidebar brand, website). Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
