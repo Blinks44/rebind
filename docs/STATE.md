@@ -22,6 +22,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** With Show in Dock off, the Dock icon now follows window visibility (shown while a window is open, gone after the last one closes). User-confirmed in the running app.
 - **2026-10-13:** Show in Dock / Show in menu bar / Start in the background settings (schema 33); windows reopen on the current Space; Spanish and Simplified Chinese added (unreviewed translations). Dock/menu bar hiding, background start and current-Space windows are user-confirmed; both new languages display correctly but their wording is not reviewed by a fluent reader.
 - **2026-10-13:** A mouse button with gestures clicks again when released without movement and may also carry a press rule; Back/Forward actions send ⌘[ / ⌘] (user-confirmed); the click on a gesture button is user-confirmed too.
 - **2026-10-13:** Copy review of every string in four languages (plain wording, one term per language), Back/Forward output on its own held button fixed, Sketch completed with screens 27–28 and repaired dark icon tints.

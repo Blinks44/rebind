@@ -332,7 +332,7 @@ Required runtime behavior:
 
 ### Presence (2026-10-13)
 
-General settings let the user hide the Dock icon, hide the Menu Bar icon and start without opening the window (including at login). With both icons hidden, opening Rebind again shows its window. Rebind's windows open on the Space the user is on rather than switching back to the Space where they were first shown.
+General settings let the user hide the Dock icon, hide the Menu Bar icon and start without opening the window (including at login). With the Dock icon hidden, Rebind still appears in the Dock while one of its windows is open and leaves it when the last window closes; it keeps running until quit from the menu or with Command-Q. With both icons hidden, opening Rebind again shows its window. Rebind's windows open on the Space the user is on rather than switching back to the Space where they were first shown.
 
 ### Information architecture
 

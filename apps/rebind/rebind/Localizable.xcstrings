@@ -19882,37 +19882,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind keeps working without a Dock icon."
+            "value" : "When off, the Dock icon appears only while a Rebind window is open."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind продолжает работать и без значка в Dock."
+            "value" : "Если выключить, значок будет в Dock, только пока открыто окно Rebind."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind arbeitet auch ohne Dock-Symbol weiter."
+            "value" : "Wenn deaktiviert, erscheint das Dock-Symbol nur, solange ein Rebind-Fenster geöffnet ist."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind continue de fonctionner sans icône dans le Dock."
+            "value" : "Si l’option est désactivée, l’icône n’apparaît dans le Dock que lorsqu’une fenêtre de Rebind est ouverte."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind sigue funcionando sin icono en el Dock."
+            "value" : "Si se desactiva, el icono solo aparece en el Dock mientras haya una ventana de Rebind abierta."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "没有程序坞图标，Rebind 也会继续工作。"
+            "value" : "关闭后，仅在 Rebind 窗口打开时显示程序坞图标。"
           }
         }
       }

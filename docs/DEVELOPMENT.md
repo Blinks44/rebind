@@ -148,6 +148,15 @@ The app target has no Swift package dependency. Source adaptations and isolated 
 
 The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
 
+## Releasing without notarization
+
+Rebind is distributed outside the App Store and is not notarized. `apps/rebind/scripts/release.sh` builds Release, signs the bundle with one stable self-signed certificate (default name **Rebind Release**, override with `REBIND_SIGN_IDENTITY`) under the hardened runtime, and writes `apps/rebind/build/release/Rebind-<version>-<build>.dmg` with its SHA-256 for GitHub Releases. The disk image (app, Applications shortcut and an arrow on `scripts/dmg/background.tiff`) needs the `create-dmg` tool (`brew install create-dmg`, MIT); without it the script falls back to a zip. Regenerate the background with `apps/rebind/tools/dmg-background.swift` and `tiffutil -cathidpicheck`.
+
+- The certificate is created once in Keychain Access (the script prints the steps when it is missing). **Back up its `.p12`.** macOS ties the Accessibility grant to the signature; a release signed with a different certificate makes every user grant the permission again.
+- Do not sign releases with an "Apple Development" certificate: its designated requirement embeds the account's e-mail address in the published signature, and the certificate expires yearly.
+- Gatekeeper still blocks the first launch of a downloaded copy until the user chooses **Open Anyway** in System Settings → Privacy & Security; the README explains this to users.
+- Moving to Developer ID and notarization later changes the signature once: users confirm the Accessibility permission one more time.
+
 ## Contribution workflow
 
 Inspect the existing implementation and [current state](STATE.md) before choosing a slice. Read [engineering standards](ENGINEERING.md) for native input, Swift/concurrency, localization and security requirements. UI work follows [DESIGN](DESIGN.md) and current Sketch frames. Build/test the affected behavior, record the required runtime/manual checks and preserve unrelated work. [WORKFLOW](WORKFLOW.md) describes durable task records and handoff. Detailed per-action behavior and checks live in [verification](verification/); the root README stays a concise public overview.

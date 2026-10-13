@@ -22,7 +22,7 @@ struct GeneralSettingsView: View {
                 }
                 LoginItemSettingsRow(model: model.loginItem)
                 presenceToggle(.showInDock, description: .showInDockDescription, \.showsDockIcon) {
-                    RebindAppDelegate.applyDockIcon(shown: $0)
+                    RebindAppDelegate.updateDockIcon(preferred: $0)
                 }
                 presenceToggle(.showInMenuBar, description: .showInMenuBarDescription, \.showsMenuBarIcon)
                 if !model.configuration.showsDockIcon && !model.configuration.showsMenuBarIcon {
