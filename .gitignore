@@ -18,8 +18,7 @@ Build/
 # Xcode transient verification output; concise technical results stay in docs.
 *.xcresult/
 
-# Generated raster captures belong in .local/agent-context/verification/.
-# Scope this to verification output; app/brand assets and test fixtures stay visible.
+# Generated raster captures stay in temporary storage, never under docs/verification.
 # A justified versioned image needs a documented purpose and a narrow exception here.
 /docs/verification/**/*.png
 /docs/verification/**/*.jpg
@@ -31,13 +30,6 @@ xcuserdata/
 
 # JetBrains local project/workspace state; Rebind has no shared .idea contract.
 .idea/
-
-# Agent-local transcripts, scratch work, backups and workstation access hints.
-# Verification screenshots/exports use .local/agent-context/verification/ by default.
-# Shared agent instructions, skills, state, tasks and evidence remain versioned.
-/.local/agent-context/
-.kilo/
-kilo.json
 
 # Swift Package Manager
 .build/

@@ -53,7 +53,7 @@ testing with the user's enabled system shortcuts; no live output by the agent.
 
 - Xcode 27.0 / Swift 6.4 / SDK 27.0, macOS 27.0.1 (26A434), Apple Silicon.
   Minimum remains macOS 26.0; Intel/macOS 26 execution is unverified.
-- `scripts/dev.sh test -resultBundlePath build/DesktopActionsTests.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/DesktopActionsTests.xcresult`:
   **255 tests / 36 suites / 0 failures**, all 243 previous plus 12 new functions.
   New coverage: catalog/custom parameters, suggestions, invalid/unknown output,
   schema-10 migration/byte preservation and old-schema gates, typed key/button/wheel

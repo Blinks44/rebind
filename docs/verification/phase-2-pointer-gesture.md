@@ -48,9 +48,9 @@ The earlier user-confirmed G603 ordinary/long-press results do not verify this f
 
 ## Verified in software and UI
 
-- `scripts/dev.sh doctor`: Xcode 27.0, Swift 6.4, SDK 27.0; Apple Silicon macOS 27.0.1
+- `apps/rebind/scripts/dev.sh doctor`: Xcode 27.0, Swift 6.4, SDK 27.0; Apple Silicon macOS 27.0.1
   (26A434). Deployment remains macOS 26, strict Swift 6, default MainActor for UI.
-- `scripts/dev.sh test -resultBundlePath build/Phase2PointerGestureTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2PointerGestureTests-Final.xcresult`:
   **131 tests / 20 suites / 0 failures**, 31 added test functions across matcher/mailbox,
   relative-field adapter/tap-mask policy and persistence. All prior 100 tests pass.
   Covers four directions, threshold/dominance/timeout boundaries, noise/net reversal,
@@ -58,7 +58,7 @@ The earlier user-confirmed G603 ordinary/long-press results do not verify this f
   queue saturation, recording, secure reset including no active gesture, ownership,
   extreme numeric inputs, schema-4 literal byte preservation and rule-family conflicts.
   Tests construct but never post Quartz events or start a tap; temporary stores only.
-- `scripts/dev.sh build` and `scripts/dev.sh release`: **BUILD SUCCEEDED**. Release
+- `apps/rebind/scripts/dev.sh build` and `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**. Release
   contains arm64/x86_64, strict/deep signature verification and packaged privacy-manifest
   lint pass. No Intel/macOS 26 execution claim. Expected AppIntents metadata-skip warning
   and hosted system autoShortcut diagnostics; no Swift/concurrency warnings.

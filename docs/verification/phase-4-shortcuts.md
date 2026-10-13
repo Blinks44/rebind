@@ -46,7 +46,7 @@ No runtime dependency, private API or permission grant was added.
 
 - Xcode 27.0 / Swift 6.4 / SDK 27.0, macOS 27.0.1 (26A434), Apple Silicon.
   Deployment remains 26; Intel/macOS 26 execution is unverified.
-- `scripts/dev.sh test -resultBundlePath build/AppleShortcutsTests-Final3.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/AppleShortcutsTests-Final3.xcresult`:
   **243 tests / 35 suites / 0 failures**, including 18 new test functions. Tests
   cover parsing/identity/limits, literal UUID arguments, old-schema migration and
   byte preservation, input families, serial dispatch, progress/error routing,

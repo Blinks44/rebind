@@ -8,6 +8,15 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 
 **Status:** under active development. Keyboard/mouse remapping and many action paths are implemented; full hardware, reliability and UI acceptance are still in progress. Trackpad support is experimental. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
 
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `apps/rebind/` | The macOS app: Xcode project, sources, tests, the `scripts/dev.sh` build script and developer tools |
+| `apps/website/` | Reserved for the public website; not set up yet |
+| `docs/` | Specification, design notes, roadmap, current state and verification records |
+| `AGENTS.md`, `.agents/` | Instructions and skills for coding and design agents |
+
 ## Features
 
 - Keyboard and middle/extra mouse-button bindings with Command, Control, Option and Shift modifiers.
@@ -32,18 +41,18 @@ The project has been built and inspected on Apple Silicon with a newer macOS/Xco
 From the repository directory:
 
 ```sh
-scripts/dev.sh doctor
-scripts/dev.sh run
+apps/rebind/scripts/dev.sh doctor
+apps/rebind/scripts/dev.sh run
 ```
 
 `doctor` reports the selected toolchain and project targets. `run` builds Debug and opens `Rebind.app`. The script selects full Xcode per process without changing your system's `xcode-select` setting.
 
-Alternatively, open `rebind.xcodeproj` in Xcode, select the **rebind** scheme and run with **⌘R**. Local development builds can use **Sign to Run Locally**; rebuilds may require renewing macOS permission grants.
+Alternatively, open `apps/rebind/rebind.xcodeproj` in Xcode, select the **rebind** scheme and run with **⌘R**. Local development builds can use **Sign to Run Locally**; rebuilds may require renewing macOS permission grants.
 
 To build a Release app:
 
 ```sh
-scripts/dev.sh release
+apps/rebind/scripts/dev.sh release
 ```
 
 The result is `build/DerivedData/Build/Products/Release/Rebind.app`. Distribution signing and notarization are not complete. See the [development guide](docs/DEVELOPMENT.md) for toolchain overrides, tests and signing details.
@@ -76,7 +85,7 @@ Configuration is stored locally at `~/Library/Application Support/Rebind/configu
 | Tests | Swift Testing with an Xcode-hosted test target |
 | Build and assets | Xcode, SF Symbols, Sketch, Icon Composer |
 
-The app target has no Swift package dependency. Some experimental trackpad/Dock/lock paths use private macOS APIs and carry compatibility limits. The standalone research probe has separate pinned dependencies. [Third-party notices](rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+The app target has no Swift package dependency. Some experimental trackpad/Dock/lock paths use private macOS APIs and carry compatibility limits. The standalone research probe has separate pinned dependencies. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
 
 ## Documentation
 

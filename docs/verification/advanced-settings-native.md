@@ -14,10 +14,10 @@ Import validates/migrates a bounded backup off MainActor, stages counts and requ
 
 Healthy export validates a snapshot and writes atomically. Protected storage offers only original-file reveal/export; corrupt/future bytes are copied unchanged, including files beyond the JSON limit. Original-path, symlink and hard-link destinations are rejected. Native FileManager replacement staging keeps raw-copy memory bounded. Security-scoped access and page-owned asynchronous work are balanced. These are local transactions, not interprocess file locking.
 
-- `scripts/dev.sh test -resultBundlePath build/AdvancedSettingsFinal.xcresult`: **TEST SUCCEEDED**, **563 Swift Testing tests / 76 suites + 7 XCTest tests = 570 tests**, **1,464 expanded executions**, zero failures/skips. xcresult reports no runtime warnings. Authored temporary stores/injected state cover paused roundtrip, reset, rollback/retry, cancellation, stale/multiwindow review, external corrupt/future-file protection, source-release ownership, independent localized plurals, diagnostic status gates, alias protection and raw-copy/size boundaries. Tests never start the global input engine.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/AdvancedSettingsFinal.xcresult`: **TEST SUCCEEDED**, **563 Swift Testing tests / 76 suites + 7 XCTest tests = 570 tests**, **1,464 expanded executions**, zero failures/skips. xcresult reports no runtime warnings. Authored temporary stores/injected state cover paused roundtrip, reset, rollback/retry, cancellation, stale/multiwindow review, external corrupt/future-file protection, source-release ownership, independent localized plurals, diagnostic status gates, alias protection and raw-copy/size boundaries. Tests never start the global input engine.
 - Native geometry: 112 Advanced state/locale/appearance/size combinations; 16 Settings/diagnostics windows; 416 full-main Settings combinations including Advanced/protected storage, plus existing permission/General/Input/Language checks. Final Russian Light/Dark overview and protected-state attachments were inspected locally. Five sections exceeded standard width in German/French; ViewThatFits now selects a native menu when the segmented control cannot fit.
 - Foundation URL metadata caching caused a failed-write retry to keep treating a repaired file as a directory. Fresh metadata URLs fix that failure; the retry and cached-URL regression tests pass.
-- `scripts/dev.sh build`: **BUILD SUCCEEDED** after the final suite. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes; local ad-hoc signature only.
+- `apps/rebind/scripts/dev.sh build`: **BUILD SUCCEEDED** after the final suite. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes; local ad-hoc signature only.
 
 Logs retain AppIntents metadata/service messages, stale-output warnings from the isolated fixture build directory, and one excessive-live-window warning at 101 windows during the large layout matrix. No negative geometry or layout-recursion message occurred in the final non-inspected suite. The live-window warning is test-host evidence; window-count/leak profiling is not established by passing bounds assertions. Earlier interactive runs retain the separately diagnosed OS [sharing-indicator warning](appkit-sharing-indicator.md) and occasional startup layout recursion; no private OS workaround was added.
 
@@ -28,7 +28,7 @@ An authored two-profile/no-binding fixture used a temporary configuration, stub 
 Final keyboard run:
 
 ```sh
-scripts/dev.sh test -only-testing:rebindTests/AdvancedInteractiveTemporaryTests \
+apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/AdvancedInteractiveTemporaryTests \
   PRODUCT_BUNDLE_IDENTIFIER=blinks44.rebind.advancedverification \
   CONFIGURATION_BUILD_DIR=/private/tmp/RebindAdvancedNativeProducts \
   -resultBundlePath build/AdvancedNativeKeyboard2.xcresult

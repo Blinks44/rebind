@@ -2,6 +2,8 @@
 
 Act as a senior macOS engineer or product designer working on a production native input remapper. Follow the user's current authorized task and preserve existing work. This file is the entry point for **both code and design agents**; instructions do not imply shared chat memory or automatic synchronization.
 
+The repository is a monorepo: the app lives in `apps/rebind/` (Xcode project, sources, tests, `scripts/dev.sh`, `tools/`), `apps/website/` is reserved for the public site, and `docs/`, `AGENTS.md` and `.agents/` at the root serve every part.
+
 ## 1. Start or resume a task
 
 1. Read this file and [docs/STATE.md](docs/STATE.md) from disk. Follow [docs/WORKFLOW.md](docs/WORKFLOW.md), including its startup and completion rules.
@@ -34,7 +36,7 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 ## 3. Non-negotiable boundaries
 
 - macOS **26+**, native SwiftUI/AppKit, Swift 6 strict concurrency. Preserve target/scheme/module `rebind`, product `Rebind.app`, bundle ID `blinks44.rebind` and existing project settings unless a justified change is required.
-- Use `scripts/dev.sh doctor|build|release|build-for-testing|test|resolve|run`; see [README](README.md). Do not change system-wide xcode-select. Xcode MCP build/documentation/preview tools are preferred when suitable and available.
+- Use `apps/rebind/scripts/dev.sh doctor|build|release|build-for-testing|test|resolve|run`; see [README](README.md). Do not change system-wide xcode-select. Xcode MCP build/documentation/preview tools are preferred when suitable and available.
 - Read ENGINEERING for callback/actor rules. Global callbacks remain synchronous and bounded: no Task/actor hop, blocking I/O, UI, file writes, process launching or heavyweight classification in the tap. Preserve down/up ownership, unmatched passthrough, synthetic tags, protected-context safeguards and safe failure/recovery.
 - No typed-text collection, telemetry, secrets, root/SIP shortcuts or unrelated permissions. Verify actual grants; a button click is not permission evidence.
 - Input is category-wide within one manually selected profile. Physical-device inventory/attribution and automatic activation were withdrawn; do not reintroduce them without a new user request. The built-in trackpad and an external Magic Trackpad are two input categories with separate rules (user request 2026-10-13); the external one means any connected trackpad-shaped surface, not a specific device. Numeric additional mouse buttons remain unrestricted by a fixed enum.
@@ -45,7 +47,7 @@ When sources disagree, inspect the implementation/artifact and evidence, state t
 - Prefer an existing, maintained library, system API or add-on over a custom implementation whenever it satisfies the need; write custom code only when no suitable ready solution exists.
 - No hacks or workarounds: fix the actual cause or record the limitation explicitly; do not mask symptoms.
 - Research non-trivial capture/action mechanisms before adding custom implementations. Check native APIs, GitHub, Swift Package Index, maintenance and licensing. Read [research](docs/research/README.md); record refreshed decisions in the affected task/register. Report unavailable research access honestly. No blind dependency installs or copying GPL sources without an explicit licensing decision.
-- Sketch screens are drawn in English only; the other languages are translated and verified in the app. Sketch icons are SF Symbols exported with `tools/sf-symbol-svg.swift` and named after the symbol used in code.
+- Sketch screens are drawn in English only; the other languages are translated and verified in the app. Sketch icons are SF Symbols exported with `apps/rebind/tools/sf-symbol-svg.swift` and named after the symbol used in code.
 - Preserve user changes. Coordinate ownership before editing the same code, catalog, docs section or Sketch source. Never stage/commit/reset/push unrelated work. Git commits and Sketch saves are separate operations; record both when actually performed.
 - Write repository documentation, instructions, comments and skill content in English. Reply to the user in their preferred language. Preserve the app's EN/RU/DE/FR translations and purposeful Unicode/localization test data.
 - Commit technical outcomes and concise verification results, not chat transcripts, verbatim user replies, personal paths, actual user configuration or temporary logs. Verification screenshots/exports stay local by default; version images only for a specific documented purpose under WORKFLOW. Summarize reported results with their evidence limits.

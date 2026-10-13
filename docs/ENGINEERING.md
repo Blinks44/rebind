@@ -93,7 +93,7 @@ Product copy is calm, concise, direct and helpful. Name the action/result, then 
 
 Resolve skill-relative paths from the installed folder. Rebind's macOS 26 minimum, actual installed SDK, and synchronous input-callback rules take precedence over upstream iOS examples, newer toolchain assumptions, and generic async advice. Do not install upstream plugin bundles or execute their scripts implicitly. See `docs/research/DEPENDENCIES.md` for review decisions.
 
-Use `scripts/dev.sh doctor`, `build`, `release`, `build-for-testing`, `test`, `resolve`, or `run`; see `../README.md`. The script selects full Xcode per process without changing `xcode-select`. Keep target/scheme `rebind`, module `rebind`, and bundle ID `blinks44.rebind` stable; the app product is `Rebind.app`. Global-input code must explicitly opt out of the app target's default MainActor isolation where its callback contract requires it.
+Use `apps/rebind/scripts/dev.sh doctor`, `build`, `release`, `build-for-testing`, `test`, `resolve`, or `run`; see `../README.md`. The script selects full Xcode per process without changing `xcode-select`. Keep target/scheme `rebind`, module `rebind`, and bundle ID `blinks44.rebind` stable; the app product is `Rebind.app`. Global-input code must explicitly opt out of the app target's default MainActor isolation where its callback contract requires it.
 
 ## 7. Persistence, localization, and security
 
@@ -104,7 +104,7 @@ Use `scripts/dev.sh doctor`, `build`, `release`, `build-for-testing`, `test`, `r
 
 ## 8. Verification and handoff
 
-Follow [WORKFLOW](WORKFLOW.md) for task-specific checks, evidence, status updates and handoff, including its local-by-default screenshot policy for native visual checks. Build after app code changes. Hardware acceptance is separate from compilation and mocked tests. Xcode MCP operations are preferred when available; otherwise use scripts/dev.sh.
+Follow [WORKFLOW](WORKFLOW.md) for task-specific checks, evidence, status updates and handoff, including its local-by-default screenshot policy for native visual checks. Build after app code changes. Hardware acceptance is separate from compilation and mocked tests. Xcode MCP operations are preferred when available; otherwise use apps/rebind/scripts/dev.sh.
 
 ## 9. Scope control
 

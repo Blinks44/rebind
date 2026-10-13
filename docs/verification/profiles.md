@@ -38,7 +38,7 @@ The 2026-10-11 follow-ups confirm the requested switching scenario for one mouse
 
 - Xcode 27.0 / Swift 6.4 / SDK 27.0, macOS 27.0.1 (26A434), Apple Silicon.
   Deployment 26 unchanged; no Intel/macOS 26 execution claim.
-- `scripts/dev.sh test -resultBundlePath build/ManualProfilesTests-Verified.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/ManualProfilesTests-Verified.xcresult`:
   **177 tests / 27 suites / 0 failures**. Retained all 159 core tests, added 18 profile
   functions, removed 21 tests alongside retired inventory/source code. Tests use
   isolated temporary stores/constructed events, not the user's file or a live tap.

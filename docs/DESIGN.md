@@ -20,9 +20,9 @@ Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
 | 99 · Archive | The two original hand-drawn Keyboard frames |
 
-Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
+Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `apps/rebind/tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
 
-The code mirrors the variables in `rebind/UI/DesignSystem/Theme.swift`; on 2026-10-13 all 43 colors used by the app matched Sketch exactly. Change a token in both places.
+The code mirrors the variables in `apps/rebind/rebind/UI/DesignSystem/Theme.swift`; on 2026-10-13 all 43 colors used by the app matched Sketch exactly. Change a token in both places.
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 
@@ -83,7 +83,7 @@ Plain-language copy is saved/reviewed across all 125 screens and the reusable EN
 
 ## Brand
 
-The app icon is itself a full-bleed blue keycap with two opposing white arrows, following the macOS 26 icon grid (no inner margin). Editable geometry lives on page `05 · Brand`. [AppIcon.icon](../rebind/AppIcon.icon/) is the sole app-icon input (deep-blue fill plus `Key` and `Glyph` SVG layers composed by Icon Composer); [RebindMenuBar.imageset](../rebind/Assets.xcassets/RebindMenuBar.imageset/) is the monochrome template; the sidebar shows the running app's own icon. For revisions, edit the geometry in Sketch, update the two SVG layers, rebuild and inspect `Rebind.app/Contents/Resources/AppIcon.icns`; do not bake a corner mask, shadow or background into the layers, the system adds them. `docs/images/app-icon.png` is the README preview exported from a build. Earlier Dock/tint checks in [BRAND-001](tasks/BRAND-001-icon-runtime.md) apply to the previous artwork and must be repeated.
+The app icon is itself a full-bleed blue keycap with two opposing white arrows, following the macOS 26 icon grid (no inner margin). Editable geometry lives on page `05 · Brand`. [AppIcon.icon](../apps/rebind/rebind/AppIcon.icon/) is the sole app-icon input (deep-blue fill plus `Key` and `Glyph` SVG layers composed by Icon Composer); [RebindMenuBar.imageset](../apps/rebind/rebind/Assets.xcassets/RebindMenuBar.imageset/) is the monochrome template; the sidebar shows the running app's own icon. For revisions, edit the geometry in Sketch, update the two SVG layers, rebuild and inspect `Rebind.app/Contents/Resources/AppIcon.icns`; do not bake a corner mask, shadow or background into the layers, the system adds them. `docs/images/app-icon.png` is the README preview exported from a build. Earlier Dock/tint checks in [BRAND-001](tasks/BRAND-001-icon-runtime.md) apply to the previous artwork and must be repeated.
 
 ## Updating this design contract
 

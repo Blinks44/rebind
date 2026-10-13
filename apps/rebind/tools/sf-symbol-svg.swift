@@ -1,5 +1,5 @@
 // Exports SF Symbols as SVG outlines for the Sketch design system.
-// Usage: xcrun swift tools/sf-symbol-svg.swift <output-directory> <symbol-name>...
+// Usage: xcrun swift apps/rebind/tools/sf-symbol-svg.swift <output-directory> <symbol-name>...
 // SwiftUI's ImageRenderer writes symbols to PDF as plain filled paths; this converts
 // those path operators to one SVG <path>. Symbols are for Rebind's own mockups only.
 import AppKit

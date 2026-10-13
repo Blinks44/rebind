@@ -1,11 +1,11 @@
 // Magic Mouse feasibility probe for SPEC §3.5 / PLAN Phase 6. Not part of Rebind.app.
 //
-//   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift tools/magic-mouse-probe.swift [seconds]
+//   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift apps/rebind/tools/magic-mouse-probe.swift [seconds]
 //
 // Lists multitouch devices, then observes contact frames from every external one
 // for the given time (default 30 s, 1–60). It only counts contacts: nothing is
 // suppressed, posted or stored, and no permission is required. Private
-// MultitouchSupport ABI offsets match rebind/Engine/Trackpad/NativeTrackpadBuffer.swift.
+// MultitouchSupport ABI offsets match apps/rebind/rebind/Engine/Trackpad/NativeTrackpadBuffer.swift.
 
 import CoreGraphics
 import Foundation

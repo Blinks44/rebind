@@ -41,13 +41,13 @@ Phase 1's end-to-end exit criterion remains open; see its
 Host: Apple Silicon, macOS 27.0.1 (26A434), Xcode 27.0, Swift 6.4, SDK 27.0;
 deployment minimum remains macOS 26. No macOS 26 or Intel execution claim.
 
-- `scripts/dev.sh test -resultBundlePath build/Phase2WheelTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2WheelTests-Final.xcresult`:
   **47 tests in 8 suites passed**, including 23 new tests for direction/metadata,
   unsupported event passthrough, throttle boundaries/bursts/alternating axes,
   timestamp overflow/regression, exact modifiers, recording, queue bounds,
   pause/Secure Input/suspension/editing, old-format migration and wheel round trip.
   Events were constructed, never globally posted; hosted tests do not start a tap.
-- Final `scripts/dev.sh build` and `scripts/dev.sh release` succeeded. Release
+- Final `apps/rebind/scripts/dev.sh build` and `apps/rebind/scripts/dev.sh release` succeeded. Release
   contains arm64/x86_64 and passes `codesign --verify --strict --verbose=2`.
   No Swift/concurrency warnings; expected AppIntents metadata-extraction warning
   because this app does not use AppIntents. Hosted tests emitted system

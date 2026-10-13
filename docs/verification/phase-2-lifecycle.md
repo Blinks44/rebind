@@ -37,9 +37,9 @@ Status: implemented and software-tested; **basic Pause/Resume and sleep/wake rec
 
 ## Software evidence
 
-- `scripts/dev.sh doctor`: Xcode 27.0 (27A266a), Swift 6.4, SDK 27.0,
+- `apps/rebind/scripts/dev.sh doctor`: Xcode 27.0 (27A266a), Swift 6.4, SDK 27.0,
   Apple Silicon macOS 27.0.1 (26A434); deployment remains macOS 26.
-- `scripts/dev.sh test -resultBundlePath build/Phase2LifecycleTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2LifecycleTests-Final.xcresult`:
   **143 tests / 22 suites / 0 failures**, 12 added functions in CaptureLifecycleTests
   and AppModelLifecycleTests. Covers permission loss, old-hold cancellation/fresh
   rearming, explicit retry after failure, pointer capture/output failure, secure
@@ -51,7 +51,7 @@ Status: implemented and software-tested; **basic Pause/Resume and sleep/wake rec
 - Tests never install a tap/post input, change permissions, sleep the Mac, run real
   NSWorkspace notifications, or touch user storage. They exercise the actual handlers
   and mailbox policy; they do not prove hardware/OS delivery, suppression or recovery.
-- Final `scripts/dev.sh build` and `scripts/dev.sh release`: **BUILD SUCCEEDED**.
+- Final `apps/rebind/scripts/dev.sh build` and `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**.
   Release contains arm64/x86_64, strict/deep signature verification and packaged
   privacy-manifest lint pass. No Intel/macOS 26 execution claim.
   Existing expected AppIntents metadata-skip and hosted autoShortcut service messages;

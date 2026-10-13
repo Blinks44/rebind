@@ -28,12 +28,12 @@ SkyLight sharing notification / main run loop
 
 Other occurrences use NSThemeFrame.layout after the same sharing indicator is installed. All 42 AppKit negative-geometry log entries in the traced run correspond to 21 negative sharing-indicator setter calls. Startup NSTextField title sizing also briefly proposed a negative width, but did not emit this diagnostic; it is distinct.
 
-Actual commands (all via scripts/dev.sh):
+Actual commands (all via apps/rebind/scripts/dev.sh):
 
-- `test -only-testing:rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryBaseline3.xcresult`: **1 test passed**, no Computer Use inspection, **0** AppKit negative-geometry warnings.
-- `test -only-testing:rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryInteractive.xcresult`: **1 test passed**, Computer Use transitions inspected, **60** AppKit negative-geometry warnings.
-- `test -only-testing:rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryStack.xcresult`: **1 test passed**, traced Computer Use inspection, **42** warnings, all attributed above.
-- `test -only-testing:rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryStack2.xcresult`: **1 test passed**, same traced actual-main fixture without inspection, **0** warnings.
+- `test -only-testing:apps/rebind/rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryBaseline3.xcresult`: **1 test passed**, no Computer Use inspection, **0** AppKit negative-geometry warnings.
+- `test -only-testing:apps/rebind/rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryInteractive.xcresult`: **1 test passed**, Computer Use transitions inspected, **60** AppKit negative-geometry warnings.
+- `test -only-testing:apps/rebind/rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryStack.xcresult`: **1 test passed**, traced Computer Use inspection, **42** warnings, all attributed above.
+- `test -only-testing:apps/rebind/rebindTests/GeometryInvestigationTests -resultBundlePath build/AppKitGeometryStack2.xcresult`: **1 test passed**, same traced actual-main fixture without inspection, **0** warnings.
 - Plain-control attempts (`AppKitGeometryPlainControl[2].xcresult`) passed with no warnings; later Computer Use requests timed out. These attempts do **not** establish a successful inspected plain-window control and are not needed for the captured stack attribution.
 
 An initial fixture compilation failed due to an optional Selector; corrected before these runs. A sandboxed runner attempt could not connect to testmanagerd; subsequent authorized Xcode test runs executed outside that restriction. Existing linkd/AppIntents messages are unrelated. Raw logs and xcresults remain ignored local outputs; the meaningful evidence is retained here.

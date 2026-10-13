@@ -44,7 +44,7 @@ targets, revoked access and latency still require manual checks.
 
 ## Software evidence — 2026-10-08
 
-- `scripts/dev.sh test -resultBundlePath build/WindowActionsTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/WindowActionsTests-Final.xcresult`:
   **205 tests / 30 suites / 0 failures**, including 13 new parameterized functions.
   Covers target selection, ownership/self/permissions, absent/disabled/read-only
   targets, focus changes, revocation/cancellation after reads, rejected mutation

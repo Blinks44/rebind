@@ -23,7 +23,7 @@ pane when access remains unavailable. Finder reveal uses the running bundle URL.
 
 ## Verified
 
-- Debug and universal Release build successfully using `scripts/dev.sh`.
+- Debug and universal Release build successfully using `apps/rebind/scripts/dev.sh`.
 - 73 tests in 12 suites pass, including permission-policy and staged-consent regressions.
 - Release signature verification passes; 77 translated keys have EN/RU/DE/FR text (plus the unchanged product-name entry).
 - Native Russian UI displays Accessibility **not granted**, Input Monitoring

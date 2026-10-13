@@ -22,9 +22,9 @@ Pure regression tests reproduced repeated recognition cancellation after forward
 Recorded checks:
 
 ```sh
-scripts/dev.sh test -resultBundlePath build/TrackpadClickRecoveryFinalTests.xcresult
-scripts/dev.sh build
-scripts/dev.sh release
+apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadClickRecoveryFinalTests.xcresult
+apps/rebind/scripts/dev.sh build
+apps/rebind/scripts/dev.sh release
 ```
 
 Result: **479 tests / 63 suites / 0 failures**; Debug and universal Release builds succeeded; strict/deep signature verification passed. Test inputs were injected, not physical capture/output. An initial method filter selected zero tests; the recorded result is from the corrected suite/full run.
@@ -35,7 +35,7 @@ Manual reports indicated better initial recognition followed by loss of shortcut
 
 Forwarded callback timestamp/frame metadata for zero-contact arrays. Recognition bounds changed to 30–400 ms duration, 150 ms arrival/lift spread, 0.04 per-contact travel and two peak frames. Settling changed from 500 ms to 60 ms; contact identity/movement, active-frame continuity, click/activity/focus/runtime cancellation and dispatch guards remain.
 
-Recorded command: `scripts/dev.sh test -resultBundlePath build/TrackpadResponsivenessTests.xcresult`; **476 tests / 63 suites / 0 failures**. Debug/Release builds and universal signature checks passed. Integrated output had a manual success report, but roughly one-in-seven recognition and perceived delay failed usability acceptance. Revised latency, reliability and click/lifecycle behavior remain open.
+Recorded command: `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadResponsivenessTests.xcresult`; **476 tests / 63 suites / 0 failures**. Debug/Release builds and universal signature checks passed. Integrated output had a manual success report, but roughly one-in-seven recognition and perceived delay failed usability acceptance. Revised latency, reliability and click/lifecycle behavior remain open.
 
 ### 2026-10-10 — Experimental four-finger app integration and layout
 
@@ -44,8 +44,8 @@ Built-in four-finger single tap → shortcut integrated with manual profiles, ve
 Recorded commands:
 
 ```sh
-scripts/dev.sh test -resultBundlePath build/FourFingerTapIntegrationTests-FocusGuard.xcresult
-scripts/dev.sh test -resultBundlePath build/TrackpadLayoutRegressionTests.xcresult
+apps/rebind/scripts/dev.sh test -resultBundlePath build/FourFingerTapIntegrationTests-FocusGuard.xcresult
+apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadLayoutRegressionTests.xcresult
 ```
 
 Each recorded **465 tests / 63 suites / 0 failures**; Debug/Release builds passed. Native layout inspection confirmed category/editor transitions at the inspected window size after removing inappropriate vertical fixed sizing. Compact resizing, accessibility and integrated hardware safety were not established by these checks.
@@ -75,7 +75,7 @@ Build/signature checks used the recorded Apple Silicon macOS 27.0.1 / Xcode 27 /
 
 ### Historical software-check register
 
-These are earlier recorded runs, preserved during documentation migration rather than rerun. The invocation pattern is `scripts/dev.sh test -resultBundlePath build/<bundle>` using the result-bundle names below. Final ordinary `scripts/dev.sh build` and `scripts/dev.sh release` and signature checks were recorded as passing for each listed slice. Exact implementation commits were not recorded with these entries; results describe their historical slice, not the current checkout.
+These are earlier recorded runs, preserved during documentation migration rather than rerun. The invocation pattern is `apps/rebind/scripts/dev.sh test -resultBundlePath build/<bundle>` using the result-bundle names below. Final ordinary `apps/rebind/scripts/dev.sh build` and `apps/rebind/scripts/dev.sh release` and signature checks were recorded as passing for each listed slice. Exact implementation commits were not recorded with these entries; results describe their historical slice, not the current checkout.
 
 | Date | Slice | Result bundle | Recorded full-suite result |
 | --- | --- | --- | --- |

@@ -4,7 +4,7 @@
 - Stage: awaiting_verification
 - Owner: Claude Code chat, 2026-10-13; released at handoff
 - Ownership checked: 2026-10-13 on `ca02747`; advisory coordination, not a lock
-- Owned surfaces: `rebind/UI/Theme.swift`, `ThemeControls.swift`, `BindingsView.swift`, `BindingRow.swift`, `MainSidebar*.swift`, `ContentView.swift`, main-window layout tests
+- Owned surfaces: `apps/rebind/rebind/UI/Theme.swift`, `ThemeControls.swift`, `BindingsView.swift`, `BindingRow.swift`, `MainSidebar*.swift`, `ContentView.swift`, main-window layout tests
 - Requirements: SPEC §§4, 10; phase 8
 - Code baseline: `main` at `ca02747`; all changes uncommitted
 
@@ -40,9 +40,9 @@ Decisions:
 
 Checks, 2026-10-13, macOS 27.0.1, Xcode 27, agent-observed:
 
-- `scripts/dev.sh build`: succeeded.
+- `apps/rebind/scripts/dev.sh build`: succeeded.
 - `MainWindowLayoutTests/testKeyboardScreenRendersAtSketchSize` (new): passes; renders 1080 × 720 Light/Dark with seven fixture rules. Compared by eye with the Sketch frame: sidebar, header, row pitch 72, arrow/tile/switch/menu columns match within about 1 pt.
-- Full `scripts/dev.sh test` after the final code and asset changes: 15 XCTest layout tests and 663 Swift Testing tests in 90 suites pass, zero failures.
+- Full `apps/rebind/scripts/dev.sh test` after the final code and asset changes: 15 XCTest layout tests and 663 Swift Testing tests in 90 suites pass, zero failures.
 
 ## Follow-up 2026-10-13
 
@@ -148,6 +148,6 @@ Final diff reviewed against the Sketch frame and the acceptance list. The layout
 
 ## Next handoff
 
-- **User:** run `scripts/dev.sh run`, compare with Sketch screen 01 in Light and Dark, and report differences.
+- **User:** run `apps/rebind/scripts/dev.sh run`, compare with Sketch screen 01 in Light and Dark, and report differences.
 - **Code:** restyle Settings pages, the action picker sheet, hold-duration card, onboarding, profiles and About with the same `Theme` components; reconcile the permission banner with the Sketch Banner.
 - **Design:** continue UI-022's remaining screens.

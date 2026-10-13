@@ -45,13 +45,13 @@ The user's ordinary G603 Control + Button 4 → Command+A result does not verify
   No numeric timing measurement or separate results for short press, motion variants,
   one-shot delivery, suppression, cancellation, keyboard or lifecycle were supplied.
 
-- Follow-up `scripts/dev.sh test -resultBundlePath build/Phase2HoldFixTests.xcresult`:
+- Follow-up `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2HoldFixTests.xcresult`:
   **100 tests / 16 suites / 0 failures**. Five additional test functions cover repeated
   owned mouse drags without deadline reset or repeat delivery, changed flags during a
   drag, the user's exact two-rule configuration (Button 5, no modifiers, 1000 ms),
   and focus loss both with and without an explicit recorder. No tap or posting is run.
 
-- `scripts/dev.sh test -resultBundlePath build/Phase2HoldTests-Verified.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2HoldTests-Verified.xcresult`:
   **95 tests / 15 suites / 0 failures**, including 22 new hold/mailbox/persistence cases.
   Threshold boundary, once-only firing, short release, repeat, drag, modifiers, queue,
   editing/recording/pause, secure/capture reset, independent clock origins,

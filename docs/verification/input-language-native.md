@@ -28,10 +28,10 @@ Apple documents the app/global domain separation, precedence and language key in
 
 Environment: Apple Silicon macOS 27.0.1, Xcode 27.0 / Swift 6.4 / SDK 27; macOS 26 target and strict concurrency retained.
 
-- `scripts/dev.sh test -resultBundlePath build/InputLanguageFinal.xcresult`: **539 Swift Testing tests / 73 suites + five native XCTest tests, 544 total; zero failures; TEST SUCCEEDED**.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/InputLanguageFinal.xcresult`: **539 Swift Testing tests / 73 suites + five native XCTest tests, 544 total; zero failures; TEST SUCCEEDED**.
 - Full main Settings checks now cover **352 combinations** (11 states × four locales × Light/Dark × four sizes), including Input, Language, pending reopen and protected storage. Native split and both columns must fit the viewport. Earlier 72 rules and 264 General combinations remain.
 - Additional permanent native coverage: **32** Input/Language standard Settings combinations (600 × 480 and 760 × 600); **16** language failure and **48** Hold-editor combinations (100/575/5,000 ms, EN/RU/DE/FR, Light/Dark, two sizes). Checks include actual scroll bounds/document width and requested window size.
-- After final popup alignment and duplicate AX-name repair, `scripts/dev.sh test -only-testing:rebindTests/MainWindowLayoutTests -only-testing:rebindTests/InputLanguageLayoutTests -only-testing:rebindTests/LanguageSettingsTests -resultBundlePath build/InputLanguageCleanFinal.xcresult`: **four XCTest tests + nine Language test functions, zero failures; TEST SUCCEEDED**. This uses the normal product/bundle identifier, with temporary helpers/guard removed.
+- After final popup alignment and duplicate AX-name repair, `apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/MainWindowLayoutTests -only-testing:apps/rebind/rebindTests/InputLanguageLayoutTests -only-testing:apps/rebind/rebindTests/LanguageSettingsTests -resultBundlePath build/InputLanguageCleanFinal.xcresult`: **four XCTest tests + nine Language test functions, zero failures; TEST SUCCEEDED**. This uses the normal product/bundle identifier, with temporary helpers/guard removed.
 
 The initial build exposed a catalog-name/Int32 placeholder mismatch, corrected before successful tests. A duplicate derivedDataPath inspection command and a missing return in the temporary identity guard also failed; neither is acceptance evidence. The final normal build/tests use the corrected production source.
 
@@ -39,7 +39,7 @@ The initial build exposed a catalog-name/Int32 placeholder mismatch, corrected b
 
 Only authored temporary configurations were changed. Fixtures never started the engine. An ambiguous tool selection showed an ordinary Rebind window once; no controls/actions were used there and it was left alone. Subsequent inspection used a separate output directory and temporary `blinks44.rebind.verification.Rebind` identifier, with an explicit guard preventing real configuration loading/runtime startup even if the UI tool launched that verification bundle. Production project settings were unchanged. The helper and guard were removed afterward; build/result output is ignored.
 
-Inspection commands used `scripts/dev.sh test CONFIGURATION_BUILD_DIR=<repo>/build/InputLanguageVerificationProducts/Debug 'PRODUCT_BUNDLE_IDENTIFIER=blinks44.rebind.verification.$(PRODUCT_NAME:rfc1034identifier)' 'INFOPLIST_KEY_CFBundleDisplayName=Rebind Verification' -testLanguage fr|ru -test-timeouts-enabled YES -default-test-execution-time-allowance 360 -maximum-test-execution-time-allowance 360 -only-testing:rebindTests/InputLanguageVisibleInspectionTests/<method> -resultBundlePath <bundle>`; stop flags ended the bounded manual holds. Passing results: `build/InputHoldDistinctFrench2.xcresult`, `build/InputLanguageDistinctRussian.xcresult`, `build/InputLanguageFinalAccessibility.xcresult`. Earlier short visible holds also passed but missed parts of the interaction; they are not substituted for the checks below.
+Inspection commands used `apps/rebind/scripts/dev.sh test CONFIGURATION_BUILD_DIR=<repo>/build/InputLanguageVerificationProducts/Debug 'PRODUCT_BUNDLE_IDENTIFIER=blinks44.rebind.verification.$(PRODUCT_NAME:rfc1034identifier)' 'INFOPLIST_KEY_CFBundleDisplayName=Rebind Verification' -testLanguage fr|ru -test-timeouts-enabled YES -default-test-execution-time-allowance 360 -maximum-test-execution-time-allowance 360 -only-testing:apps/rebind/rebindTests/InputLanguageVisibleInspectionTests/<method> -resultBundlePath <bundle>`; stop flags ended the bounded manual holds. Passing results: `build/InputHoldDistinctFrench2.xcresult`, `build/InputLanguageDistinctRussian.xcresult`, `build/InputLanguageFinalAccessibility.xcresult`. Earlier short visible holds also passed but missed parts of the interaction; they are not substituted for the checks below.
 
 Agent-observed:
 
@@ -51,7 +51,7 @@ Reviewed live capture states: Input Dark RU, Language Dark RU, reopen Dark RU, c
 
 ## Artifact and remaining acceptance
 
-- `scripts/dev.sh release`: **BUILD SUCCEEDED**, universal `x86_64 arm64`. Debug/Release pass `codesign --verify --deep --strict`. Final normal bundle ID `blinks44.rebind`; target/scheme/module/product unchanged. Temporary helper, identity guard and build-setting overrides are absent from production source/project.
+- `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**, universal `x86_64 arm64`. Debug/Release pass `codesign --verify --deep --strict`. Final normal bundle ID `blinks44.rebind`; target/scheme/module/product unchanged. Temporary helper, identity guard and build-setting overrides are absent from production source/project.
 - Executable SHA-256: Debug `dc9a13230d1a5376fbe9d3f58df881f2d0dacac66d2fa7c450b2c203a74e027b`; Release `f899d208e72f0888989d43627ba1ae334b2cee97bc310106e597e849e247b341`.
 - Live main transitions/resizing still emitted AppKit negative-size warnings (62 occurrences in each inspected Russian run); no observed overflow. Static final geometry tests did not emit that warning. Cause isolation remains open, rather than declaring all runtime geometry warning-free.
 

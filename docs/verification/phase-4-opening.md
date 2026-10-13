@@ -50,7 +50,7 @@ No new permissions or runtime dependencies.
 
 - Xcode 27.0 / Swift 6.4 / SDK 27.0, macOS 27.0.1 (26A434), Apple Silicon.
   Deployment 26 unchanged; Intel/macOS 26 execution unverified.
-- `scripts/dev.sh test -resultBundlePath build/WorkspaceActionsTests-Final2.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/WorkspaceActionsTests-Final2.xcresult`:
   **225 tests / 32 suites / 0 failures**. Twenty new functions cover metadata,
   supported/invalid parameters, directory URL/path comparison, old-schema gates,
   migration byte preservation, trigger families, large-save rollback, serialization,

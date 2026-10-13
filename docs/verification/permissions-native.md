@@ -28,11 +28,11 @@ Deliberate bounded differences: unavailable Settings tabs and About are omitted;
 
 Host: Apple Silicon, macOS **27.0.1 (26A434)**, Xcode **27.0 (27A266a)**, Swift **6.4**, SDK **27.0**. Target remains macOS 26+, Swift 6 strict concurrency, scheme/module `rebind`, product `Rebind.app`, bundle ID `blinks44.rebind`; no dependencies or project settings changed.
 
-- `scripts/dev.sh doctor`: reports the above toolchain and `rebind` / `rebindTests` targets. Restricted execution emits cache/Simulator-service warnings but completes.
-- Initial restricted `scripts/dev.sh build` failed because sandbox-exec denied the Swift macro plugin. Xcode checks subsequently ran outside the sandbox through the authorized build script.
-- Final `scripts/dev.sh test`: **508 tests / 68 suites / zero failures**, `TEST SUCCEEDED`, 2026-10-11; runner completed at 08:33:57 local. Includes the pre-existing trackpad repair tests. Fifteen new test functions cover missing/ready grants, grant/posting progression, cancellation/engine separation, durable deferral, failed writes/corrupt/future files, one-time presentation/editor protection, schema 1–22 migration and schema-22 trackpad preservation without rewriting. No global input posting or ordinary app-engine launch in the test host.
+- `apps/rebind/scripts/dev.sh doctor`: reports the above toolchain and `rebind` / `rebindTests` targets. Restricted execution emits cache/Simulator-service warnings but completes.
+- Initial restricted `apps/rebind/scripts/dev.sh build` failed because sandbox-exec denied the Swift macro plugin. Xcode checks subsequently ran outside the sandbox through the authorized build script.
+- Final `apps/rebind/scripts/dev.sh test`: **508 tests / 68 suites / zero failures**, `TEST SUCCEEDED`, 2026-10-11; runner completed at 08:33:57 local. Includes the pre-existing trackpad repair tests. Fifteen new test functions cover missing/ready grants, grant/posting progression, cancellation/engine separation, durable deferral, failed writes/corrupt/future files, one-time presentation/editor protection, schema 1–22 migration and schema-22 trackpad preservation without rewriting. No global input posting or ordinary app-engine launch in the test host.
 - The first full test attempt exposed two regressions: cancellation result consumed too late, and a prior trackpad migration assertion hard-coded schema 22. Both were corrected; final full tests include their regressions. Pure presentation state is explicitly nonisolated/Sendable under the app's main-actor-default configuration.
-- `scripts/dev.sh release`: `BUILD SUCCEEDED`; Release Mach-O contains **x86_64 + arm64**. This does not prove Intel or macOS 26 execution.
+- `apps/rebind/scripts/dev.sh release`: `BUILD SUCCEEDED`; Release Mach-O contains **x86_64 + arm64**. This does not prove Intel or macOS 26 execution.
 - `codesign --verify --deep --strict` passes for final Debug and Release bundles. Only expected AppIntents metadata-skip warnings; macOS test-host linkd service warnings did not fail tests.
 - All **53** handoff keys exactly match EN/RU/DE/FR catalog values (52 additions and the existing permissionsTitle updated to the delivered heading). Copy reviewed with Writing for Interfaces; no artificial line breaks.
 - `git diff --check` passes. Shared source/skills/design inputs remain versioned; build/xcresult output remains under existing narrow ignore rules.
@@ -85,7 +85,7 @@ At the user's stop request, General implementation was halted before source edit
 
 The recovery description's `.fixedSize(horizontal: false, vertical: true)` caused SwiftUI's native split-view minimum-size probing to compute an oversized height. In an isolated 1040 × 640 window, the split hierarchy measured 1040 × 1309 at y = −334. With the notice absent it measured 1040 × 640; removing only the description's fixed-height modifier restores 1040 × 640 with the notice present. The production fix is limited to that modifier in `PermissionRecoveryBanner.swift`; normal localized wrapping remains. No GeometryReader, hard-coded notice height, project setting or engine change was retained. Native sizing guidance was checked against [Apple's NSHostingController sizing contract](https://developer.apple.com/documentation/swiftui/nshostingcontroller/sizingoptions).
 
-A permanent XCTest native layout regression in `rebindTests/UI/MainWindowLayoutTests.swift` checks split-view bounds inside the window viewport for **72 combinations**: EN/RU/DE/FR × missing AX/missing posting/ready × empty/one-rule profile × 1040 × 640, 880 × 600 and 1280 × 800. It uses injected grants and a unique temporary store, never starts capture or loads real configuration. This is geometry coverage, not hardware or actual-grant acceptance.
+A permanent XCTest native layout regression in `apps/rebind/rebindTests/UI/MainWindowLayoutTests.swift` checks split-view bounds inside the window viewport for **72 combinations**: EN/RU/DE/FR × missing AX/missing posting/ready × empty/one-rule profile × 1040 × 640, 880 × 600 and 1280 × 800. It uses injected grants and a unique temporary store, never starts capture or loads real configuration. This is geometry coverage, not hardware or actual-grant acceptance.
 
 Computer Use screenshot and accessibility inspection confirmed:
 
@@ -99,8 +99,8 @@ Twenty-four additional native fixture captures covered compact setup/Settings lo
 
 Final checks on the repaired source, baseline `main` / `acce2f4` plus the existing uncommitted implementation:
 
-- `scripts/dev.sh test`: **508 Swift Testing cases / 68 suites + 1 XCTest layout test, zero failures**, `TEST SUCCEEDED`; completed 09:12:44 local. The layout test checks all 72 combinations and passes in 11.240 seconds. Debug build is included. Log `/tmp/rebind-window-final-test.log` is supplementary.
-- `scripts/dev.sh release`: `BUILD SUCCEEDED`, **x86_64 + arm64**, 09:13:10 local; supplementary log `/tmp/rebind-window-release.log`.
+- `apps/rebind/scripts/dev.sh test`: **508 Swift Testing cases / 68 suites + 1 XCTest layout test, zero failures**, `TEST SUCCEEDED`; completed 09:12:44 local. The layout test checks all 72 combinations and passes in 11.240 seconds. Debug build is included. Log `/tmp/rebind-window-final-test.log` is supplementary.
+- `apps/rebind/scripts/dev.sh release`: `BUILD SUCCEEDED`, **x86_64 + arm64**, 09:13:10 local; supplementary log `/tmp/rebind-window-release.log`.
 - Both final bundles pass `codesign --verify --deep --strict`; all 53 four-language handoff keys exactly match the catalog; `git diff --check` passes. Expected AppIntents metadata-skip/test-host linkd warnings remain. The isolated manual sheet dismissal emitted transient AppKit negative-geometry warnings, but the returned window was intact and final geometry/full tests pass; ordinary-window transition stress remains open.
 
 | Repaired artifact | SHA-256 |

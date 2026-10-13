@@ -18,7 +18,7 @@ Accessibility uses native controls, named clear/options/toggle actions, scoped c
 
 `MouseLayoutTests` adds two XCTest native fixtures. The test host never starts the input engine or reads real configuration. Full main Mouse detail covers empty/populated × missing/granted injected permissions × EN/RU/DE/FR × Light/Dark × 880×600/1040×640 = 64 combinations, asserting the actual split/columns remain inside the window. Editors cover four existing trigger/activation fixtures plus new draft × four languages × both appearances × 512×600/512×760 = 80 combinations. These assertions verify native bounds, not every control's visibility or accessibility tree.
 
-Targeted `scripts/dev.sh test -only-testing:rebindTests/MouseLayoutTests/testLocalizedMouseEditorsFitCompactNativeWindows -resultBundlePath build/MouseVisualReview.xcresult` passed. Local German Hold Light/Dark attachments were visually inspected: readable wrapped hints/content and pinned Cancel/Save; longer form content intentionally scrolls. No verification images are versioned.
+Targeted `apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/MouseLayoutTests/testLocalizedMouseEditorsFitCompactNativeWindows -resultBundlePath build/MouseVisualReview.xcresult` passed. Local German Hold Light/Dark attachments were visually inspected: readable wrapped hints/content and pinned Cancel/Save; longer form content intentionally scrolls. No verification images are versioned.
 
 Live isolated review used the same editor test with a temporary test-only pause forwarded through `TEST_RUNNER_REBIND_MOUSE_VISUAL_REVIEW=1`, result `build/MouseLiveReview.xcresult`: one test passed. At 512×600, the menu switched Button to Button + movement, cleared trigger/activation options, displayed direction, retained the shortcut output and disabled Save until a trigger existed. Native AX exposed Cancel/Save identifiers, clear names and type/activation controls. No capture/save/remapping action was executed. The temporary interactive branch was removed before the final regression/build.
 
@@ -28,8 +28,8 @@ Earlier check failures were corrected: fixture UInt32/concurrency typing, pointe
 
 ## Final regression and artifact
 
-- `scripts/dev.sh test -resultBundlePath build/MouseFinalVerified.xcresult`: **TEST SUCCEEDED**, 574 Swift Testing functions + 12 XCTest = **586 tests**, **1,488 expanded executions**, zero failures/skips. This follows correction of the obsolete Hold width expectation in the earlier `MouseFinalRegression.xcresult` run. The only later code edit was whitespace indentation in BindingEditor, followed by the final build.
-- `scripts/dev.sh build`: **BUILD SUCCEEDED**. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes, local ad-hoc signature only.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/MouseFinalVerified.xcresult`: **TEST SUCCEEDED**, 574 Swift Testing functions + 12 XCTest = **586 tests**, **1,488 expanded executions**, zero failures/skips. This follows correction of the obsolete Hold width expectation in the earlier `MouseFinalRegression.xcresult` run. The only later code edit was whitespace indentation in BindingEditor, followed by the final build.
+- `apps/rebind/scripts/dev.sh build`: **BUILD SUCCEEDED**. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes, local ad-hoc signature only.
 - Final Debug artifact: `build/DerivedData/Build/Products/Debug/Rebind.app`, bundle ID `blinks44.rebind`; executable SHA-256 `89356d5996588e4ed32470fb59f906ff40221224379a6af04c87db677520a7cf`.
 - Catalog review: all 33 new Mouse keys have EN/RU/DE/FR; two count keys have independent plural forms. `git diff --check` passes. Temporary review source is absent; result bundles/images remain ignored/local.
 

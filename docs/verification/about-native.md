@@ -15,7 +15,7 @@ The implementation reuses public [NSTextFinder](https://developer.apple.com/docu
 Apple Silicon MacBook Air, macOS 27.0.1 (26A434), Xcode 27.0 / Swift 6.4 / SDK 27. Computer Use inspected the identity-isolated test host (`blinks44.rebind.aboutverification`), with no AppModel.start() and no user configuration. The second fixture uses an authored empty/paused temporary store, acknowledged setup, injected missing grants and a stub login service. Its terminal assertions confirm remapping remains paused and bindings empty. App-level Dark appearance is scoped to the isolated test process; system preferences were not changed.
 
 ```sh
-scripts/dev.sh test -only-testing:rebindTests/AboutInteractiveTemporaryTests \
+apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/AboutInteractiveTemporaryTests \
   PRODUCT_BUNDLE_IDENTIFIER=blinks44.rebind.aboutverification \
   CONFIGURATION_BUILD_DIR=/private/tmp/RebindAboutNativeProducts \
   -resultBundlePath build/AboutInteractive2.xcresult
@@ -32,10 +32,10 @@ Interactive logs also contain the previously isolated [AppKit sharing-indicator 
 
 ## Final checks and artifact
 
-- `scripts/dev.sh test -resultBundlePath build/AboutFinal.xcresult`: **TEST SUCCEEDED**, 564 Swift Testing + 10 XCTest = **574 tests**, 1,468 expanded executions, zero failures/skips. This full run preceded the final Find deferral; it established the unchanged input/storage/Settings regressions and exposed the cycle subsequently repaired.
-- `scripts/dev.sh test -only-testing:rebindTests/AboutInformationTests -only-testing:rebindTests/AboutLayoutTests -resultBundlePath build/AboutFinalRepair.xcresult`: **four tests pass**, zero failures/skips, on the final source. Shipped metadata/notices match actual bundle resources; 48 About/available-unavailable license size/locale/appearance combinations fit. NSTextView is read-only/selectable, localized and focusable. Find opens/reopens and ordinary updates preserve selection/content. No attribute-cycle or negative-geometry message in this run. Native bounds assertions alone are not complete visual/accessibility acceptance.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/AboutFinal.xcresult`: **TEST SUCCEEDED**, 564 Swift Testing + 10 XCTest = **574 tests**, 1,468 expanded executions, zero failures/skips. This full run preceded the final Find deferral; it established the unchanged input/storage/Settings regressions and exposed the cycle subsequently repaired.
+- `apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/AboutInformationTests -only-testing:apps/rebind/rebindTests/AboutLayoutTests -resultBundlePath build/AboutFinalRepair.xcresult`: **four tests pass**, zero failures/skips, on the final source. Shipped metadata/notices match actual bundle resources; 48 About/available-unavailable license size/locale/appearance combinations fit. NSTextView is read-only/selectable, localized and focusable. Find opens/reopens and ordinary updates preserve selection/content. No attribute-cycle or negative-geometry message in this run. Native bounds assertions alone are not complete visual/accessibility acceptance.
 - The repaired run retains one internal QoS priority-inversion warning at the test's NSHostingController root replacement. It is recorded rather than treated as a warning-free result; no production latency/profile conclusion is established.
-- `scripts/dev.sh build`: **BUILD SUCCEEDED** after the final targeted checks. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes; local ad-hoc signature only.
+- `apps/rebind/scripts/dev.sh build`: **BUILD SUCCEEDED** after the final targeted checks. `codesign --verify --deep --strict build/DerivedData/Build/Products/Debug/Rebind.app` passes; local ad-hoc signature only.
 - Catalog review: 12 new manual keys, all four translations present. `git diff --check` passes; local screenshot exports are covered by the existing narrow ignore rule.
 
 Final production Debug artifact: `build/DerivedData/Build/Products/Debug/Rebind.app`, bundle ID `blinks44.rebind`; executable SHA-256 `049b114d542f50b25315d592c442f2f09eca38e28e55559acb9845242a3d3309`. Final ReadOnlyNoticesText.swift SHA-256 `4d19ff52078fd22a0aee5980b858fd29711f66a2b880713e7d1b3023b9fc645f`. Temporary interactive source is absent from final builds. Initial sandbox-only build could not execute Swift macro tooling; builds/tests above used the authorized Xcode execution path. Early missing Done key/read-only-environment fixture errors were corrected before passing checks.

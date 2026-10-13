@@ -58,7 +58,7 @@ confusion. **The three notification effects now have user-confirmed happy paths;
   modifiers 2 (Control), source modifiers 0. ModifierSet maps Control to maskControl
   and Option to maskAlternate. This excludes a simple persisted-enum swap in that
   rule; it does not establish what Dock received or rule out OS remaps/other tools.
-- `scripts/dev.sh test -resultBundlePath build/DockActionsTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/DockActionsTests-Final.xcresult`:
   **266 tests / 38 suites / 0 failures**. Eleven new functions, with retained desktop
   tests adapted for native versus Space routing. Coverage: fixed native requests,
   no key fallback, cancellation/failure, schema-11 all-profile migration/byte

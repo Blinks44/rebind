@@ -128,8 +128,8 @@ Three deterministic regressions were reproduced before repair: a callback receiv
 
 Final checks on Apple Silicon/macOS 27.0.1, Xcode 27.0/Swift 6.4/SDK 27:
 
-- `scripts/dev.sh test -resultBundlePath build/TrackpadReliabilityFinalTests.xcresult`: **TEST SUCCEEDED**, 488 tests / 64 suites / zero failures. This includes Debug app compilation. Initial diagnostics builds exposed missing Synchronization import and default-MainActor extension isolation; both corrected before the final run.
-- `scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing unused AppIntents metadata extraction warning remains; no new compiler diagnostics. Test-host linkd/autoShortcut connection messages are nonfatal test-environment output, not evidence of gesture delivery.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadReliabilityFinalTests.xcresult`: **TEST SUCCEEDED**, 488 tests / 64 suites / zero failures. This includes Debug app compilation. Initial diagnostics builds exposed missing Synchronization import and default-MainActor extension isolation; both corrected before the final run.
+- `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing unused AppIntents metadata extraction warning remains; no new compiler diagnostics. Test-host linkd/autoShortcut connection messages are nonfatal test-environment output, not evidence of gesture delivery.
 - `codesign --verify --deep --strict` passes for both bundles; Release `lipo -archs`: `x86_64 arm64`. Minimum macOS 26/Intel execution remains unverified.
 - Debug executable SHA-256 `a4390f1ccf5cbc01dcbd94bda83ccff719a85a90659d29f2e28d7de0bc9c2b3a`; Debug implementation dylib `dc551faa24087dd0708fb6b71bebe9231d5e52c238c10f9e650805c3f474b3f4`; Release executable `13b0f20317a45d9cd7950b3f37d86a18ad9ad21330f0d4305358a13d9e7f980c`. These identify current ignored local artifacts, not a committed revision.
 - No actual tap, Command-W output, rule/permission mutation or manual latency/click-exclusivity test performed by the agent.
@@ -160,9 +160,9 @@ The repair cancels output for an activity-mismatched frame but retains its neutr
 
 Checks on the previously recorded Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
 
-- Before repair: `scripts/dev.sh test -only-testing:rebindTests/TrackpadIntegrationTests -resultBundlePath build/TrackpadBufferedReleaseBefore.xcresult`: **TEST FAILED**, both new release-order cases failed; 26 test functions / one suite / two issues.
-- After repair: `scripts/dev.sh test -resultBundlePath build/TrackpadBufferedReleaseFinal.xcresult`: **TEST SUCCEEDED**, 490 tests / 64 suites / zero failures, including Debug app compilation.
-- `scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing AppIntents metadata-skip warning remains. Both bundles pass `codesign --verify --deep --strict`.
+- Before repair: `apps/rebind/scripts/dev.sh test -only-testing:apps/rebind/rebindTests/TrackpadIntegrationTests -resultBundlePath build/TrackpadBufferedReleaseBefore.xcresult`: **TEST FAILED**, both new release-order cases failed; 26 test functions / one suite / two issues.
+- After repair: `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadBufferedReleaseFinal.xcresult`: **TEST SUCCEEDED**, 490 tests / 64 suites / zero failures, including Debug app compilation.
+- `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**. Existing AppIntents metadata-skip warning remains. Both bundles pass `codesign --verify --deep --strict`.
 - Debug implementation dylib SHA-256: `c55c5c7bde615cb5d8c59ae4e866ccdc3402adc25a3f6c412b030959cdfad9ef`; Release executable: `868acf306921c22d47a8ef533aff7339c63aa52df1780bd8acef041532f466d1`.
 - No actual app/remapping launch, user-rule/permission changes, Sketch edit or agent commit. Hardware recovery, click-only output and minimum-OS/Intel checks remain open.
 
@@ -178,9 +178,9 @@ Baseline `acce2f4`, with uncommitted `ShortcutSender.swift`, `TrackpadDiagnostic
 
 Checks on the existing Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
 
-- `scripts/dev.sh test -resultBundlePath build/TrackpadOutputValidationTests.xcresult`: **TEST SUCCEEDED**, 493 tests / 65 suites / zero failures, including Debug compilation.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadOutputValidationTests.xcresult`: **TEST SUCCEEDED**, 493 tests / 65 suites / zero failures, including Debug compilation.
 - New injected tests exercise the sender itself: tagged balanced Command-W pair to the captured PID, eight cancellation cases including changes during preparation, and 37 worker dispatches after real-button event pairs. No native input/output or AX/UI requests are made by those tests; they do not prove hardware recovery.
-- `scripts/dev.sh release`: **BUILD SUCCEEDED**. Both bundles pass `codesign --verify --deep --strict`; Release architectures `x86_64 arm64`. Existing AppIntents metadata-skip warning and nonfatal test-host linkd messages remain.
+- `apps/rebind/scripts/dev.sh release`: **BUILD SUCCEEDED**. Both bundles pass `codesign --verify --deep --strict`; Release architectures `x86_64 arm64`. Existing AppIntents metadata-skip warning and nonfatal test-host linkd messages remain.
 - Debug implementation dylib SHA-256: `b3c6c7ff9aabb99180c02f9ec2178183b131018cf6f3a114fa5c72af78cc90f3`; Release executable: `251e32ef3bfad4654a841a0ad757c4e6dce09b8fa33b7a13c372d8c2b20f6a33`.
 - No agent app/remapping launch, rules/permissions mutation, Sketch edit or commit. Prior actual post-click failure remains reported; the new output check is awaiting hardware verification.
 

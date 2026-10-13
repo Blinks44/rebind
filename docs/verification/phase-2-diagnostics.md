@@ -48,9 +48,9 @@ remain open.**
 
 ## Verification
 
-- `scripts/dev.sh doctor`: Xcode 27.0 (27A266a), Swift 6.4, SDK 27.0,
+- `apps/rebind/scripts/dev.sh doctor`: Xcode 27.0 (27A266a), Swift 6.4, SDK 27.0,
   Apple Silicon macOS 27.0.1 (26A434), deployment 26 unchanged.
-- `scripts/dev.sh test -resultBundlePath build/Phase2DiagnosticsTests.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2DiagnosticsTests.xcresult`:
   **159 tests / 24 suites / 0 failures**, 16 new functions covering opt-in/stop/clear,
   chronological ring overflow, burst limits, idle expiry, clock regression/extremes,
   keyboard/tag/receipt exclusion, independent snapshots, paused passthrough, unchanged

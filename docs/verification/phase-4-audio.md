@@ -50,7 +50,7 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
 
 ## Evidence
 
-- `scripts/dev.sh test -resultBundlePath build/SystemAudioActionsTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/SystemAudioActionsTests-Final.xcresult`:
   **192 tests / 29 suites / 0 failures**; prior 177 retained, 15 new action functions.
   Tests inject execution/capability/preflight callbacks and use isolated storage or
   constructed input. No real Core Audio setter, global posting, live tap or user

@@ -5,7 +5,7 @@
 - Owner: Unassigned; last artifact/cache check by `/root`. No geometry or Sketch edits.
 - Owned surfaces when claimed: brand runtime evidence/this task; coordinate any new Sketch/Composer/asset changes.
 - Requirements: SPEC §10 Application icon/Menu Bar icon; PLAN Phase 8.
-- Baseline inspected: `6c1a5be`, `rebind/AppIcon.icon` and named `RebindMenuBar` template exist.
+- Baseline inspected: `6c1a5be`, `apps/rebind/rebind/AppIcon.icon` and named `RebindMenuBar` template exist.
 
 ## Outcome and existing delivery
 

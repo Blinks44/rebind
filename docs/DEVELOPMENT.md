@@ -10,17 +10,17 @@ The last recorded development environment (2026-10-10) used Xcode 27.0 (27A266a)
 and macOS 27.0.1 (26A434) on Apple Silicon. macOS 26 runtime compatibility
 and Intel runtime behavior still need testing.
 
-Open `rebind.xcodeproj`, select the shared **rebind** scheme, and Run (⌘R).
+Open `apps/rebind/rebind.xcodeproj`, select the shared **rebind** scheme, and Run (⌘R).
 Test (⌘U) uses the connected **rebindTests** target.
 
 ```sh
-scripts/dev.sh doctor
-scripts/dev.sh resolve
-scripts/dev.sh build
-scripts/dev.sh build-for-testing
-scripts/dev.sh test
-scripts/dev.sh release
-scripts/dev.sh run
+apps/rebind/scripts/dev.sh doctor
+apps/rebind/scripts/dev.sh resolve
+apps/rebind/scripts/dev.sh build
+apps/rebind/scripts/dev.sh build-for-testing
+apps/rebind/scripts/dev.sh test
+apps/rebind/scripts/dev.sh release
+apps/rebind/scripts/dev.sh run
 ```
 
 The script respects `DEVELOPER_DIR` or a valid `xcode-select` selection, then
@@ -28,23 +28,23 @@ falls back to `/Applications/Xcode.app/Contents/Developer`. It never modifies
 the system selection. For another Xcode installation:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer scripts/dev.sh build
+DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer apps/rebind/scripts/dev.sh build
 ```
 
-Build output is under ignored `build/DerivedData/`. Do not run concurrent
+Build output is under ignored `apps/rebind/build/DerivedData/`. Do not run concurrent
 Xcode build commands against the same DerivedData directory. Extra arguments
 are forwarded to `xcodebuild`, for example:
 
 ```sh
-scripts/dev.sh test -resultBundlePath build/Tests.xcresult
+apps/rebind/scripts/dev.sh test -resultBundlePath build/Tests.xcresult
 ```
 
 Use a fresh result-bundle path for each run. The equivalent direct build is:
 
 ```sh
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build \
-  -project rebind.xcodeproj -scheme rebind -configuration Debug \
-  -destination 'platform=macOS' -derivedDataPath build/DerivedData
+  -project apps/rebind/rebind.xcodeproj -scheme rebind -configuration Debug \
+  -destination 'platform=macOS' -derivedDataPath apps/rebind/build/DerivedData
 ```
 
 The Swift Testing target covers matching, exact modifiers, press/release
@@ -144,9 +144,9 @@ Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue
 
 ## Packages and research tools
 
-The app target has no Swift package dependency. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../rebind/Resources/ThirdPartyNotices.txt).
+The app target has no Swift package dependency. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
-The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
+The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
 
 ## Contribution workflow
 

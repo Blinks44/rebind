@@ -48,7 +48,7 @@ unverified.** Phase 1/2 hardware exit criteria remain open. See the
 Host: Apple Silicon, macOS 27.0.1 (26A434), Xcode 27.0, Swift 6.4, SDK 27.0;
 minimum macOS 26. No macOS 26/Intel execution claim.
 
-- `scripts/dev.sh test -resultBundlePath build/Phase2DoublePressTests-Final.xcresult`:
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/Phase2DoublePressTests-Final.xcresult`:
   **69 tests / 11 suites / 0 failures**, including 22 new tests for key/numeric
   button pairs, exact interval boundary, expired/held/repeated/dragged sources,
   intervening presses/modifiers, timestamp regression/overflow, pair grouping,

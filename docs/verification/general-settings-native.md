@@ -27,9 +27,9 @@ The earlier design wording about rollback after all failed storage changes confl
 
 Environment: Apple Silicon, macOS 27.0.1 (26A434), Xcode 27.0 (27A266a), Swift 6.4, SDK 27; project deployment target macOS 26 and Swift 6 strict concurrency unchanged. Xcode MCP was not available. Sandbox-only compilation failed because Swift macro plugin execution was denied; the same project commands succeeded through approved Xcode execution outside the sandbox. No system-wide toolchain setting changed.
 
-- `scripts/dev.sh doctor`: passed; actual environment and deployment settings inspected.
-- `scripts/dev.sh test -resultBundlePath build/GeneralSettingsAccepted.xcresult`: **529 Swift Testing cases / 71 suites plus two native XCTest cases, 531 total / zero failures**; `TEST SUCCEEDED`.
-- Debug test build and `scripts/dev.sh release`: succeeded. Release contains `arm64` and `x86_64`; both app signatures pass `codesign --verify --deep --strict`.
+- `apps/rebind/scripts/dev.sh doctor`: passed; actual environment and deployment settings inspected.
+- `apps/rebind/scripts/dev.sh test -resultBundlePath build/GeneralSettingsAccepted.xcresult`: **529 Swift Testing cases / 71 suites plus two native XCTest cases, 531 total / zero failures**; `TEST SUCCEEDED`.
+- Debug test build and `apps/rebind/scripts/dev.sh release`: succeeded. Release contains `arm64` and `x86_64`; both app signatures pass `codesign --verify --deep --strict`.
 - Initial executable SHA-256 (superseded by repair artifacts): Debug `636746db845757bef088d112342bae7020369e10120c21fc2d3197d9108b9297`; Release `ab5ab681e36fe44de0c9cbc1b561005bcc07a2e51f354d6f84f6d563390420e6`.
 - Build/result bundles and raw logs remain ignored/local; curated fixtures and this evidence are versioned. Catalog check confirms all 25 handoff keys match in four languages, with the two supplemental keys complete. Affected links and `git diff --check` pass.
 
