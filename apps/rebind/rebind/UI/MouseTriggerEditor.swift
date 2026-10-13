@@ -12,7 +12,7 @@ struct MouseTriggerEditor: View {
                 Text(.mouseInputKind).font(Theme.caption).foregroundStyle(Theme.textPrimary)
                 Spacer(minLength: 8)
                 MenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
-                    choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger], label: inputKindTitle)
+                    choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger, .buttonScrollTrigger], label: inputKindTitle)
                     .frame(maxWidth: 224)
                     .accessibilityIdentifier("mouse-input-selector")
                     .disabled(model.recording != nil)
@@ -41,6 +41,12 @@ struct MouseTriggerEditor: View {
                                 options: PointerDirection.allCases, label: { $0.label }, fillsWidth: true)
                     .accessibilityIdentifier("mouse-direction-selector")
                     .disabled(model.recording != nil)
+            } else if draft.mouseTarget == .buttonScrollTrigger {
+                Text(.wheelDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                SegmentedPicker(selection: $draft.scrollDirection, title: .wheelDirectionTitle,
+                                options: ScrollDirection.allCases, label: { $0.directionLabel }, fillsWidth: true)
+                    .accessibilityIdentifier("mouse-wheel-direction-selector")
+                    .disabled(model.recording != nil)
             }
             Text(help).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -51,6 +57,7 @@ struct MouseTriggerEditor: View {
         switch target {
         case .scrollTrigger: .mouseWheelInput
         case .gestureTrigger: .pointerGestureInput
+        case .buttonScrollTrigger: .buttonWheelInput
         default: .mouseButtonInput
         }
     }
@@ -59,6 +66,7 @@ struct MouseTriggerEditor: View {
         switch draft.mouseTarget {
         case .scrollTrigger: .mouseWheelHelp
         case .gestureTrigger: .mousePointerHelp
+        case .buttonScrollTrigger: .buttonWheelHelp
         default: .mouseButtonHelp
         }
     }

@@ -80,6 +80,12 @@ enum Theme {
     static let compactControlHeight: CGFloat = 24
     static let rowHeight: CGFloat = 72
     static let cardRadius: CGFloat = 22
+
+    /// Accent border width of a focused or listening field: 1.5 pt snapped to whole device pixels.
+    /// A fractional pixel width renders unevenly (1 px on top, 1.5 px below at 1x).
+    static func accentBorderWidth(displayScale: CGFloat) -> CGFloat {
+        (1.5 * displayScale).rounded() / displayScale
+    }
 }
 
 extension Color {
@@ -112,6 +118,7 @@ struct ControlSurface: ViewModifier {
     /// Text fields pass their focus state to swap the hairline for the accent border.
     var isFocused = false
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.displayScale) private var displayScale
 
     func body(content: Content) -> some View {
         // Circular capsules only: on macOS 27 the default continuous capsule draws a broken
@@ -119,7 +126,7 @@ struct ControlSurface: ViewModifier {
         content.background {
             Capsule(style: .circular).fill(Theme.controlSurface)
                 .strokeBorder(isFocused ? Theme.accent : contrast == .increased ? Theme.borderStrong : Theme.borderControl,
-                              lineWidth: isFocused ? 1.5 : 1)
+                              lineWidth: isFocused ? Theme.accentBorderWidth(displayScale: displayScale) : 1)
                 .shadow(color: Theme.shadowSoft, radius: 7, y: 4)
         }
     }

@@ -728,19 +728,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laufendes Programm aktivieren"
+            "value" : "Laufende App aktivieren"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activate Running Application"
+            "value" : "Activate Running App"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activer une application ouverte"
+            "value" : "Activer une app ouverte"
           }
         },
         "ru" : {
@@ -964,6 +964,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "添加一条规则：选择要按下的输入以及要执行的操作。"
+          }
+        }
+      }
+    },
+    "addExcludedApp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App hinzufügen…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add App…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir app…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter une app…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить приложение…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加 App…"
           }
         }
       }
@@ -4601,7 +4642,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show current app windows"
+            "value" : "Show Current App Windows"
           }
         },
         "fr" : {
@@ -5122,6 +5163,88 @@
         }
       }
     },
+    "bindingNotePrompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional, zum Beispiel wofür diese Belegung gedacht ist"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional, for example what this binding is for"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional, por ejemplo para qué sirve esta regla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facultatif, par exemple à quoi sert cette règle"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Необязательно: например, зачем это правило"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可选，例如这条规则的用途"
+          }
+        }
+      }
+    },
+    "bindingNoteTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notiz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заметка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "备注"
+          }
+        }
+      }
+    },
     "bindingSaveFailed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5200,6 +5323,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "之前的规则未更改。请保持此窗口打开并再次尝试保存。"
+          }
+        }
+      }
+    },
+    "bottomHalfAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untere Hälfte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom Half"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitad inferior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitié inférieure"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижняя половина"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下半屏"
+          }
+        }
+      }
+    },
+    "bottomLeftQuarterAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viertel unten links"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom Left Quarter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuarto inferior izquierdo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quart inférieur gauche"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижняя левая четверть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左下四分之一"
+          }
+        }
+      }
+    },
+    "bottomRightQuarterAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viertel unten rechts"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom Right Quarter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuarto inferior derecho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quart inférieur droit"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижняя правая четверть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右下四分之一"
           }
         }
       }
@@ -5364,6 +5610,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "内建触控板"
+          }
+        }
+      }
+    },
+    "buttonWheelHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taste erfassen und Richtung des Mausrads wählen. Taste gedrückt halten und das Mausrad drehen: Die Aktion wird bei jedem Schritt ausgeführt. Ein Klick ohne Drehen funktioniert wie gewohnt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record the button, then choose a wheel direction. To use the binding, hold that button and turn the wheel; it runs on every wheel step. A click without turning the wheel still works as usual."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graba el botón y elige una dirección de la rueda. Mantén pulsado ese botón y gira la rueda: la acción se ejecuta en cada paso. Un clic sin girar la rueda funciona como siempre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrez le bouton, puis choisissez un sens de molette. Maintenez le bouton et tournez la molette : l’action s’exécute à chaque cran. Un clic sans tourner la molette fonctionne comme d’habitude."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запишите кнопку и выберите направление колеса. Удерживайте кнопку и крутите колесо: действие срабатывает на каждый шаг. Клик без прокрутки работает как обычно."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "录制按钮，然后选择滚轮方向。使用时按住该按钮并滚动滚轮，每滚动一格执行一次。不滚动滚轮的点按仍照常生效。"
+          }
+        }
+      }
+    },
+    "buttonWheelInput" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taste + Mausrad"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Button + Wheel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botón + rueda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouton + molette"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кнопка + колесо"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按钮 + 滚轮"
           }
         }
       }
@@ -5579,19 +5907,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Programm auswählen…"
+            "value" : "App auswählen…"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose Application…"
+            "value" : "Choose App…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir une application…"
+            "value" : "Choisir une app…"
           }
         },
         "ru" : {
@@ -5603,13 +5931,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir aplicación…"
+            "value" : "Elegir app…"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选取应用程序…"
+            "value" : "选取 App…"
           }
         }
       }
@@ -5774,6 +6102,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "继续"
+          }
+        }
+      }
+    },
+    "copyAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝"
+          }
+        }
+      }
+    },
+    "copyBindingToProfile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Profil kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy to Profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar al perfil"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier vers le profil"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать в профиль"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝到配置文件"
+          }
+        }
+      }
+    },
+    "cutAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausschneiden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cortar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couper"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вырезать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪切"
           }
         }
       }
@@ -6475,6 +6926,88 @@
         }
       }
     },
+    "doNothingAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts tun"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do Nothing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hacer nada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne rien faire"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничего не делать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不执行任何操作"
+          }
+        }
+      }
+    },
+    "doNothingHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schaltet den Auslöser ab: Rebind fängt ihn ab und sendet nichts."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns the trigger off: Rebind swallows it and sends nothing."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactiva el activador: Rebind lo intercepta y no envía nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactive le déclencheur : Rebind l’intercepte et n’envoie rien."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отключает триггер: Rebind перехватывает его и ничего не отправляет."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用此触发器：Rebind 会拦截它，不发送任何内容。"
+          }
+        }
+      }
+    },
     "doubleLeftClickAction" : {
       "comment" : "Mouse output action/category or execution contract; not a physical trigger.",
       "extractionState" : "manual",
@@ -6488,7 +7021,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double left click"
+            "value" : "Double Left Click"
           }
         },
         "fr" : {
@@ -6582,7 +7115,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите дважды быстро, как при двойном щелчке. Одиночное нажатие ничего не делает и не передаётся приложениям."
+            "value" : "Нажмите дважды быстро, как при двойном клике. Одиночное нажатие ничего не делает и не передаётся приложениям."
           }
         },
         "es" : {
@@ -6595,6 +7128,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "像双击那样快速按两下。只按一下不会有任何作用，也不会传给其他 App。"
+          }
+        }
+      }
+    },
+    "duplicateBinding" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belegung duplizieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicate Binding"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicar regla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dupliquer la règle"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дублировать правило"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制规则"
           }
         }
       }
@@ -6623,7 +7197,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Копировать профиль"
+            "value" : "Дублировать профиль"
           }
         },
         "es" : {
@@ -7056,7 +7630,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bedienungshilfen sind erlaubt. Das Senden von Ereignissen muss noch erlaubt werden. Klicken Sie im Hauptfenster auf „Senden von Ereignissen erlauben“ und starten Sie Rebind bei Aufforderung neu."
+            "value" : "Bedienungshilfen sind erlaubt, aber Rebind kann noch keine Tastenkombinationen und Klicks senden. Klicken Sie im Hauptfenster auf „Senden von Ereignissen erlauben“ und starten Sie Rebind bei Aufforderung neu."
           }
         },
         "en" : {
@@ -7068,13 +7642,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accessibilité est autorisée. L’envoi d’événements doit encore être autorisé. Cliquez sur « Autoriser l’envoi d’événements » dans la fenêtre principale, puis relancez Rebind si macOS le demande."
+            "value" : "L’accessibilité est autorisée, mais Rebind ne peut pas encore envoyer de raccourcis ni de clics. Cliquez sur « Autoriser l’envoi d’événements » dans la fenêtre principale, puis relancez Rebind si macOS le demande."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Универсальный доступ разрешён, но Rebind пока не может отправлять сочетания клавиш и щелчки. Нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
+            "value" : "Универсальный доступ разрешён, но Rebind пока не может отправлять сочетания клавиш и клики. Нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
           }
         },
         "es" : {
@@ -7138,7 +7712,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bedienungshilfen sind aktiviert. macOS benötigt noch die Erlaubnis, Tastenkombinationen und Klicks an andere Apps zu senden."
+            "value" : "Bedienungshilfen sind aktiviert. Rebind benötigt noch die Erlaubnis, Tastenkombinationen und Klicks an andere Apps zu senden."
           }
         },
         "en" : {
@@ -7150,13 +7724,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’accessibilité est activée. macOS a encore besoin d’une autorisation pour envoyer des raccourcis et clics aux autres apps."
+            "value" : "L’accessibilité est activée. Rebind a encore besoin d’une autorisation pour envoyer des raccourcis et des clics aux autres apps."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Универсальный доступ включён. Rebind ещё нужно разрешение отправлять сочетания клавиш и щелчки в другие приложения."
+            "value" : "Универсальный доступ включён. Rebind ещё нужно разрешение отправлять сочетания клавиш и клики в другие приложения."
           }
         },
         "es" : {
@@ -7251,6 +7825,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发送事件"
+          }
+        }
+      }
+    },
+    "excludedAppRejected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese App kann nicht hinzugefügt werden. Wählen Sie eine andere App als Rebind, die noch nicht in der Liste steht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app can’t be added. Choose an app other than Rebind that is not already in the list."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede añadir esta app. Elige una app distinta de Rebind que aún no esté en la lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’ajouter cette app. Choisissez une app autre que Rebind qui ne figure pas déjà dans la liste."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это приложение нельзя добавить. Выберите приложение, кроме Rebind, которого ещё нет в списке."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法添加此 App。请选择 Rebind 以外且尚未在列表中的 App。"
+          }
+        }
+      }
+    },
+    "excludedAppsDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solange eine dieser Apps im Vordergrund ist, lässt Rebind Tastatur, Maus und Trackpad unverändert. Praktisch für Spiele, virtuelle Maschinen und Remote-Desktops."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While one of these apps is in front, Rebind leaves the keyboard, mouse and trackpad alone. Useful for games, virtual machines and remote desktops."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mientras una de estas apps esté en primer plano, Rebind no toca el teclado, el ratón ni el trackpad. Útil para juegos, máquinas virtuales y escritorios remotos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tant que l’une de ces apps est au premier plan, Rebind ne touche ni au clavier, ni à la souris, ni au trackpad. Utile pour les jeux, les machines virtuelles et les bureaux à distance."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока одно из этих приложений на переднем плане, Rebind не вмешивается в работу клавиатуры, мыши и трекпада. Полезно для игр, виртуальных машин и удалённого рабочего стола."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当其中某个 App 位于最前面时，Rebind 不会干预键盘、鼠标和触控板。适用于游戏、虚拟机和远程桌面。"
+          }
+        }
+      }
+    },
+    "excludedAppsTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausgenommene Apps"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded Apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps excluidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps exclues"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приложения-исключения"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排除的 App"
           }
         }
       }
@@ -7419,25 +8116,189 @@
         }
       }
     },
+    "gestureDistanceLong" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lang"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Larga"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longue"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Длинный"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "长"
+          }
+        }
+      }
+    },
+    "gestureDistanceShort" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courte"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Короткий"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短"
+          }
+        }
+      }
+    },
+    "gestureDistanceStandard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estándar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартный"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标准"
+          }
+        }
+      }
+    },
+    "gestureDistanceTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestenweg"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesture distance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distancia del gesto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance du geste"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Длина жеста"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手势距离"
+          }
+        }
+      }
+    },
     "hideApplicationAction" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktives Programm ausblenden"
+            "value" : "Aktive App ausblenden"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hide Active Application"
+            "value" : "Hide Active App"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masquer l’application active"
+            "value" : "Masquer l’app active"
           }
         },
         "ru" : {
@@ -7662,6 +8523,170 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按住达到所选时长后执行一次。时间不够的按压不会有任何作用，也不会传给其他 App。松开、按下其他键或滚动都会取消。"
+          }
+        }
+      }
+    },
+    "holdOutputBadge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Halten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While held"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al mantener pulsado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant l’appui"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока удерживается"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住期间"
+          }
+        }
+      }
+    },
+    "holdOutputRepeatHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Aktion wiederholt sich, solange Sie den Auslöser gedrückt halten, mit der Tastenwiederholrate Ihrer Tastatur."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The action repeats for as long as you hold the trigger, at your keyboard’s key repeat rate."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La acción se repite mientras mantienes pulsado el activador, a la velocidad de repetición del teclado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’action se répète tant que vous maintenez le déclencheur, à la vitesse de répétition de votre clavier."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Действие повторяется, пока вы удерживаете триггер, с частотой автоповтора клавиатуры."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住触发器期间，操作会按键盘的按键重复速度重复执行。"
+          }
+        }
+      }
+    },
+    "holdOutputShortcutHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Kürzel bleibt gedrückt, solange Sie den Auslöser gedrückt halten, und wiederholt sich wie eine gehaltene Taste."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shortcut stays pressed for as long as you hold the trigger and repeats like a held key."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El atajo sigue pulsado mientras mantienes pulsado el activador y se repite como una tecla mantenida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le raccourci reste enfoncé tant que vous maintenez le déclencheur et se répète comme une touche maintenue."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сочетание остаётся нажатым, пока вы удерживаете триггер, и повторяется как зажатая клавиша."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住触发器期间，快捷键保持按下，并像按住按键一样重复。"
+          }
+        }
+      }
+    },
+    "holdOutputTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Halten wiederholen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repeat While Held"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetir al mantener pulsado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répéter pendant l’appui"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторять при удержании"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住时重复"
           }
         }
       }
@@ -7912,48 +8937,6 @@
         }
       }
     },
-    "inputFixedSensitivity" : {
-      "comment" : "Input overview status: mouse pointer gesture sensitivity is fixed, not automatically adjusted.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feste Empfindlichkeit"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fixed sensitivity"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sensibilité fixe"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Фиксированная чувствительность"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sensibilidad fija"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "固定灵敏度"
-          }
-        }
-      }
-    },
     "inputMonitoringTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8032,6 +9015,211 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按压与手势"
+          }
+        }
+      }
+    },
+    "insertTextAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text einfügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insertar texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insérer du texte"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить текст"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插入文本"
+          }
+        }
+      }
+    },
+    "insertTextFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Text konnte nicht eingegeben werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not type the text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido escribir el texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de saisir le texte."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось ввести текст."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法输入文本。"
+          }
+        }
+      }
+    },
+    "insertTextHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gibt diesen Text in die App im Vordergrund ein. Er wird unverschlüsselt auf diesem Mac gespeichert; verwenden Sie ihn daher nicht für Passwörter."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Types this text into the app in front. It is stored on this Mac without encryption, so do not use it for passwords."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe este texto en la app en primer plano. Se guarda en este Mac sin cifrar, así que no lo uses para contraseñas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisit ce texte dans l’app au premier plan. Il est stocké sur ce Mac sans chiffrement : ne l’utilisez pas pour des mots de passe."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вводит этот текст в приложение на переднем плане. Текст хранится на этом Mac без шифрования, поэтому не используйте его для паролей."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在最前面的 App 中输入这段文本。文本以未加密形式存储在这台 Mac 上，请勿用于密码。"
+          }
+        }
+      }
+    },
+    "insertTextPrompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einzugebender Text"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text to type"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texto que se escribirá"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texte à saisir"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст для ввода"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要输入的文本"
+          }
+        }
+      }
+    },
+    "insertTextTooLong" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Höchstens 500 Zeichen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use 500 characters or fewer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa 500 caracteres como máximo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "500 caractères maximum."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не больше 500 символов."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最多 500 个字符。"
           }
         }
       }
@@ -8500,7 +9688,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left click"
+            "value" : "Left Click"
           }
         },
         "fr" : {
@@ -9282,7 +10470,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Middle click"
+            "value" : "Middle Click"
           }
         },
         "fr" : {
@@ -10339,37 +11527,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Halten Sie eine mittlere oder zusätzliche Maustaste und bewegen Sie die Maus in eine Richtung. Die Empfindlichkeit ist fest eingestellt."
+            "value" : "Halten Sie eine mittlere oder zusätzliche Maustaste und bewegen Sie die Maus in eine Richtung. Wählen Sie, wie weit sich der Zeiger bewegen muss, bevor eine Geste zählt."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hold a middle or extra mouse button and move up, down, left or right. Movement sensitivity is fixed."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris dans une direction. La sensibilité est prédéfinie."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удерживайте среднюю или дополнительную кнопку и двигайте мышь в нужную сторону. Чувствительность фиксированная."
+            "value" : "Hold a middle or extra mouse button and move up, down, left or right. Choose how far the pointer must travel before a gesture counts."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado el botón central o uno adicional y mueve el ratón arriba, abajo, a la izquierda o a la derecha. La sensibilidad es fija."
+            "value" : "Mantén pulsado el botón central o uno adicional y mueve el ratón arriba, abajo, a la izquierda o a la derecha. Elige cuánto debe moverse el puntero para que el gesto cuente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris dans une direction. Choisissez la distance que le pointeur doit parcourir pour qu’un geste soit reconnu."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживайте среднюю или дополнительную кнопку и двигайте мышь в нужную сторону. Выберите, как далеко нужно сдвинуть указатель, чтобы жест засчитался."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按住中键或额外按钮，然后向上、下、左或右移动鼠标。灵敏度固定。"
+            "value" : "按住中键或额外按钮，然后向上、下、左或右移动鼠标。可选择指针需要移动多远才算作手势。"
           }
         }
       }
@@ -11112,6 +12300,47 @@
         }
       }
     },
+    "namedShortcutHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendet %@, das Standardkürzel von macOS für diesen Befehl. Apps mit einem anderen Kürzel reagieren nicht, ebenso wenig ein in den Systemeinstellungen geändertes Kürzel."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends %@, the standard macOS shortcut for this command. Apps that use a different shortcut, or a shortcut you changed in System Settings, will not respond."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envía %@, el atajo estándar de macOS para este comando. No funcionará en apps que usen otro atajo ni si lo cambiaste en Ajustes del Sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoie %@, le raccourci standard de macOS pour cette commande. Les apps qui utilisent un autre raccourci, ou un raccourci modifié dans Réglages Système, ne réagiront pas."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправляет %@ — стандартное сочетание клавиш macOS для этой команды. Не сработает в приложениях с другим сочетанием и если вы изменили его в Системных настройках."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送 %@，即 macOS 中此命令的标准快捷键。使用其他快捷键的 App，或你在“系统设置”中改过的快捷键，将不会响应。"
+          }
+        }
+      }
+    },
     "namesUnchanged" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11194,6 +12423,170 @@
         }
       }
     },
+    "newTabAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuer Tab"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Tab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva pestaña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel onglet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новая вкладка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建标签页"
+          }
+        }
+      }
+    },
+    "nextDisplayAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fenster auf nächstes Display bewegen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Window to Next Display"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover ventana a la siguiente pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer la fenêtre vers l’écran suivant"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переместить окно на следующий экран"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将窗口移到下一个显示器"
+          }
+        }
+      }
+    },
+    "nextDisplayHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegt das Fenster im Vordergrund auf das nächste Display und behält seine Größe, sofern sie passt. Benötigt mindestens zwei Displays; funktioniert nicht im Vollbildmodus."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the window in front to the next display and keeps its size where it fits. Needs at least two displays; it does not work in full screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve la ventana en primer plano a la siguiente pantalla y conserva su tamaño si cabe. Necesita al menos dos pantallas; no funciona en pantalla completa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplace la fenêtre au premier plan vers l’écran suivant en conservant sa taille si elle tient. Nécessite au moins deux écrans ; ne fonctionne pas en plein écran."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемещает окно на переднем плане на следующий экран и сохраняет его размер, если он помещается. Нужно минимум два экрана; в полноэкранном режиме не работает."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将最前面的窗口移到下一个显示器，并在放得下时保持其大小。至少需要两个显示器；全屏幕下无效。"
+          }
+        }
+      }
+    },
+    "nextProfileAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächstes Profil"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil suivant"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следующий профиль"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一个配置文件"
+          }
+        }
+      }
+    },
     "nextSpaceAction" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11231,6 +12624,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下一个桌面"
+          }
+        }
+      }
+    },
+    "nextTabAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächster Tab"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Tab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pestaña siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onglet suivant"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Следующая вкладка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一个标签页"
           }
         }
       }
@@ -11529,19 +12963,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Programm öffnen"
+            "value" : "App öffnen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Application"
+            "value" : "Open App"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrir une application"
+            "value" : "Ouvrir une app"
           }
         },
         "ru" : {
@@ -11553,13 +12987,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir aplicación"
+            "value" : "Abrir app"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开应用程序"
+            "value" : "打开 App"
           }
         }
       }
@@ -12056,6 +13490,47 @@
         }
       }
     },
+    "pasteAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einsetzen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coller"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴"
+          }
+        }
+      }
+    },
     "pauseBindings" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12093,6 +13568,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂停"
+          }
+        }
+      }
+    },
+    "pauseRebindAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind pausieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause Rebind"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar Rebind"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suspendre Rebind"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приостановить Rebind"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停 Rebind"
+          }
+        }
+      }
+    },
+    "pauseRebindHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausiert alle Belegungen. Während der Pause laufen keine Belegungen; setzen Sie sie daher über das Rebind-Menü oder -Fenster fort."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pauses all bindings. Bindings do not run while paused, so resume from the Rebind menu or window."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa todas las reglas. Mientras está en pausa no se ejecutan, así que reanuda desde el menú o la ventana de Rebind."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suspend toutes les règles. Elles ne s’exécutent pas pendant la pause : reprenez depuis le menu ou la fenêtre de Rebind."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приостанавливает все правила. На паузе правила не работают, поэтому возобновить можно только из меню или окна Rebind."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停所有规则。暂停期间规则不会运行，请从 Rebind 菜单或窗口恢复。"
           }
         }
       }
@@ -12267,7 +13824,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erkenne Auslöser und führe gewählte Aktionen in anderen Apps aus."
+            "value" : "Auslöser erkennen und gewählte Aktionen in anderen Apps ausführen."
           }
         },
         "en" : {
@@ -12525,13 +14082,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind peut envoyer des raccourcis et clics aux autres apps."
+            "value" : "Rebind peut envoyer des raccourcis et des clics aux autres apps."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind может отправлять сочетания клавиш и щелчки в другие приложения."
+            "value" : "Rebind может отправлять сочетания клавиш и клики в другие приложения."
           }
         },
         "es" : {
@@ -12566,13 +14123,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorisez Rebind à envoyer des raccourcis et clics aux autres apps."
+            "value" : "Autorisez Rebind à envoyer des raccourcis et des clics aux autres apps."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разрешите Rebind отправлять сочетания клавиш и щелчки в другие приложения."
+            "value" : "Разрешите Rebind отправлять сочетания клавиш и клики в другие приложения."
           }
         },
         "es" : {
@@ -12607,13 +14164,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer des raccourcis et clics aux autres apps. Activez d’abord l’accessibilité."
+            "value" : "Envoyer des raccourcis et des clics aux autres apps. Activez d’abord l’accessibilité."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправлять сочетания клавиш и щелчки в другие приложения. Сначала включите универсальный доступ."
+            "value" : "Отправлять сочетания клавиш и клики в другие приложения. Сначала включите «Универсальный доступ»."
           }
         },
         "es" : {
@@ -13183,13 +14740,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez la durée de maintien : 100–5 000 ms. Le double appui utilise la vitesse du double-clic de macOS."
+            "value" : "Durée de maintien des touches et des boutons : 100–5 000 ms. Le double appui utilise la vitesse du double-clic de macOS."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Время удержания клавиш и кнопок: 100–5 000 мс. Скорость двойного нажатия берётся из настроек двойного щелчка в macOS."
+            "value" : "Время удержания клавиш и кнопок: 100–5 000 мс. Для двойного нажатия используется скорость двойного клика из настроек macOS."
           }
         },
         "es" : {
@@ -13218,7 +14775,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Previous Application"
+            "value" : "Previous App"
           }
         },
         "fr" : {
@@ -13236,7 +14793,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aplicación anterior"
+            "value" : "App anterior"
           }
         },
         "zh-Hans" : {
@@ -13329,6 +14886,47 @@
         }
       }
     },
+    "previousProfileAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorheriges Profil"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil précédent"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предыдущий профиль"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上一个配置文件"
+          }
+        }
+      }
+    },
     "previousSpaceAction" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13366,6 +14964,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上一个桌面"
+          }
+        }
+      }
+    },
+    "previousTabAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorheriger Tab"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Tab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pestaña anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onglet précédent"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предыдущая вкладка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上一个标签页"
           }
         }
       }
@@ -13916,13 +15555,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quit Selected Application"
+            "value" : "Quit Selected App"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitter l’application sélectionnée"
+            "value" : "Quitter l’app sélectionnée"
           }
         },
         "ru" : {
@@ -13934,13 +15573,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salir de la aplicación seleccionada"
+            "value" : "Salir de la app seleccionada"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出所选应用程序"
+            "value" : "退出所选 App"
           }
         }
       }
@@ -14193,6 +15832,47 @@
     },
     "Rebind" : {
 
+    },
+    "rebindActions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind"
+          }
+        }
+      }
     },
     "rebindWindowTitle" : {
       "extractionState" : "manual",
@@ -14559,6 +16239,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辅助功能已开启。请允许发送事件，规则才能生效。"
+          }
+        }
+      }
+    },
+    "redoAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rehacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rétablir"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重做"
           }
         }
       }
@@ -14938,7 +16659,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Belegungen werden aktiviert …"
+            "value" : "Belegungen werden aktiviert…"
           }
         },
         "en" : {
@@ -15055,6 +16776,47 @@
         }
       }
     },
+    "removeExcludedApp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ entfernen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Убрать %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除“%@”"
+          }
+        }
+      }
+    },
     "renameProfile" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15133,6 +16895,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已保存：%@。请退出并重新打开 Rebind，使其在所有位置生效。Rebind 关闭期间规则不会生效。"
+          }
+        }
+      }
+    },
+    "reopenTabAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschlossenen Tab wieder öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reopen Closed Tab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a abrir la pestaña cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouvrir l’onglet fermé"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть закрытую вкладку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新打开已关闭的标签页"
           }
         }
       }
@@ -15437,7 +17240,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right click"
+            "value" : "Right Click"
           }
         },
         "fr" : {
@@ -15585,6 +17388,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保存"
+          }
+        }
+      }
+    },
+    "screenshotAreaAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausgewählten Bereich aufnehmen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capture Selected Area"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturar una zona"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturer une zone"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снимок выбранной области"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截取所选区域"
+          }
+        }
+      }
+    },
+    "screenshotScreenAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamten Bildschirm aufnehmen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capture Entire Screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturar toda la pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capturer tout l’écran"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снимок всего экрана"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截取整个屏幕"
+          }
+        }
+      }
+    },
+    "screenshotToolsAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionen für Bildschirmfoto und Aufnahme"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screenshot and Recording Options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones de captura y grabación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de capture et d’enregistrement"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Параметры снимка и записи экрана"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截屏与录制选项"
           }
         }
       }
@@ -15839,6 +17765,47 @@
         }
       }
     },
+    "selectAllAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles auswählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout sélectionner"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбрать все"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全选"
+          }
+        }
+      }
+    },
     "selectProfile" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15927,7 +17894,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lege fest, wie Rebind auf diesem Mac arbeitet."
+            "value" : "Legen Sie fest, wie Rebind auf diesem Mac arbeitet."
           }
         },
         "en" : {
@@ -16302,7 +18269,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show desktop"
+            "value" : "Show Desktop"
           }
         },
         "fr" : {
@@ -16431,7 +18398,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de suspendre l’activité du Mac. La suspension d’activité est peut-être indisponible pour le moment."
+            "value" : "Impossible de mettre le Mac en veille. La mise en veille est peut-être indisponible pour le moment."
           }
         },
         "ru" : {
@@ -16472,7 +18439,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suspend l’activité du Mac. Relâcher ensuite la touche ou le bouton peut le réactiver. La demande de mot de passe dépend de vos réglages."
+            "value" : "Met le Mac en veille. Relâcher ensuite la touche ou le bouton peut le réactiver. La demande de mot de passe dépend de vos réglages."
           }
         },
         "ru" : {
@@ -16513,7 +18480,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suspension d’activité est indisponible sur ce Mac."
+            "value" : "La mise en veille est indisponible sur ce Mac."
           }
         },
         "ru" : {
@@ -16791,7 +18758,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Belegungen gestoppt"
+            "value" : "Belegungen angehalten"
           }
         },
         "en" : {
@@ -16945,6 +18912,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法保存设置。请检查可用磁盘空间和文件权限。"
+          }
+        }
+      }
+    },
+    "switchProfileHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zum benachbarten Profil in der Liste und beginnt am Ende wieder von vorn. Legen Sie dieselbe Belegung in jedem Profil an, damit der Wechsel weiter funktioniert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches to the neighboring profile in the list and wraps around at the end. Add the same binding to each profile to keep switching."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia al perfil vecino de la lista y vuelve al principio al llegar al final. Añade la misma regla a cada perfil para seguir cambiando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe au profil voisin dans la liste et revient au début après le dernier. Ajoutez la même règle à chaque profil pour continuer à changer."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переключает на соседний профиль в списке, с конца переходит в начало. Чтобы переключаться дальше, добавьте такое же правило в каждый профиль."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换到列表中相邻的配置文件，到末尾后回到开头。要继续切换，请在每个配置文件中添加同样的规则。"
           }
         }
       }
@@ -17355,6 +19363,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换静音"
+          }
+        }
+      }
+    },
+    "topHalfAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obere Hälfte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Half"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitad superior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitié supérieure"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхняя половина"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上半屏"
+          }
+        }
+      }
+    },
+    "topLeftQuarterAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viertel oben links"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Left Quarter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuarto superior izquierdo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quart supérieur gauche"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхняя левая четверть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上四分之一"
+          }
+        }
+      }
+    },
+    "topRightQuarterAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viertel oben rechts"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Right Quarter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuarto superior derecho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quart supérieur droit"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхняя правая четверть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上四分之一"
           }
         }
       }
@@ -18890,6 +21021,47 @@
         }
       }
     },
+    "undoAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widerrufen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销"
+          }
+        }
+      }
+    },
     "volumeDownAction" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19054,6 +21226,47 @@
         }
       }
     },
+    "wheelDirectionTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtung des Mausrads"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheel direction"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección de la rueda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sens de la molette"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Направление колеса"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滚轮方向"
+          }
+        }
+      }
+    },
     "windowActionFailed" : {
       "comment" : "Active target is resolved when dispatch begins. AX acceptance does not confirm that a window closed or an animation finished.",
       "extractionState" : "manual",
@@ -19144,19 +21357,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fenster und Programme"
+            "value" : "Fenster und Apps"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Windows and Applications"
+            "value" : "Windows and Apps"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fenêtres et applications"
+            "value" : "Fenêtres et apps"
           }
         },
         "ru" : {
@@ -19168,13 +21381,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ventanas y aplicaciones"
+            "value" : "Ventanas y apps"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "窗口与应用程序"
+            "value" : "窗口与 App"
           }
         }
       }
@@ -20159,6 +22372,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rebind 启动时不打开窗口，登录时也是如此。"
+          }
+        }
+      }
+    },
+    "zoomInAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vergrößern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom In"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ampliar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrandir"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увеличить масштаб"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放大"
+          }
+        }
+      }
+    },
+    "zoomOutAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verkleinern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom Out"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уменьшить масштаб"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缩小"
           }
         }
       }

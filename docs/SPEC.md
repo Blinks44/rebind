@@ -83,6 +83,8 @@ Action: Previous Desktop
 - Prevent a gesture firing repeatedly from each touch frame; one recognized gesture produces the configured number of actions (normally one).
 - Avoid double-triggering when both HID and Quartz deliver representations of the same physical input.
 - Support a global pause switch and emergency bypass that restores normal input safely.
+- **Held output (2026-10-13):** a press rule on a key or mouse button may keep its output for as long as the trigger is held. A shortcut is one key-down, repeats at the system key-repeat rate and one key-up; volume, brightness and scroll actions repeat instead. Every interruption (pause, editing, Secure Input, lost capture, sleep or lock, an excluded app coming to the front, quitting) releases a held key. A button that also carries pointer gestures cannot hold an output.
+- **Excluded apps (2026-10-13):** the user may list apps in which Rebind leaves keyboard, mouse and trackpad input untouched while they are in front. This is a global list, not a per-app rule set or automatic profile activation, which stay out of scope.
 - Keep rule evaluation synchronous, fast, and allocation-light on the event path; hand off slow action execution outside the hook.
 
 ### Suggested compact model (illustrative, not mandated)
@@ -244,7 +246,7 @@ Requirements:
 - Always provide cancel/retry/clear; scope recording to the active prompt; suppress or neutralize recorded events only when safe and possible.
 - Avoid capturing keys used to dismiss the recorder without explicit handling.
 - Show disabled/unavailable input modes with explanations, not a fake gesture recorder.
-- Edit, delete, enable/disable individual rules. Show clear trigger→action in the bindings list.
+- Edit, delete, duplicate, enable/disable individual rules and copy a rule to another profile; a copy whose trigger is already used there arrives switched off. A rule may carry a short note (up to 80 characters) shown in the list and matched by search. Show clear trigger→action in the bindings list.
 - Conflict handling is deterministic; duplicate bindings should not be silently accepted.
 
 **Acceptance R1:** A nontechnical user can create `Control + Mouse Button 4` → `Command + W` without entering a key code or mouse index.
@@ -258,11 +260,14 @@ Every supported trigger uses the **same** action catalog. Group actions, search 
 - Send key or keyboard shortcut with correct down/up order.
 - Restore/release synthetic modifier states after cancellation/error.
 - Mouse left/right/middle click, double click, back/forward equivalent when safe, and scroll output where feasible.
+- Named standard commands (Copy, Paste, Cut, Undo, Redo, Select All, tab and zoom commands, screenshots) are fixed shortcuts with their own catalog entries; the editor states which shortcut is sent.
+- Insert Text types user-authored text (1–500 characters, no control characters) into the app in front. It is stored locally without encryption and the editor says so.
+- Do Nothing swallows its trigger. Pause Rebind, Next Profile and Previous Profile control Rebind itself; resuming is only possible from the menu or window because rules do not run while paused.
 
 ### Windows and applications
 
 - Close active window (`Command + W` where appropriate), minimize, hide application, toggle full screen; App Exposé, Mission Control, Show Desktop.
-- Window tiling/resizing/moving using suitable macOS API or Accessibility, **only when the app/window supports it**.
+- Window tiling/resizing/moving using suitable macOS API or Accessibility, **only when the app/window supports it**: halves, quarters, fill, center and move to the next display.
 - Switch windows/apps; open/activate/quit a specified app; open URL/file; run an Apple Shortcut where a reliable integration exists.
 
 ### Spaces and system
@@ -358,7 +363,7 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 
 - Main bindings list with clear labels for trigger/modifiers/action, toggle, edit, delete, empty states, Add Binding.
 - Create/edit binding sheet or equivalent focused flow; searchable action picker, capture UX, conditional options, conflict messages.
-- Settings: General (launch at login, background/menu bar behavior, global enabled), Permissions (status, refresh, open settings), Input (meaningful gesture thresholds), Language (System, EN, RU, DE, FR), Advanced (diagnostic event viewer showing safe metadata, import/export/reset).
+- Settings: General (launch at login, background/menu bar behavior, global enabled), Permissions (status, refresh, open settings), Input (mouse gesture distance, excluded apps), Language (System, EN, RU, DE, FR), Advanced (diagnostic event viewer showing safe metadata, import/export/reset).
 - About: icon, Rebind name/version, brief description, credits/licenses, relevant links where available.
 - First-run permissions onboarding with accurate statuses.
 

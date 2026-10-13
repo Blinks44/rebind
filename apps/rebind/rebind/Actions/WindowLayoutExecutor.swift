@@ -24,7 +24,7 @@ nonisolated enum WindowLayoutExecutor {
               let current = client.frame(of: window),
               let target = WindowLayoutGeometry.target(action, window: current, displays: displays),
               WindowLayoutGeometry.valid(target), client.isSettable(kAXPositionAttribute, of: window),
-              action == .center || client.isSettable(kAXSizeAttribute, of: window) else { return .unavailable }
+              action.keepsSize || client.isSettable(kAXSizeAttribute, of: window) else { return .unavailable }
 
         func gate() -> WindowActionResult? {
             guard canPerform() else { return .cancelled }
@@ -38,12 +38,12 @@ nonisolated enum WindowLayoutExecutor {
         // Separate AX writes are not atomic. On failure/cancellation we stop:
         // rolling back could mutate a window after focus or permission changed.
         if let result = gate() { return result }
-        if action != .center {
+        if !action.keepsSize {
             guard client.setSize(target.size, of: window) else { return .unavailable }
             if let result = gate() { return result }
         }
         guard client.setPosition(target.origin, of: window) else { return .unavailable }
-        if action != .center {
+        if !action.keepsSize {
             if let result = gate() { return result }
             // macOS may constrain the first resize at the old position.
             guard client.setSize(target.size, of: window) else { return .unavailable }

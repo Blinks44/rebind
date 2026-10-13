@@ -22,7 +22,7 @@ struct SettingsView: View {
             case .permissions:
                 PermissionView(model: model, showsSettingsHeader: false)
             case .input:
-                InputSettingsView()
+                InputSettingsView(model: model)
             case .language:
                 LanguageSettingsView(model: model)
             case .advanced:

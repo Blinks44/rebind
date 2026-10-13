@@ -6,6 +6,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     case mouseButton(UInt32)
     case mouseGesture(button: UInt32, direction: PointerDirection)
     case scroll(ScrollDirection)
+    /// A wheel step while a middle or extra button is held.
+    case buttonScroll(button: UInt32, direction: ScrollDirection)
     case fourFingerTap
     case threeFingerTap
     case threeFingerDoubleTap
@@ -33,9 +35,27 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         return false
     }
 
+    /// Rules that act while their button stays down; the button's own click is decided on release.
+    var holdsButton: Bool {
+        switch self {
+        case .mouseGesture, .buttonScroll: true
+        default: false
+        }
+    }
+
     var pressSource: InputTrigger {
-        if case .mouseGesture(let button, _) = self { return .mouseButton(button) }
-        return self
+        switch self {
+        case .mouseGesture(let button, _), .buttonScroll(let button, _): .mouseButton(button)
+        default: self
+        }
+    }
+
+    /// Only a key or a mouse button has a release to end a held output.
+    var canHoldOutput: Bool {
+        switch self {
+        case .key, .mouseButton: true
+        default: false
+        }
     }
 
     var isScroll: Bool {
@@ -48,7 +68,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap, .trackpadClick: .builtInTrackpad
         case .key: .allKeyboards
-        case .mouseButton, .mouseGesture, .scroll: .allMice
+        case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
         }
     }
 
@@ -56,7 +76,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         switch self {
         case .key(let code): KeyboardShortcut.isSupportedKey(code)
         case .mouseButton(let number): number >= 2
-        case .mouseGesture(let number, _): number >= 2
+        case .mouseGesture(let number, _), .buttonScroll(let number, _): number >= 2
         case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap: true
         case .trackpadClick(let fingers): (2...4).contains(fingers)

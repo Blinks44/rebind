@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-13**. HEAD `582fb28`; uncommitted: click on a gesture button, universal Back/Forward actions. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `99b2ad6`; uncommitted: [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) feature work, sidebar brand, website. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -14,14 +14,16 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 | --- | --- |
 | Keyboard/mouse | Quartz tap, primary modifiers, numeric middle/extra buttons, shortcuts, wheel, double/long press and four button-held directions. G603 subsets user-confirmed; physical keyboard/full safety matrix open. |
 | Runtime | Bounded synchronous capture/matcher/mailbox, separate action execution, synthetic tags, protected-session/pause/cancellation safeguards and opt-in memory-only mouse diagnostics. Measured callback/action performance and full fault/recovery acceptance remain open. |
-| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **33**, migrations 1–32 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
+| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **34**, migrations 1–33 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
 | Actions | Searchable catalog: shortcuts, audio/media/mouse, AX window/app/layout/cycling, Previous Application, app/web/file, Apple Shortcuts, Spaces, sleep, experimental Dock/lock. Happy-path subsets confirmed; broader guards/platform checks remain. |
 | Trackpad | Four-finger delivery/click recovery/lifecycle are user-confirmed subsets. Three/four single/double and two-finger double engine/storage are integrated ([INPUT-004](tasks/INPUT-004-two-finger-double-tap.md)). [Tap preset editor](tasks/UI-014-trackpad-presets.md) exposes the full twelve-preset pool: 3/4 singles, 2/3/4 doubles, [2/3/4-finger physical clicks](tasks/INPUT-006-trackpad-clicks.md) and four [one-finger corner taps](tasks/INPUT-005-corner-taps.md). Hardware/native conflicts, timing/safety/platform checks remain open. Trackpad rules run [any catalog action](tasks/INPUT-007-trackpad-action-catalog.md). Native gestures are not suppressed, except that click and corner rules replace their own click (both user-confirmed happy paths). |
 | UI/localization | Whole app uses the soft design system from `apps/rebind/rebind/UI/DesignSystem` with EN/RU/DE/FR/ES/Simplified Chinese. Running-app accessibility, focus and localized-width acceptance remain open. |
 | Brand | New keycap-and-arrows **apps/rebind/rebind/AppIcon.icon** and **RebindMenuBar** template (2026-10-13). Rendered icon inspected from the Debug build; Dock/live menu/Dark/tint acceptance must be repeated. |
+| Website | **apps/website**: one-page landing on TanStack Start + Rsbuild with moduix components, Motion and Paraglide (RU at `/`, EN at `/en`), styled from the Theme tokens (2026-10-13). Builds and renders locally in Light/Dark and at phone width; the download button is a placeholder until `site.githubRepo` is set, and `site.url` (canonical/Open Graph) and deployment are open. |
 
 ## Design source and recent changes
 
+- **2026-10-13:** [Held output, excluded apps, wider catalog and rule management](tasks/INPUT-009-held-output-exclusions-catalog.md) (schema 34): "Repeat While Held" for shortcuts and step actions, apps in which Rebind stays out of the way, 27 new catalog actions (Do Nothing, pause/profile control, editing, tabs, screenshots, Insert Text, quarters, next display), rule duplicate/copy-to-profile/note, mouse gesture distance. 727 tests pass; nothing seen in the running app or tried on hardware.
 - **2026-10-13:** Sidebar brand enlarged by user request: 44 pt icon and 22 pt Semibold name in all Sketch sidebar screens and in the app ([UI-023](tasks/UI-023-main-window-soft-adoption.md)). Layout tests pass; not yet seen in the running app.
 - **2026-10-13:** With Show in Dock off, the Dock icon now follows window visibility (shown while a window is open, gone after the last one closes). User-confirmed in the running app.
 - **2026-10-13:** Show in Dock / Show in menu bar / Start in the background settings (schema 33); windows reopen on the current Space; Spanish and Simplified Chinese added (unreviewed translations). Dock/menu bar hiding, background start and current-Space windows are user-confirmed; both new languages display correctly but their wording is not reviewed by a fluent reader.
@@ -44,11 +46,12 @@ Source: **Rebind - new.sketch** (28 screens × Light/Dark, English only) is the 
 ## Open work / next steps
 
 - **Next:** run `apps/rebind/tools/magic-mouse-probe.swift` with the Magic Mouse switched on (paired, was not connected on 2026-10-13); its contact counts decide which Magic Mouse presets are feasible and whether the sidebar section becomes real.
-- **Open from review:** a residual search-field focus outline defect; running-app checks of keyboard focus, VoiceOver and RU/DE/FR at minimum width; Dock/tint acceptance of the new icon.
+- **Open from review:** running-app checks of keyboard focus, VoiceOver and RU/DE/FR at minimum width; Dock/tint acceptance of the new icon.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
-| [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths; fix the search-field outline. |
+| [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths. |
+| [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned; released | Try held output, excluded apps and the new actions on the built app; draw the new controls in Sketch. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Draw screens for new functionality as it is built (Mouse/Magic Mouse editors, action parameters, diagnostics). |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture, keyboard/VoiceOver/preferences. |
 | [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | awaiting_verification | Unassigned; released | Connect a Magic Trackpad: discovery, gestures, reconnection; regression-check the built-in trackpad. |

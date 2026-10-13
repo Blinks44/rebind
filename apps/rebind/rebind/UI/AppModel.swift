@@ -126,6 +126,7 @@ import Dispatch
         configureEngine(configuration)
         refreshSessionProtection()
         refreshWindowDisplays()
+        refreshForegroundApplication()
         EventTapWorker.start(mailbox: mailbox)
         ActionWorker.start(mailbox: mailbox)
         trackpadCapture = TrackpadCapture(mailbox: mailbox)
@@ -140,6 +141,8 @@ import Dispatch
             DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleScreenLockNotification(_:)),
                                                                name: name, object: nil, suspensionBehavior: .deliverImmediately)
         }
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(refreshForegroundApplication),
+                                                          name: NSWorkspace.didActivateApplicationNotification, object: nil)
         for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
                      NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification] {
             NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceNotification(_:)),
@@ -151,6 +154,10 @@ import Dispatch
         previousApplication.stop()
         cancelRecording()
         mailbox.stop()
+        // The worker may not run again before the process exits: release held keys here.
+        while let command = mailbox.nextHeldKey(at: DispatchTime.now().uptimeNanoseconds) {
+            ShortcutSender.postHeldKey(command)
+        }
         trackpadCapture?.stop()
         trackpadCapture = nil
         workspaceTask?.cancel()
@@ -174,7 +181,8 @@ import Dispatch
             lastPermissionCheck = Date()
         }
         let update = mailbox.state.withLock { state in
-            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil, state.appleShortcutInProgress)
+            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil, state.appleShortcutInProgress, state.profileStep)
+            state.profileStep = 0
             state.actionFailed = nil
             state.recorded = nil
             state.emergencyPause = false
@@ -216,8 +224,11 @@ import Dispatch
             case .workspace(.openSystemSettings): error = .openSystemSettingsFailed
             case .workspace: error = .workspaceActionFailed
             case .appleShortcut: error = .appleShortcutFailed
+            case .text: error = .insertTextFailed
+            case .doNothing, .control: break
             }
         }
+        if update.7 != 0 { stepProfile(by: update.7) }
         if workspaceTask == nil, mailbox.hasWorkspaceRequest {
             let mailbox = mailbox
             let previousApplication = previousApplication
@@ -372,6 +383,44 @@ import Dispatch
         return trySave(updated)
     }
 
+    /// Adds an app in which Rebind stays out of the way. False when it is already listed or rejected.
+    @discardableResult func excludeApplication(_ target: ApplicationTarget) -> Bool {
+        var updated = configuration
+        updated.excludedApplications.append(target)
+        do { try updated.validate() } catch { self.error = .excludedAppRejected; return false }
+        return trySave(updated)
+    }
+
+    func includeApplication(_ bundleIdentifier: String) {
+        var updated = configuration
+        updated.excludedApplications.removeAll { $0.bundleIdentifier == bundleIdentifier }
+        trySave(updated)
+    }
+
+    func setPointerGestureDistance(_ distance: PointerGestureDistance) {
+        guard distance != configuration.pointerGestureDistance else { return }
+        var updated = configuration
+        updated.pointerGestureDistance = distance
+        trySave(updated)
+    }
+
+    @objc private func refreshForegroundApplication() {
+        mailbox.setForegroundApplication(NSWorkspace.shared.frontmostApplication?.bundleIdentifier)
+    }
+
+    /// Copies a rule into another profile. If its trigger is already used there, the copy arrives switched off.
+    @discardableResult func copyBinding(_ binding: Binding, toProfile id: UUID) -> Bool {
+        guard let index = configuration.profiles.firstIndex(where: { $0.id == id }) else { return false }
+        var copy = binding
+        copy.id = UUID()
+        var updated = configuration
+        updated.profiles[index].bindings.append(copy)
+        do { try updated.validate() } catch ConfigurationError.conflict {
+            updated.profiles[index].bindings[updated.profiles[index].bindings.count - 1].isEnabled = false
+        } catch { showConfigurationError(error); return false }
+        return trySave(updated)
+    }
+
     func delete(_ id: UUID) {
         var updated = configuration
         updated.bindings.removeAll { $0.id == id }
@@ -387,6 +436,15 @@ import Dispatch
     @discardableResult func selectProfile(_ id: UUID) -> Bool {
         guard id != configuration.selectedProfileID else { return true }
         return updateProfiles { try $0.selectProfile(id) }
+    }
+
+    /// Moves the selection through the profile list, wrapping at either end.
+    private func stepProfile(by step: Int) {
+        let profiles = configuration.profiles
+        guard profiles.count > 1, !storageLocked,
+              let index = profiles.firstIndex(where: { $0.id == configuration.selectedProfileID }) else { return }
+        let count = profiles.count
+        selectProfile(profiles[((index + step) % count + count) % count].id)
     }
 
     @discardableResult func createProfile(name: String, copying sourceID: UUID? = nil) -> Bool {
@@ -461,7 +519,17 @@ import Dispatch
         let interval = NSEvent.doubleClickInterval
         let nanoseconds: UInt64 = interval.isFinite && interval > 0 && interval <= 60
             ? UInt64(interval * 1_000_000_000) : 500_000_000
-        mailbox.configure(configuration, doublePressIntervalNanoseconds: nanoseconds)
+        mailbox.configure(configuration, doublePressIntervalNanoseconds: nanoseconds,
+                          keyRepeat: Self.keyRepeat(delay: NSEvent.keyRepeatDelay, interval: NSEvent.keyRepeatInterval))
+    }
+
+    /// The system key-repeat preference, bounded so a broken value cannot storm or stall.
+    nonisolated static func keyRepeat(delay: TimeInterval, interval: TimeInterval) -> KeyRepeatTiming {
+        func nanoseconds(_ seconds: TimeInterval, in range: ClosedRange<TimeInterval>, default value: TimeInterval) -> UInt64 {
+            UInt64((seconds.isFinite ? min(max(seconds, range.lowerBound), range.upperBound) : value) * 1_000_000_000)
+        }
+        return KeyRepeatTiming(delayNanoseconds: nanoseconds(delay, in: 0.2...2, default: 0.5),
+                               intervalNanoseconds: nanoseconds(interval, in: 0.03...2, default: 0.08))
     }
 
     func requestAccessibility() {

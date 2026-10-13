@@ -13,12 +13,14 @@ enum BindingList {
             || AppLocalization.string(detail(for: binding)).localizedStandardContains(query)
             || (binding.activation == .hold && String(binding.holdDurationMilliseconds).contains(query))
             || binding.action.label.localizedStandardContains(query)
+            || (binding.note?.localizedStandardContains(query) ?? false)
     }
 
     static func detail(for binding: Binding) -> LocalizedStringResource {
         switch binding.trigger {
         case .scroll: .mouseDiscreteStep
         case .mouseGesture: .pointerGestureInput
+        case .buttonScroll: .buttonWheelInput
         default:
             switch binding.activation {
             case .press: .pressActivation

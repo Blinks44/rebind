@@ -28,6 +28,11 @@ struct ContentView: View {
                     BindingsView(model: model, scope: scope,
                         add: { editor = EditorSelection(scope: scope, binding: nil) },
                         edit: { editor = EditorSelection(scope: scope, binding: $0) },
+                        duplicate: {
+                            var copy = $0
+                            copy.id = UUID()
+                            editor = EditorSelection(scope: scope, binding: copy, isCopy: true)
+                        },
                         delete: { pendingDeletion = $0 },
                         manageProfiles: { showingProfiles = true },
                         openPermissions: { selection = .settings(.permissions) })
@@ -49,7 +54,7 @@ struct ContentView: View {
             PermissionSetupView(model: model, context: context)
         }
         .sheet(item: $editor) { selection in
-            BindingEditor(model: model, scope: selection.scope, existing: selection.binding)
+            BindingEditor(model: model, scope: selection.scope, existing: selection.binding, isCopy: selection.isCopy)
         }
         .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
         .onChange(of: model.configuration.selectedProfileID) {
@@ -95,4 +100,5 @@ private struct EditorSelection: Identifiable {
     let id = UUID()
     let scope: DeviceScope
     var binding: Binding?
+    var isCopy = false
 }

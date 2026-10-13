@@ -16,9 +16,11 @@ nonisolated final class ActionWorker {
     private let performAudio: @Sendable (SystemAction, UInt32) -> Bool
     private let sendTrackpadShortcut: @Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult
     private let sendShortcut: @Sendable (KeyboardShortcut) -> Bool
+    private let sendHeldKey: @Sendable (HeldKeyCommand) -> Void
     private let requestLock: @Sendable (@Sendable () -> Bool) -> WindowActionResult
     private let requestSleep: @Sendable (@Sendable () -> Bool) -> WindowActionResult
     private let performMouse: @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult
+    private let performText: @Sendable (String, @Sendable () -> Bool) -> WindowActionResult
     private let performMedia: @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult
     private let performDock: @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult
     private let performWindow: @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult
@@ -37,6 +39,7 @@ nonisolated final class ActionWorker {
          performAudio: @escaping @Sendable (SystemAction, UInt32) -> Bool = { CoreAudioOutput.perform($0, device: $1) },
          sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
+         sendHeldKey: @escaping @Sendable (HeldKeyCommand) -> Void = { ShortcutSender.postHeldKey($0) },
          requestLock: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = { canPerform in
              ScreenLockExecutor.perform(canPerform: { canPerform() && ScreenLockSession.allowsInput() })
          },
@@ -45,6 +48,9 @@ nonisolated final class ActionWorker {
          },
          performMouse: @escaping @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult = {
              MouseClickSender.perform($0, canPerform: $1)
+         },
+         performText: @escaping @Sendable (String, @Sendable () -> Bool) -> WindowActionResult = {
+             TextSender.perform($0, canPerform: $1)
          },
          performMedia: @escaping @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult = {
              MediaKeySender.perform($0, canPerform: $1)
@@ -72,12 +78,14 @@ nonisolated final class ActionWorker {
         self.requestLock = requestLock
         self.requestSleep = requestSleep
         self.sendShortcut = sendShortcut
+        self.sendHeldKey = sendHeldKey
         self.sendTrackpadShortcut = sendTrackpadShortcut ?? { shortcut, target, canPerform in
             ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
                                 diagnose: { mailbox.recordTrackpadDiagnostic($0) })
         }
         self.performMouse = performMouse
         self.performMedia = performMedia
+        self.performText = performText
         self.performDock = performDock
         self.performWindow = performWindow
         self.performWindowCycle = performWindowCycle
@@ -96,6 +104,10 @@ nonisolated final class ActionWorker {
                 autoreleasepool { worker.service(at: DispatchTime.now().uptimeNanoseconds) }
                 Thread.sleep(forTimeInterval: 0.02)
             }
+            // Stopping marks every held key released; post what is still owed.
+            while let command = mailbox.nextHeldKey(at: DispatchTime.now().uptimeNanoseconds) {
+                ShortcutSender.postHeldKey(command)
+            }
         }
         thread.name = "Rebind actions"
         thread.qualityOfService = .userInitiated
@@ -110,8 +122,13 @@ nonisolated final class ActionWorker {
             lastCapabilitiesCheck = now
             mailbox.updateAudioCapabilities(capabilities())
         }
-        guard !secureInput() else { mailbox.captureLost(status: .secureInput); return }
-        guard postingAllowed() else { mailbox.captureLost(status: .permissionRequired); return }
+        let secure = secureInput()
+        let allowed = postingAllowed()
+        if secure { mailbox.captureLost(status: .secureInput) }
+        else if !allowed { mailbox.captureLost(status: .permissionRequired) }
+        // After the checks above, so a key held when capture is lost is released at once.
+        if let command = mailbox.nextHeldKey(at: now) { sendHeldKey(command) }
+        guard !secure, allowed else { return }
         guard let dispatch = mailbox.nextAction() else { return }
         // Recheck after dequeue: configuration/edit/pause/capture-loss changes
         // invalidate waiting work. A call already accepted here cannot be recalled.
@@ -179,6 +196,19 @@ nonisolated final class ActionWorker {
             }
             guard result != .cancelled else { return }
             success = result == .performed
+        case .doNothing: success = true
+        case .text(let text):
+            let mailbox = mailbox
+            let postingAllowed = postingAllowed
+            let secureInput = secureInput
+            let result = performText(text) {
+                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            }
+            guard result != .cancelled else { return }
+            success = result == .performed
+        case .control(let action):
+            mailbox.requestControl(action, for: dispatch)
+            return
         case .desktop: success = false // Legacy decoding only; cannot enter compiled rules.
         case .dock(let action):
             let mailbox = mailbox

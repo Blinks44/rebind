@@ -5,6 +5,8 @@ struct BindingEditor: View {
     let model: AppModel
     let scope: DeviceScope
     let existing: Binding?
+    /// A copy opens prefilled but is saved as a new rule.
+    let isCopy: Bool
     private let profileID: UUID
     private let configurationRevision: UInt64
     @Environment(\.dismiss) private var dismiss
@@ -17,9 +19,11 @@ struct BindingEditor: View {
     @State private var webAddress: String
     @State private var file: URL?
     @State private var appleShortcut: AppleShortcutTarget?
+    @State private var snippet: String
 
-    init(model: AppModel, scope: DeviceScope, existing: Binding?) {
+    init(model: AppModel, scope: DeviceScope, existing: Binding?, isCopy: Bool = false) {
         self.model = model
+        self.isCopy = isCopy
         self.scope = scope
         self.existing = existing
         profileID = model.configuration.selectedProfileID
@@ -35,6 +39,8 @@ struct BindingEditor: View {
         else { _file = State(initialValue: nil) }
         if case .appleShortcut(let target) = existing?.action { _appleShortcut = State(initialValue: target) }
         else { _appleShortcut = State(initialValue: nil) }
+        if case .text(let text) = existing?.action { _snippet = State(initialValue: text) }
+        else { _snippet = State(initialValue: "") }
     }
 
     var body: some View {
@@ -42,7 +48,7 @@ struct BindingEditor: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(existing == nil ? LocalizedStringResource.addBinding : .editBinding)
+                        Text(existing == nil || isCopy ? LocalizedStringResource.addBinding : .editBinding)
                             .font(Theme.titleSmall).foregroundStyle(Theme.textPrimary)
                             .accessibilityAddTraits(.isHeader)
                         Text(scopeCaption).font(Theme.caption).foregroundStyle(Theme.textSecondary)
@@ -54,12 +60,18 @@ struct BindingEditor: View {
                     case .allKeyboards: keyboardTrigger
                     }
                     action
+                    VStack(alignment: .leading, spacing: 12) {
+                        SectionLabel(.bindingNoteTitle)
+                        ThemeTextField(title: .bindingNoteTitle, text: $draft.note, prompt: Text(.bindingNotePrompt))
+                            .disabled(model.recording != nil)
+                            .accessibilityIdentifier("binding-editor-note")
+                    }
                     feedback
                 }.padding(28)
             }
             Theme.separator.frame(height: 1)
             HStack(spacing: 10) {
-                if existing != nil {
+                if existing != nil, !isCopy {
                     Button(.deleteBinding, systemImage: "trash") { model.cancelRecording(); confirmingDeletion = true }
                         .destructiveButton()
                         .disabled(model.recording != nil || model.storageLocked)
@@ -100,6 +112,7 @@ struct BindingEditor: View {
         .onChange(of: draft.activation) { model.cancelRecording() }
         .onChange(of: draft.holdDurationMilliseconds) { model.cancelRecording() }
         .onChange(of: draft.pointerDirection) { model.cancelRecording() }
+        .onChange(of: draft.scrollDirection) { model.cancelRecording() }
         .onChange(of: draft.trackpadPreset) {
             model.cancelRecording()
             recordingRequest = nil
@@ -168,11 +181,34 @@ struct BindingEditor: View {
                     recording: model.recording, canRecord: model.canRecord,
                     record: { record(.output) }, cancel: model.cancelRecording,
                     clear: { draft.output = nil }, wrapsControls: true, shortcut: draft.output)
+            } else if actionKind == .insertText {
+                ThemeTextField(title: .insertTextAction, text: $snippet, prompt: Text(.insertTextPrompt))
+                    .disabled(model.recording != nil)
+                if snippet.count > TextSnippet.maximumLength {
+                    Text(.insertTextTooLong).font(Theme.caption).foregroundStyle(Theme.warningText)
+                }
             } else if actionKind == .runAppleShortcut {
                 AppleShortcutParameters(target: $appleShortcut).disabled(model.recording != nil)
             } else if actionKind.needsWorkspaceParameters {
                 WorkspaceActionParameters(kind: actionKind, application: $application, webAddress: $webAddress, file: $file)
                     .disabled(model.recording != nil)
+            }
+            if showsHoldOption {
+                Toggle(isOn: $draft.holdsOutput) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(.holdOutputTitle).font(Theme.body).foregroundStyle(Theme.textPrimary)
+                        Text(actionKind == .keyboardShortcut ? LocalizedStringResource.holdOutputShortcutHint : .holdOutputRepeatHint)
+                            .font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .toggleStyle(ThemeSwitchStyle())
+                .padding(.leading, 14).padding(.trailing, 10).padding(.vertical, 10)
+                .background(Theme.insetSurface, in: .rect(cornerRadius: 14, style: .continuous))
+                .overlay { RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.borderSubtle) }
+                .disabled(model.recording != nil)
+                .accessibilityIdentifier("binding-editor-hold-output")
             }
             if let actionHint {
                 Text(actionHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
@@ -185,13 +221,25 @@ struct BindingEditor: View {
         }
     }
 
+    /// Only a pressed key or mouse button has a release to hold an output until.
+    private var showsHoldOption: Bool {
+        guard actionKind.canBeHeld, draft.activation == .press else { return false }
+        return scope == .allKeyboards || (scope == .allMice && draft.mouseTarget == .mouseTrigger)
+    }
+
     private var actionHint: LocalizedStringResource? {
         if actionKind == .keyboardShortcut {
             return scope == .allMice ? .mouseOutputHelp : scope.isTrackpad ? .trackpadOutputHelp : nil
         }
         if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
-        if actionKind.fixedShortcut != nil { return .navigationActionHint }
+        if actionKind == .doNothing { return .doNothingHint }
+        if actionKind == .pauseRebind { return .pauseRebindHint }
+        if actionKind.controlAction != nil { return .switchProfileHint }
+        if actionKind == .insertText { return .insertTextHint }
+        if actionKind == .navigateBack || actionKind == .navigateForward { return .navigationActionHint }
+        if let shortcut = actionKind.fixedShortcut { return .namedShortcutHint(InputLabels.shortcut(shortcut)) }
         if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }
+        if actionKind == .nextDisplay { return .nextDisplayHint }
         if actionKind.windowLayoutAction != nil { return .windowLayoutHint }
         if let media = actionKind.mediaAction { return media.isBrightness ? .brightnessActionHint : .mediaActionHint }
         if let desktop = actionKind.desktopAction {
@@ -239,7 +287,7 @@ struct BindingEditor: View {
 
     private var configuredAction: RebindAction? {
         actionKind.configuredAction(shortcut: draft.output, application: application, webAddress: webAddress, file: file,
-                                    appleShortcut: appleShortcut)
+                                    appleShortcut: appleShortcut, text: snippet)
     }
 
     private var candidate: Binding? {

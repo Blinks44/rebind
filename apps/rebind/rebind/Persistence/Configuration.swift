@@ -1,8 +1,9 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 33
+    static let currentSchemaVersion = 34
     static let maximumProfiles = 20
+    static let maximumExcludedApplications = 50
     var schemaVersion: Int
     var isEnabled: Bool
     /// Records an explicit setup dismissal without changing remapping intent.
@@ -13,6 +14,9 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     var showsMenuBarIcon = true
     /// Whether launching Rebind (including at login) opens its main window.
     var opensWindowAtLaunch = true
+    /// Apps in which Rebind leaves all input alone while they are in front.
+    var excludedApplications: [ApplicationTarget] = []
+    var pointerGestureDistance = PointerGestureDistance.standard
     var profiles: [RuleProfile]
     var selectedProfileID: UUID
 
@@ -41,6 +45,11 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
               profiles.allSatisfy(\.hasValidName) else { throw ConfigurationError.profileInvalid }
         let names = profiles.compactMap(\.nameKey)
         guard Set(names).count == names.count else { throw ConfigurationError.profileInvalid }
+        guard excludedApplications.count <= Self.maximumExcludedApplications,
+              excludedApplications.allSatisfy(\.isSupported),
+              Set(excludedApplications.map(\.bundleIdentifier)).count == excludedApplications.count else {
+            throw ConfigurationError.invalid
+        }
         let allBindings = profiles.flatMap(\.bindings)
         guard allBindings.count <= 1000, Set(allBindings.map(\.id)).count == allBindings.count,
               allBindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
@@ -48,11 +57,12 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             let enabled = profile.bindings.filter(\.isEnabled)
             let keys = enabled.map(\.matchKey)
             guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
-            let gestures = Set(keys.filter { $0.trigger.isPointerGesture }.map(\.pressSource))
+            let gestures = Set(keys.filter { $0.trigger.holdsButton }.map(\.pressSource))
             // A plain press rule may share a button with its gestures (it runs on a click
             // without movement); hold and double press on that button stay ambiguous.
             guard !enabled.contains(where: {
-                !$0.trigger.isPointerGesture && $0.activation != .press && gestures.contains($0.matchKey.pressSource)
+                !$0.trigger.holdsButton && ($0.activation != .press || $0.holdsOutput)
+                    && gestures.contains($0.matchKey.pressSource)
             }) else {
                 throw ConfigurationError.conflict
             }
@@ -61,6 +71,20 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
+        if schemaVersion < 34, !excludedApplications.isEmpty || pointerGestureDistance != .standard {
+            throw ConfigurationError.invalid
+        }
+        if schemaVersion < 34, profiles.flatMap(\.bindings).contains(where: {
+            if $0.holdsOutput || $0.note != nil { return true }
+            if case .buttonScroll = $0.trigger { return true }
+            switch $0.action {
+            case .doNothing, .control, .text: return true
+            case .windowLayout(let layout): return layout.isNewInSchema34
+            default: return false
+            }
+        }) {
+            throw ConfigurationError.invalid
+        }
         if schemaVersion < 33, languagePreference == .es || languagePreference == .zhHans {
             throw ConfigurationError.invalid
         }
@@ -198,7 +222,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             result.schemaVersion = Self.currentSchemaVersion
         }
         if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...32).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...33).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         // Existing installations recover through the permission notice, not first-run setup.
         if (1...22).contains(schemaVersion) { result.hasCompletedSetup = true }
         try result.validate()
@@ -207,7 +231,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, isEnabled, hasCompletedSetup, languagePreference, bindings, profiles, selectedProfileID
-        case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch
+        case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch, excludedApplications, pointerGestureDistance
     }
 
     init(from decoder: any Decoder) throws {
@@ -233,6 +257,10 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             showsMenuBarIcon = try values.decode(Bool.self, forKey: .showsMenuBarIcon)
             opensWindowAtLaunch = try values.decode(Bool.self, forKey: .opensWindowAtLaunch)
         }
+        if version >= 34 {
+            excludedApplications = try values.decode([ApplicationTarget].self, forKey: .excludedApplications)
+            pointerGestureDistance = try values.decode(PointerGestureDistance.self, forKey: .pointerGestureDistance)
+        }
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -245,6 +273,10 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try values.encode(showsDockIcon, forKey: .showsDockIcon)
             try values.encode(showsMenuBarIcon, forKey: .showsMenuBarIcon)
             try values.encode(opensWindowAtLaunch, forKey: .opensWindowAtLaunch)
+        }
+        if schemaVersion >= 34 {
+            try values.encode(excludedApplications, forKey: .excludedApplications)
+            try values.encode(pointerGestureDistance, forKey: .pointerGestureDistance)
         }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }

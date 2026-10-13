@@ -38,15 +38,27 @@ enum InputLabels {
         case .mouseGesture(let button, let direction):
             label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label).lowercased()))
         case .scroll(let direction): label = AppLocalization.string(direction.label)
+        case .buttonScroll(let button, let direction):
+            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label).lowercased()))
         }
         switch trigger {
-        case .mouseButton, .mouseGesture, .scroll:
+        case .mouseButton, .mouseGesture, .scroll, .buttonScroll:
             return modifiers.glyphs.isEmpty ? label : modifiers.glyphs + " " + label
         default: return modifiers.glyphs + label
         }
     }
 
     static func shortcut(_ shortcut: KeyboardShortcut) -> String { trigger(.key(shortcut.keyCode), modifiers: shortcut.modifiers) }
+}
+
+extension PointerGestureDistance {
+    var label: LocalizedStringResource {
+        switch self {
+        case .short: .gestureDistanceShort
+        case .standard: .gestureDistanceStandard
+        case .long: .gestureDistanceLong
+        }
+    }
 }
 
 extension PointerDirection {
@@ -61,6 +73,16 @@ extension PointerDirection {
 }
 
 extension ScrollDirection {
+    /// The bare direction, for a picker whose title already says it is the wheel.
+    var directionLabel: LocalizedStringResource {
+        switch self {
+        case .up: .pointerUp
+        case .down: .pointerDown
+        case .left: .pointerLeft
+        case .right: .pointerRight
+        }
+    }
+
     var label: LocalizedStringResource {
         switch self {
         case .up: .scrollUp

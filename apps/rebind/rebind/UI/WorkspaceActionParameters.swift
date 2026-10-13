@@ -61,12 +61,7 @@ struct WorkspaceActionParameters: View {
                 let accessed = url.startAccessingSecurityScopedResource()
                 defer { if accessed { url.stopAccessingSecurityScopedResource() } }
                 if pickingApplication {
-                    guard let bundle = Bundle(url: url), let identifier = bundle.bundleIdentifier,
-                          bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL" else {
-                        selectionFailed = true; return
-                    }
-                    let target = ApplicationTarget(url: url.standardizedFileURL, bundleIdentifier: identifier)
-                    guard target.isSupported else { selectionFailed = true; return }
+                    guard let target = ApplicationTarget(bundleURL: url) else { selectionFailed = true; return }
                     application = target
                 } else {
                     let action = WorkspaceAction.openFile(url.standardizedFileURL)

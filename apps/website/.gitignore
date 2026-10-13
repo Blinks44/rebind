@@ -1,0 +1,7 @@
+# Dependencies and build output of the website; sources and the lockfile stay versioned.
+node_modules/
+dist/
+.tanstack/
+# Compiled by Paraglide from messages/*.json on every dev start and build.
+src/paraglide/
+project.inlang/cache/

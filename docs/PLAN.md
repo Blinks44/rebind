@@ -13,7 +13,8 @@ Out of scope by user decision: Caps Lock, Fn/Globe and left/right modifier disti
 1. **Hardware acceptance of 2026-10-13 work** — built-in trackpad after the adapter refactor, Magic Trackpad discovery and gestures, Back/Forward, scroll and brightness actions, non-shortcut actions from trackpad rules. Tasks INPUT-005 … INPUT-008.
 2. **Magic Mouse** — run `apps/rebind/tools/magic-mouse-probe.swift` on the real device, then decide the supported presets, implement them and draw the screens. No implementation or hardware claim yet (SPEC §3.5).
 3. **Review pass** — code, design and copy once the hardware findings are in; German, French, Spanish and Simplified Chinese proofreading by fluent readers.
-4. **Release preparation** — see the gates below.
+4. **GitHub repository and update check** — the user publishes the repository (planned, 2026-10-13); then set the releases address, add a "Check for Updates" command that compares the running version with the latest release and opens its page, and fill `site.githubRepo` for the website download button. Releases are signed with one stable self-signed certificate, so the Accessibility grant survives updates.
+5. **Release preparation** — see the gates below.
 
 ## Release gates
 

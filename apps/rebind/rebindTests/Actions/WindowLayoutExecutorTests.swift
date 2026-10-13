@@ -3,8 +3,11 @@ import Testing
 @testable import rebind
 
 struct WindowLayoutExecutorTests {
+    // The second display lets "next display" resolve; every other layout stays on the first.
     private let displays = [WindowDisplay(frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
-                                         visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725))]
+                                         visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725)),
+                            WindowDisplay(frame: CGRect(x: 1000, y: 0, width: 1600, height: 900),
+                                         visibleFrame: CGRect(x: 1000, y: 25, width: 1600, height: 875))]
 
     @Test(arguments: WindowLayoutAction.allCases)
     func requestedGeometryIsAppliedAndReadBack(_ action: WindowLayoutAction) {

@@ -20,7 +20,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 | Path | Contents |
 | --- | --- |
 | `apps/rebind/` | The macOS app: Xcode project, sources, tests, the `scripts/dev.sh` build script and developer tools |
-| `apps/website/` | Reserved for the public website; not set up yet |
+| `apps/website/` | The public landing page (TanStack Start on Rsbuild); see its README |
 | `docs/` | Specification, design notes, roadmap, current state and verification records |
 | `AGENTS.md`, `.agents/` | Instructions and skills for coding and design agents |
 

@@ -5,6 +5,7 @@ struct BindingRow: View {
     let binding: Binding
     let model: AppModel
     let edit: () -> Void
+    let duplicate: () -> Void
     let delete: () -> Void
 
     private var kind: ActionKind { ActionKind(action: binding.action) }
@@ -13,7 +14,9 @@ struct BindingRow: View {
 
     private var caption: String {
         if !isAvailable { return AppLocalization.string(kind.unavailableMessage) }
+        if let note = binding.note { return note }
         let category = AppLocalization.string(kind.category.title)
+        if binding.holdsOutput { return category + " · " + AppLocalization.string(.holdOutputBadge) }
         guard binding.activation != .press else { return category }
         return category + " · " + AppLocalization.string(BindingList.detail(for: binding))
     }
@@ -49,6 +52,15 @@ struct BindingRow: View {
 
     @ViewBuilder private var actions: some View {
         Button(.editBinding, systemImage: "pencil", action: edit)
+        Button(.duplicateBinding, systemImage: "doc.on.doc", action: duplicate)
+        let others = model.configuration.profiles.filter { $0.id != model.configuration.selectedProfileID }
+        if !others.isEmpty {
+            Menu(.copyBindingToProfile, systemImage: "square.on.square") {
+                ForEach(others) { profile in
+                    Button { model.copyBinding(binding, toProfile: profile.id) } label: { Text(verbatim: profile.title) }
+                }
+            }
+        }
         Button(.deleteBinding, systemImage: "trash", role: .destructive, action: delete)
     }
 
@@ -61,7 +73,7 @@ struct BindingRow: View {
             case .mouseButton: Keycap(label: InputLabels.trigger(binding.trigger, modifiers: []))
             case .mouseGesture(_, let direction):
                 TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "arrow.\(direction.rawValue)")
-            case .scroll(let direction):
+            case .scroll(let direction), .buttonScroll(_, let direction):
                 TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "arrow.\(direction.rawValue)")
             default: TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "hand.tap")
             }

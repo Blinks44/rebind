@@ -16,6 +16,36 @@ struct WindowLayoutGeometryTests {
         #expect(WindowLayoutGeometry.target(.fill, window: window, displays: [display]) == display.visibleFrame)
     }
 
+    @Test func quartersAndVerticalHalvesTileTheUsableAreaWithoutGaps() throws {
+        func target(_ action: WindowLayoutAction) throws -> CGRect {
+            try #require(WindowLayoutGeometry.target(action, window: window, displays: [display]))
+        }
+        #expect(try target(.topHalf) == CGRect(x: 0, y: 25, width: 1001, height: 362))
+        #expect(try target(.bottomHalf) == CGRect(x: 0, y: 387, width: 1001, height: 363))
+        #expect(try target(.topLeft) == CGRect(x: 0, y: 25, width: 500, height: 362))
+        #expect(try target(.bottomRight) == CGRect(x: 500, y: 387, width: 501, height: 363))
+        let quarters = try [WindowLayoutAction.topLeft, .topRight, .bottomLeft, .bottomRight].map(target)
+        #expect(quarters.reduce(CGRect.null) { $0.union($1) } == display.visibleFrame)
+        #expect(quarters.map { $0.width * $0.height }.reduce(0, +) == display.visibleFrame.width * display.visibleFrame.height)
+    }
+
+    @Test func nextDisplayKeepsSizeAndRelativePlaceWrapsAroundAndShrinksToFit() throws {
+        let second = WindowDisplay(frame: CGRect(x: 1001, y: 0, width: 600, height: 500),
+                                   visibleFrame: CGRect(x: 1001, y: 25, width: 600, height: 475))
+        #expect(WindowLayoutGeometry.target(.nextDisplay, window: window, displays: [display]) == nil)
+        let leftEdge = CGRect(x: 0, y: 25, width: 300, height: 200)
+        #expect(WindowLayoutGeometry.target(.nextDisplay, window: leftEdge, displays: [display, second])
+            == CGRect(x: 1001, y: 25, width: 300, height: 200))
+        let rightBottom = CGRect(x: 701, y: 550, width: 300, height: 200)
+        #expect(WindowLayoutGeometry.target(.nextDisplay, window: rightBottom, displays: [display, second])
+            == CGRect(x: 1301, y: 300, width: 300, height: 200))
+        let large = CGRect(x: 0, y: 25, width: 900, height: 700)
+        #expect(WindowLayoutGeometry.target(.nextDisplay, window: large, displays: [display, second]) == second.visibleFrame)
+        let onSecond = CGRect(x: 1001, y: 25, width: 300, height: 200)
+        #expect(WindowLayoutGeometry.target(.nextDisplay, window: onSecond, displays: [display, second])
+            == CGRect(x: 0, y: 25, width: 300, height: 200))
+    }
+
     @Test func centerPreservesSizeAndRejectsOversizedWindows() {
         #expect(WindowLayoutGeometry.target(.center, window: window, displays: [display]) == CGRect(x: 350.5, y: 287.5, width: 300, height: 200))
         #expect(WindowLayoutGeometry.target(.center, window: CGRect(x: 0, y: 100, width: 1100, height: 300), displays: [display]) == nil)

@@ -1,7 +1,9 @@
 import SwiftUI
 
-/// Explains existing recognition behavior without introducing global timing overrides.
+/// Recognition settings shared by every rule: gesture distance and excluded apps.
 struct InputSettingsView: View {
+    let model: AppModel
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -11,8 +13,22 @@ struct InputSettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 information(.pressTiming, status: .perBinding, description: .pressTimingDescription)
-                information(.mouseGestures, status: .inputFixedSensitivity, description: .mouseGesturesDescription)
+                Card {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(.mouseGestures).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                        Text(.mouseGesturesDescription).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        SegmentedPicker(selection: SwiftUI.Binding(get: { model.configuration.pointerGestureDistance },
+                                                                   set: { model.setPointerGestureDistance($0) }),
+                                        title: .gestureDistanceTitle, options: PointerGestureDistance.allCases,
+                                        label: { $0.label }, fillsWidth: true)
+                            .disabled(model.storageLocked)
+                            .accessibilityIdentifier("input-gesture-distance")
+                    }
+                }
                 information(.inputBuiltInTrackpad, status: .experimental, description: .trackpadInputDescription)
+                ExcludedApplicationsCard(model: model)
                 Text(.inputEditGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }

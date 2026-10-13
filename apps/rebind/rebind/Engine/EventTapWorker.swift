@@ -51,7 +51,7 @@ nonisolated final class EventTapWorker {
         let control = mailbox.state.withLock {
             $0.diagnostics.expire(at: now)
             return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput,
-                    $0.enabled && $0.hasPointerGestureRules, $0.diagnostics.isRunning)
+                    $0.isMatching && $0.hasPointerGestureRules, $0.diagnostics.isRunning)
         }
         if failureLatched { removeTap() }
         if !hasPermissions || control.2 {

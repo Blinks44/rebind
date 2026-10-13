@@ -5,7 +5,9 @@ nonisolated enum EngineStatus: Sendable {
     case paused, active, permissionRequired, secureInput, tapFailed, interrupted, outputFailed
 }
 
-nonisolated enum RecordingTarget: Hashable, Sendable { case keyboardTrigger, mouseTrigger, gestureTrigger, scrollTrigger, output }
+nonisolated enum RecordingTarget: Hashable, Sendable {
+    case keyboardTrigger, mouseTrigger, gestureTrigger, scrollTrigger, buttonScrollTrigger, output
+}
 
 nonisolated struct RecordingRequest: Sendable, Equatable {
     var id = UUID()
@@ -27,6 +29,11 @@ nonisolated final class EngineMailbox: Sendable {
         var actionFailed: RebindAction?
         var hasPointerGestureRules = false
         var enabled = false
+        /// Bundle identifiers of apps in which Rebind leaves all input alone.
+        var excludedApplications: Set<String> = []
+        var foregroundBundleID: String?
+        /// Enabled and not in front of an excluded app. Pause state itself is `enabled`.
+        var isMatching: Bool { enabled && !(foregroundBundleID.map(excludedApplications.contains) ?? false) }
         var suspended = false
         var stopped = false
         var status: EngineStatus = .paused
@@ -35,6 +42,9 @@ nonisolated final class EngineMailbox: Sendable {
         var recorded: RecordedInput?
         var matcher = InputMatcher()
         var pending: [RebindAction] = []
+        var held: [HeldOutput] = []
+        var keyRepeat = KeyRepeatTiming()
+        static let maximumHeldOutputs = 4
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
         var trackpadDiagnostics: TrackpadDiagnostics?
@@ -46,14 +56,65 @@ nonisolated final class EngineMailbox: Sendable {
         var workspaceClaimed = false
         var appleShortcutInProgress = false
         var emergencyPause = false
+        /// Profile steps requested by rules, applied by the UI model: +1 next, -1 previous.
+        var profileStep = 0
         var retryID: UInt64 = 0
         var diagnostics = InputDiagnostics()
         var profileID = RuleProfile.defaultID
 
-        init() { pending.reserveCapacity(16) }
+        init() { pending.reserveCapacity(16); held.reserveCapacity(Self.maximumHeldOutputs) }
+
+        var canDispatch: Bool {
+            status == .active && isMatching && !editing && !suspended && !stopped && recording == nil
+        }
+
+        /// Ends every held output. A key that is already down still gets its release.
+        mutating func cancelHeldOutputs() {
+            held.removeAll { $0.pressedAt == nil }
+            for index in held.indices { held[index].released = true }
+        }
+
+        /// The trigger was physically released. A press the worker has not performed yet
+        /// becomes an ordinary single action, so a quick tap is never lost.
+        mutating func releaseHeldOutput(for trigger: InputTrigger) {
+            guard let index = held.firstIndex(where: { $0.trigger == trigger && !$0.released }) else { return }
+            if held[index].pressedAt == nil {
+                pending.append(held.remove(at: index).action)
+            } else { held[index].released = true }
+        }
+
+        /// One step per worker pass: a due release first, then a press or repeat.
+        mutating func nextHeldKey(at now: UInt64) -> HeldKeyCommand? {
+            if let index = held.firstIndex(where: \.released) {
+                let output = held.remove(at: index)
+                guard let shortcut = output.action.shortcut else { return nil }
+                return HeldKeyCommand(shortcut: shortcut, phase: .release)
+            }
+            guard canDispatch else { return nil }
+            for index in held.indices {
+                let output = held[index]
+                let isDue: Bool
+                if let pressedAt = output.pressedAt {
+                    let last = output.lastRepeatAt
+                    let next = last.map { $0 &+ keyRepeat.intervalNanoseconds } ?? pressedAt &+ keyRepeat.delayNanoseconds
+                    isDue = now >= next
+                    if isDue { held[index].lastRepeatAt = now }
+                } else {
+                    isDue = true
+                    held[index].pressedAt = now
+                }
+                guard isDue else { continue }
+                if let shortcut = output.action.shortcut {
+                    return HeldKeyCommand(shortcut: shortcut, phase: output.pressedAt == nil ? .press : .repeatPress)
+                }
+                // A step action goes through the ordinary queue each time it is due.
+                if pending.count < 16 { pending.append(output.action) }
+            }
+            return nil
+        }
 
         func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
-            actionRevision == dispatch.revision && status == .active && enabled
+            actionRevision == dispatch.revision && status == .active && isMatching
                 && !editing && !suspended && !stopped && recording == nil
                 && audioCapabilities.supports(dispatch.action)
                 && (dispatch.trackpadTarget.map {
@@ -71,6 +132,7 @@ nonisolated final class EngineMailbox: Sendable {
             }
             actionRevision &+= 1
             pending.removeAll(keepingCapacity: true)
+            cancelHeldOutputs()
             trackpadDispatch = nil
             matcher.resetAfterCaptureLoss()
             diagnostics.stop(clear: true)
@@ -89,11 +151,13 @@ nonisolated final class EngineMailbox: Sendable {
         }
     }
 
-    func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000) {
+    func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000,
+                   keyRepeat: KeyRepeatTiming = KeyRepeatTiming()) {
         let compiled = InputMatcher.compile(configuration.bindings)
         state.withLock {
             if $0.profileID != configuration.selectedProfileID {
                 $0.profileID = configuration.selectedProfileID
+                $0.profileStep = 0
                 $0.recording = nil
                 $0.recorded = nil
             }
@@ -105,10 +169,29 @@ nonisolated final class EngineMailbox: Sendable {
             $0.rules = compiled.filter { capabilities.supports($0.value.action) }
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.enabled = configuration.isEnabled
+            $0.excludedApplications = Set(configuration.excludedApplications.map(\.bundleIdentifier))
             $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
             $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
+            $0.keyRepeat = keyRepeat
+            $0.matcher.pointerThreshold = configuration.pointerGestureDistance.points
+        }
+    }
+
+    /// The app now in front. Entering or leaving an excluded app cancels waiting work;
+    /// presses Rebind already swallowed keep their release.
+    func setForegroundApplication(_ bundleIdentifier: String?) {
+        state.withLock {
+            let wasMatching = $0.isMatching
+            $0.foregroundBundleID = bundleIdentifier
+            guard $0.isMatching != wasMatching else { return }
+            $0.actionRevision &+= 1
+            $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
+            $0.trackpadDispatch = nil
+            $0.matcher.cancelPendingActivation()
         }
     }
 
@@ -125,6 +208,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.actionRevision &+= 1
             $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
             $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
@@ -136,7 +220,7 @@ nonisolated final class EngineMailbox: Sendable {
             // request already accepted must finish before another action starts.
             if let request = $0.workspaceRequest, !$0.workspaceClaimed,
                !$0.dispatchIsCurrent(request.dispatch) { $0.workspaceRequest = nil }
-            guard $0.status == .active, $0.enabled, !$0.editing, !$0.suspended,
+            guard $0.status == .active, $0.isMatching, !$0.editing, !$0.suspended,
                   !$0.stopped, $0.recording == nil,
                   $0.workspaceRequest == nil else { return nil }
             if let dispatch = $0.trackpadDispatch {
@@ -153,6 +237,8 @@ nonisolated final class EngineMailbox: Sendable {
         state.withLock { $0.dispatchIsCurrent(dispatch) }
     }
 
+    func nextHeldKey(at now: UInt64) -> HeldKeyCommand? { state.withLock { $0.nextHeldKey(at: now) } }
+
     func systemTransitionRequested(_ dispatch: ActionDispatch) {
         state.withLock {
             guard $0.actionRevision == dispatch.revision else { return }
@@ -161,6 +247,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.diagnostics.stop(clear: true)
             $0.actionRevision &+= 1
             $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
             $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
@@ -207,6 +294,25 @@ nonisolated final class EngineMailbox: Sendable {
         }
     }
 
+    /// Pause takes effect here; a profile change is applied by the UI model, which owns storage.
+    func requestControl(_ action: ControlAction, for dispatch: ActionDispatch) {
+        state.withLock {
+            guard $0.dispatchIsCurrent(dispatch) else { return }
+            switch action {
+            case .pause:
+                $0.actionRevision &+= 1
+                $0.enabled = false
+                $0.emergencyPause = true
+                $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
+                $0.trackpadDispatch = nil
+                $0.matcher.cancelPendingActivation()
+            case .nextProfile: $0.profileStep += 1
+            case .previousProfile: $0.profileStep -= 1
+            }
+        }
+    }
+
     func record(_ request: RecordingRequest?) {
         state.withLock {
             if request != nil { $0.retryID &+= 1 }
@@ -214,6 +320,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.recording = request
             $0.recorded = nil
             $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
             $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
@@ -224,6 +331,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.actionRevision &+= 1
             $0.editing = editing
             $0.pending.removeAll(keepingCapacity: true)
+            $0.cancelHeldOutputs()
             $0.trackpadDispatch = nil
             $0.matcher.cancelPendingActivation()
         }
@@ -282,9 +390,10 @@ nonisolated final class EngineMailbox: Sendable {
         // Any real key/button/wheel activity invalidates a delayed touch action.
         // No key code/text is retained by the touch recognizer.
         if event.phase != .drag { state.inputActivity &+= 1; state.trackpadDispatch = nil }
-        let pendingCount = state.pending.count
+        let queuedCount = state.pending.count + state.held.count
         let suppressed = handle(event, state: &state, secureInput: secureInput)
-        state.diagnostics.record(event, suppressed: suppressed, queued: state.pending.count > pendingCount)
+        state.diagnostics.record(event, suppressed: suppressed,
+                                 queued: state.pending.count + state.held.count > queuedCount)
         return suppressed
     }
 
@@ -330,7 +439,7 @@ nonisolated final class EngineMailbox: Sendable {
         // Evaluate once: a disabled pre-pass would cancel a temporal sequence.
         // Ownership/emergency bypass still work during pause, editing or recording.
         let decision = state.matcher.handle(event, rules: state.recording == nil ? state.rules : [:],
-                                            enabled: state.enabled && !state.editing && state.recording == nil,
+                                            enabled: state.isMatching && !state.editing && state.recording == nil,
                                             canDispatch: state.pending.count < 16)
         if decision.emergencyPause {
             state.actionRevision &+= 1
@@ -338,11 +447,17 @@ nonisolated final class EngineMailbox: Sendable {
             state.emergencyPause = true
             state.recording = nil
             state.pending.removeAll(keepingCapacity: true)
+            state.cancelHeldOutputs()
             state.trackpadDispatch = nil
             state.diagnostics.stop(clear: true)
             return true
         }
-        if let action = decision.action { state.pending.append(action) }
+        if event.phase == .up { state.releaseHeldOutput(for: event.trigger) }
+        if let action = decision.action {
+            if decision.holdsOutput, state.held.count < State.maximumHeldOutputs {
+                state.held.append(HeldOutput(trigger: event.trigger, action: action))
+            } else { state.pending.append(action) }
+        }
         if decision.suppress { return true }
         if let request = state.recording {
             guard event.phase == .down || event.phase == .scroll, !event.isRepeat else { return false }
@@ -351,7 +466,8 @@ nonisolated final class EngineMailbox: Sendable {
             } else {
                 let matchesCategory: Bool
                 switch (request.target, event.trigger) {
-                case (.mouseTrigger, .mouseButton), (.gestureTrigger, .mouseButton): matchesCategory = true
+                case (.mouseTrigger, .mouseButton), (.gestureTrigger, .mouseButton),
+                     (.buttonScrollTrigger, .mouseButton): matchesCategory = true
                 case (.scrollTrigger, .scroll): matchesCategory = true
                 case (.keyboardTrigger, .key), (.output, .key): matchesCategory = true
                 default: matchesCategory = false
@@ -377,7 +493,7 @@ nonisolated final class EngineMailbox: Sendable {
             state.matcher.expirePointerGesture(at: now)
             let holdKey = state.matcher.holdKey
             if let action = state.matcher.pollHold(at: now, rules: state.rules,
-                                                      enabled: state.enabled && !state.editing && state.recording == nil,
+                                                      enabled: state.isMatching && !state.editing && state.recording == nil,
                                                       canDispatch: state.pending.count < 16) {
                 state.pending.append(action)
                 if let holdKey, case .mouseButton(let number) = holdKey.trigger {

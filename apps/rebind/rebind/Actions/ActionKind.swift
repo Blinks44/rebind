@@ -12,14 +12,22 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case brightnessUp, brightnessDown, openSystemSettings, sleepSystem, lockScreen
     case runAppleShortcut
     case missionControl, applicationWindows, showDesktop, previousSpace, nextSpace
+    case doNothing, pauseRebind, nextProfile, previousProfile
+    case copy, paste, cut, undo, redo, selectAll, insertText
+    case nextTab, previousTab, newTab, reopenTab, zoomIn, zoomOut
+    case screenshotScreen, screenshotArea, screenshotTools
+    case topHalf, bottomHalf, topLeftQuarter, topRightQuarter, bottomLeftQuarter, bottomRightQuarter, nextDisplay
     var id: Self { self }
 
     enum Category: CaseIterable, Identifiable {
-        case keyboard, mouse, audio, windows, desktop, system, automation
+        case keyboard, mouse, audio, windows, desktop, system, automation, rebind
         var id: Self { self }
     }
 
     var category: Category {
+        if self == .doNothing || controlAction != nil { return .rebind }
+        if [.copy, .paste, .cut, .undo, .redo, .selectAll, .insertText].contains(self) { return .keyboard }
+        if [.screenshotScreen, .screenshotArea, .screenshotTools].contains(self) { return .system }
         if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen
             || mediaAction?.isBrightness == true { return .system }
         if mouseAction != nil { return .mouse }
@@ -35,8 +43,12 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         switch action {
         case .lockScreen: self = .lockScreen
         case .sleepSystem: self = .sleepSystem
+        case .doNothing: self = .doNothing
+        case .control(.pause): self = .pauseRebind
+        case .control(.nextProfile): self = .nextProfile
+        case .control(.previousProfile): self = .previousProfile
         case .shortcut(let shortcut):
-            self = [.navigateBack, .navigateForward].first { $0.fixedShortcut == shortcut } ?? .keyboardShortcut
+            self = Self.allCases.first { $0.fixedShortcut == shortcut } ?? .keyboardShortcut
         case .media(.playPause): self = .playPause
         case .media(.nextTrack): self = .nextTrack
         case .media(.previousTrack): self = .previousTrack
@@ -48,10 +60,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .system(.toggleMute): self = .toggleMute
         case .windowCycle(.next): self = .nextWindow
         case .windowCycle(.previous): self = .previousWindow
-        case .windowLayout(.leftHalf): self = .leftHalf
-        case .windowLayout(.rightHalf): self = .rightHalf
-        case .windowLayout(.fill): self = .fillWindow
-        case .windowLayout(.center): self = .centerWindow
+        case .windowLayout(let layout): self = Self.allCases.first { $0.windowLayoutAction == layout } ?? .fillWindow
+        case .text: self = .insertText
         case .window(.close): self = .closeWindow
         case .window(.minimize): self = .minimizeWindow
         case .window(.toggleFullScreen): self = .toggleFullScreen
@@ -89,6 +99,21 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Whether "Repeat while held" applies; named shortcuts such as Back run once.
+    var canBeHeld: Bool {
+        self == .keyboardShortcut || [.volumeUp, .volumeDown, .brightnessUp, .brightnessDown].contains(self)
+            || mouseAction?.scrollLines != nil
+    }
+
+    var controlAction: ControlAction? {
+        switch self {
+        case .pauseRebind: .pause
+        case .nextProfile: .nextProfile
+        case .previousProfile: .previousProfile
+        default: nil
+        }
+    }
+
     var mouseAction: MouseAction? { MouseAction(rawValue: rawValue) }
 
     var mediaAction: MediaAction? {
@@ -116,6 +141,13 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .rightHalf: .rightHalf
         case .fillWindow: .fill
         case .centerWindow: .center
+        case .topHalf: .topHalf
+        case .bottomHalf: .bottomHalf
+        case .topLeftQuarter: .topLeft
+        case .topRightQuarter: .topRight
+        case .bottomLeftQuarter: .bottomLeft
+        case .bottomRightQuarter: .bottomRight
+        case .nextDisplay: .nextDisplay
         default: nil
         }
     }
@@ -148,19 +180,37 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Back and Forward are the standard ⌘[ and ⌘] shortcuts, which most apps understand.
+    /// Named commands that are the standard macOS shortcut for what they do, such as ⌘[ for Back.
     var fixedShortcut: KeyboardShortcut? {
         switch self {
         case .navigateBack: KeyboardShortcut(keyCode: 33, modifiers: .command)
         case .navigateForward: KeyboardShortcut(keyCode: 30, modifiers: .command)
+        case .copy: KeyboardShortcut(keyCode: 8, modifiers: .command)
+        case .paste: KeyboardShortcut(keyCode: 9, modifiers: .command)
+        case .cut: KeyboardShortcut(keyCode: 7, modifiers: .command)
+        case .undo: KeyboardShortcut(keyCode: 6, modifiers: .command)
+        case .redo: KeyboardShortcut(keyCode: 6, modifiers: [.command, .shift])
+        case .selectAll: KeyboardShortcut(keyCode: 0, modifiers: .command)
+        case .nextTab: KeyboardShortcut(keyCode: 48, modifiers: .control)
+        case .previousTab: KeyboardShortcut(keyCode: 48, modifiers: [.control, .shift])
+        case .newTab: KeyboardShortcut(keyCode: 17, modifiers: .command)
+        case .reopenTab: KeyboardShortcut(keyCode: 17, modifiers: [.command, .shift])
+        case .zoomIn: KeyboardShortcut(keyCode: 24, modifiers: .command)
+        case .zoomOut: KeyboardShortcut(keyCode: 27, modifiers: .command)
+        case .screenshotScreen: KeyboardShortcut(keyCode: 20, modifiers: [.command, .shift])
+        case .screenshotArea: KeyboardShortcut(keyCode: 21, modifiers: [.command, .shift])
+        case .screenshotTools: KeyboardShortcut(keyCode: 23, modifiers: [.command, .shift])
         default: nil
         }
     }
 
     func configuredAction(shortcut: KeyboardShortcut?, application: ApplicationTarget? = nil,
                           webAddress: String = "", file: URL? = nil,
-                          appleShortcut: AppleShortcutTarget? = nil) -> RebindAction? {
+                          appleShortcut: AppleShortcutTarget? = nil, text: String = "") -> RebindAction? {
         if let fixedShortcut { return .shortcut(fixedShortcut) }
+        if self == .insertText { return TextSnippet.isValid(text) ? .text(text) : nil }
+        if self == .doNothing { return .doNothing }
+        if let controlAction { return .control(controlAction) }
         if self == .lockScreen { return .lockScreen }
         if self == .sleepSystem { return .sleepSystem }
         if self == .openSystemSettings { return .workspace(.openSystemSettings) }

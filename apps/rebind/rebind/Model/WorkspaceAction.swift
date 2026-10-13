@@ -18,6 +18,16 @@ nonisolated struct ApplicationTarget: Codable, Equatable, Sendable {
     }
 }
 
+extension ApplicationTarget {
+    /// A user-picked application bundle, or nil when it is not an app Rebind can target.
+    init?(bundleURL url: URL) {
+        guard let bundle = Bundle(url: url), let identifier = bundle.bundleIdentifier,
+              bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL" else { return nil }
+        self.init(url: url.standardizedFileURL, bundleIdentifier: identifier)
+        guard isSupported else { return nil }
+    }
+}
+
 nonisolated enum WorkspaceAction: Codable, Equatable, Sendable {
     case openApplication(ApplicationTarget)
     case activateApplication(ApplicationTarget)

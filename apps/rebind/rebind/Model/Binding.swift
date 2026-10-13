@@ -9,21 +9,28 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
     var isEnabled = true
     var activation: PressActivation = .press
     var holdDurationMilliseconds: UInt32 = 500
+    /// Keeps a shortcut pressed, or repeats a step action, for as long as the trigger is held.
+    var holdsOutput = false
+    /// The user's own description of the rule; nil when there is none.
+    var note: String?
+    static let maximumNoteLength = 80
 
     var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers, isMagicTrackpad: scope == .magicTrackpad) }
     var isValid: Bool {
         (scope == trigger.scope || (scope == .magicTrackpad && trigger.isTrackpad)) && trigger.isSupported && action.isSupported
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
-            && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture && !trigger.isTrackpad))
+            && (activation == .press || (!trigger.isScroll && !trigger.holdsButton && !trigger.isTrackpad))
             && (!trigger.isTrackpad || modifiers.isEmpty)
             && (100...5000).contains(holdDurationMilliseconds)
+            && (note.map(Self.isValidNote) ?? true)
+            && (!holdsOutput || (activation == .press && trigger.canHoldOutput && action.canBeHeld))
     }
 }
 
 extension Binding {
     nonisolated private enum CodingKeys: String, CodingKey {
-        case id, scope, trigger, modifiers, action, isEnabled, activation, holdDurationMilliseconds
+        case id, scope, trigger, modifiers, action, isEnabled, activation, holdDurationMilliseconds, holdsOutput, note
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -38,6 +45,16 @@ extension Binding {
         activation = values.contains(.activation) ? try values.decode(PressActivation.self, forKey: .activation) : .press
         holdDurationMilliseconds = values.contains(.holdDurationMilliseconds)
             ? try values.decode(UInt32.self, forKey: .holdDurationMilliseconds) : 500
+        holdsOutput = values.contains(.holdsOutput) ? try values.decode(Bool.self, forKey: .holdsOutput) : false
+        note = try values.decodeIfPresent(String.self, forKey: .note)
+    }
+}
+
+extension Binding {
+    nonisolated static func isValidNote(_ note: String) -> Bool {
+        !note.isEmpty && note.count <= maximumNoteLength
+            && note == note.trimmingCharacters(in: .whitespacesAndNewlines)
+            && !note.unicodeScalars.contains { $0.properties.generalCategory == .control }
     }
 }
 

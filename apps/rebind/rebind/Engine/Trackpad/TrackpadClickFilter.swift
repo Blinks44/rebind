@@ -97,7 +97,7 @@ nonisolated struct TrackpadClickFilter: Sendable {
 extension EngineMailbox.State {
     /// Runs inside the mailbox lock on the event-tap thread; no I/O, one bounded append.
     nonisolated mutating func consumesTrackpadClick(button: UInt32, event: InputEvent) -> Bool {
-        let active = status == .active && enabled && !editing && !suspended && !stopped
+        let active = status == .active && isMatching && !editing && !suspended && !stopped
             && recording == nil && foregroundPID != nil
         let rules = rules
         func rule(_ trigger: InputTrigger, _ magic: Bool) -> RebindAction? {

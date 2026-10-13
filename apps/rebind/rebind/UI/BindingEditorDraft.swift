@@ -8,6 +8,9 @@ nonisolated struct BindingEditorDraft {
     var activation: PressActivation
     var holdDurationMilliseconds: UInt32
     var pointerDirection: PointerDirection
+    var scrollDirection: ScrollDirection
+    var holdsOutput: Bool
+    var note: String
 
     var trackpadPreset: TrackpadPreset? {
         get { trigger.flatMap { TrackpadPreset(trigger: $0.trigger) } }
@@ -24,14 +27,20 @@ nonisolated struct BindingEditorDraft {
         output = existing?.action.shortcut
         activation = existing?.activation ?? .press
         holdDurationMilliseconds = existing?.holdDurationMilliseconds ?? 500
+        holdsOutput = existing?.holdsOutput ?? false
+        note = existing?.note ?? ""
         mouseTarget = .mouseTrigger
         pointerDirection = .left
+        scrollDirection = .up
         if let existing {
             switch existing.trigger {
             case .scroll: mouseTarget = .scrollTrigger
             case .mouseGesture(_, let direction):
                 mouseTarget = .gestureTrigger
                 pointerDirection = direction
+            case .buttonScroll(_, let direction):
+                mouseTarget = .buttonScrollTrigger
+                scrollDirection = direction
             default: break
             }
         }
@@ -43,6 +52,7 @@ nonisolated struct BindingEditorDraft {
         activation = .press
         holdDurationMilliseconds = 500
         pointerDirection = .left
+        scrollDirection = .up
     }
 
     mutating func accept(_ recorded: RecordedInput, for request: RecordingRequest?, scope: DeviceScope) {
@@ -54,7 +64,7 @@ nonisolated struct BindingEditorDraft {
         case .keyboardTrigger:
             guard scope == .allKeyboards, case .key = input.trigger else { return }
             trigger = input
-        case .mouseTrigger, .gestureTrigger:
+        case .mouseTrigger, .gestureTrigger, .buttonScrollTrigger:
             guard scope == .allMice, recorded.request.target == mouseTarget,
                   case .mouseButton = input.trigger, input.trigger.isSupported else { return }
             trigger = input
@@ -72,6 +82,9 @@ nonisolated struct BindingEditorDraft {
             case .gestureTrigger:
                 guard case .mouseButton(let button) = source else { return nil }
                 source = .mouseGesture(button: button, direction: pointerDirection)
+            case .buttonScrollTrigger:
+                guard case .mouseButton(let button) = source else { return nil }
+                source = .buttonScroll(button: button, direction: scrollDirection)
             case .mouseTrigger:
                 guard case .mouseButton = source else { return nil }
             case .scrollTrigger:
@@ -80,8 +93,12 @@ nonisolated struct BindingEditorDraft {
             }
         }
         var binding = Binding(scope: scope, trigger: source, modifiers: trigger.modifiers, action: action,
-            activation: source.isScroll || source.isPointerGesture ? .press : activation,
+            activation: source.isScroll || source.holdsButton ? .press : activation,
             holdDurationMilliseconds: holdDurationMilliseconds)
+        binding.holdsOutput = holdsOutput && binding.activation == .press && source.canHoldOutput && action.canBeHeld
+        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        binding.note = trimmed.isEmpty ? nil : String(trimmed.prefix(Binding.maximumNoteLength))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         if let existing { binding.id = existing.id; binding.isEnabled = existing.isEnabled }
         return binding
     }

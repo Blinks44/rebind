@@ -141,6 +141,14 @@ User request: the sidebar logo and app name read too close to body text. Tried 4
 
 Checks: build succeeds; `MainWindowLayoutTests` (3 tests) pass; the Light 1080 × 720 render was compared by eye with Sketch screen 01. Not seen in the running app by the agent.
 
+## Follow-up 10 — 2026-10-13: field outline cause found
+
+The uneven focus outline was reproduced in an on-screen test window on the user's 1x display (2560 × 1440) and measured by pixel: a 1.5 pt `strokeBorder` renders 1 px on the top edge and 1.5 px on the bottom and sides. Any fractional pixel width shows the same loss; whole-pixel widths are even. The capsule style, clipping and layer size targeted in Follow-ups 4–5 were not the cause.
+
+`Theme.accentBorderWidth(displayScale:)` snaps the 1.5 pt accent border to whole device pixels (2 px at 1x, 3 px = 1.5 pt at 2x). `ControlSurface` (text fields) and `BindingCaptureField` (listening state) use it; no other fractional stroke widths exist in the app.
+
+Checks: build succeeds; the full suite passes (699 Swift Testing tests, XCTest host succeeded); the test-window capture shows 2 px on every edge after the change. Measured at 1x only; the 2x path is unchanged arithmetic and was not captured. Why the top/bottom loss appeared to swap when the app lost focus was not reproduced. Not seen in the running app by the agent; the user confirmed the outline is even in the running app on the 1x display the same day.
+
 ## Open checks / dependency
 
 - The offscreen `cacheDisplay` capture draws shadow offsets upward, so shadow direction, keycap ledge and button glow were not verified by image. They need a look in the running app.

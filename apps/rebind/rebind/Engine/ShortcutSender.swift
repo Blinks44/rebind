@@ -25,6 +25,18 @@ nonisolated enum ShortcutSender {
         return [down, up]
     }
 
+    /// One half of a held key. The pair is balanced by the mailbox, which always
+    /// issues a release for a press it handed out.
+    static func postHeldKey(_ command: HeldKeyCommand) {
+        guard command.shortcut.isSupported, let source = CGEventSource(stateID: .privateState),
+              let event = CGEvent(keyboardEventSource: source, virtualKey: command.shortcut.keyCode,
+                                  keyDown: command.phase != .release) else { return }
+        event.flags = command.shortcut.modifiers.flags
+        event.setIntegerValueField(.eventSourceUserData, value: eventTag)
+        if command.phase == .repeatPress { event.setIntegerValueField(.keyboardEventAutorepeat, value: 1) }
+        event.post(tap: .cgSessionEventTap)
+    }
+
     // The touch action keeps its captured target even if foreground changes in
     // the final posting race. No retry/acknowledgement or global modifier events.
     static func send(_ shortcut: KeyboardShortcut, to target: TrackpadDispatchTarget,

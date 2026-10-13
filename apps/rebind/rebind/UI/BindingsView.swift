@@ -6,6 +6,7 @@ struct BindingsView: View {
     let scope: DeviceScope
     let add: () -> Void
     let edit: (Binding) -> Void
+    let duplicate: (Binding) -> Void
     let delete: (Binding) -> Void
     let manageProfiles: () -> Void
     let openPermissions: () -> Void
@@ -145,7 +146,8 @@ struct BindingsView: View {
     private var card: some View {
         VStack(spacing: 0) {
             ForEach(visible) { binding in
-                BindingRow(binding: binding, model: model, edit: { edit(binding) }, delete: { delete(binding) })
+                BindingRow(binding: binding, model: model, edit: { edit(binding) },
+                           duplicate: { duplicate(binding) }, delete: { delete(binding) })
                     .overlay(alignment: .top) {
                         if binding.id != visible.first?.id {
                             Theme.separator.frame(height: 1).padding(.horizontal, 20)

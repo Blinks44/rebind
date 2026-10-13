@@ -13,6 +13,7 @@ struct BindingCaptureField: View {
     var shortcut: KeyboardShortcut?
     @FocusState private var cancelFocused: Bool
     @FocusState private var recordFocused: Bool
+    @Environment(\.displayScale) private var displayScale
 
     private var isListening: Bool { recording?.target == target }
 
@@ -48,7 +49,7 @@ struct BindingCaptureField: View {
         .background(isListening ? Theme.accentTint : Theme.insetSurface, in: .rect(cornerRadius: 16, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(isListening ? Theme.accent : Theme.borderSubtle, lineWidth: isListening ? 1.5 : 1)
+                .strokeBorder(isListening ? Theme.accent : Theme.borderSubtle, lineWidth: isListening ? Theme.accentBorderWidth(displayScale: displayScale) : 1)
         }
         .onChange(of: isListening) { wasListening, listening in
             if listening {
@@ -97,7 +98,7 @@ struct BindingCaptureField: View {
         switch target {
         case .output: .mouseOutputListening
         case .scrollTrigger: .mouseWheelListening
-        case .mouseTrigger, .gestureTrigger: .mouseButtonListening
+        case .mouseTrigger, .gestureTrigger, .buttonScrollTrigger: .mouseButtonListening
         case .keyboardTrigger: .listeningHint
         }
     }

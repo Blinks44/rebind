@@ -108,6 +108,8 @@ private struct RebindMenu: View {
 
     var body: some View {
         Text(model.statusText)
+        // The window may be closed when an action fails; the menu is where it can still be seen.
+        if let error = model.error { Text(error) }
         Button(.openRebind) { openWindow(id: "main"); NSApp.activate() }
         Menu(.profileTitle) {
             ProfilePicker(model: model).pickerStyle(.inline)
