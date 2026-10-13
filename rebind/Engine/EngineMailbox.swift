@@ -38,6 +38,7 @@ nonisolated final class EngineMailbox: Sendable {
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
         var trackpadDiagnostics: TrackpadDiagnostics?
+        var trackpadClicks = TrackpadClickFilter()
         var inputActivity: UInt64 = 0
         var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?
@@ -254,7 +255,12 @@ nonisolated final class EngineMailbox: Sendable {
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
         guard !event.isSynthetic, !event.trigger.isTrackpad else { return false }
-        return state.withLock { Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput) }
+        return state.withLock {
+            // Trackpad click rules and configured corner taps replace the click itself.
+            if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput,
+               $0.consumesTrackpadClick(button: button, event: event) { return true }
+            return Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput)
+        }
     }
 
     func handlePointerMotion(_ motion: PointerMotion, modifiers: ModifierSet, receivedAt: UInt64,

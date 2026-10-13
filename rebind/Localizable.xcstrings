@@ -12516,6 +12516,35 @@
         }
       }
     },
+    "trackpadSmartZoomHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If Smart Zoom is enabled, macOS may also respond. In System Settings → Trackpad → Scroll & Zoom, turn off Smart zoom, or choose another preset. Rebind does not suppress system gestures."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Если включено смарт-масштабирование, macOS тоже может отреагировать. Отключите его в Системных настройках → Трекпад → Прокрутка и масштабирование или выберите другой жест. Rebind не подавляет системные жесты."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn Intelligentes Zoomen aktiviert ist, kann macOS ebenfalls reagieren. Deaktivieren Sie es unter Systemeinstellungen → Trackpad → Scrollen & Zoomen oder wählen Sie eine andere Geste. Rebind unterdrückt Systemgesten nicht."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si le zoom intelligent est activé, macOS peut aussi réagir. Désactivez-le dans Réglages Système → Trackpad → Défilement et zoom, ou choisissez un autre geste. Rebind ne bloque pas les gestes système."
+          }
+        }
+      }
+    },
     "trackpadOutputHelp" : {
       "comment" : "Trackpad preset editor. Conditional guidance does not inspect or change macOS settings.",
       "extractionState" : "manual",
@@ -12631,6 +12660,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Системные жесты тоже могут сработать"
+          }
+        }
+      }
+    },
+    "trackpadTwoFingerDoubleTapHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap twice with 2 fingers without pressing the trackpad."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коснитесь трекпада двумя пальцами дважды, не нажимая на него."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen Sie zweimal mit zwei Fingern, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez deux fois avec deux doigts sans appuyer sur le trackpad."
           }
         }
       }
@@ -12780,6 +12838,354 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Если включено увеличение жестом трекпада, macOS тоже может отреагировать. Проверьте эту опцию в Системных настройках → Универсальный доступ → Увеличение или выберите другой жест. Rebind не подавляет системные жесты."
+          }
+        }
+      }
+    },
+    "trackpadTopLeftCornerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-left corner tap"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тап в левом верхнем углу"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen in die Ecke oben links"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher dans le coin supérieur gauche"
+          }
+        }
+      }
+    },
+    "trackpadTopRightCornerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-right corner tap"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тап в правом верхнем углу"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen in die Ecke oben rechts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher dans le coin supérieur droit"
+          }
+        }
+      }
+    },
+    "trackpadTwoFingerClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-finger click"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажатие двумя пальцами"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klick mit zwei Fingern"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic à deux doigts"
+          }
+        }
+      }
+    },
+    "trackpadThreeFingerClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Three-finger click"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажатие тремя пальцами"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klick mit drei Fingern"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic à trois doigts"
+          }
+        }
+      }
+    },
+    "trackpadFourFingerClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Four-finger click"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажатие четырьмя пальцами"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klick mit vier Fingern"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic à quatre doigts"
+          }
+        }
+      }
+    },
+    "trackpadClickHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press the trackpad until it clicks while this many fingers rest on it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите на трекпад до щелчка, держа на нём столько пальцев."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücken Sie das Trackpad, bis es klickt, während so viele Finger darauf liegen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez sur le trackpad jusqu’au clic avec ce nombre de doigts posés dessus."
+          }
+        }
+      }
+    },
+    "trackpadSecondaryClickHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This rule replaces the trackpad’s secondary click. It works while Secondary click is set to Click with Two Fingers in System Settings → Trackpad → Point & Click."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это правило заменяет имитацию правой кнопки на трекпаде. Оно работает, когда в Системных настройках → Трекпад → Выбор и нажатие для имитации правой кнопки выбрано нажатие двумя пальцами."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Regel ersetzt den Sekundärklick des Trackpads. Sie funktioniert, wenn unter Systemeinstellungen → Trackpad → Zeigen & Klicken für den Sekundärklick „Mit zwei Fingern klicken“ gewählt ist."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette règle remplace le clic secondaire du trackpad. Elle fonctionne lorsque le clic secondaire est réglé sur « Cliquer avec deux doigts » dans Réglages Système → Trackpad → Pointer et cliquer."
+          }
+        }
+      }
+    },
+    "trackpadMultiFingerClickHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This rule replaces the ordinary click made with this many fingers. Clicking while other fingers rest on the trackpad can also run it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это правило заменяет обычное нажатие, сделанное таким числом пальцев. Оно может сработать и при нажатии, когда другие пальцы просто лежат на трекпаде."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Regel ersetzt den normalen Klick mit so vielen Fingern. Sie kann auch auslösen, wenn beim Klicken weitere Finger auf dem Trackpad ruhen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette règle remplace le clic ordinaire effectué avec ce nombre de doigts. Elle peut aussi se déclencher si d’autres doigts reposent sur le trackpad pendant le clic."
+          }
+        }
+      }
+    },
+    "trackpadBottomLeftCornerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom-left corner tap"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тап в левом нижнем углу"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen in die Ecke unten links"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher dans le coin inférieur gauche"
+          }
+        }
+      }
+    },
+    "trackpadBottomRightCornerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom-right corner tap"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тап в правом нижнем углу"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen in die Ecke unten rechts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher dans le coin inférieur droit"
+          }
+        }
+      }
+    },
+    "trackpadCornerTapHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap once with 1 finger in this corner without pressing the trackpad."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коснитесь этого угла трекпада одним пальцем один раз, не нажимая на него."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen Sie einmal mit einem Finger in diese Ecke, ohne das Trackpad zu drücken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez une fois ce coin avec un doigt sans appuyer sur le trackpad."
+          }
+        }
+      }
+    },
+    "trackpadTapToClickHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With Tap to click on, a tap in this corner runs the rule instead of clicking; press the trackpad to click there. If macOS still clicks, turn off Tap to click in System Settings → Trackpad → Point & Click, or choose another preset."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При включённом «Касании для имитации нажатия» тап в этом углу запускает правило вместо нажатия; чтобы нажать там, надавите на трекпад. Если macOS всё равно выполняет нажатие, отключите эту опцию в Системных настройках → Трекпад → Выбор и нажатие или выберите другой жест."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist „Klick durch Tippen“ aktiviert, löst Tippen in dieser Ecke die Regel aus, statt zu klicken; drücken Sie das Trackpad, um dort zu klicken. Falls macOS trotzdem klickt, deaktivieren Sie die Option unter Systemeinstellungen → Trackpad → Zeigen & Klicken oder wählen Sie eine andere Geste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si « Toucher pour cliquer » est activé, un toucher dans ce coin exécute la règle au lieu de cliquer ; appuyez sur le trackpad pour y cliquer. Si macOS clique quand même, désactivez cette option dans Réglages Système → Trackpad → Pointer et cliquer, ou choisissez un autre geste."
           }
         }
       }

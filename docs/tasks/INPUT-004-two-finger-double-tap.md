@@ -1,6 +1,6 @@
 # INPUT-004 — Two-finger double-tap engine and storage
 
-- Updated: 2026-10-12.
+- Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
 - Owner: Kilo code agent (this chat); engine/data ownership released.
 - Ownership checked: 2026-10-12 / `main` `8e8a06e`; concurrent `/root` agent owns uncommitted [UI-021](UI-021-main-window-layout.md) main-shell surfaces (ContentView/rebindApp/MainSidebar*/Navigation.xcstrings/EditorMenuSelector/ProfilePicker/MouseBindingsView and their layout tests). No file overlap; both uncommitted work preserved.
@@ -35,6 +35,8 @@ Agent-observed on macOS 27.0.1 (26A434) / arm64, Xcode 27.0 / Swift 6.4 / SDK 27
 - Debug build passes; `git diff --check` clean. Editor exposure, physical accuracy/latency and native coexistence remain open.
 
 ## Open checks / dependency
+
+**2026-10-13:** the preset is exposed in the Trackpad editor (`TrackpadPreset.twoFingerDoubleTap`, Smart Zoom guidance in four languages); editor suites and the localized layout test pass. The exposure dependency below is closed; physical acceptance remains.
 
 Physical/hardware acceptance requires the user on a named build. Editor preset exposure requires the design-adoption agent ([UI-013](UI-013-design-coverage-completion.md) final selector; saved pool already contains "Double tap · 2 fingers" with four-language copy). The Settings matrix failure is UI-021's open item, not this engine slice.
 

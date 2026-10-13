@@ -113,6 +113,7 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
+        mailbox.state.withLock { $0.trackpadClicks.observe(frame) }
         state.withLock { $0.append(frame, generation: generation) }
     }
 

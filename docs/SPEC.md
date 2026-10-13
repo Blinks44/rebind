@@ -196,6 +196,8 @@ additional platforms still require evidence. See [implementation limits](verific
 
 **Editor follow-up, 2026-10-12:** [UI-014](tasks/UI-014-trackpad-presets.md) now exposes the four engine-backed single/double presets through one selector, independent output recording and conditional Look Up/Zoom guidance. This supersedes the earlier editor-exposure limitation. Physical/native/accessibility acceptance and the broader final preset/action pool remain open; no suppression or new hardware support claim.
 
+**Engine/editor follow-up, 2026-10-13:** the editor exposes the two-finger double tap, and [INPUT-005](tasks/INPUT-005-corner-taps.md) adds one-finger corner taps (schema 28) through the same guarded engine. With Tap to click on, the click macOS synthesizes from a configured corner tap is consumed so the rule replaces it (user decision 2026-10-13); this is the only native trackpad behavior Rebind suppresses. [INPUT-006](tasks/INPUT-006-trackpad-clicks.md) adds physical clicks with 2/3/4 fingers (schema 29): the rule replaces the click; two fingers count only when macOS reports the secondary button. Physical acceptance of the whole pool is open.
+
 **Acceptance T1:** On tested physical trackpad hardware, a four-finger tap can generate one `Command + W` in a supported setup, without unsafe duplicate behavior.  
 **Acceptance T2:** Gesture classification is debounced, produces no accidental extra actions, and respects user pause.
 

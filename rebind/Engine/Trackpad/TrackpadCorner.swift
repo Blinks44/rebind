@@ -1,6 +1,6 @@
 // Corner bounds adapted from Sanne's MIT CornerTapRecognizer.region(at:).
 // Copyright (c) 2026 Sanne contributors. See Resources/ThirdPartyNotices.txt.
-nonisolated enum TrackpadCorner: CaseIterable, Hashable, Sendable {
+nonisolated enum TrackpadCorner: String, CaseIterable, Codable, Hashable, Sendable {
     case topLeft, topRight, bottomLeft, bottomRight
 
     // Native normalized trackpad Y increases toward the top, unlike Quartz Y.

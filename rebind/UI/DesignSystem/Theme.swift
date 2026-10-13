@@ -24,7 +24,7 @@ enum Theme {
 
     // Text and icons
     static let textPrimary = Color(light: 0x111318, dark: 0xF2F4F8)
-    static let textSecondary = Color(light: 0x3C3C43, 0.6, dark: 0xEBEBF5, 0.6)
+    static let textSecondary = Color(light: 0x3C3C43, 0.75, dark: 0xEBEBF5, 0.6)
     static let textTertiary = Color(light: 0x3C3C43, 0.3, dark: 0xEBEBF5, 0.3)
     static let iconSecondary = Color(light: 0x3C3C43, 0.7, dark: 0xEBEBF5, 0.7)
     static let iconTertiary = Color(light: 0x3C3C43, 0.4, dark: 0xEBEBF5, 0.4)

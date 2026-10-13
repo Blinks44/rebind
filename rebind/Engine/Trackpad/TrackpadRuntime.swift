@@ -22,6 +22,9 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
     var threeFingerDoubleShortcut: KeyboardShortcut? = nil
     var fourFingerDoubleShortcut: KeyboardShortcut? = nil
     var twoFingerDoubleShortcut: KeyboardShortcut? = nil
+    var cornerShortcuts: [TrackpadCorner: KeyboardShortcut] = [:]
+    /// Click rules are resolved on the event-tap path; they only need contact frames to keep flowing.
+    var hasClickRules = false
     var doubleTapIntervalNanoseconds: UInt64 = 500_000_000
 
     var enabledGestures: Set<TrackpadTapSequence.Gesture> {
@@ -31,6 +34,7 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
             }
         })
         if shortcut(for: .twoFingerDouble) != nil { gestures.insert(TrackpadTapGesture.twoFingerDouble.sequenceGesture) }
+        gestures.formUnion(cornerShortcuts.keys.map { .cornerTap($0) })
         return gestures
     }
 
@@ -40,13 +44,18 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
         case .double(.threeFinger): threeFingerDoubleShortcut
         case .double(.fourFinger): fourFingerDoubleShortcut
         case .twoFingerDouble: twoFingerDoubleShortcut
+        case .corner(let corner): cornerShortcuts[corner]
         }
     }
 
-    /// The only gesture identity a completed contact of this finger count may
-    /// produce under the configured rules; nil when none is configured. A
-    /// two-finger contact can never produce a single-tap output.
-    func admissibleGesture(fingers: Int) -> TrackpadTapGesture? {
+    /// The only gesture identity a completed contact of this finger count and
+    /// starting centroid may produce under the configured rules; nil when none
+    /// is configured. A two-finger contact can never produce a single-tap output,
+    /// and a one-finger contact only counts inside a configured corner.
+    func admissibleGesture(fingers: Int, x: Float, y: Float) -> TrackpadTapGesture? {
+        if fingers == 1 {
+            return TrackpadCorner.containing(x: x, y: y).flatMap { cornerShortcuts[$0] == nil ? nil : .corner($0) }
+        }
         if fingers == 2 { return shortcut(for: .twoFingerDouble) == nil ? nil : .twoFingerDouble }
         guard let tap = TrackpadSingleTap(rawValue: fingers),
               shortcut(for: .single(tap)) != nil || shortcut(for: .double(tap)) != nil else { return nil }
@@ -75,11 +84,18 @@ extension EngineMailbox {
             let doubleThree = supportsDouble ? $0.rules[MatchKey(trigger: .threeFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
             let doubleFour = supportsDouble ? $0.rules[MatchKey(trigger: .fourFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
             let doubleTwo = supportsDouble ? $0.rules[MatchKey(trigger: .twoFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
-            guard four != nil || three != nil || doubleThree != nil || doubleFour != nil || doubleTwo != nil else { return nil }
+            let rules = $0.rules
+            let clicks = (2...4).contains { rules[MatchKey(trigger: .trackpadClick(fingers: $0), modifiers: [])]?.action.shortcut != nil }
+            var corners: [TrackpadCorner: KeyboardShortcut] = [:]
+            for corner in TrackpadCorner.allCases {
+                corners[corner] = $0.rules[MatchKey(trigger: .cornerTap(corner), modifiers: [])]?.action.shortcut
+            }
+            guard four != nil || three != nil || doubleThree != nil || doubleFour != nil || doubleTwo != nil
+                    || !corners.isEmpty || clicks else { return nil }
             return TrackpadRuntime(revision: $0.actionRevision, inputActivity: $0.inputActivity,
                                    fourFingerShortcut: four, threeFingerShortcut: three,
                                    threeFingerDoubleShortcut: doubleThree, fourFingerDoubleShortcut: doubleFour,
-                                   twoFingerDoubleShortcut: doubleTwo,
+                                   twoFingerDoubleShortcut: doubleTwo, cornerShortcuts: corners, hasClickRules: clicks,
                                    doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
         }
     }

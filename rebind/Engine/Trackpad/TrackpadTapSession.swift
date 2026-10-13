@@ -48,14 +48,9 @@ nonisolated struct TrackpadTapSession: Sendable {
             // does not make the idle trackpad unknown. It may emit no more zero
             // frames until the next tap. Never preserve an active/uncertain stroke
             // or neutrality across focus/rule changes.
-            let preserveNeutral = knownNeutral && self.runtime.revision == runtime.revision
-                && self.runtime.fourFingerShortcut == runtime.fourFingerShortcut
-                && self.runtime.threeFingerShortcut == runtime.threeFingerShortcut
-                && self.runtime.threeFingerDoubleShortcut == runtime.threeFingerDoubleShortcut
-                && self.runtime.fourFingerDoubleShortcut == runtime.fourFingerDoubleShortcut
-                && self.runtime.twoFingerDoubleShortcut == runtime.twoFingerDoubleShortcut
-                && self.runtime.doubleTapIntervalNanoseconds == runtime.doubleTapIntervalNanoseconds
-                && self.foreground == foreground
+            var previous = self.runtime
+            previous.inputActivity = runtime.inputActivity
+            let preserveNeutral = knownNeutral && previous == runtime && self.foreground == foreground
             interrupt(isNeutral: preserveNeutral)
             sequence = Self.makeSequence(runtime)
         }
@@ -97,8 +92,8 @@ nonisolated struct TrackpadTapSession: Sendable {
         let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts,
                                            allowIdleFrameGaps: qualifiedGesture == nil && sequence?.hasPending != true)
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0) }
-        if let candidate, let admissible = runtime.admissibleGesture(fingers: candidate.fingers),
-           let origin = recognizer.origin,
+        if let candidate, let origin = recognizer.origin,
+           let admissible = runtime.admissibleGesture(fingers: candidate.fingers, x: origin.x, y: origin.y),
            gate.candidate(fingers: candidate.fingers, at: frame.receipt,
                            buttons: frame.activity, observerReady: true) {
             guard foreground != nil else { interrupt(isNeutral: true); return .targetChanged }

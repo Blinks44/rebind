@@ -31,6 +31,8 @@ enum InputLabels {
         case .threeFingerDoubleTap: label = AppLocalization.string(.threeFingerDoubleTap)
         case .fourFingerDoubleTap: label = AppLocalization.string(.fourFingerDoubleTap)
         case .twoFingerDoubleTap: label = AppLocalization.string(.twoFingerDoubleTap)
+        case .cornerTap(let corner): label = AppLocalization.string(corner.title)
+        case .trackpadClick(let fingers): label = AppLocalization.string(TrackpadPreset.clickTitle(fingers: fingers))
         case .key(let code): label = key(code)
         case .mouseButton(let number): label = AppLocalization.string(.mouseButton(Int(number) + 1))
         case .mouseGesture(let button, let direction):
@@ -107,6 +109,17 @@ extension TrackpadCaptureStatus {
         case .active: .trackpadActive
         case .unavailable: .trackpadUnavailable
         case .failed: .trackpadFailed
+        }
+    }
+}
+
+nonisolated extension TrackpadCorner {
+    var title: LocalizedStringResource {
+        switch self {
+        case .topLeft: .trackpadTopLeftCornerTap
+        case .topRight: .trackpadTopRightCornerTap
+        case .bottomLeft: .trackpadBottomLeftCornerTap
+        case .bottomRight: .trackpadBottomRightCornerTap
         }
     }
 }

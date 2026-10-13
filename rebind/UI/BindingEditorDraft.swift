@@ -13,7 +13,7 @@ nonisolated struct BindingEditorDraft {
         get { trigger.flatMap { TrackpadPreset(trigger: $0.trigger) } }
         set {
             guard let newValue else { return }
-            trigger = MatchKey(trigger: newValue.gesture.trigger, modifiers: [])
+            trigger = MatchKey(trigger: newValue.trigger, modifiers: [])
             activation = .press
         }
     }

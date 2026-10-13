@@ -13,9 +13,9 @@ import XCTest
         for language in ["en", "ru", "de", "fr"] {
             for appearance in [ColorScheme.light, .dark] {
                 for scenario in 0..<10 {
-                    let preset = TrackpadPreset.allCases[scenario % 4]
+                    let preset = TrackpadPreset.allCases[scenario % TrackpadPreset.allCases.count]
                     var existing: rebind.Binding? = rebind.Binding(scope: .builtInTrackpad,
-                        trigger: preset.gesture.trigger, modifiers: [], action: shortcut)
+                        trigger: preset.trigger, modifiers: [], action: shortcut)
                     if scenario == 4 { existing = nil }
                     if scenario == 9 { existing?.isEnabled = false }
                     let duplicate = scenario == 5

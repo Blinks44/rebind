@@ -10,17 +10,19 @@ User decision 2026-10-12: the calm look of **Rebind - new.sketch** replaces the 
 
 ## Current source: Rebind - new.sketch
 
-Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-12**, SHA-256 `fb80066eafaa777789c42011396c7d390192e644da13151d9817f285ca48bfb9`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-12**, SHA-256 `d1b0f6358b3b2e59859161f78cda7b1d1e3aeb509a3d80ad0b217972f098bd7a`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 18 screens, each Light and Dark, built only from components |
+| 01 · Screens | 19 screens, each Light and Dark, built only from components |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
-| 05 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
+| 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
 | 99 · Archive | The two original hand-drawn Keyboard frames |
 
 Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
+
+The code mirrors the variables in `rebind/UI/DesignSystem/Theme.swift`; on 2026-10-13 all 43 colors used by the app matched Sketch exactly. Change a token in both places.
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 

@@ -36,15 +36,11 @@ struct MouseTriggerEditor: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
             } else if draft.mouseTarget == .gestureTrigger {
-                HStack(spacing: 12) {
-                    Text(.pointerDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textPrimary)
-                    Spacer(minLength: 8)
-                    MenuSelector(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
-                        choices: PointerDirection.allCases, label: { $0.label })
-                        .frame(maxWidth: 224)
-                        .accessibilityIdentifier("mouse-direction-selector")
-                        .disabled(model.recording != nil)
-                }
+                Text(.pointerDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                SegmentedPicker(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
+                                options: PointerDirection.allCases, label: { $0.label }, fillsWidth: true)
+                    .accessibilityIdentifier("mouse-direction-selector")
+                    .disabled(model.recording != nil)
             }
             Text(help).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

@@ -66,7 +66,7 @@ struct AppShortContactTests {
         #expect(candidate.fingers == 4)
     }
 
-    @Test(arguments: [1, 5]) func unsupportedCountsNeverBecomeCandidates(fingers: Int) {
+    @Test(arguments: [5, 6]) func unsupportedCountsNeverBecomeCandidates(fingers: Int) {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(fingers))

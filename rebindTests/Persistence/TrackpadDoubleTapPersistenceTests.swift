@@ -89,7 +89,7 @@ struct TrackpadDoubleTapPersistenceTests {
         let corrupt = text.replacingOccurrences(of: "threeFingerDoubleTap", with: "fiveFingerDoubleTap")
         #expect(throws: (any Error).self) { _ = try JSONDecoder().decode(Configuration.self, from: Data(corrupt.utf8)) }
         var future = config
-        future.schemaVersion = 28
+        future.schemaVersion = Configuration.currentSchemaVersion + 1
         let encoded = try JSONEncoder().encode(future)
         #expect(throws: ConfigurationError.incompatible) { _ = try JSONDecoder().decode(Configuration.self, from: encoded) }
     }
