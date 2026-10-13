@@ -9,7 +9,8 @@ struct TrackpadTriggerEditor: View {
             SectionLabel(.triggerTitle)
             MenuSelector(selection: $draft.trackpadPreset, title: .trackpadGestureTitle,
                 choices: (draft.trackpadPreset == nil ? [nil] : []) + TrackpadPreset.allCases.map(Optional.some),
-                label: { $0?.title ?? .notRecorded })
+                label: { $0?.title ?? .notRecorded },
+                startsGroup: { [.twoFingerDoubleTap, .click(fingers: 2), .cornerTap(.topLeft)].contains($0) })
             .frame(maxWidth: .infinity, minHeight: 36)
             .disabled(isRecording)
             .accessibilityIdentifier("trackpad-preset-selector")

@@ -8,7 +8,7 @@ struct MediaKeySenderTests {
     func constructsNativeAuxiliaryPairsWithExactCodesPhasesNoRepeatOrModifiers(_ action: MediaAction) throws {
         let pair = try #require(MediaKeySender.events(action))
         #expect(pair.count == 2)
-        #expect(action.keyCode == (action == .playPause ? 16 : action == .nextTrack ? 17 : 18))
+        #expect(action.keyCode == [.playPause: 16, .nextTrack: 17, .previousTrack: 18, .brightnessUp: 2, .brightnessDown: 3][action])
         let sources = try pair.map { try #require(CGEventSource(event: $0)) }
         #expect(sources[0].sourceStateID == sources[1].sourceStateID)
         #expect(sources[0].sourceStateID != .hidSystemState && sources[0].sourceStateID != .combinedSessionState)

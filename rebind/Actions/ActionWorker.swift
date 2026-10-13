@@ -118,11 +118,15 @@ nonisolated final class ActionWorker {
         guard postingAllowed() else { mailbox.captureLost(status: .permissionRequired); return }
         guard !secureInput() else { mailbox.captureLost(status: .secureInput); return }
         guard mailbox.dispatchIsCurrent(dispatch) else { return }
+        // A delayed touch action is dropped rather than executed late, whatever it does.
+        if let target = dispatch.trackpadTarget, now > target.expiresAt {
+            mailbox.recordTrackpadDiagnostic(.outputExpired)
+            return
+        }
         let success: Bool
         switch dispatch.action {
         case .shortcut(let shortcut):
             if let target = dispatch.trackpadTarget {
-                guard now <= target.expiresAt else { mailbox.recordTrackpadDiagnostic(.outputExpired); return }
                 let mailbox = mailbox
                 let postingAllowed = postingAllowed
                 let secureInput = secureInput

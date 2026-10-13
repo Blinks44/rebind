@@ -161,10 +161,7 @@ struct BindingEditor: View {
     private var action: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.actionTitle)
-            if scope == .builtInTrackpad {
-                SelectorLabel(title: .outputShortcut, symbol: "command").modifier(ControlSurface())
-                    .accessibilityElement(children: .combine)
-            } else { ActionPickerView(model: model, selection: $actionKind) }
+            ActionPickerView(model: model, selection: $actionKind)
             if actionKind == .keyboardShortcut {
                 BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
                     recording: model.recording, canRecord: model.canRecord,
@@ -194,7 +191,7 @@ struct BindingEditor: View {
         if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
         if actionKind.mouseAction != nil { return .mouseActionHint }
         if actionKind.windowLayoutAction != nil { return .windowLayoutHint }
-        if actionKind.mediaAction != nil { return .mediaActionHint }
+        if let media = actionKind.mediaAction { return media.isBrightness ? .brightnessActionHint : .mediaActionHint }
         if let desktop = actionKind.desktopAction {
             return desktop.dockNotification != nil ? .dockActionHint : .spaceActionHint
         }

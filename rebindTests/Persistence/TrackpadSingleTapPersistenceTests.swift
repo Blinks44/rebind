@@ -53,7 +53,7 @@ struct TrackpadSingleTapPersistenceTests {
         case 0: invalid.modifiers = .control
         case 1: invalid.activation = .doublePress
         case 2: invalid.activation = .hold
-        case 3: invalid.action = .lockScreen
+        case 3: invalid.action = .shortcut(.init(keyCode: 57, modifiers: []))
         default: invalid.scope = .allMice
         }
         #expect(invalid.isValid == false)

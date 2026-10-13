@@ -100,14 +100,12 @@ extension EngineMailbox.State {
         let active = status == .active && enabled && !editing && !suspended && !stopped
             && recording == nil && foregroundPID != nil
         let rules = rules
-        func shortcutRule(_ trigger: InputTrigger) -> RebindAction? {
-            guard active, let action = rules[MatchKey(trigger: trigger, modifiers: [])]?.action,
-                  action.shortcut != nil else { return nil }
-            return action
+        func rule(_ trigger: InputTrigger) -> RebindAction? {
+            active ? rules[MatchKey(trigger: trigger, modifiers: [])]?.action : nil
         }
         let decision = trackpadClicks.resolve(button: button, phase: event.phase, at: event.receivedAt ?? event.timestamp,
-            hasCornerRule: { shortcutRule(.cornerTap($0)) != nil },
-            hasClickRule: { shortcutRule(.trackpadClick(fingers: $0)) != nil })
+            hasCornerRule: { rule(.cornerTap($0)) != nil },
+            hasClickRule: { rule(.trackpadClick(fingers: $0)) != nil })
         switch decision {
         case .pass: return false
         case .consume: return true
@@ -115,7 +113,7 @@ extension EngineMailbox.State {
             // A press is still real activity: it must cancel any pending light-tap output.
             inputActivity &+= 1
             trackpadDispatch = nil
-            if pending.count < 16, let action = shortcutRule(.trackpadClick(fingers: fingers)) { pending.append(action) }
+            if pending.count < 16, let action = rule(.trackpadClick(fingers: fingers)) { pending.append(action) }
             return true
         }
     }

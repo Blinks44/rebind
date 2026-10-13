@@ -8,7 +8,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case leftHalf, rightHalf, fillWindow, centerWindow
     case nextWindow, previousWindow, previousApplication
     case openApplication, activateApplication, quitApplication, openURL, openFile
-    case openSystemSettings, sleepSystem, lockScreen
+    case brightnessUp, brightnessDown, openSystemSettings, sleepSystem, lockScreen
     case runAppleShortcut
     case missionControl, applicationWindows, showDesktop, previousSpace, nextSpace
     var id: Self { self }
@@ -19,7 +19,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     }
 
     var category: Category {
-        if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen { return .system }
+        if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen
+            || mediaAction?.isBrightness == true { return .system }
         if mouseAction != nil { return .mouse }
         if desktopAction != nil { return .desktop }
         if self == .runAppleShortcut { return .automation }
@@ -37,6 +38,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .media(.playPause): self = .playPause
         case .media(.nextTrack): self = .nextTrack
         case .media(.previousTrack): self = .previousTrack
+        case .media(.brightnessUp): self = .brightnessUp
+        case .media(.brightnessDown): self = .brightnessDown
         case .mouse(.leftClick): self = .leftClick
         case .mouse(.rightClick): self = .rightClick
         case .mouse(.middleClick): self = .middleClick
@@ -102,6 +105,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .playPause: .playPause
         case .nextTrack: .nextTrack
         case .previousTrack: .previousTrack
+        case .brightnessUp: .brightnessUp
+        case .brightnessDown: .brightnessDown
         default: nil
         }
     }

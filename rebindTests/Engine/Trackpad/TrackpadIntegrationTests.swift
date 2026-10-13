@@ -485,7 +485,7 @@ struct TrackpadIntegrationTests {
             case 0: invalid.modifiers = .control
             case 1: invalid.activation = .doublePress
             case 2: invalid.activation = .hold
-            default: invalid.action = .lockScreen
+            default: invalid.action = .shortcut(.init(keyCode: 57, modifiers: []))
             }
             #expect(!invalid.isValid)
         }

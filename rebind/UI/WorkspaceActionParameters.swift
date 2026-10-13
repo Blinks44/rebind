@@ -22,19 +22,34 @@ struct WorkspaceActionParameters: View {
             if kind == .openURL {
                 ThemeTextField(title: .webAddressTitle, text: $webAddress, prompt: Text(verbatim: "https://example.com"))
                 if !webAddress.isEmpty && WorkspaceAction.webURL(webAddress) == nil {
-                    Text(.webAddressInvalid).foregroundStyle(Theme.textSecondary)
+                    Text(.webAddressInvalid).font(Theme.caption).foregroundStyle(Theme.warningText)
                 }
             } else {
-                if let url = pickingApplication ? application?.url : file {
-                    Text(url.lastPathComponent).lineLimit(2)
-                    Text(url.path).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                        .lineLimit(3).help(url.path)
-                } else { Text(.targetNotSelected).foregroundStyle(Theme.textSecondary) }
-                Button(pickingApplication ? LocalizedStringResource.chooseApplication : .chooseFile) {
-                    selectionFailed = false
-                    showingPicker = true
-                }.secondaryButton()
-                if selectionFailed { Text(.targetSelectionFailed).foregroundStyle(Theme.textSecondary) }
+                let url = pickingApplication ? application?.url : file
+                HStack(spacing: 12) {
+                    if let url {
+                        Image(nsImage: NSWorkspace.shared.icon(forFile: url.path)).resizable()
+                            .frame(width: 32, height: 32).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: url.deletingPathExtension().lastPathComponent)
+                                .font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary).lineLimit(1)
+                            Text(verbatim: url.path).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                                .lineLimit(1).truncationMode(.middle).help(url.path)
+                        }
+                    } else {
+                        Text(.targetNotSelected).font(Theme.body).foregroundStyle(Theme.textSecondary)
+                    }
+                    Spacer(minLength: 8)
+                    Button(pickingApplication ? LocalizedStringResource.chooseApplication : .chooseFile) {
+                        selectionFailed = false
+                        showingPicker = true
+                    }.secondaryButton().fixedSize()
+                }
+                .padding(.leading, 14).padding(.trailing, 10)
+                .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+                .background(Theme.insetSurface, in: .rect(cornerRadius: 16, style: .continuous))
+                .overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.borderSubtle) }
+                if selectionFailed { Text(.targetSelectionFailed).font(Theme.caption).foregroundStyle(Theme.warningText) }
             }
             Text(hint)
                 .font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)

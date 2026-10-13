@@ -119,7 +119,7 @@ struct TrackpadCornerTapTests {
     @Test func mailboxDeliversOnlyTheConfiguredCornerShortcut() throws {
         let h = try Harness(corners: [.topLeft])
         var spoofed = h.runtime
-        spoofed.cornerShortcuts[.topLeft] = .init(keyCode: 0, modifiers: .command)
+        spoofed.actions[.corner(.topLeft)] = .shortcut(.init(keyCode: 0, modifiers: .command))
         #expect(h.mailbox.submitTrackpad(spoofed, gesture: .corner(.topLeft), pid: 100, at: lift) == false)
         #expect(h.mailbox.submitTrackpad(h.runtime, gesture: .corner(.topRight), pid: 100, at: lift) == false)
         #expect(h.mailbox.handle(InputEvent(trigger: .cornerTap(.topLeft), phase: .down), secureInput: false) == false)

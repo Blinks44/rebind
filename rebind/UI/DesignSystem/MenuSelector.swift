@@ -10,6 +10,8 @@ struct MenuSelector<Selection: Hashable>: View {
     var compact = false
     var symbol: String?
     var singleLine = false
+    /// Choices that start a new group, shown after a separator.
+    var startsGroup: (Selection) -> Bool = { _ in false }
     var menuActionTitle: LocalizedStringResource?
     var menuAction: (() -> Void)?
     @Environment(\.locale) private var locale
@@ -63,6 +65,7 @@ struct MenuSelector<Selection: Hashable>: View {
             selection = choices[index]
         }
         for (index, choice) in choices.enumerated() {
+            if index > 0, startsGroup(choice) { menu.addItem(.separator()) }
             var resource = label(choice)
             resource.locale = locale
             let item = NSMenuItem(title: String(localized: resource),

@@ -119,3 +119,25 @@ struct TrackpadClickRuleTests {
         }
     }
 }
+
+struct TrackpadActionCatalogTests {
+    @Test func tapAndClickRulesAcceptAnyCatalogActionButOlderFilesCannotCarryThem() throws {
+        let tap = rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .lockScreen)
+        let click = rebind.Binding(scope: .builtInTrackpad, trigger: .trackpadClick(fingers: 3), modifiers: [],
+                                   action: .media(.playPause))
+        let configuration = Configuration(isEnabled: true, bindings: [tap, click])
+        try configuration.validate()
+        var old = configuration
+        old.schemaVersion = 29
+        #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+
+        let mailbox = EngineMailbox()
+        mailbox.configure(configuration)
+        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        let runtime = try #require(mailbox.trackpadRuntime())
+        #expect(runtime.actions == [.single(.threeFinger): .lockScreen] && runtime.hasClickRules)
+        #expect(mailbox.submitTrackpad(runtime, gesture: .single(.threeFinger), pid: 100, at: 1_000))
+        let dispatch = try #require(mailbox.nextAction())
+        #expect(dispatch.action == .lockScreen && dispatch.trackpadTarget?.pid == 100)
+    }
+}

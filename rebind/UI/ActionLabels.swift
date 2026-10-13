@@ -21,6 +21,8 @@ extension ActionKind {
         case .playPause: .playPauseAction
         case .nextTrack: .nextTrackAction
         case .previousTrack: .previousTrackAction
+        case .brightnessUp: .brightnessUpAction
+        case .brightnessDown: .brightnessDownAction
         case .nextWindow: .nextWindowAction
         case .previousWindow: .previousWindowAction
         case .previousApplication: .previousApplicationAction
@@ -92,6 +94,8 @@ extension ActionKind {
         case .playPause: "playpause"
         case .nextTrack: "forward.end"
         case .previousTrack: "backward.end"
+        case .brightnessUp: "sun.max"
+        case .brightnessDown: "sun.min"
         case .leftClick, .rightClick, .middleClick: "cursorarrow.click"
         case .doubleLeftClick: "cursorarrow.click.2"
         case .closeWindow: "xmark.square"

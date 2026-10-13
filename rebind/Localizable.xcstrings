@@ -3372,6 +3372,93 @@
         }
       }
     },
+    "brightnessUpAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase Display Brightness"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увеличить яркость дисплея"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Displayhelligkeit erhöhen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Augmenter la luminosité de l’écran"
+          }
+        }
+      }
+    },
+    "brightnessDownAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decrease Display Brightness"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уменьшить яркость дисплея"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Displayhelligkeit verringern"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire la luminosité de l’écran"
+          }
+        }
+      }
+    },
+    "brightnessActionHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends the system brightness key. macOS decides which display responds; displays without brightness control ignore it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправляет системную клавишу яркости. macOS сама выбирает дисплей; дисплеи без управления яркостью её игнорируют."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendet die System-Helligkeitstaste. macOS bestimmt, welches Display reagiert; Displays ohne Helligkeitssteuerung ignorieren sie."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoie la touche système de luminosité. macOS choisit l’écran concerné ; les écrans sans réglage de luminosité l’ignorent."
+          }
+        }
+      }
+    },
     "audioActions" : {
       "extractionState" : "manual",
       "localizations" : {

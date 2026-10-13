@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 29
+    static let currentSchemaVersion = 30
     static let maximumProfiles = 20
     var schemaVersion: Int
     var isEnabled: Bool
@@ -51,6 +51,12 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
+        if schemaVersion < 30, profiles.flatMap(\.bindings).contains(where: {
+            if case .media(let media) = $0.action, media.isBrightness { return true }
+            return $0.trigger.isTrackpad && $0.action.shortcut == nil
+        }) {
+            throw ConfigurationError.invalid
+        }
         if schemaVersion < 29, profiles.flatMap(\.bindings).contains(where: {
             if case .trackpadClick = $0.trigger { return true }
             return false
@@ -170,7 +176,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             result.schemaVersion = Self.currentSchemaVersion
         }
         if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...28).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
+        if (13...29).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         // Existing installations recover through the permission notice, not first-run setup.
         if (1...22).contains(schemaVersion) { result.hasCompletedSetup = true }
         try result.validate()

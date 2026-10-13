@@ -7,6 +7,9 @@ nonisolated enum TrackpadTapGesture: Hashable, Sendable {
     case twoFingerDouble
     case corner(TrackpadCorner)
 
+    static let allCases: [Self] = TrackpadSingleTap.allCases.flatMap { [.single($0), .double($0)] }
+        + [.twoFingerDouble] + TrackpadCorner.allCases.map(Self.corner)
+
     var trigger: InputTrigger {
         switch self {
         case .single(let tap): tap.trigger

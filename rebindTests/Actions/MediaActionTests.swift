@@ -7,7 +7,7 @@ struct MediaActionTests {
     @Test(arguments: MediaAction.allCases) @MainActor
     func sharedCatalogDoesNotRequireAudioDeviceOrRecordedShortcut(_ media: MediaAction) throws {
         let action = RebindAction.media(media), kind = ActionKind(action: action)
-        #expect(kind.category == .audio && kind.mediaAction == media && kind.systemAction == nil)
+        #expect(kind.category == (media.isBrightness ? .system : .audio) && kind.mediaAction == media && kind.systemAction == nil)
         #expect(kind.configuredAction(shortcut: nil) == action && action.shortcut == nil && action.isSupported)
         #expect(kind.isAvailable(with: AudioOutputCapabilities()) && AudioOutputCapabilities().supports(action))
         #expect(action.label == String(localized: kind.title))

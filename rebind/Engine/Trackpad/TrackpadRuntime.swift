@@ -16,37 +16,13 @@ nonisolated struct TrackpadDispatchTarget: Equatable, Sendable {
 nonisolated struct TrackpadRuntime: Equatable, Sendable {
     var revision: UInt64
     var inputActivity: UInt64
-    /// The existing four-finger rule, if enabled in the selected profile.
-    var fourFingerShortcut: KeyboardShortcut?
-    var threeFingerShortcut: KeyboardShortcut? = nil
-    var threeFingerDoubleShortcut: KeyboardShortcut? = nil
-    var fourFingerDoubleShortcut: KeyboardShortcut? = nil
-    var twoFingerDoubleShortcut: KeyboardShortcut? = nil
-    var cornerShortcuts: [TrackpadCorner: KeyboardShortcut] = [:]
+    /// Enabled light-tap rules of the selected profile, by complete gesture.
+    var actions: [TrackpadTapGesture: RebindAction] = [:]
     /// Click rules are resolved on the event-tap path; they only need contact frames to keep flowing.
     var hasClickRules = false
     var doubleTapIntervalNanoseconds: UInt64 = 500_000_000
 
-    var enabledGestures: Set<TrackpadTapSequence.Gesture> {
-        var gestures = Set(TrackpadSingleTap.allCases.flatMap { tap in
-            [TrackpadTapGesture.single(tap), .double(tap)].compactMap { gesture in
-                shortcut(for: gesture) == nil ? nil : gesture.sequenceGesture
-            }
-        })
-        if shortcut(for: .twoFingerDouble) != nil { gestures.insert(TrackpadTapGesture.twoFingerDouble.sequenceGesture) }
-        gestures.formUnion(cornerShortcuts.keys.map { .cornerTap($0) })
-        return gestures
-    }
-
-    func shortcut(for gesture: TrackpadTapGesture) -> KeyboardShortcut? {
-        switch gesture {
-        case .single(let tap): shortcut(for: tap)
-        case .double(.threeFinger): threeFingerDoubleShortcut
-        case .double(.fourFinger): fourFingerDoubleShortcut
-        case .twoFingerDouble: twoFingerDoubleShortcut
-        case .corner(let corner): cornerShortcuts[corner]
-        }
-    }
+    var enabledGestures: Set<TrackpadTapSequence.Gesture> { Set(actions.keys.map(\.sequenceGesture)) }
 
     /// The only gesture identity a completed contact of this finger count and
     /// starting centroid may produce under the configured rules; nil when none
@@ -54,19 +30,12 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
     /// and a one-finger contact only counts inside a configured corner.
     func admissibleGesture(fingers: Int, x: Float, y: Float) -> TrackpadTapGesture? {
         if fingers == 1 {
-            return TrackpadCorner.containing(x: x, y: y).flatMap { cornerShortcuts[$0] == nil ? nil : .corner($0) }
+            return TrackpadCorner.containing(x: x, y: y).flatMap { actions[.corner($0)] == nil ? nil : .corner($0) }
         }
-        if fingers == 2 { return shortcut(for: .twoFingerDouble) == nil ? nil : .twoFingerDouble }
-        guard let tap = TrackpadSingleTap(rawValue: fingers),
-              shortcut(for: .single(tap)) != nil || shortcut(for: .double(tap)) != nil else { return nil }
-        return shortcut(for: .double(tap)) == nil ? .single(tap) : .double(tap)
-    }
-
-    func shortcut(for tap: TrackpadSingleTap) -> KeyboardShortcut? {
-        switch tap {
-        case .threeFinger: threeFingerShortcut
-        case .fourFinger: fourFingerShortcut
-        }
+        if fingers == 2 { return actions[.twoFingerDouble] == nil ? nil : .twoFingerDouble }
+        guard let tap = TrackpadSingleTap(rawValue: fingers) else { return nil }
+        if actions[.double(tap)] != nil { return .double(tap) }
+        return actions[.single(tap)] == nil ? nil : .single(tap)
     }
 }
 
@@ -75,27 +44,19 @@ extension EngineMailbox {
         state.withLock {
             guard $0.status == .active, $0.enabled, !$0.editing, !$0.suspended, !$0.stopped,
                   $0.recording == nil else { return nil }
-            let four = $0.rules[MatchKey(trigger: .fourFingerTap, modifiers: [])]?.action.shortcut
-            let three = $0.rules[MatchKey(trigger: .threeFingerTap, modifiers: [])]?.action.shortcut
+            let rules = $0.rules
             let interval = $0.matcher.doublePressIntervalNanoseconds
             // An unsupported system interval disables only double recognition;
             // existing single-tap rules remain usable without a delayed backlog.
             let supportsDouble = (1...2_000_000_000).contains(interval)
-            let doubleThree = supportsDouble ? $0.rules[MatchKey(trigger: .threeFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
-            let doubleFour = supportsDouble ? $0.rules[MatchKey(trigger: .fourFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
-            let doubleTwo = supportsDouble ? $0.rules[MatchKey(trigger: .twoFingerDoubleTap, modifiers: [])]?.action.shortcut : nil
-            let rules = $0.rules
-            let clicks = (2...4).contains { rules[MatchKey(trigger: .trackpadClick(fingers: $0), modifiers: [])]?.action.shortcut != nil }
-            var corners: [TrackpadCorner: KeyboardShortcut] = [:]
-            for corner in TrackpadCorner.allCases {
-                corners[corner] = $0.rules[MatchKey(trigger: .cornerTap(corner), modifiers: [])]?.action.shortcut
+            var actions: [TrackpadTapGesture: RebindAction] = [:]
+            for gesture in TrackpadTapGesture.allCases where supportsDouble || !gesture.isDoubleTap {
+                actions[gesture] = rules[MatchKey(trigger: gesture.trigger, modifiers: [])]?.action
             }
-            guard four != nil || three != nil || doubleThree != nil || doubleFour != nil || doubleTwo != nil
-                    || !corners.isEmpty || clicks else { return nil }
+            let clicks = (2...4).contains { rules[MatchKey(trigger: .trackpadClick(fingers: $0), modifiers: [])] != nil }
+            guard !actions.isEmpty || clicks else { return nil }
             return TrackpadRuntime(revision: $0.actionRevision, inputActivity: $0.inputActivity,
-                                   fourFingerShortcut: four, threeFingerShortcut: three,
-                                   threeFingerDoubleShortcut: doubleThree, fourFingerDoubleShortcut: doubleFour,
-                                   twoFingerDoubleShortcut: doubleTwo, cornerShortcuts: corners, hasClickRules: clicks,
+                                   actions: actions, hasClickRules: clicks,
                                    doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
         }
     }
@@ -131,10 +92,10 @@ extension EngineMailbox {
             guard now <= UInt64.max - 100_000_000, $0.pending.isEmpty,
                   $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
                   $0.actionRevision == runtime.revision, $0.inputActivity == runtime.inputActivity,
-                  $0.foregroundPID == pid, let shortcut = runtime.shortcut(for: gesture),
-                  $0.rules[MatchKey(trigger: gesture.trigger, modifiers: [])]?.action.shortcut == shortcut else { return false }
-            let dispatch = ActionDispatch(action: .shortcut(shortcut), revision: runtime.revision,
-                trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
+                  $0.foregroundPID == pid, let action = runtime.actions[gesture],
+                  $0.rules[MatchKey(trigger: gesture.trigger, modifiers: [])]?.action == action else { return false }
+            let dispatch = ActionDispatch(action: action, revision: runtime.revision,
+                deviceID: $0.audioCapabilities.deviceID, trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
                                                       expiresAt: now + 100_000_000, queuedAt: now))
             guard $0.dispatchIsCurrent(dispatch) else { return false }
             $0.trackpadDispatch = dispatch

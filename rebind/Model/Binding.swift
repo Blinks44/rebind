@@ -16,7 +16,7 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
             && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture && !trigger.isTrackpad))
-            && (!trigger.isTrackpad || (modifiers.isEmpty && action.shortcut != nil))
+            && (!trigger.isTrackpad || modifiers.isEmpty)
             && (100...5000).contains(holdDurationMilliseconds)
     }
 }
