@@ -84,6 +84,7 @@ Action: Previous Desktop
 - Avoid double-triggering when both HID and Quartz deliver representations of the same physical input.
 - Support a global pause switch and emergency bypass that restores normal input safely.
 - **Held output (2026-10-13):** a press rule on a key or mouse button may keep its output for as long as the trigger is held. A shortcut is one key-down, repeats at the system key-repeat rate and one key-up; volume, brightness and scroll actions repeat instead. Every interruption (pause, editing, Secure Input, lost capture, sleep or lock, an excluded app coming to the front, quitting) releases a held key. A button that also carries pointer gestures cannot hold an output.
+- **Modifier actions and short press (2026-10-13):** a key or mouse button may act as Command, Option, Control or Shift while held: Rebind posts the modifier press and release and adds the flag to the input it passes on. Rebind's own bindings do not match on it. A hold rule may also carry a shortcut that is sent when the trigger is released before the hold time; this is the supported form of a dual-role key.
 - **Excluded apps (2026-10-13):** the user may list apps in which Rebind leaves keyboard, mouse and trackpad input untouched while they are in front. This is a global list, not a per-app rule set or automatic profile activation, which stay out of scope.
 - Keep rule evaluation synchronous, fast, and allocation-light on the event path; hand off slow action execution outside the hook.
 
@@ -173,6 +174,7 @@ complete gestures, for example `Double tap · 3 fingers` or `Top-left corner tap
 Finger count, click/tap kind and corner belong to each preset; do not expose
 separate controls or record touch triggers. Any supported modifier variant must
 be an explicitly curated preset rather than a freely composed combination.
+**User request 2026-10-13:** a trackpad rule may require one held modifier key (Command, Option, Control or Shift), chosen from a fixed list next to the preset; chords of several modifiers stay unavailable. Matching is exact, so the same gesture with and without the key can have separate rules.
 The release pool must respect native macOS reservations and verified coexistence.
 
 General one/two-finger single taps, five-finger gestures, holds, swipes (including
@@ -331,6 +333,7 @@ Required runtime behavior:
 - Stable profile/binding identifiers, selected profile, names, category scopes, trigger parameters, action parameters, enabled flags, relevant gesture thresholds, app preferences, and schema version.
 - Migration path for schema changes; reasonable recovery/backup behavior for corrupt or incompatible data; no silent erasure.
 - Import and export user settings with validation and confirmation before destructive replacement.
+- Export one profile to a file and import profiles from a file (2026-10-13). An import only adds profiles, with fresh identifiers and unused names; it replaces nothing and carries no app preferences or excluded apps.
 - No SwiftData/SQLite/Core Data unless actual requirements demonstrate a need.
 - Never store unstable HID pointers or raw platform objects as persistent identifiers.
 
@@ -364,7 +367,7 @@ The sidebar lists input categories. Keep Settings and About visibly separated ne
 
 - Main bindings list with clear labels for trigger/modifiers/action, toggle, edit, delete, empty states, Add Binding.
 - Create/edit binding sheet or equivalent focused flow; searchable action picker, capture UX, conditional options, conflict messages.
-- Settings: General (launch at login, background/menu bar behavior, global enabled), Permissions (status, refresh, open settings), Input (mouse gesture distance, excluded apps), Language (System, EN, RU, DE, FR), Advanced (diagnostic event viewer showing safe metadata, import/export/reset).
+- Settings: General (launch at login, background/menu bar behavior, global enabled), Permissions (status, refresh, open settings), Input (mouse gesture distance, mouse wheel direction and speed for stepped wheels, excluded apps), Language (System, EN, RU, DE, FR), Advanced (diagnostic event viewer showing safe metadata, a support report without binding content, import/export/reset).
 - About: icon, Rebind name/version, brief description, credits/licenses, relevant links where available.
 - First-run permissions onboarding with accurate statuses.
 
@@ -384,7 +387,7 @@ Create a high-quality macOS icon asset suitable for Dock/Finder: white/light bas
 
 ### Menu Bar icon
 
-Provide a separate monochrome vector template derived from Rebind's brand mark, with transparent background and open counters at menu-bar size. macOS supplies the foreground color for light/dark and selected states; do not shrink the decorated Dock icon or bake a background, lighting, or shadow into this asset. Keep the accessible app name and display runtime/permission/pause status in the menu, with emergency pause always reachable (§§6, 8).
+Provide a separate monochrome vector template derived from Rebind's brand mark, with transparent background and open counters at menu-bar size. macOS supplies the foreground color for light/dark and selected states; do not shrink the decorated Dock icon or bake a background, lighting, or shadow into this asset. A second template with pause bars is shown whenever rules cannot run (paused, missing permission or locked storage). Keep the accessible app name and display runtime/permission/pause status in the menu, with emergency pause always reachable (§§6, 8).
 
 ## 11. Localization (CORE)
 

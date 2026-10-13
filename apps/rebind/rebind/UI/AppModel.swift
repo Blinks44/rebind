@@ -225,7 +225,7 @@ import Dispatch
             case .workspace: error = .workspaceActionFailed
             case .appleShortcut: error = .appleShortcutFailed
             case .text: error = .insertTextFailed
-            case .doNothing, .control: break
+            case .doNothing, .control, .modifier: break
             }
         }
         if update.7 != 0 { stepProfile(by: update.7) }
@@ -283,6 +283,9 @@ import Dispatch
         if !enabled { configureEngine(updated); configuration.isEnabled = false }
         trySave(updated)
     }
+
+    /// Drives the Menu Bar icon: the paused glyph whenever rules cannot run.
+    var rulesAreRunning: Bool { configuration.isEnabled && permissions.allowsRemapping && !storageLocked }
 
     var generalRuntime: GeneralRuntimePresentation {
         GeneralRuntimePresentation(isEnabled: configuration.isEnabled, permissions: permissions,
@@ -397,6 +400,40 @@ import Dispatch
         trySave(updated)
     }
 
+    func setMouseWheel(reverses: Bool? = nil, speed: MouseWheelSpeed? = nil) {
+        var updated = configuration
+        if let reverses { updated.reversesMouseWheel = reverses }
+        if let speed { updated.mouseWheelSpeed = speed }
+        guard updated != configuration else { return }
+        trySave(updated)
+    }
+
+    /// Plain-text facts for a bug report. Counts and states only: no triggers, shortcuts,
+    /// typed text, app names or paths ever appear in it.
+    func supportReport(information: AboutInformation = AboutInformation(),
+                       system: String = ProcessInfo.processInfo.operatingSystemVersionString) -> String {
+        let scopes: [(String, DeviceScope)] = [("keyboard", .allKeyboards), ("mouse", .allMice),
+                                               ("trackpad", .builtInTrackpad), ("magic trackpad", .magicTrackpad)]
+        let rules = configuration.bindings
+        var lines = [
+            "Rebind \(information.version ?? "?") (\(information.build ?? "?"))",
+            "macOS: \(system)",
+            "Language: \(activeLanguage.rawValue) (preference: \(configuration.languagePreference.rawValue))",
+            "Bindings on: \(configuration.isEnabled); engine: \(status); trackpad: \(trackpadStatus)",
+            "Accessibility: \(permissions.accessibility); event sending: \(permissions.posting); input monitoring: \(permissions.listening)",
+            "Configuration: schema \(configuration.schemaVersion), locked: \(storageLocked)",
+            "Profiles: \(configuration.profiles.count); bindings in all profiles: \(configuration.profiles.reduce(0) { $0 + $1.bindings.count })",
+            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), speed \(configuration.mouseWheelSpeed.rawValue)"
+        ]
+        for (name, scope) in scopes {
+            let scoped = rules.filter { $0.scope == scope }
+            lines.append("Selected profile, \(name): \(scoped.count) bindings, \(scoped.filter(\.isEnabled).count) enabled")
+        }
+        let kinds = Dictionary(grouping: rules, by: { ActionKind(action: $0.action).rawValue }).mapValues(\.count)
+        lines.append("Actions: " + kinds.sorted { $0.key < $1.key }.map { "\($0.key) ×\($0.value)" }.joined(separator: ", "))
+        return lines.joined(separator: "\n")
+    }
+
     func setPointerGestureDistance(_ distance: PointerGestureDistance) {
         guard distance != configuration.pointerGestureDistance else { return }
         var updated = configuration
@@ -455,6 +492,40 @@ import Dispatch
     @discardableResult func renameProfile(_ id: UUID, name: String) -> Bool {
         guard profileNameIsAvailable(name, excluding: id) else { error = .profileInvalid; return false }
         return updateProfiles { try $0.renameProfile(id, name: name) }
+    }
+
+    /// A file holding only this profile, or nil when it no longer exists.
+    func profileBackup(_ id: UUID) -> ConfigurationBackup? {
+        guard !storageLocked else { return nil }
+        return try? ConfigurationBackup(configuration: configuration.exportingProfile(id))
+    }
+
+    /// Adds every profile of a file next to the existing ones, with fresh identifiers and unused
+    /// names. Nothing is replaced and the selection stays. Returns how many were added.
+    func importProfiles(from backup: ConfigurationBackup) -> Int? {
+        var updated = configuration
+        for source in backup.configuration.profiles {
+            let base = String(source.title.prefix(76))
+            var name = base
+            var suffix = 2
+            while updated.profiles.contains(where: { Self.sameName($0.title, name) }) {
+                name = "\(base) \(suffix)"
+                suffix += 1
+            }
+            let bindings = source.bindings.map { original in
+                var binding = original
+                binding.id = UUID()
+                return binding
+            }
+            updated.profiles.append(RuleProfile(name: name, bindings: bindings))
+        }
+        do { try updated.validate() } catch { return nil }
+        return trySave(updated) ? backup.configuration.profiles.count : nil
+    }
+
+    private static func sameName(_ lhs: String, _ rhs: String) -> Bool {
+        lhs.compare(rhs, options: [.caseInsensitive, .diacriticInsensitive],
+                    locale: Locale(identifier: "en_US_POSIX")) == .orderedSame
     }
 
     private func profileNameIsAvailable(_ name: String, excluding id: UUID? = nil) -> Bool {

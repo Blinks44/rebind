@@ -94,7 +94,9 @@ import Dispatch
 
     private func service(_ surface: inout Surface, pid: Int32?, now: UInt64) -> TrackpadCaptureStatus {
         let isMagic = surface.kind == .magicTrackpad
-        guard let runtime = mailbox.trackpadRuntime(magicTrackpad: isMagic) else {
+        // Read the held keys here, off the event tap; the session restarts whenever they change.
+        let modifiers = ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState))
+        guard let runtime = mailbox.trackpadRuntime(magicTrackpad: isMagic, modifiers: modifiers) else {
             stop(&surface)
             return .idle
         }

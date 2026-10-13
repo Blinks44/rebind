@@ -50,7 +50,7 @@ struct TrackpadSingleTapPersistenceTests {
     func unsupportedTouchVariantsRemainInvalid(_ tap: TrackpadSingleTap, _ variant: Int) {
         var invalid = binding(tap)
         switch variant {
-        case 0: invalid.modifiers = .control
+        case 0: invalid.modifiers = [.control, .shift]
         case 1: invalid.activation = .doublePress
         case 2: invalid.activation = .hold
         case 3: invalid.action = .shortcut(.init(keyCode: 57, modifiers: []))

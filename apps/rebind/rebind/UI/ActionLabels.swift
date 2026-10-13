@@ -64,6 +64,10 @@ extension ActionKind {
         case .redo: .redoAction
         case .selectAll: .selectAllAction
         case .insertText: .insertTextAction
+        case .holdCommand: .holdCommandAction
+        case .holdOption: .holdOptionAction
+        case .holdControl: .holdControlAction
+        case .holdShift: .holdShiftAction
         case .nextTab: .nextTabAction
         case .previousTab: .previousTabAction
         case .newTab: .newTabAction
@@ -109,7 +113,7 @@ extension RebindAction {
             let kind = ActionKind(action: self)
             return kind == .keyboardShortcut ? InputLabels.shortcut(shortcut) : AppLocalization.string(kind.title)
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock,
-             .doNothing, .control: return AppLocalization.string(ActionKind(action: self).title)
+             .doNothing, .control, .modifier: return AppLocalization.string(ActionKind(action: self).title)
         case .text(let text):
             let preview = text.count > 24 ? String(text.prefix(24)) + "…" : text
             return "\(AppLocalization.string(.insertTextAction)) — \(preview)"
@@ -177,6 +181,10 @@ extension ActionKind {
         case .redo: "arrow.uturn.forward"
         case .selectAll: "square.dashed"
         case .insertText: "text.cursor"
+        case .holdCommand: "command"
+        case .holdOption: "option"
+        case .holdControl: "control"
+        case .holdShift: "shift"
         case .nextTab: "arrow.right.to.line"
         case .previousTab: "arrow.left.to.line"
         case .newTab: "plus.square.on.square"

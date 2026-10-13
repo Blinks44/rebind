@@ -14,6 +14,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case missionControl, applicationWindows, showDesktop, previousSpace, nextSpace
     case doNothing, pauseRebind, nextProfile, previousProfile
     case copy, paste, cut, undo, redo, selectAll, insertText
+    case holdCommand, holdOption, holdControl, holdShift
     case nextTab, previousTab, newTab, reopenTab, zoomIn, zoomOut
     case screenshotScreen, screenshotArea, screenshotTools
     case topHalf, bottomHalf, topLeftQuarter, topRightQuarter, bottomLeftQuarter, bottomRightQuarter, nextDisplay
@@ -26,7 +27,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
 
     var category: Category {
         if self == .doNothing || controlAction != nil { return .rebind }
-        if [.copy, .paste, .cut, .undo, .redo, .selectAll, .insertText].contains(self) { return .keyboard }
+        if [.copy, .paste, .cut, .undo, .redo, .selectAll, .insertText].contains(self) || modifierAction != nil { return .keyboard }
         if [.screenshotScreen, .screenshotArea, .screenshotTools].contains(self) { return .system }
         if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen
             || mediaAction?.isBrightness == true { return .system }
@@ -62,6 +63,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .windowCycle(.previous): self = .previousWindow
         case .windowLayout(let layout): self = Self.allCases.first { $0.windowLayoutAction == layout } ?? .fillWindow
         case .text: self = .insertText
+        case .modifier(let modifiers): self = Self.allCases.first { $0.modifierAction == modifiers } ?? .holdCommand
         case .window(.close): self = .closeWindow
         case .window(.minimize): self = .minimizeWindow
         case .window(.toggleFullScreen): self = .toggleFullScreen
@@ -95,6 +97,16 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .volumeUp: .volumeUp
         case .volumeDown: .volumeDown
         case .toggleMute: .toggleMute
+        default: nil
+        }
+    }
+
+    var modifierAction: ModifierSet? {
+        switch self {
+        case .holdCommand: .command
+        case .holdOption: .option
+        case .holdControl: .control
+        case .holdShift: .shift
         default: nil
         }
     }
@@ -209,6 +221,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
                           appleShortcut: AppleShortcutTarget? = nil, text: String = "") -> RebindAction? {
         if let fixedShortcut { return .shortcut(fixedShortcut) }
         if self == .insertText { return TextSnippet.isValid(text) ? .text(text) : nil }
+        if let modifierAction { return .modifier(modifierAction) }
         if self == .doNothing { return .doNothing }
         if let controlAction { return .control(controlAction) }
         if self == .lockScreen { return .lockScreen }

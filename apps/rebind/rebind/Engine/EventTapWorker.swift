@@ -143,7 +143,7 @@ nonisolated final class EventTapWorker {
         if type == .mouseMoved {
             return mailbox.handlePointerMotion(PointerMotion.from(event), modifiers: ModifierSet(flags: event.flags),
                                                receivedAt: DispatchTime.now().uptimeNanoseconds,
-                                               secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
+                                               secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
         }
         if type == .scrollWheel {
             guard var input = ScrollEventAdapter.input(from: event) else {
@@ -152,35 +152,45 @@ nonisolated final class EventTapWorker {
                 mailbox.handleUnsupportedScroll(modifiers: ModifierSet(flags: event.flags),
                                                 at: DispatchTime.now().uptimeNanoseconds,
                                                 secureInput: IsSecureEventInputEnabled())
-                return Unmanaged.passUnretained(event)
+                if let adjustment = mailbox.wheelAdjustment { ScrollEventAdapter.adjust(event, by: adjustment) }
+                return pass(event)
             }
             input.receivedAt = DispatchTime.now().uptimeNanoseconds
-            return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
+            guard !mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) else { return nil }
+            if let adjustment = mailbox.wheelAdjustment { ScrollEventAdapter.adjust(event, by: adjustment) }
+            return pass(event)
         }
         let trigger: InputTrigger
         let phase: InputEvent.Phase
         switch type {
         case .keyDown, .keyUp, .flagsChanged:
             let code = event.getIntegerValueField(.keyboardEventKeycode)
-            guard let value = UInt16(exactly: code) else { return Unmanaged.passUnretained(event) }
+            guard let value = UInt16(exactly: code) else { return pass(event) }
             trigger = .key(value)
             phase = type == .flagsChanged ? .modifiersChanged : (type == .keyDown ? .down : .up)
         case .leftMouseDown, .rightMouseDown, .otherMouseDown, .leftMouseUp, .rightMouseUp, .otherMouseUp,
              .otherMouseDragged, .leftMouseDragged, .rightMouseDragged:
             let number = event.getIntegerValueField(.mouseEventButtonNumber)
-            guard let value = UInt32(exactly: number) else { return Unmanaged.passUnretained(event) }
+            guard let value = UInt32(exactly: number) else { return pass(event) }
             trigger = .mouseButton(value)
             switch type {
             case .leftMouseUp, .rightMouseUp, .otherMouseUp: phase = .up
             case .otherMouseDragged, .leftMouseDragged, .rightMouseDragged: phase = .drag
             default: phase = .down
             }
-        default: return Unmanaged.passUnretained(event)
+        default: return pass(event)
         }
         let input = InputEvent(trigger: trigger, modifiers: ModifierSet(flags: event.flags), phase: phase,
                                isRepeat: type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) != 0,
                                timestamp: event.timestamp, receivedAt: DispatchTime.now().uptimeNanoseconds,
                                motion: phase == .drag ? PointerMotion.from(event) : nil)
-        return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : Unmanaged.passUnretained(event)
+        return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
+    }
+
+    /// Hands an event on, with any modifier Rebind is holding for the user added to it.
+    private func pass(_ event: CGEvent) -> Unmanaged<CGEvent> {
+        let held = mailbox.virtualModifiers
+        if !held.isEmpty { event.flags.insert(held.flags) }
+        return Unmanaged.passUnretained(event)
     }
 }

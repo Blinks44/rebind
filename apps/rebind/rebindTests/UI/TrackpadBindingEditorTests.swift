@@ -29,7 +29,8 @@ import Testing
         #expect(draft.output == action.shortcut)
         let candidate = try #require(draft.binding(scope: .builtInTrackpad, action: action, existing: existing))
         #expect(candidate.id == existing.id && !candidate.isEnabled)
-        #expect(candidate.trigger == preset.trigger && candidate.modifiers.isEmpty)
+        // The chosen held key belongs to the rule, not to the preset, so changing the preset keeps it.
+        #expect(candidate.trigger == preset.trigger && candidate.modifiers == .shift)
         #expect(candidate.activation == .press && candidate.isValid)
     }
 

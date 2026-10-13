@@ -26,14 +26,31 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 
 ## Features
 
-- Keyboard and middle/extra mouse-button bindings with Command, Control, Option and Shift modifiers.
-- Ordinary, double-press and long-press activation; discrete scroll-wheel triggers and mouse-button-held movement in four directions.
-- Actions for keyboard shortcuts, mouse clicks, volume/media controls, windows, application switching, opening apps/files/web addresses, Apple Shortcuts and system operations.
-- Named profiles with manual selection, independent rule sets and local persistence.
-- Menu-bar controls to open Rebind, select a profile, pause/resume bindings and quit. Closing the main window keeps the app running.
-- English, Russian, German and French translations; System Default or manual selection, applied after quitting and reopening Rebind.
+**Triggers**
 
-Profiles apply to input categories rather than individual physical devices. Caps Lock/Fn remapping, held/repeating output, Magic Mouse gestures and external-trackpad support are not currently available. The integrated built-in four-finger tap is experimental, with recognition/recovery checks still open; native trackpad gestures remain active. First-run setup and permission recovery are implemented. General, Permissions, Input and Language settings are implemented, including Launch at Login through ServiceManagement and per-binding Hold timing; actual login/relaunch and complete localization/accessibility acceptance remain open. Advanced/About and import/export/reset are unfinished.
+- Keyboard keys and shortcuts; middle and extra mouse buttons, with Command, Control, Option and Shift.
+- Press, double press and hold. A hold binding can also send a shortcut on a short press.
+- Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
+- Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
+
+**Actions**
+
+- Keyboard shortcuts, kept pressed and repeated while the trigger is held if you choose; named commands such as Copy, Paste, Undo, Back, Forward, tab and zoom commands and screenshots.
+- Hold Command, Option, Control or Shift from a mouse button or key.
+- Insert text, mouse clicks and scrolling, or do nothing to switch a key off.
+- Windows: halves, quarters, fill, center, move to the next display, close, minimize, full screen, next and previous window.
+- Apps and system: open, activate or quit an app, previous app, open a file, folder or web address, Apple Shortcuts, Mission Control and desktops, volume, media keys, display brightness, sleep and lock.
+- Rebind itself: pause, next and previous profile.
+
+**Everything else**
+
+- Named profiles with manual selection; duplicate a binding, copy it to another profile, give it a note; export and import single profiles or a full backup.
+- Excluded apps in which Rebind leaves all input alone, such as games and virtual machines.
+- Reverse or speed up a stepped mouse wheel without changing the trackpad; adjustable mouse gesture distance.
+- Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
+- English, Russian, German, French, Spanish and Simplified Chinese.
+
+Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and smooth scrolling. Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
 
 ## Requirements
 

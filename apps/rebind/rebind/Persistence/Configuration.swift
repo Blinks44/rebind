@@ -17,6 +17,9 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     /// Apps in which Rebind leaves all input alone while they are in front.
     var excludedApplications: [ApplicationTarget] = []
     var pointerGestureDistance = PointerGestureDistance.standard
+    /// Stepped mouse wheels only; trackpads and continuous wheels are never changed.
+    var reversesMouseWheel = false
+    var mouseWheelSpeed = MouseWheelSpeed.standard
     var profiles: [RuleProfile]
     var selectedProfileID: UUID
 
@@ -71,14 +74,16 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
 
     func migrated() throws -> Configuration {
         var result = self
-        if schemaVersion < 34, !excludedApplications.isEmpty || pointerGestureDistance != .standard {
+        if schemaVersion < 34, !excludedApplications.isEmpty || pointerGestureDistance != .standard
+            || reversesMouseWheel || mouseWheelSpeed != .standard {
             throw ConfigurationError.invalid
         }
         if schemaVersion < 34, profiles.flatMap(\.bindings).contains(where: {
-            if $0.holdsOutput || $0.note != nil { return true }
+            if $0.holdsOutput || $0.note != nil || $0.tapShortcut != nil { return true }
             if case .buttonScroll = $0.trigger { return true }
+            if $0.trigger.isTrackpad, !$0.modifiers.isEmpty { return true }
             switch $0.action {
-            case .doNothing, .control, .text: return true
+            case .doNothing, .control, .text, .modifier: return true
             case .windowLayout(let layout): return layout.isNewInSchema34
             default: return false
             }
@@ -232,6 +237,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, isEnabled, hasCompletedSetup, languagePreference, bindings, profiles, selectedProfileID
         case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch, excludedApplications, pointerGestureDistance
+        case reversesMouseWheel, mouseWheelSpeed
     }
 
     init(from decoder: any Decoder) throws {
@@ -260,6 +266,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         if version >= 34 {
             excludedApplications = try values.decode([ApplicationTarget].self, forKey: .excludedApplications)
             pointerGestureDistance = try values.decode(PointerGestureDistance.self, forKey: .pointerGestureDistance)
+            reversesMouseWheel = try values.decode(Bool.self, forKey: .reversesMouseWheel)
+            mouseWheelSpeed = try values.decode(MouseWheelSpeed.self, forKey: .mouseWheelSpeed)
         }
     }
 
@@ -277,6 +285,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         if schemaVersion >= 34 {
             try values.encode(excludedApplications, forKey: .excludedApplications)
             try values.encode(pointerGestureDistance, forKey: .pointerGestureDistance)
+            try values.encode(reversesMouseWheel, forKey: .reversesMouseWheel)
+            try values.encode(mouseWheelSpeed, forKey: .mouseWheelSpeed)
         }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
@@ -285,6 +295,16 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try values.encode(profiles, forKey: .profiles)
             try values.encode(selectedProfileID, forKey: .selectedProfileID)
         }
+    }
+
+    /// One profile as a shareable file: no other profiles, no app preferences, no excluded apps.
+    func exportingProfile(_ id: UUID) throws -> Configuration {
+        guard let profile = profiles.first(where: { $0.id == id }) else { throw ConfigurationError.profileInvalid }
+        var result = Configuration()
+        result.profiles = [profile]
+        result.selectedProfileID = profile.id
+        try result.validate()
+        return result
     }
 
     mutating func selectProfile(_ id: UUID) throws {

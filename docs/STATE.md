@@ -23,7 +23,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
-- **2026-10-13:** [Held output, excluded apps, wider catalog and rule management](tasks/INPUT-009-held-output-exclusions-catalog.md) (schema 34): "Repeat While Held" for shortcuts and step actions, apps in which Rebind stays out of the way, 27 new catalog actions (Do Nothing, pause/profile control, editing, tabs, screenshots, Insert Text, quarters, next display), rule duplicate/copy-to-profile/note, mouse gesture distance, and wheel rules under a held mouse button. A copy review of all six languages changed 95 strings (one term per language for app, trigger, click and shortcut; Title Case action names in English). Sketch gained screens 29–33 (Button + Wheel editor, Repeat While Held with a note, Input settings with gesture distance and excluded apps, Insert Text, the binding options menu), saved 2026-10-13. 732 tests pass; nothing seen in the running app or tried on hardware.
+- **2026-10-13:** [Held output, excluded apps, wider catalog and rule management](tasks/INPUT-009-held-output-exclusions-catalog.md) (schema 34): "Repeat While Held" for shortcuts and step actions, apps in which Rebind stays out of the way, 27 new catalog actions (Do Nothing, pause/profile control, editing, tabs, screenshots, Insert Text, quarters, next display), rule duplicate/copy-to-profile/note, mouse gesture distance, and wheel rules under a held mouse button. A copy review of all six languages changed 95 strings (one term per language for app, trigger, click and shortcut; Title Case action names in English). Sketch gained screens 29–33 (Button + Wheel editor, Repeat While Held with a note, Input settings with gesture distance and excluded apps, Insert Text, the binding options menu), saved 2026-10-13. Later the same day: modifier-hold actions, a short-press shortcut on hold rules, one held key for trackpad gestures, wheel direction and speed, single-profile export/import, a support report and a paused Menu Bar icon; Sketch has screens 29–38 covering every addition, `Icon/text.cursor` and `Brand/Menu Bar Template Paused`. 748 tests pass; nothing seen in the running app or tried on hardware.
 - **2026-10-13:** Sidebar brand enlarged by user request: 44 pt icon and 22 pt Semibold name in all Sketch sidebar screens and in the app ([UI-023](tasks/UI-023-main-window-soft-adoption.md)). Layout tests pass; not yet seen in the running app.
 - **2026-10-13:** With Show in Dock off, the Dock icon now follows window visibility (shown while a window is open, gone after the last one closes). User-confirmed in the running app.
 - **2026-10-13:** Show in Dock / Show in menu bar / Start in the background settings (schema 33); windows reopen on the current Space; Spanish and Simplified Chinese added (unreviewed translations). Dock/menu bar hiding, background start and current-Space windows are user-confirmed; both new languages display correctly but their wording is not reviewed by a fluent reader.
@@ -41,7 +41,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 - **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27; preset exposure and physical acceptance open.
 - **2026-10-12:** [Trackpad focus cancellation](verification/trackpad-focus-cancellation.md) repaired and user-confirmed; measured timing open.
 
-Source: **Rebind - new.sketch** (33 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is superseded and kept only as a copy reference. Older entries: [history](history/2026-10.md).
+Source: **Rebind - new.sketch** (38 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is superseded and kept only as a copy reference. Older entries: [history](history/2026-10.md).
 
 ## Open work / next steps
 
@@ -51,7 +51,7 @@ Source: **Rebind - new.sketch** (33 screens × Light/Dark, English only) is the 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths. |
-| [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned; released | Try held output, wheel-with-button rules, excluded apps and the new actions on the built app. |
+| [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned; released | Walk the physical checklist for held output, modifiers, wheel, excluded apps, trackpad keys and the new actions. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Draw screens for new functionality as it is built (Mouse/Magic Mouse editors, action parameters, diagnostics). |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture, keyboard/VoiceOver/preferences. |
 | [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | awaiting_verification | Unassigned; released | Connect a Magic Trackpad: discovery, gestures, reconnection; regression-check the built-in trackpad. |

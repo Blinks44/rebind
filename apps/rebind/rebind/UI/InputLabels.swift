@@ -44,11 +44,36 @@ enum InputLabels {
         switch trigger {
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll:
             return modifiers.glyphs.isEmpty ? label : modifiers.glyphs + " " + label
-        default: return modifiers.glyphs + label
+        default:
+            if trigger.isTrackpad, !modifiers.glyphs.isEmpty { return modifiers.glyphs + " " + label }
+            return modifiers.glyphs + label
         }
     }
 
     static func shortcut(_ shortcut: KeyboardShortcut) -> String { trigger(.key(shortcut.keyCode), modifiers: shortcut.modifiers) }
+}
+
+extension ModifierSet {
+    /// Name of a single modifier choice for a trackpad gesture.
+    var choiceTitle: LocalizedStringResource {
+        switch self {
+        case .command: .modifierCommand
+        case .option: .modifierOption
+        case .control: .modifierControl
+        case .shift: .modifierShift
+        default: .trackpadModifierNone
+        }
+    }
+}
+
+extension MouseWheelSpeed {
+    var label: LocalizedStringResource {
+        switch self {
+        case .standard: .mouseWheelSpeedStandard
+        case .fast: .mouseWheelSpeedFast
+        case .faster: .mouseWheelSpeedFaster
+        }
+    }
 }
 
 extension PointerGestureDistance {

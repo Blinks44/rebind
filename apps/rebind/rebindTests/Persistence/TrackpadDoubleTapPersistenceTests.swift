@@ -73,7 +73,7 @@ struct TrackpadDoubleTapPersistenceTests {
     func unsupportedModifiersActionsAndActivationStayInvalid(_ trigger: InputTrigger, _ variant: Int) {
         var invalid = binding(trigger)
         switch variant {
-        case 0: invalid.modifiers = .option
+        case 0: invalid.modifiers = [.option, .command]
         case 1: invalid.activation = .doublePress
         case 2: invalid.activation = .hold
         case 3: invalid.action = .shortcut(.init(keyCode: 57, modifiers: []))

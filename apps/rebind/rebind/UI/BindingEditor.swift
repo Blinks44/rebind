@@ -55,7 +55,8 @@ struct BindingEditor: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     switch scope {
-                    case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
+                    case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) },
+                                                      recordTapOutput: { record(.tapOutput) })
                     case .builtInTrackpad, .magicTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                     case .allKeyboards: keyboardTrigger
                     }
@@ -164,6 +165,9 @@ struct BindingEditor: View {
                     .font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            if draft.activation == .hold {
+                TapOutputField(draft: $draft, model: model, record: { record(.tapOutput) })
+            }
         }
     }
 
@@ -223,7 +227,7 @@ struct BindingEditor: View {
 
     /// Only a pressed key or mouse button has a release to hold an output until.
     private var showsHoldOption: Bool {
-        guard actionKind.canBeHeld, draft.activation == .press else { return false }
+        guard actionKind.canBeHeld, draft.activation != .doublePress else { return false }
         return scope == .allKeyboards || (scope == .allMice && draft.mouseTarget == .mouseTrigger)
     }
 
@@ -236,6 +240,7 @@ struct BindingEditor: View {
         if actionKind == .pauseRebind { return .pauseRebindHint }
         if actionKind.controlAction != nil { return .switchProfileHint }
         if actionKind == .insertText { return .insertTextHint }
+        if actionKind.modifierAction != nil { return .holdModifierHint }
         if actionKind == .navigateBack || actionKind == .navigateForward { return .navigationActionHint }
         if let shortcut = actionKind.fixedShortcut { return .namedShortcutHint(InputLabels.shortcut(shortcut)) }
         if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }

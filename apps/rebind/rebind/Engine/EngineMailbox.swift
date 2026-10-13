@@ -6,7 +6,7 @@ nonisolated enum EngineStatus: Sendable {
 }
 
 nonisolated enum RecordingTarget: Hashable, Sendable {
-    case keyboardTrigger, mouseTrigger, gestureTrigger, scrollTrigger, buttonScrollTrigger, output
+    case keyboardTrigger, mouseTrigger, gestureTrigger, scrollTrigger, buttonScrollTrigger, output, tapOutput
 }
 
 nonisolated struct RecordingRequest: Sendable, Equatable {
@@ -44,6 +44,7 @@ nonisolated final class EngineMailbox: Sendable {
         var pending: [RebindAction] = []
         var held: [HeldOutput] = []
         var keyRepeat = KeyRepeatTiming()
+        var wheel: WheelAdjustment?
         static let maximumHeldOutputs = 4
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
@@ -79,22 +80,34 @@ nonisolated final class EngineMailbox: Sendable {
         mutating func releaseHeldOutput(for trigger: InputTrigger) {
             guard let index = held.firstIndex(where: { $0.trigger == trigger && !$0.released }) else { return }
             if held[index].pressedAt == nil {
-                pending.append(held.remove(at: index).action)
+                let action = held.remove(at: index).action
+                if !action.requiresHeldOutput { pending.append(action) }
             } else { held[index].released = true }
+        }
+
+        /// Modifiers Rebind is holding for the user; the tap adds them to the input it passes on.
+        var virtualModifiers: ModifierSet {
+            held.reduce(into: ModifierSet()) { result, output in
+                if case .modifier(let modifiers) = output.action, output.pressedAt != nil, !output.released {
+                    result.formUnion(modifiers)
+                }
+            }
         }
 
         /// One step per worker pass: a due release first, then a press or repeat.
         mutating func nextHeldKey(at now: UInt64) -> HeldKeyCommand? {
             if let index = held.firstIndex(where: \.released) {
                 let output = held.remove(at: index)
-                guard let shortcut = output.action.shortcut else { return nil }
-                return HeldKeyCommand(shortcut: shortcut, phase: .release)
+                guard let target = output.action.heldKeyTarget else { return nil }
+                return HeldKeyCommand(target: target, phase: .release)
             }
             guard canDispatch else { return nil }
             for index in held.indices {
                 let output = held[index]
                 let isDue: Bool
                 if let pressedAt = output.pressedAt {
+                    // A modifier is down once; only keys and step actions repeat.
+                    if output.action.requiresHeldOutput { continue }
                     let last = output.lastRepeatAt
                     let next = last.map { $0 &+ keyRepeat.intervalNanoseconds } ?? pressedAt &+ keyRepeat.delayNanoseconds
                     isDue = now >= next
@@ -104,8 +117,8 @@ nonisolated final class EngineMailbox: Sendable {
                     held[index].pressedAt = now
                 }
                 guard isDue else { continue }
-                if let shortcut = output.action.shortcut {
-                    return HeldKeyCommand(shortcut: shortcut, phase: output.pressedAt == nil ? .press : .repeatPress)
+                if let target = output.action.heldKeyTarget {
+                    return HeldKeyCommand(target: target, phase: output.pressedAt == nil ? .press : .repeatPress)
                 }
                 // A step action goes through the ordinary queue each time it is due.
                 if pending.count < 16 { pending.append(output.action) }
@@ -177,6 +190,9 @@ nonisolated final class EngineMailbox: Sendable {
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
             $0.keyRepeat = keyRepeat
             $0.matcher.pointerThreshold = configuration.pointerGestureDistance.points
+            let wheel = WheelAdjustment(reverses: configuration.reversesMouseWheel,
+                                        multiplier: configuration.mouseWheelSpeed.multiplier)
+            $0.wheel = wheel.factor == 1 ? nil : wheel
         }
     }
 
@@ -235,6 +251,14 @@ nonisolated final class EngineMailbox: Sendable {
 
     func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
         state.withLock { $0.dispatchIsCurrent(dispatch) }
+    }
+
+    /// Checked for every event the tap passes on; empty unless a modifier rule is held.
+    var virtualModifiers: ModifierSet { state.withLock { $0.held.isEmpty ? [] : $0.virtualModifiers } }
+
+    /// The wheel change for an event Rebind passes through, or nil while rules are not running.
+    var wheelAdjustment: WheelAdjustment? {
+        state.withLock { $0.status == .active && $0.isMatching && !$0.suspended && !$0.stopped ? $0.wheel : nil }
     }
 
     func nextHeldKey(at now: UInt64) -> HeldKeyCommand? { state.withLock { $0.nextHeldKey(at: now) } }
@@ -456,7 +480,7 @@ nonisolated final class EngineMailbox: Sendable {
         if let action = decision.action {
             if decision.holdsOutput, state.held.count < State.maximumHeldOutputs {
                 state.held.append(HeldOutput(trigger: event.trigger, action: action))
-            } else { state.pending.append(action) }
+            } else if !action.requiresHeldOutput { state.pending.append(action) }
         }
         if decision.suppress { return true }
         if let request = state.recording {
@@ -469,7 +493,7 @@ nonisolated final class EngineMailbox: Sendable {
                 case (.mouseTrigger, .mouseButton), (.gestureTrigger, .mouseButton),
                      (.buttonScrollTrigger, .mouseButton): matchesCategory = true
                 case (.scrollTrigger, .scroll): matchesCategory = true
-                case (.keyboardTrigger, .key), (.output, .key): matchesCategory = true
+                case (.keyboardTrigger, .key), (.output, .key), (.tapOutput, .key): matchesCategory = true
                 default: matchesCategory = false
                 }
                 guard matchesCategory, event.trigger.isSupported,
@@ -495,7 +519,10 @@ nonisolated final class EngineMailbox: Sendable {
             if let action = state.matcher.pollHold(at: now, rules: state.rules,
                                                       enabled: state.isMatching && !state.editing && state.recording == nil,
                                                       canDispatch: state.pending.count < 16) {
-                state.pending.append(action)
+                // The trigger is still down, so a held output lasts from here to its release.
+                if let holdKey, state.rules[holdKey]?.holdsOutput == true, state.held.count < State.maximumHeldOutputs {
+                    state.held.append(HeldOutput(trigger: holdKey.trigger, action: action))
+                } else if !action.requiresHeldOutput { state.pending.append(action) }
                 if let holdKey, case .mouseButton(let number) = holdKey.trigger {
                     state.diagnostics.append(kind: .button(number), phase: .activation, modifiers: holdKey.modifiers,
                                              outcome: .queued, at: now)

@@ -113,8 +113,11 @@ struct HeldOutputTests {
         #expect(binding(.system(.toggleMute)).isValid == false)
         #expect(binding(.lockScreen).isValid == false)
         #expect(binding(.shortcut(output), trigger: .scroll(.up)).isValid == false)
+        // After a hold the trigger is still down, so its output may be held too; a double press is not.
         var hold = binding(.shortcut(output))
         hold.activation = .hold
+        #expect(hold.isValid)
+        hold.activation = .doublePress
         #expect(hold.isValid == false)
         // A gesture button decides its click on release, so it cannot also hold an output.
         let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],

@@ -25,16 +25,35 @@ nonisolated enum ShortcutSender {
         return [down, up]
     }
 
-    /// One half of a held key. The pair is balanced by the mailbox, which always
+    /// One half of a held key or modifier. The pair is balanced by the mailbox, which always
     /// issues a release for a press it handed out.
     static func postHeldKey(_ command: HeldKeyCommand) {
-        guard command.shortcut.isSupported, let source = CGEventSource(stateID: .privateState),
-              let event = CGEvent(keyboardEventSource: source, virtualKey: command.shortcut.keyCode,
-                                  keyDown: command.phase != .release) else { return }
-        event.flags = command.shortcut.modifiers.flags
-        event.setIntegerValueField(.eventSourceUserData, value: eventTag)
-        if command.phase == .repeatPress { event.setIntegerValueField(.keyboardEventAutorepeat, value: 1) }
-        event.post(tap: .cgSessionEventTap)
+        for event in heldKeyEvents(command) { event.post(tap: .cgSessionEventTap) }
+    }
+
+    static func heldKeyEvents(_ command: HeldKeyCommand) -> [CGEvent] {
+        guard let source = CGEventSource(stateID: .privateState) else { return [] }
+        switch command.target {
+        case .shortcut(let shortcut):
+            guard shortcut.isSupported,
+                  let event = CGEvent(keyboardEventSource: source, virtualKey: shortcut.keyCode,
+                                      keyDown: command.phase != .release) else { return [] }
+            event.flags = shortcut.modifiers.flags
+            event.setIntegerValueField(.eventSourceUserData, value: eventTag)
+            if command.phase == .repeatPress { event.setIntegerValueField(.keyboardEventAutorepeat, value: 1) }
+            return [event]
+        case .modifiers(let modifiers):
+            // Apps that track modifier state see an ordinary modifier press; the tap adds the
+            // same flags to the hardware events that follow, which Quartz would not do itself.
+            let keys: [(ModifierSet, CGKeyCode)] = [(.command, 55), (.shift, 56), (.option, 58), (.control, 59)]
+            return keys.filter { modifiers.contains($0.0) }.compactMap { _, key in
+                guard let event = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: command.phase != .release) else { return nil }
+                event.type = .flagsChanged
+                event.flags = command.phase == .release ? [] : modifiers.flags
+                event.setIntegerValueField(.eventSourceUserData, value: eventTag)
+                return event
+            }
+        }
     }
 
     // The touch action keeps its captured target even if foreground changes in
@@ -46,11 +65,13 @@ nonisolated enum ShortcutSender {
                          AXIsProcessTrusted() && CGPreflightPostEventAccess()
                              && !IsSecureEventInputEnabled() && ScreenLockSession.allowsInput()
                      },
-                     blockedInput: (KeyboardShortcut) -> TrackpadDiagnosticEvent? = heldInput,
+                     blockedInput: ((KeyboardShortcut) -> TrackpadDiagnosticEvent?)? = nil,
                      targetIsActive: (Int32) -> Bool = applicationIsActive,
                      clock: () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
                      post: (CGEvent, Int32) -> Void = { $0.postToPid($1) }) -> WindowActionResult {
         let pid = target.pid
+        // The modifier a rule requires is necessarily down; any other held input still blocks.
+        let blockedInput = blockedInput ?? { heldInput($0, allowing: target.modifiers) }
         guard canPerform() else { diagnose(.runtimeChanged); return .cancelled }
         guard pid > 0, pid != getpid(), targetIsActive(pid) else { diagnose(.outputTargetInactive); return .cancelled }
         guard allowsInput() else {
@@ -82,9 +103,10 @@ nonisolated enum ShortcutSender {
         return app.isActive && !app.isTerminated && app.activationPolicy == .regular
     }
 
-    private static func heldInput(_ shortcut: KeyboardShortcut) -> TrackpadDiagnosticEvent? {
+    private static func heldInput(_ shortcut: KeyboardShortcut, allowing allowed: ModifierSet) -> TrackpadDiagnosticEvent? {
         guard CGEventSource.flagsState(.combinedSessionState)
-            .intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift, .maskSecondaryFn]).isEmpty else {
+            .intersection([.maskCommand, .maskControl, .maskAlternate, .maskShift, .maskSecondaryFn])
+            .subtracting(allowed.flags).isEmpty else {
             return .heldModifier
         }
         guard !(0..<64).contains(where: {

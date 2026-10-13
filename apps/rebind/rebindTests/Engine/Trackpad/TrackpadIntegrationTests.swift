@@ -482,7 +482,7 @@ struct TrackpadIntegrationTests {
         for scenario in 0...3 {
             var invalid = binding
             switch scenario {
-            case 0: invalid.modifiers = .control
+            case 0: invalid.modifiers = [.control, .shift]
             case 1: invalid.activation = .doublePress
             case 2: invalid.activation = .hold
             default: invalid.action = .shortcut(.init(keyCode: 57, modifiers: []))

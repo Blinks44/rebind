@@ -101,7 +101,7 @@ extension EngineMailbox.State {
             && recording == nil && foregroundPID != nil
         let rules = rules
         func rule(_ trigger: InputTrigger, _ magic: Bool) -> RebindAction? {
-            active ? rules[MatchKey(trigger: trigger, modifiers: [], isMagicTrackpad: magic)]?.action : nil
+            active ? rules[MatchKey(trigger: trigger, modifiers: event.modifiers, isMagicTrackpad: magic)]?.action : nil
         }
         // Each surface keeps its own contact state; the one that explains the press decides.
         let now = event.receivedAt ?? event.timestamp

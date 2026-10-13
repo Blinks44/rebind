@@ -17,6 +17,8 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
     case doNothing
     case control(ControlAction)
     case text(String)
+    /// Acts as these modifier keys while the trigger is held.
+    case modifier(ModifierSet)
 
     var shortcut: KeyboardShortcut? {
         if case .shortcut(let value) = self { return value }
@@ -26,12 +28,18 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
     /// A shortcut stays pressed; these step actions repeat. Other actions run once.
     var canBeHeld: Bool {
         switch self {
-        case .shortcut: true
+        case .shortcut, .modifier: true
         case .system(let action): action != .toggleMute
         case .media(let action): action.isBrightness
         case .mouse(let action): action.scrollLines != nil
         default: false
         }
+    }
+
+    /// A modifier exists only while held; it has no one-shot form.
+    var requiresHeldOutput: Bool {
+        if case .modifier = self { return true }
+        return false
     }
 
     var isSupported: Bool {
@@ -40,6 +48,7 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle,
              .doNothing, .control: true
         case .text(let text): TextSnippet.isValid(text)
+        case .modifier(let modifiers): !modifiers.isEmpty && modifiers.subtracting(.supported).isEmpty
         case .workspace(let action): action.isSupported
         case .appleShortcut(let target): target.isSupported
         case .desktop: false

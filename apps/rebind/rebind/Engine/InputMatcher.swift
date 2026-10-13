@@ -81,7 +81,7 @@ nonisolated struct InputMatcher: Sendable {
             if rules[binding.matchKey] != nil { conflicts.insert(binding.matchKey) }
             rules[binding.matchKey] = CompiledBinding(action: binding.action, activation: binding.activation,
                                                       holdDurationNanoseconds: UInt64(binding.holdDurationMilliseconds) * 1_000_000,
-                                                      holdsOutput: binding.holdsOutput)
+                                                      holdsOutput: binding.holdsOutput, tapShortcut: binding.tapShortcut)
         }
         let ambiguousSources = gestureSources.intersection(ordinarySources)
         for key in rules.keys where ambiguousSources.contains(key.pressSource) { conflicts.insert(key) }
@@ -122,7 +122,14 @@ nonisolated struct InputMatcher: Sendable {
                 }
                 pointerGesture = nil
             }
-            if hold?.key.trigger == event.trigger { hold = nil }
+            if let candidate = hold, candidate.key.trigger == event.trigger {
+                // Released before the hold time: a hold rule may send its short-press shortcut.
+                if enabled, canDispatch, candidate.key.modifiers == event.modifiers, suppressed.contains(event.trigger),
+                   let tap = rules[candidate.key]?.tapShortcut {
+                    click = .shortcut(tap)
+                }
+                hold = nil
+            }
             let owned = suppressed.remove(event.trigger) != nil
             if click != nil { doublePress = nil; return MatchDecision(suppress: owned, action: click) }
             if let candidate = doublePress, candidate.key.trigger == event.trigger {

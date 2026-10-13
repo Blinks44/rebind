@@ -196,7 +196,7 @@ nonisolated final class ActionWorker {
             }
             guard result != .cancelled else { return }
             success = result == .performed
-        case .doNothing: success = true
+        case .doNothing, .modifier: success = true
         case .text(let text):
             let mailbox = mailbox
             let postingAllowed = postingAllowed

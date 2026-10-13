@@ -40,7 +40,8 @@ struct rebindApp: App {
                 .background { ActiveSpaceWindow() }
                 .environment(\.locale, delegate.model.activeLanguage.locale)
         }
-        MenuBarExtra("Rebind", image: "RebindMenuBar", isInserted: menuBarIconShown) {
+        MenuBarExtra("Rebind", image: delegate.model.rulesAreRunning ? "RebindMenuBar" : "RebindMenuBarPaused",
+                     isInserted: menuBarIconShown) {
             RebindMenu(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
         }
     }

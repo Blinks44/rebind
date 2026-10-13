@@ -11,14 +11,21 @@ nonisolated struct BindingEditorDraft {
     var scrollDirection: ScrollDirection
     var holdsOutput: Bool
     var note: String
+    var tapOutput: KeyboardShortcut?
 
     var trackpadPreset: TrackpadPreset? {
         get { trigger.flatMap { TrackpadPreset(trigger: $0.trigger) } }
         set {
             guard let newValue else { return }
-            trigger = MatchKey(trigger: newValue.trigger, modifiers: [])
+            trigger = MatchKey(trigger: newValue.trigger, modifiers: trackpadModifiers)
             activation = .press
         }
+    }
+
+    /// The single key a trackpad gesture requires, or none.
+    var trackpadModifiers: ModifierSet {
+        get { trigger.map { ModifierSet.trackpadChoices.contains($0.modifiers) ? $0.modifiers : [] } ?? [] }
+        set { trigger?.modifiers = newValue }
     }
 
     init(scope: DeviceScope, existing: Binding?) {
@@ -29,6 +36,7 @@ nonisolated struct BindingEditorDraft {
         holdDurationMilliseconds = existing?.holdDurationMilliseconds ?? 500
         holdsOutput = existing?.holdsOutput ?? false
         note = existing?.note ?? ""
+        tapOutput = existing?.tapShortcut
         mouseTarget = .mouseTrigger
         pointerDirection = .left
         scrollDirection = .up
@@ -61,6 +69,9 @@ nonisolated struct BindingEditorDraft {
         case .output:
             guard case .key(let code) = input.trigger else { return }
             output = KeyboardShortcut(keyCode: code, modifiers: input.modifiers)
+        case .tapOutput:
+            guard case .key(let code) = input.trigger else { return }
+            tapOutput = KeyboardShortcut(keyCode: code, modifiers: input.modifiers)
         case .keyboardTrigger:
             guard scope == .allKeyboards, case .key = input.trigger else { return }
             trigger = input
@@ -95,7 +106,9 @@ nonisolated struct BindingEditorDraft {
         var binding = Binding(scope: scope, trigger: source, modifiers: trigger.modifiers, action: action,
             activation: source.isScroll || source.holdsButton ? .press : activation,
             holdDurationMilliseconds: holdDurationMilliseconds)
-        binding.holdsOutput = holdsOutput && binding.activation == .press && source.canHoldOutput && action.canBeHeld
+        binding.holdsOutput = (holdsOutput || action.requiresHeldOutput) && binding.activation != .doublePress
+            && source.canHoldOutput && action.canBeHeld
+        binding.tapShortcut = binding.activation == .hold ? tapOutput : nil
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
         binding.note = trimmed.isEmpty ? nil : String(trimmed.prefix(Binding.maximumNoteLength))
             .trimmingCharacters(in: .whitespacesAndNewlines)

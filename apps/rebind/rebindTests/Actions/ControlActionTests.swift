@@ -70,7 +70,8 @@ import Testing
         try configuration.createProfile(name: "Second", copying: RuleProfile.defaultID)
         try configuration.selectProfile(RuleProfile.defaultID)
         try store.save(configuration)
-        let model = AppModel(store: store)
+        // refresh() rereads session state; a locked screen on the test machine must not suspend this test.
+        let model = AppModel(store: store, sessionAllowsInput: { true })
         let second = model.configuration.profiles[1].id
         for expected in [second, RuleProfile.defaultID] {
             model.mailbox.configure(model.configuration)

@@ -13,6 +13,8 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
     var holdsOutput = false
     /// The user's own description of the rule; nil when there is none.
     var note: String?
+    /// For a hold rule: sent when the trigger is released before the hold time.
+    var tapShortcut: KeyboardShortcut?
     static let maximumNoteLength = 80
 
     var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers, isMagicTrackpad: scope == .magicTrackpad) }
@@ -21,16 +23,18 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
             && (activation == .press || (!trigger.isScroll && !trigger.holdsButton && !trigger.isTrackpad))
-            && (!trigger.isTrackpad || modifiers.isEmpty)
+            && (!trigger.isTrackpad || modifiers.isEmpty || ModifierSet.trackpadChoices.contains(modifiers))
             && (100...5000).contains(holdDurationMilliseconds)
             && (note.map(Self.isValidNote) ?? true)
-            && (!holdsOutput || (activation == .press && trigger.canHoldOutput && action.canBeHeld))
+            && (!holdsOutput || (activation != .doublePress && trigger.canHoldOutput && action.canBeHeld))
+            && (holdsOutput || !action.requiresHeldOutput)
+            && (tapShortcut.map { activation == .hold && $0.isSupported } ?? true)
     }
 }
 
 extension Binding {
     nonisolated private enum CodingKeys: String, CodingKey {
-        case id, scope, trigger, modifiers, action, isEnabled, activation, holdDurationMilliseconds, holdsOutput, note
+        case id, scope, trigger, modifiers, action, isEnabled, activation, holdDurationMilliseconds, holdsOutput, note, tapShortcut
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -47,6 +51,7 @@ extension Binding {
             ? try values.decode(UInt32.self, forKey: .holdDurationMilliseconds) : 500
         holdsOutput = values.contains(.holdsOutput) ? try values.decode(Bool.self, forKey: .holdsOutput) : false
         note = try values.decodeIfPresent(String.self, forKey: .note)
+        tapShortcut = try values.decodeIfPresent(KeyboardShortcut.self, forKey: .tapShortcut)
     }
 }
 

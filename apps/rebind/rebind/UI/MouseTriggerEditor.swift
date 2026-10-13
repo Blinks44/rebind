@@ -4,6 +4,7 @@ struct MouseTriggerEditor: View {
     @SwiftUI.Binding var draft: BindingEditorDraft
     let model: AppModel
     let record: () -> Void
+    let recordTapOutput: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -31,6 +32,7 @@ struct MouseTriggerEditor: View {
                     HoldDurationRow(milliseconds: $draft.holdDurationMilliseconds).disabled(model.recording != nil)
                     Text(.holdHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
+                    TapOutputField(draft: $draft, model: model, record: recordTapOutput)
                 } else if draft.activation == .doublePress {
                     Text(.doublePressHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)

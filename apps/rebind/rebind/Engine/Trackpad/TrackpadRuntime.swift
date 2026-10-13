@@ -11,6 +11,8 @@ nonisolated struct TrackpadDispatchTarget: Equatable, Sendable {
     var expiresAt: UInt64
     /// Monotonic mailbox admission time; transient and never serialized.
     var queuedAt: UInt64 = 0
+    /// The modifier key the matched rule requires; it is expected to be down while the output is sent.
+    var modifiers: ModifierSet = []
 }
 
 nonisolated struct TrackpadRuntime: Equatable, Sendable {
@@ -18,6 +20,8 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
     var inputActivity: UInt64
     /// Whether these are the Magic Trackpad's rules rather than the built-in trackpad's.
     var isMagicTrackpad = false
+    /// Keyboard modifiers held when this snapshot was taken; only rules for exactly these apply.
+    var modifiers: ModifierSet = []
     /// Enabled light-tap rules of the selected profile, by complete gesture.
     var actions: [TrackpadTapGesture: RebindAction] = [:]
     /// Click rules are resolved on the event-tap path; they only need contact frames to keep flowing.
@@ -42,7 +46,7 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
 }
 
 extension EngineMailbox {
-    nonisolated func trackpadRuntime(magicTrackpad: Bool = false) -> TrackpadRuntime? {
+    nonisolated func trackpadRuntime(magicTrackpad: Bool = false, modifiers: ModifierSet = []) -> TrackpadRuntime? {
         state.withLock {
             guard $0.status == .active, $0.isMatching, !$0.editing, !$0.suspended, !$0.stopped,
                   $0.recording == nil else { return nil }
@@ -53,13 +57,16 @@ extension EngineMailbox {
             let supportsDouble = (1...2_000_000_000).contains(interval)
             var actions: [TrackpadTapGesture: RebindAction] = [:]
             for gesture in TrackpadTapGesture.allCases where supportsDouble || !gesture.isDoubleTap {
-                actions[gesture] = rules[MatchKey(trigger: gesture.trigger, modifiers: [], isMagicTrackpad: magicTrackpad)]?.action
+                actions[gesture] = rules[MatchKey(trigger: gesture.trigger, modifiers: modifiers, isMagicTrackpad: magicTrackpad)]?.action
             }
-            let clicks = (2...4).contains { rules[MatchKey(trigger: .trackpadClick(fingers: $0), modifiers: [], isMagicTrackpad: magicTrackpad)] != nil
+            // Click rules are matched on the event-tap path with the click's own modifiers.
+            let clicks = rules.keys.contains {
+                if case .trackpadClick = $0.trigger { return $0.isMagicTrackpad == magicTrackpad }
+                return false
             }
             guard !actions.isEmpty || clicks else { return nil }
             return TrackpadRuntime(revision: $0.actionRevision, inputActivity: $0.inputActivity,
-                                   isMagicTrackpad: magicTrackpad,
+                                   isMagicTrackpad: magicTrackpad, modifiers: modifiers,
                                    actions: actions, hasClickRules: clicks,
                                    doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
         }
@@ -97,11 +104,12 @@ extension EngineMailbox {
                   $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
                   $0.actionRevision == runtime.revision, $0.inputActivity == runtime.inputActivity,
                   $0.foregroundPID == pid, let action = runtime.actions[gesture],
-                  $0.rules[MatchKey(trigger: gesture.trigger, modifiers: [],
+                  $0.rules[MatchKey(trigger: gesture.trigger, modifiers: runtime.modifiers,
                                     isMagicTrackpad: runtime.isMagicTrackpad)]?.action == action else { return false }
             let dispatch = ActionDispatch(action: action, revision: runtime.revision,
                 deviceID: $0.audioCapabilities.deviceID, trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
-                                                      expiresAt: now + 100_000_000, queuedAt: now))
+                                                      expiresAt: now + 100_000_000, queuedAt: now,
+                                                      modifiers: runtime.modifiers))
             guard $0.dispatchIsCurrent(dispatch) else { return false }
             $0.trackpadDispatch = dispatch
             return true

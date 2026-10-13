@@ -28,6 +28,32 @@ struct InputSettingsView: View {
                     }
                 }
                 information(.inputBuiltInTrackpad, status: .experimental, description: .trackpadInputDescription)
+                Card {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(.mouseWheelTitle).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                        Text(.mouseWheelDescription).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Toggle(isOn: SwiftUI.Binding(get: { model.configuration.reversesMouseWheel },
+                                                     set: { model.setMouseWheel(reverses: $0) })) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(.reverseMouseWheel).font(Theme.body).foregroundStyle(Theme.textPrimary)
+                                Text(.reverseMouseWheelDescription).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .toggleStyle(ThemeSwitchStyle())
+                        .accessibilityIdentifier("input-reverse-wheel")
+                        Text(.mouseWheelSpeedTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                        SegmentedPicker(selection: SwiftUI.Binding(get: { model.configuration.mouseWheelSpeed },
+                                                                   set: { model.setMouseWheel(speed: $0) }),
+                                        title: .mouseWheelSpeedTitle, options: MouseWheelSpeed.allCases,
+                                        label: { $0.label }, fillsWidth: true)
+                            .accessibilityIdentifier("input-wheel-speed")
+                    }
+                    .disabled(model.storageLocked)
+                }
                 ExcludedApplicationsCard(model: model)
                 Text(.inputEditGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

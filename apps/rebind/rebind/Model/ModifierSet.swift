@@ -10,6 +10,8 @@ nonisolated struct ModifierSet: OptionSet, Codable, Hashable, Sendable {
     // before hardware research. Dropping it could silently match a different chord.
     static let function = Self(rawValue: 16)
     static let supported: Self = [.command, .control, .option, .shift]
+    /// A trackpad gesture may require at most one held modifier key: a curated set, not free chords.
+    static let trackpadChoices: [Self] = [[], .command, .option, .control, .shift]
 
     init(rawValue: UInt8) { self.rawValue = rawValue }
 

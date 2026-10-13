@@ -11,8 +11,30 @@ nonisolated struct HeldOutput: Sendable, Equatable {
 
 nonisolated struct HeldKeyCommand: Sendable, Equatable {
     enum Phase: Sendable { case press, repeatPress, release }
-    var shortcut: KeyboardShortcut
+    enum Target: Sendable, Equatable {
+        case shortcut(KeyboardShortcut)
+        case modifiers(ModifierSet)
+    }
+    var target: Target
     var phase: Phase
+
+    init(target: Target, phase: Phase) {
+        self.target = target
+        self.phase = phase
+    }
+
+    init(shortcut: KeyboardShortcut, phase: Phase) { self.init(target: .shortcut(shortcut), phase: phase) }
+}
+
+extension RebindAction {
+    /// What a held output posts as key events; nil for step actions, which repeat through the queue.
+    nonisolated var heldKeyTarget: HeldKeyCommand.Target? {
+        switch self {
+        case .shortcut(let shortcut): .shortcut(shortcut)
+        case .modifier(let modifiers): .modifiers(modifiers)
+        default: nil
+        }
+    }
 }
 
 nonisolated struct KeyRepeatTiming: Sendable, Equatable {

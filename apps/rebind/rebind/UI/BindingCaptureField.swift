@@ -16,6 +16,7 @@ struct BindingCaptureField: View {
     @Environment(\.displayScale) private var displayScale
 
     private var isListening: Bool { recording?.target == target }
+    private var isOutput: Bool { target == .output || target == .tapOutput }
 
     var body: some View {
         Group {
@@ -24,7 +25,7 @@ struct BindingCaptureField: View {
                     Circle().fill(Theme.danger).frame(width: 12, height: 12).accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(prompt).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
-                        Text(target == .output ? LocalizedStringResource.mouseOutputListeningHelp : .mouseListeningHelp)
+                        Text(isOutput ? LocalizedStringResource.mouseOutputListeningHelp : .mouseListeningHelp)
                             .font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     }.fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 8)
@@ -67,7 +68,7 @@ struct BindingCaptureField: View {
                     if let value {
                         TriggerChip(label: value, symbol: target == .keyboardTrigger ? "keyboard" : "computermouse")
                     } else {
-                        Text(target == .output ? LocalizedStringResource.mouseNoOutput : .mouseNoTrigger)
+                        Text(isOutput ? LocalizedStringResource.mouseNoOutput : .mouseNoTrigger)
                             .foregroundStyle(Theme.textTertiary)
                     }
                 }
@@ -78,9 +79,9 @@ struct BindingCaptureField: View {
     }
 
     private var recordButton: some View {
-        Button(target == .output ? LocalizedStringResource.editorRecordOutput : .editorRecordTrigger, action: record)
+        Button(isOutput ? LocalizedStringResource.editorRecordOutput : .editorRecordTrigger, action: record)
             .secondaryButton()
-            .accessibilityLabel(Text(target == .output ? LocalizedStringResource.recordOutput : .recordTrigger))
+            .accessibilityLabel(Text(isOutput ? LocalizedStringResource.recordOutput : .recordTrigger))
             .focused($recordFocused).disabled(!canRecord || recording != nil)
     }
 
@@ -90,13 +91,13 @@ struct BindingCaptureField: View {
                 .frame(width: 28, height: 28).contentShape(.rect)
         }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(target == .output ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
+            .accessibilityLabel(Text(isOutput ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
             .disabled(value == nil || recording != nil)
     }
 
     private var prompt: LocalizedStringResource {
         switch target {
-        case .output: .mouseOutputListening
+        case .output, .tapOutput: .mouseOutputListening
         case .scrollTrigger: .mouseWheelListening
         case .mouseTrigger, .gestureTrigger, .buttonScrollTrigger: .mouseButtonListening
         case .keyboardTrigger: .listeningHint

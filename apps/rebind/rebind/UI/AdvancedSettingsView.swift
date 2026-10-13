@@ -11,6 +11,7 @@ struct AdvancedSettingsView: View {
     @State private var panel: NSSavePanel?
     @State private var windowAnchor = NSView()
     @State private var confirmation: NSAlert?
+    @State private var copiedReport = false
 
     private struct FileRequest: Equatable {
         let id = UUID()
@@ -62,6 +63,12 @@ struct AdvancedSettingsView: View {
                     if let feedback = editing.feedback, feedbackBelongsToReset {
                         feedbackCard(feedback)
                     }
+                }
+                SettingsActionCard(title: .supportReportTitle, description: .supportReportDescription) {
+                    Button(copiedReport ? LocalizedStringResource.supportReportCopied : .supportReportCopy) {
+                        NSPasteboard.general.clearContents()
+                        copiedReport = NSPasteboard.general.setString(model.supportReport(), forType: .string)
+                    }.secondaryButton()
                 }
                 if model.requiresLanguageReopen {
                     Banner(severity: .information, title: .reopenTitle, message: .reopenDescription(savedLanguageName)) {

@@ -7993,6 +7993,47 @@
         }
       }
     },
+    "exportProfile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil exportieren…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Profile…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportar perfil…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporter le profil…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Экспортировать профиль…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出配置文件…"
+          }
+        }
+      }
+    },
     "fillWindowAction" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8362,6 +8403,88 @@
         }
       }
     },
+    "holdCommandAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Befehlstaste halten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold ⌘ Command"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener ⌘ Comando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenir ⌘ Commande"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживать ⌘ Command"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 ⌘ Command"
+          }
+        }
+      }
+    },
+    "holdControlAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ ctrl-Taste halten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold ⌃ Control"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener ⌃ Control"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenir ⌃ Contrôle"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживать ⌃ Control"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 ⌃ Control"
+          }
+        }
+      }
+    },
     "holdDuration %lld" : {
       "comment" : "Long-press threshold in milliseconds; integer between 100 and 5000.",
       "extractionState" : "manual",
@@ -8523,6 +8646,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按住达到所选时长后执行一次。时间不够的按压不会有任何作用，也不会传给其他 App。松开、按下其他键或滚动都会取消。"
+          }
+        }
+      }
+    },
+    "holdModifierHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wirkt wie diese Sondertaste, solange Sie den Auslöser gedrückt halten: Sie wird anderen Tasten, Klicks und dem Scrollen hinzugefügt. Der Auslöser muss eine Taste oder Maustaste sein, gedrückt oder gehalten. Die eigenen Belegungen von Rebind berücksichtigen diese Sondertaste nicht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acts as this modifier key for as long as you hold the trigger: other keys, clicks and scrolling get it added. Needs a key or mouse button as the trigger, pressed or held. Rebind’s own bindings do not see this modifier."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actúa como esta tecla modificadora mientras mantienes pulsado el activador: se añade a otras teclas, clics y desplazamientos. El activador debe ser una tecla o un botón del ratón, con pulsación o mantenido. Las reglas de Rebind no tienen en cuenta este modificador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agit comme cette touche de modification tant que vous maintenez le déclencheur : elle s’ajoute aux autres touches, aux clics et au défilement. Le déclencheur doit être une touche ou un bouton de souris, en appui ou en maintien. Les règles de Rebind ne tiennent pas compte de ce modificateur."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока вы удерживаете триггер, он работает как эта клавиша-модификатор: она добавляется к другим клавишам, кликам и прокрутке. Триггером должна быть клавиша или кнопка мыши с нажатием или удержанием. Собственные правила Rebind этот модификатор не учитывают."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住触发器期间，它相当于这个修饰键：会加到其他按键、点按和滚动上。触发器必须是按键或鼠标按钮，激活方式为按下或按住。Rebind 自己的规则不会识别这个修饰键。"
+          }
+        }
+      }
+    },
+    "holdOptionAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Wahltaste halten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold ⌥ Option"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener ⌥ Opción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenir ⌥ Option"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживать ⌥ Option"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 ⌥ Option"
           }
         }
       }
@@ -8732,6 +8937,47 @@
         }
       }
     },
+    "holdShiftAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Umschalttaste halten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold ⇧ Shift"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener ⇧ Mayúsculas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenir ⇧ Maj"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживать ⇧ Shift"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 ⇧ Shift"
+          }
+        }
+      }
+    },
     "holdValue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8769,6 +9015,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%d 毫秒"
+          }
+        }
+      }
+    },
+    "importProfile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil importieren…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Profile…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar perfil…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un profil…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Импортировать профиль…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入配置文件…"
           }
         }
       }
@@ -10581,6 +10868,170 @@
         }
       }
     },
+    "modifierCommand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Befehlstaste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Command"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Comando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Commande"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Command"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ Command"
+          }
+        }
+      }
+    },
+    "modifierControl" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ ctrl-Taste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ Control"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ Control"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ Contrôle"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ Control"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌃ Control"
+          }
+        }
+      }
+    },
+    "modifierOption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Wahltaste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Option"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Opción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Option"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Option"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌥ Option"
+          }
+        }
+      }
+    },
+    "modifierShift" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Umschalttaste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Shift"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Mayúsculas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Maj"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Shift"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⇧ Shift"
+          }
+        }
+      }
+    },
     "mouseActionFailed" : {
       "comment" : "Mouse output action/category or execution contract; not a physical trigger.",
       "extractionState" : "manual",
@@ -12177,6 +12628,47 @@
         }
       }
     },
+    "mouseWheelDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt nur für Mausräder mit Rasterung. Trackpads, Magic Mouse und stufenlose Mausräder verhalten sich wie im System eingestellt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applies to stepped mouse wheels only. Trackpads, Magic Mouse and smooth-scrolling wheels keep the system behavior."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se aplica a las ruedas de ratón con pasos. Los trackpads, el Magic Mouse y las ruedas de desplazamiento suave mantienen el comportamiento del sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’applique uniquement aux molettes crantées. Les trackpads, la Magic Mouse et les molettes à défilement fluide conservent le comportement du système."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Действует только на колесо мыши с шагами. Трекпады, Magic Mouse и колёса с плавной прокруткой работают как задано в системе."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅适用于带刻度的鼠标滚轮。触控板、妙控鼠标和平滑滚动的滚轮保持系统行为。"
+          }
+        }
+      }
+    },
     "mouseWheelHelp" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12296,6 +12788,211 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "滚动滚轮一格"
+          }
+        }
+      }
+    },
+    "mouseWheelSpeedFast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schnell"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapide"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Быстрая"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快"
+          }
+        }
+      }
+    },
+    "mouseWheelSpeedFaster" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sehr schnell"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very fast"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muy rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très rapide"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очень быстрая"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "很快"
+          }
+        }
+      }
+    },
+    "mouseWheelSpeedStandard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estándar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартная"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标准"
+          }
+        }
+      }
+    },
+    "mouseWheelSpeedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mausradgeschwindigkeit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheel speed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad de la rueda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vitesse de la molette"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скорость колеса"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滚轮速度"
+          }
+        }
+      }
+    },
+    "mouseWheelTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mausrad"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mouse wheel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rueda del ratón"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molette de la souris"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Колесо мыши"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标滚轮"
           }
         }
       }
@@ -15174,6 +15871,129 @@
         }
       }
     },
+    "profileExported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil exportiert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile exported."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil exportado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil exporté."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Профиль экспортирован."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置文件已导出。"
+          }
+        }
+      }
+    },
+    "profileExportFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Profil konnte nicht exportiert werden. Wählen Sie einen anderen Speicherort."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not export the profile. Choose another save location."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido exportar el perfil. Elige otra ubicación para guardar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’exporter le profil. Choisissez un autre emplacement."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось экспортировать профиль. Выберите другое место сохранения."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导出配置文件。请选择其他保存位置。"
+          }
+        }
+      }
+    },
+    "profileImportFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Datei konnte nicht hinzugefügt werden. Sie ist kein Rebind-Profil oder -Backup, oder damit würden 20 Profile oder 1.000 Belegungen überschritten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not add this file. It is not a Rebind profile or backup, or it would exceed 20 profiles or 1,000 bindings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido añadir este archivo. No es un perfil ni una copia de Rebind, o se superarían los 20 perfiles o las 1000 reglas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’ajouter ce fichier. Ce n’est ni un profil ni une copie Rebind, ou la limite de 20 profils ou de 1 000 règles serait dépassée."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось добавить этот файл. Это не профиль и не резервная копия Rebind, либо будет превышен предел в 20 профилей или 1 000 правил."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法添加此文件。它不是 Rebind 配置文件或备份，或者会超出 20 个配置文件或 1000 条规则的上限。"
+          }
+        }
+      }
+    },
     "profileInvalid" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15498,6 +16318,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有设备共用一个生效的配置文件。可在这里或菜单栏中切换。"
+          }
+        }
+      }
+    },
+    "profilesImported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinzugefügte Profile: %lld. Nichts wurde ersetzt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiles added: %lld. Nothing was replaced."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfiles añadidos: %lld. No se ha reemplazado nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profils ajoutés : %lld. Rien n’a été remplacé."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавлено профилей: %lld. Существующие не изменены."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加配置文件：%lld 个。未替换任何内容。"
           }
         }
       }
@@ -17182,6 +18043,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启用规则"
+          }
+        }
+      }
+    },
+    "reverseMouseWheel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mausradrichtung umkehren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverse wheel direction"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invertir la dirección de la rueda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inverser le sens de la molette"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обратное направление колеса"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反转滚轮方向"
+          }
+        }
+      }
+    },
+    "reverseMouseWheelDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Mausrad scrollt in die andere Richtung, das Trackpad bleibt unverändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrolls the other way with the mouse wheel without changing the trackpad."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La rueda del ratón se desplaza en sentido contrario sin cambiar el trackpad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La molette défile dans l’autre sens, sans modifier le trackpad."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Колесо мыши прокручивает в обратную сторону, трекпад при этом не меняется."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标滚轮反向滚动，触控板不受影响。"
           }
         }
       }
@@ -18916,6 +19859,170 @@
         }
       }
     },
+    "supportReportCopied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copié"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировано"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拷贝"
+          }
+        }
+      }
+    },
+    "supportReportCopy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bericht kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Report"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar informe"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier le rapport"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать отчёт"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝报告"
+          }
+        }
+      }
+    },
+    "supportReportDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert Versionen, den Status der Berechtigungen und die Anzahl der Belegungen je Art. Der Bericht enthält keine Auslöser, Kürzel, Texte, App-Namen oder Dateipfade."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copies versions, permission status and the number of bindings of each kind. It contains no triggers, shortcuts, text, app names or file paths."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia las versiones, el estado de los permisos y el número de reglas de cada tipo. No incluye activadores, atajos, texto, nombres de apps ni rutas de archivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copie les versions, l’état des autorisations et le nombre de règles de chaque type. Le rapport ne contient ni déclencheurs, ni raccourcis, ni texte, ni noms d’apps, ni chemins de fichiers."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копирует версии, состояние разрешений и количество правил каждого вида. В отчёте нет триггеров, сочетаний клавиш, текста, названий приложений и путей к файлам."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷贝版本信息、权限状态以及各类规则的数量。报告不包含触发器、快捷键、文本、App 名称或文件路径。"
+          }
+        }
+      }
+    },
+    "supportReportTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supportbericht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support report"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informe de soporte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapport d’assistance"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отчёт для поддержки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持报告"
+          }
+        }
+      }
+    },
     "switchProfileHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19117,6 +20224,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rebind 无法开始读取输入。请暂停规则，检查权限，然后重新启用。"
+          }
+        }
+      }
+    },
+    "tapOutputHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional. Wenn Sie vor Ablauf der Haltedauer loslassen, wird statt der Aktion dieses Kürzel gesendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional. If you release before the hold time, this shortcut is sent instead of the action."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional. Si sueltas antes del tiempo de pulsación mantenida, se envía este atajo en lugar de la acción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facultatif. Si vous relâchez avant la durée de maintien, ce raccourci est envoyé à la place de l’action."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Необязательно. Если отпустить раньше времени удержания, вместо действия отправится это сочетание клавиш."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可选。如果在按住时长之前松开，会发送这个快捷键，而不是执行操作。"
+          }
+        }
+      }
+    },
+    "tapOutputTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurzes Drücken"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short press"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsación corta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appui court"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Короткое нажатие"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短按"
           }
         }
       }
@@ -20108,6 +21297,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果开启了三指查询，macOS 也会响应。请在“系统设置”→“触控板”→“光标与点按”中更改“查询与数据检测器”，或选择其他手势。"
+          }
+        }
+      }
+    },
+    "trackpadModifierHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist eine Taste gewählt, wird die Geste nur ausgelöst, während genau diese Taste gehalten wird; dieselbe Geste ohne Taste kann eine eigene Belegung haben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With a key chosen, the gesture runs only while that key alone is held; the same gesture without a key can have its own binding."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si eliges una tecla, el gesto solo se ejecuta mientras mantienes pulsada únicamente esa tecla; el mismo gesto sin tecla puede tener su propia regla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si une touche est choisie, le geste ne s’exécute que lorsque cette touche seule est maintenue ; le même geste sans touche peut avoir sa propre règle."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Если выбрана клавиша, жест срабатывает, только когда зажата именно она; для того же жеста без клавиши можно создать отдельное правило."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择按键后，只有在仅按住该键时手势才会触发；不按键的同一手势可以另设规则。"
+          }
+        }
+      }
+    },
+    "trackpadModifierNone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
+          }
+        }
+      }
+    },
+    "trackpadModifierTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gehaltene Taste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Held key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tecla mantenida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche maintenue"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зажатая клавиша"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住的按键"
           }
         }
       }
