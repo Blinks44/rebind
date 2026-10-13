@@ -1,6 +1,6 @@
 # Rebind — current state
 
-Updated **2026-10-13**. HEAD `cc7c8c4`; uncommitted: contrast fix, two-finger double-tap, corner-tap and click presets, full Trackpad action catalog, brightness actions (schema 30), Mouse direction control, Magic Mouse probe. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `64dadc3`; uncommitted: Back/Forward and scroll actions, Magic Trackpad section (schema 32), compact gesture names, diagnostics table restyle, rule-row switch fix. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -14,7 +14,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 | --- | --- |
 | Keyboard/mouse | Quartz tap, primary modifiers, numeric middle/extra buttons, shortcuts, wheel, double/long press and four button-held directions. G603 subsets user-confirmed; physical keyboard/full safety matrix open. |
 | Runtime | Bounded synchronous capture/matcher/mailbox, separate action execution, synthetic tags, protected-session/pause/cancellation safeguards and opt-in memory-only mouse diagnostics. Measured callback/action performance and full fault/recovery acceptance remain open. |
-| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **30**, migrations 1–29 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
+| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **32**, migrations 1–31 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
 | Actions | Searchable catalog: shortcuts, audio/media/mouse, AX window/app/layout/cycling, Previous Application, app/web/file, Apple Shortcuts, Spaces, sleep, experimental Dock/lock. Happy-path subsets confirmed; broader guards/platform checks remain. |
 | Trackpad | Four-finger delivery/click recovery/lifecycle are user-confirmed subsets. Three/four single/double and two-finger double engine/storage are integrated ([INPUT-004](tasks/INPUT-004-two-finger-double-tap.md)). [Tap preset editor](tasks/UI-014-trackpad-presets.md) exposes the full twelve-preset pool: 3/4 singles, 2/3/4 doubles, [2/3/4-finger physical clicks](tasks/INPUT-006-trackpad-clicks.md) and four [one-finger corner taps](tasks/INPUT-005-corner-taps.md). Hardware/native conflicts, timing/safety/platform checks remain open. Trackpad rules run [any catalog action](tasks/INPUT-007-trackpad-action-catalog.md). Native gestures are not suppressed, except that click and corner rules replace their own click (both user-confirmed happy paths). |
 | UI/localization | Whole app uses the soft design system from `rebind/UI/DesignSystem` with EN/RU/DE/FR. Running-app accessibility, focus and localized-width acceptance remain open. |
@@ -22,6 +22,9 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** Copy review of every string in four languages (plain wording, one term per language), Back/Forward output on its own held button fixed, Sketch completed with screens 27–28 and repaired dark icon tints.
+- **2026-10-13:** [Magic Trackpad section](tasks/INPUT-008-magic-trackpad.md): own rules, same presets and editor as the built-in trackpad (schema 32); no device was connected, so everything about the external surface is unverified. Gesture names use the compact Sketch form ("Tap · 4 fingers"); the diagnostics table uses design-system rows; Sketch gains the sidebar item and screens 21–23.
+- **2026-10-13:** Back/Forward mouse-button and scroll actions added (schema 31); the rule row no longer draws its switch label. Outputs untested on hardware.
 - **2026-10-13:** [Trackpad rules use the full action catalog](tasks/INPUT-007-trackpad-action-catalog.md); display brightness up/down added (schema 30). Complete suite passes; hardware checks open.
 - **2026-10-13:** [Physical 2/3/4-finger clicks](tasks/INPUT-006-trackpad-clicks.md) replace the click with their rule (schema 29, three editor presets); injected tests pass, physical acceptance open.
 - **2026-10-13:** [One-finger corner taps](tasks/INPUT-005-corner-taps.md) integrated through the tap engine with schema 28 and four editor presets; the click Tap to click makes from a configured corner is consumed so the rule replaces it. Injected tests pass and the happy path is user-confirmed with Tap to click on; other corners/options and palm false positives are open.
@@ -32,7 +35,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 - **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27; preset exposure and physical acceptance open.
 - **2026-10-12:** [Trackpad focus cancellation](verification/trackpad-focus-cancellation.md) repaired and user-confirmed; measured timing open.
 
-Source: **Rebind - new.sketch** (20 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is superseded and kept only as a copy reference. Older entries: [history](history/2026-10.md).
+Source: **Rebind - new.sketch** (28 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is superseded and kept only as a copy reference. Older entries: [history](history/2026-10.md).
 
 ## Open work / next steps
 
@@ -46,6 +49,7 @@ Source: **Rebind - new.sketch** (20 screens × Light/Dark, English only) is the 
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths; fix the search-field outline. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Draw screens for new functionality as it is built (Mouse/Magic Mouse editors, action parameters, diagnostics). |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture, keyboard/VoiceOver/preferences. |
+| [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | awaiting_verification | Unassigned; released | Connect a Magic Trackpad: discovery, gestures, reconnection; regression-check the built-in trackpad. |
 | [INPUT-007](tasks/INPUT-007-trackpad-action-catalog.md) | awaiting_verification | Unassigned; released | Run non-shortcut actions from trackpad rules and the brightness actions on hardware. |
 | [INPUT-006](tasks/INPUT-006-trackpad-clicks.md) | awaiting_verification | Unassigned; engine/editor released | Verify physical 2/3/4-finger clicks, resting-finger false positives and secondary-click settings. |
 | [INPUT-005](tasks/INPUT-005-corner-taps.md) | awaiting_verification | Unassigned; engine/editor released | Verify physical corner taps with Tap to click off/on and accidental palm contact. |

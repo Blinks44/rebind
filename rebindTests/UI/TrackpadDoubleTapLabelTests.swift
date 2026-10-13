@@ -2,10 +2,10 @@ import Testing
 @testable import rebind
 
 @MainActor struct TrackpadDoubleTapLabelTests {
-    @Test(arguments: [(AppLanguage.en, "Three-finger double tap", "Four-finger double tap", "Two-finger double tap"),
-                      (.ru, "Двойной тап тремя пальцами", "Двойной тап четырьмя пальцами", "Двойной тап двумя пальцами"),
-                      (.de, "Doppeltippen mit drei Fingern", "Doppeltippen mit vier Fingern", "Doppeltippen mit zwei Fingern"),
-                      (.fr, "Double toucher à trois doigts", "Double toucher à quatre doigts", "Double toucher à deux doigts")])
+    @Test(arguments: [(AppLanguage.en, "Double tap · 3 fingers", "Double tap · 4 fingers", "Double tap · 2 fingers"),
+                      (.ru, "Двойное касание · 3 пальца", "Двойное касание · 4 пальца", "Двойное касание · 2 пальца"),
+                      (.de, "Doppeltippen · 3 Finger", "Doppeltippen · 4 Finger", "Doppeltippen · 2 Finger"),
+                      (.fr, "Double toucher · 3 doigts", "Double toucher · 4 doigts", "Double toucher · 2 doigts")])
     func distinctDoubleLabelsExistInAllLanguages(_ sample: (AppLanguage, String, String, String)) {
         #expect(AppLocalization.string(.threeFingerDoubleTap, language: sample.0) == sample.1)
         #expect(AppLocalization.string(.fourFingerDoubleTap, language: sample.0) == sample.2)

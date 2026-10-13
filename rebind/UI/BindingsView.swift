@@ -19,6 +19,7 @@ struct BindingsView: View {
         case .allKeyboards: LocalizedStringResource("keyboardNavigationTitle", table: "Navigation")
         case .allMice: .mouseTitle
         case .builtInTrackpad: LocalizedStringResource("trackpadNavigationTitle", table: "Navigation")
+        case .magicTrackpad: scope.title
         }
     }
 
@@ -26,7 +27,7 @@ struct BindingsView: View {
         switch scope {
         case .allKeyboards: .keyboardSubtitle
         case .allMice: .mouseSubtitle
-        case .builtInTrackpad: .trackpadSubtitle
+        case .builtInTrackpad, .magicTrackpad: .trackpadSubtitle
         }
     }
 
@@ -64,7 +65,7 @@ struct BindingsView: View {
                 Banner(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
                     Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked).secondaryButton()
                 }.padding(.top, 24)
-            } else if scope == .builtInTrackpad && !bindings.isEmpty {
+            } else if scope.isTrackpad && !bindings.isEmpty {
                 Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
                     .padding(.top, 24)
             }

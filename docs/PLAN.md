@@ -56,6 +56,7 @@ The checked items below describe only the stated software/artifact milestone. An
 - [x] [One-finger corner taps](tasks/INPUT-005-corner-taps.md) and the two-finger double preset are integrated in engine and editor (schema 28); injected checks pass, physical/Tap to click acceptance open.
 - [x] [Physical 2/3/4-finger clicks](tasks/INPUT-006-trackpad-clicks.md) integrated in engine and editor (schema 29); injected checks pass, physical acceptance open.
 - [ ] Implement and verify remaining SPEC §3.4 scope: single 3/4, double 2/3/4, physical click 2/3/4, one-finger corners, deliberately curated modifier variants/actions and preset editing/conflict UX. Two-finger doubles are engine-ready (INPUT-004); preset exposure and corners still require native integration.
+- [x] [Magic Trackpad section](tasks/INPUT-008-magic-trackpad.md) implemented in engine, storage and UI (schema 32); no hardware evidence yet.
 - [ ] Verify external Magic Trackpad separately; raw contacts do not prove suppression. Swipes/pinch/rotation/five-finger gestures remain out of scope.
 
 ### Phase 6 — Magic Mouse

@@ -10,9 +10,9 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
     var activation: PressActivation = .press
     var holdDurationMilliseconds: UInt32 = 500
 
-    var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers) }
+    var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers, isMagicTrackpad: scope == .magicTrackpad) }
     var isValid: Bool {
-        scope == trigger.scope && trigger.isSupported && action.isSupported
+        (scope == trigger.scope || (scope == .magicTrackpad && trigger.isTrackpad)) && trigger.isSupported && action.isSupported
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
             && (activation == .press || (!trigger.isScroll && !trigger.isPointerGesture && !trigger.isTrackpad))
@@ -44,6 +44,8 @@ extension Binding {
 nonisolated struct MatchKey: Hashable, Sendable {
     var trigger: InputTrigger
     var modifiers: ModifierSet
-    var pressSource: MatchKey { Self(trigger: trigger.pressSource, modifiers: modifiers) }
+    /// Separates Magic Trackpad rules from built-in trackpad rules that use the same gesture.
+    var isMagicTrackpad = false
+    var pressSource: MatchKey { Self(trigger: trigger.pressSource, modifiers: modifiers, isMagicTrackpad: isMagicTrackpad) }
     static let emergencyBypass = Self(trigger: .key(53), modifiers: [.command, .control, .option, .shift])
 }

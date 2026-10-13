@@ -50,7 +50,7 @@ struct BindingEditor: View {
                     }
                     switch scope {
                     case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) })
-                    case .builtInTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
+                    case .builtInTrackpad, .magicTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                     case .allKeyboards: keyboardTrigger
                     }
                     action
@@ -126,6 +126,7 @@ struct BindingEditor: View {
         switch scope {
         case .allMice: return .mouseEditorScope(profile)
         case .builtInTrackpad: return .trackpadEditorScope(profile)
+        case .magicTrackpad: return .magicTrackpadEditorScope(profile)
         case .allKeyboards: return .keyboardEditorScope(profile)
         }
     }
@@ -186,10 +187,10 @@ struct BindingEditor: View {
 
     private var actionHint: LocalizedStringResource? {
         if actionKind == .keyboardShortcut {
-            return scope == .allMice ? .mouseOutputHelp : scope == .builtInTrackpad ? .trackpadOutputHelp : nil
+            return scope == .allMice ? .mouseOutputHelp : scope.isTrackpad ? .trackpadOutputHelp : nil
         }
         if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
-        if actionKind.mouseAction != nil { return .mouseActionHint }
+        if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }
         if actionKind.windowLayoutAction != nil { return .windowLayoutHint }
         if let media = actionKind.mediaAction { return media.isBrightness ? .brightnessActionHint : .mediaActionHint }
         if let desktop = actionKind.desktopAction {
@@ -204,7 +205,7 @@ struct BindingEditor: View {
     }
 
     @ViewBuilder private var feedback: some View {
-        if scope == .builtInTrackpad, let preset = draft.trackpadPreset {
+        if scope.isTrackpad, let preset = draft.trackpadPreset {
             Banner(severity: .warning, title: .trackpadSystemGestureWarning,
                            message: preset.systemGestureHelp) {
                 Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
@@ -254,7 +255,7 @@ struct BindingEditor: View {
     }
 
     private var conflictHelp: LocalizedStringResource {
-        scope == .builtInTrackpad ? .trackpadConflictHelp : .mouseConflictHelp
+        scope.isTrackpad ? .trackpadConflictHelp : .mouseConflictHelp
     }
 
     private func openSystemSettings() {

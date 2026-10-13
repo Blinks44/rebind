@@ -20,7 +20,7 @@ nonisolated struct BindingEditorDraft {
 
     init(scope: DeviceScope, existing: Binding?) {
         trigger = existing?.matchKey.pressSource
-            ?? (scope == .builtInTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil)
+            ?? (scope.isTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil)
         output = existing?.action.shortcut
         activation = existing?.activation ?? .press
         holdDurationMilliseconds = existing?.holdDurationMilliseconds ?? 500

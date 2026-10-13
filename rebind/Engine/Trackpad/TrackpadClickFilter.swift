@@ -100,12 +100,21 @@ extension EngineMailbox.State {
         let active = status == .active && enabled && !editing && !suspended && !stopped
             && recording == nil && foregroundPID != nil
         let rules = rules
-        func rule(_ trigger: InputTrigger) -> RebindAction? {
-            active ? rules[MatchKey(trigger: trigger, modifiers: [])]?.action : nil
+        func rule(_ trigger: InputTrigger, _ magic: Bool) -> RebindAction? {
+            active ? rules[MatchKey(trigger: trigger, modifiers: [], isMagicTrackpad: magic)]?.action : nil
         }
-        let decision = trackpadClicks.resolve(button: button, phase: event.phase, at: event.receivedAt ?? event.timestamp,
-            hasCornerRule: { rule(.cornerTap($0)) != nil },
-            hasClickRule: { rule(.trackpadClick(fingers: $0)) != nil })
+        // Each surface keeps its own contact state; the one that explains the press decides.
+        let now = event.receivedAt ?? event.timestamp
+        var decision = trackpadClicks.resolve(button: button, phase: event.phase, at: now,
+            hasCornerRule: { rule(.cornerTap($0), false) != nil },
+            hasClickRule: { rule(.trackpadClick(fingers: $0), false) != nil })
+        var magic = false
+        if decision == .pass {
+            magic = true
+            decision = magicTrackpadClicks.resolve(button: button, phase: event.phase, at: now,
+                hasCornerRule: { rule(.cornerTap($0), true) != nil },
+                hasClickRule: { rule(.trackpadClick(fingers: $0), true) != nil })
+        }
         switch decision {
         case .pass: return false
         case .consume: return true
@@ -113,7 +122,7 @@ extension EngineMailbox.State {
             // A press is still real activity: it must cancel any pending light-tap output.
             inputActivity &+= 1
             trackpadDispatch = nil
-            if pending.count < 16, let action = rule(.trackpadClick(fingers: fingers)) { pending.append(action) }
+            if pending.count < 16, let action = rule(.trackpadClick(fingers: fingers), magic) { pending.append(action) }
             return true
         }
     }

@@ -39,6 +39,7 @@ nonisolated final class EngineMailbox: Sendable {
         var trackpadStatus: TrackpadCaptureStatus = .idle
         var trackpadDiagnostics: TrackpadDiagnostics?
         var trackpadClicks = TrackpadClickFilter()
+        var magicTrackpadClicks = TrackpadClickFilter()
         var inputActivity: UInt64 = 0
         var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?

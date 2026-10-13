@@ -56,10 +56,12 @@ struct ActionTile: View {
 struct ThemeSwitchStyle: ToggleStyle {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.labelsVisibility) private var labelsVisibility
 
     func makeBody(configuration: ToggleStyleConfiguration) -> some View {
         HStack(spacing: 16) {
-            configuration.label
+            // A custom style must honor `.labelsHidden()` itself; the label still names the switch for VoiceOver.
+            if labelsVisibility != .hidden { configuration.label }
             track(configuration)
         }
         .accessibilityRepresentation { Toggle(isOn: configuration.$isOn) { configuration.label } }

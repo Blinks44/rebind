@@ -3,7 +3,8 @@ import Foundation
 nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case keyboardShortcut, volumeUp, volumeDown, toggleMute
     case playPause, nextTrack, previousTrack
-    case leftClick, rightClick, middleClick, doubleLeftClick
+    case leftClick, rightClick, middleClick, doubleLeftClick, backClick, forwardClick
+    case scrollUp, scrollDown, scrollLeft, scrollRight
     case closeWindow, minimizeWindow, toggleFullScreen, hideApplication
     case leftHalf, rightHalf, fillWindow, centerWindow
     case nextWindow, previousWindow, previousApplication
@@ -40,10 +41,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .media(.previousTrack): self = .previousTrack
         case .media(.brightnessUp): self = .brightnessUp
         case .media(.brightnessDown): self = .brightnessDown
-        case .mouse(.leftClick): self = .leftClick
-        case .mouse(.rightClick): self = .rightClick
-        case .mouse(.middleClick): self = .middleClick
-        case .mouse(.doubleLeftClick): self = .doubleLeftClick
+        case .mouse(let action): self = Self(rawValue: action.rawValue) ?? .leftClick
         case .system(.volumeUp): self = .volumeUp
         case .system(.volumeDown): self = .volumeDown
         case .system(.toggleMute): self = .toggleMute
@@ -90,15 +88,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var mouseAction: MouseAction? {
-        switch self {
-        case .leftClick: .leftClick
-        case .rightClick: .rightClick
-        case .middleClick: .middleClick
-        case .doubleLeftClick: .doubleLeftClick
-        default: nil
-        }
-    }
+    var mouseAction: MouseAction? { MouseAction(rawValue: rawValue) }
 
     var mediaAction: MediaAction? {
         switch self {

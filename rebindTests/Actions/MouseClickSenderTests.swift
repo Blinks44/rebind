@@ -4,7 +4,7 @@ import Testing
 @testable import rebind
 
 struct MouseClickSenderTests {
-    @Test(arguments: MouseAction.allCases)
+    @Test(arguments: MouseAction.allCases.filter { $0.scrollLines == nil })
     func constructsBalancedPlainTaggedClicksAtOneGlobalPosition(_ action: MouseAction) throws {
         let point = CGPoint(x: -280, y: 42)
         let events = try #require(MouseClickSender.events(action, at: point, make: { source, type, location, button in
@@ -101,7 +101,7 @@ struct MouseClickSenderTests {
         }
     }
 
-    @Test(arguments: MouseAction.allCases)
+    @Test(arguments: MouseAction.allCases.filter { $0.scrollLines == nil })
     func startedBatchFinishesBalancedReleaseAtSessionTapWithoutResamplingPointer(_ action: MouseAction) {
         var allowed = true, reads = 0
         var posted: [CGEventType] = []
@@ -114,5 +114,41 @@ struct MouseClickSenderTests {
             })
         #expect(result == .performed && posted.count == action.clickCount * 2 && reads == 1)
         #expect(posted.last == action.upType)
+    }
+
+    @Test(arguments: MouseAction.allCases.filter { $0.scrollLines != nil })
+    func scrollActionPostsOneTaggedLineEventWithoutModifiers(_ action: MouseAction) throws {
+        let lines = try #require(action.scrollLines)
+        let event = try #require(MouseClickSender.scrollEvent(lines))
+        #expect(event.type == .scrollWheel && event.flags.isEmpty)
+        #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis1) == Int64(lines.vertical))
+        #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis2) == Int64(lines.horizontal))
+        #expect(event.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag)
+        var taps: [CGEventTapLocation] = []
+        let performed = MouseClickSender.perform(action, canPerform: { true }, post: { _, tap in taps.append(tap) })
+        #expect(performed == .performed && taps == [.cgSessionEventTap])
+        let cancelled = MouseClickSender.perform(action, canPerform: { false }, post: { _, tap in taps.append(tap) })
+        #expect(cancelled == .cancelled && taps.count == 1)
+    }
+
+    @Test func backAndForwardUseQuartzButtonsThreeAndFourAndNeedSchema31() throws {
+        #expect(MouseAction.backClick.button.rawValue == 3 && MouseAction.forwardClick.button.rawValue == 4)
+        #expect(MouseAction.backClick.downType == .otherMouseDown && MouseAction.forwardClick.upType == .otherMouseUp)
+        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(13), modifiers: .command, action: .mouse(.backClick))
+        var old = Configuration(isEnabled: true, bindings: [binding])
+        try old.validate()
+        old.schemaVersion = 30
+        #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+    }
+
+    @Test(arguments: [MouseAction.backClick, .forwardClick])
+    func backAndForwardClickEvenWhileTheirOwnButtonIsHeld(_ action: MouseAction) {
+        var posted = 0
+        let result = MouseClickSender.perform(action, canPerform: { true }, position: { .zero },
+                                              isButtonDown: { _ in true }, post: { _, _ in posted += 1 })
+        #expect(result == .performed && posted == 2)
+        let held = MouseClickSender.perform(.middleClick, canPerform: { true }, position: { .zero },
+                                            isButtonDown: { _ in true }, post: { _, _ in posted += 1 })
+        #expect(held == .unavailable && posted == 2)
     }
 }

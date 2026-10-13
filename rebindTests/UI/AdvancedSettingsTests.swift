@@ -218,8 +218,8 @@ import Testing
             #expect(plural.contains("2 profiles and 5 bindings imported"))
         }
         if language == .de { #expect(singular.contains("1 Profil, 1 Belegung")) }
-        if language == .fr { #expect(singular.contains("1 profil, 1 association")) }
-        if language == .ru { #expect(singular.contains("профилей — 1, привязок — 1")) }
+        if language == .fr { #expect(singular.contains("1 profil, 1 règle")) }
+        if language == .ru { #expect(singular.contains("профилей — 1, правил — 1")) }
     }
 
     @Test(arguments: AppLanguage.allCases, [false, true])

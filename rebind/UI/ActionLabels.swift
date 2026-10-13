@@ -15,6 +15,12 @@ extension ActionKind {
         case .rightClick: .rightClickAction
         case .middleClick: .middleClickAction
         case .doubleLeftClick: .doubleLeftClickAction
+        case .backClick: .backClickAction
+        case .forwardClick: .forwardClickAction
+        case .scrollUp: .scrollUpAction
+        case .scrollDown: .scrollDownAction
+        case .scrollLeft: .scrollLeftAction
+        case .scrollRight: .scrollRightAction
         case .volumeUp: .volumeUpAction
         case .volumeDown: .volumeDownAction
         case .toggleMute: .toggleMuteAction
@@ -98,6 +104,12 @@ extension ActionKind {
         case .brightnessDown: "sun.min"
         case .leftClick, .rightClick, .middleClick: "cursorarrow.click"
         case .doubleLeftClick: "cursorarrow.click.2"
+        case .backClick: "chevron.backward"
+        case .forwardClick: "chevron.forward"
+        case .scrollUp: "arrow.up"
+        case .scrollDown: "arrow.down"
+        case .scrollLeft: "arrow.left"
+        case .scrollRight: "arrow.right"
         case .closeWindow: "xmark.square"
         case .minimizeWindow: "minus.square"
         case .toggleFullScreen: "arrow.up.left.and.arrow.down.right"

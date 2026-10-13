@@ -7,11 +7,20 @@ nonisolated enum MouseClickSender {
                         build: (MouseAction, CGPoint) -> [CGEvent]? = { events($0, at: $1) },
                         post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
-        // Do not synthesize an up for a target button already held by hardware
-        // or another event source. The trigger's own suppressed release stays owned.
-        guard !isButtonDown(action.button), let point = position(),
+        if let lines = action.scrollLines {
+            guard let event = scrollEvent(lines) else { return .unavailable }
+            guard canPerform() else { return .cancelled }
+            post(event, .cgSessionEventTap)
+            return .performed
+        }
+        // Do not synthesize an up for a primary, secondary or middle button already held
+        // by hardware or another source: that would end a drag. Back and Forward are
+        // click-only, and their own physical button is often the trigger (its press is
+        // suppressed, so applications never saw it held); the output click is safe there.
+        let guardsHeldButton = action.button.rawValue <= 2
+        guard !(guardsHeldButton && isButtonDown(action.button)), let point = position(),
               let batch = build(action, point), batch.count == action.clickCount * 2 else { return .unavailable }
-        guard !isButtonDown(action.button) else { return .unavailable }
+        guard !(guardsHeldButton && isButtonDown(action.button)) else { return .unavailable }
         guard canPerform() else { return .cancelled }
         // Construction and final checks precede any output. Finish every started
         // down/up pair; no delay, suspension or synthetic held-button state escapes.
@@ -43,6 +52,17 @@ nonisolated enum MouseClickSender {
             result.append(contentsOf: [down, up])
         }
         return result
+    }
+
+    /// One discrete line-based wheel event at the pointer, tagged so Rebind's own scroll rules ignore it.
+    static func scrollEvent(_ lines: (vertical: Int32, horizontal: Int32),
+                            source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) }) -> CGEvent? {
+        guard let source = source(),
+              let event = CGEvent(scrollWheelEvent2Source: source, units: .line, wheelCount: 2,
+                                  wheel1: lines.vertical, wheel2: lines.horizontal, wheel3: 0) else { return nil }
+        event.flags = []
+        event.setIntegerValueField(.eventSourceUserData, value: ShortcutSender.eventTag)
+        return event
     }
 
     private static func buttonIsDown(_ button: CGMouseButton) -> Bool {

@@ -9,10 +9,16 @@ import Dispatch
 // logged, exposed to UI, or retained after an interrupted/completed stroke.
 @MainActor final class TrackpadCapture: NSObject {
     private let mailbox: EngineMailbox
-    private var device: NativeTrackpadDevice?
+    /// One independent recognition pipeline per touch surface.
+    private struct Surface {
+        let kind: NativeTrackpadDevice.Kind
+        var device: NativeTrackpadDevice?
+        var revision: UInt64?
+        var session: TrackpadTapSession?
+        var scannedAt: UInt64?
+    }
+    private var surfaces = [Surface(kind: .builtIn), Surface(kind: .magicTrackpad)]
     private var timer: Timer?
-    private var revision: UInt64?
-    private var session: TrackpadTapSession?
 
     init(mailbox: EngineMailbox) { self.mailbox = mailbox }
 
@@ -36,7 +42,7 @@ import Dispatch
     }
 
     @objc private func foregroundChanged() {
-        session?.interrupt()
+        for index in surfaces.indices { surfaces[index].session?.interrupt() }
         mailbox.updateTrackpadForeground(foregroundPID(), activationChanged: true)
     }
 
@@ -48,9 +54,14 @@ import Dispatch
     }
 
     private func stopCapture() {
-        device?.stop()
-        revision = nil; session = nil
+        for index in surfaces.indices { stop(&surfaces[index]) }
         mailbox.state.withLock { $0.trackpadStatus = .idle; $0.trackpadDispatch = nil }
+    }
+
+    private func stop(_ surface: inout Surface) {
+        surface.device?.stop()
+        surface.revision = nil
+        surface.session = nil
     }
 
     @objc private func poll() {
@@ -67,41 +78,62 @@ import Dispatch
         // this poll could classify pre-switch contacts with the old runtime.
         let pid = foregroundPID()
         mailbox.updateTrackpadForeground(pid)
-        guard let runtime = mailbox.trackpadRuntime() else {
+        var statuses: [TrackpadCaptureStatus] = []
+        for index in surfaces.indices { statuses.append(service(&surfaces[index], pid: pid, now: now)) }
+        let status = statuses.first { $0 != .idle } ?? .idle
+        mailbox.state.withLock {
+            $0.trackpadStatus = status
+            if status == .idle { $0.trackpadDispatch = nil }
+        }
+        if status == .idle {
             mailbox.recordTrackpadDiagnostic(.captureInactive)
-            stopCapture()
             // Idle polling does not need the recognition cadence.
             timer?.fireDate = Date().addingTimeInterval(0.1)
-            return
         }
-        if revision != runtime.revision {
-            stopCapture()
-            if device == nil { device = NativeTrackpadDevice.acquire(mailbox: mailbox) }
-            guard let device, device.start() else {
-                mailbox.state.withLock { $0.trackpadStatus = device?.failed == true ? .failed : .unavailable }
-                mailbox.recordTrackpadDiagnostic(device?.failed == true ? .captureFailed : .captureUnavailable)
+    }
+
+    private func service(_ surface: inout Surface, pid: Int32?, now: UInt64) -> TrackpadCaptureStatus {
+        let isMagic = surface.kind == .magicTrackpad
+        guard let runtime = mailbox.trackpadRuntime(magicTrackpad: isMagic) else {
+            stop(&surface)
+            return .idle
+        }
+        // A Magic Trackpad connects and disconnects; look for it at a slow cadence.
+        if isMagic, surface.scannedAt.map({ now < $0 || now - $0 >= 2_000_000_000 }) ?? true {
+            surface.scannedAt = now
+            let found = NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicTrackpad)
+            if found !== surface.device { stop(&surface); surface.device = found }
+        }
+        if surface.revision != runtime.revision {
+            stop(&surface)
+            if !isMagic, surface.device == nil { surface.device = NativeTrackpadDevice.acquire(mailbox: mailbox) }
+            guard let device = surface.device, device.start() else {
+                mailbox.recordTrackpadDiagnostic(surface.device?.failed == true ? .captureFailed : .captureUnavailable)
                 // Latch this revision; a failing start is not retried every 10 ms.
-                revision = runtime.revision
-                return
+                // An absent Magic Trackpad is picked up by the next scan instead.
+                if surface.device != nil || !isMagic { surface.revision = runtime.revision }
+                return surface.device?.failed == true ? .failed : .unavailable
             }
-            revision = runtime.revision
+            surface.revision = runtime.revision
             mailbox.recordTrackpadDiagnostic(.captureRestarted)
-            session = TrackpadTapSession(runtime: runtime, foreground: pid, startedAt: now)
+            surface.session = TrackpadTapSession(runtime: runtime, foreground: pid, startedAt: now)
         }
-        guard let device, session != nil else { return }
-        if let event = session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
+        guard let device = surface.device, surface.session != nil else {
+            return surface.device?.failed == true ? .failed : .unavailable
+        }
+        if let event = surface.session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
         let mailbox = mailbox
-        session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
-                                       diagnose: { mailbox.recordTrackpadDiagnostic($0) })
+        surface.session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
+                                               diagnose: { mailbox.recordTrackpadDiagnostic($0) })
         let decisionTime = DispatchTime.now().uptimeNanoseconds
         // A busy UI cancels rather than executing old actions after it unblocks.
-        if let gesture = session?.takeReadyGesture(from: device.buffer, at: decisionTime,
+        if let gesture = surface.session?.takeReadyGesture(from: device.buffer, at: decisionTime,
                               diagnose: { mailbox.recordTrackpadDiagnostic($0) }), let pid {
             let queued = mailbox.submitTrackpad(runtime, gesture: gesture, pid: pid, at: decisionTime)
             mailbox.recordTrackpadDiagnostic(queued ? .queued : .queueUnavailable)
         }
-        if let event = session?.takeCancellation() { mailbox.recordTrackpadDiagnostic(event) }
-        mailbox.state.withLock { $0.trackpadStatus = .active }
+        if let event = surface.session?.takeCancellation() { mailbox.recordTrackpadDiagnostic(event) }
+        return .active
     }
 
     private func reportDiagnostics(finishing: Bool = false) {

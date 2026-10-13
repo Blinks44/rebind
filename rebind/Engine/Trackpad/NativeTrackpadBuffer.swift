@@ -98,7 +98,12 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
     }
     let state = Mutex(State())
     let mailbox: EngineMailbox
-    init(mailbox: EngineMailbox) { self.mailbox = mailbox }
+    /// Frames of an external Magic Trackpad feed its own click filter.
+    let isMagicTrackpad: Bool
+    init(mailbox: EngineMailbox, isMagicTrackpad: Bool = false) {
+        self.mailbox = mailbox
+        self.isMagicTrackpad = isMagicTrackpad
+    }
 
     func receive(_ data: UnsafeRawPointer?, count: Int32,
                  callbackFrame: Int32? = nil, callbackTime: Double? = nil) {
@@ -113,7 +118,8 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
-        mailbox.state.withLock { $0.trackpadClicks.observe(frame) }
+        let magic = isMagicTrackpad
+        mailbox.state.withLock { magic ? $0.magicTrackpadClicks.observe(frame) : $0.trackpadClicks.observe(frame) }
         state.withLock { $0.append(frame, generation: generation) }
     }
 

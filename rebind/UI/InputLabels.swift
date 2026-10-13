@@ -91,6 +91,7 @@ extension DeviceScope {
         case .allKeyboards: .allKeyboards
         case .allMice: .allMice
         case .builtInTrackpad: .builtInTrackpad
+        case .magicTrackpad: LocalizedStringResource("magicTrackpadNavigationTitle", table: "Navigation")
         }
     }
     var symbol: String {
@@ -98,6 +99,7 @@ extension DeviceScope {
         case .allKeyboards: "keyboard"
         case .allMice: "computermouse"
         case .builtInTrackpad: "rectangle.and.hand.point.up.left"
+        case .magicTrackpad: "hand.tap"
         }
     }
 }

@@ -1,93 +1,122 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "keyboardNavigationTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keyboard"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "keyboardNavigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Клавиатура"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Клавиатура"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tastatur"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tastatur"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clavier"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clavier"
           }
         }
       }
     },
-    "trackpadNavigationTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trackpad"
+    "trackpadNavigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trackpad"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Трекпад"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Трекпад"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trackpad"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trackpad"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trackpad"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trackpad"
           }
         }
       }
     },
-    "magicMouseNavigationTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse"
+    "magicMouseNavigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic Mouse"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse"
+          }
+        }
+      }
+    },
+    "magicTrackpadNavigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Trackpad"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Trackpad"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Trackpad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Trackpad"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
