@@ -1,4 +1,4 @@
-Rebind — third-party notices
+Rebind: third-party notices
 
 SpaceShortcutSender: HID Ctrl+Arrow recipe checked against
 https://github.com/cehbz/spacekit/blob/5363f0b8285832e505fd030aa1199113f3b83981/cmd/spaceswitch/native.go

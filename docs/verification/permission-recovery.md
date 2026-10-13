@@ -1,4 +1,4 @@
-# Permission recovery — design delivery
+# Permission recovery: design delivery
 
 Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Reviewed and saved 2026-10-10. Scope: UI-001, SPEC §§6–8/10–11 and S2; design only. Started at Git `365db64`; completion checkout is `acce2f4` after an external workflow commit during this design slice. Permission-recovery records/exports remain uncommitted; prior work is preserved. Existing actual permission checks were read in `InputPermissions`, `PermissionView` and `AppModel`; no engine, app source, grants or rules changed.
@@ -9,15 +9,15 @@ Initial delivery: `Rebind.sketch`, Sketch 2026.3.1 / API 2.0.0, document ID `DE0
 
 | Frame | Stable ID | Size | Final evidence |
 | --- | --- | --- | --- |
-| 14 · Keyboard / Accessibility missing · Light | `C7666697-D667-433D-87E7-2ED3AEE66AB0` | 1040 × 640 | [Light main](../DESIGN.md#screen-index-and-implementation-status) |
-| 15 · Keyboard / Accessibility missing · Dark | `ED7548FC-E890-4446-9B9A-49EAD9FF3013` | 1040 × 640 | [Dark main](../DESIGN.md#screen-index-and-implementation-status) |
-| 16 · Keyboard / Event sending missing · Light | `4BE17A75-C9D5-4DA0-BADD-252CA3D63ABF` | 1040 × 640 | [Event sending main](../DESIGN.md#screen-index-and-implementation-status) |
-| 17 · Settings / Permissions missing · Light | `9E3ECBEB-6D9B-4A8A-AA74-7F088874B71C` | 1040 × 640 | [Missing access](../DESIGN.md#screen-index-and-implementation-status) |
-| 18 · Settings / Event sending missing · Light | `FDAE5B1D-7817-4E57-B2DE-4F6A4A78F544` | 1040 × 640 | [Event sending](../DESIGN.md#screen-index-and-implementation-status) |
-| 19 · Settings / Required access enabled · Light | `1019A6B3-431F-43F7-A828-8A137FAD66B2` | 1040 × 640 | [Enabled grants](../DESIGN.md#screen-index-and-implementation-status) |
-| 20 · Settings / Permissions missing · Dark | `74084012-59AC-4A15-A060-CF5800B0EDD0` | 1040 × 640 | [Dark Settings](../DESIGN.md#screen-index-and-implementation-status) |
-| 21 · Keyboard / Permission recovery · Compact | `33F9EC25-8B4E-4620-99C7-C2FD1F22BD73` | 880 × 600 | [Compact main](../DESIGN.md#screen-index-and-implementation-status) |
-| 22 · Settings / Permissions · German | `46BD4DAA-B7FB-41B6-B6FC-BFD2A1E18AC2` | 880 × 640 | [German Settings](../DESIGN.md#screen-index-and-implementation-status) |
+| 14 · Keyboard / Accessibility missing · Light | `C7666697-D667-433D-87E7-2ED3AEE66AB0` | 1040 × 640 | [Light main](../DESIGN.md) |
+| 15 · Keyboard / Accessibility missing · Dark | `ED7548FC-E890-4446-9B9A-49EAD9FF3013` | 1040 × 640 | [Dark main](../DESIGN.md) |
+| 16 · Keyboard / Event sending missing · Light | `4BE17A75-C9D5-4DA0-BADD-252CA3D63ABF` | 1040 × 640 | [Event sending main](../DESIGN.md) |
+| 17 · Settings / Permissions missing · Light | `9E3ECBEB-6D9B-4A8A-AA74-7F088874B71C` | 1040 × 640 | [Missing access](../DESIGN.md) |
+| 18 · Settings / Event sending missing · Light | `FDAE5B1D-7817-4E57-B2DE-4F6A4A78F544` | 1040 × 640 | [Event sending](../DESIGN.md) |
+| 19 · Settings / Required access enabled · Light | `1019A6B3-431F-43F7-A828-8A137FAD66B2` | 1040 × 640 | [Enabled grants](../DESIGN.md) |
+| 20 · Settings / Permissions missing · Dark | `74084012-59AC-4A15-A060-CF5800B0EDD0` | 1040 × 640 | [Dark Settings](../DESIGN.md) |
+| 21 · Keyboard / Permission recovery · Compact | `33F9EC25-8B4E-4620-99C7-C2FD1F22BD73` | 880 × 600 | [Compact main](../DESIGN.md) |
+| 22 · Settings / Permissions · German | `46BD4DAA-B7FB-41B6-B6FC-BFD2A1E18AC2` | 880 × 640 | [German Settings](../DESIGN.md) |
 
 All nine were inspected through explicit-ID MCP screenshots after the final relevant edits, then exported at 1×. PNG dimensions were checked from their headers. Stale first captures were recaptured before accepting layout. Compact tests found negative origins and oversized card instances; explicit content anchors and compact row sources repaired them. German checks found clipped primary text and insufficient wrapped-text padding; Fit sizing now expands controls and cards. The German action card is 159 pt tall; event/additional-status rows are 86/87 pt. Default English action/status heights are 145/73 pt. Partial final rows in the compact main are intentional scroll-viewport content, not compressed rows.
 
@@ -61,6 +61,6 @@ Latest alignment revision also centers sidebar/footer rows, repairs search/profi
 
 **Next:** implement the prepared first-run and permissions slice using the real permission model and these live frames; retain the native verification gates in UI-001. Design can independently continue the remaining Settings sections under a separate scoped task.
 
-## Subsequent native integration — 2026-10-11
+## Subsequent native integration: 2026-10-11
 
 UI-001 now integrates first-run/recovery, the main notice and Settings → Permissions; all 53 four-language keys are in the app catalog. [Native evidence](permissions-native.md) separates passing software/fixture checks from actual-grant/full-window/accessibility acceptance, which remains open. The design checks above retain their original scope/date.

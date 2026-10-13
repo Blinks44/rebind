@@ -59,7 +59,7 @@ struct InputSettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
+            .detailMargins().padding(.bottom, 32)
         }
     }
 

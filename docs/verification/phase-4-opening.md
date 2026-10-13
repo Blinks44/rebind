@@ -1,4 +1,4 @@
-# Phase 4 — Selected application, web address and file/folder actions
+# Phase 4: Selected application, web address and file/folder actions
 
 Scope: SPEC §5 A1/A2, §§9–12. Implemented and software-tested on 2026-10-08.
 Russian configuration UI inspected; the user reports the requested opening/activation

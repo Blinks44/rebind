@@ -1,4 +1,4 @@
-# Three-finger single tap engine and storage — 2026-10-11
+# Three-finger single tap engine and storage: 2026-10-11
 
 [INPUT-002](../tasks/INPUT-002-three-finger-tap.md); SPEC §§3.4, 4, 6, 9, 12 / PLAN Phase 5. Baseline `main` / `afb7411` plus uncommitted owned changes. Independent UI-013 Sketch work remains separate. No production input engine launch, native action, real configuration/permission change, Sketch edit or agent commit.
 

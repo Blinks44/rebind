@@ -219,7 +219,7 @@ import Testing
         }
         if language == .de { #expect(singular.contains("1 Profil, 1 Belegung")) }
         if language == .fr { #expect(singular.contains("1 profil, 1 règle")) }
-        if language == .ru { #expect(singular.contains("профилей — 1, правил — 1")) }
+        if language == .ru { #expect(singular.contains("профилей: 1, правил: 1")) }
     }
 
     @Test(arguments: AppLanguage.allCases, [false, true])

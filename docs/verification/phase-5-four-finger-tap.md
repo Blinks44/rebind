@@ -1,4 +1,4 @@
-# Phase 5 — integrated four-finger tap (experimental)
+# Phase 5: integrated four-finger tap (experimental)
 
 ## Implemented subset
 
@@ -63,7 +63,7 @@ external Magic Trackpad remain separate implementation/hardware gates.
   proof or universal tap/click exclusivity. The current contact-observer path does not suppress native gestures; [selective suppression feasibility](../research/native-gesture-suppression.md) remains unestablished.
   System conflicts/double effects remain possible and are disclosed in the UI.
 
-## Software verification — 2026-10-09–10
+## Software verification: 2026-10-09–10
 
 The user confirms integrated app output (2026-10-10), but reports approximately
 one successful tap out of seven and noticeable delay versus BetterTouchTool. This
@@ -120,7 +120,7 @@ compilation alone does not establish them.
 If a system gesture also fires, pause the test and inspect its System Settings
 assignment before testing again. Rebind never disables native settings itself.
 T1/T2 and production adapter lifecycle remain unchecked until these real checks.
-## Timing races, recovery and opt-in diagnostics — 2026-10-10
+## Timing races, recovery and opt-in diagnostics: 2026-10-10
 
 Baseline `6c1a5be` plus uncommitted changes in Trackpad capture/gate/session/recognizer/diagnostics, EngineMailbox, ShortcutSender, ActionWorker and trackpad tests. Latest manual feedback reports very low recognition and possible physical-click output; exact tested bundle unknown. Hardware reliability/exclusivity is **not accepted**.
 
@@ -150,7 +150,7 @@ Counters are fixed safe reason names: frames, qualified taps, queueing/posting, 
 
 Next gate: rebuilt-app hardware frequency, click-only negatives and post-click recovery with this report. [Research decision](../research/trackpad-tap-reliability.md), [task](../tasks/INPUT-001-four-finger-tap.md). No broader gesture or BTT-equivalence claim.
 
-## Buffered release after mouse-up — 2026-10-10
+## Buffered release after mouse-up: 2026-10-10
 
 User-reported built-in-trackpad comparison: Rebind initially delivered 8/10 taps, then stopped responding after clicks/taps; BTT delivered 10/10 and continued operating. Exact app artifacts, BTT version/settings, overlap and diagnostic report were not supplied. This establishes a reported regression, not controlled latency or click-exclusivity acceptance.
 
@@ -168,13 +168,13 @@ Checks on the previously recorded Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
 
 Next: use the fresh packaged Debug executable with `--diagnose-trackpad` as above, with other Rebind copies/BTT closed. Alternate taps and quick/held clicks, then continue tapping if recognition stops within the one-minute report window. Save the aggregate report and observed delivery/click-only results. Do not claim the sustained failure fixed without that evidence.
 
-## Output target validation — 2026-10-11
+## Output target validation: 2026-10-11
 
 User-reported packaged Debug run on the built-in trackpad: 1,342 frames, 37 qualified taps, 37 queued actions and 37 cancelled outputs; no posted output. One capture start, 64 activity changes and 13 obsolete frames were recorded. Recognition continued. The 44 `foreground-changed` counts mixed capture focus changes with sender focus-read/target/runtime failures, so they do not prove 44 app switches or establish which sender subcheck failed. Exact running artifact digest and target applications were not supplied; the locally preceding Debug implementation digest is recorded above.
 
 Baseline `acce2f4`, with uncommitted `ShortcutSender.swift`, `TrackpadDiagnostics.swift` and new `TrackpadShortcutSenderTests.swift`, plus scoped records. The public AppKit target-activity/termination/regular-policy check replaces AX-tree focused-application reads for this sender only. Checks run twice around event construction; mailbox focus/activity/revision guards and PID-directed balanced output are retained. Permission/protected-session and held-input checks repeat immediately before posting. No recognition thresholds, callback changes, rule/grant edits, dependency or source adoption.
 
-`output-target-inactive` now identifies native output target rejection separately from capture `foreground-changed`; `output-runtime-changed` identifies invalidated dispatch. Apple documents NSRunningApplication as thread-safe with main-run-loop caching. That cache and the final focus/post race remain limitations; no atomic delivery/focus guarantee or global-output fallback is claimed. [Research](../research/trackpad-tap-reliability.md#output-validation-follow-up--2026-10-11).
+`output-target-inactive` now identifies native output target rejection separately from capture `foreground-changed`; `output-runtime-changed` identifies invalidated dispatch. Apple documents NSRunningApplication as thread-safe with main-run-loop caching. That cache and the final focus/post race remain limitations; no atomic delivery/focus guarantee or global-output fallback is claimed. [Research](../research/trackpad-tap-reliability.md#output-validation-follow-up-2026-10-11).
 
 Checks on the existing Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
 
@@ -186,7 +186,7 @@ Checks on the existing Apple Silicon/macOS 27.0.1/Xcode 27 toolchain:
 
 Next: quit other Rebind/BTT copies and launch the fresh packaged Debug executable with `--diagnose-trackpad`. Test natural taps, quick/held clicks and further taps in disposable tabs. Share the one-minute report and actual delivery/click-only behavior. Check `output-posted`, `output-target-inactive`, `output-runtime-changed` and other output guards before further recognition changes. Minimum-OS/Intel, latency and click exclusivity remain open.
 
-## Successful single-tap retest — 2026-10-11
+## Successful single-tap retest: 2026-10-11
 
 User-assisted retest of the repository packaged Debug executable with `--diagnose-trackpad`, following the requested tap/click/tap walkthrough: roughly 10/10 successful configured Command-W delivery reported. The one-minute aggregate contains 1,692 frames, one capture start, 25 qualified taps, 25 queued actions and 25 posted outputs. No output cancellation, unavailable/expired output or inactive-target/runtime rejection was reported. Three foreground changes, 182 input-activity changes and 23 obsolete frames occurred without capture restart in the reporting window. Recognition rejection counters are per-frame/sequence aggregates, not an attempted-tap denominator.
 
@@ -202,6 +202,6 @@ Follow-up user check, 2026-10-11: physical clicks alone did not send the configu
 
 Recorded as a user-verified subset in the task/capability/roadmap. No implementation, build/test rerun, actual input action, permission/rule change or commit by the agent. Next hardware gate is deliberate pause/resume and sleep/wake; mixed-input/hold-duration stress and broader platform/native-conflict checks remain. Independent implementation can proceed without repeating the successful delivery/click-only scenario.
 
-## User lifecycle follow-up — 2026-10-11
+## User lifecycle follow-up: 2026-10-11
 
 User reports successful pause/resume, sleep/wake and mixed-input checks in response to the pending walkthrough. No new exact artifact/device/OS identifiers, counts or timing measurements were supplied; no native actions were executed by the agent. This closes the reported walkthrough subset, while quantified stress, native conflicts/protected contexts and macOS 26/Intel remain open.

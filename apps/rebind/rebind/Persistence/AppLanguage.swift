@@ -37,15 +37,10 @@ nonisolated enum AppLanguagePreference: String, Codable, CaseIterable, Sendable 
     case system, en, ru, de, fr, es
     case zhHans = "zh-Hans"
 
+    /// The manually chosen language; nil for System Default.
+    var language: AppLanguage? { AppLanguage(rawValue: rawValue) }
+
     func resolved(preferredLanguages: [String]) -> AppLanguage {
-        switch self {
-        case .system: AppLanguage.resolve(preferredLanguages: preferredLanguages)
-        case .en: .en
-        case .ru: .ru
-        case .de: .de
-        case .fr: .fr
-        case .es: .es
-        case .zhHans: .zhHans
-        }
+        language ?? AppLanguage.resolve(preferredLanguages: preferredLanguages)
     }
 }

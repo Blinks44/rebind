@@ -1,4 +1,4 @@
-# Phase 2 input diagnostics — 2026-10-08
+# Phase 2 input diagnostics: 2026-10-08
 
 Scope: SPEC §§6, 9, 12; Phase 2 safe event metadata viewer.
 Status: implemented, software-tested, Russian native UI inspected and basic G603
@@ -77,7 +77,7 @@ Build/signature/catalog results are recorded in [the historical evidence summary
 `/tmp/rebind-diagnostics-{doctor,tests,build-final,release-final}.log`;
 result `build/Phase2DiagnosticsTests.xcresult` (ignored).
 
-## User hardware result — 2026-10-08
+## User hardware result: 2026-10-08
 
 Manual test report, 2026-10-08: diagnostics collection succeeded. A supplied
 panel screenshot records the previously reported G603 LIGHTSPEED/G HUB setup. It shows Button 4 → CG 3 and

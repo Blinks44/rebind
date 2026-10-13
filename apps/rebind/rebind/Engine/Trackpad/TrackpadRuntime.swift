@@ -48,8 +48,7 @@ nonisolated struct TrackpadRuntime: Equatable, Sendable {
 extension EngineMailbox {
     nonisolated func trackpadRuntime(magicTrackpad: Bool = false, modifiers: ModifierSet = []) -> TrackpadRuntime? {
         state.withLock {
-            guard $0.status == .active, $0.isMatching, !$0.editing, !$0.suspended, !$0.stopped,
-                  $0.recording == nil else { return nil }
+            guard $0.canDispatch else { return nil }
             let rules = $0.rules
             let interval = $0.matcher.doublePressIntervalNanoseconds
             // An unsupported system interval disables only double recognition;

@@ -1,4 +1,4 @@
-# Rebind — current mechanism and dependency decisions
+# Rebind: current mechanism and dependency decisions
 
 Updated 2026-10-12: [twelve-candidate touch-library audit](touch-library-audit.md) identifies reusable acquisition/pure recognition components and a proposed stationary-tap first pool. No new hardware experiment or app dependency. Check dates/revisions when changing a mechanism. [Dependency/reference register](DEPENDENCIES.md) retains licenses, pinned sources, maintenance and prior decisions. [Historical research](../history/implementation-through-2026-10-10.md#research-findings--blockers) retains reasoning and superseded approaches.
 
@@ -19,7 +19,7 @@ Liquid Glass / design-transfer audit: seven library candidates and additional sk
 | Mission Control / lock | Isolated dynamic private Dock notifications/login-framework entry point; explicitly Experimental. | Platform/version compatibility and effect/lifecycle acceptance |
 | Spaces | Standard enabled Ctrl+arrow pair, secondary-Fn/HID posting, read-only settings validation. Failed session posting and instant Dock swipe were replaced. | Display/Reduce Motion/held modifiers/edges/latency/safety checks; no settings mutation |
 | Icons/UI | SF Symbols primary UI set; native Icon Composer app icon; named vector Menu Bar template. Optional icon packages were researched, not adopted. | Current Sketch implementation/runtime/accessibility acceptance |
-| Advanced backup/transactions | Native fileImporter/NSSavePanel/NSAlert, existing validated codec and Foundation atomic writes/raw-copy replacement; Swift Configuration evaluated, not adopted. [Decision](DEPENDENCIES.md#advanced-configuration-transactions--2026-10-11) | SPEC §15.12 restored-binding runtime and full accessibility acceptance |
+| Advanced backup/transactions | Native fileImporter/NSSavePanel/NSAlert, existing validated codec and Foundation atomic writes/raw-copy replacement; Swift Configuration evaluated, not adopted. [Decision](DEPENDENCIES.md#advanced-configuration-transactions-2026-10-11) | SPEC §15.12 restored-binding runtime and full accessibility acceptance |
 
 ## Current research risks
 

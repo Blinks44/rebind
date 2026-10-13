@@ -140,123 +140,50 @@ nonisolated final class ActionWorker {
             mailbox.recordTrackpadDiagnostic(.outputExpired)
             return
         }
-        let success: Bool
+        let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+        let canPerform: @Sendable () -> Bool = {
+            mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+        }
+        let result: WindowActionResult
         switch dispatch.action {
         case .shortcut(let shortcut):
             if let target = dispatch.trackpadTarget {
-                let mailbox = mailbox
-                let postingAllowed = postingAllowed
-                let secureInput = secureInput
-                let result = sendTrackpadShortcut(shortcut, target) {
-                    mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-                }
+                result = sendTrackpadShortcut(shortcut, target, canPerform)
                 switch result {
                 case .performed: mailbox.recordTrackpadDiagnostic(.outputPosted)
                 case .cancelled: mailbox.recordTrackpadDiagnostic(.outputCancelled)
                 case .unavailable: mailbox.recordTrackpadDiagnostic(.outputUnavailable)
                 }
-                guard result != .cancelled else { return }
-                success = result == .performed
-            } else { success = sendShortcut(shortcut) }
-        case .lockScreen:
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = requestLock {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            if result == .performed { mailbox.systemTransitionRequested(dispatch) }
-            else if result == .unavailable { mailbox.actionFailed(dispatch) }
+            } else { result = sendShortcut(shortcut) ? .performed : .unavailable }
+        case .lockScreen, .sleepSystem:
+            let transition = dispatch.action == .lockScreen ? requestLock(canPerform) : requestSleep(canPerform)
+            if transition == .performed { mailbox.systemTransitionRequested(dispatch) }
+            else if transition == .unavailable { mailbox.actionFailed(dispatch) }
             return
-        case .sleepSystem:
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = requestSleep {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            if result == .performed { mailbox.systemTransitionRequested(dispatch) }
-            else if result == .unavailable { mailbox.actionFailed(dispatch) }
-            return
-        case .media(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = performMedia(action) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            guard result != .cancelled else { return }
-            success = result == .performed
-        case .mouse(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = performMouse(action) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            guard result != .cancelled else { return }
-            success = result == .performed
-        case .doNothing, .modifier: success = true
-        case .text(let text):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = performText(text) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            guard result != .cancelled else { return }
-            success = result == .performed
+        case .media(let action): result = performMedia(action, canPerform)
+        case .mouse(let action): result = performMouse(action, canPerform)
+        case .text(let text): result = performText(text, canPerform)
+        case .dock(let action): result = performDock(action, canPerform)
+        case .window(let action): result = performWindow(action, canPerform)
+        case .doNothing, .modifier: result = .performed
+        case .desktop: result = .unavailable // Legacy decoding only; cannot enter compiled rules.
         case .control(let action):
             mailbox.requestControl(action, for: dispatch)
             return
-        case .desktop: success = false // Legacy decoding only; cannot enter compiled rules.
-        case .dock(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = performDock(action) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            guard result != .cancelled else { return }
-            success = result == .performed
         case .system(let action):
             guard let device = dispatch.deviceID else { mailbox.actionFailed(dispatch); return }
-            success = performAudio(action, device)
-        case .window(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let result = performWindow(action) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            guard result != .cancelled else { return }
-            success = result == .performed
+            result = performAudio(action, device) ? .performed : .unavailable
         case .windowCycle(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
-            let canPerform: @Sendable () -> Bool = {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
-            }
-            let result: WindowActionResult
             if let performWindowCycle { result = performWindowCycle(action, canPerform) }
             else { result = WindowCycleExecutor.perform(action, revision: dispatch.revision, state: &windowCycle, canPerform: canPerform) }
-            guard result != .cancelled else { return }
-            success = result == .performed
         case .windowLayout(let action):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
             let clock = layoutClock
             let snapshot = mailbox.state.withLock { $0.windowDisplays }
             guard snapshot.isFresh(at: clock()) else { mailbox.actionFailed(dispatch); return }
-            let result = performWindowLayout(action, snapshot.displays) {
+            result = performWindowLayout(action, snapshot.displays) {
                 let current = mailbox.state.withLock { $0.windowDisplays }
-                return current.displays == snapshot.displays && current.isFresh(at: clock())
-                    && mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+                return current.displays == snapshot.displays && current.isFresh(at: clock()) && canPerform()
             }
-            guard result != .cancelled else { return }
-            success = result == .performed
         case .workspace(let action):
             guard let target = prepareWorkspace(action) else { mailbox.actionFailed(dispatch); return }
             // Preparation can wait on filesystem metadata. The MainActor
@@ -264,22 +191,19 @@ nonisolated final class ActionWorker {
             mailbox.submitWorkspace(WorkspaceRequest(dispatch: dispatch, target: target))
             return
         case .appleShortcut(let target):
-            let mailbox = mailbox
-            let postingAllowed = postingAllowed
-            let secureInput = secureInput
             mailbox.state.withLock { $0.appleShortcutInProgress = true }
-            defer { mailbox.state.withLock { $0.appleShortcutInProgress = false } }
-            let result = performAppleShortcut(target) {
-                mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
+            let run = performAppleShortcut(target, canPerform)
+            mailbox.state.withLock { $0.appleShortcutInProgress = false }
+            switch run {
+            case .performed: result = .performed
+            case .cancelled: result = .cancelled
+            case .failed: result = .unavailable
             }
-            guard result != .cancelled else { return }
-            success = result == .performed
         }
-        if !success {
-            mailbox.actionFailed(dispatch)
-            // Detect output replacement/property loss promptly, without retrying
-            // an action or replaying the already consumed original input.
-            if case .system = dispatch.action { mailbox.updateAudioCapabilities(capabilities()) }
-        }
+        guard result == .unavailable else { return }
+        mailbox.actionFailed(dispatch)
+        // Detect output replacement/property loss promptly, without retrying
+        // an action or replaying the already consumed original input.
+        if case .system = dispatch.action { mailbox.updateAudioCapabilities(capabilities()) }
     }
 }

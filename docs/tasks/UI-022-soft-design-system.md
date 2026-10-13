@@ -1,4 +1,4 @@
-# UI-022 — Soft design system and redesigned core screens
+# UI-022: Soft design system and redesigned core screens
 
 - Updated: 2026-10-12
 - Stage: in_design
@@ -58,4 +58,4 @@ Screens were compared against the original two frames; geometry, type and color 
 ## Next handoff
 
 - **Design:** after user review, redraw the remaining screens listed above using the existing components; add new components only for genuinely new patterns.
-- **Code:** request “Implement the soft design system in the main window” — start with tokens (colors, type, radii, shadows) and the Keyboard list, reading components live from Sketch. Do not start before the user confirms the direction on the saved file.
+- **Code:** request “Implement the soft design system in the main window”, start with tokens (colors, type, radii, shadows) and the Keyboard list, reading components live from Sketch. Do not start before the user confirms the direction on the saved file.

@@ -1,4 +1,4 @@
-# General settings — native implementation and verification
+# General settings: native implementation and verification
 
 Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
 

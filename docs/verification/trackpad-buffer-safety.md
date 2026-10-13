@@ -1,4 +1,4 @@
-# Trackpad buffer loss and readiness — 2026-10-11
+# Trackpad buffer loss and readiness: 2026-10-11
 
 [INPUT-001](../tasks/INPUT-001-four-finger-tap.md); SPEC §§3.4, 6, 12, T1/T2. Engineering-only follow-up to the existing experimental four-finger tap. No Sketch, UI, catalog, schema, dependency, gesture-threshold or native-suppression change.
 

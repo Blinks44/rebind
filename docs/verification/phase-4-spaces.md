@@ -1,4 +1,4 @@
-# Phase 4 — Native Space shortcuts
+# Phase 4: Native Space shortcuts
 
 Scope: SPEC §5 A1/A2, §§6–7, 9–12, 2026-10-09.
 

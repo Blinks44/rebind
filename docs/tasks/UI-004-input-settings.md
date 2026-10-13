@@ -1,4 +1,4 @@
-# UI-004 — Input settings and per-binding hold timing
+# UI-004: Input settings and per-binding hold timing
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; native integration/software/layout/live save-retry pass; hardware/accessibility acceptance open.

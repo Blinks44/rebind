@@ -1,4 +1,4 @@
-# Phase 4 — Cycle windows of the active application
+# Phase 4: Cycle windows of the active application
 
 Scope: SPEC §5 Windows and applications / A1/A2, §§2, 6–7, 9–12.
 Implemented and software-tested; **requested happy path user-confirmed (2026-10-09)**.
@@ -47,7 +47,7 @@ No live window was raised, modified or read by the agent for this slice.
   explicit successful save; reject cycle payloads in older/inactive profiles.
   EN/RU/DE/FR localized labels/hint/failure, unchanged bundle/target/minimum OS.
 
-## Research and software evidence — 2026-10-09
+## Research and software evidence: 2026-10-09
 
 - [Apple AXMain](https://developer.apple.com/documentation/applicationservices/kaxmainattribute),
   [AXRaise](https://developer.apple.com/documentation/applicationservices/kaxraiseaction),
@@ -80,7 +80,7 @@ No live window was raised, modified or read by the agent for this slice.
   Real applications, Spaces/fullscreen/sheets, latency, locales and access changes
   still require manual checks.
 
-## Manual checks — all open
+## Manual checks: all open
 
 1. Restart the authorized rebuilt Rebind. In a test profile map two spare mouse
    buttons (or different modifiers) to Next/Previous Window of Current App.

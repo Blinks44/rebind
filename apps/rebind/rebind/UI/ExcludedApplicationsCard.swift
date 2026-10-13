@@ -50,15 +50,10 @@ struct ExcludedApplicationsCard: View {
                 .frame(width: 28, height: 28).accessibilityHidden(true)
             Text(verbatim: name).font(Theme.body).foregroundStyle(Theme.textPrimary).lineLimit(1)
             Spacer(minLength: 8)
-            Button { model.includeApplication(application.bundleIdentifier) } label: {
-                Image(systemName: "minus").font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.textPrimary)
-                    .frame(width: 28, height: 28).contentShape(.circle)
-            }
-            .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing(Circle())
+            CircleIconButton(symbol: "minus") { model.includeApplication(application.bundleIdentifier) }
             .accessibilityLabel(Text(.removeExcludedApp(name))).help(Text(.removeExcludedApp(name)))
         }
         .padding(.leading, 12).padding(.trailing, 10).frame(minHeight: 48)
-        .background(Theme.insetSurface, in: .rect(cornerRadius: 14, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.borderSubtle) }
+        .insetSurface()
     }
 }

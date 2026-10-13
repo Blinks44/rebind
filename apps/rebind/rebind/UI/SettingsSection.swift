@@ -1,6 +1,6 @@
 import Foundation
 
-/// Implemented settings destinations; other sections remain separate deliveries.
+/// The tabs of Settings, in display order.
 nonisolated enum SettingsSection: Hashable, CaseIterable {
     case general, permissions, input, language, advanced
 

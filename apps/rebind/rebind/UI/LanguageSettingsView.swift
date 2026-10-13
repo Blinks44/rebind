@@ -43,13 +43,13 @@ struct LanguageSettingsView: View {
                     }
                 }
                 if model.storageLocked {
-                    feedback(.storageUnreadable, description: .storageLockedLanguage)
+                    Banner(severity: .error, title: .storageUnreadable, message: .storageLockedLanguage)
                 } else if editing.saveFailed {
-                    feedback(.languageSaveFailed, description: .languageSaveFailedDescription)
+                    Banner(severity: .error, title: .languageSaveFailed, message: .languageSaveFailedDescription)
                 }
                 if model.requiresLanguageReopen {
                     Banner(severity: .information, title: .reopenTitle,
-                                   message: .reopenDescription(savedPreferenceName)) {
+                                   message: .reopenDescription(model.savedLanguageName)) {
                         Button(.quitRebind) { NSApp.terminate(nil) }.secondaryButton()
                     }
                 }
@@ -57,27 +57,14 @@ struct LanguageSettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
+            .detailMargins().padding(.bottom, 32)
         }
         .onChange(of: model.configuration.languagePreference) {
             editing.draft = model.configuration.languagePreference
         }
     }
 
-    private var savedPreferenceName: String {
-        if model.configuration.languagePreference == .system {
-            return AppLocalization.string(.systemDefault, language: model.activeLanguage)
-        }
-        return model.configuration.languagePreference.resolved(preferredLanguages: []).autonym
-    }
-
     private func languageTitle(_ preference: AppLanguagePreference) -> LocalizedStringResource {
-        if preference == .system { return .systemDefault }
-        return LocalizedStringResource(stringLiteral: preference.resolved(preferredLanguages: []).autonym)
-    }
-
-    private func feedback(_ title: LocalizedStringResource,
-                          description: LocalizedStringResource) -> some View {
-        Banner(severity: .error, title: title, message: description)
+        preference.language.map { LocalizedStringResource(stringLiteral: $0.autonym) } ?? .systemDefault
     }
 }

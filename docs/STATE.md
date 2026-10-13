@@ -1,6 +1,6 @@
-# Rebind — current state
+# Rebind: current state
 
-Updated **2026-10-13**. HEAD `0216061` contains all work to date ([INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md), sidebar brand, website). Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-13**. HEAD `03c1504` plus the uncommitted 2026-10-13 cleanup contains all work to date ([INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md), sidebar brand, website). Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -14,7 +14,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 | --- | --- |
 | Keyboard/mouse | Quartz tap, primary modifiers, numeric middle/extra buttons, shortcuts, wheel, double/long press and four button-held directions. G603 subsets user-confirmed; physical keyboard/full safety matrix open. |
 | Runtime | Bounded synchronous capture/matcher/mailbox, separate action execution, synthetic tags, protected-session/pause/cancellation safeguards and opt-in memory-only mouse diagnostics. Measured callback/action performance and full fault/recovery acceptance remain open. |
-| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **34**, migrations 1–33 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up--2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
+| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **34**, migrations 1–33 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up-2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
 | Actions | Searchable catalog: shortcuts, audio/media/mouse, AX window/app/layout/cycling, Previous Application, app/web/file, Apple Shortcuts, Spaces, sleep, experimental Dock/lock. Happy-path subsets confirmed; broader guards/platform checks remain. |
 | Trackpad | Four-finger delivery/click recovery/lifecycle are user-confirmed subsets. Three/four single/double and two-finger double engine/storage are integrated ([INPUT-004](tasks/INPUT-004-two-finger-double-tap.md)). [Tap preset editor](tasks/UI-014-trackpad-presets.md) exposes the full twelve-preset pool: 3/4 singles, 2/3/4 doubles, [2/3/4-finger physical clicks](tasks/INPUT-006-trackpad-clicks.md) and four [one-finger corner taps](tasks/INPUT-005-corner-taps.md). Hardware/native conflicts, timing/safety/platform checks remain open. Trackpad rules run [any catalog action](tasks/INPUT-007-trackpad-action-catalog.md). Native gestures are not suppressed, except that click and corner rules replace their own click (both user-confirmed happy paths). |
 | UI/localization | Whole app uses the soft design system from `apps/rebind/rebind/UI/DesignSystem` with EN/RU/DE/FR/ES/Simplified Chinese. Running-app accessibility, focus and localized-width acceptance remain open. |
@@ -23,6 +23,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** Repository-wide cleanup. Em dashes removed from documentation, product strings, the website and Sketch. Code simplified without behavior changes: one mailbox helper for cancelling queued work, one cancellation closure in the action worker, schema migration as a per-rule minimum-schema table, shared inset-row/round-button/margin helpers, dead parameters removed. DESIGN no longer describes the superseded Liquid Glass document. 748 Swift Testing and 15 layout tests pass; nothing was checked in the running app or on hardware.
 - **2026-10-13:** [Held output, excluded apps, wider catalog and rule management](tasks/INPUT-009-held-output-exclusions-catalog.md) (schema 34): "Repeat While Held" for shortcuts and step actions, apps in which Rebind stays out of the way, 27 new catalog actions (Do Nothing, pause/profile control, editing, tabs, screenshots, Insert Text, quarters, next display), rule duplicate/copy-to-profile/note, mouse gesture distance, and wheel rules under a held mouse button. A copy review of all six languages changed 95 strings (one term per language for app, trigger, click and shortcut; Title Case action names in English). Sketch gained screens 29–33 (Button + Wheel editor, Repeat While Held with a note, Input settings with gesture distance and excluded apps, Insert Text, the binding options menu), saved 2026-10-13. Later the same day: modifier-hold actions, a short-press shortcut on hold rules, one held key for trackpad gestures, wheel direction and speed, single-profile export/import, a support report and a paused Menu Bar icon; Sketch has screens 29–38 covering every addition, `Icon/text.cursor` and `Brand/Menu Bar Template Paused`. 748 tests pass; nothing seen in the running app or tried on hardware.
 - **2026-10-13:** Sidebar brand enlarged by user request: 44 pt icon and 22 pt Semibold name in all Sketch sidebar screens and in the app ([UI-023](tasks/UI-023-main-window-soft-adoption.md)). Layout tests pass; not yet seen in the running app.
 - **2026-10-13:** With Show in Dock off, the Dock icon now follows window visibility (shown while a window is open, gone after the last one closes). User-confirmed in the running app.
@@ -41,7 +42,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 - **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27; preset exposure and physical acceptance open.
 - **2026-10-12:** [Trackpad focus cancellation](verification/trackpad-focus-cancellation.md) repaired and user-confirmed; measured timing open.
 
-Source: **Rebind - new.sketch** (38 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is superseded and kept only as a copy reference. Older entries: [history](history/2026-10.md).
+Source: **Rebind - new.sketch** (38 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier **Rebind.sketch** is fully superseded. Older entries: [history](history/2026-10.md).
 
 ## Open work / next steps
 

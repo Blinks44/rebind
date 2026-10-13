@@ -28,11 +28,7 @@ struct ContentView: View {
                     BindingsView(model: model, scope: scope,
                         add: { editor = EditorSelection(scope: scope, binding: nil) },
                         edit: { editor = EditorSelection(scope: scope, binding: $0) },
-                        duplicate: {
-                            var copy = $0
-                            copy.id = UUID()
-                            editor = EditorSelection(scope: scope, binding: copy, isCopy: true)
-                        },
+                        duplicate: { editor = EditorSelection(scope: scope, binding: $0.duplicated(), isCopy: true) },
                         delete: { pendingDeletion = $0 },
                         manageProfiles: { showingProfiles = true },
                         openPermissions: { selection = .settings(.permissions) })

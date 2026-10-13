@@ -110,8 +110,7 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         guard let generation = state.withLock({ $0.accepting ? $0.generation : nil }) else { return }
         let receipt = DispatchTime.now().uptimeNanoseconds
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
-            guard state.status == .active, state.isMatching, !state.editing, !state.suspended,
-                  !state.stopped, state.recording == nil else { return nil }
+            guard state.canDispatch else { return nil }
             return (state.actionRevision, state.inputActivity)
         }
         guard let snapshot else { return }

@@ -1,4 +1,4 @@
-# INPUT-004 — Two-finger double-tap engine and storage
+# INPUT-004: Two-finger double-tap engine and storage
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
@@ -30,7 +30,7 @@ Implemented in the 2026-10-12 session (agent): `InputTrigger.twoFingerDoubleTap`
 
 Agent-observed on macOS 27.0.1 (26A434) / arm64, Xcode 27.0 / Swift 6.4 / SDK 27, final source (uncommitted on `8e8a06e`). Injected software evidence only; no production capture/configuration/grants or actions executed.
 
-- Targeted suites: double-tap/recognition/sequence/persistence/labels **67 tests / 5 suites**; remaining trackpad engine suites **93 tests / 9 suites**; matcher/persistence/editor-adjacent suites **53 tests / 8 suites** — all pass, zero failures/skips.
+- Targeted suites: double-tap/recognition/sequence/persistence/labels **67 tests / 5 suites**; remaining trackpad engine suites **93 tests / 9 suites**; matcher/persistence/editor-adjacent suites **53 tests / 8 suites**: all pass, zero failures/skips.
 - Full `dev.sh test` run: Swift Testing module **663 tests / 90 suites pass**, zero failures. Native XCTest suites pass except: `MainWindowLayoutTests.testSettingsDoesNotExpandNavigationBeyondTheWindow` fails 632≠600 assertions from the concurrent agent's uncommitted UI-021 titlebar/shell work (their owned surface; not fixed here), and `TrackpadEditorLayoutTests` hit a default-allowance test-host timeout and passes **isolated in 20.5 s** under a 180 s allowance (`test-without-building` from the same products). [Evidence](../verification/two-finger-double-tap-engine.md).
 - Debug build passes; `git diff --check` clean. Editor exposure, physical accuracy/latency and native coexistence remain open.
 

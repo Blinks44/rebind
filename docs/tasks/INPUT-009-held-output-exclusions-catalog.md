@@ -1,4 +1,4 @@
-# INPUT-009 — Held output, excluded apps, wider action catalog and rule management
+# INPUT-009: Held output, excluded apps, wider action catalog and rule management
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.

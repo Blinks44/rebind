@@ -1,4 +1,4 @@
-# Advanced configuration backup foundation — 2026-10-11
+# Advanced configuration backup foundation: 2026-10-11
 
 ## Implemented scope
 

@@ -1,4 +1,4 @@
-# INPUT-008 — External Magic Trackpad section
+# INPUT-008: External Magic Trackpad section
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.

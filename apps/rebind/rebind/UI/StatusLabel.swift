@@ -11,17 +11,21 @@ struct StatusLabel: View {
     var body: some View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .firstTextBaseline) {
-                Text(title).font(isPrimary ? Theme.titleSmall : Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                titleText
                 Spacer(minLength: 16)
                 statusText
             }
             VStack(alignment: .leading, spacing: 8) {
-                Text(title).font(isPrimary ? Theme.titleSmall : Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                titleText
                 statusText
             }
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isHeader)
+    }
+
+    private var titleText: some View {
+        Text(title).font(isPrimary ? Theme.titleSmall : Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
     }
 
     private var statusText: some View {

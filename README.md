@@ -132,10 +132,10 @@ The app target has no Swift package dependency. Some experimental trackpad/Dock/
 
 ## Documentation
 
-- [Development guide](docs/DEVELOPMENT.md) — build, tests, signing and detailed local setup.
-- [Capabilities](docs/CAPABILITIES.md) — implementation status, verified subsets and limitations.
-- [Specification](docs/SPEC.md) and [roadmap](docs/PLAN.md) — product requirements and remaining work.
-- [Documentation index](docs/README.md) — design, architecture conventions, verification and contributor/agent workflow.
+- [Development guide](docs/DEVELOPMENT.md): build, tests, signing and detailed local setup.
+- [Capabilities](docs/CAPABILITIES.md): implementation status, verified subsets and limitations.
+- [Specification](docs/SPEC.md) and [roadmap](docs/PLAN.md): product requirements and remaining work.
+- [Documentation index](docs/README.md): design, architecture conventions, verification and contributor/agent workflow.
 - [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md) and [changelog](CHANGELOG.md).
 
 ## License

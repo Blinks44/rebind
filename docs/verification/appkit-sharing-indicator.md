@@ -1,4 +1,4 @@
-# AppKit negative geometry isolation — 2026-10-11
+# AppKit negative geometry isolation: 2026-10-11
 
 ## Outcome
 

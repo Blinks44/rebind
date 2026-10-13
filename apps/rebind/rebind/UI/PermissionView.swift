@@ -3,17 +3,10 @@ import SwiftUI
 /// Settings → Permissions uses actual grants, independently of engine status.
 struct PermissionView: View {
     let model: AppModel
-    var showsSettingsHeader = true
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                if showsSettingsHeader {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(.settingsTitle).font(Theme.largeTitle).accessibilityAddTraits(.isHeader)
-                        Text(.settingsDescription).foregroundStyle(Theme.textSecondary)
-                    }
-                }
                 accessStatus
                 VStack(spacing: 16) {
                     accessibilityCard
@@ -33,11 +26,9 @@ struct PermissionView: View {
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
-            .padding(.top, showsSettingsHeader ? 28 : 0)
+            .detailMargins().padding(.bottom, 32)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .navigationTitle(.settingsTitle)
     }
 
     private var accessStatus: some View {

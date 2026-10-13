@@ -72,109 +72,23 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         }
     }
 
+    /// Brings an older file to the current schema in memory. A file that claims an old schema
+    /// but carries a newer feature is rejected instead of being silently upgraded.
     func migrated() throws -> Configuration {
+        guard (1..<Self.currentSchemaVersion).contains(schemaVersion) else {
+            try validate()
+            return self
+        }
+        guard schemaVersion >= 34 || (excludedApplications.isEmpty && pointerGestureDistance == .standard
+                                      && !reversesMouseWheel && mouseWheelSpeed == .standard),
+              schemaVersion >= 33 || (languagePreference != .es && languagePreference != .zhHans),
+              schemaVersion >= 6 || profiles.count == 1,
+              profiles.flatMap(\.bindings).allSatisfy({ $0.minimumSchemaVersion <= schemaVersion }) else {
+            throw ConfigurationError.invalid
+        }
         var result = self
-        if schemaVersion < 34, !excludedApplications.isEmpty || pointerGestureDistance != .standard
-            || reversesMouseWheel || mouseWheelSpeed != .standard {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 34, profiles.flatMap(\.bindings).contains(where: {
-            if $0.holdsOutput || $0.note != nil || $0.tapShortcut != nil { return true }
-            if case .buttonScroll = $0.trigger { return true }
-            if $0.trigger.isTrackpad, !$0.modifiers.isEmpty { return true }
-            switch $0.action {
-            case .doNothing, .control, .text, .modifier: return true
-            case .windowLayout(let layout): return layout.isNewInSchema34
-            default: return false
-            }
-        }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 33, languagePreference == .es || languagePreference == .zhHans {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 32, profiles.flatMap(\.bindings).contains(where: { $0.scope == .magicTrackpad }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 31, profiles.flatMap(\.bindings).contains(where: {
-            if case .mouse(let mouse) = $0.action { return mouse.isNewInSchema31 }
-            return false
-        }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 30, profiles.flatMap(\.bindings).contains(where: {
-            if case .media(let media) = $0.action, media.isBrightness { return true }
-            return $0.trigger.isTrackpad && $0.action.shortcut == nil
-        }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 29, profiles.flatMap(\.bindings).contains(where: {
-            if case .trackpadClick = $0.trigger { return true }
-            return false
-        }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 28, profiles.flatMap(\.bindings).contains(where: {
-            if case .cornerTap = $0.trigger { return true }
-            return false
-        }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 27, profiles.flatMap(\.bindings).contains(where: { $0.trigger == .twoFingerDoubleTap }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 26, profiles.flatMap(\.bindings).contains(where: { $0.trigger.isTrackpadDoubleTap }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 25, profiles.flatMap(\.bindings).contains(where: { $0.trigger == .threeFingerTap }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 22, profiles.flatMap(\.bindings).contains(where: { $0.trigger.isTrackpad }) {
-            throw ConfigurationError.invalid
-        }
-        if schemaVersion < 21, profiles.flatMap(\.bindings).contains(where: {
-            if case .workspace(.previousApplication) = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 20, profiles.flatMap(\.bindings).contains(where: {
-            if case .windowCycle = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 19, profiles.flatMap(\.bindings).contains(where: {
-            if case .lockScreen = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 18, profiles.flatMap(\.bindings).contains(where: {
-            if case .sleepSystem = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 17, profiles.flatMap(\.bindings).contains(where: {
-            switch $0.action {
-            case .workspace(.quitApplication), .workspace(.openSystemSettings): true
-            default: false
-            }
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 16, profiles.flatMap(\.bindings).contains(where: {
-            if case .windowLayout = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 15, profiles.flatMap(\.bindings).contains(where: {
-            if case .media = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 14, profiles.flatMap(\.bindings).contains(where: {
-            if case .mouse = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 12, profiles.flatMap(\.bindings).contains(where: {
-            if case .dock = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 13, profiles.flatMap(\.bindings).contains(where: {
-            if case .dock(let action) = $0.action { return action.isSpaceNavigation }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if (11...12).contains(schemaVersion) {
+        if schemaVersion <= 12 {
+            // Schemas 11 and 12 stored desktop actions with a shortcut; they are Dock requests now.
             for profile in result.profiles.indices {
                 for index in result.profiles[profile].bindings.indices {
                     if case .desktop(let action, let shortcut) = result.profiles[profile].bindings[index].action {
@@ -185,51 +99,10 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
                     }
                 }
             }
-            result.schemaVersion = Self.currentSchemaVersion
         }
-        if schemaVersion < 11, profiles.flatMap(\.bindings).contains(where: {
-            if case .desktop = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if schemaVersion < 10, profiles.flatMap(\.bindings).contains(where: {
-            if case .appleShortcut = $0.action { return true }
-            return false
-        }) { throw ConfigurationError.invalid }
-        if (1...5).contains(schemaVersion) {
-            guard profiles.count == 1,
-                  schemaVersion >= 5 || bindings.allSatisfy({ !$0.trigger.isPointerGesture }),
-                  schemaVersion >= 4 || bindings.allSatisfy({ $0.activation != .hold }),
-                  schemaVersion >= 3 || bindings.allSatisfy({ $0.activation == .press }),
-                  schemaVersion != 1 || bindings.allSatisfy({ !$0.trigger.isScroll }) else {
-                throw ConfigurationError.invalid
-            }
-            result.schemaVersion = Self.currentSchemaVersion
-        }
-        if (1...6).contains(schemaVersion) {
-            guard profiles.flatMap(\.bindings).allSatisfy({ $0.action.shortcut != nil }) else {
-                throw ConfigurationError.invalid
-            }
-            result.schemaVersion = Self.currentSchemaVersion
-        }
-        if schemaVersion == 7 {
-            guard profiles.flatMap(\.bindings).allSatisfy({
-                if case .window = $0.action { return false }
-                if case .workspace = $0.action { return false }
-                return true
-            }) else { throw ConfigurationError.invalid }
-            result.schemaVersion = Self.currentSchemaVersion
-        }
-        if schemaVersion == 8 {
-            guard profiles.flatMap(\.bindings).allSatisfy({
-                if case .workspace = $0.action { return false }
-                return true
-            }) else { throw ConfigurationError.invalid }
-            result.schemaVersion = Self.currentSchemaVersion
-        }
-        if (9...10).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
-        if (13...33).contains(schemaVersion) { result.schemaVersion = Self.currentSchemaVersion }
         // Existing installations recover through the permission notice, not first-run setup.
-        if (1...22).contains(schemaVersion) { result.hasCompletedSetup = true }
+        if schemaVersion <= 22 { result.hasCompletedSetup = true }
+        result.schemaVersion = Self.currentSchemaVersion
         try result.validate()
         return result
     }
@@ -319,11 +192,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         var copied: [Binding] = []
         if let sourceID {
             guard let source = profiles.first(where: { $0.id == sourceID }) else { throw ConfigurationError.profileInvalid }
-            copied = source.bindings.map { original in
-                var binding = original
-                binding.id = UUID()
-                return binding
-            }
+            copied = source.bindings.map { $0.duplicated() }
         }
         let profile = RuleProfile(name: name.trimmingCharacters(in: .whitespacesAndNewlines), bindings: copied)
         var updated = self
@@ -349,5 +218,53 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         if selectedProfileID == id, let first = updated.profiles.first { updated.selectedProfileID = first.id }
         try updated.validate()
         self = updated
+    }
+}
+
+nonisolated private extension Binding {
+    /// The first schema whose files may contain this rule.
+    var minimumSchemaVersion: Int {
+        var version = 1
+        func introduced(in schema: Int, _ applies: Bool) { if applies { version = max(version, schema) } }
+
+        introduced(in: 2, trigger.isScroll)
+        introduced(in: 3, activation != .press)
+        introduced(in: 4, activation == .hold)
+        introduced(in: 5, trigger.isPointerGesture)
+        introduced(in: 22, trigger.isTrackpad)
+        introduced(in: 25, trigger == .threeFingerTap)
+        introduced(in: 26, trigger.isTrackpadDoubleTap)
+        introduced(in: 27, trigger == .twoFingerDoubleTap)
+        introduced(in: 30, trigger.isTrackpad && action.shortcut == nil)
+        introduced(in: 32, scope == .magicTrackpad)
+        introduced(in: 34, holdsOutput || note != nil || tapShortcut != nil || (trigger.isTrackpad && !modifiers.isEmpty))
+        switch trigger {
+        case .cornerTap: introduced(in: 28, true)
+        case .trackpadClick: introduced(in: 29, true)
+        case .buttonScroll: introduced(in: 34, true)
+        default: break
+        }
+        switch action {
+        case .shortcut: break
+        case .system: introduced(in: 7, true)
+        case .window: introduced(in: 8, true)
+        case .workspace(let workspace):
+            switch workspace {
+            case .quitApplication, .openSystemSettings: introduced(in: 17, true)
+            case .previousApplication: introduced(in: 21, true)
+            default: introduced(in: 9, true)
+            }
+        case .appleShortcut: introduced(in: 10, true)
+        case .desktop: introduced(in: 11, true)
+        case .dock(let desktop): introduced(in: desktop.isSpaceNavigation ? 13 : 12, true)
+        case .mouse(let mouse): introduced(in: mouse.isNewInSchema31 ? 31 : 14, true)
+        case .media(let media): introduced(in: media.isBrightness ? 30 : 15, true)
+        case .windowLayout(let layout): introduced(in: layout.isNewInSchema34 ? 34 : 16, true)
+        case .sleepSystem: introduced(in: 18, true)
+        case .lockScreen: introduced(in: 19, true)
+        case .windowCycle: introduced(in: 20, true)
+        case .doNothing, .control, .text, .modifier: introduced(in: 34, true)
+        }
+        return version
     }
 }

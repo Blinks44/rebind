@@ -1,4 +1,4 @@
-# Phase 4 — Put Mac to Sleep
+# Phase 4: Put Mac to Sleep
 
 Scope: SPEC §5 Spaces and system / A1/A2, §§2, 6–7, 9–12.
 Implemented and software-tested; **requested happy path user-confirmed on 2026-10-09**.
@@ -42,7 +42,7 @@ The agent did not request sleep, change power settings or run a global input eng
   schemas, including inactive profiles, are rejected. Titles/help/errors translated
   into EN/RU/DE/FR.
 
-## Software evidence — 2026-10-09
+## Software evidence: 2026-10-09
 
 12 new Swift Testing functions in SystemSleepTests. Full
 **354 tests / 48 suites / 0 failures** in `build/SystemSleep-Final2.xcresult`.

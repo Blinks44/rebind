@@ -40,7 +40,7 @@ struct GeneralSettingsView: View {
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
+            .detailMargins().padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }

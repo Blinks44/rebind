@@ -15,7 +15,7 @@ This is a technical summary of earlier implementation and verification. It is no
 
 The heading is retained for earlier evidence links. Entries are scoped technical outcomes with reported or software-observed evidence, not verbatim session records.
 
-### 2026-10-10 — Click-to-tap recovery after idle native frame gaps
+### 2026-10-10: Click-to-tap recovery after idle native frame gaps
 
 Pure regression tests reproduced repeated recognition cancellation after forward frame-ID gaps between neutral strokes. The fix permits forward gaps only when no stroke is open and neutral was observed. Active-stroke/pending-release gaps, backwards or duplicate IDs, malformed/stale data and nonmonotonic timing still cancel. New contacts cancel earlier pending output before starting another stroke.
 
@@ -31,13 +31,13 @@ Result: **479 tests / 63 suites / 0 failures**; Debug and universal Release buil
 
 Manual reports indicated better initial recognition followed by loss of shortcut output after physical clicks. That physical sequence and recovery remain unverified on the rebuilt app; the software reproduction does not establish the hardware cause. See [INPUT-001](../tasks/INPUT-001-four-finger-tap.md).
 
-### 2026-10-10 — Four-finger tap responsiveness and natural-contact tolerances
+### 2026-10-10: Four-finger tap responsiveness and natural-contact tolerances
 
 Forwarded callback timestamp/frame metadata for zero-contact arrays. Recognition bounds changed to 30–400 ms duration, 150 ms arrival/lift spread, 0.04 per-contact travel and two peak frames. Settling changed from 500 ms to 60 ms; contact identity/movement, active-frame continuity, click/activity/focus/runtime cancellation and dispatch guards remain.
 
 Recorded command: `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadResponsivenessTests.xcresult`; **476 tests / 63 suites / 0 failures**. Debug/Release builds and universal signature checks passed. Integrated output had a manual success report, but roughly one-in-seven recognition and perceived delay failed usability acceptance. Revised latency, reliability and click/lifecycle behavior remain open.
 
-### 2026-10-10 — Experimental four-finger app integration and layout
+### 2026-10-10: Experimental four-finger app integration and layout
 
 Built-in four-finger single tap → shortcut integrated with manual profiles, versioned schema 22 and experimental guidance. Pure recognition/buffer/migration/dispatch checks passed; native suppression and broader gestures were not implemented.
 
@@ -50,13 +50,13 @@ apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadLayoutRegression
 
 Each recorded **465 tests / 63 suites / 0 failures**; Debug/Release builds passed. Native layout inspection confirmed category/editor transitions at the inspected window size after removing inappropriate vertical fixed sizing. Compact resizing, accessibility and integrated hardware safety were not established by these checks.
 
-### 2026-10-10 — App icon and permission designs
+### 2026-10-10: App icon and permission designs
 
 Native Icon Composer delivery passed Debug/Release resource/signature checks and Finder preview inspection. The separate menu-bar template was integrated. Dock/live Menu Bar/minimum-OS/tint checks remain open.
 
 Six first-launch/permission frames were saved and reviewed in Sketch. Their state/copy handoff is indexed in [DESIGN](../DESIGN.md) and menu-bar/onboarding verification. Saved frames are not native onboarding implementation.
 
-### 2026-10-08–09 — Keyboard, mouse, profiles and actions
+### 2026-10-08–09: Keyboard, mouse, profiles and actions
 
 The scoped records retain actual test commands, implementations, reported happy paths and remaining checks:
 

@@ -1,4 +1,4 @@
-# First-run and permissions — native implementation
+# First-run and permissions: native implementation
 
 Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
 
@@ -71,7 +71,7 @@ On an explicitly identified bundle, with the user controlling real permission ch
 5. VoiceOver: read heading → status → explanation → primary action → Check Again → instructions; buttons must be separately actionable, navigation selected state understandable, focus restore after closing sheets. Keyboard-only Tab/Shift-Tab, Return and Escape must work without trapping focus. Use Accessibility Inspector on an ordinary window; native automation and manual VoiceOver are still open.
 6. Enable actual Increase Contrast, Reduce Transparency and Reduce Motion, check readable surfaces/native navigation, visible focus and no lost control/status. Check macOS 26 and Intel separately where claimed; stable signing/TCC persistence remains open.
 
-## Main-window rendering regression — 2026-10-11
+## Main-window rendering regression: 2026-10-11
 
 The user reported a blank sidebar and clipped main content. Read-only Computer Use inspection reproduced the visual failure in the already-running Xcode Debug `Rebind.app` (process 20230, `main` window; ordinary Xcode DerivedData artifact, not the script-produced artifact identified above). The accessibility tree contains category rows, Settings, profile controls, heading, recovery text/buttons and footer; the screenshot shows an empty sidebar, recovery buttons clipped at the upper edge and only the centered empty-rule state. At that initial inspection the cause was not established. Prior software/isolated-fixture evidence did not verify this full window or disprove the regression; the repair below supersedes that open diagnosis.
 
@@ -81,7 +81,7 @@ Display-name discovery briefly opened a separate historical lowercase `rebind.ap
 
 At the user's stop request, General implementation was halted before source edits. This investigation changed documentation only; no fix, build or new test run is claimed. The existing app implementation and independent work remain preserved.
 
-## Main-window repair and verification — 2026-10-11
+## Main-window repair and verification: 2026-10-11
 
 The recovery description's `.fixedSize(horizontal: false, vertical: true)` caused SwiftUI's native split-view minimum-size probing to compute an oversized height. In an isolated 1040 × 640 window, the split hierarchy measured 1040 × 1309 at y = −334. With the notice absent it measured 1040 × 640; removing only the description's fixed-height modifier restores 1040 × 640 with the notice present. The production fix is limited to that modifier in `PermissionRecoveryBanner.swift`; normal localized wrapping remains. No GeometryReader, hard-coded notice height, project setting or engine change was retained. Native sizing guidance was checked against [Apple's NSHostingController sizing contract](https://developer.apple.com/documentation/swiftui/nshostingcontroller/sizingoptions).
 

@@ -17,7 +17,6 @@ nonisolated enum ShortcutSender {
         }
         // Encode shortcut modifiers on the balanced key pair rather than posting
         // modifier key-downs that could overwrite physically held modifier state.
-        // This slice sends a pulse once per press; it does not synthesize held keys.
         for event in [down, up] {
             event.flags = shortcut.modifiers.flags
             event.setIntegerValueField(.eventSourceUserData, value: eventTag)

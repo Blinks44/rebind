@@ -67,6 +67,12 @@ import Dispatch
         configuration.languagePreference.resolved(preferredLanguages: systemLanguages) != activeLanguage
     }
 
+    /// Name of the saved language choice, shown where a reopen is still pending.
+    var savedLanguageName: String {
+        configuration.languagePreference.language?.autonym
+            ?? AppLocalization.string(.systemDefault, language: activeLanguage)
+    }
+
     var configurationFileURL: URL { store.url }
 
     /// A confirmed whole-document transaction. Persist before changing any runtime state.
@@ -180,55 +186,41 @@ import Dispatch
             refreshWindowDisplays()
             lastPermissionCheck = Date()
         }
+        // Copy the engine's state and clear its one-shot results in one short lock.
         let update = mailbox.state.withLock { state in
-            let result = (state.status, state.recorded, state.emergencyPause, state.audioCapabilities, state.actionFailed, state.workspaceRequest != nil, state.appleShortcutInProgress, state.profileStep)
+            let result = (status: state.status, trackpadStatus: state.trackpadStatus,
+                          audioCapabilities: state.audioCapabilities,
+                          workspaceActionInProgress: state.workspaceRequest != nil,
+                          appleShortcutInProgress: state.appleShortcutInProgress,
+                          recorded: state.recorded, paused: state.emergencyPause, failed: state.actionFailed,
+                          profileStep: state.profileStep)
             state.profileStep = 0
             state.actionFailed = nil
             state.recorded = nil
             state.emergencyPause = false
             return result
         }
-        trackpadStatus = mailbox.state.withLock { $0.trackpadStatus }
-        status = update.0
-        audioCapabilities = update.3
-        workspaceActionInProgress = update.5
-        appleShortcutInProgress = update.6
+        status = update.status
+        trackpadStatus = update.trackpadStatus
+        audioCapabilities = update.audioCapabilities
+        workspaceActionInProgress = update.workspaceActionInProgress
+        appleShortcutInProgress = update.appleShortcutInProgress
         refreshDiagnostics()
-        if let captured = update.1, captured.request == recording {
+        if let captured = update.recorded, captured.request == recording {
             lastRecording = captured
             recording = nil
         }
         // Consume the worker's cancellation result before clearing any remaining recorder.
         if !permissions.allowsRemapping { cancelRecording() }
-        if update.2 {
+        if update.paused {
             recording = nil
             var paused = configuration
             paused.isEnabled = false
             configuration.isEnabled = false
             trySave(paused)
         }
-        if let failed = update.4 {
-            switch failed {
-            case .shortcut, .desktop: error = .outputFailed
-            case .mouse: error = .mouseActionFailed
-            case .media: error = .mediaActionFailed
-            case .dock(let action): error = action.isSpaceNavigation ? .spaceActionFailed : .dockActionFailed
-            case .lockScreen: error = .lockScreenFailed
-            case .sleepSystem: error = .sleepSystemFailed
-            case .system: error = .audioActionFailed
-            case .windowCycle: error = .windowCycleFailed
-            case .windowLayout: error = .windowLayoutFailed
-            case .window: error = .windowActionFailed
-            case .workspace(.previousApplication): error = .previousApplicationFailed
-            case .workspace(.quitApplication): error = .quitApplicationFailed
-            case .workspace(.openSystemSettings): error = .openSystemSettingsFailed
-            case .workspace: error = .workspaceActionFailed
-            case .appleShortcut: error = .appleShortcutFailed
-            case .text: error = .insertTextFailed
-            case .doNothing, .control, .modifier: break
-            }
-        }
-        if update.7 != 0 { stepProfile(by: update.7) }
+        if let message = update.failed?.failureMessage { error = message }
+        if update.profileStep != 0 { stepProfile(by: update.profileStep) }
         if workspaceTask == nil, mailbox.hasWorkspaceRequest {
             let mailbox = mailbox
             let previousApplication = previousApplication
@@ -448,10 +440,8 @@ import Dispatch
     /// Copies a rule into another profile. If its trigger is already used there, the copy arrives switched off.
     @discardableResult func copyBinding(_ binding: Binding, toProfile id: UUID) -> Bool {
         guard let index = configuration.profiles.firstIndex(where: { $0.id == id }) else { return false }
-        var copy = binding
-        copy.id = UUID()
         var updated = configuration
-        updated.profiles[index].bindings.append(copy)
+        updated.profiles[index].bindings.append(binding.duplicated())
         do { try updated.validate() } catch ConfigurationError.conflict {
             updated.profiles[index].bindings[updated.profiles[index].bindings.count - 1].isEnabled = false
         } catch { showConfigurationError(error); return false }
@@ -512,12 +502,7 @@ import Dispatch
                 name = "\(base) \(suffix)"
                 suffix += 1
             }
-            let bindings = source.bindings.map { original in
-                var binding = original
-                binding.id = UUID()
-                return binding
-            }
-            updated.profiles.append(RuleProfile(name: name, bindings: bindings))
+            updated.profiles.append(RuleProfile(name: name, bindings: source.bindings.map { $0.duplicated() }))
         }
         do { try updated.validate() } catch { return nil }
         return trySave(updated) ? backup.configuration.profiles.count : nil
@@ -531,10 +516,7 @@ import Dispatch
     private func profileNameIsAvailable(_ name: String, excluding id: UUID? = nil) -> Bool {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         // Include the localized built-in label, whose stored name is nil.
-        return !configuration.profiles.contains {
-            $0.id != id && $0.title.compare(trimmed, options: [.caseInsensitive, .diacriticInsensitive],
-                                           locale: Locale(identifier: "en_US_POSIX")) == .orderedSame
-        }
+        return !configuration.profiles.contains { $0.id != id && Self.sameName($0.title, trimmed) }
     }
 
     @discardableResult func deleteProfile(_ id: UUID) -> Bool {

@@ -1,4 +1,4 @@
-# Phase 2 capture lifecycle — 2026-10-08
+# Phase 2 capture lifecycle: 2026-10-08
 
 Scope: SPEC §§2, 6, 9; capture loss, protected input and workspace suspension.
 Status: implemented and software-tested; **basic Pause/Resume and sleep/wake recovery user-verified; remaining lifecycle checks pending**.
@@ -60,7 +60,7 @@ Status: implemented and software-tested; **basic Pause/Resume and sleep/wake rec
 Logs: `/tmp/rebind-lifecycle-doctor.log`, `/tmp/rebind-lifecycle-{tests,build,release}-final.log`;
 result `build/Phase2LifecycleTests-Final.xcresult` (ignored).
 
-## User-reported hardware result — 2026-10-08
+## User-reported hardware result: 2026-10-08
 
 Manual test report, 2026-10-08: ordinary/hold/leftward-gesture bindings
 continued working after Pause/Resume and sleep/wake on the rebuilt app.

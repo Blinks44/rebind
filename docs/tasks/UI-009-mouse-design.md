@@ -1,4 +1,4 @@
-# UI-009 — Mouse rules and conditional trigger editor
+# UI-009: Mouse rules and conditional trigger editor
 
 - Updated: 2026-10-11.
 - Stage: `awaiting_verification`.
@@ -29,7 +29,7 @@ Live MCP screenshots checked all new states, Light/Dark, German 880 × 600 list 
 
 Design review does not establish hardware support or native behavior. Button 9 is an authored numeric example, not a hardware result. No app build/runtime, recording, remapping, configuration or permission changes were performed during the design phase. Native keyboard/VoiceOver/adaptive materials, localization, capture cancellation and physical timing acceptance remain open; existing capability evidence is unchanged.
 
-## Native implementation — 2026-10-11
+## Native implementation: 2026-10-11
 
 Implemented category-wide selected-profile Mouse list/search, per-rule enabled state, edit/delete, empty/no-results feedback, permission recovery and diagnostics. The editor separates trigger/output capture; button activation/Hold, discrete wheel and cardinal pointer direction show only applicable controls. Type changes reset trigger options while retaining the action. Existing identity/enabled state and unrestricted numeric button indexes are retained. Only the editor's exact recording request can update its draft; cancelled/stale/wrong-type results retain values. Save uses shared configuration validation, displays conflicts, and retains the draft after storage failure. Nested permission recovery preserves unsaved edits. Secure Input/suspended/stopped capture is unavailable; global pause alone permits recording.
 

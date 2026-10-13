@@ -1,6 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "meta_title": "Rebind — réaffectez touches, boutons de souris et gestes du trackpad sur macOS",
+  "meta_title": "Rebind : réaffectez touches, boutons de souris et gestes du trackpad sur macOS",
   "meta_description": "Une app macOS native et gratuite : associez touches, boutons de souris et gestes du trackpad ou de la Magic Mouse à des raccourcis et des actions système. Sans abonnement, sans compte, sans suivi.",
   "nav_sections": "Sections",
   "nav_scenarios": "Exemples",

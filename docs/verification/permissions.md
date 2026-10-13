@@ -1,4 +1,4 @@
-# Permission gate correction — 2026-10-08
+# Permission gate correction: 2026-10-08
 
 Scope: Phase 1 onboarding/hardware gate; SPEC §7 and S2. User hardware: Logitech
 G603 via LIGHTSPEED, with G HUB installed (confirmed by the user).

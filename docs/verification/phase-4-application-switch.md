@@ -1,4 +1,4 @@
-# Phase 4 — Previous Application
+# Phase 4: Previous Application
 
 Scope: SPEC §5 Windows/applications / A1/A2, §§2, 6–7, 9–12.
 Implemented and software-tested; the user confirms the requested AX retest works
@@ -82,7 +82,7 @@ CGSession state. It now injects a known unlocked session, retaining production
 protection. Final commands/results are recorded in [the historical software-check register](../history/implementation-through-2026-10-10.md#historical-software-check-register). Software
 fakes prove dispatch/state behavior, not real native application activation.
 
-## Detailed manual checks — remaining
+## Detailed manual checks: remaining
 
 1. Restart Debug Rebind, add Previous Application to a G603 side button in a test
    profile. Open Finder and TextEdit, activate Finder then TextEdit manually.

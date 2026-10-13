@@ -1,4 +1,4 @@
-# INPUT-007 — Full action catalog for Trackpad rules; display brightness actions
+# INPUT-007: Full action catalog for Trackpad rules; display brightness actions
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
@@ -20,7 +20,7 @@ Trackpad tap, corner and click rules can run any catalog action, not only a keyb
 
 ## Verification
 
-Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27: complete suite passes — 15 native layout tests and 684 Swift Testing tests, including a catalog test (non-shortcut tap/click rules validate, queue with a trackpad target, and are rejected in schema 29 files) and updated media-key tests for the two brightness codes. Software evidence only.
+Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27: complete suite passes, 15 native layout tests and 684 Swift Testing tests, including a catalog test (non-shortcut tap/click rules validate, queue with a trackpad target, and are rejected in schema 29 files) and updated media-key tests for the two brightness codes. Software evidence only.
 
 ## Open checks
 

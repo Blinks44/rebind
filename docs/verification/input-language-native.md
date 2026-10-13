@@ -1,4 +1,4 @@
-# Input/hold and Language — native implementation
+# Input/hold and Language: native implementation
 
 Routine capture files were moved to ignored local storage during repository cleanup on 2026-10-11. The dated observations, commands and acceptance limits below are preserved; these images are not automated test baselines.
 
@@ -59,6 +59,6 @@ Still open: actual quit/relaunch across main/standard Settings/Menu Bar and nati
 
 Next: verify the saved language through an actual user-controlled quit/reopen on the identified normal bundle; independently implement the ready Advanced behavior once its design handoff is released. Preserve the full-main geometry coverage for every added Settings section.
 
-### AppKit diagnostic follow-up — 2026-10-11
+### AppKit diagnostic follow-up: 2026-10-11
 
 The previously open negative-geometry warning is now [isolated to AppKit’s window-sharing indicator during Computer Use inspection](appkit-sharing-indicator.md). No production layout change follows from that diagnostic. Existing geometry/visual evidence remains scoped as recorded; actual restart and accessibility checks remain open.

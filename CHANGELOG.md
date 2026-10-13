@@ -2,7 +2,7 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
-## 1.0 — unreleased
+## 1.0: unreleased
 
 First public version.
 

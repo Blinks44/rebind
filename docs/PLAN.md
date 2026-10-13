@@ -1,4 +1,4 @@
-# Rebind — roadmap
+# Rebind: roadmap
 
 Updated 2026-10-13. Read [STATE](STATE.md) first for current facts and the task table; [WORKFLOW](WORKFLOW.md) defines how to work; requirements are in [SPEC](SPEC.md); per-capability evidence is in [CAPABILITIES](CAPABILITIES.md). Nothing here is declared complete by a passing build alone.
 
@@ -10,11 +10,11 @@ Out of scope by user decision: Caps Lock, Fn/Globe and left/right modifier disti
 
 ## Next
 
-1. **Hardware acceptance of 2026-10-13 work** — built-in trackpad after the adapter refactor, Magic Trackpad discovery and gestures, Back/Forward, scroll and brightness actions, non-shortcut actions from trackpad rules. Held output, modifier holds, wheel, excluded apps and the new actions. Tasks INPUT-005 … INPUT-009.
-2. **Magic Mouse** — run `apps/rebind/tools/magic-mouse-probe.swift` on the real device, then decide the supported presets, implement them and draw the screens. No implementation or hardware claim yet (SPEC §3.5).
-3. **Review pass** — code, design and copy once the hardware findings are in; German, French, Spanish and Simplified Chinese proofreading by fluent readers.
-4. **GitHub repository and update check** — the user publishes the repository (planned, 2026-10-13); then set the releases address, add a "Check for Updates" command that compares the running version with the latest release and opens its page, and fill `site.githubRepo` for the website download button. Releases are signed with one stable self-signed certificate, so the Accessibility grant survives updates.
-5. **Release preparation** — see the gates below.
+1. **Hardware acceptance of 2026-10-13 work**: built-in trackpad after the adapter refactor, Magic Trackpad discovery and gestures, Back/Forward, scroll and brightness actions, non-shortcut actions from trackpad rules. Held output, modifier holds, wheel, excluded apps and the new actions. Tasks INPUT-005 … INPUT-009.
+2. **Magic Mouse**: run `apps/rebind/tools/magic-mouse-probe.swift` on the real device, then decide the supported presets, implement them and draw the screens. No implementation or hardware claim yet (SPEC §3.5).
+3. **Review pass**: code, design and copy once the hardware findings are in; German, French, Spanish and Simplified Chinese proofreading by fluent readers.
+4. **GitHub repository and update check**: the user publishes the repository (planned, 2026-10-13); then set the releases address, add a "Check for Updates" command that compares the running version with the latest release and opens its page, and fill `site.githubRepo` for the website download button. Releases are signed with one stable self-signed certificate, so the Accessibility grant survives updates.
+5. **Release preparation**: see the gates below.
 
 ## Release gates
 

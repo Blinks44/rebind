@@ -1,4 +1,4 @@
-# UI-005 — Language settings
+# UI-005: Language settings
 
 - Updated: 2026-10-11.
 - Stage: `awaiting_verification`; selection/persistence/reopen path and software/layout/live Apply pass; production relaunch/accessibility acceptance open.

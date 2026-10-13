@@ -1,4 +1,4 @@
-# General settings — design delivery
+# General settings: design delivery
 
 Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Saved and reviewed 2026-10-11. Scope: UI-003, SPEC §§6, 8, 10–11 / S1, design only. Git baseline `main` / `acce2f4`; prior permission/alignment work and concurrent trackpad engineering are preserved. `rebindApp.swift` and `AppModel` were inspected for window lifetime, Menu Bar, quit and enabled-state behavior. No app source, real configuration, login item or permissions changed.
@@ -13,16 +13,16 @@ Saved-model comparison with the preceding alignment revision (`50859f5…`) reta
 
 | Frame | Stable ID | Size | Evidence |
 | --- | --- | --- | --- |
-| 23 · General / Enabled · Light, login off | `2C9A6A68-F839-46C2-BF15-E672107FB024` | 1040 × 640 | [Light](../DESIGN.md#screen-index-and-implementation-status) |
-| 24 · General / Paused · Dark, login on | `410A654D-4DF2-4810-9EA2-79242185FEC3` | 1040 × 640 | [Dark](../DESIGN.md#screen-index-and-implementation-status) |
-| 25 · Login approval required | `067A6C10-7A7D-406A-B26F-FABEDC1DA9DD` | 1040 × 640 | [Approval](../DESIGN.md#screen-index-and-implementation-status) |
-| 26 · Login enable failed | `4788D158-8D0B-4FF1-9606-CAA460194EFF` | 1040 × 640 | [Enable error](../DESIGN.md#screen-index-and-implementation-status) |
-| 27 · Required access missing, enabled intent retained | `10363873-FAC1-4DCA-9180-0315D7C493F9` | 1040 × 640 | [Missing access](../DESIGN.md#screen-index-and-implementation-status) |
-| 28 · General / German | `53A0F080-03E7-4FE8-A05E-8EB1AF8DF7AF` | 880 × 600 | [German](../DESIGN.md#screen-index-and-implementation-status) |
-| 29 · General / Russian | `94510528-E1B3-403B-97AA-943B664B5D8D` | 880 × 600 | [Russian](../DESIGN.md#screen-index-and-implementation-status) |
-| 30 · General / French | `72D357F2-458E-432D-B344-DE9310F27F6C` | 880 × 600 | [French](../DESIGN.md#screen-index-and-implementation-status) |
-| 31 · Login removal failed | `C9407364-ECD6-4C46-B051-EECF9BB7A031` | 1040 × 640 | [Removal error](../DESIGN.md#screen-index-and-implementation-status) |
-| 32 · Remapping could not start, enabled intent retained | `2BDAD1BE-0E66-42EB-82EC-EDFED6974A84` | 1040 × 640 | [Engine error](../DESIGN.md#screen-index-and-implementation-status) |
+| 23 · General / Enabled · Light, login off | `2C9A6A68-F839-46C2-BF15-E672107FB024` | 1040 × 640 | [Light](../DESIGN.md) |
+| 24 · General / Paused · Dark, login on | `410A654D-4DF2-4810-9EA2-79242185FEC3` | 1040 × 640 | [Dark](../DESIGN.md) |
+| 25 · Login approval required | `067A6C10-7A7D-406A-B26F-FABEDC1DA9DD` | 1040 × 640 | [Approval](../DESIGN.md) |
+| 26 · Login enable failed | `4788D158-8D0B-4FF1-9606-CAA460194EFF` | 1040 × 640 | [Enable error](../DESIGN.md) |
+| 27 · Required access missing, enabled intent retained | `10363873-FAC1-4DCA-9180-0315D7C493F9` | 1040 × 640 | [Missing access](../DESIGN.md) |
+| 28 · General / German | `53A0F080-03E7-4FE8-A05E-8EB1AF8DF7AF` | 880 × 600 | [German](../DESIGN.md) |
+| 29 · General / Russian | `94510528-E1B3-403B-97AA-943B664B5D8D` | 880 × 600 | [Russian](../DESIGN.md) |
+| 30 · General / French | `72D357F2-458E-432D-B344-DE9310F27F6C` | 880 × 600 | [French](../DESIGN.md) |
+| 31 · Login removal failed | `C9407364-ECD6-4C46-B051-EECF9BB7A031` | 1040 × 640 | [Removal error](../DESIGN.md) |
+| 32 · Remapping could not start, enabled intent retained | `2BDAD1BE-0E66-42EB-82EC-EDFED6974A84` | 1040 × 640 | [Engine error](../DESIGN.md) |
 
 All ten states inspected with explicit-ID MCP screenshots after their relevant edits. Ten final 1× PNG exports have matching header dimensions. New Permissions/About prototype links and missing-access CTA: **21 valid connections**, none launch System Settings or change actual login state. Existing frames' inbound navigation is unchanged. Prototype permissions destinations are design references; the native app must retain actual grants and current locale.
 

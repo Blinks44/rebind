@@ -1,4 +1,4 @@
-# Rebind — agent instructions
+# Rebind: agent instructions
 
 Act as a senior macOS engineer or product designer working on a production native input remapper. Follow the user's current authorized task and preserve existing work. This file is the entry point for **both code and design agents**; instructions do not imply shared chat memory or automatic synchronization.
 

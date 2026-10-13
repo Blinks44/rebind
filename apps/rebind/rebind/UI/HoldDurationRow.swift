@@ -16,8 +16,7 @@ struct HoldDurationRow: View {
                 step("plus", by: 100)
             }
             .padding(.leading, 14).padding(.trailing, 10).frame(minHeight: 48)
-            .background(Theme.insetSurface, in: .rect(cornerRadius: 14, style: .continuous))
-            .overlay { RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.borderSubtle) }
+            .insetSurface()
             .accessibilityRepresentation {
                 Stepper(value: $milliseconds, in: range, step: 100) { Text(.holdDurationTitle) }
                     .accessibilityValue(Text(.holdValue(Int32(milliseconds))))
@@ -32,13 +31,9 @@ struct HoldDurationRow: View {
 
     private func step(_ symbol: String, by delta: Int) -> some View {
         let next = Int(milliseconds) + delta
-        return Button {
+        return CircleIconButton(symbol: symbol) {
             milliseconds = UInt32(min(max(next, Int(range.lowerBound)), Int(range.upperBound)))
-        } label: {
-            Image(systemName: symbol).font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.textPrimary)
-                .frame(width: 28, height: 28).contentShape(.circle)
         }
-        .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing(Circle())
         .disabled(!range.contains(UInt32(clamping: next)))
     }
 }

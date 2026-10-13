@@ -137,7 +137,7 @@ Use associated-value enums or similarly clear models for trigger and action vari
 
 ### 3.3 Manual profiles and category-wide rule scoping (CORE)
 
-**User decision — 2026-10-08:** remove HID inventory, device capabilities and experimental source attribution from the product. The existing G603 sender check shows unknown sources; the user chooses simple manual profiles instead of further physical-device routing work. This is a scope decision, not proof that macOS cannot enumerate or identify any device.
+**User decision, 2026-10-08:** remove HID inventory, device capabilities and experimental source attribution from the product. The existing G603 sender check shows unknown sources; the user chooses simple manual profiles instead of further physical-device routing work. This is a scope decision, not proof that macOS cannot enumerate or identify any device.
 
 - A profile is a named, local set of rules for every supported input category. Exactly one profile is selected; the engine evaluates only its enabled rules.
 - Create an empty profile, duplicate rules with new binding IDs, rename and delete profiles with confirmation; keep at least one. Names are unique without case/accent differences, 1–80 characters, no control characters. Bound the configuration to 20 profiles and 1000 total rules.
@@ -154,7 +154,7 @@ Use associated-value enums or similarly clear models for trigger and action vari
 
 ### 3.4 Built-in trackpad and Magic Trackpad (RESEARCH-GATED)
 
-**Confirmed compact scope — 2026-10-09:** the user has a built-in trackpad and
+**Confirmed compact scope, 2026-10-09:** the user has a built-in trackpad and
 explicitly wants both a light tap and a physical click with 3/4 fingers. Retain
 previously requested double taps and corner taps. Supported only where reliably
 recognized:
@@ -169,7 +169,7 @@ recognized:
 - Safe movement/duration/corner tolerances; expose advanced adjustments only when
   necessary.
 
-**Preset editing contract — 2026-10-11:** present one selector of curated,
+**Preset editing contract, 2026-10-11:** present one selector of curated,
 complete gestures, for example `Double tap · 3 fingers` or `Top-left corner tap`.
 Finger count, click/tap kind and corner belong to each preset; do not expose
 separate controls or record touch triggers. Any supported modifier variant must

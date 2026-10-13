@@ -11,7 +11,7 @@ import { Button } from '@moduix/react/button'
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@moduix/react/card'
 import { Marquee, MarqueeContent, MarqueeItem, MarqueeViewport } from '@moduix/react/marquee'
 import { createFileRoute } from '@tanstack/react-router'
-import { BadgeCheck, Download, Keyboard, Languages, Layers, LockKeyhole, Mouse, Pause, ShieldCheck, Sparkles, Tag } from 'lucide-react'
+import { BadgeCheck, Download, Keyboard, Languages, Layers, LockKeyhole, type LucideIcon, Mouse, Pause, ShieldCheck, Sparkles, Tag } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { actions } from '~/actions'
@@ -209,9 +209,9 @@ function Landing() {
         <section className="container section">
           <SectionHeading title={m.steps_title()} />
           <ol className="steps">
-            <Step number="1" title={m.step1_title()} text={m.step1_text()} />
-            <Step number="2" title={m.step2_title()} text={m.step2_text()} />
-            <Step number="3" title={m.step3_title()} text={m.step3_text()} />
+            <Step number={1} title={m.step1_title()} text={m.step1_text()} />
+            <Step number={2} title={m.step2_title()} text={m.step2_text()} />
+            <Step number={3} title={m.step3_title()} text={m.step3_text()} />
           </ol>
         </section>
 
@@ -262,7 +262,7 @@ function SectionHeading({ title, lead }: { title: string; lead?: string }) {
   )
 }
 
-function Stat({ icon, value, label }: { icon: Action['icon']; value: string; label: string }) {
+function Stat({ icon, value, label }: { icon: LucideIcon; value: string; label: string }) {
   return (
     <div className="stat">
       <Tile icon={icon} />
@@ -313,7 +313,7 @@ function ActionMarquee({ items, reverse }: { items: Action[]; reverse?: boolean 
   )
 }
 
-function Why(props: { icon: Action['icon']; title: string; text: string; large?: boolean }) {
+function Why(props: { icon: LucideIcon; title: string; text: string; large?: boolean }) {
   return (
     <Reveal className={props.large ? 'why-item why-item-large' : 'why-item'}>
       <Card className="why-card">
@@ -329,10 +329,10 @@ function Why(props: { icon: Action['icon']; title: string; text: string; large?:
   )
 }
 
-function Step({ number, title, text }: { number: string; title: string; text: string }) {
+function Step({ number, title, text }: { number: number; title: string; text: string }) {
   return (
     <li className="step">
-      <Reveal delay={(Number(number) - 1) * 0.1}>
+      <Reveal delay={(number - 1) * 0.1}>
         <span className="step-key" aria-hidden>
           {number}
         </span>

@@ -1,4 +1,4 @@
-# UI-003 — General settings and background behavior
+# UI-003: General settings and background behavior
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; General feedback adopted; actual login/relaunch/accessibility acceptance remains open.
@@ -55,11 +55,11 @@ Native Russian General → Permissions → rules → Settings transitions checke
 - **Design:** review justified native feedback arrangement/scrolling differences against the saved source; existing design remains released.
 - User-facing name: **General settings and background behavior**. General implementation is available; required native acceptance remains open.
 
-## AppKit warning isolation — 2026-10-11
+## AppKit warning isolation: 2026-10-11
 
 [Captured stacks and controlled runs](../verification/appkit-sharing-indicator.md) attribute the warning to NSWindowSharingSessionRecipientIndicator receiving (-1, -1) during selective sharing/inspection. The same actual-main fixture without Computer Use emits zero such warnings. No production control/layout workaround was added; temporary instrumentation removed. The warning investigation is complete on this host; real login/relaunch and accessibility acceptance remain open. The then-next Advanced slices have since been implemented in UI-008/UI-007; current next work is listed below.
 
-## General feedback adoption — 2026-10-12
+## General feedback adoption: 2026-10-12
 
 Adopted existing shared semantic feedback/recovery controls from live General and Foundations 04/14/15. Runtime/login failures, missing access/protected configuration, approval/unavailable and busy states retain actual-state behavior and four-language copy. Neutral pause remains neutral. General status scrolls with content to accommodate expanded messages without the old split-view minimum-height failure; protected-file guidance is shown once.
 

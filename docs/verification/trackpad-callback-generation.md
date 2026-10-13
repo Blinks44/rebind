@@ -1,4 +1,4 @@
-# Trackpad callback generations — 2026-10-12
+# Trackpad callback generations: 2026-10-12
 
 [INPUT-001](../tasks/INPUT-001-four-finger-tap.md); SPEC §§3.4, 6, 12, T1/T2. Engineering-only repair to the existing native buffer; no UI, Sketch, gesture thresholds, schema, dependencies or capability expansion.
 
@@ -28,7 +28,7 @@ Final Debug app: `build/DerivedData/Build/Products/Debug/Rebind.app`. Executable
 
 Logs/result bundles stay local under ignored `build/`. No production launch or agent commit.
 
-## User hardware follow-up — 2026-10-12
+## User hardware follow-up: 2026-10-12
 
 User-reported result for the supplied physical four-finger single-tap walkthrough: **10/10 ordinary taps**, **zero delayed outputs after pause/resume**, and **5/5 fresh taps after resuming**. This confirms delivery and the bounded pause/recovery scenario after the generation repair. Do not repeat this confirmed scenario without a new concern.
 

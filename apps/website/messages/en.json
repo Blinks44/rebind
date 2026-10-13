@@ -1,6 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "meta_title": "Rebind — remap keys, mouse buttons and trackpad gestures on macOS",
+  "meta_title": "Rebind: remap keys, mouse buttons and trackpad gestures on macOS",
   "meta_description": "A free native app for macOS: map keys, mouse buttons and trackpad or Magic Mouse gestures to shortcuts and system actions. No subscription, no account, no analytics.",
   "nav_sections": "Sections",
   "nav_scenarios": "Scenarios",

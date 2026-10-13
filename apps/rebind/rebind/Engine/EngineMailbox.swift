@@ -63,10 +63,31 @@ nonisolated final class EngineMailbox: Sendable {
         var diagnostics = InputDiagnostics()
         var profileID = RuleProfile.defaultID
 
-        init() { pending.reserveCapacity(16); held.reserveCapacity(Self.maximumHeldOutputs) }
+        init() { pending.reserveCapacity(Self.maximumPending); held.reserveCapacity(Self.maximumHeldOutputs) }
+
+        static let maximumPending = 16
 
         var canDispatch: Bool {
             status == .active && isMatching && !editing && !suspended && !stopped && recording == nil
+        }
+
+        /// Whether rules may match at all; ownership and the emergency bypass work regardless.
+        var matchesRules: Bool { isMatching && !editing && recording == nil }
+        var hasQueueSpace: Bool { pending.count < Self.maximumPending }
+
+        /// Invalidates dispatched and waiting work. Presses already swallowed keep their release.
+        mutating func cancelQueuedWork() {
+            actionRevision &+= 1
+            pending.removeAll(keepingCapacity: true)
+            cancelHeldOutputs()
+            trackpadDispatch = nil
+            matcher.cancelPendingActivation()
+        }
+
+        /// Turns rules off from the engine side; the UI model persists it on its next refresh.
+        mutating func pause() {
+            enabled = false
+            emergencyPause = true
         }
 
         /// Ends every held output. A key that is already down still gets its release.
@@ -121,14 +142,13 @@ nonisolated final class EngineMailbox: Sendable {
                     return HeldKeyCommand(target: target, phase: output.pressedAt == nil ? .press : .repeatPress)
                 }
                 // A step action goes through the ordinary queue each time it is due.
-                if pending.count < 16 { pending.append(output.action) }
+                if hasQueueSpace { pending.append(output.action) }
             }
             return nil
         }
 
         func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
-            actionRevision == dispatch.revision && status == .active && isMatching
-                && !editing && !suspended && !stopped && recording == nil
+            actionRevision == dispatch.revision && canDispatch
                 && audioCapabilities.supports(dispatch.action)
                 && (dispatch.trackpadTarget.map {
                     $0.pid == foregroundPID && $0.inputActivity == inputActivity
@@ -175,7 +195,6 @@ nonisolated final class EngineMailbox: Sendable {
                 $0.recorded = nil
             }
             if configuration.isEnabled && !$0.enabled { $0.retryID &+= 1 }
-            $0.actionRevision &+= 1
             $0.actionFailed = nil
             $0.allRules = compiled
             let capabilities = $0.audioCapabilities
@@ -183,10 +202,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.enabled = configuration.isEnabled
             $0.excludedApplications = Set(configuration.excludedApplications.map(\.bundleIdentifier))
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
             $0.keyRepeat = keyRepeat
             $0.matcher.pointerThreshold = configuration.pointerGestureDistance.points
@@ -203,11 +219,7 @@ nonisolated final class EngineMailbox: Sendable {
             let wasMatching = $0.isMatching
             $0.foregroundBundleID = bundleIdentifier
             guard $0.isMatching != wasMatching else { return }
-            $0.actionRevision &+= 1
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
         }
     }
 
@@ -222,11 +234,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.audioCapabilities = capabilities
             $0.rules = $0.allRules.filter { capabilities.supports($0.value.action) }
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
-            $0.actionRevision &+= 1
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
         }
     }
 
@@ -236,9 +244,7 @@ nonisolated final class EngineMailbox: Sendable {
             // request already accepted must finish before another action starts.
             if let request = $0.workspaceRequest, !$0.workspaceClaimed,
                !$0.dispatchIsCurrent(request.dispatch) { $0.workspaceRequest = nil }
-            guard $0.status == .active, $0.isMatching, !$0.editing, !$0.suspended,
-                  !$0.stopped, $0.recording == nil,
-                  $0.workspaceRequest == nil else { return nil }
+            guard $0.canDispatch, $0.workspaceRequest == nil else { return nil }
             if let dispatch = $0.trackpadDispatch {
                 $0.trackpadDispatch = nil
                 if $0.dispatchIsCurrent(dispatch) { return dispatch }
@@ -269,11 +275,7 @@ nonisolated final class EngineMailbox: Sendable {
             // Do not run already queued work or delayed recognition during the
             // transition to sleep/lock. Keep suppressed press ownership until up.
             $0.diagnostics.stop(clear: true)
-            $0.actionRevision &+= 1
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
         }
     }
 
@@ -311,8 +313,7 @@ nonisolated final class EngineMailbox: Sendable {
             switch dispatch.action {
             case .shortcut, .desktop:
                 $0.resetCapture(status: .outputFailed)
-                $0.enabled = false
-                $0.emergencyPause = true
+                $0.pause()
             default: break
             }
         }
@@ -324,13 +325,8 @@ nonisolated final class EngineMailbox: Sendable {
             guard $0.dispatchIsCurrent(dispatch) else { return }
             switch action {
             case .pause:
-                $0.actionRevision &+= 1
-                $0.enabled = false
-                $0.emergencyPause = true
-                $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-                $0.trackpadDispatch = nil
-                $0.matcher.cancelPendingActivation()
+                $0.cancelQueuedWork()
+                $0.pause()
             case .nextProfile: $0.profileStep += 1
             case .previousProfile: $0.profileStep -= 1
             }
@@ -340,24 +336,16 @@ nonisolated final class EngineMailbox: Sendable {
     func record(_ request: RecordingRequest?) {
         state.withLock {
             if request != nil { $0.retryID &+= 1 }
-            $0.actionRevision &+= 1
             $0.recording = request
             $0.recorded = nil
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
         }
     }
 
     func setEditing(_ editing: Bool) {
         state.withLock {
-            $0.actionRevision &+= 1
             $0.editing = editing
-            $0.pending.removeAll(keepingCapacity: true)
-            $0.cancelHeldOutputs()
-            $0.trackpadDispatch = nil
-            $0.matcher.cancelPendingActivation()
+            $0.cancelQueuedWork()
         }
     }
 
@@ -372,10 +360,7 @@ nonisolated final class EngineMailbox: Sendable {
     func captureLost(status: EngineStatus, pause: Bool = false) {
         state.withLock {
             $0.resetCapture(status: status)
-            if pause {
-                $0.enabled = false
-                $0.emergencyPause = true
-            }
+            if pause { $0.pause() }
         }
     }
 
@@ -463,12 +448,10 @@ nonisolated final class EngineMailbox: Sendable {
         // Evaluate once: a disabled pre-pass would cancel a temporal sequence.
         // Ownership/emergency bypass still work during pause, editing or recording.
         let decision = state.matcher.handle(event, rules: state.recording == nil ? state.rules : [:],
-                                            enabled: state.isMatching && !state.editing && state.recording == nil,
-                                            canDispatch: state.pending.count < 16)
+                                            enabled: state.matchesRules, canDispatch: state.hasQueueSpace)
         if decision.emergencyPause {
             state.actionRevision &+= 1
-            state.enabled = false
-            state.emergencyPause = true
+            state.pause()
             state.recording = nil
             state.pending.removeAll(keepingCapacity: true)
             state.cancelHeldOutputs()
@@ -516,9 +499,8 @@ nonisolated final class EngineMailbox: Sendable {
             }
             state.matcher.expirePointerGesture(at: now)
             let holdKey = state.matcher.holdKey
-            if let action = state.matcher.pollHold(at: now, rules: state.rules,
-                                                      enabled: state.isMatching && !state.editing && state.recording == nil,
-                                                      canDispatch: state.pending.count < 16) {
+            if let action = state.matcher.pollHold(at: now, rules: state.rules, enabled: state.matchesRules,
+                                                   canDispatch: state.hasQueueSpace) {
                 // The trigger is still down, so a held output lasts from here to its release.
                 if let holdKey, state.rules[holdKey]?.holdsOutput == true, state.held.count < State.maximumHeldOutputs {
                     state.held.append(HeldOutput(trigger: holdKey.trigger, action: action))

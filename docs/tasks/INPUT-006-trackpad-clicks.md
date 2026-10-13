@@ -1,4 +1,4 @@
-# INPUT-006 — Physical trackpad clicks with 2, 3 or 4 fingers
+# INPUT-006: Physical trackpad clicks with 2, 3 or 4 fingers
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
@@ -21,7 +21,7 @@ Pressing the trackpad while 2, 3 or 4 fingers rest on it runs the configured sho
 
 Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27, injected software evidence only: new `TrackpadClickRuleTests` (7 functions) cover replacement for 3/4 fingers, the two-finger secondary-button rule, pass-through of other counts/stale frames/no contact, paused/editing/Secure Input, capture with click rules only, persistence and schema guard, labels. Full Swift Testing module passes (683 tests) with the native layout suites.
 
-## User-reported result — 2026-10-13
+## User-reported result: 2026-10-13
 
 Built-in trackpad, macOS 27.0.1, Debug build from the working tree: the user reports the click rules work as intended. No per-count breakdown or timing measurements.
 

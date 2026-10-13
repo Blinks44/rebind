@@ -97,8 +97,7 @@ nonisolated struct TrackpadClickFilter: Sendable {
 extension EngineMailbox.State {
     /// Runs inside the mailbox lock on the event-tap thread; no I/O, one bounded append.
     nonisolated mutating func consumesTrackpadClick(button: UInt32, event: InputEvent) -> Bool {
-        let active = status == .active && isMatching && !editing && !suspended && !stopped
-            && recording == nil && foregroundPID != nil
+        let active = canDispatch && foregroundPID != nil
         let rules = rules
         func rule(_ trigger: InputTrigger, _ magic: Bool) -> RebindAction? {
             active ? rules[MatchKey(trigger: trigger, modifiers: event.modifiers, isMagicTrackpad: magic)]?.action : nil
@@ -122,7 +121,7 @@ extension EngineMailbox.State {
             // A press is still real activity: it must cancel any pending light-tap output.
             inputActivity &+= 1
             trackpadDispatch = nil
-            if pending.count < 16, let action = rule(.trackpadClick(fingers: fingers), magic) { pending.append(action) }
+            if hasQueueSpace, let action = rule(.trackpadClick(fingers: fingers), magic) { pending.append(action) }
             return true
         }
     }

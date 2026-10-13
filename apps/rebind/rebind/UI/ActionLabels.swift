@@ -107,24 +107,41 @@ extension ActionKind.Category {
 }
 
 extension RebindAction {
-    var label: String {
+    /// What the user is told when this action could not run; nil for actions that cannot fail.
+    var failureMessage: LocalizedStringResource? {
         switch self {
-        case .shortcut(let shortcut):
-            let kind = ActionKind(action: self)
-            return kind == .keyboardShortcut ? InputLabels.shortcut(shortcut) : AppLocalization.string(kind.title)
+        case .shortcut, .desktop: .outputFailed
+        case .mouse: .mouseActionFailed
+        case .media: .mediaActionFailed
+        case .dock(let action): action.isSpaceNavigation ? .spaceActionFailed : .dockActionFailed
+        case .lockScreen: .lockScreenFailed
+        case .sleepSystem: .sleepSystemFailed
+        case .system: .audioActionFailed
+        case .windowCycle: .windowCycleFailed
+        case .windowLayout: .windowLayoutFailed
+        case .window: .windowActionFailed
+        case .workspace(.previousApplication): .previousApplicationFailed
+        case .workspace(.quitApplication): .quitApplicationFailed
+        case .workspace(.openSystemSettings): .openSystemSettingsFailed
+        case .workspace: .workspaceActionFailed
+        case .appleShortcut: .appleShortcutFailed
+        case .text: .insertTextFailed
+        case .doNothing, .control, .modifier: nil
+        }
+    }
+
+    var label: String {
+        let kind = ActionKind(action: self)
+        let title = AppLocalization.string(kind.title)
+        switch self {
+        case .shortcut(let shortcut): return kind == .keyboardShortcut ? InputLabels.shortcut(shortcut) : title
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock,
-             .doNothing, .control, .modifier: return AppLocalization.string(ActionKind(action: self).title)
-        case .text(let text):
-            let preview = text.count > 24 ? String(text.prefix(24)) + "…" : text
-            return "\(AppLocalization.string(.insertTextAction)) — \(preview)"
-        case .appleShortcut(let target): return "\(AppLocalization.string(.runAppleShortcutAction)) — \(target.name)"
-        case .desktop(_, let shortcut): return "\(AppLocalization.string(ActionKind(action: self).title)) — \(InputLabels.shortcut(shortcut))"
-        case .workspace(let action):
-            let detail: String
-            if case .openURL(let url) = action { detail = url.host ?? "" }
-            else if let url = action.url { detail = url.lastPathComponent }
-            else { return AppLocalization.string(ActionKind(action: self).title) }
-            return "\(AppLocalization.string(ActionKind(action: self).title)) — \(detail)"
+             .doNothing, .control, .modifier: return title
+        case .text(let text): return "\(title): \(text.count > 24 ? String(text.prefix(24)) + "…" : text)"
+        case .appleShortcut(let target): return "\(title): \(target.name)"
+        case .desktop(_, let shortcut): return "\(title): \(InputLabels.shortcut(shortcut))"
+        case .workspace(.openURL(let url)): return "\(title): \(url.host ?? "")"
+        case .workspace(let action): return action.url.map { "\(title): \($0.lastPathComponent)" } ?? title
         }
     }
 }

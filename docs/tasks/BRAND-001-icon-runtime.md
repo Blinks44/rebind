@@ -1,4 +1,4 @@
-# BRAND-001 — finish existing icon runtime acceptance
+# BRAND-001: finish existing icon runtime acceptance
 
 - Updated: 2026-10-13, new keycap icon and menu bar template checked from fresh builds; live Dock/menu bar look still needs the user's eyes.
 - Stage: `awaiting_verification`
@@ -9,7 +9,7 @@
 
 ## Outcome and existing delivery
 
-Confirm the existing icon in real runtime contexts. Do not recreate it because acceptance is incomplete. Sketch owns refined vector geometry; Composer owns the app delivery materials/mask/appearances. Menu Bar uses its own monochrome template. [DESIGN source index](../DESIGN.md#brand-existing-source-and-delivered-assets), [brand README](../DESIGN.md#brand).
+Confirm the existing icon in real runtime contexts. Do not recreate it because acceptance is incomplete. Sketch owns refined vector geometry; Composer owns the app delivery materials/mask/appearances. Menu Bar uses its own monochrome template. [DESIGN source index](../DESIGN.md#brand), [brand README](../DESIGN.md#brand).
 
 ## Acceptance
 
@@ -23,7 +23,7 @@ Confirm the existing icon in real runtime contexts. Do not recreate it because a
 
 The new package was already connected at baseline `6c1a5be`. Deleted the superseded app/reference PNG sets and verified matching brand/package SVGs, fresh builds, native ICNS artwork, bundle metadata and signing. Detailed checks. No behavioral tests or app/input launch were needed for this asset-only change. Stage remains `awaiting_verification` for the runtime gates below.
 
-## Fresh-build check — 2026-10-13
+## Fresh-build check: 2026-10-13
 
 Agent-observed on macOS 27.0.1 after the 2026-10-13 icon redesign (UI-023): the repository Debug bundle and the Xcode DerivedData Debug bundle carry the same `AppIcon.icns` (identical checksum). `NSWorkspace.icon(forFile:)` for the Xcode bundle returns the new full-bleed keycap icon at 128, 64, 32 and 16 pt, so the system icon service is not serving a stale image for that path. The `RebindMenuBar` template, tinted black on a light bar and white on a dark bar at 18 pt, is legible in both. Rebind was not running during the check; the live Dock tile, the real menu bar (including selection highlight), tinted/clear icon appearances and macOS 26 were not observed.
 

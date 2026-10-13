@@ -1,4 +1,4 @@
-# Phase 4 — Direct Dock actions and system-shortcut follow-up
+# Phase 4: Direct Dock actions and system-shortcut follow-up
 
 **Historical replacement:** the user now confirms Mission Control/current-app windows/Show Desktop work, but the separate keyboard sender still fails for Spaces. Space navigation and schema notes below are superseded by [the current HID shortcut slice](phase-4-spaces.md).
 

@@ -1,4 +1,4 @@
-# Trackpad scheduling and aggregate timing — 2026-10-12
+# Trackpad scheduling and aggregate timing: 2026-10-12
 
 [INPUT-001](../tasks/INPUT-001-four-finger-tap.md), SPEC §§3.4, 6, 12 / T1/T2/S1/S3. Engineering-only diagnostics and injected verification; no UI/Sketch change or capability expansion.
 
@@ -42,7 +42,7 @@ Reviewed all changed declarations and call sites using the installed Swift Concu
 
 Reviewed test independence: each parameter has its own buffer/mailbox/worker and synchronized output holder; no sleeps, production posting or actual configuration. Recovery checks exercise production buffer publication, session, mailbox, worker and sender rather than a duplicate matcher. No actionable source defect remains from this review; **physical timing remains unresolved**, not waived; final runtime tests now pass as recorded below. The added dispatch timestamp is supplied at every production construction; its zero default is used only by the existing synthetic target fixture.
 
-## Final user-run regression reviewed — 2026-10-12
+## Final user-run regression reviewed: 2026-10-12
 
 The user launched `apps/rebind/scripts/dev.sh test -resultBundlePath build/TrackpadTimingFinalVerified.xcresult` in Terminal. The agent observed the native fixtures progressing and inspected the finalized result bundle: test and build statuses **succeeded**, **659 unique test functions / 1,860 expanded executions**, **zero failures/skips**, zero errors/warnings/test-warning summaries in xcresult. Run interval 15:30:21–15:34:03 +03:00. Swift Testing console: **645 functions / 89 suites** pass; XCTest: **14 functions** pass. All 24 Scheduling executions, all three diagnostic functions and all ten sender executions pass, including the final post-before-diagnostics assertion and 400 injected recovery cycles. No source changed between the earlier review/build and this run. The tested app `rebind.debug.dylib` SHA-256 still matches the ordinary Debug artifact above. Test embedding can alter the signed launcher; the prior ordinary-build executable hash is not claimed as the test-host launcher hash.
 

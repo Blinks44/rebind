@@ -1,4 +1,4 @@
-# Rebind — shared development workflow
+# Rebind: shared development workflow
 
 Updated 2026-10-11. Applies to the human-directed code and Sketch agents. [AGENTS](../AGENTS.md) is the mandatory entry point; this document defines durable context and continuation. It does not create agents, send messages, change permissions or start the remapping engine automatically.
 

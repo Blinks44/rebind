@@ -1,6 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "meta_title": "Rebind — 在 macOS 上重新映射按键、鼠标按钮和触控板手势",
+  "meta_title": "Rebind：在 macOS 上重新映射按键、鼠标按钮和触控板手势",
   "meta_description": "免费的 macOS 原生应用：把按键、鼠标按钮以及触控板和妙控鼠标手势映射为快捷键和系统操作。无需订阅，无需账户，不收集数据。",
   "nav_sections": "页面导航",
   "nav_scenarios": "使用场景",

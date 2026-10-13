@@ -1,4 +1,4 @@
-# Phase 4 — System media keys
+# Phase 4: System media keys
 
 Scope: SPEC §5 playback actions / A1/A2, §§2, 6–7, 9–12. Implemented with software
 checks; **happy-path real-player delivery is user-confirmed** (2026-10-09): mouse/additional-button actions work in different applications, including minimized/background contexts. Exact applications/rules/OS were not restated. No player controlled by the agent; detailed routing/interleaving/cancellation/platform checks remain open.

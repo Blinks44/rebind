@@ -1,4 +1,4 @@
-# Phase 4 — Quit selected application and open System Settings
+# Phase 4: Quit selected application and open System Settings
 
 Scope: SPEC §5 Windows and applications / Spaces and system, A1/A2, §§6–7, 9–12.
 Implemented and software-tested; **requested real-app delivery is user-confirmed** (2026-10-09). Exact selected app/trigger/background/save-dialog cases were not separately restated; detailed identity/lifecycle/latency/platform checks remain open. The agent neither quit user applications nor opened System Settings or ran another input engine.
@@ -38,7 +38,7 @@ Implemented and software-tested; **requested real-app delivery is user-confirmed
   activation and pause. New commands in old schemas, including inactive profiles,
   fail migration. Both have translated EN/RU/DE/FR titles, help and failures.
 
-## Software evidence — 2026-10-09
+## Software evidence: 2026-10-09
 
 16 new Swift Testing functions in ApplicationQuitTests and ApplicationCommandsTests;
 full **342 tests / 47 suites / 0 failures** in

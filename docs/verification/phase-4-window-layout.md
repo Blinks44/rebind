@@ -1,4 +1,4 @@
-# Phase 4 — Ordinary window placement
+# Phase 4: Ordinary window placement
 
 Scope: SPEC §5 Windows and applications / A1/A2, §§6–7, 9–12.
 Implemented and software-tested; **left/right placement and maximizing are user-confirmed** (2026-10-09). The user reports different applications, left/right halves, maximizing and minimizing; exact apps/rules/OS and maximize/full-screen distinction were not restated. Centering and detailed display/constraint/cancellation checks remain open.
@@ -51,7 +51,7 @@ The agent did not move/resize windows or start a global remapping engine.
   Existing actions/profile selection/modifiers/activation are retained. New payloads
   in old schemas (including inactive profiles) and unknown cases fail validation.
 
-## Software evidence — 2026-10-09
+## Software evidence: 2026-10-09
 
 `WindowLayoutGeometryTests`, `WindowLayoutExecutorTests`, `WindowLayoutActionTests`:
 24 new functions; full **326 tests / 45 suites / 0 failures** in

@@ -1,4 +1,4 @@
-# <ID> — <user-visible outcome>
+# <ID>: <user-visible outcome>
 
 - Updated: <date>
 - Stage: <planned / in_design / ready_for_implementation / implementing / awaiting_verification / done / blocked / cancelled>

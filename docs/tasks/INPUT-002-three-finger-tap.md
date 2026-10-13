@@ -1,4 +1,4 @@
-# INPUT-002 — Three-finger single tap engine and storage
+# INPUT-002: Three-finger single tap engine and storage
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; engine/data and UI-014 editor released, native/hardware acceptance open.

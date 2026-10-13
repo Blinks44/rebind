@@ -1,4 +1,4 @@
-# Phase 4 — Active window/application actions
+# Phase 4: Active window/application actions
 
 Scope: SPEC §5, A1/A2, current Phase 4 slice. **Implemented and software-tested;
 all four ordinary action happy paths are user-confirmed.** Cancellation, unsupported
@@ -42,7 +42,7 @@ targets, revoked access and latency still require manual checks.
   user edit. Schema-7 audio actions/profiles remain intact. New window actions are
   rejected in older schemas. Unknown action values and future schemas remain errors.
 
-## Software evidence — 2026-10-08
+## Software evidence: 2026-10-08
 
 - `apps/rebind/scripts/dev.sh test -resultBundlePath build/WindowActionsTests-Final.xcresult`:
   **205 tests / 30 suites / 0 failures**, including 13 new parameterized functions.
@@ -66,7 +66,7 @@ targets, revoked access and latency still require manual checks.
 - EN/RU/DE/FR translations are present; other language layout, VoiceOver, actual
   requests/timeouts, cancellation and hardware fault cases are still pending.
 
-## User confirmation — 2026-10-08
+## User confirmation: 2026-10-08
 
 Manual test report, 2026-10-08: all four requested window actions completed
 successfully in the Finder/TextEdit walkthrough, including full-screen entry/exit.
@@ -76,7 +76,7 @@ and entry/exit details were not restated. Do not treat this as confirmation of
 save dialogs, windowless apps, every activation mode, protected contexts, focus
 races, cancellation, unsupported targets or performance.
 
-## Manual walkthrough — remaining detail and safety checks
+## Manual walkthrough: remaining detail and safety checks
 
 1. On the user's authorized copy, assign an unused side-button/modifier chord to
    **Minimize Active Window**. Activate a disposable TextEdit or Finder window,

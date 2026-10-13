@@ -1,4 +1,4 @@
-# About and licenses — native integration, 2026-10-11
+# About and licenses: native integration, 2026-10-11
 
 ## Outcome and source
 

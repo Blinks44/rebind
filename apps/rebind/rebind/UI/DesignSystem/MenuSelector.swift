@@ -1,14 +1,13 @@
 import AppKit
 import SwiftUI
 
-/// A glass selector with a native menu anchored to its leading edge rather than its selected label.
+/// A capsule selector with a native menu anchored to its leading edge rather than its selected label.
 struct MenuSelector<Selection: Hashable>: View {
     @SwiftUI.Binding var selection: Selection
     let title: LocalizedStringResource
     let choices: [Selection]
     let label: (Selection) -> LocalizedStringResource
     var compact = false
-    var symbol: String?
     var singleLine = false
     /// Choices that start a new group, shown after a separator.
     var startsGroup: (Selection) -> Bool = { _ in false }
@@ -25,7 +24,7 @@ struct MenuSelector<Selection: Hashable>: View {
             let event = NSApp.currentEvent?.type
             requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
         } label: {
-            SelectorLabel(title: label(selection), symbol: symbol,
+            SelectorLabel(title: label(selection),
                                 height: compact ? Theme.compactControlHeight : Theme.controlHeight,
                                 horizontalInset: compact ? 12 : 16, singleLine: singleLine)
         }

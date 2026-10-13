@@ -1,4 +1,4 @@
-# Phase 4 — Mission Control and Spaces via configured shortcuts
+# Phase 4: Mission Control and Spaces via configured shortcuts
 
 **Historical first implementation.** The user subsequently reported unintended
 effects on 2026-10-09; it did not pass hardware verification. The current

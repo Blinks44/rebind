@@ -209,8 +209,7 @@ struct BindingEditor: View {
                 }
                 .toggleStyle(ThemeSwitchStyle())
                 .padding(.leading, 14).padding(.trailing, 10).padding(.vertical, 10)
-                .background(Theme.insetSurface, in: .rect(cornerRadius: 14, style: .continuous))
-                .overlay { RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.borderSubtle) }
+                .insetSurface()
                 .disabled(model.recording != nil)
                 .accessibilityIdentifier("binding-editor-hold-output")
             }

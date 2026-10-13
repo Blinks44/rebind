@@ -71,13 +71,15 @@ struct BindingRow: View {
             switch binding.trigger {
             case .key(let code): Keycap(label: InputLabels.key(code))
             case .mouseButton: Keycap(label: InputLabels.trigger(binding.trigger, modifiers: []))
-            case .mouseGesture(_, let direction):
-                TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "arrow.\(direction.rawValue)")
-            case .scroll(let direction), .buttonScroll(_, let direction):
-                TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "arrow.\(direction.rawValue)")
-            default: TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: "hand.tap")
+            case .mouseGesture(_, let direction): chip("arrow.\(direction.rawValue)")
+            case .scroll(let direction), .buttonScroll(_, let direction): chip("arrow.\(direction.rawValue)")
+            default: chip("hand.tap")
             }
         }
         .accessibilityElement(children: .ignore).accessibilityLabel(Text(input))
+    }
+
+    private func chip(_ symbol: String) -> TriggerChip {
+        TriggerChip(label: InputLabels.trigger(binding.trigger, modifiers: []), symbol: symbol)
     }
 }

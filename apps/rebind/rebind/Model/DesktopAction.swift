@@ -11,5 +11,4 @@ nonisolated enum DesktopAction: String, Codable, CaseIterable, Sendable {
     }
 
     var isSpaceNavigation: Bool { self == .previousSpace || self == .nextSpace }
-
 }

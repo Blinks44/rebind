@@ -71,13 +71,13 @@ struct AdvancedSettingsView: View {
                     }.secondaryButton()
                 }
                 if model.requiresLanguageReopen {
-                    Banner(severity: .information, title: .reopenTitle, message: .reopenDescription(savedLanguageName)) {
+                    Banner(severity: .information, title: .reopenTitle, message: .reopenDescription(model.savedLanguageName)) {
                         Button(.quitRebind) { NSApp.terminate(nil) }.secondaryButton()
                     }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32)
+            .detailMargins().padding(.bottom, 32)
         }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             if case .success(let url) = result { request = FileRequest(importURL: url) }
@@ -118,12 +118,6 @@ struct AdvancedSettingsView: View {
                 editing.cancelReview()
             }
         }
-    }
-
-    private var savedLanguageName: String {
-        model.configuration.languagePreference == .system
-            ? AppLocalization.string(.systemDefault, language: model.activeLanguage)
-            : model.configuration.languagePreference.resolved(preferredLanguages: []).autonym
     }
 
     @ViewBuilder private var transferActions: some View {
@@ -168,7 +162,7 @@ struct AdvancedSettingsView: View {
             Banner(severity: .success, title: .advancedExportSuccess)
         case .invalidBackup, .incompatibleBackup:
             Banner(severity: .error, title: .advancedImportRejectedTitle,
-                           message: isIncompatible(feedback) ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
+                           message: feedback == .incompatibleBackup ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
                 Button(.advancedChooseBackup) { importing = true }.disabled(busy).secondaryButton()
             }
         case .writeFailed:
@@ -186,11 +180,6 @@ struct AdvancedSettingsView: View {
         case .staleReview:
             Banner(severity: .error, title: .advancedWriteFailedTitle, message: .advancedStaleReviewBody)
         }
-    }
-
-    private func isIncompatible(_ feedback: AdvancedSettingsModel.Feedback) -> Bool {
-        if case .incompatibleBackup = feedback { return true }
-        return false
     }
 }
 

@@ -1,4 +1,4 @@
-# Phase 4 — Mouse click output
+# Phase 4: Mouse click output
 
 Scope: SPEC §5 keyboard/mouse output, A1/A2, §§2, 6–7, 9–12. Implemented and
 software-tested on 2026-10-09. **User confirms all four click outputs work,

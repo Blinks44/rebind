@@ -1,4 +1,4 @@
-# Native gesture suppression — scoped feasibility refresh
+# Native gesture suppression: scoped feasibility refresh
 
 Date: 2026-10-12. Baseline `main` / `59f5754` plus UI-016 editor changes. This is a source/API review, **not a hardware suppression experiment**. No input mechanism, dependency, OS preference or permission was changed.
 

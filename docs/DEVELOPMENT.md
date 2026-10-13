@@ -1,4 +1,4 @@
-# Rebind — development and local setup
+# Rebind: development and local setup
 
 Build commands, signing, permission troubleshooting and detailed rule semantics for contributors. For the product overview and first launch, see the [root README](../README.md). Current capability evidence is in [CAPABILITIES](CAPABILITIES.md); agent startup/handoff is defined in [AGENTS](../AGENTS.md) and [WORKFLOW](WORKFLOW.md).
 

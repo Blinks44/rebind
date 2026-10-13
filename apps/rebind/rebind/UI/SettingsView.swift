@@ -15,12 +15,12 @@ struct SettingsView: View {
                     Text(.settingsDescription).font(Theme.body).foregroundStyle(Theme.textSecondary)
                 }
                 SettingsSectionPicker(selection: $selection)
-            }.padding(.leading, 32).padding(.trailing, 40).padding(.top, 28).padding(.bottom, 24)
+            }.detailMargins().padding(.top, 28).padding(.bottom, 24)
             switch selection {
             case .general:
                 GeneralSettingsView(model: model) { selection = .permissions }
             case .permissions:
-                PermissionView(model: model, showsSettingsHeader: false)
+                PermissionView(model: model)
             case .input:
                 InputSettingsView(model: model)
             case .language:
@@ -37,5 +37,4 @@ struct SettingsView: View {
             model.refreshPermissions()
         }
     }
-
 }

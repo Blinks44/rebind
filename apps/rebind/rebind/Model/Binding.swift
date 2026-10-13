@@ -56,6 +56,13 @@ extension Binding {
 }
 
 extension Binding {
+    /// The same rule under a fresh identity, for a duplicate or a copy into another profile.
+    nonisolated func duplicated() -> Binding {
+        var copy = self
+        copy.id = UUID()
+        return copy
+    }
+
     nonisolated static func isValidNote(_ note: String) -> Bool {
         !note.isEmpty && note.count <= maximumNoteLength
             && note == note.trimmingCharacters(in: .whitespacesAndNewlines)

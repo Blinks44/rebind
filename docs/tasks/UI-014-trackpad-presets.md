@@ -1,4 +1,4 @@
-# UI-014 — Trackpad tap preset editor
+# UI-014: Trackpad tap preset editor
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; bounded tap editor released, physical/accessibility acceptance open.

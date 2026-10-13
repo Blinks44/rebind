@@ -1,4 +1,4 @@
-# INPUT-005 — One-finger corner taps
+# INPUT-005: One-finger corner taps
 
 - Updated: 2026-10-13.
 - Stage: `awaiting_verification`.
@@ -25,7 +25,7 @@ Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27, injected software evidence o
 - New `TrackpadCornerTapTests` (13 functions), including consumed immediate and delayed tap clicks, pass-through of centre/unconfigured/late/moved/physical clicks and paused state. Earlier scope: each corner emits once after settling; centre and unconfigured corners never emit; movement cancels; button activity after the tap cancels and the next tap recovers; three-finger rules unaffected; spoofed/unconfigured dispatch refused; round trip and schema guard; four-language labels.
 - Full Swift Testing module passes after updating two expectations (a one-finger stroke is now a recognizer candidate; a hard-coded future schema number). Native layout suites pass except `MainWindowLayoutTests`, not rerun after this change (it passed earlier the same day and does not touch this code).
 
-## User-reported result — 2026-10-13
+## User-reported result: 2026-10-13
 
 Built-in trackpad, macOS 27.0.1, Tap to click on, Debug build from the working tree: a tap in the configured corner ran the rule without a click; taps in the middle behaved as ordinary clicks and produced no rule output. One configuration, no timing measurements.
 

@@ -1,4 +1,4 @@
-# INPUT-003 — Three/four-finger double tap engine and storage
+# INPUT-003: Three/four-finger double tap engine and storage
 
 - Updated: 2026-10-12.
 - Stage: `awaiting_verification`; engine/data and UI-014 editor released, hardware acceptance open.

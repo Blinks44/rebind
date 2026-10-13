@@ -1,4 +1,4 @@
-# Language settings — design delivery
+# Language settings: design delivery
 
 Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Date: **2026-10-11**. Task: [UI-005](../tasks/UI-005-language-settings.md). Agent-observed Sketch verification; native localization activation, persistence and accessibility remain open.
@@ -17,16 +17,16 @@ Subsequent [native implementation/evidence](input-language-native.md) integrates
 
 | Frame | Stable ID | Size / PNG |
 | --- | --- | --- |
-| 40 · Language / System Default · Light | `EDEFA711-A6AB-47C6-8471-D0FA965F3F30` | 1040 × 640 · [40](../DESIGN.md#screen-index-and-implementation-status) |
-| 41 · Language / Pending choice · Dark | `B220CDBD-0E6C-4FA5-9CA3-F3130DED7B1F` | 1040 × 640 · [41](../DESIGN.md#screen-index-and-implementation-status) |
-| 42 · Language / Russian · Compact | `66C93F75-C555-4C77-AEFC-36D156237C62` | 880 × 600 · [42](../DESIGN.md#screen-index-and-implementation-status) |
-| 43 · Language / German · Compact | `DCAC62FA-AE96-4392-A0A1-863B81C1F19C` | 880 × 600 · [43](../DESIGN.md#screen-index-and-implementation-status) |
-| 44 · Language / French · Compact | `97197B9F-FE43-4923-9B3D-16FD5B2E387C` | 880 × 600 · [44](../DESIGN.md#screen-index-and-implementation-status) |
-| 45 · Language / Choice menu · Light | `56A6D424-96E0-4918-BCF8-34402AD910EC` | 1040 × 640 · [45](../DESIGN.md#screen-index-and-implementation-status) |
-| 46 · Language / Save failed · Light | `845196E3-BB2F-4B55-B352-B652F47EA7E2` | 1040 × 640 · [46](../DESIGN.md#screen-index-and-implementation-status) |
-| 47 · Language / Reopen required · Light | `B707527F-B13D-40B7-BE14-C6C90D766264` | 1040 × 640 · [47](../DESIGN.md#screen-index-and-implementation-status) |
+| 40 · Language / System Default · Light | `EDEFA711-A6AB-47C6-8471-D0FA965F3F30` | 1040 × 640 · [40](../DESIGN.md) |
+| 41 · Language / Pending choice · Dark | `B220CDBD-0E6C-4FA5-9CA3-F3130DED7B1F` | 1040 × 640 · [41](../DESIGN.md) |
+| 42 · Language / Russian · Compact | `66C93F75-C555-4C77-AEFC-36D156237C62` | 880 × 600 · [42](../DESIGN.md) |
+| 43 · Language / German · Compact | `DCAC62FA-AE96-4392-A0A1-863B81C1F19C` | 880 × 600 · [43](../DESIGN.md) |
+| 44 · Language / French · Compact | `97197B9F-FE43-4923-9B3D-16FD5B2E387C` | 880 × 600 · [44](../DESIGN.md) |
+| 45 · Language / Choice menu · Light | `56A6D424-96E0-4918-BCF8-34402AD910EC` | 1040 × 640 · [45](../DESIGN.md) |
+| 46 · Language / Save failed · Light | `845196E3-BB2F-4B55-B352-B652F47EA7E2` | 1040 × 640 · [46](../DESIGN.md) |
+| 47 · Language / Reopen required · Light | `B707527F-B13D-40B7-BE14-C6C90D766264` | 1040 × 640 · [47](../DESIGN.md) |
 
-Additional evidence: [German 1280 × 800](../DESIGN.md#screen-index-and-implementation-status), [Dark 1280 × 800](../DESIGN.md#screen-index-and-implementation-status), [reopen feedback 880 × 600](../DESIGN.md#screen-index-and-implementation-status). All eight final states and these three views were inspected through MCP screenshots. Eleven PNG signatures, dimensions and non-empty file sizes checked. These are suitable mock content; no user configuration is included.
+Additional evidence: [German 1280 × 800](../DESIGN.md), [Dark 1280 × 800](../DESIGN.md), [reopen feedback 880 × 600](../DESIGN.md). All eight final states and these three views were inspected through MCP screenshots. Eleven PNG signatures, dimensions and non-empty file sizes checked. These are suitable mock content; no user configuration is included.
 
 German compact and Dark preferred → 1280 × 800 → original; reopen preferred → 880 × 600 → original: **all 91 local screen-node frames restore exactly**. Deferred nested layout was settled by applying the owned body Stack before verification. Minimum feedback wraps without clipping, popup width stays 208, system controls/sidebar/footer keep intrinsic sizes and anchors. Native scrolling/text expansion remains to be checked.
 
@@ -71,4 +71,4 @@ Receiving implementation must verify:
 - Light/Dark, EN/RU/DE/FR, minimum/preferred/expanded windows, longer failure/reopen strings and scrolling. Native menu may size beyond the 208 pt closed control for localized System Default; no truncation or fixed mobile-style menu rendering.
 - Keyboard access, visible focus, popup label/selected state, focus restoration after menu dismissal and one meaningful announcement per status. Use native popup/menu semantics; announce save failure and pending-reopen status without duplicate labels. Reduce Transparency/Increase Contrast use semantic opaque materials; Reduce Motion must not introduce decorative transitions.
 
-Affected documentation links/status reviewed; `git diff --check` passes. Curated exports/task/evidence are not excluded by Git ignore rules. No new app build, runtime/hardware test or grant in this design slice. Ready bounded handoff: **Language settings and localization activation**. Next design slice: **Settings → Advanced**; remaining design coverage is indexed in [DESIGN](../DESIGN.md#remaining-design-coverage).
+Affected documentation links/status reviewed; `git diff --check` passes. Curated exports/task/evidence are not excluded by Git ignore rules. No new app build, runtime/hardware test or grant in this design slice. Ready bounded handoff: **Language settings and localization activation**. Next design slice: **Settings → Advanced**; remaining design coverage is indexed in [DESIGN](../DESIGN.md).

@@ -15,7 +15,7 @@ Escape cancellation were observed. Closing the window left the same app
 process running. No Accessibility or Input Monitoring grants were given;
 no global tap, physical remap or injected action was manually verified.
 
-## User hardware result — 2026-10-08
+## User hardware result: 2026-10-08
 
 After the event-posting consent correction, the user confirms the permission flow
 works and records Logitech G603 middle **Mouse Button 3**, sides **Mouse Buttons

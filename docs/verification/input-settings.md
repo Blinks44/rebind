@@ -1,4 +1,4 @@
-# Input settings and per-binding hold timing — design delivery
+# Input settings and per-binding hold timing: design delivery
 
 Historical Sketch PNG copies were removed on 2026-10-11. Use live Rebind.sketch via [DESIGN](../DESIGN.md); dated checks below remain historical evidence, not a new review.
 Date: **2026-10-11**. Task: [UI-004](../tasks/UI-004-input-settings.md). Agent-observed Sketch artifact verification; native UI/runtime/accessibility acceptance remains open.
@@ -15,15 +15,15 @@ The saved source has **39 screen frames**. The pre-edit ZIP snapshot had 1,838 l
 
 | Frame | Stable ID | Size / PNG |
 | --- | --- | --- |
-| 33 · Settings / Input · Light | `F121172C-AC90-4D1F-9A0E-5E467E3E07F4` | 1040 × 640 · [33](../DESIGN.md#screen-index-and-implementation-status) |
-| 34 · Settings / Input · Dark | `95BC21C9-2B67-4B55-B09C-11C2BEFAFABC` | 1040 × 640 · [34](../DESIGN.md#screen-index-and-implementation-status) |
-| 35 · Settings / Input · Russian | `F9CF0786-1007-474E-9B03-1F4A2AC7BA4E` | 880 × 600 · [35](../DESIGN.md#screen-index-and-implementation-status) |
-| 36 · Settings / Input · German | `E71C9EC6-2F72-4DA9-A8A6-AAADA548EC40` | 880 × 600 · [36](../DESIGN.md#screen-index-and-implementation-status) |
-| 37 · Settings / Input · French | `CA520624-1683-434F-B654-86F07878F896` | 880 × 600 · [37](../DESIGN.md#screen-index-and-implementation-status) |
-| 38 · Edit Binding / Hold | `57339F81-811A-43DB-B920-02525FC5B3BD` | 512 × 570 · [38](../DESIGN.md#screen-index-and-implementation-status) |
-| 39 · Edit Binding / Hold / Save failed | `EDAE6F9E-A2E5-4942-BAE0-500059DF5145` | 512 × 700 · [39](../DESIGN.md#screen-index-and-implementation-status) |
+| 33 · Settings / Input · Light | `F121172C-AC90-4D1F-9A0E-5E467E3E07F4` | 1040 × 640 · [33](../DESIGN.md) |
+| 34 · Settings / Input · Dark | `95BC21C9-2B67-4B55-B09C-11C2BEFAFABC` | 1040 × 640 · [34](../DESIGN.md) |
+| 35 · Settings / Input · Russian | `F9CF0786-1007-474E-9B03-1F4A2AC7BA4E` | 880 × 600 · [35](../DESIGN.md) |
+| 36 · Settings / Input · German | `E71C9EC6-2F72-4DA9-A8A6-AAADA548EC40` | 880 × 600 · [36](../DESIGN.md) |
+| 37 · Settings / Input · French | `CA520624-1683-434F-B654-86F07878F896` | 880 × 600 · [37](../DESIGN.md) |
+| 38 · Edit Binding / Hold | `57339F81-811A-43DB-B920-02525FC5B3BD` | 512 × 570 · [38](../DESIGN.md) |
+| 39 · Edit Binding / Hold / Save failed | `EDAE6F9E-A2E5-4942-BAE0-500059DF5145` | 512 × 700 · [39](../DESIGN.md) |
 
-Additional resize evidence: [Light 1280 × 800](../DESIGN.md#screen-index-and-implementation-status), [Dark 1280 × 800](../DESIGN.md#screen-index-and-implementation-status), [Russian 850 × 560](../DESIGN.md#screen-index-and-implementation-status). All ten PNG signatures/dimensions/non-empty sizes checked from the final export files. All seven final frame compositions, the three exported resize views and English 880 × 600 were inspected through MCP screenshots after relevant edits. No clipping remains in the reviewed final sizes.
+Additional resize evidence: [Light 1280 × 800](../DESIGN.md), [Dark 1280 × 800](../DESIGN.md), [Russian 850 × 560](../DESIGN.md). All ten PNG signatures/dimensions/non-empty sizes checked from the final export files. All seven final frame compositions, the three exported resize views and English 880 × 600 were inspected through MCP screenshots after relevant edits. No clipping remains in the reviewed final sizes.
 
 ## Reusable sources and layout
 

@@ -24,3 +24,14 @@ struct Card<Content: View>: View {
         return contrast == .increased ? Theme.borderStrong : Theme.borderSubtle
     }
 }
+
+extension View {
+    /// Recessed surface with a hairline, for a row of controls inside a card or sheet.
+    func insetSurface(cornerRadius: CGFloat = 14) -> some View {
+        background(Theme.insetSurface, in: .rect(cornerRadius: cornerRadius, style: .continuous))
+            .overlay { RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).strokeBorder(Theme.borderSubtle) }
+    }
+
+    /// Horizontal margins of the main window's detail column.
+    func detailMargins() -> some View { padding(.leading, 32).padding(.trailing, 40) }
+}

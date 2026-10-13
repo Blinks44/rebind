@@ -1,4 +1,4 @@
-# Advanced settings — native integration, 2026-10-11
+# Advanced settings: native integration, 2026-10-11
 
 ## Outcome and artifact
 
@@ -40,13 +40,13 @@ No P0 finding emerged from scoped source/AX/keyboard review. Native headings/but
 
 ## Open acceptance and next step
 
-### User restoration follow-up — 2026-10-11
+### User restoration follow-up: 2026-10-11
 
 In response to the named backup-restoration/restored-rule scenario, the tester reports that it works. Record this as a user-confirmed restoration happy path. Exact export/reset/import/resume steps, tested bindings/profile counts, enabled/paused transitions and build/OS were not restated, so this broad report does not certify the complete identified-build SPEC §15.12 walkthrough or failure/cancellation/accessibility coverage. No new agent app execution/build/test accompanied this documentation update. Next native engineering check: Advanced keyboard/focus and VoiceOver; retain the detailed runtime walkthrough where evidence remains unspecified.
 
 Keep UI-007 `awaiting_verification`. Run SPEC §15.12 on an explicitly identified build and disposable authored profiles: export → confirmed reset → import → explicit resume → observe restored binding behavior. Then test:
 
-### User navigation/accessibility follow-up — 2026-10-11
+### User navigation/accessibility follow-up: 2026-10-11
 
 After the named keyboard-navigation/focus/accessibility checks, the tester reports successful operation. This is a broad user-confirmed interaction result; exact controls, Tab/Shift-Tab/Escape/Return paths, VoiceOver use, accessibility preferences, locale and artifact/OS were not specified. Do not infer a complete VoiceOver/preferences matrix or close all UI-007 acceptance from this report. Retain the detailed checks below; next implementation work may proceed independently of this evidence gap. No new agent app build/test or UI change was performed for this update.
 

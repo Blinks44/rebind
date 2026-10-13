@@ -48,7 +48,7 @@ struct BindingsView: View {
             summary
             // An empty ScrollView collapses to its content width; keep it as wide as the detail.
             ScrollView {
-                if !visible.isEmpty { card.padding(.top, 24).padding(.leading, 32).padding(.trailing, 40).padding(.bottom, 32) }
+                if !visible.isEmpty { card.padding(.top, 24).detailMargins().padding(.bottom, 32) }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay { if visible.isEmpty { emptyState } }
@@ -74,7 +74,7 @@ struct BindingsView: View {
                 Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText).padding(.top, 12)
             }
         }
-        .padding(.leading, 32).padding(.trailing, 40)
+        .detailMargins()
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 

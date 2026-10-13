@@ -1,4 +1,4 @@
-# UI-001 — coherent first-run and permission recovery
+# UI-001: coherent first-run and permission recovery
 
 - Updated: 2026-10-12, after bounded Settings feedback adoption and final checks.
 - Stage: `awaiting_verification`; first-run/recovery/Settings integrated and the reported rendering failure repaired. Actual grant/revocation and broader accessibility acceptance remain open.
@@ -15,7 +15,7 @@ Provide a clear native first-run flow and recovery when grants are missing/revok
 
 ## Design handoff
 
-Saved `Rebind.sketch`, 2026-10-10; current document ID `0D40E26C-3A14-42D3-9DBA-D9DC6DFAB6D4`, resolve live again. Saved revision SHA-256: `50859f5bfbe9d4bc031431e526ca03f65a3af3fd29e6e554cd867484c28a6f58`. Six permission frame IDs remain stable in [DESIGN](../DESIGN.md#screen-index-and-implementation-status). Repaired Light/Dark setup components and Apple macOS 26 controls remain live and reusable.
+Saved `Rebind.sketch`, 2026-10-10; current document ID `0D40E26C-3A14-42D3-9DBA-D9DC6DFAB6D4`, resolve live again. Saved revision SHA-256: `50859f5bfbe9d4bc031431e526ca03f65a3af3fd29e6e554cd867484c28a6f58`. Six permission frame IDs remain stable in [DESIGN](../DESIGN.md). Repaired Light/Dark setup components and Apple macOS 26 controls remain live and reusable.
 
 Saved/reviewed states: Accessibility missing Light/Dark, AX granted/event-posting missing, ready, revoked and German expansion. The latest review fixes negative text origins, a vertically compressed icon, unanchored symbol contents and inconsistent button spacing. All six states were screenshot-checked at 560 × 580, 520 × 560 and 720 × 680; resizing back restores the original geometry after applying Stacks. See layout review.
 
@@ -34,7 +34,7 @@ Copy handoff: 53 keys × EN/RU/DE/FR, now integrated into the app catalog by the
 
 Screen-icon consistency repair: Setup/About retain the Frosted master; sidebar retains Small optical geometry. Size-specific layer-style overrides scale only the white-face and rim borders by target size / 1024, preserving Brand geometry, materials and live Symbol connections. See icon review. App/Dock/Menu Bar delivery assets are unchanged.
 
-## Permission-recovery delivery — 2026-10-10
+## Permission-recovery delivery: 2026-10-10
 
 Frames 14–22 add missing AX Light/Dark, posting-missing main, Settings missing/posting-missing/granted, Dark Settings, compact main and German Settings. [Delivery evidence and frame/component IDs](../verification/permission-recovery.md) own exact checks, copy, sizing, prototype navigation and native transition/accessibility requirements. The previous onboarding visual direction was accepted before this slice; that does not establish runtime acceptance of the new frames.
 
@@ -61,13 +61,13 @@ Final software evidence: **508 tests / 68 suites / zero failures**, Debug and un
 
 Live permission frames/styles were read from document `56ED9B64-CF2D-4FE8-AB0E-4EA4E3501214` before coding; independent Input design subsequently changed the document identity. No implementation Sketch edit/save or Git commit. Earlier design evidence remains in menu-bar/onboarding and [permission recovery](../verification/permission-recovery.md).
 
-## Main-window repair — 2026-10-11
+## Main-window repair: 2026-10-11
 
-Removed forced vertical sizing from the recovery description: minimum-size probing had made the 640 pt window host a 1309 pt split view. Final split bounds fit at three sizes across 72 language/grant/rule combinations. Native screenshots confirm visible sidebar/header/notice/footer; Settings/category navigation, editor cancellation, standard Settings/scrolling and isolated first-run deferral were checked. Final checks: 508 Swift Testing cases in 68 suites plus one XCTest geometry test, zero failures; universal Release and both signatures pass. Temporary capture/manual helpers removed before final tests. [Repair evidence, artifacts and limits](../verification/permissions-native.md#main-window-repair-and-verification--2026-10-11).
+Removed forced vertical sizing from the recovery description: minimum-size probing had made the 640 pt window host a 1309 pt split view. Final split bounds fit at three sizes across 72 language/grant/rule combinations. Native screenshots confirm visible sidebar/header/notice/footer; Settings/category navigation, editor cancellation, standard Settings/scrolling and isolated first-run deferral were checked. Final checks: 508 Swift Testing cases in 68 suites plus one XCTest geometry test, zero failures; universal Release and both signatures pass. Temporary capture/manual helpers removed before final tests. [Repair evidence, artifacts and limits](../verification/permissions-native.md#main-window-repair-and-verification-2026-10-11).
 
 Actual grants/revocation, VoiceOver/preferences and complete main Sketch styling remain open. This bounded repair does not finish the product or remaining input capabilities.
 
-## Settings feedback adoption — 2026-10-12
+## Settings feedback adoption: 2026-10-12
 
 Permissions adopts current shared amber warning/green verified status, compact recovery controls and opt-in raised opaque Light/Dark cards. Shared defaults keep setup/banner/other Settings presentation intact. Actual grant requests/checks, rules/pause, engine, four-language catalog and schema are unchanged. Status/recheck placement follows live Sketch; existing Finder/signing help remains reachable by scrolling.
 
@@ -77,6 +77,6 @@ Next implementation: adopt the separately released Language selector refinement 
 
 ## Next handoff
 
-- **Code — verification handoff:** verify actual grant/revocation and accessibility for integrated first-run/permission recovery and current Settings feedback on the named bundle, following current evidence and the earlier [onboarding walkthrough](../verification/permissions-native.md). The user controls actual grants and configured input; keep unavailable gates open. General/Input/Language/Advanced already have native implementations in their owning records.
-- **Design — independent next slice:** continue released-source review/copy under its own task, then hand off affected native reconciliation. Do not expand UI-001 into all Settings; native integration checks remain with implementation.
+- **Code, verification handoff:** verify actual grant/revocation and accessibility for integrated first-run/permission recovery and current Settings feedback on the named bundle, following current evidence and the earlier [onboarding walkthrough](../verification/permissions-native.md). The user controls actual grants and configured input; keep unavailable gates open. General/Input/Language/Advanced already have native implementations in their owning records.
+- **Design, independent next slice:** continue released-source review/copy under its own task, then hand off affected native reconciliation. Do not expand UI-001 into all Settings; native integration checks remain with implementation.
 - User-facing handoff name: **first-run and permissions**. “Implement the prepared first-run and permissions design” resolves here without a task ID. No automatic agent messaging or extra design-approval gate is implied.

@@ -1,4 +1,4 @@
-# Phase 2 — Discrete wheel → shortcut
+# Phase 2: Discrete wheel → shortcut
 
 Status: implemented; pure behavior and constructed Quartz-event tests pass.
 **Physical capture, recording, suppression and recipient delivery are unverified.**
@@ -36,7 +36,7 @@ Phase 1's end-to-end exit criterion remains open; see its
   rewrite disk; a successful save writes schema 5 atomically. Unknown/corrupt
   versions remain protected from editing/overwrite.
 
-## Verification performed — 2026-10-08
+## Verification performed: 2026-10-08
 
 Host: Apple Silicon, macOS 27.0.1 (26A434), Xcode 27.0, Swift 6.4, SDK 27.0;
 deployment minimum remains macOS 26. No macOS 26 or Intel execution claim.

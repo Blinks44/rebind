@@ -167,6 +167,20 @@ struct ThemeTextField: View {
     }
 }
 
+/// Small round button with one symbol, such as a stepper's minus and plus.
+struct CircleIconButton: View {
+    let symbol: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol).font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.textPrimary)
+                .frame(width: 28, height: 28).contentShape(.circle)
+        }
+        .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing(Circle())
+    }
+}
+
 /// The "…" menu at the end of a row.
 struct OptionsMenu<Content: View>: View {
     let label: LocalizedStringResource

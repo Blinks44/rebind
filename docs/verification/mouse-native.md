@@ -1,4 +1,4 @@
-# Mouse list and conditional editor — native integration
+# Mouse list and conditional editor: native integration
 
 Date: 2026-10-11. [UI-009](../tasks/UI-009-mouse-design.md); SPEC §§2, 3.2–3.3, 4, 10–11, M1/M2/R1. Baseline `main` / `8daa97b`, scoped uncommitted Mouse implementation alongside preserved About work. Xcode 27.0 / Swift 6.4 / SDK 27, Apple Silicon macOS 27.0.1 (26A434). macOS 26 and Intel execution remain unverified.
 

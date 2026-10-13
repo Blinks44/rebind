@@ -1,4 +1,4 @@
-# Trackpad tap preset editor — native/software evidence
+# Trackpad tap preset editor: native/software evidence
 
 2026-10-12, [UI-014](../tasks/UI-014-trackpad-presets.md). Baseline `main` / `afb7411` plus the existing INPUT-002/003 engine/data work; no agent commit. macOS 27.0.1 (26A434), Apple Silicon MacBook Air, Xcode 27 / Swift 6.4 / SDK 27. Minimum macOS 26 and Intel remain unverified.
 

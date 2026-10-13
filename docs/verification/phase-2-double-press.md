@@ -1,4 +1,4 @@
-# Phase 2 — Double press → shortcut
+# Phase 2: Double press → shortcut
 
 Status: implemented; software behavior tests and Russian native-editor checks
 pass. **Physical recording, source suppression and recipient delivery are still
@@ -43,7 +43,7 @@ unverified.** Phase 1/2 hardware exit criteria remain open. See the
   enabled state. Saving is atomic; disguised legacy double rules, invalid enum
   values/null, future versions and enabled conflicts remain rejected.
 
-## Verification performed — 2026-10-08
+## Verification performed: 2026-10-08
 
 Host: Apple Silicon, macOS 27.0.1 (26A434), Xcode 27.0, Swift 6.4, SDK 27.0;
 minimum macOS 26. No macOS 26/Intel execution claim.

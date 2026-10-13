@@ -1,4 +1,4 @@
-# Three/four-finger double tap engine — 2026-10-11–12
+# Three/four-finger double tap engine: 2026-10-11–12
 
 Scope: [INPUT-003](../tasks/INPUT-003-double-tap-engine.md), SPEC §3.4, PLAN Phase 5. Baseline `main` / `afb7411` plus INPUT-002 and INPUT-003 uncommitted source/tests. No agent commit, real rules/permission changes, physical remapping or Sketch edits.
 

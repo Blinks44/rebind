@@ -1,4 +1,4 @@
-# UI-023 — Main window in the soft design system
+# UI-023: Main window in the soft design system
 
 - Updated: 2026-10-13
 - Stage: awaiting_verification
@@ -56,7 +56,7 @@ Requested after the first review and integrated:
 
 Checks: build succeeds; `testKeyboardScreensRenderAtSketchSize` and `testLocalizedMouseEditorsFitCompactNativeWindows` pass and their Light/Dark renders were reviewed; full-suite result in Review. The rendered `AppIcon.icns` from the Debug build was inspected. A second app instance was started once by mistake while the user's own build was running and was quit immediately; the app is not launched by the agent any more.
 
-## Follow-up 2 — 2026-10-13
+## Follow-up 2: 2026-10-13
 
 User review of the running app reported outlines on controls after mouse clicks, a stale app icon and an unstyled action picker.
 
@@ -66,7 +66,7 @@ User review of the running app reported outlines on controls after mouse clicks,
 
 Checks: build succeeds. The full suite failed once without a captured cause and passed on the immediate re-run (15 XCTest + 663 Swift Testing); the first failure was not diagnosed and may recur. Keyboard-only focus behavior and the popover were not seen in a running app by the agent.
 
-## Follow-up 3 — 2026-10-13
+## Follow-up 3: 2026-10-13
 
 - **Icon is full-bleed.** The user found the keycap-on-a-light-tile icon too small in the Dock and sidebar. The icon is now the keycap itself: deep-blue fill, lighter top face, larger arrows. Rendered `AppIcon.icns` inspected; Sketch `05 · Brand` updated.
 - **Toolbar approach withdrawn.** The empty unified toolbar overlapped the header (controls start 36 pt from the top, the bar is 52 pt), and the user reported damaged top borders on the search field. The window is `hiddenTitleBar` again. The link between the toolbar and the border defect is the agent's inference, not a confirmed cause.
@@ -75,7 +75,7 @@ Checks: build succeeds. The full suite failed once without a captured cause and 
 
 Checks: build succeeds; `MainWindowLayoutTests` passed three consecutive isolated runs, including the 28 pt button-center assertion. Two of four full-suite runs today ended with "Restarting after unexpected exit" inside `testSettingsDoesNotExpandNavigationBeyondTheWindow`, with no crash report and no failed assertion; the other two passed all 15 + 663 tests. The cause is unknown; an earlier intermittent Settings runner exit is noted in history. Resize behavior and the search-field border were not seen in a running app by the agent.
 
-## Follow-up 4 — 2026-10-13
+## Follow-up 4: 2026-10-13
 
 User review found that the zoom button drifted away during resize and the search-field outline still lost its top or bottom edge, swapping when the app lost focus; the empty state collapsed into a narrow column.
 
@@ -86,13 +86,13 @@ User review found that the zoom button drifted away during resize and the search
 
 Checks: build succeeds; `MainWindowLayoutTests` (3 tests) pass; empty-state and Keyboard renders reviewed. Full suite not re-run after this follow-up. Window-button behavior and the outline were not seen in a running app by the agent.
 
-## Follow-up 5 — 2026-10-13
+## Follow-up 5: 2026-10-13
 
 The search-field outline was still broken after Follow-up 4, so that fix did not work. The defect was then reproduced in a test window by making the field first responder: the default continuous `Capsule()` draws a malformed outline on macOS 27.0.1 (extra end ticks at 1x; the user sees a missing top or bottom edge at 2x). The same artifact appeared on the primary button's hairline. All capsule shapes in the app now use `Capsule(style: .circular)`, after which the reproduced outline renders cleanly. `ControlSurface` keeps fill and border as one shape.
 
 Checks: build succeeds; focused-field render reviewed before and after in Light/Dark. `MainWindowLayoutTests` passed two of three runs; the third ended with the same "unexpected exit" and no crash report. The exits coincide with the user relaunching their own debug build of the same bundle, which is a plausible but unconfirmed cause. The fix was not seen in the running app by the agent.
 
-## Follow-up 6 — 2026-10-13: Settings
+## Follow-up 6: 2026-10-13: Settings
 
 - All five Settings tabs, the permission cards, the first-run setup, About and the hold-duration card now use the design system through the shared primitives: `PermissionCard` is the raised 22 pt card (tinted when it carries a severity), switches use `ThemeSwitchStyle` with their labels, prominent buttons use `PrimaryButtonStyle` (28 pt with `.controlSize(.small)`), text uses the `Theme` type scale and colors, and `ThemeCanvas` replaces `PermissionCanvas`.
 - Settings content aligns with the main detail (32 pt leading, 40 pt trailing, below the titlebar strip).
@@ -105,7 +105,7 @@ Checks: build succeeds. Main-window, Permission and General layout tests pass; R
 
 Still open from the user's review: the search-field focus outline improved with circular capsules but still shows a defect.
 
-## Follow-up 7 — 2026-10-13: remaining surfaces
+## Follow-up 7: 2026-10-13: remaining surfaces
 
 - **Advanced** rows now show the title and description with their actions trailing (stacked when space is short), matching Sketch apart from Export and Import sharing one row.
 - **Profile manager** rebuilt as a sheet with one card of profile rows (tile, name, count, Active mark or Select, options menu) and a footer; the **profile-name sheet** has a themed field and primary/secondary buttons, and Return saves.
@@ -115,7 +115,7 @@ Still open from the user's review: the search-field focus outline improved with 
 
 Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests. Light/Dark renders of the profile manager, setup and About were reviewed. None of these surfaces was seen in the running app by the agent.
 
-## Follow-up 8 — 2026-10-13: design and app reconciled
+## Follow-up 8: 2026-10-13: design and app reconciled
 
 Requested: bring Sketch and the app into agreement before new functionality. Each difference was resolved toward whichever side was better.
 
@@ -135,13 +135,13 @@ Deliberately not reconciled: the Trackpad gesture selector stays a native menu (
 
 Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests; the Keyboard editor render and the revised Sketch editor and Permissions frames were reviewed. Not seen in the running app by the agent.
 
-## Follow-up 9 — 2026-10-13: larger sidebar brand
+## Follow-up 9: 2026-10-13: larger sidebar brand
 
 User request: the sidebar logo and app name read too close to body text. Tried 40 pt / Title Small first; the user chose the larger step. The brand row now uses a 44 pt icon and the **Title** style (22 pt Semibold) with a 12 pt gap; the row starts 50 pt from the top so navigation keeps its position. All 50 sidebar screens (Light and Dark) in Sketch were updated and the document saved; `MainSidebar.swift` mirrors the values.
 
 Checks: build succeeds; `MainWindowLayoutTests` (3 tests) pass; the Light 1080 × 720 render was compared by eye with Sketch screen 01. Not seen in the running app by the agent.
 
-## Follow-up 10 — 2026-10-13: field outline cause found
+## Follow-up 10: 2026-10-13: field outline cause found
 
 The uneven focus outline was reproduced in an on-screen test window on the user's 1x display (2560 × 1440) and measured by pixel: a 1.5 pt `strokeBorder` renders 1 px on the top edge and 1.5 px on the bottom and sides. Any fractional pixel width shows the same loss; whole-pixel widths are even. The capsule style, clipping and layer size targeted in Follow-ups 4–5 were not the cause.
 

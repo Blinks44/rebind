@@ -1,4 +1,4 @@
-# Rebind — dependency and reference register
+# Rebind: dependency and reference register
 
 Last migrated 2026-10-10; [twelve-candidate touch audit](touch-library-audit.md) refreshed 2026-10-12 with full pinned revisions, available licenses, manifests, maintenance and source findings. Review dates in individual entries are historical unless explicitly refreshed. [Renewed tap audit](trackpad-tap-reliability.md) records current pinned OpenMultitouchSupport/Subsurface/Sanne metadata, new Touchy/MultiTouch alternatives, licensing/platform limits and the decision to fix reproduced consumer bugs without a new dependency.
 
@@ -71,28 +71,28 @@ Swift Package Index was searched: [KeyboardShortcuts](https://swiftpackageindex.
 
 Update this table when a package is actually installed or rejected. Don't present candidate names as installed dependencies.
 
-## Trackpad selective suppression — 2026-10-12
+## Trackpad selective suppression: 2026-10-12
 
 Scoped follow-up: [scoped source/API refresh](native-gesture-suppression.md) distinguishes active Quartz filtering from raw-contact observation. Native global NSEvent monitoring and the reviewed default-device touch stream do not establish selective suppression. No new dependency/filter or OS setting change; named-hardware acquisition/coexistence evidence is the next gate.
 
-## Advanced configuration transactions — 2026-10-11
+## Advanced configuration transactions: 2026-10-11
 
 UI-007 retains native SwiftUI fileImporter, AppKit [NSSavePanel.begin](https://developer.apple.com/documentation/appkit/nssavepanel/begin(completionhandler:)) / NSAlert sheets, Foundation Codable, atomic Data writes and [FileManager replacement](https://developer.apple.com/documentation/foundation/filemanager/replaceitemat(_:withitemat:backupitemname:options:)). NSSavePanel allows original-path/symlink/hard-link validation before writing; protected originals use a raw copy through a destination-volume replacement directory rather than decoding or loading an oversized file into Data. No input callback performs this work. The final alert's local Escape monitor is scoped to that UI sheet and removed after dismissal; it is not global capture.
 
 [Swift Configuration](https://github.com/apple/swift-configuration) and its [SPI listing](https://swiftpackageindex.com/apple/swift-configuration) were evaluated. README, current manifest and full Apache-2.0 license were read: tools 6.2, macOS 15 availability annotation, provider/reloading architecture with Swift System/Collections and optional logging/lifecycle/YAML dependencies. Repository/SPI activity and releases are visible; exact latest commit and local package compatibility were not established. Not adopted: provider hierarchies do not replace Rebind's whole-document schema validation, migration and destructive transaction rules. Native APIs plus the existing codec suffice; no package install/source copying. [Behavior, checks and limits](../verification/advanced-settings-native.md).
 
-## Native language activation — 2026-10-11
+## Native language activation: 2026-10-11
 
 For UI-005, refreshed Apple's [LocalizedStringResource](https://developer.apple.com/documentation/foundation/localizedstringresource) and [User Defaults domains/languages](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/AboutPreferenceDomains/AboutPreferenceDomains.html). Retain existing catalogs/Foundation/SwiftUI and atomic JSON; no localization dependency or Bundle swizzle. Live view-only locale did not change already-created native menus, so use explicit saved/active/reopen semantics. Successful JSON writes project the manual choice to the app-specific Cocoa language default; System Default removes that app override and resolves the global language order. Failed/protected/no-op saves do not change the projection. The JSON preference remains authoritative; actual production relaunch/interrupted projection repair remains acceptance work. [Implementation, native observations and limits](../verification/input-language-native.md).
 
-## Three-finger single-tap extension — 2026-10-11
+## Three-finger single-tap extension: 2026-10-11
 
 Retain the existing native acquisition, bounded buffer and short-contact classifier. [Scoped refreshed audit](../verification/three-finger-tap-engine.md#research-refresh) rechecked Apple's view/responder touch delivery and three-finger Look Up reservation, and OpenMultitouchSupport README/manifest/manager/full MIT license/releases. Current main uses tools 6.2/macOS 15, a binary 4.0.0 target, AsyncAlgorithms and default-device shared touch streams; this is not a replacement for independent click settling, cancellation or recognition. No package/binary/source copied or locally built. Exact current main SHA/date could not be retrieved; direct SPI listing failed. Earlier pinned source and broader alternative audits remain historical references. Three-finger/native-conflict hardware evidence and preset UI are still required; no suppression or release support added by this decision.
 
-## Three/four-finger double-tap sequencing — 2026-10-12
+## Three/four-finger double-tap sequencing: 2026-10-12
 
 [INPUT-003 research/evidence](../verification/double-tap-engine.md) refreshes Apple system timing/Zoom reservation, GitHub MultiTouch and SPI discovery. Reuse the existing private acquisition and pure sequence; no package or source copied. Earlier pinned license/maintenance audit remains authoritative where current metadata/raw license requests failed. Native physical click qualification, system conflicts and platform acceptance remain open.
 
-## Touch acquisition and reusable recognition — 2026-10-12
+## Touch acquisition and reusable recognition: 2026-10-12
 
 [Current candidate register and decision](touch-library-audit.md) supersede older touch candidate metadata where explicitly refreshed. Subsurface and OpenMultitouchSupport are real acquisition packages; CalmMouseCore exports pure tap/scroll logic; MagicBind/Sanne contain internal targets rather than ready library products, and MouseToucherLib excludes acquisition. Limited scroll/click filtering is distinct from selective native-gesture cancellation. MIT/Apache reuse candidates require a bounded adapter and named-hardware tests. GPL sources remain conceptual; Touchy has no identified license. No app/probe package, lockfile, source or bundled notice changed. Next evaluate a small isolated Magic Mouse acquisition/coexistence path while retaining the existing Trackpad engine; the smaller initial preset pool remains a proposal, not a changed release requirement.

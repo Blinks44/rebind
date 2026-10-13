@@ -47,8 +47,7 @@ struct WorkspaceActionParameters: View {
                 }
                 .padding(.leading, 14).padding(.trailing, 10)
                 .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
-                .background(Theme.insetSurface, in: .rect(cornerRadius: 16, style: .continuous))
-                .overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.borderSubtle) }
+                .insetSurface(cornerRadius: 16)
                 if selectionFailed { Text(.targetSelectionFailed).font(Theme.caption).foregroundStyle(Theme.warningText) }
             }
             Text(hint)

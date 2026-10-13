@@ -1,4 +1,4 @@
-# Phase 4 — Lock Screen (Experimental)
+# Phase 4: Lock Screen (Experimental)
 
 Scope: SPEC §5 Spaces and system / A1/A2, §§2, 6–7, 9–12.
 Implemented and software-tested; **requested happy path user-confirmed on 2026-10-09**.
@@ -51,7 +51,7 @@ The agent did not perform a lock request, password entry, permission grant or us
   until a successful explicit save. Older schemas reject lock payloads even in
   inactive profiles. No changes to target/bundle/minimum OS, TCC or power settings.
 
-## Research / software evidence — 2026-10-09
+## Research / software evidence: 2026-10-09
 
 - Apple documents [Control-Command-Q](https://support.apple.com/en-us/102650),
   [CGSessionCopyCurrentDictionary](https://developer.apple.com/documentation/coregraphics/cgsessioncopycurrentdictionary()),
@@ -77,7 +77,7 @@ The agent did not perform a lock request, password entry, permission grant or us
 - Debug and universal Release build checks are recorded in [the historical evidence summary](../history/implementation-through-2026-10-10.md). Compilation,
   symbol presence and mocked state transitions do not prove actual screen locking.
 
-## Manual checks — happy path reported; detailed cases remain open
+## Manual checks: happy path reported; detailed cases remain open
 
 1. Save work, quit/restart the rebuilt authorized Rebind copy. In a test profile,
    assign a spare G603 side button/hold to System → Lock Screen (Experimental).

@@ -1,4 +1,4 @@
-# Phase 2 button-hold pointer gestures — 2026-10-08
+# Phase 2 button-hold pointer gestures: 2026-10-08
 
 Scope: SPEC §§2, 3.2, 4, 6, 9; Phase 2 button-hold + direction recognition.
 Status: implemented, software-tested and Russian editor inspected. **Configured G603 leftward gesture happy path user-verified; broader hardware checks pending.**
@@ -75,7 +75,7 @@ The earlier user-confirmed G603 ordinary/long-press results do not verify this f
 Logs: `/tmp/rebind-pointer-{doctor,tests-final,build-final,release-final}.log`;
 result `build/Phase2PointerGestureTests-Final.xcresult` (ignored). No dependency installed.
 
-## User-reported hardware result — 2026-10-08
+## User-reported hardware result: 2026-10-08
 
 Manual test report, 2026-10-08: **Option + Button 4 + move Left → Command+A**
 worked in TextEdit. Evidence source: tester report, not agent-observed input. The device was previously

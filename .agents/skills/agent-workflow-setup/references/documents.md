@@ -11,7 +11,7 @@ Commit stable requirements/design/engineering contracts, concise current state/t
 A reported result is evidence, not a quotation. Record it neutrally:
 
 ```text
-Manual test report — date
+Manual test report, date
 Configuration: known device/OS/build/trigger; unknown fields explicitly stated
 Result: specific requested behavior reported successful or failed
 Evidence source: tester report; distinguish screenshots or agent observation
@@ -22,7 +22,7 @@ Do not replace a vague confirmation with a stronger claim than it supports. Succ
 
 Keep design acceptance separate from runtime evidence: record the accepted design scope/version only when supplied. An unknown build or condition remains unknown. Shared state/tasks/evidence stay versioned; if committing is requested, review the exact staged diff. Ignore rules do not remove private material already tracked in Git.
 
-## Entry point — AGENTS.md
+## Entry point: AGENTS.md
 
 Keep the mandatory entry point practical, usually a few KiB. Include:
 
@@ -44,7 +44,7 @@ Write for a repository visitor: project purpose/use case, honest availability, u
 
 Keep internal session logs, owner tables, test counts and agent prompts out of the root page. Link detailed development/limitations instead. Include release/download/license claims only when they actually exist; do not grant a software license while organizing docs. Distinguish the target OS from runtime compatibility tested on it.
 
-## Current state — docs/STATE.md or equivalent
+## Current state: docs/STATE.md or equivalent
 
 Keep a short index (roughly 1–2 pages as guidance):
 
@@ -62,7 +62,7 @@ SPEC owns user outcomes, scope/non-goals, behavior, constraints and observable a
 
 PLAN owns priorities/dependencies and remaining phase/milestone gates. A milestone checkbox describes a precise result, never “phase complete” because one build passed. Store execution details in tasks/evidence; no growing daily logs. Current state points to the plan rather than duplicating the backlog.
 
-## Design contract — docs/DESIGN.md when relevant
+## Design contract: docs/DESIGN.md when relevant
 
 Record the actual platform/brand direction, source locations and version lookup, ready scope and remaining coverage. Use relevant platform semantics. When agents can inspect the authoritative editable source directly, keep components, visual states, copy and interaction annotations there; the repository needs a short locator/readiness note rather than a mirrored inventory or visual implementation manual. Do not prescribe macOS Liquid Glass to a website or copy a generic mobile density into a desktop app.
 

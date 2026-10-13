@@ -1,4 +1,4 @@
-# Phase 4 — Apple Shortcuts
+# Phase 4: Apple Shortcuts
 
 Scope: SPEC §5 A1/A2, §§9–12. Implemented and software-tested on 2026-10-09.
 Native listing was probed on this Mac; no user command was executed by the agent.

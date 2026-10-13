@@ -81,7 +81,7 @@ struct InputDiagnosticsView: View {
 
     private func rawButton(_ entry: InputDiagnostic) -> Text {
         if case .button(let number) = entry.kind { return Text(number, format: .number).monospacedDigit() }
-        return Text(verbatim: "—")
+        return Text(verbatim: "–")
     }
 
     private var blockedDescription: LocalizedStringResource {

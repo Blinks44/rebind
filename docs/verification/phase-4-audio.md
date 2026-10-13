@@ -1,4 +1,4 @@
-# Phase 4 — action catalog and audio controls — 2026-10-08
+# Phase 4: action catalog and audio controls: 2026-10-08
 
 Scope: SPEC §§2, 4–6, 9–12; A1/A2. Implemented and software-tested;
 Russian native catalog/editor and current-output capability checks inspected.

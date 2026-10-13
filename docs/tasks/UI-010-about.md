@@ -1,4 +1,4 @@
-# UI-010 — About Rebind and bundled licenses
+# UI-010: About Rebind and bundled licenses
 
 - Updated: 2026-10-11.
 - Stage: `awaiting_verification`; native implementation and scoped software checks pass.
