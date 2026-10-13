@@ -135,6 +135,12 @@ Deliberately not reconciled: the Trackpad gesture selector stays a native menu (
 
 Checks: build succeeds; an uninterrupted full run passes 15 XCTest and 663 Swift Testing tests; the Keyboard editor render and the revised Sketch editor and Permissions frames were reviewed. Not seen in the running app by the agent.
 
+## Follow-up 9 — 2026-10-13: larger sidebar brand
+
+User request: the sidebar logo and app name read too close to body text. Tried 40 pt / Title Small first; the user chose the larger step. The brand row now uses a 44 pt icon and the **Title** style (22 pt Semibold) with a 12 pt gap; the row starts 50 pt from the top so navigation keeps its position. All 50 sidebar screens (Light and Dark) in Sketch were updated and the document saved; `MainSidebar.swift` mirrors the values.
+
+Checks: build succeeds; `MainWindowLayoutTests` (3 tests) pass; the Light 1080 × 720 render was compared by eye with Sketch screen 01. Not seen in the running app by the agent.
+
 ## Open checks / dependency
 
 - The offscreen `cacheDisplay` capture draws shadow offsets upward, so shadow direction, keycap ledge and button glow were not verified by image. They need a look in the running app.

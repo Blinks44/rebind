@@ -12,14 +12,14 @@ struct MainSidebar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
                 // The running app's own icon keeps the sidebar mark identical to the Dock.
-                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 32, height: 32)
+                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 44, height: 44)
                     .accessibilityHidden(true)
-                Text(verbatim: "Rebind").font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.textPrimary)
+                Text(verbatim: "Rebind").font(Theme.title).foregroundStyle(Theme.textPrimary)
                 Spacer(minLength: 0)
             }
-            .padding(.leading, 8).padding(.top, 56).accessibilityElement(children: .combine)
+            .padding(.leading, 8).padding(.top, 50).accessibilityElement(children: .combine)
             VStack(spacing: 4) {
                 MainSidebarButton(title: LocalizedStringResource("keyboardNavigationTitle", table: "Navigation"), symbol: "keyboard",
                     isSelected: selection == .input(.allKeyboards)) { selection = .input(.allKeyboards) }
@@ -35,7 +35,7 @@ struct MainSidebar: View {
                     .accessibilityIdentifier("sidebar-magic-trackpad")
                 MainSidebarButton(title: LocalizedStringResource("magicMouseNavigationTitle", table: "Navigation"), symbol: "magicmouse") { }
                     .disabled(true).help(Text(.magicMouseNotAvailable))
-            }.padding(.top, 24)
+            }.padding(.top, 18)
 
             Spacer(minLength: 16)
             Theme.separator.frame(height: 1).padding(.horizontal, 8).padding(.bottom, 15).accessibilityHidden(true)

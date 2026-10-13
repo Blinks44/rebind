@@ -22,6 +22,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-13:** Sidebar brand enlarged by user request: 44 pt icon and 22 pt Semibold name in all Sketch sidebar screens and in the app ([UI-023](tasks/UI-023-main-window-soft-adoption.md)). Layout tests pass; not yet seen in the running app.
 - **2026-10-13:** With Show in Dock off, the Dock icon now follows window visibility (shown while a window is open, gone after the last one closes). User-confirmed in the running app.
 - **2026-10-13:** Show in Dock / Show in menu bar / Start in the background settings (schema 33); windows reopen on the current Space; Spanish and Simplified Chinese added (unreviewed translations). Dock/menu bar hiding, background start and current-Space windows are user-confirmed; both new languages display correctly but their wording is not reviewed by a fluent reader.
 - **2026-10-13:** A mouse button with gestures clicks again when released without movement and may also carry a press rule; Back/Forward actions send ⌘[ / ⌘] (user-confirmed); the click on a gesture button is user-confirmed too.
