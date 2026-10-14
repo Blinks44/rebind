@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rebind-website",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // The server bundle from `rsbuild build`; static files are served from dist/client before it runs.
+  "main": "dist/server/index.js",
+  "assets": { "directory": "dist/client" },
+  // moduix.dev is on Cloudflare, so the DNS record and certificate are created on deploy.
+  "routes": [{ "pattern": "rebind.moduix.dev", "custom_domain": true }]
+}
