@@ -49,7 +49,7 @@ All 76 screens (38 × Light/Dark) were screenshot-reviewed and checked by script
 
 ## Update 2026-10-14: one trigger style
 
-User request: rule triggers no longer mix raised keycaps with flat grey chips. `Trigger Chip` (Light/Dark) now uses the keycap face (`Keycap/Body`, `Keycap Label`, radius 9) with a leading icon that names the input type: `computermouse` for mouse buttons, `arrow.*` for gestures and the wheel, `hand.tap` for touch. Mouse buttons on every Mouse screen (02, 19, 24, 29, 33, 34, Light/Dark) moved from text keycaps to the chip with the mouse icon; keyboard keys stay plain keycaps. Foundations: radius and keycap principle text updated. The app (`TriggerChip`, `BindingRow`) and the website `TriggerChip` follow the same rule.
+User request: rule triggers no longer mix raised keycaps with flat grey chips. `Trigger Chip` (Light/Dark) now uses the keycap face (`Keycap/Body`, `Keycap Label`, radius 9) with a leading icon that names the input type: `computermouse` for mouse buttons, `arrow.*` for gestures and the wheel, `hand.tap` for touch. Mouse buttons on every Mouse screen (02, 19, 24, 29, 33, 34, Light/Dark) moved from text keycaps to the chip with the mouse icon; keyboard keys stay plain keycaps. Foundations: radius and keycap principle text updated. The app (`TriggerChip`, `BindingRow`) and the website `TriggerChip` follow the same rule; the user confirmed the app result in the running app on 2026-10-14.
 
 ## Open checks / dependency
 
