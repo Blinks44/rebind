@@ -99,6 +99,15 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         if hasWindow { NSApp.activate() }
     }
 
+    /// Opens a window from the Menu Bar item and brings Rebind to the front. As an accessory app,
+    /// Rebind first becomes a regular app: switching the policy later, when the window becomes main,
+    /// deactivates the app after the click's activation and the window can stay behind other apps.
+    static func showWindow(_ open: () -> Void) {
+        if NSApp.activationPolicy() != .regular { NSApp.setActivationPolicy(.regular) }
+        open()
+        NSApp.activate()
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationWillTerminate(_ notification: Notification) { model.stop() }
 }
@@ -106,19 +115,20 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
 private struct RebindMenu: View {
     let model: AppModel
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         Text(model.statusText)
         // The window may be closed when an action fails; the menu is where it can still be seen.
         if let error = model.error { Text(error) }
-        Button(.openRebind) { openWindow(id: "main"); NSApp.activate() }
+        Button(.openRebind) { RebindAppDelegate.showWindow { openWindow(id: "main") } }
         Menu(.profileTitle) {
             ProfilePicker(model: model).pickerStyle(.inline)
         }.disabled(model.storageLocked)
         Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
             model.setEnabled(!model.configuration.isEnabled)
         }.disabled(model.storageLocked && !model.configuration.isEnabled)
-        SettingsLink { Text(.settingsTitle) }
+        Button(.settingsTitle) { RebindAppDelegate.showWindow { openSettings() } }
         Divider()
         Button(.quitRebind) { NSApp.terminate(nil) }.keyboardShortcut("q")
     }
