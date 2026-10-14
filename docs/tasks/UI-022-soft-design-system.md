@@ -4,7 +4,7 @@
 - Stage: in_design
 - Owner: Claude Code design chat, 2026-10-12; released at handoff
 - Ownership checked: 2026-10-12 on `ca02747`, clean tree; advisory coordination, not a lock
-- Owned surfaces: **Rebind - new.sketch** (all pages); DESIGN direction/source sections; SPEC §10 visual language
+- Owned surfaces: **Rebind.sketch**, formerly "Rebind - new.sketch" (all pages); DESIGN direction/source sections; SPEC §10 visual language
 - Requirements: SPEC §§3.4–3.5, 4, 8, 10; phase 8
 - Code baseline: `main` at `ca02747`; documentation-only changes uncommitted; no app code changed
 
@@ -22,7 +22,7 @@ The user prefers the calm look of the new Sketch draft over Liquid Glass and ask
 
 ## Sketch source
 
-**Rebind - new.sketch**, saved 2026-10-12; digest and page map are in [DESIGN](../DESIGN.md#current-source-rebind---newsketch). 124 Color Variables, 68 text styles, 68 layer styles, 192 symbol sources (60 icons), 12 screens × Light/Dark. Foundations board 05 carries the principles and native mapping. The original frames are preserved on `99 · Archive`.
+**Rebind - new.sketch** (renamed to Rebind.sketch on 2026-10-14), saved 2026-10-12; digest and page map are in [DESIGN](../DESIGN.md#current-source-rebindsketch). 124 Color Variables, 68 text styles, 68 layer styles, 192 symbol sources (60 icons), 12 screens × Light/Dark. Foundations board 05 carries the principles and native mapping. The original frames are preserved on `99 · Archive`.
 
 ## Implementation and verification
 
@@ -46,6 +46,10 @@ Screens 13–18 added: Settings Input, Language, Advanced; profile management; f
 ## Update 2026-10-14: artifact audit
 
 All 76 screens (38 × Light/Dark) were screenshot-reviewed and checked by script for clipped text, Light/Dark drift and wrong-theme components (none of the latter). Fixed: Banner and Settings Row/Status messages now wrap inside the component instead of running past its edge (screens 03, 08, 09, 13, 21 resized to fit); recording and profile-name hints wrap inside their sheets (07, 26); action fields show the action's own symbol (Mission Control, Open App, Open Web Address, Run Apple Shortcut on 19, 20, 24, 27, 28, 29); the Magic Mouse screen no longer highlights Magic Trackpad too (04); About Light text is centered like Dark (18); the submenu chevron in menu items sits at the trailing edge (33). After the fixes Light and Dark match in geometry and text. The app's `Banner` already wraps its message, so no code change was needed.
+
+## Update 2026-10-14: one trigger style
+
+User request: rule triggers no longer mix raised keycaps with flat grey chips. `Trigger Chip` (Light/Dark) now uses the keycap face (`Keycap/Body`, `Keycap Label`, radius 9) with a leading icon that names the input type: `computermouse` for mouse buttons, `arrow.*` for gestures and the wheel, `hand.tap` for touch. Mouse buttons on every Mouse screen (02, 19, 24, 29, 33, 34, Light/Dark) moved from text keycaps to the chip with the mouse icon; keyboard keys stay plain keycaps. Foundations: radius and keycap principle text updated. The app (`TriggerChip`, `BindingRow`) and the website `TriggerChip` follow the same rule.
 
 ## Open checks / dependency
 

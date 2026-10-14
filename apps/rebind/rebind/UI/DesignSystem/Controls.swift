@@ -13,17 +13,12 @@ struct Keycap: View {
             .lineLimit(1)
             .padding(.horizontal, isGlyph ? 10 : 14)
             .frame(minWidth: 36).frame(height: 36)
-            .background {
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(LinearGradient(colors: [Theme.keycapTop, Theme.keycapBottom], startPoint: .top, endPoint: .bottom))
-                    .shadow(color: Theme.keycapLedge, radius: 0, y: 2)
-                    .shadow(color: Theme.shadowRaised, radius: 2, y: 3)
-            }
-            .overlay { RoundedRectangle(cornerRadius: 9, style: .continuous).strokeBorder(Theme.keycapBorder) }
+            .keycapSurface()
     }
 }
 
-/// Flat chip for triggers that are not a physical key or button: gestures, wheel and taps.
+/// Keycap for a trigger that is not a keyboard key; the leading symbol names the input type
+/// (mouse button, direction or touch).
 struct TriggerChip: View {
     let label: String
     let symbol: String
@@ -32,11 +27,24 @@ struct TriggerChip: View {
         HStack(spacing: 6) {
             Image(systemName: symbol).font(.system(size: 13, weight: .medium))
                 .foregroundStyle(Theme.iconSecondary).frame(width: 16, height: 16)
-            Text(label).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary).lineLimit(1)
+            Text(label).font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(Theme.keycapText).lineLimit(1)
         }
-        .padding(.leading, 10).padding(.trailing, 12).frame(height: 36)
-        .background(Theme.neutralSoft, in: .rect(cornerRadius: 10, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(Theme.neutralBorder) }
+        .padding(.leading, 12).padding(.trailing, 14).frame(height: 36)
+        .keycapSurface()
+    }
+}
+
+private extension View {
+    /// The raised keycap face: top-lit gradient, ledge, soft shadow and hairline.
+    func keycapSurface() -> some View {
+        background {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .fill(LinearGradient(colors: [Theme.keycapTop, Theme.keycapBottom], startPoint: .top, endPoint: .bottom))
+                .shadow(color: Theme.keycapLedge, radius: 0, y: 2)
+                .shadow(color: Theme.shadowRaised, radius: 2, y: 3)
+        }
+        .overlay { RoundedRectangle(cornerRadius: 9, style: .continuous).strokeBorder(Theme.keycapBorder) }
     }
 }
 

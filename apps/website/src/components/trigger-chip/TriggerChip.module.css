@@ -1,9 +1,15 @@
 /* Long gesture names wrap onto a second line instead of being cut off, as in the app. */
 .chip {
-  white-space: normal;
-  padding-block: 6px;
+  --moduix-kbd-padding-x: 14px;
+  --moduix-kbd-padding-y: 6px;
+  gap: 6px;
+  padding-inline-start: 12px;
+  text-align: start;
 }
 
-.label {
-  overflow: visible;
+.icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--rebind-icon-secondary);
 }

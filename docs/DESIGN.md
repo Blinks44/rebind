@@ -6,11 +6,11 @@ Design the final planned release, including Trackpad and Magic Mouse. User clari
 
 ## Direction: soft, opaque-first macOS 26+ (2026-10-12)
 
-User decision 2026-10-12: the calm look of **Rebind - new.sketch** replaces the Liquid Glass direction. Surfaces are opaque-first with soft shadows and 1 pt hairlines; controls are 36 pt capsules (28 pt small); lists sit on one raised card with 72 pt rows; raised SF Pro Rounded keycaps are the brand motif; one blue accent, and other color only for state. Only the sidebar and menus may use a system material. Light and Dark share geometry, type and spacing. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density.
+User decision 2026-10-12: the calm look of the current **Rebind.sketch** replaces the Liquid Glass direction. Surfaces are opaque-first with soft shadows and 1 pt hairlines; controls are 36 pt capsules (28 pt small); lists sit on one raised card with 72 pt rows; raised SF Pro Rounded keycaps are the brand motif; one blue accent, and other color only for state. Only the sidebar and menus may use a system material. Light and Dark share geometry, type and spacing. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density.
 
-## Current source: Rebind - new.sketch
+## Current source: Rebind.sketch
 
-Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-14**, SHA-256 `6fc16afc68612020c9b7333e5e6100f483db94556755022728fac74b27725a4f`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-14**, SHA-256 `2f2604b77e980d55139c864b582997adcd57114cb0f180802037cc67ec2f90c6`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
 
 | Page | Content |
 | --- | --- |
@@ -31,11 +31,12 @@ Covered screens (38): Keyboard, Mouse, Trackpad and Magic Trackpad lists with em
 ## Rules that apply to every screen
 
 - Trackpad and Magic Mouse use one selector of complete, curated gesture presets followed by the shared action editor: no touch trigger recording and no separate type/finger/direction controls. Keyboard and conventional Mouse keep their trigger recorders; output-shortcut recording is available to every category. SPEC carries the behavioral rule.
+- Every rule trigger is a raised keycap. Keyboard keys show only their label; any other trigger (mouse button, gesture, wheel, touch) adds a leading SF Symbol naming the input type.
 - Feedback colors: failures red, prerequisites and conflicts amber, completed operations green, information and progress blue. Deliberate pause, empty and disabled states stay neutral.
 - Increase Contrast strengthens text and edges; Reduce Motion removes decorative transitions. Keyboard focus, VoiceOver, resizing and localized expansion are accepted in the app, not in Sketch.
 - Sketch is saved separately from Git. If it is unavailable, ask for the document and continue independent engineering; do not substitute an old PNG. Verification screenshots stay local under [WORKFLOW](WORKFLOW.md#repository-content-and-language).
 
-The earlier 125-frame Liquid Glass document **Rebind.sketch** is fully superseded and no longer a reference; its history is in the [design tasks](tasks/README.md) and [history](history/2026-10.md).
+The earlier 125-frame Liquid Glass document, which used the same file name, is fully superseded and no longer a reference; task and verification records dated before 2026-10-12 that cite "Rebind.sketch" mean that old document; its history is in the [design tasks](tasks/README.md) and [history](history/2026-10.md).
 
 ## Brand
 

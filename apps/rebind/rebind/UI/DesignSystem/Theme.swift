@@ -44,8 +44,6 @@ enum Theme {
     static let danger = Color(light: 0xE5484D, dark: 0xFF6B6E)
     static let dangerText = Color(light: 0xB4232A, dark: 0xFF8A8C)
     static let neutral = Color(light: 0x6B7280, dark: 0x9AA1B0)
-    static let neutralSoft = Color(light: 0x0F172A, 0.06, dark: 0xFFFFFF, 0.08)
-    static let neutralBorder = Color(light: 0x0F172A, 0.1, dark: 0xFFFFFF, 0.14)
 
     // Keycap and toggle
     static let keycapTop = Color(light: 0xFFFFFF, dark: 0x3A3E48)

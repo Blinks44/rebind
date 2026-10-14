@@ -64,13 +64,13 @@ struct BindingRow: View {
         Button(.deleteBinding, systemImage: "trash", role: .destructive, action: delete)
     }
 
-    /// Modifier keycaps followed by the key, mouse button or gesture chip.
+    /// Modifier keycaps followed by the key, or a trigger keycap whose symbol names the input type.
     private var trigger: some View {
         HStack(spacing: 6) {
             ForEach(Array(binding.modifiers.glyphs), id: \.self) { Keycap(label: String($0)) }
             switch binding.trigger {
             case .key(let code): Keycap(label: InputLabels.key(code))
-            case .mouseButton: Keycap(label: InputLabels.trigger(binding.trigger, modifiers: []))
+            case .mouseButton: chip("computermouse")
             case .mouseGesture(_, let direction): chip("arrow.\(direction.rawValue)")
             case .scroll(let direction), .buttonScroll(_, let direction): chip("arrow.\(direction.rawValue)")
             default: chip("hand.tap")
