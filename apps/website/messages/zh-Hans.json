@@ -130,5 +130,8 @@
   "faq_mac_q": "需要什么样的 Mac？",
   "faq_mac_a": "任何运行 macOS 26 或更高版本的 Mac，Apple 芯片或 Intel 处理器均可。",
   "cta_title": "让 Mac 按你的方式工作",
-  "cta_text": "免费，无需注册，几分钟即可上手。"
+  "cta_text": "免费，无需注册，几分钟即可上手。",
+  "not_found_title": "页面不存在",
+  "not_found_text": "链接可能已失效，或者地址有拼写错误。其他内容都还在原处。",
+  "not_found_home": "返回首页"
 }

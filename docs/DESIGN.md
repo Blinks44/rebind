@@ -10,7 +10,7 @@ User decision 2026-10-12: the calm look of **Rebind - new.sketch** replaces the 
 
 ## Current source: Rebind - new.sketch
 
-Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-13**, SHA-256 `f99788ca59f3a9dae870cb7c6dd772035740a5b6c133b49b5a79843dbbb961da`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+Open **Rebind - new.sketch** through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-14**, SHA-256 `6fc16afc68612020c9b7333e5e6100f483db94556755022728fac74b27725a4f`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
 
 | Page | Content |
 | --- | --- |

@@ -1,10 +1,18 @@
+import { Button } from '@moduix/react/button'
 import { Switch, SwitchControl, SwitchHiddenInput } from '@moduix/react/switch'
+import { Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger } from '@moduix/react/tabs'
 import { ChevronsUpDown, Hand, Info, Keyboard, Layers, Mouse, MousePointer2, Plus, Settings, Touchpad } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { type ReactNode, useState } from 'react'
-import { actions } from '~/actions'
+import { type Action, actions } from '~/lib/actions'
 import { m } from '~/paraglide/messages.js'
-import { type Action, Binding, Keycaps, Logo, TriggerChip } from './ui'
+import { Binding } from '../binding/Binding'
+import { BindingList } from '../binding-list/BindingList'
+import { Keycaps } from '../keycaps/Keycaps'
+import { Logo } from '../logo/Logo'
+import { StatusBadge } from '../status-badge/StatusBadge'
+import { TriggerChip } from '../trigger-chip/TriggerChip'
+import styles from './AppWindow.module.css'
 
 type Row = { trigger: ReactNode; action: Action; off?: boolean }
 
@@ -69,78 +77,71 @@ const tabs = [
   },
 ]
 
-/** A working HTML rendition of the main window: the sidebar switches lists and the toggles respond. */
+/**
+ * A working HTML rendition of the main window. The sidebar is a moduix vertical tab list, so switching
+ * lists, the selection indicator and keyboard navigation come from Ark; the toggles respond as well.
+ */
 export function AppWindow() {
-  const [tabId, setTabId] = useState('keyboard')
-  const tab = tabs.find((candidate) => candidate.id === tabId) ?? tabs[0]
-
   return (
-    <section className="window" aria-label={m.app_label()}>
-      <aside className="window-sidebar">
-        <div className="traffic-lights" aria-hidden>
+    <Tabs className={styles.window} orientation="vertical" defaultValue="keyboard" lazyMount unmountOnExit aria-label={m.app_label()}>
+      <aside className={styles.sidebar}>
+        <div className={styles.trafficLights} aria-hidden>
           <i />
           <i />
           <i />
         </div>
-        <div className="window-brand">
+        <div className={styles.brand}>
           <Logo size={34} />
           Rebind
         </div>
-        {tabs.map(({ id, icon: Icon, title }) => (
-          <button key={id} type="button" className="sidebar-item" aria-pressed={id === tabId} onClick={() => setTabId(id)}>
-            {id === tabId && <motion.span layoutId="sidebar-selection" className="sidebar-selection" />}
-            <Icon size={16} aria-hidden /> <span>{title()}</span>
-          </button>
-        ))}
-        <span className="sidebar-item sidebar-item-bottom">
-          <Settings size={16} aria-hidden /> {m.app_settings()}
-        </span>
-        <span className="sidebar-item">
-          <Info size={16} aria-hidden /> {m.app_about()}
-        </span>
-      </aside>
-      <div className="window-main">
-        <div className="window-header">
-          <div>
-            <div className="window-title">{tab.title()}</div>
-            <div className="window-subtitle">{tab.subtitle()}</div>
-          </div>
-          <span className="window-add">
-            <Plus size={15} aria-hidden /> {m.app_add()}
-          </span>
-        </div>
-        <div className="window-tabs">
-          {tabs.map(({ id, title }) => (
-            <button key={id} type="button" aria-pressed={id === tabId} onClick={() => setTabId(id)}>
-              {title()}
-            </button>
+        <TabsList className={styles.tabs}>
+          <TabsIndicator className={styles.indicator} />
+          {tabs.map(({ id, icon: Icon, title }) => (
+            <TabsTrigger key={id} value={id} className={styles.tab}>
+              <Icon size={16} aria-hidden /> {title()}
+            </TabsTrigger>
           ))}
-        </div>
-        <div className="window-toolbar">
-          <span className="select">
-            <Layers size={15} aria-hidden /> {m.app_profile()} <ChevronsUpDown size={13} aria-hidden />
+        </TabsList>
+        <div className={styles.sidebarFooter} aria-hidden>
+          <span>
+            <Settings size={16} /> {m.app_settings()}
           </span>
-          <span className="status-pill">
-            <i /> {m.app_status()}
+          <span>
+            <Info size={16} /> {m.app_about()}
           </span>
         </div>
-        <div className="card binding-list">
-          <AnimatePresence mode="popLayout" initial={false}>
+      </aside>
+      {tabs.map((tab) => (
+        <TabsContent key={tab.id} value={tab.id} className={styles.main}>
+          <div className={styles.header}>
+            <div>
+              <div className={styles.title}>{tab.title()}</div>
+              <div className={styles.subtitle}>{tab.subtitle()}</div>
+            </div>
+            <Button asChild size="md" className={styles.add}>
+              <span>
+                <Plus size={15} aria-hidden /> {m.app_add()}
+              </span>
+            </Button>
+          </div>
+          <div className={styles.toolbar}>
+            <Button asChild variant="outline" size="md" className={styles.profile}>
+              <span>
+                <Layers size={15} aria-hidden /> {m.app_profile()} <ChevronsUpDown size={13} aria-hidden />
+              </span>
+            </Button>
+            <StatusBadge>{m.app_status()}</StatusBadge>
+          </div>
+          <BindingList>
             {tab.rows().map((row, index) => (
-              <motion.div
-                key={`${tab.id}-${index}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, delay: index * 0.04 }}
-              >
+              <motion.div key={index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: index * 0.04 }}>
                 <BindingRow row={row} />
               </motion.div>
             ))}
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
+          </BindingList>
+        </TabsContent>
+      ))}
+    </Tabs>
   )
 }
 
@@ -152,7 +153,7 @@ function BindingRow({ row }: { row: Row }) {
       action={row.action}
       dimmed={!enabled}
       trailing={
-        <Switch className="binding-switch" checked={enabled} onCheckedChange={({ checked }) => setEnabled(checked)} aria-label={m.app_enabled()}>
+        <Switch checked={enabled} onCheckedChange={({ checked }) => setEnabled(checked)} aria-label={m.app_enabled()}>
           <SwitchControl />
           <SwitchHiddenInput />
         </Switch>

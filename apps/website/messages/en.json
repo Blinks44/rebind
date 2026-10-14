@@ -130,5 +130,8 @@
   "faq_mac_q": "Which Mac do I need?",
   "faq_mac_a": "Any Mac running macOS 26 or later, with Apple silicon or an Intel processor.",
   "cta_title": "Make your Mac work your way",
-  "cta_text": "Free, no sign-up, ready in a couple of minutes."
+  "cta_text": "Free, no sign-up, ready in a couple of minutes.",
+  "not_found_title": "This page doesn’t exist",
+  "not_found_text": "The link may be out of date, or there’s a typo in the address. Everything else is right where it was.",
+  "not_found_home": "Back to home"
 }

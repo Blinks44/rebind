@@ -43,6 +43,10 @@ Icons were replaced with real SF Symbols outlines (80 components, names equal to
 
 Screens 13–18 added: Settings Input, Language, Advanced; profile management; first-run setup; About. The titlebar strip is native, so every screen's content starts 56 pt from the top and the traffic lights use the system size.
 
+## Update 2026-10-14: artifact audit
+
+All 76 screens (38 × Light/Dark) were screenshot-reviewed and checked by script for clipped text, Light/Dark drift and wrong-theme components (none of the latter). Fixed: Banner and Settings Row/Status messages now wrap inside the component instead of running past its edge (screens 03, 08, 09, 13, 21 resized to fit); recording and profile-name hints wrap inside their sheets (07, 26); action fields show the action's own symbol (Mission Control, Open App, Open Web Address, Run Apple Shortcut on 19, 20, 24, 27, 28, 29); the Magic Mouse screen no longer highlights Magic Trackpad too (04); About Light text is centered like Dark (18); the submenu chevron in menu items sits at the trailing edge (33). After the fixes Light and Dark match in geometry and text. The app's `Banner` already wraps its message, so no code change was needed.
+
 ## Open checks / dependency
 
 - User has not yet reviewed or accepted the design.

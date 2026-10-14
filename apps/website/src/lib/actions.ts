@@ -20,9 +20,12 @@ import {
   Volume2,
   VolumeX,
   Zap,
+  type LucideIcon,
 } from 'lucide-react'
-import type { Action } from './components/ui'
-import { m } from './paraglide/messages.js'
+import { m } from '~/paraglide/messages.js'
+
+/** An action as the app lists it: icon tile, title and catalog category. */
+export type Action = { icon: LucideIcon; title: string; category?: string }
 
 /** The subset of Rebind's action catalog shown on the page; resolved per request so labels follow the locale. */
 export const actions = {

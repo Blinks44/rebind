@@ -1,0 +1,11 @@
+.badge {
+  --moduix-badge-height: 30px;
+  --moduix-badge-padding-x: 13px;
+  --moduix-badge-gap: 8px;
+  --moduix-badge-font-size: 13px;
+  --moduix-badge-dot-size: 8px;
+  --moduix-badge-outline-color: var(--rebind-success-text);
+  --moduix-badge-outline-border-color: color-mix(in srgb, var(--rebind-success) 25%, transparent);
+  --moduix-badge-outline-bg: color-mix(in srgb, var(--rebind-success) 12%, transparent);
+  white-space: nowrap;
+}

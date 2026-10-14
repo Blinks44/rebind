@@ -130,5 +130,8 @@
   "faq_mac_q": "Welchen Mac brauche ich?",
   "faq_mac_a": "Jeden Mac mit macOS 26 oder neuer, mit Apple Chip oder Intel-Prozessor.",
   "cta_title": "Richte deinen Mac nach deinen Regeln ein",
-  "cta_text": "Kostenlos, ohne Registrierung, in ein paar Minuten."
+  "cta_text": "Kostenlos, ohne Registrierung, in ein paar Minuten.",
+  "not_found_title": "Diese Seite gibt es nicht",
+  "not_found_text": "Vielleicht ist der Link veraltet oder die Adresse enthält einen Tippfehler. Alles andere ist an seinem Platz.",
+  "not_found_home": "Zur Startseite"
 }

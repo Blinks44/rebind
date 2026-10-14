@@ -130,5 +130,8 @@
   "faq_mac_q": "¿Qué Mac necesito?",
   "faq_mac_a": "Cualquier Mac con macOS 26 o posterior, con chip de Apple o procesador Intel.",
   "cta_title": "Haz que tu Mac funcione a tu manera",
-  "cta_text": "Gratis, sin registro y en un par de minutos."
+  "cta_text": "Gratis, sin registro y en un par de minutos.",
+  "not_found_title": "Esta página no existe",
+  "not_found_text": "Puede que el enlace esté desactualizado o que haya una errata en la dirección. Todo lo demás sigue en su sitio.",
+  "not_found_home": "Volver al inicio"
 }

@@ -1,0 +1,35 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(48px, 8vw, 88px) 24px;
+  border-radius: 32px;
+  text-align: center;
+  color: #fff;
+  background:
+    radial-gradient(600px circle at 50% 0, rgb(255 255 255 / 0.28), transparent),
+    linear-gradient(#4a7dfa, #2452d9);
+  box-shadow: 0 40px 80px -30px var(--rebind-accent-glow);
+}
+
+.panel img {
+  filter: drop-shadow(0 12px 24px rgb(10 30 110 / 0.4));
+}
+
+.title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  color: inherit;
+}
+
+.lead {
+  font-size: clamp(17px, 1.8vw, 20px);
+  color: rgb(255 255 255 / 0.8);
+}
+
+.button {
+  margin-top: 8px;
+}

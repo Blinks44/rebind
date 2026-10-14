@@ -1,0 +1,145 @@
+/*
+ * Rebind's colors mirror apps/rebind/rebind/UI/DesignSystem/Theme.swift (Sketch "Rebind - new", 02 Foundations).
+ * The second half maps them onto moduix tokens, so every moduix component takes the app's look without
+ * per-component overrides. Component layout lives next to each component in a CSS Module.
+ */
+:root {
+  /* moduix starts in light mode; follow the system instead, which drives every light-dark() below. */
+  color-scheme: light dark;
+
+  --rebind-canvas-top: light-dark(#f5f7fb, #15171c);
+  --rebind-canvas-bottom: light-dark(#edf1f8, #101217);
+  --rebind-canvas-glow: light-dark(rgb(220 231 255 / 0.55), rgb(34 52 107 / 0.4));
+  --rebind-sidebar-surface: light-dark(rgb(255 255 255 / 0.58), rgb(255 255 255 / 0.07));
+  --rebind-card-surface: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.055));
+  --rebind-control-surface: light-dark(rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.09));
+  --rebind-window-surface: light-dark(#f3f6fb, #16181d);
+  --rebind-sheet-surface: light-dark(#fbfcfe, #1d2027);
+  --rebind-border-control: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.12));
+  --rebind-border-subtle: light-dark(rgb(15 23 42 / 0.06), rgb(255 255 255 / 0.09));
+  --rebind-separator: light-dark(rgb(15 23 42 / 0.07), rgb(255 255 255 / 0.08));
+  --rebind-text-primary: light-dark(#111318, #f2f4f8);
+  --rebind-text-secondary: light-dark(rgb(60 60 67 / 0.75), rgb(235 235 245 / 0.6));
+  --rebind-text-tertiary: light-dark(rgb(60 60 67 / 0.3), rgb(235 235 245 / 0.3));
+  --rebind-icon-secondary: light-dark(rgb(60 60 67 / 0.7), rgb(235 235 245 / 0.7));
+  --rebind-accent: light-dark(#2f66f5, #6e94ff);
+  --rebind-accent-fill: light-dark(#2f66f5, #3b6af0);
+  --rebind-accent-soft: light-dark(rgb(47 102 245 / 0.12), rgb(110 148 255 / 0.2));
+  --rebind-accent-glow: light-dark(rgb(47 102 245 / 0.28), rgb(110 148 255 / 0.25));
+  --rebind-success: light-dark(#1e9e5a, #3dd68c);
+  --rebind-success-text: light-dark(#15704a, #3dd68c);
+  --rebind-neutral-soft: light-dark(rgb(15 23 42 / 0.06), rgb(255 255 255 / 0.08));
+  --rebind-neutral-border: light-dark(rgb(15 23 42 / 0.1), rgb(255 255 255 / 0.14));
+  --rebind-keycap-top: light-dark(#ffffff, #3a3e48);
+  --rebind-keycap-bottom: light-dark(#eef1f6, #2b2e36);
+  --rebind-keycap-ledge: light-dark(#d3d9e4, #14161b);
+  --rebind-keycap-border: light-dark(rgb(15 23 42 / 0.1), rgb(255 255 255 / 0.12));
+  --rebind-keycap-text: light-dark(#1b2230, #f2f4f8);
+  --rebind-toggle-off: light-dark(rgb(120 120 128 / 0.16), rgb(255 255 255 / 0.16));
+  --rebind-shadow-ambient: light-dark(rgb(15 23 42 / 0.04), rgb(0 0 0 / 0.16));
+  --rebind-shadow-soft: light-dark(rgb(15 23 42 / 0.07), rgb(0 0 0 / 0.32));
+  --rebind-shadow-raised: light-dark(rgb(15 23 42 / 0.08), rgb(0 0 0 / 0.32));
+  --rebind-shadow-window: light-dark(rgb(15 23 42 / 0.16), rgb(0 0 0 / 0.5));
+  --rebind-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  --rebind-font-rounded: ui-rounded, 'SF Pro Rounded', var(--rebind-font);
+  --rebind-card-radius: 22px;
+  --rebind-button-gloss: linear-gradient(rgb(255 255 255 / 0.24), transparent 55%);
+
+  --moduix-font-sans: var(--rebind-font);
+  --moduix-background: var(--rebind-canvas-top);
+  --moduix-foreground: var(--rebind-text-primary);
+  --moduix-card: var(--rebind-card-surface);
+  --moduix-card-foreground: var(--rebind-text-primary);
+  --moduix-popover: var(--rebind-sheet-surface);
+  --moduix-popover-foreground: var(--rebind-text-primary);
+  --moduix-primary: var(--rebind-accent-fill);
+  --moduix-primary-foreground: #fff;
+  --moduix-secondary: var(--rebind-neutral-soft);
+  --moduix-secondary-foreground: var(--rebind-text-primary);
+  --moduix-muted: var(--rebind-neutral-soft);
+  --moduix-muted-foreground: var(--rebind-text-secondary);
+  --moduix-accent: var(--rebind-neutral-soft);
+  --moduix-border: var(--rebind-neutral-border);
+  --moduix-ring: var(--rebind-accent);
+  --moduix-success: var(--rebind-success);
+
+  --moduix-container-max-width-lg: 67.5rem;
+  --moduix-container-max-width-sm: 47.5rem;
+
+  --moduix-button-radius: 999px;
+  --moduix-button-font-weight: 600;
+  --moduix-button-outline-bg: var(--rebind-control-surface);
+  --moduix-card-radius: var(--rebind-card-radius);
+  --moduix-card-border-color: var(--rebind-border-subtle);
+  --moduix-card-shadow: 0 12px 32px var(--rebind-shadow-ambient);
+  --moduix-card-title-font-size: 19px;
+  --moduix-card-description-font-size: 15px;
+  --moduix-card-description-line-height: 1.5;
+  --moduix-heading-letter-spacing: -0.01em;
+
+  /* Raised keycaps, the app's brand motif. */
+  --moduix-kbd-height: 36px;
+  --moduix-kbd-min-width: 36px;
+  --moduix-kbd-padding-x: 10px;
+  --moduix-kbd-radius: 9px;
+  --moduix-kbd-font-family: var(--rebind-font-rounded);
+  --moduix-kbd-font-size: 16px;
+  --moduix-kbd-font-weight: 500;
+  --moduix-kbd-color: var(--rebind-keycap-text);
+  /* moduix paints this as background-color, so the keycap gradient itself is added by Keycaps. */
+  --moduix-kbd-bg: var(--rebind-keycap-bottom);
+  --moduix-kbd-border-color: var(--rebind-keycap-border);
+  --moduix-kbd-shadow: 0 2px 0 var(--rebind-keycap-ledge), 0 3px 4px var(--rebind-shadow-raised);
+  --moduix-kbd-group-gap: 6px;
+
+  /* Flat chips for triggers that are not keys: gestures, wheel and mouse buttons. */
+  --moduix-tag-height-md: 36px;
+  --moduix-tag-radius: 10px;
+  --moduix-tag-font-size: 14px;
+  --moduix-tag-line-height: 1.25;
+  --moduix-tag-gap: 6px;
+  --moduix-tag-padding-x-md: 11px;
+  --moduix-tag-icon-size: 15px;
+  --moduix-tag-secondary-border-color: var(--rebind-neutral-border);
+
+  --moduix-switch-bg: var(--rebind-toggle-off);
+  --moduix-switch-bg-hover: var(--rebind-toggle-off);
+  --moduix-switch-border-color: transparent;
+  --moduix-switch-thumb-bg: #fff;
+
+  --moduix-accordion-trigger-bg: transparent;
+  --moduix-accordion-trigger-bg-hover: transparent;
+  --moduix-accordion-trigger-padding-x: 0;
+  --moduix-accordion-trigger-padding-y: 18px;
+  --moduix-accordion-trigger-font-size: 17px;
+  --moduix-accordion-item-body-padding: 0 0 20px;
+  --moduix-accordion-item-border-color: var(--rebind-separator);
+
+  --moduix-marquee-edge-color: var(--rebind-canvas-bottom);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: clip;
+  font-family: var(--rebind-font);
+  line-height: 1.55;
+  color: var(--rebind-text-primary);
+  /* The app's canvas: a vertical gradient with soft glows at the top. */
+  background:
+    radial-gradient(640px circle at 15% 0, var(--rebind-canvas-glow), transparent),
+    radial-gradient(520px circle at 90% 420px, var(--rebind-canvas-glow), transparent),
+    linear-gradient(var(--rebind-canvas-top), var(--rebind-canvas-bottom) 900px);
+  background-color: var(--rebind-canvas-bottom);
+  -webkit-font-smoothing: antialiased;
+}

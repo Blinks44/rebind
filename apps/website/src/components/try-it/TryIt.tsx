@@ -1,10 +1,15 @@
-import { Button } from '@moduix/react/button'
+import { Card } from '@moduix/react/card'
+import { ToggleGroup, ToggleGroupItem } from '@moduix/react/toggle-group'
 import { Check } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { type KeyboardEvent, useState } from 'react'
-import { actions } from '~/actions'
+import { actions } from '~/lib/actions'
 import { m } from '~/paraglide/messages.js'
-import { type Action, Binding, Keycaps } from './ui'
+import { Binding } from '../binding/Binding'
+import { Keycaps } from '../keycaps/Keycaps'
+import styles from './TryIt.module.css'
+
+const choices = ['missionControl', 'nextDesktop', 'playPause', 'closeWindow'] as const
 
 const keyLabels: Record<string, string> = {
   ' ': 'Space',
@@ -26,12 +31,13 @@ function describe(event: KeyboardEvent): string[] | null {
   )
 }
 
+const reveal = { initial: { opacity: 0, height: 0 }, animate: { opacity: 1, height: 'auto' }, exit: { opacity: 0, height: 0 } }
+
 /** The page's own capture field: records a combination locally and pairs it with an action. */
 export function TryIt() {
   const [keys, setKeys] = useState<string[] | null>(null)
   const [listening, setListening] = useState(false)
-  const [action, setAction] = useState<Action | null>(null)
-  const choices = [actions.missionControl(), actions.nextDesktop(), actions.playPause(), actions.closeWindow()]
+  const [choice, setChoice] = useState<(typeof choices)[number] | null>(null)
 
   function onKeyDown(event: KeyboardEvent) {
     // Tab and Escape keep their meaning so the field never traps keyboard users.
@@ -40,14 +46,14 @@ export function TryIt() {
     if (!combination) return
     event.preventDefault()
     setKeys(combination)
-    setAction(null)
+    setChoice(null)
   }
 
   return (
-    <div className="card try">
+    <Card className={styles.card}>
       <button
         type="button"
-        className="capture"
+        className={styles.capture}
         data-listening={listening || undefined}
         onKeyDown={onKeyDown}
         onFocus={() => setListening(true)}
@@ -58,40 +64,46 @@ export function TryIt() {
             <Keycaps keys={keys} />
           </motion.span>
         ) : (
-          <span className="capture-hint">{listening ? m.try_listening() : m.try_placeholder()}</span>
+          <span className={styles.hint}>{listening ? m.try_listening() : m.try_placeholder()}</span>
         )}
       </button>
 
       <AnimatePresence initial={false}>
         {keys && (
-          <motion.div className="try-step" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-            <p className="try-label">{m.try_pick()}</p>
-            <div className="try-choices">
-              {choices.map((choice) => (
-                <Button
-                  key={choice.title}
-                  variant={choice.title === action?.title ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setAction(choice)}
-                >
-                  <choice.icon size={15} aria-hidden /> {choice.title}
-                </Button>
-              ))}
-            </div>
+          <motion.div className={styles.step} {...reveal}>
+            <p className={styles.note}>{m.try_pick()}</p>
+            <ToggleGroup
+              className={styles.choices}
+              variant="outline"
+              size="sm"
+              multiple={false}
+              aria-label={m.try_pick()}
+              value={choice ? [choice] : []}
+              onValueChange={({ value }) => setChoice((value[0] as (typeof choices)[number]) ?? null)}
+            >
+              {choices.map((key) => {
+                const action = actions[key]()
+                return (
+                  <ToggleGroupItem key={key} value={key}>
+                    <action.icon aria-hidden /> {action.title}
+                  </ToggleGroupItem>
+                )
+              })}
+            </ToggleGroup>
           </motion.div>
         )}
-        {keys && action && (
-          <motion.div className="try-step" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-            <div className="try-result">
-              <Binding trigger={<Keycaps keys={keys} />} action={action} />
+        {keys && choice && (
+          <motion.div className={styles.step} {...reveal}>
+            <div className={styles.result}>
+              <Binding trigger={<Keycaps keys={keys} />} action={actions[choice]()} />
             </div>
-            <p className="try-done">
+            <p className={styles.done}>
               <Check size={16} aria-hidden /> {m.try_result()}
             </p>
           </motion.div>
         )}
       </AnimatePresence>
-      <p className="try-privacy">{m.try_privacy()}</p>
-    </div>
+      <p className={styles.note}>{m.try_privacy()}</p>
+    </Card>
   )
 }

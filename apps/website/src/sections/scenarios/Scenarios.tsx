@@ -1,0 +1,63 @@
+import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@moduix/react/card'
+import { SimpleGrid } from '@moduix/react/simple-grid'
+import { Mouse } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Binding, Keycaps, Reveal, Section, SectionHeading, TriggerChip } from '~/components'
+import { actions } from '~/lib/actions'
+import { m } from '~/paraglide/messages.js'
+import styles from './Scenarios.module.css'
+
+export function Scenarios() {
+  return (
+    <Section id="scenarios">
+      <SectionHeading title={m.scenarios_title()} lead={m.scenarios_lead()} />
+      <SimpleGrid minChildWidth="22rem" gap="16px">
+        <Scenario title={m.scenario_mouse_title()} text={m.scenario_mouse_text()}>
+          <Binding trigger={<TriggerChip icon={Mouse}>{m.trigger_button4()}</TriggerChip>} action={actions.missionControl()} />
+          <Binding trigger={<TriggerChip icon={Mouse}>{m.trigger_button5()}</TriggerChip>} action={actions.nextDesktop()} />
+        </Scenario>
+        <Scenario title={m.scenario_presses_title()} text={m.scenario_presses_text()} delay={0.08}>
+          <Binding trigger={<Press kind={m.press_single()} />} action={actions.playPause()} />
+          <Binding trigger={<Press kind={m.press_double()} />} action={actions.nextTrack()} />
+          <Binding trigger={<Press kind={m.press_long()} />} action={actions.mute()} />
+        </Scenario>
+        <Scenario title={m.scenario_windows_title()} text={m.scenario_windows_text()}>
+          <Binding trigger={<Keycaps keys={['⌃', '⌥', '←']} />} action={actions.leftHalf()} />
+          <Binding trigger={<Keycaps keys={['⌃', '⌥', '→']} />} action={actions.rightHalf()} />
+          <Binding trigger={<Keycaps keys={['⌃', '⌥', '↩']} />} action={actions.fillScreen()} />
+        </Scenario>
+        <Scenario title={m.scenario_launch_title()} text={m.scenario_launch_text()} delay={0.08}>
+          <Binding trigger={<Keycaps keys={['⌥', 'T']} />} action={actions.openTerminal()} />
+          <Binding trigger={<Keycaps keys={['F16']} />} action={actions.runShortcut()} />
+          <Binding trigger={<Keycaps keys={['⌥', 'G']} />} action={actions.openLink()} />
+        </Scenario>
+      </SimpleGrid>
+    </Section>
+  )
+}
+
+function Scenario(props: { title: string; text: string; delay?: number; children: ReactNode }) {
+  return (
+    <Reveal delay={props.delay} className={styles.cell}>
+      <Card>
+        <CardHeader>
+          <CardTitle asChild>
+            <h3>{props.title}</h3>
+          </CardTitle>
+          <CardDescription>{props.text}</CardDescription>
+        </CardHeader>
+        <CardBody className={styles.bindings}>{props.children}</CardBody>
+      </Card>
+    </Reveal>
+  )
+}
+
+/** F13 with the kind of press that triggers the rule. */
+function Press({ kind }: { kind: string }) {
+  return (
+    <>
+      <Keycaps keys={['F13']} />
+      <span className={styles.press}>{kind}</span>
+    </>
+  )
+}

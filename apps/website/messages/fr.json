@@ -130,5 +130,8 @@
   "faq_mac_q": "Quel Mac faut-il ?",
   "faq_mac_a": "N’importe quel Mac sous macOS 26 ou ultérieur, avec une puce Apple ou un processeur Intel.",
   "cta_title": "Faites du Mac votre Mac",
-  "cta_text": "Gratuit, sans inscription, en quelques minutes."
+  "cta_text": "Gratuit, sans inscription, en quelques minutes.",
+  "not_found_title": "Cette page n’existe pas",
+  "not_found_text": "Le lien est peut-être périmé, ou l’adresse contient une faute de frappe. Tout le reste est à sa place.",
+  "not_found_home": "Retour à l’accueil"
 }

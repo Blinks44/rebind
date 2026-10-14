@@ -4,7 +4,8 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { MotionConfig } from 'motion/react'
 import type { ReactNode } from 'react'
 import { getLocale } from '~/paraglide/runtime.js'
-import appCss from '~/styles/app.css?url'
+import { NotFound } from '~/sections'
+import themeCss from '~/styles/theme.css?url'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -16,12 +17,13 @@ export const Route = createRootRoute({
       { name: 'theme-color', content: '#15171C', media: '(prefers-color-scheme: dark)' },
     ],
     links: [
-      { rel: 'stylesheet', href: appCss },
+      { rel: 'stylesheet', href: themeCss },
       { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       { rel: 'apple-touch-icon', href: '/app-icon.png' },
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
 
 function RootDocument({ children }: { children: ReactNode }) {

@@ -1,0 +1,9 @@
+/* Long gesture names wrap onto a second line instead of being cut off, as in the app. */
+.chip {
+  white-space: normal;
+  padding-block: 6px;
+}
+
+.label {
+  overflow: visible;
+}

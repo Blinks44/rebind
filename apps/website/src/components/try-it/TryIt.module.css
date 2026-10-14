@@ -1,0 +1,76 @@
+.card {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.capture {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 96px;
+  border: 1.5px dashed var(--rebind-neutral-border);
+  border-radius: 16px;
+  background: var(--rebind-neutral-soft);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.capture[data-listening] {
+  border-style: solid;
+  border-color: var(--rebind-accent);
+  outline: none;
+  background: var(--rebind-accent-soft);
+  box-shadow: 0 0 0 4px var(--rebind-accent-soft);
+}
+
+.hint {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--rebind-text-secondary);
+}
+
+.capture[data-listening] .hint {
+  color: var(--rebind-accent);
+}
+
+.step {
+  display: grid;
+  gap: 12px;
+  overflow: hidden;
+  text-align: start;
+}
+
+.note {
+  font-size: 13px;
+  color: var(--rebind-text-secondary);
+}
+
+.choices {
+  --moduix-toggle-group-bg: transparent;
+  --moduix-toggle-group-border-color: transparent;
+  --moduix-toggle-group-gap: 8px;
+  --moduix-toggle-group-item-radius: 999px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: auto;
+}
+
+.result {
+  padding: 14px 16px;
+  border: 1px solid var(--rebind-separator);
+  border-radius: 14px;
+}
+
+.done {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--rebind-success-text);
+}
