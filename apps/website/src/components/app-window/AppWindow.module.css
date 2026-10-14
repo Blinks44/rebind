@@ -182,22 +182,7 @@
   .tabs {
     --moduix-tabs-tab-height: 32px;
     --moduix-tabs-tab-padding-x: 12px;
-    inline-size: auto;
-    min-inline-size: 0;
-    flex-direction: row;
-    overflow-x: auto;
     scrollbar-width: none;
-  }
-
-  .tab {
-    flex: none;
-  }
-
-  /* The list is laid out as a row here, so the indicator follows the tab horizontally too. */
-  .indicator {
-    left: var(--left);
-    width: var(--width);
-    translate: none;
   }
 
   .tab svg {

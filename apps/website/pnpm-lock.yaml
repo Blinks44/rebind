@@ -172,6 +172,9 @@ importers:
       '@moduix/react':
         specifier: ^3.0.0
         version: 3.0.0(@ark-ui/react@5.39.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@reactuses/core':
+        specifier: ^6.5.9
+        version: 6.5.9(react@19.3.0)
       '@tanstack/react-router':
         specifier: ^1.170.42
         version: 1.170.42(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -433,6 +436,9 @@ packages:
   '@lix-js/sdk@0.19.0':
     resolution: {integrity: sha512-ks7hKZdJGH0APlSLWtFYCXDO3yIoleoPqzLgkZYtMbaiWRN2Ih772tNGGBZFLKbutq6DuNRwcjNkG94KqWRbBA==}
 
+  '@microsoft/fetch-event-source@2.0.1':
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
+
   '@moduix/react@3.0.0':
     resolution: {integrity: sha512-KfbgG6Rkv0FPl0mPo+DbKaUL55Q0GGVr1DS+JMiDKVIYM8MGzm9alow02SbG15l+p0wuZBpMQPKgfOS++HXqhA==}
     peerDependencies:
@@ -592,6 +598,15 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
+
+  '@reactuses/core@6.5.9':
+    resolution: {integrity: sha512-3csTdmUhB6PWFMqEGiX5k69Ha0jbDSgQ3QmG35Kh2D8qTEHkSi31Kd1bNHrslnha3fo5nvRpKQKNZr0tTi9Lkg==}
+    peerDependencies:
+      qrcode: ^1.5
+      react: ^16.8.0  || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      qrcode:
+        optional: true
 
   '@rsbuild/core@2.2.12':
     resolution: {integrity: sha512-SnJ81Jf9ZGms8hUq0FGxrqlUxdHKV76VK9gxrEdtWLbTic+qRt0SIAsk5NdIr1tXFzqzQ6Fqeffs+K1EUuZEHw==}
@@ -1382,6 +1397,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  js-cookie@3.0.8:
+    resolution: {integrity: sha512-yeJd4aNAdYZQjaon2bpD/Gb0B/omw7HQOsynXXcOiWVCacbBcPlgn8S/d1X6blFSaHao7ozqtW7NZW19xpCtIw==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1477,6 +1495,9 @@ packages:
     resolution: {integrity: sha512-WkUDrojuJs0xkgGf2udWxa3yGBRxPtxUkB79i6aCZLRgc7PM8fZe9TosfPDcvEpQZbuFASnHYmRLBLUbmLOIIA==}
     engines: {node: '>= 12.0.0'}
 
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -1566,6 +1587,10 @@ packages:
 
   scheduler@0.28.0:
     resolution: {integrity: sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==}
+
+  screenfull@5.2.0:
+    resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
+    engines: {node: '>=0.10.0'}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -2038,6 +2063,8 @@ snapshots:
       binaryen: 130.0.0
       fflate: 0.8.3
 
+  '@microsoft/fetch-event-source@2.0.1': {}
+
   '@moduix/react@3.0.0(@ark-ui/react@5.39.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@ark-ui/react': 5.39.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -2145,6 +2172,15 @@ snapshots:
 
   '@oxc-minify/binding-win32-x64-msvc@0.136.0':
     optional: true
+
+  '@reactuses/core@6.5.9(react@19.3.0)':
+    dependencies:
+      '@microsoft/fetch-event-source': 2.0.1
+      js-cookie: 3.0.8
+      lodash-es: 4.18.1
+      react: 19.3.0
+      screenfull: 5.2.0
+      use-sync-external-store: 1.7.0(react@19.3.0)
 
   '@rsbuild/core@2.2.12':
     dependencies:
@@ -3221,6 +3257,8 @@ snapshots:
 
   jiti@2.7.0: {}
 
+  js-cookie@3.0.8: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.3.2:
@@ -3281,6 +3319,8 @@ snapshots:
       lightningcss-linux-x64-musl: 1.33.0
       lightningcss-win32-arm64-msvc: 1.33.0
       lightningcss-win32-x64-msvc: 1.33.0
+
+  lodash-es@4.18.1: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -3367,6 +3407,8 @@ snapshots:
   rou3@0.8.1: {}
 
   scheduler@0.28.0: {}
+
+  screenfull@5.2.0: {}
 
   semver@6.3.1: {}
 

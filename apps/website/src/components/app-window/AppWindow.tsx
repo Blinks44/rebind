@@ -1,6 +1,7 @@
 import { Button } from '@moduix/react/button'
 import { Switch, SwitchControl, SwitchHiddenInput } from '@moduix/react/switch'
 import { Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger } from '@moduix/react/tabs'
+import { useMediaQuery } from '@reactuses/core'
 import { ChevronsUpDown, Hand, Info, Keyboard, Layers, Mouse, MousePointer2, Plus, Settings, Touchpad } from 'lucide-react'
 import { motion } from 'motion/react'
 import { type ReactNode, useState } from 'react'
@@ -78,12 +79,15 @@ const tabs = [
 ]
 
 /**
- * A working HTML rendition of the main window. The sidebar is a moduix vertical tab list, so switching
- * lists, the selection indicator and keyboard navigation come from Ark; the toggles respond as well.
+ * A working HTML rendition of the main window. The sidebar is a moduix tab list, so switching lists,
+ * the selection indicator and keyboard navigation come from Ark; the toggles respond as well.
+ * On narrow screens the list becomes a horizontal row, so the arrow keys and indicator follow it.
  */
 export function AppWindow() {
+  // The server renders the desktop layout; phones switch right after hydration.
+  const narrow = useMediaQuery('(max-width: 860px)', false)
   return (
-    <Tabs className={styles.window} orientation="vertical" defaultValue="keyboard" lazyMount unmountOnExit aria-label={m.app_label()}>
+    <Tabs className={styles.window} orientation={narrow ? 'horizontal' : 'vertical'} defaultValue="keyboard" lazyMount unmountOnExit aria-label={m.app_label()}>
       <aside className={styles.sidebar}>
         <div className={styles.trafficLights} aria-hidden>
           <i />
@@ -95,7 +99,7 @@ export function AppWindow() {
           Rebind
         </div>
         <TabsList className={styles.tabs}>
-          <TabsIndicator className={styles.indicator} />
+          <TabsIndicator />
           {tabs.map(({ id, icon: Icon, title }) => (
             <TabsTrigger key={id} value={id} className={styles.tab}>
               <Icon size={16} aria-hidden /> {title()}
