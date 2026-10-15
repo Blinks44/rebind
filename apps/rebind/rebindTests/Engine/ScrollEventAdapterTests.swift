@@ -27,11 +27,20 @@ struct ScrollEventAdapterTests {
         #expect(input.timestamp == event.timestamp)
     }
 
-    @Test(arguments: [CGEventField.scrollWheelEventIsContinuous, .scrollWheelEventScrollPhase,
-                      .scrollWheelEventMomentumPhase, .scrollWheelEventDeltaAxis3])
+    @Test(arguments: [CGEventField.scrollWheelEventScrollPhase, .scrollWheelEventMomentumPhase,
+                      .scrollWheelEventDeltaAxis3])
     func unsupportedScrollMetadataPassesThrough(_ field: CGEventField) throws {
         let event = try wheel()
         event.setIntegerValueField(field, value: 1)
+        #expect(ScrollEventAdapter.input(from: event) == nil)
+    }
+
+    @Test func aContinuousWheelWithoutPhaseIsAWheelStepByItsPointDelta() throws {
+        let event = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
+                                         wheel1: -4, wheel2: 0, wheel3: 0))
+        #expect(event.getIntegerValueField(.scrollWheelEventIsContinuous) == 1)
+        #expect(ScrollEventAdapter.input(from: event)?.trigger == .scroll(.down))
+        event.setIntegerValueField(.scrollWheelEventScrollPhase, value: 2)
         #expect(ScrollEventAdapter.input(from: event) == nil)
     }
 

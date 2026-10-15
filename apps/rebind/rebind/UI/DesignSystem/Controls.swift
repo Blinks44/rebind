@@ -233,6 +233,7 @@ struct SegmentedPicker<Value: Hashable>: View {
         .padding(4)
         .background(Theme.insetSurface, in: .capsule)
         .overlay { Capsule(style: .circular).strokeBorder(Theme.borderSubtle) }
+        .opacity(isEnabled ? 1 : 0.45)
         .transaction { $0.animation = nil }
         .onKeyPress(.leftArrow) { move(by: -1) }
         .onKeyPress(.rightArrow) { move(by: 1) }

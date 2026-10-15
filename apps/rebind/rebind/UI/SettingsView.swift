@@ -23,6 +23,8 @@ struct SettingsView: View {
                 PermissionView(model: model)
             case .input:
                 InputSettingsView(model: model)
+            case .devices:
+                DevicesSettingsView(model: model)
             case .language:
                 LanguageSettingsView(model: model)
             case .advanced:

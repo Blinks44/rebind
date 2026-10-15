@@ -1,4 +1,4 @@
-/// How many times each stepped wheel event is multiplied before apps see it.
+/// How many times each mouse wheel event is multiplied before apps see it.
 nonisolated enum MouseWheelSpeed: String, Codable, CaseIterable, Hashable, Sendable {
     case standard, fast, faster
 
@@ -11,7 +11,7 @@ nonisolated enum MouseWheelSpeed: String, Codable, CaseIterable, Hashable, Senda
     }
 }
 
-/// What the tap applies to a stepped wheel event it passes through. Nil means leave it alone.
+/// What the tap applies to a mouse wheel event it passes through. Nil means leave it alone.
 nonisolated struct WheelAdjustment: Equatable, Sendable {
     var reverses: Bool
     var multiplier: Int64

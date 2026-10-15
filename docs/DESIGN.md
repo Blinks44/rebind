@@ -14,7 +14,7 @@ Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) throug
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 38 screens, each Light and Dark, built only from components |
+| 01 · Screens | 45 screens, each Light and Dark, built only from components |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
@@ -26,7 +26,7 @@ The code mirrors the variables in `apps/rebind/rebind/UI/DesignSystem/Theme.swif
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 
-Covered screens (38): Keyboard, Mouse, Trackpad and Magic Trackpad lists with empty, no-results, permission-needed and paused states; the Magic Mouse empty state; Keyboard, Mouse and Trackpad editors (recording, conflict, action picker and parameters, hold, wheel, held key, note); all five Settings tabs; profile management, naming, export and import; first-run setup; diagnostics; licenses; About. Not drawn: Magic Mouse editors (the presets are undecided, see [PLAN](PLAN.md)) and compact-width variants, which are checked in the app.
+Covered screens (45): Keyboard, Mouse, Trackpad and Magic Trackpad lists with empty, no-results, permission-needed and paused states; the Magic Mouse empty state; Keyboard, Mouse and Trackpad editors (recording, conflict, action picker and parameters, hold, wheel, held key, note); all Settings tabs including Devices (39–41: mice, Options+ warning, empty) and the Mouse page with a companion-app warning (42) and a future gesture-button trigger (43, marked "Future": out of scope until diversion is planned); Input with smooth scrolling (44) and excluded apps with Bindings / Smooth scrolling switches (45); profile management, naming, export and import; first-run setup; diagnostics; licenses; About. Not drawn: Magic Mouse editors (the presets are undecided, see [PLAN](PLAN.md)) and compact-width variants, which are checked in the app.
 
 ## Rules that apply to every screen
 

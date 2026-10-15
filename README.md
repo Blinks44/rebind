@@ -45,12 +45,13 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 **Everything else**
 
 - Named profiles with manual selection; duplicate a binding, copy it to another profile, give it a note; export and import single profiles or a full backup.
-- Excluded apps in which Rebind leaves all input alone, such as games and virtual machines.
-- Reverse or speed up a stepped mouse wheel without changing the trackpad; adjustable mouse gesture distance.
+- Excluded apps, such as games and virtual machines, with bindings and smooth scrolling switched off separately.
+- Reverse or speed up the mouse wheel without changing the trackpad, smooth scrolling for wheels with clicks, adjustable mouse gesture distance.
+- Logitech mice: SmartShift wheel mode and sensitivity and pointer resolution (DPI), kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
-Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and smooth scrolling. Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
+Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and the Logitech gesture button and thumb wheel as triggers. Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
 
 ## Requirements
 
@@ -124,11 +125,23 @@ Configuration is stored locally at `~/Library/Application Support/Rebind/configu
 | Language and UI | Swift 6 language mode, SwiftUI, AppKit, Observation |
 | Input | Core Graphics / Quartz Event Services, owned Core Foundation run loop |
 | Actions | Accessibility, NSWorkspace, Core Audio, IOKit, native Shortcuts CLI |
+| Mice | IOKit HID, Logitech HID++ 2.0 through the vendored HIDPP package |
 | Storage and localization | Codable/JSON, atomic local files, String Catalogs |
 | Tests | Swift Testing with an Xcode-hosted test target |
 | Build and assets | Xcode, SF Symbols, Sketch, Icon Composer |
 
-The app target has no Swift package dependency. Some experimental trackpad/Dock/lock paths use private macOS APIs and carry compatibility limits. The standalone research probe has separate pinned dependencies. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+The app target's only Swift package is the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and carry compatibility limits. The standalone research probe has separate pinned dependencies. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+
+## Acknowledgements
+
+Rebind builds on the work of these open-source projects. Each is credited with its license in [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt), which the app also shows under About.
+
+- [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT): the vendored `HIDPP` package for Logitech HID++, the approach of the smooth scrolling glide, and scaling the HID event attached to a scroll event so that reversing works on high-resolution wheels.
+- [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0): its HID++ feature documentation informed the SmartShift and device name payloads. Reference only; no code was copied.
+- [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) (MIT): media key events, the screen lock entry point and window raising were checked against it.
+- [spacekit](https://github.com/cehbz/spacekit) (MIT): the Control+Arrow events for switching desktops.
+- [Sanne](https://github.com/anandghegde/sanne) (MIT): the corner regions for one-finger corner taps.
+- [Subsurface](https://github.com/mrkai77/Subsurface) (Apache-2.0): the private multitouch signatures and contact layout used by the trackpad adapter were compared with it.
 
 ## Documentation
 

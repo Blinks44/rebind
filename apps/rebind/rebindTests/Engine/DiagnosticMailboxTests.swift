@@ -102,6 +102,21 @@ struct DiagnosticMailboxTests {
         #expect(snapshot(mailbox).entries.last?.outcome == .passedThrough)
     }
 
+    @Test func aWheelEventShowsWhetherInputSettingsChangedIt() {
+        let mailbox = EngineMailbox()
+        var configuration = Configuration(isEnabled: true)
+        configuration.reversesMouseWheel = true
+        mailbox.configure(configuration)
+        mailbox.startDiagnostics(at: 0)
+        let wheel = InputEvent(trigger: .scroll(.down), phase: .scroll, receivedAt: 1)
+        // Rules paused by a missing or stopped tap: passed on unchanged.
+        #expect(mailbox.handle(wheel, secureInput: false) == false)
+        #expect(snapshot(mailbox).entries.last?.outcome == .passedThrough)
+        mailbox.state.withLock { $0.status = .active }
+        #expect(mailbox.handle(wheel, secureInput: false) == false)
+        #expect(snapshot(mailbox).entries.last?.outcome == .adjusted)
+    }
+
     @Test func disabledStartAndEmergencyBypassDoNotKeepDiagnosticsAlive() {
         let mailbox = EngineMailbox()
         mailbox.suspend(true)

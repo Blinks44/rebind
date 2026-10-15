@@ -111,6 +111,7 @@ private extension InputDiagnostic {
     var outcomeLabel: LocalizedStringResource {
         switch outcome {
         case .passedThrough: .diagnosticsPassed
+        case .adjusted: .diagnosticsAdjusted
         case .suppressed: .diagnosticsSuppressed
         case .queued: .diagnosticsQueued
         }

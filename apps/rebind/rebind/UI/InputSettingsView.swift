@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Recognition settings shared by every rule: gesture distance and excluded apps.
+/// Recognition settings shared by every rule: gesture distance, the mouse wheel and excluded apps.
 struct InputSettingsView: View {
     let model: AppModel
 
@@ -8,69 +8,102 @@ struct InputSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(.inputTitle).font(Theme.headline).accessibilityAddTraits(.isHeader)
+                    Text(.settingsInput).font(Theme.headline).accessibilityAddTraits(.isHeader)
                     Text(.inputDescription).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                information(.pressTiming, status: .perBinding, description: .pressTimingDescription)
                 Card {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(.mouseGestures).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
-                            .accessibilityAddTraits(.isHeader)
-                        Text(.mouseGesturesDescription).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                        title(.mouseGestures, description: .mouseGesturesDescription)
                         SegmentedPicker(selection: SwiftUI.Binding(get: { model.configuration.pointerGestureDistance },
                                                                    set: { model.setPointerGestureDistance($0) }),
                                         title: .gestureDistanceTitle, options: PointerGestureDistance.allCases,
                                         label: { $0.label }, fillsWidth: true)
-                            .disabled(model.storageLocked)
                             .accessibilityIdentifier("input-gesture-distance")
                     }
                 }
-                information(.inputBuiltInTrackpad, status: .experimental, description: .trackpadInputDescription)
-                Card {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(.mouseWheelTitle).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
-                            .accessibilityAddTraits(.isHeader)
-                        Text(.mouseWheelDescription).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Toggle(isOn: SwiftUI.Binding(get: { model.configuration.reversesMouseWheel },
-                                                     set: { model.setMouseWheel(reverses: $0) })) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(.reverseMouseWheel).font(Theme.body).foregroundStyle(Theme.textPrimary)
-                                Text(.reverseMouseWheelDescription).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .toggleStyle(ThemeSwitchStyle())
-                        .accessibilityIdentifier("input-reverse-wheel")
-                        Text(.mouseWheelSpeedTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                        SegmentedPicker(selection: SwiftUI.Binding(get: { model.configuration.mouseWheelSpeed },
-                                                                   set: { model.setMouseWheel(speed: $0) }),
-                                        title: .mouseWheelSpeedTitle, options: MouseWheelSpeed.allCases,
-                                        label: { $0.label }, fillsWidth: true)
-                            .accessibilityIdentifier("input-wheel-speed")
-                    }
-                    .disabled(model.storageLocked)
-                }
+                .disabled(model.storageLocked)
+                mouseWheel
                 ExcludedApplicationsCard(model: model)
-                Text(.inputEditGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .detailMargins().padding(.bottom, 32)
         }
     }
 
-    private func information(_ title: LocalizedStringResource, status: LocalizedStringResource,
-                             description: LocalizedStringResource) -> some View {
+    private var mouseWheel: some View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
-                StatusLabel(title: title, status: status)
-                Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                title(.mouseWheelTitle, description: .mouseWheelDescription)
+                toggle(.reverseMouseWheel, description: .reverseMouseWheelDescription,
+                       isOn: SwiftUI.Binding(get: { model.configuration.reversesMouseWheel },
+                                             set: { model.setMouseWheel(reverses: $0) }))
+                    .accessibilityIdentifier("input-reverse-wheel")
+                choice(.mouseWheelSpeedTitle, SwiftUI.Binding(get: { model.configuration.mouseWheelSpeed },
+                                                              set: { model.setMouseWheel(speed: $0) }), label: \.label)
+                    .accessibilityIdentifier("input-wheel-speed")
+                Theme.separator.frame(height: 1).padding(.vertical, 4)
+                toggle(.smoothScrollingTitle, description: .smoothScrollingDescription,
+                       isOn: SwiftUI.Binding(get: { model.configuration.smoothScrolling },
+                                             set: { model.setSmoothScrolling(enabled: $0) }))
+                    .accessibilityIdentifier("input-smooth-scrolling")
+                if model.configuration.smoothScrolling {
+                    choice(.smoothScrollingGlide, SwiftUI.Binding(get: { model.configuration.smoothScrollingGlide },
+                                                                  set: { model.setSmoothScrolling(glide: $0) }), label: \.label)
+                    choice(.smoothScrollingScope, SwiftUI.Binding(get: { model.configuration.smoothScrollingScope },
+                                                                  set: { model.setSmoothScrolling(scope: $0) }), label: \.label)
+                }
+            }
+        }
+        .disabled(model.storageLocked)
+    }
+
+    private func title(_ title: LocalizedStringResource, description: LocalizedStringResource) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary).accessibilityAddTraits(.isHeader)
+            Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func toggle(_ title: LocalizedStringResource, description: LocalizedStringResource,
+                        isOn: SwiftUI.Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(Theme.body).foregroundStyle(Theme.textPrimary)
+                Text(description).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .toggleStyle(ThemeSwitchStyle())
+    }
+
+    private func choice<Value: Hashable & CaseIterable>(_ title: LocalizedStringResource, _ selection: SwiftUI.Binding<Value>,
+                                                        label: @escaping (Value) -> LocalizedStringResource) -> some View
+        where Value.AllCases == [Value] {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+            SegmentedPicker(selection: selection, title: title, options: Value.allCases, label: label, fillsWidth: true)
+        }
+    }
+}
+
+extension SmoothScrollingGlide {
+    var label: LocalizedStringResource {
+        switch self {
+        case .short: .glideShort
+        case .standard: .glideStandard
+        case .long: .glideLong
+        }
+    }
+}
+
+extension SmoothScrollingScope {
+    var label: LocalizedStringResource {
+        switch self {
+        case .steppedWheels: .smoothScrollingSteppedWheels
+        case .allWheels: .smoothScrollingAllWheels
         }
     }
 }

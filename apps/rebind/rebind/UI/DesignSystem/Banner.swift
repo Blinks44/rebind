@@ -4,6 +4,8 @@ struct Banner<Actions: View>: View {
     let severity: BannerSeverity
     let title: LocalizedStringResource
     var message: LocalizedStringResource?
+    /// Shows a close button that hides the banner.
+    var dismiss: (() -> Void)?
     @ViewBuilder var actions: Actions
     @Environment(\.colorSchemeContrast) private var contrast
 
@@ -20,6 +22,15 @@ struct Banner<Actions: View>: View {
                 }
                 actions.padding(.top, 6)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            if let dismiss {
+                Button(action: dismiss) {
+                    Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Theme.iconSecondary).frame(width: 22, height: 22).contentShape(.rect)
+                }
+                .buttonStyle(.plain).keyboardFocusRing(Circle())
+                .accessibilityLabel(Text(.bannerHide)).help(Text(.bannerHide))
+            }
         }
         .padding(.horizontal, 18).padding(.vertical, 14).frame(maxWidth: .infinity, alignment: .leading)
         .background(severity.surface, in: .rect(cornerRadius: 16, style: .continuous))
@@ -33,10 +44,11 @@ struct Banner<Actions: View>: View {
 
 extension Banner where Actions == EmptyView {
     init(severity: BannerSeverity, title: LocalizedStringResource,
-         message: LocalizedStringResource? = nil) {
+         message: LocalizedStringResource? = nil, dismiss: (() -> Void)? = nil) {
         self.severity = severity
         self.title = title
         self.message = message
+        self.dismiss = dismiss
         actions = EmptyView()
     }
 }

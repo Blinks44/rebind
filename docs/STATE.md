@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-13**. HEAD `03c1504` plus the uncommitted 2026-10-13 cleanup contains all work to date ([INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md), sidebar brand, website). Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-15**. HEAD `f10ed48` plus uncommitted [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) (Devices settings, Logitech HID++, companion apps, continuous-wheel fix). Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -14,7 +14,7 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 | --- | --- |
 | Keyboard/mouse | Quartz tap, primary modifiers, numeric middle/extra buttons, shortcuts, wheel, double/long press and four button-held directions. G603 subsets user-confirmed; physical keyboard/full safety matrix open. |
 | Runtime | Bounded synchronous capture/matcher/mailbox, separate action execution, synthetic tags, protected-session/pause/cancellation safeguards and opt-in memory-only mouse diagnostics. Measured callback/action performance and full fault/recovery acceptance remain open. |
-| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **34**, migrations 1–33 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up-2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
+| Profiles/storage | Manual CRUD/copy/selection, atomic JSON and protected originals after launch. Schema **36**, migrations 1–35 and restoration software-tested. [Button 4 switching and restart selection/rules/pause user-confirmed](verification/profiles.md#user-switching-follow-up-2026-10-11); restoration happy path user-confirmed; login and broader cancellation/routes remain open. |
 | Actions | Searchable catalog: shortcuts, audio/media/mouse, AX window/app/layout/cycling, Previous Application, app/web/file, Apple Shortcuts, Spaces, sleep, experimental Dock/lock. Happy-path subsets confirmed; broader guards/platform checks remain. |
 | Trackpad | Four-finger delivery/click recovery/lifecycle are user-confirmed subsets. Three/four single/double and two-finger double engine/storage are integrated ([INPUT-004](tasks/INPUT-004-two-finger-double-tap.md)). [Tap preset editor](tasks/UI-014-trackpad-presets.md) exposes the full twelve-preset pool: 3/4 singles, 2/3/4 doubles, [2/3/4-finger physical clicks](tasks/INPUT-006-trackpad-clicks.md) and four [one-finger corner taps](tasks/INPUT-005-corner-taps.md). Hardware/native conflicts, timing/safety/platform checks remain open. Trackpad rules run [any catalog action](tasks/INPUT-007-trackpad-action-catalog.md). Native gestures are not suppressed, except that click and corner rules replace their own click (both user-confirmed happy paths). |
 | UI/localization | Whole app uses the soft design system from `apps/rebind/rebind/UI/DesignSystem` with EN/RU/DE/FR/ES/Simplified Chinese. Running-app accessibility, focus and localized-width acceptance remain open. |
@@ -23,6 +23,8 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 ## Design source and recent changes
 
+- **2026-10-15:** [Smooth scrolling and per-app exclusions](tasks/INPUT-010-smooth-scrolling.md): optional glide for wheel clicks (Short/Standard/Long, wheels with clicks or all), excluded apps with separate Bindings and Smooth scrolling switches (schema 36), a hideable companion warning on the Mouse page, and three text-only cards removed from Input. README gains Acknowledgements. 767 tests + 15 layout tests pass; not yet run in the app.
+- **2026-10-15:** [Devices settings](tasks/DEVICE-001-mouse-devices.md): a Settings tab lists connected mice; Logitech HID++ mice (direct or on a Bolt/Unifying receiver) get SmartShift wheel mode, sensitivity and DPI, stored per model (schema 35) and written whenever the mouse is found. LinearMouse's MIT `HIDPP` module is vendored as `apps/rebind/Packages/HIDPP`. Logi Options+ and G HUB are detected: any of them adds one shared warning on the Mouse page; Options+ also shows it in Devices and disables the settings there; both appear in the support report. Mouse wheel reverse/speed now also covers continuous wheels without a gesture phase, including the HID event AppKit reads for them (MX Master 2S report). Gesture button/thumb wheel diversion is out of scope (Sketch frame 43 marked Future). 762 tests + 15 layout tests and 26 package tests pass; the user saw the MX Master 2S listed and SmartShift switching work in the Debug build.
 - **2026-10-14:** Opening Rebind or Settings from the Menu Bar item now always brings the window to the front: with Show in Dock off, Rebind becomes a regular app before the window opens instead of after it becomes main, where the policy switch deactivated the app after the click's activation. The Settings item uses `openSettings` with the same path. 748 tests pass; not yet checked in the running app.
 - **2026-10-14:** Website deploy setup: Cloudflare Worker via wrangler with the custom domain `rebind.moduix.dev`; Rsbuild builds the server for a web worker in production (TanStack's Cloudflare guide covers only Vite). Verified locally in `wrangler dev`: all six language routes, static files, assets and 404 respond and the page renders styled with no console errors. The actual deploy and Cloudflare login are left to the user.
 - **2026-10-14:** One trigger style: every rule trigger is a raised keycap, and non-keyboard triggers carry an icon for the input type (mouse, arrow, touch) instead of a flat grey chip. Sketch (component and all Mouse screens, Light/Dark), the app and the website updated; 748 Swift Testing and 15 layout tests pass and the website builds (seen in Light/Dark and at phone width); the new chips are user-confirmed in the running app.
@@ -41,9 +43,6 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 - **2026-10-13:** Two-finger double-tap preset exposed in the Trackpad editor; Mouse gesture direction is a segmented control (Sketch screen 19, Light/Dark); `apps/rebind/tools/magic-mouse-probe.swift` prepared for the Phase 6 hardware check. Scoped editor/layout tests pass.
 - **2026-10-13:** Code and design review: design-system code consolidated under `apps/rebind/rebind/UI/DesignSystem`, legacy names and 48 unused strings removed, secondary text contrast raised, unused Sketch styles deleted. Full suite passes.
 - **2026-10-13:** [Whole app restyled and reconciled with Sketch](tasks/UI-023-main-window-soft-adoption.md): main window, editor, Settings, profiles, setup and About use the soft design system; new app icon and Menu Bar template.
-- **2026-10-12:** [Soft design system](tasks/UI-022-soft-design-system.md) replaces the Liquid Glass direction by user decision.
-- **2026-10-12:** [Two-finger double-tap engine/storage](verification/two-finger-double-tap-engine.md): schema 27; preset exposure and physical acceptance open.
-- **2026-10-12:** [Trackpad focus cancellation](verification/trackpad-focus-cancellation.md) repaired and user-confirmed; measured timing open.
 
 Source: **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14; 38 screens × Light/Dark, English only) is the design source; [DESIGN](DESIGN.md) locates it. The earlier Liquid Glass document of the same name is fully superseded. Older entries: [history](history/2026-10.md).
 
@@ -54,6 +53,8 @@ Source: **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14; 38 
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
+| [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | awaiting_verification | Unassigned; released | User checklist: glide feel per length, wheel bindings, Cmd/Ctrl/Shift and trackpad unchanged, per-app toggles, × on the warning, Light/Dark. |
+| [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | awaiting_verification | Unassigned; released | User checklist: Devices on the MX Master 2S, persistence, banner, wheel reverse/speed ("Passed on, changed" in diagnostics), trackpad unaffected, Light/Dark. |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths. |
 | [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned; released | Walk the physical checklist for held output, modifiers, wheel, excluded apps, trackpad keys and the new actions. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Draw screens for new functionality as it is built (Mouse/Magic Mouse editors, action parameters, diagnostics). |

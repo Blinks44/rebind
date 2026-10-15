@@ -20,6 +20,9 @@ import Dispatch
     private(set) var workspaceActionInProgress = false
     private(set) var appleShortcutInProgress = false
     let loginItem: LoginItemModel
+    /// Mouse makers' apps running now, and the connected mice with their hardware settings.
+    let companionApps = CompanionAppMonitor()
+    let mouseHardware = MouseHardware()
     let activeLanguage: AppLanguage
     @ObservationIgnored private let systemLanguages: [String]
     @ObservationIgnored private let languagePreferenceSaved: (AppLanguagePreference) -> Void
@@ -101,6 +104,7 @@ import Dispatch
         error = nil
         configurationReplacementRevision &+= 1
         if languageChanged { languagePreferenceSaved(updated.languagePreference) }
+        mouseHardware.refresh()
     }
 
     /// A UI-only transaction: do not reconfigure/cancel/restart the input engine.
@@ -129,6 +133,12 @@ import Dispatch
     func start() {
         guard timer == nil else { return }
         previousApplication.start()
+        // Once a companion app quits, write the stored settings it may have replaced.
+        companionApps.changed = { [weak self] in self?.mouseHardware.refresh() }
+        companionApps.start()
+        mouseHardware.storedSettings = { [weak self] in self?.configuration.mouseHardware ?? [] }
+        mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0) == nil }
+        mouseHardware.start()
         configureEngine(configuration)
         refreshSessionProtection()
         refreshWindowDisplays()
@@ -158,6 +168,8 @@ import Dispatch
 
     func stop() {
         previousApplication.stop()
+        companionApps.stop()
+        mouseHardware.stop()
         cancelRecording()
         mailbox.stop()
         // The worker may not run again before the process exits: release held keys here.
@@ -381,9 +393,40 @@ import Dispatch
     /// Adds an app in which Rebind stays out of the way. False when it is already listed or rejected.
     @discardableResult func excludeApplication(_ target: ApplicationTarget) -> Bool {
         var updated = configuration
-        updated.excludedApplications.append(target)
+        updated.excludedApplications.append(ExcludedApplication(target: target))
         do { try updated.validate() } catch { self.error = .excludedAppRejected; return false }
         return trySave(updated)
+    }
+
+    /// What keeps working in an excluded app: bindings and/or smooth scrolling.
+    func setExclusion(_ bundleIdentifier: String, allowsBindings: Bool? = nil, allowsSmoothScrolling: Bool? = nil) {
+        var updated = configuration
+        guard let index = updated.excludedApplications.firstIndex(where: { $0.bundleIdentifier == bundleIdentifier }) else { return }
+        if let allowsBindings { updated.excludedApplications[index].allowsBindings = allowsBindings }
+        if let allowsSmoothScrolling { updated.excludedApplications[index].allowsSmoothScrolling = allowsSmoothScrolling }
+        guard updated != configuration else { return }
+        trySave(updated)
+    }
+
+    func setSmoothScrolling(enabled: Bool? = nil, glide: SmoothScrollingGlide? = nil, scope: SmoothScrollingScope? = nil) {
+        var updated = configuration
+        if let enabled { updated.smoothScrolling = enabled }
+        if let glide { updated.smoothScrollingGlide = glide }
+        if let scope { updated.smoothScrollingScope = scope }
+        guard updated != configuration else { return }
+        trySave(updated)
+    }
+
+    /// Companion apps whose Mouse page warning is still shown: a newly seen app shows it again.
+    var visibleMouseCompanionApps: [CompanionApp] {
+        mouseCompanionApps.filter { !configuration.dismissedCompanionApps.contains($0.name) }
+    }
+
+    func dismissCompanionWarning(for apps: [CompanionApp]) {
+        var updated = configuration
+        for app in apps where !updated.dismissedCompanionApps.contains(app.name) { updated.dismissedCompanionApps.append(app.name) }
+        guard updated != configuration else { return }
+        trySave(updated)
     }
 
     func includeApplication(_ bundleIdentifier: String) {
@@ -400,8 +443,27 @@ import Dispatch
         trySave(updated)
     }
 
+    /// Running vendor apps that may take buttons or settings of a connected mouse.
+    var mouseCompanionApps: [CompanionApp] {
+        companionApps.running.filter { app in mouseHardware.mice.contains { $0.vendorID == app.vendorID } }
+    }
+
+    /// Saves wheel and pointer settings for one mouse model and writes them to it.
+    func setMouseHardware(_ settings: MouseHardwareSettings) {
+        var updated = configuration
+        if let index = updated.mouseHardware.firstIndex(where: { $0.deviceKey == settings.deviceKey }) {
+            updated.mouseHardware[index] = settings
+        } else {
+            updated.mouseHardware.append(settings)
+        }
+        guard updated != configuration else { return }
+        do { try updated.validate() } catch { self.error = .storageWriteFailed; return }
+        if trySave(updated) { mouseHardware.apply(settings) }
+    }
+
     /// Plain-text facts for a bug report. Counts and states only: no triggers, shortcuts,
-    /// typed text, app names or paths ever appear in it.
+    /// typed text, user-chosen app names or paths ever appear in it. Mouse models and
+    /// running companion apps (a fixed list of vendor apps) help explain device issues.
     func supportReport(information: AboutInformation = AboutInformation(),
                        system: String = ProcessInfo.processInfo.operatingSystemVersionString) -> String {
         let scopes: [(String, DeviceScope)] = [("keyboard", .allKeyboards), ("mouse", .allMice),
@@ -415,12 +477,17 @@ import Dispatch
             "Accessibility: \(permissions.accessibility); event sending: \(permissions.posting); input monitoring: \(permissions.listening)",
             "Configuration: schema \(configuration.schemaVersion), locked: \(storageLocked)",
             "Profiles: \(configuration.profiles.count); bindings in all profiles: \(configuration.profiles.reduce(0) { $0 + $1.bindings.count })",
-            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), speed \(configuration.mouseWheelSpeed.rawValue)"
+            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), speed \(configuration.mouseWheelSpeed.rawValue); smooth scrolling: \(configuration.smoothScrolling ? "\(configuration.smoothScrollingGlide.rawValue), \(configuration.smoothScrollingScope.rawValue)" : "off")"
         ]
         for (name, scope) in scopes {
             let scoped = rules.filter { $0.scope == scope }
             lines.append("Selected profile, \(name): \(scoped.count) bindings, \(scoped.filter(\.isEnabled).count) enabled")
         }
+        lines.append("Companion apps running: " + (companionApps.running.isEmpty ? "none"
+            : companionApps.running.map(\.name).joined(separator: ", ")))
+        lines.append("Mice: " + (mouseHardware.mice.isEmpty ? "none" : mouseHardware.mice.map {
+            "\($0.name) (\(String(format: "%04x", $0.vendorID)), \($0.transport), \($0.hardware == nil ? "no extra settings" : "HID++")"
+        }.joined(separator: "; ")) + "; stored mouse settings: \(configuration.mouseHardware.count)")
         let kinds = Dictionary(grouping: rules, by: { ActionKind(action: $0.action).rawValue }).mapValues(\.count)
         lines.append("Actions: " + kinds.sorted { $0.key < $1.key }.map { "\($0.key) ×\($0.value)" }.joined(separator: ", "))
         return lines.joined(separator: "\n")

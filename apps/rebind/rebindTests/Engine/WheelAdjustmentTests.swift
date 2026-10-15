@@ -18,17 +18,30 @@ import Testing
         #expect(event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) > 0)
     }
 
-    @Test func continuousAndMomentumScrollingIsNeverChanged() throws {
+    @Test func aContinuousWheelWithoutPhaseIsReversed() throws {
+        // A high-resolution wheel (such as an MX Master without Logitech software) arrives as
+        // continuous pixel scrolling with no gesture phase.
+        let wheel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
+                                         wheel1: 12, wheel2: 0, wheel3: 0))
+        #expect(wheel.getIntegerValueField(.scrollWheelEventIsContinuous) == 1)
+        let before = wheel.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
+        ScrollEventAdapter.adjust(wheel, by: WheelAdjustment(reverses: true, multiplier: 2))
+        #expect(before > 0)
+        #expect(wheel.getIntegerValueField(.scrollWheelEventPointDeltaAxis1) == -2 * before)
+    }
+
+    @Test(arguments: [CGEventField.scrollWheelEventScrollPhase, .scrollWheelEventMomentumPhase])
+    func trackpadAndMomentumScrollingIsNeverChanged(_ phase: CGEventField) throws {
         let trackpad = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
                                             wheel1: 12, wheel2: 0, wheel3: 0))
-        #expect(trackpad.getIntegerValueField(.scrollWheelEventIsContinuous) == 1)
+        trackpad.setIntegerValueField(phase, value: 2)
         let before = trackpad.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
         ScrollEventAdapter.adjust(trackpad, by: WheelAdjustment(reverses: true, multiplier: 2))
         #expect(trackpad.getIntegerValueField(.scrollWheelEventPointDeltaAxis1) == before)
-        let momentum = try wheel(vertical: 1)
-        momentum.setIntegerValueField(.scrollWheelEventMomentumPhase, value: 1)
-        ScrollEventAdapter.adjust(momentum, by: WheelAdjustment(reverses: true, multiplier: 1))
-        #expect(momentum.getIntegerValueField(.scrollWheelEventDeltaAxis1) == 1)
+        let stepped = try wheel(vertical: 1)
+        stepped.setIntegerValueField(phase, value: 1)
+        ScrollEventAdapter.adjust(stepped, by: WheelAdjustment(reverses: true, multiplier: 1))
+        #expect(stepped.getIntegerValueField(.scrollWheelEventDeltaAxis1) == 1)
     }
 
     @Test func theAdjustmentAppliesOnlyWhileRulesRunAndPersists() throws {
@@ -41,8 +54,8 @@ import Testing
         configuration.mouseWheelSpeed = .fast
         mailbox.configure(configuration)
         #expect(mailbox.wheelAdjustment == WheelAdjustment(reverses: true, multiplier: 2))
-        configuration.excludedApplications = [ApplicationTarget(url: URL(filePath: "/Applications/Game.app"),
-                                                                bundleIdentifier: "com.example.game")]
+        configuration.excludedApplications = [ExcludedApplication(target: ApplicationTarget(
+            url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))]
         mailbox.configure(configuration)
         mailbox.setForegroundApplication("com.example.game")
         #expect(mailbox.wheelAdjustment == nil)

@@ -68,7 +68,7 @@ nonisolated struct InputDiagnostics: Sendable {
         revision &+= 1
     }
 
-    mutating func record(_ event: InputEvent, suppressed: Bool, queued: Bool) {
+    mutating func record(_ event: InputEvent, suppressed: Bool, queued: Bool, adjusted: Bool = false) {
         guard isRunning, !event.isSynthetic, let now = event.receivedAt else { return }
         let kind: InputDiagnostic.Kind
         switch event.trigger {
@@ -86,7 +86,7 @@ nonisolated struct InputDiagnostics: Sendable {
         case .modifiersChanged: return
         }
         append(kind: kind, phase: phase, modifiers: event.modifiers,
-               outcome: queued ? .queued : (suppressed ? .suppressed : .passedThrough), at: now)
+               outcome: queued ? .queued : (suppressed ? .suppressed : (adjusted ? .adjusted : .passedThrough)), at: now)
     }
 
     func snapshot() -> DiagnosticSnapshot {

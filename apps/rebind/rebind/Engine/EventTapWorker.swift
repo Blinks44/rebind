@@ -8,6 +8,7 @@ import Synchronization
 // worker thread. Only the checked-Sendable Mutex mailbox crosses threads.
 nonisolated final class EventTapWorker {
     private let mailbox: EngineMailbox
+    private let scroller = SmoothScroller.start()
     private var port: CFMachPort?
     private var source: CFRunLoopSource?
     private var capturesPointerMotion = false
@@ -102,6 +103,7 @@ nonisolated final class EventTapWorker {
     }
 
     private func installTap(capturePointerMotion: Bool) {
+        AttachedHIDScroll.prepare()
         let mask = Self.eventMask(capturePointerMotion: capturePointerMotion)
         let context = Unmanaged.passUnretained(self).toOpaque()
         guard let port = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
@@ -123,6 +125,7 @@ nonisolated final class EventTapWorker {
     }
 
     private func removeTap() {
+        scroller.cancel()
         if let source { CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .defaultMode) }
         if let port { CFMachPortInvalidate(port) }
         source = nil
@@ -158,7 +161,13 @@ nonisolated final class EventTapWorker {
             input.receivedAt = DispatchTime.now().uptimeNanoseconds
             guard !mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) else { return nil }
             if let adjustment = mailbox.wheelAdjustment { ScrollEventAdapter.adjust(event, by: adjustment) }
-            return pass(event)
+            let passed = pass(event)
+            // A click no binding took becomes a glide; the original click is swallowed.
+            if let smooth = mailbox.smoothScrolling, SmoothScroller.applies(to: event, settings: smooth) {
+                scroller.feed(event, settings: smooth)
+                return nil
+            }
+            return passed
         }
         let trigger: InputTrigger
         let phase: InputEvent.Phase

@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A1000000000000000000001B /* HIDPP in Frameworks */ = {isa = PBXBuildFile; productRef = A1000000000000000000001C /* HIDPP */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A10000000000000000000001 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -38,6 +42,7 @@
 		75EDDC63307784AF00EC4D02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				A1000000000000000000001B /* HIDPP in Frameworks */,
 			);
 		};
 		A10000000000000000000004 /* Frameworks */ = {
@@ -83,6 +88,9 @@
 				75EDDC68307784AF00EC4D02 /* rebind */,
 			);
 			name = rebind;
+			packageProductDependencies = (
+				A1000000000000000000001C /* HIDPP */,
+			);
 			productName = rebind;
 			productReference = 75EDDC66307784AF00EC4D02 /* Rebind.app */;
 			productType = "com.apple.product-type.application";
@@ -141,6 +149,9 @@
 			);
 			mainGroup = 75EDDC5D307784AF00EC4D02;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A1000000000000000000001D /* XCLocalSwiftPackageReference "Packages/HIDPP" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 75EDDC67307784AF00EC4D02 /* Products */;
 			projectDirPath = "";
@@ -442,6 +453,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A1000000000000000000001D /* XCLocalSwiftPackageReference "Packages/HIDPP" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/HIDPP;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1000000000000000000001C /* HIDPP */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HIDPP;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 75EDDC5E307784AF00EC4D02 /* Project object */;
 	validationLevel = 1;

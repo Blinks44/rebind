@@ -4,7 +4,8 @@ nonisolated struct InputDiagnostic: Identifiable, Equatable, Sendable {
         case button(UInt32), wheel(ScrollDirection), unsupportedScroll
     }
     enum Phase: Equatable, Sendable { case down, up, drag, scroll, activation }
-    enum Outcome: Equatable, Sendable { case passedThrough, suppressed, queued }
+    /// `adjusted`: passed on with the wheel reversed or sped up (Input settings).
+    enum Outcome: Equatable, Sendable { case passedThrough, adjusted, suppressed, queued }
 
     let id: UInt64
     let elapsedMilliseconds: UInt64

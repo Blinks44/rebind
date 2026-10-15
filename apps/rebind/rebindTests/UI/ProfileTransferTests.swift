@@ -17,8 +17,8 @@ import Testing
         var configuration = Configuration(isEnabled: true, bindings: [binding(3)])
         try configuration.createProfile(name: "Work")
         configuration.bindings = [binding(4)]
-        configuration.excludedApplications = [ApplicationTarget(url: URL(filePath: "/Applications/Game.app"),
-                                                                bundleIdentifier: "com.example.game")]
+        configuration.excludedApplications = [ExcludedApplication(target: ApplicationTarget(
+            url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))]
         configuration.reversesMouseWheel = true
         let work = configuration.selectedProfileID
         let exported = try configuration.exportingProfile(work)

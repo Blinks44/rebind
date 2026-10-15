@@ -29,8 +29,10 @@ nonisolated final class EngineMailbox: Sendable {
         var actionFailed: RebindAction?
         var hasPointerGestureRules = false
         var enabled = false
-        /// Bundle identifiers of apps in which Rebind leaves all input alone.
+        /// Bundle identifiers of apps in which Rebind skips bindings, gestures and wheel changes.
         var excludedApplications: Set<String> = []
+        /// Bundle identifiers of apps in which wheel clicks are not smoothed.
+        var smoothScrollingExclusions: Set<String> = []
         var foregroundBundleID: String?
         /// Enabled and not in front of an excluded app. Pause state itself is `enabled`.
         var isMatching: Bool { enabled && !(foregroundBundleID.map(excludedApplications.contains) ?? false) }
@@ -45,6 +47,7 @@ nonisolated final class EngineMailbox: Sendable {
         var held: [HeldOutput] = []
         var keyRepeat = KeyRepeatTiming()
         var wheel: WheelAdjustment?
+        var smoothScrolling: SmoothScrollingSettings?
         static let maximumHeldOutputs = 4
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
@@ -69,6 +72,18 @@ nonisolated final class EngineMailbox: Sendable {
 
         var canDispatch: Bool {
             status == .active && isMatching && !editing && !suspended && !stopped && recording == nil
+        }
+
+        /// The wheel change for an event Rebind passes through, or nil while rules are not running.
+        var activeWheelAdjustment: WheelAdjustment? {
+            status == .active && isMatching && !suspended && !stopped ? wheel : nil
+        }
+
+        /// Smooth scrolling runs while Rebind is on, unless the app in front opts out of it.
+        var activeSmoothScrolling: SmoothScrollingSettings? {
+            guard status == .active, enabled, !suspended, !stopped,
+                  !(foregroundBundleID.map(smoothScrollingExclusions.contains) ?? false) else { return nil }
+            return smoothScrolling
         }
 
         /// Whether rules may match at all; ownership and the emergency bypass work regardless.
@@ -201,7 +216,11 @@ nonisolated final class EngineMailbox: Sendable {
             $0.rules = compiled.filter { capabilities.supports($0.value.action) }
             $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
             $0.enabled = configuration.isEnabled
-            $0.excludedApplications = Set(configuration.excludedApplications.map(\.bundleIdentifier))
+            $0.excludedApplications = Set(configuration.excludedApplications.filter { !$0.allowsBindings }.map(\.bundleIdentifier))
+            $0.smoothScrollingExclusions = Set(configuration.excludedApplications.filter { !$0.allowsSmoothScrolling }
+                .map(\.bundleIdentifier))
+            $0.smoothScrolling = configuration.smoothScrolling
+                ? SmoothScrollingSettings(glide: configuration.smoothScrollingGlide, scope: configuration.smoothScrollingScope) : nil
             $0.cancelQueuedWork()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
             $0.keyRepeat = keyRepeat
@@ -264,7 +283,12 @@ nonisolated final class EngineMailbox: Sendable {
 
     /// The wheel change for an event Rebind passes through, or nil while rules are not running.
     var wheelAdjustment: WheelAdjustment? {
-        state.withLock { $0.status == .active && $0.isMatching && !$0.suspended && !$0.stopped ? $0.wheel : nil }
+        state.withLock { $0.activeWheelAdjustment }
+    }
+
+    /// Smooth scrolling for an event Rebind passes through, or nil when it is off here.
+    var smoothScrolling: SmoothScrollingSettings? {
+        state.withLock { $0.activeSmoothScrolling }
     }
 
     func nextHeldKey(at now: UInt64) -> HeldKeyCommand? { state.withLock { $0.nextHeldKey(at: now) } }
@@ -401,8 +425,10 @@ nonisolated final class EngineMailbox: Sendable {
         if event.phase != .drag { state.inputActivity &+= 1; state.trackpadDispatch = nil }
         let queuedCount = state.pending.count + state.held.count
         let suppressed = handle(event, state: &state, secureInput: secureInput)
+        // A wheel event passed on is reversed or sped up by the tap right after this.
         state.diagnostics.record(event, suppressed: suppressed,
-                                 queued: state.pending.count + state.held.count > queuedCount)
+                                 queued: state.pending.count + state.held.count > queuedCount,
+                                 adjusted: !suppressed && event.phase == .scroll && state.activeWheelAdjustment != nil)
         return suppressed
     }
 

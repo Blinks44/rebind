@@ -66,6 +66,9 @@ struct BindingsView: View {
                 Banner(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
                     Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked).secondaryButton()
                 }.padding(.top, 24)
+            } else if scope == .allMice, !model.visibleMouseCompanionApps.isEmpty {
+                let apps = model.visibleMouseCompanionApps
+                CompanionBanner(apps: apps) { model.dismissCompanionWarning(for: apps) }.padding(.top, 24)
             } else if scope.isTrackpad && !bindings.isEmpty {
                 Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
                     .padding(.top, 24)

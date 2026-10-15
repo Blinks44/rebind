@@ -1,5 +1,34 @@
 Rebind: third-party notices
 
+HIDPP (Logitech HID++ transport, feature lookup, Adjustable DPI, Hi-Res Wheel):
+vendored from https://github.com/linearmouse/linearmouse/tree/843d9a070cc64d56b07fc7f16d03b0f34ff33412/Modules/HIDPP
+Revision: 843d9a070cc64d56b07fc7f16d03b0f34ff33412
+The same LinearMouse revision is the reference for SmoothScroller (posting a glide of
+tagged continuous scroll events) and AttachedHIDScroll (scaling the HID event attached
+to a scroll event); both are Rebind implementations with a simpler curve.
+
+MIT License
+
+Copyright (c) 2021-2024 LinearMouse
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 SpaceShortcutSender: HID Ctrl+Arrow recipe checked against
 https://github.com/cehbz/spacekit/blob/5363f0b8285832e505fd030aa1199113f3b83981/cmd/spaceswitch/native.go
 Revision: 5363f0b8285832e505fd030aa1199113f3b83981

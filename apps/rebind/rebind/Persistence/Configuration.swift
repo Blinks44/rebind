@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 34
+    static let currentSchemaVersion = 36
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -14,12 +14,19 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     var showsMenuBarIcon = true
     /// Whether launching Rebind (including at login) opens its main window.
     var opensWindowAtLaunch = true
-    /// Apps in which Rebind leaves all input alone while they are in front.
-    var excludedApplications: [ApplicationTarget] = []
+    /// Apps in which Rebind skips bindings and/or smooth scrolling while they are in front.
+    var excludedApplications: [ExcludedApplication] = []
     var pointerGestureDistance = PointerGestureDistance.standard
-    /// Stepped mouse wheels only; trackpads and continuous wheels are never changed.
+    /// Mouse wheels only; trackpad and Magic Mouse scrolling is never changed.
     var reversesMouseWheel = false
     var mouseWheelSpeed = MouseWheelSpeed.standard
+    var smoothScrolling = false
+    var smoothScrollingGlide = SmoothScrollingGlide.standard
+    var smoothScrollingScope = SmoothScrollingScope.steppedWheels
+    /// Companion apps whose warning on the Mouse page the user hid.
+    var dismissedCompanionApps: [String] = []
+    /// Wheel and pointer settings Rebind writes to supported mice, one entry per model.
+    var mouseHardware: [MouseHardwareSettings] = []
     var profiles: [RuleProfile]
     var selectedProfileID: UUID
 
@@ -49,10 +56,12 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         let names = profiles.compactMap(\.nameKey)
         guard Set(names).count == names.count else { throw ConfigurationError.profileInvalid }
         guard excludedApplications.count <= Self.maximumExcludedApplications,
-              excludedApplications.allSatisfy(\.isSupported),
+              excludedApplications.allSatisfy(\.target.isSupported), dismissedCompanionApps.count <= 20,
               Set(excludedApplications.map(\.bundleIdentifier)).count == excludedApplications.count else {
             throw ConfigurationError.invalid
         }
+        guard mouseHardware.count <= MouseHardwareSettings.maximumDevices, mouseHardware.allSatisfy(\.isValid),
+              Set(mouseHardware.map(\.deviceKey)).count == mouseHardware.count else { throw ConfigurationError.invalid }
         let allBindings = profiles.flatMap(\.bindings)
         guard allBindings.count <= 1000, Set(allBindings.map(\.id)).count == allBindings.count,
               allBindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
@@ -79,7 +88,11 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try validate()
             return self
         }
-        guard schemaVersion >= 34 || (excludedApplications.isEmpty && pointerGestureDistance == .standard
+        guard schemaVersion >= 36 || (!smoothScrolling && smoothScrollingGlide == .standard
+                                      && smoothScrollingScope == .steppedWheels && dismissedCompanionApps.isEmpty
+                                      && excludedApplications.allSatisfy { !$0.allowsBindings && $0.allowsSmoothScrolling }),
+              schemaVersion >= 35 || mouseHardware.isEmpty,
+              schemaVersion >= 34 || (excludedApplications.isEmpty && pointerGestureDistance == .standard
                                       && !reversesMouseWheel && mouseWheelSpeed == .standard),
               schemaVersion >= 33 || (languagePreference != .es && languagePreference != .zhHans),
               schemaVersion >= 6 || profiles.count == 1,
@@ -110,7 +123,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, isEnabled, hasCompletedSetup, languagePreference, bindings, profiles, selectedProfileID
         case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch, excludedApplications, pointerGestureDistance
-        case reversesMouseWheel, mouseWheelSpeed
+        case reversesMouseWheel, mouseWheelSpeed, mouseHardware
+        case smoothScrolling, smoothScrollingGlide, smoothScrollingScope, dismissedCompanionApps
     }
 
     init(from decoder: any Decoder) throws {
@@ -137,10 +151,21 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             opensWindowAtLaunch = try values.decode(Bool.self, forKey: .opensWindowAtLaunch)
         }
         if version >= 34 {
-            excludedApplications = try values.decode([ApplicationTarget].self, forKey: .excludedApplications)
+            // Before schema 36 an excluded app skipped bindings only; smooth scrolling did not exist.
+            excludedApplications = version >= 36
+                ? try values.decode([ExcludedApplication].self, forKey: .excludedApplications)
+                : try values.decode([ApplicationTarget].self, forKey: .excludedApplications)
+                    .map { ExcludedApplication(target: $0, allowsBindings: false, allowsSmoothScrolling: true) }
             pointerGestureDistance = try values.decode(PointerGestureDistance.self, forKey: .pointerGestureDistance)
             reversesMouseWheel = try values.decode(Bool.self, forKey: .reversesMouseWheel)
             mouseWheelSpeed = try values.decode(MouseWheelSpeed.self, forKey: .mouseWheelSpeed)
+        }
+        if version >= 35 { mouseHardware = try values.decode([MouseHardwareSettings].self, forKey: .mouseHardware) }
+        if version >= 36 {
+            smoothScrolling = try values.decode(Bool.self, forKey: .smoothScrolling)
+            smoothScrollingGlide = try values.decode(SmoothScrollingGlide.self, forKey: .smoothScrollingGlide)
+            smoothScrollingScope = try values.decode(SmoothScrollingScope.self, forKey: .smoothScrollingScope)
+            dismissedCompanionApps = try values.decode([String].self, forKey: .dismissedCompanionApps)
         }
     }
 
@@ -156,10 +181,21 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try values.encode(opensWindowAtLaunch, forKey: .opensWindowAtLaunch)
         }
         if schemaVersion >= 34 {
-            try values.encode(excludedApplications, forKey: .excludedApplications)
+            if schemaVersion >= 36 {
+                try values.encode(excludedApplications, forKey: .excludedApplications)
+            } else {
+                try values.encode(excludedApplications.map(\.target), forKey: .excludedApplications)
+            }
             try values.encode(pointerGestureDistance, forKey: .pointerGestureDistance)
             try values.encode(reversesMouseWheel, forKey: .reversesMouseWheel)
             try values.encode(mouseWheelSpeed, forKey: .mouseWheelSpeed)
+        }
+        if schemaVersion >= 35 { try values.encode(mouseHardware, forKey: .mouseHardware) }
+        if schemaVersion >= 36 {
+            try values.encode(smoothScrolling, forKey: .smoothScrolling)
+            try values.encode(smoothScrollingGlide, forKey: .smoothScrollingGlide)
+            try values.encode(smoothScrollingScope, forKey: .smoothScrollingScope)
+            try values.encode(dismissedCompanionApps, forKey: .dismissedCompanionApps)
         }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
