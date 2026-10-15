@@ -1,0 +1,16 @@
+# Verification records
+
+[CAPABILITIES](../CAPABILITIES.md) summarizes current support; [STATE](../STATE.md) indexes active tasks and [SPEC](../SPEC.md) owns current requirements. Read only evidence relevant to the task. A dated report describes its tested artifact: old schemas, controls, locale counts and implementation contracts are not today's product specification.
+
+| Topic | Evidence / current owner |
+| --- | --- |
+| Keyboard/mouse and lifecycle | [Phase 1](phase-1.md), `phase-2-*`; [CAPABILITIES](../CAPABILITIES.md) routes specific input subsets |
+| Actions | `phase-4-*`; per-action contracts, dated checks and manual fault/guard walkthroughs |
+| Trackpad | [Original tap](phase-5-four-finger-tap.md), [scheduling](trackpad-scheduling-timing.md), buffer/generation/focus reports and tap/editor records; INPUT-001–008 and UI-014 |
+| Permissions | [Gate correction](permissions.md), [native setup/recovery](permissions-native.md); UI-001 |
+| Settings and native integration | [General](general-settings-native.md), [Input/Language](input-language-native.md), [Advanced](advanced-settings-native.md), [About](about-native.md), [Mouse](mouse-native.md); corresponding UI tasks |
+| Profiles/storage | [Profiles](profiles.md), [backup staging](advanced-backup-foundation.md), [protected saves/restoration](protected-saves-and-restoration.md) |
+| Platform diagnostic | [AppKit sharing indicator](appkit-sharing-indicator.md); scoped root-cause evidence, no production workaround |
+| Superseded visual handoffs | [Historical settings design](../history/settings-design-through-2026-10-11.md); current visuals come from DESIGN + live Sketch |
+
+Keep dated commands, revision/environment, evidence source, meaningful result and limits. Current walkthroughs/open checks must remain discoverable from their task; an old report or successful build does not close them. Screenshots stay local under WORKFLOW. Remove a redundant report only after unique evidence/decisions and every open check are preserved and incoming links repaired.

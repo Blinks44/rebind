@@ -1,146 +1,105 @@
 # Rebind: shared development workflow
 
-Updated 2026-10-11. Applies to the human-directed code and Sketch agents. [AGENTS](../AGENTS.md) is the mandatory entry point; this document defines durable context and continuation. It does not create agents, send messages, change permissions or start the remapping engine automatically.
+Updated 2026-10-16. [AGENTS](../AGENTS.md) is the entry point for code and design work. This workflow defines durable context, ownership and completion; it does not authorize new agents, messages, remappings, permission changes or publication.
 
 ## Document responsibilities
 
-| File/source | Maintained content | Read when |
-| --- | --- | --- |
-| AGENTS | Startup, boundaries, routing, completion contract | Every new task/session |
-| Root README / DEVELOPMENT | Public introduction, basic setup / detailed developer commands and local behavior | Public docs/setup changes; do not put session logs or agent instructions in the root README |
-| STATE | Current summary, recent meaningful changes, open/next task index | Every task/resume and dependent handoff |
-| SPEC | Required behavior and acceptance; change only when requirements change | Product orientation and affected sections |
-| DESIGN + live Sketch | Short direction/source locator and readiness; Sketch owns visual states, components, copy and annotations | UI/brand/design tasks |
-| ENGINEERING | Platform, Swift, input, security, dependency and skill conventions | App implementation/review |
-| PLAN | Phase goals and remaining exit gates | Select/align a slice, update phase evidence |
-| tasks | One outcome's scope, ownership, design/code/evidence and next step | Work spans agents/sessions or is substantial |
-| CAPABILITIES | Detailed real capability evidence and limits | Changing/advertising a capability |
-| research | Mechanism/dependency decisions, sources and licenses | Non-trivial engine/actions/dependency work |
-| verification | Concise technical check results, limits and justified durable evidence | Run/document relevant acceptance |
-| history | Short dated technical outcomes, reasons and earlier evidence | Need rationale or prior results |
+| Source | Owns / read when |
+| --- | --- |
+| AGENTS + STATE | Boundaries and current task index; every start/resume |
+| Root README / DEVELOPMENT | Public overview / detailed build, signing and local setup |
+| SPEC | Current requirements and acceptance; product orientation or affected contracts |
+| DESIGN + live Sketch | Direction, source locator/readiness / current visual states, components, copy and annotations; UI work |
+| ENGINEERING | Native input, Swift/concurrency, storage, security and skill conventions; app code |
+| PLAN | Priorities and remaining release gates; selecting a slice |
+| tasks | One outcome's current scope, owner, implementation, evidence and next action |
+| CAPABILITIES | Actual implemented/verified subsets and limits; capability changes/claims |
+| research | Mechanism choices, sources, maintenance and licensing; non-trivial mechanisms |
+| verification | Dated results and reproducible walkthroughs; relevant acceptance |
+| history | Short dated outcomes and rationale; optional historical lookup |
 
-Do not duplicate a decision's full text in multiple files. Link to its owning record. Chat history and tool memories are supplementary. A requirement, design example, old unchecked box, screenshot or test count does not establish current implementation/support.
-
-## Repository content and language
-
-Repository documents, agent instructions, comments and skills use English; conversational replies follow the user's preferred language. Product translations and purposeful Unicode/localization fixtures remain multilingual.
-
-Commit stable requirements/design/engineering contracts, a concise current-state/task index, consequential decisions and reproducible technical verification summaries. For reported hardware results, record date, tested configuration, observed outcome and remaining limits; do not copy the person's reply. For example: “Manual test report, 2026-10-08: Option + Button 4 + leftward movement triggered Command+A in TextEdit on G603 LIGHTSPEED. Other directions and cancellation remain unverified.”
-
-Keep raw chat/tool transcripts, migration backups, personal absolute paths, actual rules/configurations and temporary logs out of commits. Workstation-only material belongs in temporary storage outside the repository; published docs must not depend on it. Use portable design names/share links and freshly resolved IDs. Build products, DerivedData and result bundles remain ignored. Before publishing screenshots, check that they show only suitable test content.
-
-Verification screenshots and exports from Sketch, the native app or other tools stay in temporary storage outside the repository by default. A visual check does not require exporting or retaining an image. Git keeps concise results identifying the tested artifact/environment, checks, observed outcome and limits; these records must be useful without local screenshots. Version an image only for a concrete purpose: a requested deliverable, shipped asset, baseline consumed by a visual test, or specific defect evidence that a written result cannot adequately preserve. Record that purpose in the owning task/evidence note; a routine native regression check alone is not a reason. Preserve existing assets/baselines; policy adoption does not automatically delete or untrack existing files. Do not blanket-ignore image extensions.
-
-A confirmation records only the result it supports: “Tester reported the configured binding working; timing and recovery checks remain open.” Design acceptance records the accepted scope/version separately from runtime verification. If the tested build or conditions are unknown, say so; a vague confirmation does not close broader acceptance. Shared STATE/tasks/evidence remain versioned. If committing is requested, review the exact staged diff; an ignore rule does not remove previously tracked private content.
-
-The commented root `.gitignore` owns shared exclusion policy for Rebind's actual Xcode/SPM, editor and local-agent output. When introducing tools or output paths, inspect existing/nested rules and preserve source, shared configuration, lockfiles, design assets, concise verification records and specifically justified evidence. Test excluded and kept paths with `git check-ignore -v --no-index`; inspect `git ls-files --cached --ignored --exclude-standard` for tracked-rule conflicts. Do not exclude entire client directories or untrack files automatically. The reusable skill's [repository hygiene guide](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md) details adaptation to other projects.
+Link to the owning record instead of copying its full content. Requirements, screenshots, old checkboxes and test counts do not establish current implementation or hardware support. Inspect actual artifacts when records disagree.
 
 ## Start, resume and establish freshness
 
-1. Read AGENTS and STATE from the current checkout, not a remembered copy. Read this workflow on first use or when it changes; refresh relevant sections after compaction.
-2. Inspect `git status --short`, branch/HEAD and relevant recent history/diff. Read the affected code/assets and task record. Preserve existing uncommitted work; do not commit other agents' files as part of yours.
-3. Locate SPEC sections/acceptance IDs and PLAN phase. Check actual implementation before deciding a feature is missing. If requirements changed, reconcile SPEC in the authorized scope.
-4. For UI, resolve the current Sketch document from DESIGN's path/name and the user's target. Stored document IDs are lookup hints and can change after save/reopen. Load MCP guides, refresh the live ID, inspect frame trees/styles/screenshots and reuse existing components. Verify referenced IDs; do not trust an old export as today's design.
-5. Identify a small outcome, owner, files/Sketch sources and required checks. Reuse an existing task ID; otherwise create a focused record from [the template](tasks/TEMPLATE.md). A tiny isolated fix needs only a short evidence/history entry. Task creation is bookkeeping, not permission to expand scope.
-6. Share a brief context update: existing implementation/design, relevant limitation, selected task and next action. Do useful authorized work; ask only for missing information that materially blocks it.
+1. Read AGENTS and STATE from the current checkout. Read this workflow on first use or when changed; refresh relevant sections after compaction or a dependent handoff.
+2. Inspect branch/HEAD, `git status --short`, relevant history/diff and the affected implementation/task. Preserve unrelated and uncommitted work. Locate the relevant SPEC acceptance and PLAN priority.
+3. For UI, resolve the live Sketch source from DESIGN. Load its MCP guides, refresh document IDs and inspect applicable frames, shared sources, styles, annotations and screenshots. An old export is not the current design.
+4. Establish a bounded outcome, owner, surfaces and required checks. Reuse a matching task; use [TEMPLATE](tasks/TEMPLATE.md) for substantial new work. A tiny isolated fix needs only concise evidence/history.
+5. Explain the selected outcome, existing result and next action briefly, then complete authorized work. Ask only about material missing behavior/access.
 
-A new chat is a useful task boundary, not a requirement after every small edit. Keep one coherent feature's implementation, debugging and verification together. Before moving chats, save a handoff even if the task is unfinished. A new agent should reconstruct the next step without reading the previous transcript.
-
-### Already-open chats after workflow changes
-
-Read the updated AGENTS and affected workflow/contracts from disk, refresh STATE and the current task, and reconcile them with the actual diff. Preserve that task's work and ownership; updating instructions is not a reason to restart implementation or run workflow setup again. Report any material conflict and continue the authorized task under the updated rules. Repeat this refresh after a relevant handoff from another agent.
+Already-open chats adopt changed instructions by re-reading them and reconciling their existing task/diff. They do not restart work or rerun setup merely to refresh context. A new chat is optional; before a handoff save enough context for another agent to continue without the old transcript.
 
 ### Short requests and role-aware task selection
 
-Interpret the intended action/outcome and established context in the user's language; example prompts are illustrations, not a command vocabulary. Tool or programming-language mentions constrain relevant sources/implementation, not the role by themselves: reading a design for implementation differs from editing it. They do not authorize installing tools or migrating the stack. Finding records, choosing IDs, reading contracts and maintaining status are the agent's responsibility. Match natural-language outcomes to task titles, requirements and actual artifacts; do not ask for an ID or old transcript when the project can answer the question.
+Interpret intent in the user's language and established scope. “Continue the task” resumes this chat's outcome; “continue design” stays in design. A fresh unqualified Rebind development request defaults to app implementation. Tool/language mentions identify applicable sources, not a new role or permission to migrate/install tools. Resolve task IDs, contracts and source locations yourself.
 
-1. Resolve role and scope from the latest request and this chat's established work. “Continue the task” resumes this chat's current outcome before choosing another. A design request stays within design; a code agent handles implementation/engineering. A fresh unqualified Rebind development request defaults to implementation. If two plausible roles/outcomes remain materially different, ask one focused question using human-readable names, while doing independent useful inspection.
-2. Reconcile STATE/PLAN/task evidence and actual artifacts. Resume the current compatible unfinished slice if ownership is available; otherwise select the highest-priority actionable slice for that role. For code, prioritize core regressions/verification and ready implementation handoffs. For design, prioritize missing designs/states that unblock implementation. A hardware gate at the top of PLAN does not become a design task. Use STATE's role recommendations as dated hints, never unconditional commands.
-3. Refresh a dependent handoff before implementation. Only its ready bounded scope is eligible; a task may contain saved initial frames plus unfinished design and code. Keep missing design/verification visible. A dedicated code agent can continue independent engineering; it changes role only when the user's request or established scope authorizes it.
-4. Announce the chosen outcome, existing result, next action and bounded success in a few sentences, then work. Do not stop for routine approval of a next step already within the request. Continue until that bounded outcome/check/handoff is complete or requires unavailable access; a plain “continue” does not authorize working through the entire roadmap indefinitely.
+A named feature takes precedence over default priorities. Inspect related partial work, reuse its record and derive observable acceptance. Otherwise select the highest-priority actionable slice for this role: core regressions/verification or ready handoffs for code; missing designs/states for design. A task with initial frames and missing states is not wholly design-ready.
 
-If the first item requires unavailable hardware, credentials, a design source or user interaction, leave its acceptance open and choose independent useful work from the remaining priorities. Ask only when the missing answer changes scope or blocks all useful progress. A saved next step is guidance, not authorization to change product direction, publish, send messages or alter real user settings.
-
-When blocked, say which outcome is waiting, exactly what is needed and what useful independent work remains. If nothing is actionable for this role, report that fact and the next receiving role/access requirement; do not invent polish or recreate a completed asset merely to keep busy. Active ownership conflicts still require coordination, not an automatic takeover.
-
-### A named feature or change
-
-“Let's build [feature]” selects that outcome ahead of the default next item. Check existing implementation/design and reuse a matching record; create a concise task only when useful. Derive observable acceptance and a sensible first slice from the request and current contracts, state the interpretation and proceed. Ask about materially missing behavior/product choices, not bookkeeping. Update affected requirements/priorities when the request changes them; distinguish proposed extensions from requested behavior. A design agent produces its design scope and implementation handoff; a code agent implements an existing ready contract or surfaces the precise design dependency while advancing independent prerequisites. Both agents can use the same outcome name without the user assigning IDs.
+If hardware/access/ownership blocks that slice, retain the gate and advance independent work within the authorized role. If none exists, state the exact missing input and next responsible role. Ask one focused question only for a material unresolved choice. Do not recreate completed work or treat “continue” as permission to exhaust the roadmap. A saved next step does not authorize external actions.
 
 ### Interrupted sessions and uncertain records
 
-Save the smallest usable handoff when an interruption is foreseeable: last verified state, unfinished files/design edits, failed check, ownership and next action. An abrupt termination may prevent this; the next agent must inspect the actual diff/artifacts instead of assuming the last final message or STATE is current. Keep incomplete edits distinct from verified results. Do not discard a partial implementation or restart it merely because its task still says `planned`.
+Before an interruption, save the verified artifact, unfinished edits, failed/pending checks, ownership and next action. After an abrupt interruption, inspect the actual diff; do not assume the last note was saved or discard partial implementation because its task still says `planned`.
 
 ## Task status and capability status are different
 
-Task stages: `planned`, `in_design`, `ready_for_implementation`, `implementing`, `awaiting_verification`, `done`, `blocked`, `cancelled`. Use the stages that apply; engine-only work skips design. `blocked` records a concrete dependency and a way to unblock, not vague uncertainty.
+Stages: `planned`, `in_design`, `ready_for_implementation`, `implementing`, `awaiting_verification`, `done`, `blocked`, `cancelled`. Skip inapplicable stages. `blocked` identifies a concrete dependency and how to unblock it.
 
-Also record design, implementation and verification separately. For example: design saved/reviewed; implementation integrated; software checks pass; hardware pending. `done` means the **task's explicitly bounded acceptance** is met. A completed asset-export task does not close the product's Dock/runtime gate. Hardware capability labels follow SPEC §13, independently of task stages.
-
-Record user acceptance only if actually supplied. Do not invent approval or impose an approval meeting on every design task. New alternatives should be distinguished from the agreed/current direction; ask when selecting between them changes the requested outcome. A saved design is not native UI implementation.
+Record design, implementation and verification separately. `done` requires the task's bounded acceptance on an identified final artifact. Keep `awaiting_verification` when required runtime/hardware acceptance remains open. Capability labels follow SPEC §13; distribution readiness requires SPEC §15 and PLAN's gates. Builds/mocks do not prove physical behavior. Record user acceptance only when supplied, limited to its actual scope; no routine approval ceremony is required.
 
 ## Code + design loop
 
-1. The task states user outcome, relevant requirements, current behavior and acceptance.
-2. Design work inspects the current app/capability limits and Sketch. It covers applicable empty/loading/error/disabled/conflict/permission/appearance states and copy. Prototype examples must not advertise unsupported triggers/actions as implemented.
-3. Make the saved Sketch source self-contained: reusable components, applicable states, product copy and interaction/native-control annotations belong beside the frames. Review changes using live MCP screenshots. Keep only a short repository note naming the source/date, ready scope, limits and next step. Routine PNG exports, mirrored frame/style inventories and separate visual implementation manuals are not required. Apply the repository image policy above to any exports.
-4. The implementation agent opens the current Sketch source through MCP and inspects its frames, components and annotations directly, even when a repository summary exists. It reuses current state/persistence/engine and implements the bounded slice. Record justified platform differences and behavior/test evidence; keep SPEC authoritative for required behavior.
-5. Run relevant software and native visual/accessibility checks, then hardware/permission checks when required and authorized. Review against the handed-off design; record differences and remaining gates. Neither a Sketch screenshot nor an Xcode build proves runtime effects.
-6. Complete the short status records below. If design changes after implementation starts, identify the affected surfaces/date and what needs reconciliation; there is no separate design-transfer ceremony.
+The task owns outcome/acceptance. Inspect the actual app/capability limits and live Sketch before design or implementation. Cover applicable empty, loading, error, disabled, conflict, permission, appearance and recovery states without advertising unsupported behavior.
+
+For design work, save a self-contained Sketch source with reusable components, states, copy and native interaction annotations; review it live. The repository needs source/date, ready scope, limits and next step. The implementation agent inspects that source directly, reuses state/storage/engine and records justified native differences. Do not mirror component inventories or routinely export PNGs.
+
+Check rendered software/native behavior against the same source revision; perform hardware/permission checks only when required and authorized. Later code or design changes invalidate affected earlier evidence. Reconcile the changed surfaces before claiming parity; a Sketch save and a Git commit are separate operations.
 
 ## Concurrent work and synchronization
 
-- Assign one owner per shared file/section and Sketch source before editing. STATE's open-task table plus task `Owner` / `Owned surfaces` fields are the coordination record. An owner is a chat/agent identifier when known, not an invented person.
-- Parallel work should use separate files and bounded Sketch targets. Shared styles affect every instance: explicitly include that impact in ownership. For overlapping work, coordinate or proceed on independent surfaces first.
-- Before updating a shared doc, re-read it and merge only your section; do not overwrite another task's new status with a stale whole-file copy. An owner claim may be stale: inspect the latest record and clarify an actual conflict; do not silently take over live edits.
-- Markdown owner fields are advisory coordination, not atomic locks. Check activity when possible and record ownership time/revision and release/transfer. If ownership is uncertain, use independent surfaces or coordinate; do not infer that an old date alone permits takeover. Separate worktrees isolate code, but their task boards also diverge until explicitly integrated. Choose one shared coordination location when parallel work is used; Git alone is not a live lock service.
-- Both agents need access to these project docs. If the Sketch agent has only MCP, supply the startup documents and task handoff and arrange for its result to be written back; it cannot read inaccessible files automatically. Shared filesystem access does not mean shared in-memory context.
-- Separate clones/worktrees see different revisions until synchronized. Record the task's branch/base commit, current implementation commit when actually made, and whether work is still uncommitted. Transfer intended changes through normal Git review/integration before the dependent agent starts. Never reset a checkout or auto-commit all changes to make synchronization easy.
-- Sketch outside Git needs its own saved document/version and backups. A Git commit does not save a Sketch edit. Code and design references should identify the same handoff version; refresh before dependent work, not merely once at chat creation.
+- Claim one owner per shared file/section and Sketch source in the task and STATE. Record scope, time/baseline and release/transfer; identifiers are advisory, not atomic locks.
+- Prefer independent surfaces. Shared styles/catalogs need explicit impact ownership. Re-read shared records immediately before editing and merge only your changes. Do not infer takeover permission from an old date; coordinate an active overlap or leave it untouched.
+- Both roles need project records and relevant artifacts. If a client cannot read the repository, provide the startup/handoff and establish who persists its result. Shared files do not create shared chat memory.
+- Separate worktrees/clones need an explicit shared coordination location and normal Git integration. Record real baselines/implementation commits or uncommitted files; never reset or auto-commit unrelated work for synchronization.
+- Sketch needs its own saved version/backup. Refresh both source and code before dependent work; session IDs are lookup hints.
+
+## Repository content and language
+
+Shared documentation, instructions, comments and skills use English; conversation follows the user's language. Preserve product translations and intentional Unicode fixtures.
+
+Keep stable contracts, current state/tasks, significant decisions and concise reproducible verification. Report date, known build/OS/device/settings, observed result, evidence source and limits. Distinguish agent observation, tester report and injected tests. Unknown conditions remain unknown; a vague confirmation does not close broad acceptance.
+
+Keep transcripts, quoted replies, personal absolute paths, real rules/configurations, migration backups and temporary logs out of commits. Use portable source names/access instructions. Screenshots/exports stay in temporary storage outside the repository by default; written results must remain useful without them. Version an image only for a documented deliverable, shipped asset, required visual-test baseline or defect evidence that text cannot preserve. Preserve existing justified assets; policy changes do not automatically delete/untrack them.
+
+The commented `.gitignore` owns actual Xcode/SPM/editor/local-output exclusions. For new paths, inspect nested rules, test ignored and kept samples with `git check-ignore -v --no-index`, and inspect `git ls-files --cached --ignored --exclude-standard`. Keep shared context, source/design inputs and lockfiles visible. Do not blanket-ignore client directories or image extensions; do not auto-untrack files. See the skill's [hygiene reference](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md).
+
+## Incremental documentation maintenance
+
+Ordinary completion includes maintaining the affected topic. Replace superseded requirements/current claims and completed next steps directly; do not append a chain of overrides. Keep task summaries focused on current scope, evidence links and open acceptance. History receives the short outcome/reason, not another session transcript.
+
+Remove completed tasks from STATE's active table. Retain records owning unique decisions/evidence or a useful handoff. Retire a redundant record only after durable facts and every open check have an identified owner; repair incoming links/anchors in the same change. Old evidence is not disposable merely because it is old or the build passes. Obsolete visual inventories can be reduced to source/date and meaningful results because live Sketch owns current visuals.
+
+Keep STATE roughly 1–2 pages (preferably under 8 KiB), PLAN a short roadmap and startup free of mandatory archives. Broader moves/merges/deletions require a scoped cleanup task; routine work does not authorize unrelated reorganization. Do not introduce a new archive hierarchy or bookkeeping framework without a concrete need.
 
 ## Verification and completion contract
 
 Before the final answer or interruption handoff:
 
-1. Update the task with actual deliverables, artifact/revision references, checks run, failures/limits and a concrete next step. Keep `awaiting_verification` if required acceptance remains open.
-2. Save concise behavior/build/hardware results in the relevant task or verification file. Date them; specify tested revision, relevant OS/device/permissions, exact commands and result. Say whether a result is user-reported, agent-observed or an injected test. For design-only work, a saved/reviewed Sketch source and concise task note are sufficient; do not create a parallel visual specification or persist every MCP screenshot. Local logs/images may expire: retain meaningful results and limits in the repo, applying the image policy above rather than routinely committing screenshots.
-3. Update STATE's affected facts, recent changes and task rows. Keep roughly 1–2 pages, preferably under 8 KiB. Retain only a handful of recent meaningful changes; move old detail to history. Do not repeat the full capability matrix or daily tool transcript.
-4. Update SPEC only for changed requirements; DESIGN only for changed direction/index/delivery; PLAN only for phase gates/priorities; CAPABILITIES only for changed supported behavior/evidence; research only for a relevant decision. No requirement to touch every file.
-5. Add a concise dated history entry for substantive work: outcome, reason, task/evidence link, unresolved acceptance. If the task already contains detail, link rather than duplicating. Never relabel an old verification as a new run.
-6. Check links/status consistency and `git diff --check`. Build after app code changes; run meaningful behavioral tests for changed logic. Docs-only work needs document verification; asset-only work needs the relevant asset/build checks. Do not launch input interception or execute configured actions merely to validate documentation.
-7. Report the meaningful outcome name, what is ready, checks/limits and the next step for this role or receiving role. When a role transfer is needed, include a short natural-language request such as “Implement the prepared first-run and permissions design”; it must resolve from shared records without an ID. Documentation/handoff is part of completion, not an optional promise for later. The user should not have to ask where the work stopped.
-
-Review the final diff against acceptance, capability limits and the affected design states. Fix actionable findings or leave them explicitly open. Relevant checks must describe the final changed artifact: later code/design changes invalidate affected earlier evidence until checked again. Identify an actual commit when one exists; for uncommitted work record the baseline plus changed files and, where reproducibility needs it, an artifact digest. Do not invent a commit to fill a field. A design saved after native review requires reconciliation of the affected native surfaces.
-
-Task `done` does not mean the app is ready for distribution. Product readiness still requires SPEC §15 and PLAN's remaining reliability/hardware/accessibility/localization/signing/minimum-OS gates, on identified artifacts. Workflow setup cannot certify product readiness.
-
-Do not append sessions to PLAN. New entries go into `history/YYYY-MM.md`; new complex decisions stay in the affected task or a focused research document. Historical evidence may contain superseded decisions; current contracts identify the applicable scope.
+1. Update the affected task/evidence with the final deliverables, real revision or baseline plus uncommitted files, actual checks/failures, limits and one next action per applicable role. Keep historical tests dated; a document edit is not a rerun.
+2. Update STATE's affected facts/rows and concise recent outcomes. Update SPEC for changed requirements, DESIGN for direction/source/readiness, PLAN for priorities/gates, CAPABILITIES for supported behavior/evidence and research for mechanism decisions. Touch only relevant records.
+3. Add a short dated history entry for substantive work, linking detailed evidence. Apply incremental maintenance above so current handoffs describe the final result.
+4. Review the final diff against acceptance, capability limits and affected design states. Build after app changes; run meaningful behavioral tests for changed logic and relevant asset checks. Keep unresolved runtime/hardware/accessibility/platform gates explicit.
+5. Report the meaningful outcome, what is ready/open and the next action/role. A receiving-role request such as “Verify Language selection and relaunch” must resolve from saved records without IDs or the old chat.
 
 ### Documentation review
 
-Review affected links, task/STATE/PLAN consistency and claims against source/evidence, then run `git diff --check`. Use an existing documentation check when the project already has one. Workflow setup adds no runtime, package, custom validator, CI job or test framework solely for Markdown bookkeeping.
+Check affected facts against artifacts/evidence, current task/STATE/PLAN consistency, incoming local links/anchors and `git diff --check`. Use existing document tooling where available. Docs-only work does not require app launch, interception, hardware actions, a new checker, runtime, CI job or test framework.
 
 ## Requests the user can give
 
-Open the same project/intended checkout. These are example short requests; equivalent wording in the user's language works through the same intent/context rules. The agent performs the reading, task lookup and record updates:
-
-| Intent | Sufficient request |
-| --- | --- |
-| Continue implementation | “Continue development.” |
-| Continue design | “Continue creating the design.” |
-| Resume this chat's task | “Continue the task.” |
-| Select a feature | “Let's add [user-visible feature/behavior].” |
-| Consume a saved design | “Implement the prepared first-run and permissions design.” |
-| Ask for status | “What is ready, what is open, and what will you do next?” |
-
-Task IDs/paths, acceptance details and constraints can help when the user has them; they are optional for continuing existing work. In a fresh chat, name a specific outcome only when intentionally selecting it. Give observable behavior for a genuinely new feature; the agent asks only about material ambiguity.
-
-Save work and the smallest useful continuation note before finishing; the user should not need to remind the agent. For design this means saved Sketch plus source/readiness/next-step pointers, not a second design package in Git. An optional early interruption request is “Save the current result so we can continue later.”
-
-Existing chats that began before this workflow update should be told once: “Read the updated project instructions and continue your task.” They then use the same short requests. Use the setup skill for configuration/audit; ordinary product requests use the project entry point and relevant skills.
+Ordinary requests such as “continue development”, “continue creating the design”, “continue the task”, “add [behavior]” or “implement the prepared permissions flow” use the selection rules above. IDs, source coordinates and old-chat summaries are optional. On workflow changes tell existing chats once to read updated instructions and continue their existing task.
 
 ## Reusing the workflow elsewhere
 
-The document responsibilities, freshness checks, task/evidence status, repository hygiene and handoff pattern apply to any development project. Derive contracts, commands, skills and verification from its actual domain, inputs, tools and delivery environment; the examples are not an eligibility list. Omit visual DESIGN when no visual contract exists, and use relevant API/data/engineering contracts instead. Do not copy Rebind's macOS/permission/input rules. Add architecture/decision docs only when they explain real contracts; no mandatory collection of empty files.
-
-Official background: [AGENTS discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [practical Codex guidance](https://learn.chatgpt.com/guides/best-practices). AGENTS is the entry point; arbitrary STATE/DESIGN files need these explicit reading instructions. This workflow supports fresh chats without claiming automatic cross-chat synchronization.
+The reusable [Agent Workflow Setup](../.agents/skills/agent-workflow-setup/README.md) adapts document responsibilities and checks to another project's actual domain and tools. Do not copy Rebind's macOS/input rules or require empty documents. Use it for setup/audit/migration; ordinary product work follows AGENTS and relevant skills.

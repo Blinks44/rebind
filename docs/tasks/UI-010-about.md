@@ -1,6 +1,6 @@
 # UI-010: About Rebind and bundled licenses
 
-- Updated: 2026-10-11.
+- Updated: 2026-10-16 (documentation reconciliation; dated checks unchanged).
 - Stage: `awaiting_verification`; native implementation and scoped software checks pass.
 - Owner: Unassigned; `/root` implementation released the bounded scope, 2026-10-11.
 - Ownership checked: `main` / `bf36465`; UI-007 released, UI-009 design remains independent.
@@ -32,4 +32,4 @@ Source review found no new P0/P1 accessibility blocker; native labels/headings a
 
 ## Next
 
-Verify About/Licenses VoiceOver reading/selection/Find and complete keyboard/accessibility-preference checks from the evidence checklist. The next independent implementation slice is the now-released Mouse list/editor in UI-009; inspect its current live Sketch handoff. Advanced restored-binding acceptance remains separate.
+Verify About/Licenses VoiceOver reading/selection/Find and complete keyboard/accessibility-preference checks from the evidence checklist. Mouse list/editor and whole-app styling are already integrated; select independent work from STATE. Advanced restored-binding acceptance remains separate.

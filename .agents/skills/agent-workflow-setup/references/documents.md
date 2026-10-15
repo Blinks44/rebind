@@ -32,6 +32,7 @@ Keep the mandatory entry point practical, usually a few KiB. Include:
 - Instruction updates: already-open chats re-read changed instructions and reconcile their task without restarting it; new chats read the entry point from disk.
 - Document-role mapping and discrepancy rule: requirements say what is wanted; source/artifacts show implementation; named checks support claims.
 - Exact existing build/test/lint commands and contextual verification; link detailed setup.
+- Explicit engineering priorities: no overengineering; choose the simplest correct solution and keep it readable; prefer a suitable maintained library, system API or add-on over custom code that solves the same problem. Minimize patches/workarounds, fix the cause, and document genuine limitations. Check suitability and licensing; justify custom machinery when no existing solution fits.
 - Design source routing for visual work and relevant skill routing with platform overrides.
 - Shared-file ownership, preservation of unrelated work and separately versioned code/design handoffs.
 - Completion: actual checks, affected records and next step; `done` requires bounded acceptance.
@@ -101,6 +102,17 @@ Developer docs own detailed environment/build/test/signing instructions. Enginee
 Record consequential decisions with context, alternatives, choice, compatibility/license implications, evidence and reopening trigger. An existing ADR system or focused task section can own these; a new directory is not required.
 
 History owns short dated technical outcomes/rationale/evidence links, without conversation excerpts. Prefer existing Git history and concise records over full copied session snapshots. Keep raw migration backups local and ignored; if a technical archive is genuinely useful, sanitize it for publication and exclude it from normal startup. Record current withdrawn/superseded decisions in current docs, not only archives.
+
+## Incremental maintenance and record lifecycle
+
+Agents maintain the affected context while completing normal work; a separate cleanup invocation is unnecessary for replacing a stale claim or next step in their topic. Keep this proportional to the change and respect other writers' ownership.
+
+- Current contracts describe the applicable requirements directly. Replace withdrawn clauses; put consequential rationale in the owning task/history instead of appending successive overrides to a specification.
+- Tasks lead with the current outcome, implemented scope, evidence links, remaining acceptance and one actionable next step. Remove completed actions from the active handoff. Keep earlier checks dated; a document edit does not rerun or renew them.
+- Verification separates current walkthroughs/open checks from dated results. Preserve unique environment/revision information, failures, root causes and evidence limits. Superseded visual IDs and mirrored component/copy inventories can be reduced to a source/date and useful outcome; the editable design owns current visuals.
+- Completed tasks leave the active index. Retain a task when it owns unique decisions/evidence or a useful handoff. Retire it only after durable facts and all open checks have an identified owner; update incoming links in the same change. Git can retain redundant implementation history, but must not become the only way to discover an unresolved gate.
+- History is a short dated outcome with links, not a second copy of the task. Read it for rationale, not as a mandatory startup document. Do not delete evidence merely because it is old or a build passed.
+- Broader moves, merges and deletions belong to an explicitly scoped cleanup. Inspect references and preserve unrelated work before editing; avoid a new archive tree or checker framework solely to make the directory look organized.
 
 The workflow document owns operational details: freshness, role-aware selection, named feature requests, design-code iteration, ownership/synchronization, interruption recovery, checks/review and completion. Include short prompts such as “continue development”, “continue the design” and “let's add [feature]”; the agent handles context recovery and task lookup. Keep IDs and expanded prompts optional.
 

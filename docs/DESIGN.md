@@ -47,3 +47,5 @@ The app icon is itself a full-bleed blue keycap with two opposing white arrows, 
 Save and review changes in Sketch; keep states, copy and annotations there. Update only this short locator/readiness index and a concise task/status note. The receiving agent reads Sketch directly. Record changed behavioral requirements in SPEC and native test results in verification; do not duplicate the visual source in Git.
 
 Device-name/keyboard follow-up (2026-10-15): [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) reuses the live Devices card and profile naming-sheet components in code. Rename and keyboard-only states are not yet drawn/reconciled in Sketch; no document edit was made.
+
+Multi-vendor battery follow-up (2026-10-16): [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) reuses the Devices header, caption and secondary button for optional Bluetooth access (allow / open privacy settings / restricted). The live Devices frames were re-inspected; this permission state and generic keyboard/trackpad inventory need Sketch reconciliation. No Sketch content was changed.

@@ -22,6 +22,8 @@
 
 <Short source/date and ready-scope pointer. Components, visual states, copy and annotations live in Sketch; the receiving agent reads it directly through MCP. Do not mirror its inventory or export routine PNGs. Design edits do not mean native implementation. Record user acceptance only if supplied. Omit irrelevant template sections.>
 
+Keep the summary current. Replace completed next steps and superseded scope; link detailed dated evidence rather than appending a session transcript. Retain unique decisions and unresolved acceptance.
+
 ## Implementation and verification
 
 <Separate design, implementation and verification status. Changed files/artifacts; decisions/reason; actual commands/results/evidence links with revision/OS/device and user-reported vs agent-observed vs injected test. Record confirmations as neutral technical outcomes, never verbatim replies; identify unknown conditions and retain untested acceptance. No invented rerun or runtime claim.>

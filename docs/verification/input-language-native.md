@@ -6,7 +6,7 @@ Updated **2026-10-11**. Scope: [Input/hold](../tasks/UI-004-input-settings.md), 
 
 ## Source and delivered behavior
 
-Live Sketch frames 33, 38 and 41 were reread through MCP at document `1640CE3E-1622-4D01-BCDE-499A8F1C2C18`, then the concurrent consistency handoff was refreshed at `DC0FF6E0-6CDB-4A87-82C5-BB8FCAEFEDEB` (same stable frame IDs). Current visual source/digest is owned by materials/consistency evidence. Behavior/copy contracts remain [Input](input-settings.md) / [Language](language-settings.md). Native implementation reuses the existing Settings shell, semantic PermissionCard and system controls. Full custom navigation/material adoption is separate; native popup intrinsic width is retained within a 208 pt trailing control lane.
+Live Sketch frames 33, 38 and 41 were reread through MCP at document `1640CE3E-1622-4D01-BCDE-499A8F1C2C18`, then the concurrent consistency handoff was refreshed at `DC0FF6E0-6CDB-4A87-82C5-BB8FCAEFEDEB` (same stable frame IDs). Current visual source/digest is owned by materials/consistency evidence. Behavior/copy contracts remain [Input](../history/settings-design-through-2026-10-11.md#input) / [Language](../history/settings-design-through-2026-10-11.md#language). Native implementation reuses the existing Settings shell, semantic PermissionCard and system controls. Full custom navigation/material adoption is separate; native popup intrinsic width is retained within a 208 pt trailing control lane.
 
 - Settings → Input explains per-binding timing, the macOS double-click interval, fixed cardinal pointer recognition and the existing experimental built-in four-finger tap. No new engine thresholds, recorder, hardware attribution or gesture claims.
 - Hold-only keyboard/middle-extra-button editing retains the existing **100…5,000 ms / 100 ms** Stepper and valid off-grid stored values. New localized duration/range/one-shot copy is integrated. Existing consumption/cancellation warning remains visible. Save failure retains the complete draft, with Save/Cancel available; only the intended binding is committed on retry. Other activation/capture constraints remain unchanged.
@@ -57,7 +57,7 @@ Reviewed live capture states: Input Dark RU, Language Dark RU, reopen Dark RU, c
 
 Still open: actual quit/relaunch across main/standard Settings/Menu Bar and native panels; production Cocoa projection/repair; full keyboard/focus/spoken VoiceOver and accessibility preferences; remaining native Dark/editor/error states; physical hold timing/safety matrix; macOS 26/Intel execution and stable signing/TCC. General real login and its AppKit transition warnings remain independently open. Current Sketch materials/full desktop hierarchy are not certified by this functional slice.
 
-Next: verify the saved language through an actual user-controlled quit/reopen on the identified normal bundle; independently implement the ready Advanced behavior once its design handoff is released. Preserve the full-main geometry coverage for every added Settings section.
+Next: verify the saved language through an actual user-controlled quit/reopen on the identified normal bundle; Advanced and whole-app styling have since been integrated; current independent work is in STATE. Preserve the full-main geometry coverage for every added Settings section.
 
 ### AppKit diagnostic follow-up: 2026-10-11
 

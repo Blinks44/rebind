@@ -4,6 +4,8 @@ A reusable Agent Skill for setting up or reviewing project context for developme
 
 It teaches an agent to inspect the repository, preserve existing work, select relevant reviewed skills, maintain a public README, establish current state/requirements/contracts/task handoffs, adapt `.gitignore` and verify the resulting workflow. Visual design documents apply when needed. It does not require every project to use the same filenames or install a catalog of skills.
 
+Generated AGENTS.md instructions explicitly prioritize simple, correct and readable solutions, no overengineering, suitable maintained libraries/system APIs before custom implementations, and minimal workarounds. Ordinary task completion includes maintaining the affected documentation: current contracts and next steps stay current, while unique evidence and unresolved checks survive cleanup.
+
 ## Use
 
 Copy this **whole folder**, including references, metadata and LICENSE, into the target repository at `.agents/skills/agent-workflow-setup/` for Codex. Avoid nesting another copy inside it. Other Agent Skill clients need their supported skill location/discovery mechanism. Skill/tool discovery is separate from access to the project's design editor or task tracker.
@@ -28,4 +30,4 @@ Verification screenshots and exports stay local by default; Git keeps concise te
 
 This is an instruction-only skill: no scripts, runtime or package dependencies. See [validation](references/validation.md) for document and scenario review using existing project tools. Setup includes candidate-skill research for upcoming project work even when it changes only documentation; additions depend on reviewed fit, not a fixed count. Document roles may be combined for a small project. Installed completion must agree across the affected current records.
 
-Version **1.3.0**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host project or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.
+Version **1.4.0**. Publish this folder independently; it has no dependency on Rebind files or other bundled skills. Its [MIT license](LICENSE) covers this folder only, not the host project or separately installed third-party skills. No external skills are redistributed here. For marketplace distribution, follow the current [Codex plugin guidance](https://learn.chatgpt.com/docs/build-skills#distribute-skills-with-plugins); no plugin/server is necessary for local repository use.

@@ -1,11 +1,7 @@
 # Task records
 
-Use one record for a feature, design handoff, shared-file task or work continued across chats. Start with [TEMPLATE](TEMPLATE.md); keep small isolated edits lightweight. [STATE](../STATE.md) is the current task index, [WORKFLOW](../WORKFLOW.md) defines status/ownership/completion. Task files are durable project notes, not Codex chats and not automatic agent jobs.
+Use one record for a substantial feature, design handoff, shared-file task or work continued across chats. Start with [TEMPLATE](TEMPLATE.md); small isolated edits can use concise evidence/history. [STATE](../STATE.md) is the single active task index; [WORKFLOW](../WORKFLOW.md) defines ownership, stages and completion.
 
-Choose a unique descriptive ID/file: `UI-001-permissions-onboarding.md`, `INPUT-001-four-finger-tap.md`, etc. Do not reuse another task's ID for a different outcome. Check existing records first. Keep completed records for evidence; remove completed tasks from STATE's open-work table and link them from history.
+Choose a unique descriptive ID after checking existing outcomes. Users can name the outcome or continue work without providing an ID. A task leads with current scope, owner, implemented result, evidence links, open acceptance and the next responsible role/action. Replace completed next steps instead of appending contradictory follow-ups. Task records are project notes, not chats or automatic jobs.
 
-IDs are agent-maintained references. Users may continue work or name an outcome without one; resolve matching titles/requirements/artifacts yourself. Handoffs identify the ready scope, open work and next responsible role, so the receiving agent can continue from a short natural-language request.
-
-## Current tasks
-
-The task table in [STATE](../STATE.md) is the single index of open records and their next steps. Finished or superseded records are deleted once their outcome is in the code, SPEC, CAPABILITIES or history; Git keeps them.
+Completed tasks leave STATE's active table. Retain a task if it owns unique decisions/evidence or a useful handoff. Delete a redundant or superseded record only after its durable facts and every open check have an identified owner; repair incoming links in the same change. Git preserves redundant detail, but unresolved acceptance must remain discoverable in current records. Apply the [maintenance policy](../WORKFLOW.md#incremental-documentation-maintenance); age alone does not justify removal.

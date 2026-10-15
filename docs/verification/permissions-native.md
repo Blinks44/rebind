@@ -16,7 +16,7 @@ Routine capture files were moved to ignored local storage during repository clea
 
 ## Live design and bounded differences
 
-Read-only Sketch inspection resolved document `56ED9B64-CF2D-4FE8-AB0E-4EA4E3501214`, API 2.0.0. Explicit-ID live screenshots/tree/style inspection covered frames 08, 10, 11, 12, 14 and 17. The subsequent independent UI-004 delivery changes the document identity; resolve current DESIGN before future work. Permission source IDs remain the ones in [design delivery](permission-recovery.md).
+Read-only Sketch inspection resolved document `56ED9B64-CF2D-4FE8-AB0E-4EA4E3501214`, API 2.0.0. Explicit-ID live screenshots/tree/style inspection covered frames 08, 10, 11, 12, 14 and 17. The subsequent independent UI-004 delivery changes the document identity; resolve current DESIGN before future work. Permission source IDs remain the ones in [design delivery](../history/settings-design-through-2026-10-11.md#permissions).
 
 The implementation reuses the delivered 32 pt setup margins, square 48 pt bundle icon, 88 pt introduction region, 16 pt action gaps, pinned footer, 28 pt Settings margins, 16 pt card padding/gaps and 12 pt card corners. Four named Light/Dark color assets reproduce live canvasTop/canvasBottom/surface/warning variables. Opaque content gradients and surfaces coexist with system-native navigation/control materials; no glass was added to permission content.
 
@@ -108,4 +108,4 @@ Final checks on the repaired source, baseline `main` / `acce2f4` plus the existi
 | Debug `Rebind.app/Contents/MacOS/Rebind` | `5d6c73aba56745acb3468455e70ae8e1774a8dd4bb41240b9a12ebd73b6c9afa` |
 | Release `Rebind.app/Contents/MacOS/Rebind` | `f16315306938e279ab5f0b1a108da13ec92719b4d89561c16b18ddfb79e0c263` |
 
-**Next:** actual grant/revocation and VoiceOver/accessibility-preference acceptance remain user-controlled gates. The reproduced layout failure is repaired; ready General/Input implementation and broader main design integration can proceed separately. No Sketch save or Git commit, new capability claim or user configuration/permission change.
+**Next:** actual grant/revocation and VoiceOver/accessibility-preference acceptance remain user-controlled gates. The reproduced layout failure is repaired; General/Input implementation and whole-app soft styling have since been integrated; current continuation is in UI-001/STATE. No Sketch save or Git commit, new capability claim or user configuration/permission change.

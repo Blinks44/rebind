@@ -3,7 +3,7 @@ name: agent-workflow-setup
 description: Set up, migrate, or audit durable agent workflows for development projects of any language, platform or discipline. Adapt project instructions, public documentation, current state, handoffs, relevant skills and Git ignore rules to the actual project. Use for configuring the workflow itself, rather than ordinary implementation under an existing workflow.
 license: MIT
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Agent Workflow Setup
@@ -35,6 +35,10 @@ Use [document contracts](references/documents.md) to adapt these responsibilitie
 - Engineering/developer guidance, decisions and history: only where the project's actual complexity warrants them.
 
 Map roles to paths in the entry point. Keep routine startup small; route deeper documents by task. State files are read from disk, not shared chat memory. Scope specialized instructions to their module when useful. Do not make every small change update every document or read the whole repository.
+
+Every generated or updated `AGENTS.md` must explicitly require no overengineering, the simplest correct and readable solution, and priority for a suitable maintained library, system API or add-on that already solves the problem. Minimize custom patches and workarounds; fix the cause or document the real limitation. Evaluate fit, maintenance and licensing before adoption; add custom machinery only when existing solutions do not satisfy the need. Include these requirements in the entry point itself, not only in this skill or a linked guide.
+
+Configure incremental context maintenance as part of ordinary task completion: replace superseded current claims and next steps, link to the owning evidence, and trim redundant detail in the affected topic. Keep requirements current rather than appending a chain of overrides. Preserve unique decisions, dated evidence and open acceptance before retiring a record; check incoming links. Follow the [record lifecycle](references/documents.md#incremental-maintenance-and-record-lifecycle), keeping broader reorganizations scoped to explicit cleanup work.
 
 All shared files created by setup must be suitable for committing. Use English for repository documentation, instructions, comments and skill content unless the project explicitly chooses another language; conversational replies follow the user's preference. Keep localized product resources and purposeful Unicode fixtures multilingual. Record technical outcomes rather than verbatim user replies or chat/tool transcripts. The repository-content boundary and reported-result format are defined in [document contracts](references/documents.md).
 

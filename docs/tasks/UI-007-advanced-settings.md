@@ -1,6 +1,6 @@
 # UI-007: Advanced settings and safe configuration management
 
-- Updated: 2026-10-12.
+- Updated: 2026-10-16 (documentation reconciliation; dated checks unchanged).
 - Stage: `awaiting_verification`; native implementation integrated, software/native cancellation checks pass.
 - Owner: Unassigned; `/root` released bounded Advanced feedback/material adoption on 2026-10-12. Sketch read-only.
 - Ownership checked: `main` / `a6471db`; preserved Trackpad completion documents. Scope: Advanced view/action card, additive shared success feedback token, native layout fixtures and this task/evidence/STATE/history.
@@ -47,4 +47,4 @@ Verify the Advanced export → reset → import → explicit resume walkthrough 
 
 Shared raised cards/recovery controls and semantic error/warning/success/progress/reopen states adopted from live Sketch. Feedback now follows the affected backup/reset operation. Evidence: 14 functions / 34 executions, 720 native viewports, Debug/signature and scoped live Light/Dark/German checks pass. Engine/model/storage/schema/translations/Sketch are unchanged; reviewed UI-018 copy remains separate. Work is uncommitted on `a6471db`; independent Trackpad notes and later focus-confirmation updates preserved.
 
-Bounded implementation/checks complete; broader task remains `awaiting_verification`. User follow-up: requested Advanced checks reported working; individual states/build/preferences were not restated. Preserve that bounded confirmation. Adaptive/platform and detailed §15.12 acceptance remain separate. Next implementation: remaining Input/settings surfaces and reviewed copy from live Sketch using the shared controls.
+Bounded implementation/checks complete; broader task remains `awaiting_verification`. User follow-up: requested Advanced checks reported working; individual states/build/preferences were not restated. Preserve that bounded confirmation. Adaptive/platform and detailed §15.12 acceptance remain separate. Next: verify the detailed restoration/accessibility/platform gates on a current named bundle; Input/Settings and whole-app soft styling are already integrated.

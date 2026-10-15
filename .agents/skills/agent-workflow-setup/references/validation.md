@@ -17,6 +17,8 @@ This instruction-only skill adds no checker scripts, runtime, packages, CI job o
 Check the process against actual artifacts and evidence:
 
 - Does a new agent discover the intended entry point and reach all necessary current contracts without reading archives?
+- Does AGENTS.md itself require no overengineering, simple readable solutions, priority for suitable maintained existing solutions, and minimal custom workarounds?
+- Do current contracts and task handoffs describe the final state directly, with completed next steps removed and unique evidence/open checks preserved when redundant records are retired?
 - Are implementation/capability claims consistent with source/artifacts and dated evidence? Are requirements and proposals separate?
 - Can a reader identify the next actionable unfinished slice, owner/access needs and acceptance?
 - Can another machine find the design source and code revision? Are session IDs lookup hints, not identity?
@@ -57,6 +59,9 @@ Use the following to challenge the configured workflow. Distinguish a written sc
 | Two chats overlap a catalog/shared component | Recognizes advisory owner limits, coordinates or chooses independent surface; no silent takeover |
 | Network unavailable for candidate skills | No guessed source/revision/review claims; useful docs created and install gap recorded |
 | Invoke setup again on unchanged project | No duplicate IDs/files/backlogs or repeated installs; improves only demonstrated gaps |
+| Task contains ten follow-ups and a final next step already implemented | Reconciles the active handoff against artifacts, condenses superseded detail and retains unique decisions and unverified acceptance |
+| Specification has a chain of contradictory dated overrides | Writes the current requirement directly, routes dated implementation evidence to its owner and preserves acceptance limits |
+| Cleanup finds an old hardware report with an unresolved safety check | Keeps the evidence and routes the open check; age or a passing build does not justify deleting it |
 | Informal success report with unknown build/conditions | Neutral scoped reported result, unknown fields retained, no quoted reply or broader verification/approval claim |
 | Workflow updated while a feature chat is open | Re-reads changed instructions/current records, reconciles actual edits, preserves task/ownership and continues without rerunning setup |
 | Unfamiliar firmware/game/data/engineering project | Inspects real inputs/tools/target and derives contracts/checks; no rejection based on an ecosystem list or invented UI workflow |

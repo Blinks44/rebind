@@ -1,69 +1,30 @@
-# UI-022: Soft design system and redesigned core screens
+# UI-022: Soft design system and screen coverage
 
-- Updated: 2026-10-12
+- Updated: 2026-10-16 (documentation reconciliation; no new Sketch review)
 - Stage: in_design
-- Owner: Claude Code design chat, 2026-10-12; released at handoff
-- Ownership checked: 2026-10-12 on `ca02747`, clean tree; advisory coordination, not a lock
-- Owned surfaces: **Rebind.sketch**, formerly "Rebind - new.sketch" (all pages); DESIGN direction/source sections; SPEC §10 visual language
-- Requirements: SPEC §§3.4–3.5, 4, 8, 10; phase 8
-- Code baseline: `main` at `ca02747`; documentation-only changes uncommitted; no app code changed
+- Owner: Unassigned; saved design released for implementation
+- Requirements: SPEC §§3.4–3.5, 4, 8, 10–11
+- Source/baseline: current source/save/digest is in DESIGN; original direction change started at `ca02747`. Integrated native adoption is tracked in UI-023, not pending initial implementation.
 
-## Outcome and scope
+## Current outcome and acceptance
 
-The user prefers the calm look of the new Sketch draft over Liquid Glass and asked for a best-practice design system built from it, to be tried in the app afterwards. This task turns the two hand-drawn Keyboard frames into reusable variables, styles and components, and redraws the core screens from them. Native adoption is a separate later step.
+The soft, opaque-first direction is established and was accepted after the user ran the new main window on 2026-10-13. Reusable Light/Dark variables, styles, components, SF Symbols, keycap triggers and brand artwork are saved in Rebind.sketch. [DESIGN](../DESIGN.md) is the current locator/readiness index; its current coverage includes core lists/editors, Settings, onboarding, profiles, About and newer input/device states.
 
-## Acceptance
+- [x] Reusable foundations/components and core screens saved and reviewed in both themes.
+- [x] Direction accepted; English-only Sketch and six-language app contract recorded.
+- [x] Real SF Symbols outlines and one raised-keycap trigger style adopted in Sketch/app; whole-app native adoption implemented in [UI-023](UI-023-main-window-soft-adoption.md).
+- [ ] Magic Mouse editors after hardware research determines the presets.
+- [ ] Reconcile newer local device names/keyboard/multi-vendor/Bluetooth states and per-app/editor changes from DEVICE-002/003 and INPUT-011 against live Sketch.
+- [ ] Native focus, VoiceOver, localized widths and adaptive preferences; these are app checks rather than Sketch proof.
 
-- [x] Color Variables, shared text/layer styles and components exist for Light and Dark and are used by every screen.
-- [x] Core screens rebuilt from components and reviewed through live MCP screenshots in both themes.
-- [x] Direction change recorded in AGENTS, SPEC §10, DESIGN, ENGINEERING, README and PLAN.
-- [x] User accepted the direction after seeing the native main window (2026-10-13).
-- [ ] Remaining screens redrawn with the system (see Open checks).
+## Retained decisions and dated evidence
 
-## Sketch source
+Controls/content are opaque; only sidebar/menus may use system material. Sketch uses separate Light/Dark variables and components because it has no variable modes. The original hand-drawn frames remain in its archive. Shared colors/geometry must be reconciled with code tokens when changed; no mirrored component inventory is maintained here.
 
-**Rebind - new.sketch** (renamed to Rebind.sketch on 2026-10-14), saved 2026-10-12; digest and page map are in [DESIGN](../DESIGN.md#current-source-rebindsketch). 124 Color Variables, 68 text styles, 68 layer styles, 192 symbol sources (60 icons), 12 screens × Light/Dark. Foundations board 05 carries the principles and native mapping. The original frames are preserved on `99 · Archive`.
+2026-10-12: original 12-screen-per-theme core set and foundations were inspected through live MCP, save/review completed; no native/hardware claim. 2026-10-13: real SF Symbols replaced stand-ins; remaining Settings/profile/setup/About screens and brand were added. Screens are English only; other languages are checked in the app.
 
-## Implementation and verification
-
-Design only. Agent-observed MCP screenshots after the final edits: Keyboard, Mouse, Trackpad, Magic Mouse empty, paused/permission states, both Keyboard editors, action picker, Trackpad gesture menu, both Settings tabs, component overview and principles boards. Decisions made while building:
-
-- Background blur was removed from control surfaces; only sidebar and menu styles keep a material. This matches the no-Liquid-Glass decision and avoids render artifacts inside components.
-- Icons are vector stand-ins named after SF Symbols; `mission.control`, `escape` and `playpause` have no exact SF Symbol and need a native choice.
-- Sketch has no variable modes, so components are duplicated per theme under `Light/` and `Dark/`.
-- Mouse buttons render as text keycaps; gestures, wheel and movement render as trigger chips.
-
-No build, test, app launch or hardware check was run; none applies to this change. `git diff --check` passes.
-
-## Update 2026-10-13
-
-Icons were replaced with real SF Symbols outlines (80 components, names equal to the symbols used in code). A brand row (logo + app name) was added to every sidebar, and page `05 · Brand` holds the new app icon, 32 pt logo and Menu Bar template. Screens stay English-only; localized duplicates are no longer planned.
-
-## Update 2026-10-13 (later)
-
-Screens 13–18 added: Settings Input, Language, Advanced; profile management; first-run setup; About. The titlebar strip is native, so every screen's content starts 56 pt from the top and the traffic lights use the system size.
-
-## Update 2026-10-14: artifact audit
-
-All 76 screens (38 × Light/Dark) were screenshot-reviewed and checked by script for clipped text, Light/Dark drift and wrong-theme components (none of the latter). Fixed: Banner and Settings Row/Status messages now wrap inside the component instead of running past its edge (screens 03, 08, 09, 13, 21 resized to fit); recording and profile-name hints wrap inside their sheets (07, 26); action fields show the action's own symbol (Mission Control, Open App, Open Web Address, Run Apple Shortcut on 19, 20, 24, 27, 28, 29); the Magic Mouse screen no longer highlights Magic Trackpad too (04); About Light text is centered like Dark (18); the submenu chevron in menu items sits at the trailing edge (33). After the fixes Light and Dark match in geometry and text. The app's `Banner` already wraps its message, so no code change was needed.
-
-## Update 2026-10-14: one trigger style
-
-User request: rule triggers no longer mix raised keycaps with flat grey chips. `Trigger Chip` (Light/Dark) now uses the keycap face (`Keycap/Body`, `Keycap Label`, radius 9) with a leading icon that names the input type: `computermouse` for mouse buttons, `arrow.*` for gestures and the wheel, `hand.tap` for touch. Mouse buttons on every Mouse screen (02, 19, 24, 29, 33, 34, Light/Dark) moved from text keycaps to the chip with the mouse icon; keyboard keys stay plain keycaps. Foundations: radius and keycap principle text updated. The app (`TriggerChip`, `BindingRow`) and the website `TriggerChip` follow the same rule; the user confirmed the app result in the running app on 2026-10-14.
-
-## Open checks / dependency
-
-- User has not yet reviewed or accepted the design.
-- Not yet redrawn: first-run onboarding, Settings Input/Language/Advanced, profile management, About, remaining Mouse/Magic Mouse editors and action-parameter states, compact-width variants, hover/pressed/focus specimens for every control.
-- Contrast, Increase Contrast and Reduce Transparency values are design intent only; native verification is open.
-- Dark overview board and several Dark screens were built by the same generator as Light but not all were individually screenshot-reviewed.
-- UI-011 glass controls are visually superseded; tasks that adopted them (UI-016, UI-017, UI-019) need reconciliation when the new system is implemented.
-
-## Review
-
-Screens were compared against the original two frames; geometry, type and color match, with components replacing raw layers. Fixed during review: gradient and swatch linkage in shared styles, collapsed icons in stacks, clipped shadows, stretched icons on resized selectors, banner button overflow.
+2026-10-14 artifact audit: 38 screens × Light/Dark reviewed for clipping, theme drift and geometry. Fixed wrapping, hints, action icons, Magic Mouse selection, About alignment and submenu chevrons. Later one-trigger-style change made non-keyboard triggers raised keycaps with a leading input-type symbol; code/website followed it, and the user confirmed the app result. These observations retain their original scope; later additions are not silently included in that audit.
 
 ## Next handoff
 
-- **Design:** after user review, redraw the remaining screens listed above using the existing components; add new components only for genuinely new patterns.
-- **Code:** request “Implement the soft design system in the main window”, start with tokens (colors, type, radii, shadows) and the Keyboard list, reading components live from Sketch. Do not start before the user confirms the direction on the saved file.
+Design: inspect current live Sketch and the newer feature tasks, then draw/reconcile the missing Devices/Input/editor states using existing components. Magic Mouse presets still depend on its hardware probe. Implementation agents consume ready bounded states directly; initial main-window/system adoption and user direction approval are already complete.

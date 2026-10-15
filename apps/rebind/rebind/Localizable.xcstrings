@@ -1,6 +1,129 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "bluetoothBatteryDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Bluetooth access to read the battery of connected Bluetooth mice, keyboards and trackpads. Some devices do not expose their battery."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Разрешите доступ к Bluetooth, чтобы читать заряд подключённых мышей, клавиатур и трекпадов. Некоторые устройства не передают заряд."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlauben Sie Bluetooth-Zugriff, um den Ladestand verbundener Mäuse, Tastaturen und Trackpads zu lesen. Nicht alle Geräte stellen ihn bereit."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez l’accès Bluetooth pour lire la batterie des souris, claviers et trackpads connectés. Certains appareils ne fournissent pas cette information."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permite el acceso a Bluetooth para leer la batería de ratones, teclados y trackpads conectados. Algunos dispositivos no proporcionan este dato."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许访问蓝牙，以读取已连接鼠标、键盘和触控板的电量。部分设备不提供电量信息。"
+          }
+        }
+      }
+    },
+    "bluetoothBatterySettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Bluetooth Privacy Settings"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть настройки доступа к Bluetooth"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth-Datenschutz öffnen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir les réglages de confidentialité Bluetooth"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir privacidad de Bluetooth"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开蓝牙隐私设置"
+          }
+        }
+      }
+    },
+    "bluetoothBatteryAllow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Bluetooth Access"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Разрешить доступ к Bluetooth"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth-Zugriff erlauben"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autoriser l’accès Bluetooth"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir acceso a Bluetooth"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许访问蓝牙"
+          }
+        }
+      }
+    },
     "deviceNamingHint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -23612,37 +23735,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connected mice and supported battery devices. Rename them here for a shorter name in the battery menu."
+            "value" : "Connected mice, keyboards and trackpads. Rename them here for a shorter name in the battery menu."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подключённые мыши и устройства с поддержкой заряда. Задайте короткое имя для меню заряда."
+            "value" : "Подключённые мыши, клавиатуры и трекпады. Задайте короткое имя для меню заряда."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verbundene Mäuse und unterstützte Batteriegeräte. Hier können Sie kürzere Namen für das Batteriemenü vergeben."
+            "value" : "Verbundene Mäuse, Tastaturen und Trackpads. Hier können Sie kürzere Namen für das Batteriemenü vergeben."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Souris connectées et appareils dont la batterie est prise en charge. Donnez-leur un nom plus court pour le menu de batterie."
+            "value" : "Souris, claviers et trackpads connectés. Donnez-leur un nom plus court pour le menu de batterie."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ratones conectados y dispositivos con batería compatible. Asígnales un nombre más corto para el menú de batería."
+            "value" : "Ratones, teclados y trackpads conectados. Asígnales un nombre más corto para el menú de batería."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已连接的鼠标及支持显示电量的设备。可在此设置电量菜单中显示的简短名称。"
+            "value" : "已连接的鼠标、键盘和触控板。可在此设置电量菜单中显示的简短名称。"
           }
         }
       }

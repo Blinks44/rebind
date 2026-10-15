@@ -50,14 +50,16 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     private(set) var mice: [ConnectedMouse] = []
     /// Charges of Logitech devices (mice and keyboards) and of devices macOS reports, by name.
     private(set) var batteries: [DeviceBattery] = []
-    private var keyboards: [String: [ConnectedAccessory]] = [:]
+    let bluetoothBattery = BluetoothBatteryMonitor()
+    private var logitechAccessories: [String: [ConnectedAccessory]] = [:]
+    private var otherInputs: [ConnectedAccessory] = []
 
     var accessories: [ConnectedAccessory] {
-        let keyboards = keyboards.sorted { $0.key < $1.key }.flatMap(\.value)
-        let known = Set(mice.map(\.deviceKey) + keyboards.map(\.deviceKey))
+        let listed = logitechAccessories.sorted { $0.key < $1.key }.flatMap(\.value) + otherInputs
+        let known = Set(mice.map(\.deviceKey) + listed.map(\.deviceKey))
         // Devices is for input hardware; a macOS battery reading alone does not qualify
         // a headset or an unclassified accessory for a settings card.
-        return keyboards + batteries.filter { $0.kind != .other && !known.contains($0.deviceKey) }.map {
+        return listed + batteries.filter { $0.kind != .other && !known.contains($0.deviceKey) }.map {
             ConnectedAccessory(id: $0.id, name: $0.name, kind: $0.kind, vendorID: $0.vendorID)
         }
     }
@@ -67,6 +69,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     @ObservationIgnored private var devices: [String: [IOHIDDevice]] = [:]
     /// Open HID++ endpoints and the mice found behind each, by IOKit location.
     @ObservationIgnored private var sessions: [String: Session] = [:]
+    @ObservationIgnored private var batterySessions: [String: BatterySession] = [:]
+    @ObservationIgnored private var peripheralBatteries: [String: DeviceBattery] = [:]
     @ObservationIgnored private var rebuildScheduled = false
     /// The stored settings, written to a mouse of the same model whenever it connects.
     @ObservationIgnored var storedSettings: () -> [MouseHardwareSettings] = { [] }
@@ -92,16 +96,34 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         }
     }
 
+    /// One in-flight read per physical location; late results are rejected by session identity.
+    private final class BatterySession {
+        let reader: PeripheralBatteryReader
+        let queue: DispatchQueue
+        let device: ConnectedAccessory
+        let interfaceIDs: Set<UInt64>
+        var isReading = false
+        init(reader: PeripheralBatteryReader, device: ConnectedAccessory, interfaceIDs: Set<UInt64>) {
+            self.reader = reader
+            self.device = device
+            self.interfaceIDs = interfaceIDs
+            queue = DispatchQueue(label: "Rebind battery \(device.id)", qos: .utility)
+        }
+    }
+
     func start() {
         guard manager == nil else { return }
-        let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-        // Pointing devices, Logitech keyboards (for their battery), and the vendor-defined interfaces
-        // that carry HID++.
+        // Discovery does not open/schedule every matched interface (including vendor-only
+        // headset interfaces). Each positively identified reader manages its own device.
+        let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOHIDManagerOptions.independentDevices.rawValue)
         let matching: [[String: Int]] = [
             [kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_Mouse],
-            [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_Keyboard],
+            [kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_Keyboard],
+            [kIOHIDDeviceUsagePageKey: kHIDPage_Digitizer, kIOHIDDeviceUsageKey: kHIDUsage_Dig_TouchPad],
             [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: 0xFF00],
-            [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: 0xFF43]
+            [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: 0xFF43],
+            [kIOHIDVendorIDKey: 0x1532],
+            [kIOHIDVendorIDKey: 0x1038]
         ]
         IOHIDManagerSetDeviceMatchingMultiple(manager, matching as CFArray)
         let context = Unmanaged.passUnretained(self).toOpaque()
@@ -116,6 +138,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = manager
+        bluetoothBattery.changed = { [weak self] in self?.publishBatteries() }
+        bluetoothBattery.startIfAuthorized()
         // Charges change slowly; a few reads every five minutes are enough for the Menu Bar.
         batteryTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.refreshBatteries() }
@@ -124,6 +148,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     func stop() {
+        bluetoothBattery.stop()
         guard let manager else { return }
         batteryTimer?.invalidate()
         batteryTimer = nil
@@ -135,8 +160,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         sessions = [:]
         devices = [:]
         mice = []
-        keyboards = [:]
+        logitechAccessories = [:]
+        otherInputs = []
         logitechBatteries = [:]
+        batterySessions = [:]
+        peripheralBatteries = [:]
         batteries = []
     }
 
@@ -144,7 +172,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     /// after a configuration restore and when a companion app quits. A mouse behind a receiver
     /// that wakes from sleep is not noticed; it keeps its own settings anyway.
     func refresh() {
+        guard manager != nil else { return }
         for location in sessions.keys { probe(location) }
+        refreshBatteries()
     }
 
     /// Writes new settings to every connected mouse of this model.
@@ -177,7 +207,10 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         if devices[location]?.isEmpty == true {
             devices[location] = nil
             logitechBatteries[location] = nil
-            keyboards[location] = nil
+            logitechAccessories[location] = nil
+            batterySessions[location] = nil
+            peripheralBatteries[location] = nil
+            bluetoothBattery.refresh()
             publishBatteries()
             sessions.removeValue(forKey: location)?.io.close()
         }
@@ -197,6 +230,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     private func rebuild() {
         var list: [ConnectedMouse] = []
+        var accessories: [ConnectedAccessory] = []
         for (location, interfaces) in devices.sorted(by: { $0.key < $1.key }) {
             let pointer = interfaces.first(where: Self.isMouse)
             // A Logitech keyboard has no mouse interface but still reports its battery over HID++.
@@ -209,6 +243,35 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                 sessions[location] = Session(io: io, location: location)
                 probe(location)
             }
+            let inputs = interfaces.filter { Self.inputKind(of: $0) != nil }
+            if let input = pointer ?? inputs.first, let kind = Self.inputKind(of: input) {
+                let identity = ConnectedAccessory(id: location, name: Self.property(input, kIOHIDProductKey) ?? "",
+                                                   kind: kind, vendorID: vendorID)
+                let interfaceIDs = Set(interfaces.map { device -> UInt64 in
+                    var id: UInt64 = 0
+                    IORegistryEntryGetRegistryEntryID(IOHIDDeviceGetService(device), &id)
+                    return id
+                })
+                if batterySessions[location]?.interfaceIDs != interfaceIDs {
+                    let productID: Int = Self.property(input, kIOHIDProductIDKey) ?? 0
+                    let isUSB = (Self.property(input, kIOHIDTransportKey) as String?) == kIOHIDTransportUSBValue
+                    let profile = kind == .mouse && isUSB
+                        ? VendorBatteryProtocol.profile(vendorID: vendorID, productID: productID) : nil
+                    let endpoint = profile.flatMap { profile in interfaces.first {
+                        let usages = Self.usagePairs($0)
+                        // No raw input callback is ever installed on a keyboard control interface.
+                        return profile.acceptsInterface(number: PeripheralBatteryReader.interfaceNumber($0), usages: usages,
+                            featureSize: Self.property($0, kIOHIDMaxFeatureReportSizeKey) ?? 0,
+                            outputSize: Self.property($0, kIOHIDMaxOutputReportSizeKey) ?? 0)
+                    } }
+                    batterySessions[location] = BatterySession(reader: PeripheralBatteryReader(inputs: inputs,
+                        vendorDevice: endpoint, profile: profile), device: identity, interfaceIDs: interfaceIDs)
+                    readPeripheralBattery(at: location)
+                }
+                // Receiver keyboard interfaces can represent the mouse's macros. A named HID++
+                // device replaces that placeholder; only genuine non-mouse inputs need a card.
+                if pointer == nil, sessions[location]?.mice.isEmpty != false { accessories.append(identity) }
+            }
             guard let pointer else { continue }
             if let known = sessions[location]?.mice, !known.isEmpty, known.allSatisfy(\.isKeyboard) { continue }
             let base = ConnectedMouse(id: location, name: Self.property(pointer, kIOHIDProductKey) ?? "",
@@ -218,6 +281,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             list += found.isEmpty ? [base] : found
         }
         if list != mice { mice = list }
+        if accessories != otherInputs { otherInputs = accessories }
         publishSmoothScrolling()
     }
 
@@ -273,12 +337,13 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         session.mice = logitech + session.mice.filter { !answered.contains($0.slot) }
         session.probed = true
         listen(to: io, at: location, mice: logitech, states: states)
-        let freshKeyboards = states.filter { $0.1.isKeyboard }.map { slot, state in
+        let batteryOnly = devices[location]?.contains(where: Self.isMouse) != true
+        let freshAccessories = states.filter { $0.1.isKeyboard || batteryOnly }.map { slot, state in
             ConnectedAccessory(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? "",
-                               kind: .keyboard, vendorID: 0x046D)
+                               kind: state.isKeyboard ? .keyboard : .mouse, vendorID: 0x046D)
         }
         let answeredIDs = Set(states.map { "\(location)#\($0.0.map(String.init) ?? "direct")" })
-        keyboards[location] = freshKeyboards + (keyboards[location] ?? []).filter { !answeredIDs.contains($0.id) }
+        logitechAccessories[location] = freshAccessories + (logitechAccessories[location] ?? []).filter { !answeredIDs.contains($0.id) }
         let fresh = states.compactMap { slot, state in
             state.batteryPercentage.map {
                 DeviceBattery(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? "",
@@ -307,11 +372,15 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             : found + asleep
         list.sort { $0.id < $1.id }
         if list != mice { mice = list }
-        publishSmoothScrolling()
+        rebuild()
     }
 
     /// Reads the charge of every device again: Logitech devices over HID++, others from macOS.
     func refreshBatteries() {
+        guard manager != nil else { return }
+        bluetoothBattery.startIfAuthorized()
+        bluetoothBattery.refresh()
+        for location in batterySessions.keys { readPeripheralBattery(at: location) }
         for (location, session) in sessions where session.probed {
             let devices = session.mice
             session.queue.async { [weak self] in
@@ -320,6 +389,25 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             }
         }
         publishBatteries()
+    }
+
+    private func readPeripheralBattery(at location: String) {
+        guard let session = batterySessions[location], !session.isReading else { return }
+        session.isReading = true
+        let reader = session.reader
+        let device = session.device
+        session.queue.async { [weak self, weak session] in
+            let reading = reader.read()
+            Task { @MainActor in
+                guard let self, let session, self.batterySessions[location] === session else { return }
+                session.isReading = false
+                if let reading {
+                    self.peripheralBatteries[location] = DeviceBattery(id: device.id, name: device.name, kind: device.kind,
+                        percentage: reading.percentage, isCharging: reading.isCharging, vendorID: device.vendorID)
+                    self.publishBatteries()
+                }
+            }
+        }
     }
 
     private func updateBatteries(at location: String, charges: [(slot: UInt8?, battery: (percentage: Int?, charging: Bool))]) {
@@ -336,9 +424,32 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     private func publishBatteries() {
         let logitech = logitechBatteries.sorted { $0.key < $1.key }.flatMap(\.value)
-        let names = Set(logitech.map(\.name))
-        let list = logitech + Self.systemBatteries().filter { !names.contains($0.name) }
+        let peripheral = peripheralBatteries.sorted { $0.key < $1.key }.filter { location, _ in
+            !(logitechBatteries[location]?.isEmpty == false)
+        }.map(\.value)
+        let preferred = logitech + peripheral
+        let inputs = mice.map { ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID) }
+            + logitechAccessories.sorted { $0.key < $1.key }.flatMap(\.value) + otherInputs
+        let bluetooth = Self.bluetoothBatteries(bluetoothBattery.batteries, matching: inputs)
+        let preferredIDs = Set(preferred.map(\.id))
+        let combined = preferred + bluetooth.filter { !preferredIDs.contains($0.id) }
+        let names = Set(combined.map(\.name))
+        let list = combined + Self.systemBatteries().filter { !names.contains($0.name) }
         if list != batteries { batteries = list }
+    }
+
+    /// Match only a unique known input identity. Never attribute one BLE reading to two
+    /// identically named devices; the existing alias key and card ID stay unchanged.
+    nonisolated static func bluetoothBatteries(_ batteries: [DeviceBattery], matching inputs: [ConnectedAccessory]) -> [DeviceBattery] {
+        batteries.compactMap { battery in
+            guard battery.kind != .other else { return nil }
+            let matches = inputs.filter { $0.name == battery.name && $0.kind == battery.kind }
+            if matches.count > 1 { return nil }
+            guard let input = matches.first else { return battery }
+            let matched = DeviceBattery(id: input.id, name: input.name, kind: input.kind, percentage: battery.percentage,
+                                    isCharging: battery.isCharging, vendorID: input.vendorID)
+            return matched
+        }
     }
 
     /// Devices whose charge macOS itself reports (Magic Mouse, Keyboard and Trackpad, and other
@@ -447,7 +558,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     /// Interfaces of one physical device share a location; a Bluetooth device has one interface.
     private nonisolated static func location(of device: IOHIDDevice) -> String {
-        if let location: Int = property(device, kIOHIDLocationIDKey) { return String(location, radix: 16) }
+        if let location: Int = property(device, kIOHIDLocationIDKey), location != 0 { return String(location, radix: 16) }
         var entry: UInt64 = 0
         IORegistryEntryGetRegistryEntryID(IOHIDDeviceGetService(device), &entry)
         return "service-" + String(entry, radix: 16)
@@ -482,6 +593,20 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             && property(device, kIOHIDPrimaryUsageKey) == kHIDUsage_GD_Mouse
             && property(device, kIOHIDBuiltInKey) != true
             && !usagePairs(device).contains { $0.page == kHIDPage_Digitizer }
+    }
+
+    private nonisolated static func inputKind(of device: IOHIDDevice) -> DeviceBattery.Kind? {
+        let page: Int = property(device, kIOHIDPrimaryUsagePageKey) ?? 0
+        let usage: Int = property(device, kIOHIDPrimaryUsageKey) ?? 0
+        return inputKind(page: page, usage: usage, usages: usagePairs(device),
+                         builtIn: property(device, kIOHIDBuiltInKey) == true)
+    }
+
+    nonisolated static func inputKind(page: Int, usage: Int, usages: [(page: Int, usage: Int)],
+                                     builtIn: Bool) -> DeviceBattery.Kind? {
+        guard !builtIn else { return nil }
+        if usages.contains(where: { $0.page == kHIDPage_Digitizer && $0.usage == kHIDUsage_Dig_TouchPad }) { return .trackpad }
+        return batteryKind(page: page, usage: usage)
     }
 
     nonisolated static func allowsHIDPP(vendorID: Int, usages: [(page: Int, usage: Int)]) -> Bool {

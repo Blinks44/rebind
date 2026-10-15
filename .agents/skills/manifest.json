@@ -112,12 +112,12 @@
       "name": "agent-workflow-setup",
       "origin": "Locally authored reusable workflow skill; canonical source in the skills repository",
       "source_path": ".agents/skills/agent-workflow-setup",
-      "version": "1.3.0",
-      "reviewed_on": "2026-10-11",
+      "version": "1.4.0",
+      "reviewed_on": "2026-10-16",
       "license": "MIT",
-      "normalization": "Project-local snapshot of agent-workflow-setup/ in the standalone skills repository. Instruction-only setup with evidence-first material questions, recommendations, reusable decisions and pending dependent work. Existing local-image, candidate-review and installed-state contracts retained. No scripts/runtime or redistributed external skills."
+      "normalization": "Identical project-local snapshot of the standalone source package. Requires explicit simplicity/readability/existing-solution priorities in AGENTS.md and scoped incremental context maintenance with evidence/open-check retention. Instruction-only; no scripts/runtime or redistributed external skills."
     }
   ],
   "design_source": "Current Rebind designs in Sketch via MCP; see AGENTS.md for document/frame inspection workflow",
-  "local_skills_reviewed_on": "2026-10-10"
+  "local_skills_reviewed_on": "2026-10-16"
 }

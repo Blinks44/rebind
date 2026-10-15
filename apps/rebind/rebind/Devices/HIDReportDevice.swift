@@ -27,7 +27,7 @@ nonisolated enum HIDReportThread {
     }()
 }
 
-/// One opened IOHIDDevice as HID++ report I/O. Opening without seizing leaves the
+/// One opened IOHIDDevice for HID++ or a known vendor battery control interface. Opening without seizing leaves the
 /// device working for macOS; Rebind only adds its own output reports.
 ///
 /// `@unchecked Sendable`: the device reference and sizes never change, replies pass
@@ -44,15 +44,17 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     private let device: IOHIDDevice
     private let buffer: UnsafeMutablePointer<UInt8>
     private let bufferLength: Int
+    private let receivesHIDPP: Bool
     private let inbox = Mutex(Inbox())
     /// Called on the report thread with each unsolicited HID++ report (software ID 0), such as a
     /// diverted button press. It must stay short: it runs between the mouse's reports.
     private let notifications = Mutex<(@Sendable ([UInt8]) -> Void)?>(nil)
     private let closed = Mutex(false)
 
-    init?(_ device: IOHIDDevice) {
+    init?(_ device: IOHIDDevice, receivesHIDPP: Bool = true) {
         guard IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeNone)) == kIOReturnSuccess else { return nil }
         self.device = device
+        self.receivesHIDPP = receivesHIDPP
         maxOutputReportSize = IOHIDDeviceGetProperty(device, kIOHIDMaxOutputReportSizeKey as CFString) as? Int
         let input = IOHIDDeviceGetProperty(device, kIOHIDMaxInputReportSizeKey as CFString) as? Int ?? 0
         bufferLength = max(input, HIDPPConstants.longReportLength)
@@ -68,7 +70,7 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     /// Ends report delivery on the report thread, then releases the device and this object.
     func close() {
         guard closed.withLock({ let was = $0; $0 = true; return !was }) else { return }
-        inbox.withLock { $0.arrived?.signal() }
+        _ = inbox.withLock { $0.arrived?.signal() }
         notifications.withLock { $0 = nil }
         let runLoop = HIDReportThread.runLoop
         CFRunLoopPerformBlock(runLoop, CFRunLoopMode.defaultMode.rawValue) { [self] in
@@ -82,9 +84,13 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     }
 
     private func receive(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
-        // Every pointer report of the mouse arrives here too; only HID++ replies matter.
-        guard length >= HIDPPConstants.shortReportLength,
-              report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID else { return }
+        // HID++ endpoints can also deliver pointer reports. Other replies are accepted only
+        // on the known vendor battery interface selected by the discovery layer.
+        guard length > 0 else { return }
+        if receivesHIDPP {
+            guard length >= HIDPPConstants.shortReportLength,
+                  report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID else { return }
+        }
         // A waiting request picks its own reply among everything that arrives; a receiver's
         // register reply looks like an event (software ID 0), so nothing is held back from it.
         let data = Data(bytes: report, count: length)
@@ -94,7 +100,7 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
             arrived.signal()
         }
         // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
-        if report[3] & 0x0F == 0 || report[2] == 0x41, let notify = notifications.withLock({ $0 }) {
+        if receivesHIDPP, report[3] & 0x0F == 0 || report[2] == 0x41, let notify = notifications.withLock({ $0 }) {
             notify(Array(UnsafeBufferPointer(start: report, count: length)))
         }
     }
@@ -105,13 +111,20 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
 
     func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
                                                matching: @escaping (Data) -> Bool) -> Data? {
+        guard let id = report.first else { return nil }
+        return performSynchronousOutputReportRequest(report, reportID: id, timeout: timeout, matching: matching)
+    }
+
+    /// Non-HID++ control interfaces use report ID 0 separately from their command payload.
+    func performSynchronousOutputReportRequest(_ report: Data, reportID: UInt8, timeout: TimeInterval,
+                                               matching: @escaping (Data) -> Bool) -> Data? {
         guard !report.isEmpty, !closed.withLock({ $0 }) else { return nil }
         let arrived = DispatchSemaphore(value: 0)
         inbox.withLock { $0 = Inbox(arrived: arrived) }
         defer { inbox.withLock { $0 = Inbox() } }
         let result = report.withUnsafeBytes { bytes -> IOReturn in
             guard let base = bytes.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return kIOReturnBadArgument }
-            return IOHIDDeviceSetReport(device, kIOHIDReportTypeOutput, CFIndex(report[0]), base, report.count)
+            return IOHIDDeviceSetReport(device, kIOHIDReportTypeOutput, CFIndex(reportID), base, report.count)
         }
         guard result == kIOReturnSuccess else { return nil }
         let deadline = DispatchTime.now() + timeout

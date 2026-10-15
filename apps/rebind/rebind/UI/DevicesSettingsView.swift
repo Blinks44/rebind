@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreBluetooth
 
 /// Connected mice with settings, plus discovered keyboards and system battery devices.
 struct DevicesSettingsView: View {
@@ -15,6 +16,17 @@ struct DevicesSettingsView: View {
                     Text(.settingsDevices).font(Theme.headline).accessibilityAddTraits(.isHeader)
                     Text(.devicesDescription).foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+                if model.mouseHardware.bluetoothBattery.authorization != .allowedAlways {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(.bluetoothBatteryDescription).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Button(model.mouseHardware.bluetoothBattery.authorization == .denied
+                               ? LocalizedStringResource.bluetoothBatterySettings : .bluetoothBatteryAllow) {
+                            model.mouseHardware.bluetoothBattery.requestAccess()
+                        }.secondaryButton()
+                            .disabled(model.mouseHardware.bluetoothBattery.authorization == .restricted)
+                    }
                 }
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
                 let controllers = Set(mice.compactMap { controller(of: $0) })

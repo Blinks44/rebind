@@ -1,34 +1,28 @@
-# UI-014: Trackpad tap preset editor
+# UI-014: Trackpad preset editor
 
-- Updated: 2026-10-12.
-- Stage: `awaiting_verification`; bounded tap editor released, physical/accessibility acceptance open.
-- Owner: Unassigned; `/root` Swift agent released implementation ownership on 2026-10-12.
-- Ownership checked: `main` / `afb7411` plus INPUT-002/003 work. UI-013 is saved/released; no Sketch edits.
-- Owned surfaces: BindingEditor/Draft, opt-in capture-control wrapping, scoped Trackpad preset presentation, localized tap guidance, editor tests and affected status/evidence sections. Preserve engine, other editor behavior and concurrent design work.
-- Requirements: SPEC §§3.4, 4, 9; PLAN Phase 5; released UI-013 Screens 93/99/106 and Foundations 16/22.
+- Updated: 2026-10-16 (documentation reconciliation)
+- Stage: awaiting_verification
+- Owner: Unassigned; implementation released
+- Requirements: SPEC §§3.4, 4, 9–11
+- Code baseline: original editor on `afb7411` plus INPUT-002/003; expanded editor is integrated in `1a0801b`. No new native/hardware checks in this cleanup.
 
-## Outcome and acceptance
+## Current outcome and acceptance
 
-Expose the four implemented three/four-finger single/double tap identities through one complete preset selector and independent shortcut recorder. Inspect the live saved Sketch before visual integration; target release membership/shared actions remain broader than current engine support.
+The editor exposes twelve complete tap/double-tap/corner/physical-click presets for built-in and external trackpad categories, one optional held primary modifier and the shared action catalog. [INPUT-004](INPUT-004-two-finger-double-tap.md) through [INPUT-009](INPUT-009-held-output-exclusions-catalog.md) own later engine/action/modifier additions. The original four-preset shortcut-only scope is historical.
 
-- [x] Presets create/edit exact identities, preserve shortcut/ID/enabled state, and validate within the selected profile.
-- [x] Selection never records a touch or executes an action; output cancellation/stale requests preserve previous values.
-- [x] Native conflict guidance is conditional on possible OS settings, never claims to read grants/settings or suppress gestures; system settings are changed only by the user.
-- [x] EN/RU/DE/FR, native compact Light/Dark editor checks, meaningful behavioral tests and Debug build.
-- [ ] Physical accuracy, coexistence, keyboard/VoiceOver and adaptive material acceptance on identified builds.
+- [x] Create/edit exact preset identities within the selected profile, retaining rule ID/enabled state and action.
+- [x] One selector rather than touch recording or independent finger/type/direction controls; independent output-shortcut recorder retains previous output on cancellation/stale requests.
+- [x] Conditional native coexistence guidance and public System Settings route without changing settings or claiming a grant.
+- [x] Original software, native compact/layout and selector interaction checks.
+- [ ] Physical accuracy, timing/click exclusion, native gesture coexistence and external hardware.
+- [ ] Complete keyboard/VoiceOver, capture cancellation, six-language layouts and adaptive preferences on named current builds.
 
-## Source and checks
+## Dated verification
 
-Live MCP inspection on 2026-10-12: Rebind.sketch, document `4B31A177-0924-4510-AC9B-D71EB9C06470`, Sketch 2026.3.1/API 2.0.0. Read Screens 93/99/106, shared Complete preset component and Foundations 16/22; screenshot reviewed. Source locator/digest stays in DESIGN. No Sketch edits or production configuration/permission/action execution.
+Live Sketch inspection on 2026-10-12 used the former released UI-013 source; current visuals come from [DESIGN](../DESIGN.md) and integrated soft components. No Sketch edits or production rule/grant/action execution occurred in that editor slice.
 
-[Evidence](../verification/trackpad-preset-editor.md): 647 full-regression functions / 1,824 expanded executions, zero failures/skips; 160 native viewport checks, scoped live RU appearance/menu/record-cancel/AX review and final Debug/strict signature pass. Known About QoS and aggregate matrix window-count warnings remain. Initial native assertion/rendering limitations and additional feedback-fixture recheck are recorded honestly. No agent commit.
+[Original editor evidence](../verification/trackpad-preset-editor.md): 647 regression functions / 1,824 expanded executions, zero failures/skips; 160 native viewports, scoped Russian appearance/menu/record-cancel/AX review and Debug/signature pass. Its [selector follow-up](../verification/trackpad-preset-editor.md#direct-menu-and-full-area-hit-testing-follow-up) fixed whole-capsule hit testing and an unintended submenu: eight functions / 23 executions passed, including that viewport matrix. Four direct menu items were correct for the historical artifact, not today's complete pool. Original render/assertion and About/window-count warnings retain their documented limits.
 
-This adopts only the four engine-backed tap presets and shortcut action. Other gestures/shared actions, final lists/keycaps and broader UI-011/012/013 adoption remain separate. Missing hardware does not prevent preset editing; only output capture needs actual permissions/runtime availability. System Settings opens through public app lookup, without a private pane URL or setting writes.
+## Next handoff
 
-Completion freshness check discovered concurrent UI-015 in design, refining shared Sketch sources without native code ownership. This integration uses the released UI-013 revision inspected above; reconcile any subsequently released control/capture refinement before claiming final visual adoption. No UI-015/Sketch source was edited by this task.
-
-## Next step
-
-2026-10-12 selector follow-up: corrected hit testing over the whole capsule and made the Picker inline, removing the unintended category submenu. Live pointer checks on label/empty center/chevrons expose four direct items; selection and Escape preserve output. Eight targeted functions / 23 executions, including the 160-viewport matrix, pass; normal Debug/strict signature pass. The earlier broad regression is retained as dated evidence. Fresh Sketch inspection did not respond; this independent interaction correction preserves the previously reviewed visual source. Ownership released; [latest artifact/evidence](../verification/trackpad-preset-editor.md#direct-menu-and-full-area-hit-testing-follow-up).
-
-Verify physical three/four single/double taps, timing/click exclusion, Look Up/Zoom coexistence and capture cancellation on the identified ordinary build in the evidence. Complete keyboard/VoiceOver/adaptive preferences and production locale contexts. Continue remaining touch engine/action/list slices independently; do not mark Phase 5 or the final design adoption complete.
+Verify the current preset pool and shared actions on named built-in/external hardware, including modifier matching, Look Up/Smart Zoom/secondary-click/Tap to click coexistence, capture cancellation and native accessibility. Do not recreate the already integrated selector/action/list surfaces or infer full touch release readiness from the old editor tests.

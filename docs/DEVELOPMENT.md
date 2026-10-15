@@ -1,6 +1,6 @@
 # Rebind: development and local setup
 
-Build commands, signing, permission troubleshooting and detailed rule semantics for contributors. For the product overview and first launch, see the [root README](../README.md). Current capability evidence is in [CAPABILITIES](CAPABILITIES.md); agent startup/handoff is defined in [AGENTS](../AGENTS.md) and [WORKFLOW](WORKFLOW.md).
+Build commands, signing, permission troubleshooting and local diagnostics for contributors. For the product overview and first launch, see the [root README](../README.md). Current capability evidence is in [CAPABILITIES](CAPABILITIES.md); agent startup/handoff is defined in [AGENTS](../AGENTS.md) and [WORKFLOW](WORKFLOW.md).
 
 ## Build and test
 
@@ -69,7 +69,7 @@ App Sandbox is disabled for the specified global input filtering, synthesis,
 and Accessibility actions outside the Mac App Store. Hardened Runtime and
 build-script sandboxing are enabled. Release disables Xcode base-entitlement
 injection; Debug retains Xcode's debugger/test-runner entitlements. No custom
-entitlements, helpers or drivers are added. The app has no Swift package dependency;
+entitlements, helpers or drivers are added. The app uses the local MIT HIDPP package;
 isolated dynamic private APIs are used for explicitly experimental trackpad/Dock/lock
 paths. See the
 [current mechanism decisions](research/README.md) and bundled third-party notices.
@@ -93,48 +93,13 @@ the app there; **Show App in Finder** reveals that exact bundle for adding it
 with the + button. Refresh the status and relaunch if macOS asks. See the
 [permission verification record](verification/permissions.md).
 
-New installations start paused with no bindings. Record a key or middle/extra
-mouse button and an output shortcut, save, then enable bindings. In **All mice**,
-choose **Scroll Wheel** in the editor to record up/down/left/right with modifiers.
-Key/button output defaults to one pulse per press. Choose **Double press** to
-fire on the second down after releasing the first, within the system double-click
-interval measured from the first down. Both presses are consumed; a lone press
-does nothing. Other presses, modifier changes, repeats and dragging cancel the
-sequence. Only one enabled activation mode is allowed for a source/modifier
-combination. Choose **Long press** for one pulse after holding for 100–5000 ms
-(default 500 ms). Short presses are consumed without replay. Modifier changes,
-another press, scroll, pause or editing cancel the pending action. Movement with
-the held mouse button preserves the deadline; dragging with another button cancels it.
-Switching away from Rebind cancels explicit recording, but preserves background recognition. A delayed
-worker skips stale actions. This mode does not hold output keys or repeat actions.
-Held output and native triple-click recognition remain deferred.
-Choose **Button + movement** in **All mice** to record a middle/extra button with
-modifiers and select left/right/up/down. Move clearly within five seconds of pressing
-the source: one shortcut fires when its stroke crosses the threshold. Direction rules
-may share the same button/modifiers, but conflict with ordinary/double/long press on
-that chord. These four directions are the complete intended mouse pointer gesture set;
-diagonals, spirals/circles and multi-stroke figures are out of scope. A click without a
-gesture is consumed without replay. Gesture movement
-is consumed until release, cancellation or timeout; diagonals or an unconfigured
-first direction cancel. Other presses, modifier changes, scrolling, editing and pause
-also cancel. Sensitivity depends on delivered Quartz deltas and mouse/driver settings.
-This is implemented and software-tested; the configured G603 leftward gesture works
-per the user, while other directions and full safety/cursor checks remain pending.
-Wheel output is limited to one pulse
-per 100 ms across wheel bindings; intermediate matched events are consumed.
-Smooth, momentum, diagonal and unmatched scroll events pass through. Directions
-follow delivered macOS events, including system direction settings and other
-utilities' transformations; there is no physical mouse attribution.
-Repeats/held output, Caps Lock, Fn and modifier-only sources
-remain deferred. Escape cancels recording. Pause is available in the menu bar
-or with ⌃⌥⇧⌘ Escape while capture is active. The main window may close without
-quitting the app. Settings are stored at
-`~/Library/Application Support/Rebind/configuration.json`; a corrupt or future
-file is preserved and locks editing instead of being overwritten. Configuration
-schema 23 reads schemas 1–22, preserving profiles, selection and existing actions/triggers,
-ordinary/wheel/double/long-press/gesture rules, IDs and enabled state. Legacy rules get the default long-press threshold without rewriting
-the file until the next successful save. Schema 23 also stores explicit first-run setup acknowledgement; existing installations migrate with setup acknowledged. Grant recovery never changes saved pause or rule flags.
+## Configuration and rule behavior
 
+New installations start paused with no bindings. Configure a keyboard/mouse trigger or choose a curated touch preset, select an action, save, then enable bindings. Escape cancels recording. Global pause is available in the Menu Bar and through ⌃⌥⇧⌘ Escape while capture is active; closing the window does not quit the app.
+
+[SPEC §§2–4](SPEC.md#2-trigger--rule--action-contract-core) owns current matching, held output, pointer/wheel behavior, profiles and editing requirements. [CAPABILITIES](CAPABILITIES.md) separates implementation from actual hardware acceptance. Historical verification contracts describe their tested revision; do not infer current restrictions from an old schema or UI snapshot.
+
+Configuration lives at `~/Library/Application Support/Rebind/configuration.json`. The current codec is [Configuration.swift](../apps/rebind/rebind/Persistence/Configuration.swift): it owns the current schema and supported migrations. Corrupt/future originals are preserved and editing locks instead of silently overwriting them. Migrations retain source bytes until a successful save. See [protected-save/restoration evidence](verification/protected-saves-and-restoration.md); no real user configuration belongs in repository records.
 
 ## Trackpad scheduling diagnostics
 
@@ -144,7 +109,7 @@ Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue
 
 ## Packages and research tools
 
-The app target has no Swift package dependency. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
+The app target uses the vendored local MIT package `apps/rebind/Packages/HIDPP` for Logitech HID++. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
 The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
 
