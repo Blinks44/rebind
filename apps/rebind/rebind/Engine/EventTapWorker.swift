@@ -162,8 +162,10 @@ nonisolated final class EventTapWorker {
             guard !mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) else { return nil }
             if let adjustment = mailbox.wheelAdjustment { ScrollEventAdapter.adjust(event, by: adjustment) }
             let passed = pass(event)
-            // A click no binding took becomes a glide; the original click is swallowed.
-            if let smooth = mailbox.smoothScrolling, SmoothScroller.applies(to: event, settings: smooth) {
+            // A click no binding took becomes a glide when its mouse has smooth scrolling on;
+            // the original click is swallowed.
+            if SmoothScroller.applies(to: event),
+               let smooth = mailbox.smoothScrolling(sender: AttachedHIDScroll.senderID(of: event)) {
                 scroller.feed(event, settings: smooth)
                 return nil
             }

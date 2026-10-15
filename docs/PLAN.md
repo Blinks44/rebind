@@ -6,7 +6,7 @@ Updated 2026-10-13. Read [STATE](STATE.md) first for current facts and the task 
 
 All planned functionality except Magic Mouse is implemented in software: keyboard and mouse rules, profiles, the action catalog, the full trackpad preset pool on the built-in trackpad and an external Magic Trackpad, Settings, onboarding, six languages, the website and the soft design system. Much of it still needs physical or running-app acceptance.
 
-Out of scope by user decision: Caps Lock, Fn/Globe and left/right modifier distinction; primary and secondary mouse buttons as triggers; physical-device inventory and automatic profile activation; swipes, pinch and rotation. Pointer speed and acceleration are left to macOS because changing them would alter a system-wide setting.
+Out of scope by user decision: Caps Lock, Fn/Globe and left/right modifier distinction; primary and secondary mouse buttons as triggers; automatic profile activation (rules may be limited to one app since 2026-10-15; per-mouse attribution exists only for Devices settings); swipes, pinch and rotation. Pointer speed and acceleration are left to macOS because changing them would alter a system-wide setting.
 
 ## Next
 

@@ -33,20 +33,16 @@ nonisolated final class SmoothScroller: Sendable {
     }
 
     /// Whether the tap should glide this wheel event instead of passing it on.
-    static func applies(to event: CGEvent, settings: SmoothScrollingSettings) -> Bool {
-        guard ScrollEventAdapter.isMouseWheel(event),
-              settings.scope == .allWheels || event.getIntegerValueField(.scrollWheelEventIsContinuous) == 0 else {
-            return false
-        }
+    static func applies(to event: CGEvent) -> Bool {
+        guard ScrollEventAdapter.isMouseWheel(event) else { return false }
         // Zoom and other modified wheel actions keep the original, exact clicks, and so does
         // Shift: apps turn a Shift+wheel click into horizontal scrolling, not a precise glide.
         return event.flags.isDisjoint(with: [.maskCommand, .maskControl, .maskShift])
     }
 
-    /// Adds one wheel event's distance in points (after reverse and speed). Tap callback: no I/O.
+    /// Adds one wheel event's distance (after reverse and speed). Tap callback: no I/O.
     func feed(_ event: CGEvent, settings: SmoothScrollingSettings) {
-        let x = event.getDoubleValueField(.scrollWheelEventPointDeltaAxis2)
-        let y = event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1)
+        let (x, y) = Self.distance(of: event, settings: settings)
         let wasIdle = glide.withLock { glide in
             let wasIdle = glide.isIdle
             glide.remainingX = Self.add(x, to: glide.remainingX)
@@ -56,6 +52,19 @@ nonisolated final class SmoothScroller: Sendable {
             return wasIdle
         }
         if wasIdle { wake.signal() }
+    }
+
+    /// Points to glide for one event. A stepped click counts its accelerated lines (the fixed-point
+    /// delta, already reversed or sped up); a continuous wheel keeps its own points, scaled so that
+    /// Standard matches it.
+    static func distance(of event: CGEvent, settings: SmoothScrollingSettings) -> (x: Double, y: Double) {
+        if event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0 {
+            let scale = settings.pointsPerLine / Double(SmoothScrollingDistance.standard)
+            return (event.getDoubleValueField(.scrollWheelEventPointDeltaAxis2) * scale,
+                    event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1) * scale)
+        }
+        return (event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) * settings.pointsPerLine,
+                event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) * settings.pointsPerLine)
     }
 
     /// Stops a glide at once, for example when the tap is removed.

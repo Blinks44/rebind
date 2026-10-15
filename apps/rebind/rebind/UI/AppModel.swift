@@ -5,6 +5,7 @@ import AppKit
 import Observation
 import Synchronization
 import Dispatch
+import Carbon
 
 @MainActor @Observable final class AppModel: NSObject {
     private(set) var configuration = Configuration()
@@ -28,6 +29,7 @@ import Dispatch
     @ObservationIgnored private let languagePreferenceSaved: (AppLanguagePreference) -> Void
 
     @ObservationIgnored let mailbox = EngineMailbox()
+    @ObservationIgnored private lazy var pointerApplication = PointerApplicationTracker(mailbox: mailbox)
     @ObservationIgnored private let store: ConfigurationStore
     private(set) var trackpadStatus: TrackpadCaptureStatus = .idle
     @ObservationIgnored private var trackpadCapture: TrackpadCapture?
@@ -56,8 +58,10 @@ import Dispatch
         var loaded = Configuration()
         var loadFailed = false
         if loadConfiguration {
-            do { loaded = try store.load() }
-            catch { loadFailed = true }
+            do {
+                loaded = try store.load()
+                store.backUpLoadedFile()
+            } catch { loadFailed = true }
         }
         activeLanguage = loaded.languagePreference.resolved(preferredLanguages: preferredLanguages)
         super.init()
@@ -77,6 +81,7 @@ import Dispatch
     }
 
     var configurationFileURL: URL { store.url }
+    var configurationBackupDirectory: URL { store.backupDirectory }
 
     /// A confirmed whole-document transaction. Persist before changing any runtime state.
     func replaceConfiguration(with replacement: Configuration, expected: Configuration,
@@ -138,6 +143,13 @@ import Dispatch
         companionApps.start()
         mouseHardware.storedSettings = { [weak self] in self?.configuration.mouseHardware ?? [] }
         mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0) == nil }
+        let mailbox = mailbox
+        mouseHardware.gestureButtonChanged = { down in
+            mailbox.handleOffTapButton(InputTrigger.gestureButton, down: down,
+                                       modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
+                                       secureInput: IsSecureEventInputEnabled())
+        }
+        mouseHardware.smoothScrollingChanged = { mailbox.setSmoothScrolling(bySender: $0) }
         mouseHardware.start()
         configureEngine(configuration)
         refreshSessionProtection()
@@ -149,6 +161,7 @@ import Dispatch
         trackpadCapture?.start()
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
+        updatePointerTracking(configuration)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshPermissions), name: NSApplication.didBecomeActiveNotification, object: nil)
@@ -178,6 +191,7 @@ import Dispatch
         }
         trackpadCapture?.stop()
         trackpadCapture = nil
+        pointerApplication.setRunning(false)
         workspaceTask?.cancel()
         workspaceTask = nil
         workspaceActionInProgress = false
@@ -408,15 +422,6 @@ import Dispatch
         trySave(updated)
     }
 
-    func setSmoothScrolling(enabled: Bool? = nil, glide: SmoothScrollingGlide? = nil, scope: SmoothScrollingScope? = nil) {
-        var updated = configuration
-        if let enabled { updated.smoothScrolling = enabled }
-        if let glide { updated.smoothScrollingGlide = glide }
-        if let scope { updated.smoothScrollingScope = scope }
-        guard updated != configuration else { return }
-        trySave(updated)
-    }
-
     /// Companion apps whose Mouse page warning is still shown: a newly seen app shows it again.
     var visibleMouseCompanionApps: [CompanionApp] {
         mouseCompanionApps.filter { !configuration.dismissedCompanionApps.contains($0.name) }
@@ -435,9 +440,10 @@ import Dispatch
         trySave(updated)
     }
 
-    func setMouseWheel(reverses: Bool? = nil, speed: MouseWheelSpeed? = nil) {
+    func setMouseWheel(reverses: Bool? = nil, reversesHorizontally: Bool? = nil, speed: MouseWheelSpeed? = nil) {
         var updated = configuration
         if let reverses { updated.reversesMouseWheel = reverses }
+        if let reversesHorizontally { updated.reversesHorizontalScrolling = reversesHorizontally }
         if let speed { updated.mouseWheelSpeed = speed }
         guard updated != configuration else { return }
         trySave(updated)
@@ -458,7 +464,11 @@ import Dispatch
         }
         guard updated != configuration else { return }
         do { try updated.validate() } catch { self.error = .storageWriteFailed; return }
-        if trySave(updated) { mouseHardware.apply(settings) }
+        let previous = configuration.mouseHardware.first { $0.deviceKey == settings.deviceKey }
+        guard trySave(updated) else { return }
+        mouseHardware.publishSmoothScrolling()
+        // Turning the gesture button on or off also changes which reports Rebind listens to.
+        if previous?.usesGestureButton != settings.usesGestureButton { mouseHardware.refresh() } else { mouseHardware.apply(settings) }
     }
 
     /// Plain-text facts for a bug report. Counts and states only: no triggers, shortcuts,
@@ -477,7 +487,7 @@ import Dispatch
             "Accessibility: \(permissions.accessibility); event sending: \(permissions.posting); input monitoring: \(permissions.listening)",
             "Configuration: schema \(configuration.schemaVersion), locked: \(storageLocked)",
             "Profiles: \(configuration.profiles.count); bindings in all profiles: \(configuration.profiles.reduce(0) { $0 + $1.bindings.count })",
-            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), speed \(configuration.mouseWheelSpeed.rawValue); smooth scrolling: \(configuration.smoothScrolling ? "\(configuration.smoothScrollingGlide.rawValue), \(configuration.smoothScrollingScope.rawValue)" : "off")"
+            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), horizontal reversed \(configuration.reversesHorizontalScrolling), speed \(configuration.mouseWheelSpeed.rawValue); smooth scrolling on \(configuration.mouseHardware.filter { $0.smoothScrolling == true }.count) mice; app-specific bindings: \(configuration.bindings.filter { $0.application != nil }.count)"
         ]
         for (name, scope) in scopes {
             let scoped = rules.filter { $0.scope == scope }
@@ -641,6 +651,13 @@ import Dispatch
             ? UInt64(interval * 1_000_000_000) : 500_000_000
         mailbox.configure(configuration, doublePressIntervalNanoseconds: nanoseconds,
                           keyRepeat: Self.keyRepeat(delay: NSEvent.keyRepeatDelay, interval: NSEvent.keyRepeatInterval))
+        if timer != nil { updatePointerTracking(configuration) }
+    }
+
+    /// Only a per-app smooth scrolling exclusion needs to know which app is under the pointer.
+    private func updatePointerTracking(_ configuration: Configuration) {
+        pointerApplication.setRunning(configuration.mouseHardware.contains { $0.smoothScrolling == true }
+            && configuration.excludedApplications.contains { !$0.allowsSmoothScrolling })
     }
 
     /// The system key-repeat preference, bounded so a broken value cannot storm or stall.

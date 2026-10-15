@@ -15,6 +15,10 @@ nonisolated enum MouseWheelSpeed: String, Codable, CaseIterable, Hashable, Senda
 nonisolated struct WheelAdjustment: Equatable, Sendable {
     var reverses: Bool
     var multiplier: Int64
+    /// Horizontal scrolling (tilt, thumb wheel) is reversed on its own.
+    var reversesHorizontally = false
 
     var factor: Int64 { (reverses ? -1 : 1) * multiplier }
+    var horizontalFactor: Int64 { (reversesHorizontally ? -1 : 1) * multiplier }
+    var changesNothing: Bool { factor == 1 && horizontalFactor == 1 }
 }

@@ -10,4 +10,4 @@ Copied on 2026-10-15 from [linearmouse/linearmouse](https://github.com/linearmou
 
 - `HIDPPFeatureID` gains `smartShift` (0x2110) and `smartShiftEnhanced` (0x2111).
 - `HIDPPTransport` treats a HID++ 1.0 error reply (sub-ID 0x8F) as a failure, so a request to an empty receiver slot ends at once instead of timing out.
-- New `Features/SmartShift.swift` and `Features/DeviceName.swift`, with tests.
+- New `Features/SmartShift.swift`, `Features/DeviceName.swift`, `Features/Battery.swift` (0x1000/0x1004) and `Features/ReprogControls.swift` (0x1B04 diversion and its notifications), with tests.

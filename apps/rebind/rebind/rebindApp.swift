@@ -102,10 +102,21 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     /// Opens a window from the Menu Bar item and brings Rebind to the front. As an accessory app,
     /// Rebind first becomes a regular app: switching the policy later, when the window becomes main,
     /// deactivates the app after the click's activation and the window can stay behind other apps.
-    static func showWindow(_ open: () -> Void) {
+    /// The rest waits one run-loop turn: the policy change and the closing menu settle first. An
+    /// activation requested in the same turn can be dropped, and a window that appears while Rebind
+    /// is inactive opens behind other apps or, with Stage Manager, in the strip at the side.
+    static func showWindow(_ open: @escaping () -> Void) {
         if NSApp.activationPolicy() != .regular { NSApp.setActivationPolicy(.regular) }
-        open()
-        NSApp.activate()
+        DispatchQueue.main.async {
+            NSApp.activate()
+            open()
+            // The window SwiftUI just opened or reused is the frontmost one; make sure it leads.
+            DispatchQueue.main.async {
+                NSApp.orderedWindows.first { $0.canBecomeMain && $0.isVisible && !($0 is NSPanel) }?
+                    .makeKeyAndOrderFront(nil)
+                NSApp.activate()
+            }
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

@@ -14,11 +14,13 @@ struct BindingRow: View {
 
     private var caption: String {
         if !isAvailable { return AppLocalization.string(kind.unavailableMessage) }
-        if let note = binding.note { return note }
+        // A rule for one app names it first: that is where it works.
+        let app = binding.application.map { AppLocalization.string(.bindingOnlyInApp($0.displayName)) + " · " } ?? ""
+        if let note = binding.note { return app + note }
         let category = AppLocalization.string(kind.category.title)
-        if binding.holdsOutput { return category + " · " + AppLocalization.string(.holdOutputBadge) }
-        guard binding.activation != .press else { return category }
-        return category + " · " + AppLocalization.string(BindingList.detail(for: binding))
+        if binding.holdsOutput { return app + category + " · " + AppLocalization.string(.holdOutputBadge) }
+        guard binding.activation != .press else { return app + category }
+        return app + category + " · " + AppLocalization.string(BindingList.detail(for: binding))
     }
 
     var body: some View {

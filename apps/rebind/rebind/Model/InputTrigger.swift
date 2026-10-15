@@ -83,3 +83,9 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         }
     }
 }
+
+extension InputTrigger {
+    /// The Logitech gesture button, diverted to Rebind over HID++. Quartz never sees it, so it
+    /// takes a button number far above any real one and works like any other mouse button.
+    nonisolated static let gestureButton: UInt32 = 1000
+}

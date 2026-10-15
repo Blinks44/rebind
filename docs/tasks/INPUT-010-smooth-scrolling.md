@@ -3,8 +3,8 @@
 - Updated: 2026-10-15
 - Stage: awaiting_verification
 - Owner: Unassigned; released 2026-10-15 by the implementation session
-- Ownership checked: 2026-10-15, uncommitted work on `main` after `f10ed48` (on top of [DEVICE-001](DEVICE-001-mouse-devices.md)); released
-- Owned surfaces: `Engine/SmoothScroller.swift`, `Engine/EventTapWorker.swift` wheel branch, `Model/ExcludedApplication.swift`, `Model/SmoothScrolling.swift`, `UI/InputSettingsView.swift`, `UI/ExcludedApplicationsCard.swift`, `Banner` close button, configuration schema 36
+- Ownership checked: 2026-10-15; first slice committed by the user as `4aff48c` (with [DEVICE-001](DEVICE-001-mouse-devices.md)), follow-up below uncommitted; released
+- Owned surfaces: `Engine/SmoothScroller.swift`, `Engine/PointerApplicationTracker.swift`, `Engine/EventTapWorker.swift` wheel branch, `Model/ExcludedApplication.swift`, `Model/SmoothScrolling.swift`, `UI/InputSettingsView.swift`, `UI/ExcludedApplicationsCard.swift`, `Banner` close button, Menu Bar window opening, configuration schemas 36–38, shared `UI/SettingSlider.swift`
 - Requirements: SPEC §3.2 (wheel), §10 Settings; schema 36
 
 ## Outcome and scope
@@ -15,6 +15,13 @@
 - **Companion warning on the Mouse page** can be hidden with ×; hidden apps are remembered (`dismissedCompanionApps`), and a companion app not hidden before shows it again. The Devices banner (Options+, controls disabled) is not hideable. No reset control: there is no natural place for it in Advanced.
 - **Input tab cleanup**: removed the "Keys and buttons · In each binding" and "Built-in trackpad · Experimental" information cards and the footer about the sidebar (text only, no control, repeated elsewhere); the header now reads "Input / How Rebind recognizes presses, movement and taps." as in Sketch. Eight strings deleted.
 
+## Follow-up 2026-10-15 (user feedback on `4aff48c`)
+
+- **Distance per click**: the glide used the 10 points a stepped click reports, while apps scroll a line much further, so pages needed many clicks. A stepped click now glides its accelerated lines (fixed-point delta, after reverse/speed) × the distance; a continuous wheel keeps its own points, scaled so the default matches it. First three presets (schema 37), then by user request a slider of 20–400 points per line in steps of 10, default 120 (schema 38; a schema 37 preset becomes 40 / 80 / 140). The Devices slider became the shared `SettingSlider`.
+- **Exclusions follow the pointer**: a scroll goes to the window under the pointer, not to the app in front (Chrome in front, PhpStorm under the pointer still glided). `PointerApplicationTracker` reads the window list on a utility queue ten times a second, only while smooth scrolling is on and some app turns it off, and publishes the app under the pointer to the mailbox; the tap reads it under the usual lock. Without it the app in front decides. Bindings exclusions still follow the app in front (keys go there).
+- **Menu Bar windows**: opening Rebind or Settings sometimes did nothing the first time or put the window into the Stage Manager strip. The policy switch and activation happened in the same run-loop turn as the menu closing; an activation requested then can be dropped and the window appears while Rebind is inactive. `showWindow` now activates and opens one turn later and brings the opened window to the front a turn after that.
+- 769 tests + 15 layout tests pass; none of these three is checked in the running app yet.
+
 ## Acceptance
 
 - [x] Smooth scrolling engine and settings; exclusion toggles; hideable warning; Input cleanup; strings in six languages.
@@ -24,7 +31,7 @@
 
 ## Sketch source
 
-Rebind.sketch, page "01 · Screens": "42 · Main · Mouse · Options+ running" (× on the banner), "44 · Settings · Input · Smooth scrolling", "45 · Settings · Input · Excluded apps", Light and Dark, inspected through MCP on 2026-10-15. Frames 13, 31 and 36 still show the removed Input information cards and the old wheel copy; the design side updates them.
+Rebind.sketch, page "01 · Screens": "42 · Main · Mouse · Options+ running" (× on the banner), "44 · Settings · Input · Smooth scrolling", "45 · Settings · Input · Excluded apps", Light and Dark, inspected through MCP on 2026-10-15. Frame 44 has no "Distance per click" slider row yet (in code above Glide: title, "How far one wheel click scrolls (default 120 pt).", value "120 pt", same style as the Devices sliders). Frames 13, 31 and 36 still show the removed Input information cards and the old wheel copy; the design side updates them.
 
 ## Implementation and verification
 

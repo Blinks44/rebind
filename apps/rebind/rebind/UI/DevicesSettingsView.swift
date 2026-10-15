@@ -1,11 +1,10 @@
 import SwiftUI
 
-/// Connected mice and the hardware settings each one supports (Logitech HID++ for now).
+/// Connected mice: smooth scrolling for each, plus the hardware settings a Logitech mouse reports.
 struct DevicesSettingsView: View {
     let model: AppModel
 
     private var mice: [ConnectedMouse] { model.mouseHardware.mice }
-    private var hasSettings: Bool { mice.contains { $0.hardware != nil } }
 
     var body: some View {
         ScrollView {
@@ -18,11 +17,12 @@ struct DevicesSettingsView: View {
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
                 let controllers = model.mouseCompanionApps.filter(\.controlsHardwareSettings)
                 if !controllers.isEmpty { CompanionBanner(apps: controllers) }
-                if hasSettings {
+                if !mice.isEmpty {
                     ForEach(mice) { mouse in
                         MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
+                                  hardwareLocked: model.companionApps.controller(ofVendor: mouse.vendorID) != nil,
                                   save: model.setMouseHardware)
-                            .disabled(model.storageLocked || model.companionApps.controller(ofVendor: mouse.vendorID) != nil)
+                            .disabled(model.storageLocked)
                     }
                 } else {
                     emptyState.frame(maxWidth: .infinity).padding(.top, 88)
@@ -48,35 +48,52 @@ struct DevicesSettingsView: View {
     }
 }
 
-/// One mouse: its name, then a row for each setting it reports, or a short note when it has none.
+/// One mouse: its name and battery, the hardware settings it reports, then smooth scrolling.
 private struct MouseCard: View {
     let mouse: ConnectedMouse
     let stored: MouseHardwareSettings?
+    /// A companion app rewrites the hardware settings; smooth scrolling is Rebind's own.
+    let hardwareLocked: Bool
     let save: (MouseHardwareSettings) -> Void
 
     private var settings: MouseHardwareSettings { stored ?? MouseHardwareSettings(deviceKey: mouse.deviceKey) }
 
     var body: some View {
         Card {
-            if let hardware = mouse.hardware {
-                VStack(alignment: .leading, spacing: 0) {
-                    identity
-                    if let mode = hardware.wheelMode {
-                        separator
-                        wheel(mode: mode, sensitivity: hardware.smartShiftSensitivity)
+            VStack(alignment: .leading, spacing: 0) {
+                identity
+                if let hardware = mouse.hardware {
+                    Group {
+                        if let mode = hardware.wheelMode {
+                            separator
+                            wheel(mode: mode, sensitivity: hardware.smartShiftSensitivity)
+                        }
+                        if let enabled = hardware.highResolutionWheel {
+                            separator
+                            toggle(.devicesHighResolutionWheel, .devicesHighResolutionWheelDescription, isOn: enabled) {
+                                var updated = settings
+                                updated.highResolutionWheel = $0
+                                save(updated)
+                            }
+                        }
+                        if let dpi = hardware.dpi {
+                            separator
+                            pointerSpeed(dpi: dpi, supported: hardware.supportedDPI)
+                        }
+                        if hardware.hasGestureButton {
+                            separator
+                            toggle(.devicesGestureButton, .devicesGestureButtonDescription,
+                                   isOn: settings.usesGestureButton == true) {
+                                var updated = settings
+                                updated.usesGestureButton = $0
+                                save(updated)
+                            }
+                        }
                     }
-                    if let dpi = hardware.dpi {
-                        separator
-                        pointerSpeed(dpi: dpi, supported: hardware.supportedDPI)
-                    }
+                    .disabled(hardwareLocked)
                 }
-            } else {
-                HStack(spacing: 16) {
-                    identity
-                    Spacer(minLength: 12)
-                    Text(.devicesNoExtraSettings).font(Theme.callout).foregroundStyle(Theme.textSecondary)
-                        .multilineTextAlignment(.trailing)
-                }
+                separator
+                smoothScrolling
             }
         }
         .accessibilityElement(children: .contain)
@@ -95,6 +112,26 @@ private struct MouseCard: View {
                     Text(verbatim: subtitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 }
             }
+            Spacer(minLength: 12)
+            if let hardware = mouse.hardware, let percentage = hardware.batteryPercentage {
+                let charging = hardware.batteryCharging
+                Label {
+                    Text(charging ? .devicesBatteryCharging(percentage) : .devicesBattery(percentage))
+                } icon: {
+                    Image(systemName: charging ? "battery.100.bolt" : Self.batterySymbol(percentage))
+                }
+                .font(Theme.callout).foregroundStyle(percentage <= 15 && !charging ? Theme.warningText : Theme.textSecondary)
+            }
+        }
+    }
+
+    static func batterySymbol(_ percentage: Int) -> String {
+        switch percentage {
+        case ..<13: "battery.0"
+        case ..<38: "battery.25"
+        case ..<63: "battery.50"
+        case ..<88: "battery.75"
+        default: "battery.100"
         }
     }
 
@@ -106,6 +143,39 @@ private struct MouseCard: View {
         case .other: nil
         }
         return [mouse.manufacturer, transport.map { AppLocalization.string($0) }].compactMap { $0 }.joined(separator: " · ")
+    }
+
+    @ViewBuilder private var smoothScrolling: some View {
+        toggle(.smoothScrollingTitle, .smoothScrollingDescription, isOn: settings.smoothScrolling == true) {
+            var updated = settings
+            updated.smoothScrolling = $0
+            save(updated)
+        }
+        if settings.smoothScrolling == true {
+            SettingSlider(title: .smoothScrollingDistance,
+                          description: .smoothScrollingDistanceDescription(SmoothScrollingDistance.standard),
+                          value: settings.smoothScrollingDistance ?? SmoothScrollingDistance.standard,
+                          values: Array(stride(from: SmoothScrollingDistance.range.lowerBound,
+                                               through: SmoothScrollingDistance.range.upperBound,
+                                               by: SmoothScrollingDistance.step)),
+                          valueLabel: { .smoothScrollingDistanceValue($0) }) { value in
+                var updated = settings
+                updated.smoothScrollingDistance = value
+                save(updated)
+            }
+            .padding(.top, 16)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(.smoothScrollingGlide).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                SegmentedPicker(selection: SwiftUI.Binding(get: { settings.smoothScrollingGlide ?? .standard }, set: {
+                                    var updated = settings
+                                    updated.smoothScrollingGlide = $0
+                                    save(updated)
+                                }),
+                                title: .smoothScrollingGlide, options: SmoothScrollingGlide.allCases, label: \.label,
+                                fillsWidth: true)
+            }
+            .padding(.top, 16)
+        }
     }
 
     @ViewBuilder private func wheel(mode: WheelMode, sensitivity: Int) -> some View {
@@ -140,6 +210,12 @@ private struct MouseCard: View {
         }
     }
 
+    private func toggle(_ title: LocalizedStringResource, _ description: LocalizedStringResource, isOn: Bool,
+                        set: @escaping (Bool) -> Void) -> some View {
+        Toggle(isOn: SwiftUI.Binding(get: { isOn }, set: set)) { label(title, description) }
+            .toggleStyle(ThemeSwitchStyle())
+    }
+
     private func label(_ title: LocalizedStringResource, _ description: LocalizedStringResource) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(Theme.body).foregroundStyle(Theme.textPrimary)
@@ -150,62 +226,13 @@ private struct MouseCard: View {
     }
 }
 
-/// A setting chosen from the values a mouse accepts. The mouse is written once a drag ends,
-/// not on every step of it; without a list of values only the current one is shown.
-private struct SettingSlider: View {
-    let title: LocalizedStringResource
-    let description: LocalizedStringResource
-    let value: Int
-    let values: [Int]
-    var valueLabel: ((Int) -> LocalizedStringResource)?
-    let commit: (Int) -> Void
-    @State private var draft: Int?
-    @State private var dragging = false
-
-    private var shown: Int { draft ?? value }
-
-    var body: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(Theme.body).foregroundStyle(Theme.textPrimary)
-                Text(description).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            if let valueLabel {
-                Text(valueLabel(shown)).font(Theme.callout).monospacedDigit().foregroundStyle(Theme.textSecondary)
-            }
-            if values.count > 1 {
-                Slider(value: index, in: 0...Double(values.count - 1), step: 1) { editing in
-                    dragging = editing
-                    if !editing { send() }
-                }
-                .tint(Theme.accent)
-                .frame(width: 240)
-                .accessibilityLabel(Text(title))
-                .accessibilityValue(Text(verbatim: String(shown)))
-            }
+extension SmoothScrollingGlide {
+    var label: LocalizedStringResource {
+        switch self {
+        case .short: .glideShort
+        case .standard: .glideStandard
+        case .long: .glideLong
         }
-    }
-
-    private var index: SwiftUI.Binding<Double> {
-        SwiftUI.Binding(
-            get: { Double(values.firstIndex(of: shown) ?? Self.nearest(to: shown, in: values)) },
-            set: { position in
-                draft = values[min(max(Int(position.rounded()), 0), values.count - 1)]
-                // Arrow keys change the value without a drag.
-                if !dragging { send() }
-            })
-    }
-
-    private func send() {
-        guard let sent = draft else { return }
-        draft = nil
-        if sent != value { commit(sent) }
-    }
-
-    static func nearest(to value: Int, in values: [Int]) -> Int {
-        values.indices.min { abs(values[$0] - value) < abs(values[$1] - value) } ?? 0
     }
 }
 

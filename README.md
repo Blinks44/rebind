@@ -45,13 +45,15 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 **Everything else**
 
 - Named profiles with manual selection; duplicate a binding, copy it to another profile, give it a note; export and import single profiles or a full backup.
+- Bindings for all apps or for one app, which then replaces the general binding with the same trigger there.
 - Excluded apps, such as games and virtual machines, with bindings and smooth scrolling switched off separately.
-- Reverse or speed up the mouse wheel without changing the trackpad, smooth scrolling for wheels with clicks, adjustable mouse gesture distance.
-- Logitech mice: SmartShift wheel mode and sensitivity and pointer resolution (DPI), kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
+- Reverse vertical and horizontal scrolling separately, speed up the wheel, smooth scrolling set per mouse, adjustable mouse gesture distance.
+- Logitech mice: SmartShift wheel mode and sensitivity, pointer resolution (DPI), high-resolution wheel, battery charge, and the gesture button as a trigger; kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
+- A daily copy of the settings for the last week, besides full export and import.
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
-Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and the Logitech gesture button and thumb wheel as triggers. Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
+Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
 
 ## Requirements
 

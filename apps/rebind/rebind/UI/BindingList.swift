@@ -14,6 +14,7 @@ enum BindingList {
             || (binding.activation == .hold && String(binding.holdDurationMilliseconds).contains(query))
             || binding.action.label.localizedStandardContains(query)
             || (binding.note?.localizedStandardContains(query) ?? false)
+            || (binding.application?.displayName.localizedStandardContains(query) ?? false)
     }
 
     static func detail(for binding: Binding) -> LocalizedStringResource {

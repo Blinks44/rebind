@@ -69,8 +69,9 @@ struct BindingsView: View {
             } else if scope == .allMice, !model.visibleMouseCompanionApps.isEmpty {
                 let apps = model.visibleMouseCompanionApps
                 CompanionBanner(apps: apps) { model.dismissCompanionWarning(for: apps) }.padding(.top, 24)
-            } else if scope.isTrackpad && !bindings.isEmpty {
-                Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint)
+            } else if scope.isTrackpad && !bindings.isEmpty && !model.configuration.hidesTrackpadGestureWarning {
+                Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint,
+                       dismiss: { model.setPresencePreference(\.hidesTrackpadGestureWarning, to: true) })
                     .padding(.top, 24)
             }
             if let error = model.error {

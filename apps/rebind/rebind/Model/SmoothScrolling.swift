@@ -12,15 +12,17 @@ nonisolated enum SmoothScrollingGlide: String, Codable, CaseIterable, Hashable, 
     }
 }
 
-/// Which mouse wheels smooth scrolling changes.
-nonisolated enum SmoothScrollingScope: String, Codable, CaseIterable, Hashable, Sendable {
-    /// Only wheels that click step by step; high-resolution wheels already scroll smoothly.
-    case steppedWheels
-    case allWheels
+/// How far one wheel click glides, in points per line of an accelerated click. A stepped
+/// click reports only about 10 points, while apps scroll a line much further, so the glide
+/// sets its own distance.
+nonisolated enum SmoothScrollingDistance {
+    static let range = 20...400
+    static let step = 10
+    static let standard = 60
 }
 
 /// The smooth scrolling choice the event tap applies.
 nonisolated struct SmoothScrollingSettings: Equatable, Sendable {
     var glide: SmoothScrollingGlide
-    var scope: SmoothScrollingScope
+    var pointsPerLine = Double(SmoothScrollingDistance.standard)
 }

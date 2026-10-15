@@ -20,6 +20,25 @@ nonisolated struct ConfigurationStore: Sendable {
         return try ConfigurationBackup(contentsOf: url).configuration
     }
 
+    /// Daily copies of the file as it loaded at launch, in `Backups` next to it. Any of them can be
+    /// restored with Settings → Advanced → Import if the configuration is ever lost or damaged.
+    var backupDirectory: URL { url.deletingLastPathComponent().appending(path: "Backups", directoryHint: .isDirectory) }
+    static let keptBackups = 7
+
+    /// Keeps today's copy of the current file and the newest `keptBackups` days; only called
+    /// after the file loaded successfully, so a damaged file never replaces a good copy.
+    func backUpLoadedFile(on date: Date = .now) {
+        guard let data = try? Data(contentsOf: url), !data.isEmpty else { return }
+        let manager = FileManager.default
+        try? manager.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+        let day = date.formatted(.iso8601.year().month().day())
+        try? data.write(to: backupDirectory.appending(path: "configuration-\(day).json"), options: .atomic)
+        let copies = (try? manager.contentsOfDirectory(at: backupDirectory, includingPropertiesForKeys: nil)) ?? []
+        let dated = copies.filter { $0.lastPathComponent.hasPrefix("configuration-") }
+            .sorted { $0.lastPathComponent > $1.lastPathComponent }
+        for old in dated.dropFirst(Self.keptBackups) { try? manager.removeItem(at: old) }
+    }
+
     func save(_ configuration: Configuration) throws {
         let data = try ConfigurationBackup(configuration: configuration).encoded()
         var isDirectory: ObjCBool = false

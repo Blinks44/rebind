@@ -25,8 +25,8 @@ Out of scope, by decision: the **gesture button and thumb wheel** (REPROG_CONTRO
 - [x] Strings in EN/RU/DE/FR/ES/zh-Hans.
 - [x] Unit tests: companion matching, schema 35 validation/migration, SmartShift/DPI payloads with a mock device; package tests for SmartShift and DEVICE_NAME.
 - [x] User report 2026-10-15 (Debug build): the MX Master 2S on the Unifying receiver is listed and switching SmartShift off works.
-- [ ] Running-app review against Sketch frames 39–42, Light and Dark.
-- [ ] Hardware: sensitivity and DPI on the MX Master 2S; reconnect and relaunch keep the values; reverse and speed on the continuous wheel after the attached-event fix; trackpad unaffected; Options+ banner with Options+ installed.
+- [x] User report 2026-10-15, Debug build of the attached-event fix: all ten checklist items work on the MX Master 2S over Unifying: Devices listing and rows, SmartShift modes, sensitivity, DPI, persistence after relaunch and reconnect, wheel reverse/speed with "Passed on, changed" in diagnostics, trackpad unaffected, G HUB banner, empty state, Light/Dark.
+- [ ] Options+ banner and disabled controls with Options+ installed (uninstalled on the test Mac); Bluetooth-direct and Bolt mice; MX Master 3/3S (0x2111).
 
 ## Sketch source
 

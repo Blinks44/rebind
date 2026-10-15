@@ -21,8 +21,11 @@ nonisolated struct RecordedInput: Sendable {
 
 nonisolated final class EngineMailbox: Sendable {
     struct State: Sendable {
+        /// The rules in effect for the app in front, without actions the audio output cannot do.
         var rules: [MatchKey: CompiledBinding] = [:]
-        var allRules: [MatchKey: CompiledBinding] = [:]
+        /// Rules for every app, and the effective set of each app that has rules of its own.
+        var generalRules: [MatchKey: CompiledBinding] = [:]
+        var applicationRules: [String: [MatchKey: CompiledBinding]] = [:]
         var windowDisplays = WindowDisplaySnapshot()
         var audioCapabilities = AudioOutputCapabilities()
         var actionRevision: UInt64 = 0
@@ -33,6 +36,8 @@ nonisolated final class EngineMailbox: Sendable {
         var excludedApplications: Set<String> = []
         /// Bundle identifiers of apps in which wheel clicks are not smoothed.
         var smoothScrollingExclusions: Set<String> = []
+        /// The app whose window is under the pointer, while `PointerApplicationTracker` runs.
+        var pointerBundleID: String?
         var foregroundBundleID: String?
         /// Enabled and not in front of an excluded app. Pause state itself is `enabled`.
         var isMatching: Bool { enabled && !(foregroundBundleID.map(excludedApplications.contains) ?? false) }
@@ -47,7 +52,8 @@ nonisolated final class EngineMailbox: Sendable {
         var held: [HeldOutput] = []
         var keyRepeat = KeyRepeatTiming()
         var wheel: WheelAdjustment?
-        var smoothScrolling: SmoothScrollingSettings?
+        /// Smooth scrolling of each mouse that has it on, by the registry ID of its HID service.
+        var smoothScrollingBySender: [UInt64: SmoothScrollingSettings] = [:]
         static let maximumHeldOutputs = 4
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
@@ -79,11 +85,21 @@ nonisolated final class EngineMailbox: Sendable {
             status == .active && isMatching && !suspended && !stopped ? wheel : nil
         }
 
-        /// Smooth scrolling runs while Rebind is on, unless the app in front opts out of it.
-        var activeSmoothScrolling: SmoothScrollingSettings? {
-            guard status == .active, enabled, !suspended, !stopped,
-                  !(foregroundBundleID.map(smoothScrollingExclusions.contains) ?? false) else { return nil }
-            return smoothScrolling
+        /// Smooth scrolling of the mouse that sent a wheel event while Rebind is on, unless the app
+        /// under the pointer, which receives the scroll, opts out (the app in front when unknown).
+        func activeSmoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {
+            guard let sender, let settings = smoothScrollingBySender[sender], status == .active, enabled,
+                  !suspended, !stopped,
+                  !((pointerBundleID ?? foregroundBundleID).map(smoothScrollingExclusions.contains) ?? false) else { return nil }
+            return settings
+        }
+
+        /// Swaps in the rules of the app in front; called when it, the rules or the audio output change.
+        mutating func selectRules() {
+            let all = foregroundBundleID.flatMap { applicationRules[$0] } ?? generalRules
+            let capabilities = audioCapabilities
+            rules = all.filter { capabilities.supports($0.value.action) }
+            hasPointerGestureRules = rules.keys.contains { $0.trigger.isPointerGesture }
         }
 
         /// Whether rules may match at all; ownership and the emergency bypass work regardless.
@@ -201,7 +217,16 @@ nonisolated final class EngineMailbox: Sendable {
 
     func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000,
                    keyRepeat: KeyRepeatTiming = KeyRepeatTiming()) {
-        let compiled = InputMatcher.compile(configuration.bindings)
+        let bindings = configuration.bindings
+        let general = bindings.filter { $0.application == nil }
+        let compiled = InputMatcher.compile(general)
+        // An app's rules replace rules for all apps with the same trigger while it is in front.
+        var perApplication: [String: [MatchKey: CompiledBinding]] = [:]
+        for bundle in Set(bindings.compactMap(\.application?.bundleIdentifier)) {
+            let own = bindings.filter { $0.application?.bundleIdentifier == bundle }
+            let ownKeys = Set(own.filter(\.isEnabled).map(\.matchKey))
+            perApplication[bundle] = InputMatcher.compile(own + general.filter { !ownKeys.contains($0.matchKey) })
+        }
         state.withLock {
             if $0.profileID != configuration.selectedProfileID {
                 $0.profileID = configuration.selectedProfileID
@@ -211,34 +236,38 @@ nonisolated final class EngineMailbox: Sendable {
             }
             if configuration.isEnabled && !$0.enabled { $0.retryID &+= 1 }
             $0.actionFailed = nil
-            $0.allRules = compiled
-            let capabilities = $0.audioCapabilities
-            $0.rules = compiled.filter { capabilities.supports($0.value.action) }
-            $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
+            $0.generalRules = compiled
+            $0.applicationRules = perApplication
+            $0.selectRules()
             $0.enabled = configuration.isEnabled
             $0.excludedApplications = Set(configuration.excludedApplications.filter { !$0.allowsBindings }.map(\.bundleIdentifier))
             $0.smoothScrollingExclusions = Set(configuration.excludedApplications.filter { !$0.allowsSmoothScrolling }
                 .map(\.bundleIdentifier))
-            $0.smoothScrolling = configuration.smoothScrolling
-                ? SmoothScrollingSettings(glide: configuration.smoothScrollingGlide, scope: configuration.smoothScrollingScope) : nil
             $0.cancelQueuedWork()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
             $0.keyRepeat = keyRepeat
             $0.matcher.pointerThreshold = configuration.pointerGestureDistance.points
             let wheel = WheelAdjustment(reverses: configuration.reversesMouseWheel,
-                                        multiplier: configuration.mouseWheelSpeed.multiplier)
-            $0.wheel = wheel.factor == 1 ? nil : wheel
+                                        multiplier: configuration.mouseWheelSpeed.multiplier,
+                                        reversesHorizontally: configuration.reversesHorizontalScrolling)
+            $0.wheel = wheel.changesNothing ? nil : wheel
         }
     }
 
-    /// The app now in front. Entering or leaving an excluded app cancels waiting work;
-    /// presses Rebind already swallowed keep their release.
+    /// The app now in front. Entering or leaving an excluded app, or an app with rules of its
+    /// own, cancels waiting work; presses Rebind already swallowed keep their release.
     func setForegroundApplication(_ bundleIdentifier: String?) {
-        state.withLock {
-            let wasMatching = $0.isMatching
-            $0.foregroundBundleID = bundleIdentifier
-            guard $0.isMatching != wasMatching else { return }
-            $0.cancelQueuedWork()
+        state.withLock { state in
+            let wasMatching = state.isMatching
+            let previous = state.foregroundBundleID
+            state.foregroundBundleID = bundleIdentifier
+            // Only apps with rules of their own change the rule set; other switches keep it.
+            let rules = state.applicationRules
+            let rulesChanged = previous != bundleIdentifier
+                && [previous, bundleIdentifier].contains { $0.map { rules[$0] != nil } ?? false }
+            if rulesChanged { state.selectRules() }
+            guard state.isMatching != wasMatching || rulesChanged else { return }
+            state.cancelQueuedWork()
         }
     }
 
@@ -251,8 +280,7 @@ nonisolated final class EngineMailbox: Sendable {
         state.withLock {
             guard $0.audioCapabilities != capabilities else { return }
             $0.audioCapabilities = capabilities
-            $0.rules = $0.allRules.filter { capabilities.supports($0.value.action) }
-            $0.hasPointerGestureRules = $0.rules.keys.contains { $0.trigger.isPointerGesture }
+            $0.selectRules()
             $0.cancelQueuedWork()
         }
     }
@@ -286,9 +314,17 @@ nonisolated final class EngineMailbox: Sendable {
         state.withLock { $0.activeWheelAdjustment }
     }
 
-    /// Smooth scrolling for an event Rebind passes through, or nil when it is off here.
-    var smoothScrolling: SmoothScrollingSettings? {
-        state.withLock { $0.activeSmoothScrolling }
+    func setPointerApplication(_ bundleIdentifier: String?) {
+        state.withLock { $0.pointerBundleID = bundleIdentifier }
+    }
+
+    /// Smooth scrolling for a wheel event from this sender, or nil when it is off here.
+    func smoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {
+        state.withLock { $0.activeSmoothScrolling(sender: sender) }
+    }
+
+    func setSmoothScrolling(bySender settings: [UInt64: SmoothScrollingSettings]) {
+        state.withLock { $0.smoothScrollingBySender = settings }
     }
 
     func nextHeldKey(at now: UInt64) -> HeldKeyCommand? { state.withLock { $0.nextHeldKey(at: now) } }
@@ -393,6 +429,16 @@ nonisolated final class EngineMailbox: Sendable {
             $0.stopped = true
             $0.resetCapture(status: .paused)
         }
+    }
+
+    /// A press or release of a button that reaches Rebind outside the event tap (the diverted
+    /// Logitech gesture button, from the HID report thread). It is matched like a tapped button;
+    /// there is no system event to suppress or give back.
+    func handleOffTapButton(_ button: UInt32, down: Bool, modifiers: ModifierSet, secureInput: Bool) {
+        let now = DispatchTime.now().uptimeNanoseconds
+        let event = InputEvent(trigger: .mouseButton(button), modifiers: modifiers, phase: down ? .down : .up,
+                               timestamp: now, receivedAt: now)
+        _ = handle(event, secureInput: secureInput)
     }
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {

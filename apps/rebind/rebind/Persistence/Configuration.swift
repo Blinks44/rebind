@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 36
+    static let currentSchemaVersion = 39
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -19,10 +19,11 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     var pointerGestureDistance = PointerGestureDistance.standard
     /// Mouse wheels only; trackpad and Magic Mouse scrolling is never changed.
     var reversesMouseWheel = false
+    /// Horizontal wheel scrolling (tilt, thumb wheel), reversed on its own since schema 39.
+    var reversesHorizontalScrolling = false
     var mouseWheelSpeed = MouseWheelSpeed.standard
-    var smoothScrolling = false
-    var smoothScrollingGlide = SmoothScrollingGlide.standard
-    var smoothScrollingScope = SmoothScrollingScope.steppedWheels
+    /// The user hid the "macOS may respond too" warning on the trackpad pages.
+    var hidesTrackpadGestureWarning = false
     /// Companion apps whose warning on the Mouse page the user hid.
     var dismissedCompanionApps: [String] = []
     /// Wheel and pointer settings Rebind writes to supported mice, one entry per model.
@@ -67,16 +68,23 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
               allBindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
         for profile in profiles {
             let enabled = profile.bindings.filter(\.isEnabled)
-            let keys = enabled.map(\.matchKey)
-            guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
-            let gestures = Set(keys.filter { $0.trigger.holdsButton }.map(\.pressSource))
-            // A plain press rule may share a button with its gestures (it runs on a click
-            // without movement); hold and double press on that button stay ambiguous.
-            guard !enabled.contains(where: {
-                !$0.trigger.holdsButton && ($0.activation != .press || $0.holdsOutput)
-                    && gestures.contains($0.matchKey.pressSource)
-            }) else {
-                throw ConfigurationError.conflict
+            // A rule for one app overrides a rule for all apps with the same trigger, so each
+            // app's effective set is checked, besides the set that applies everywhere else.
+            for bundle in [nil] + Set(enabled.compactMap(\.application?.bundleIdentifier)).sorted() {
+                let own = enabled.filter { $0.application?.bundleIdentifier == bundle }
+                let keys = own.map(\.matchKey)
+                guard Set(keys).count == keys.count else { throw ConfigurationError.conflict }
+                let general = bundle == nil ? [] : enabled.filter { $0.application == nil && !keys.contains($0.matchKey) }
+                let effective = own + general
+                let gestures = Set(effective.filter { $0.trigger.holdsButton }.map(\.matchKey.pressSource))
+                // A plain press rule may share a button with its gestures (it runs on a click
+                // without movement); hold and double press on that button stay ambiguous.
+                guard !effective.contains(where: {
+                    !$0.trigger.holdsButton && ($0.activation != .press || $0.holdsOutput)
+                        && gestures.contains($0.matchKey.pressSource)
+                }) else {
+                    throw ConfigurationError.conflict
+                }
             }
         }
     }
@@ -88,8 +96,9 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try validate()
             return self
         }
-        guard schemaVersion >= 36 || (!smoothScrolling && smoothScrollingGlide == .standard
-                                      && smoothScrollingScope == .steppedWheels && dismissedCompanionApps.isEmpty
+        guard schemaVersion >= 39 || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
+                                      && mouseHardware.allSatisfy(\.isSchema38)),
+              schemaVersion >= 36 || (dismissedCompanionApps.isEmpty
                                       && excludedApplications.allSatisfy { !$0.allowsBindings && $0.allowsSmoothScrolling }),
               schemaVersion >= 35 || mouseHardware.isEmpty,
               schemaVersion >= 34 || (excludedApplications.isEmpty && pointerGestureDistance == .standard
@@ -123,8 +132,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, isEnabled, hasCompletedSetup, languagePreference, bindings, profiles, selectedProfileID
         case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch, excludedApplications, pointerGestureDistance
-        case reversesMouseWheel, mouseWheelSpeed, mouseHardware
-        case smoothScrolling, smoothScrollingGlide, smoothScrollingScope, dismissedCompanionApps
+        case reversesMouseWheel, mouseWheelSpeed, mouseHardware, dismissedCompanionApps
+        case reversesHorizontalScrolling, hidesTrackpadGestureWarning
     }
 
     init(from decoder: any Decoder) throws {
@@ -158,14 +167,17 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
                     .map { ExcludedApplication(target: $0, allowsBindings: false, allowsSmoothScrolling: true) }
             pointerGestureDistance = try values.decode(PointerGestureDistance.self, forKey: .pointerGestureDistance)
             reversesMouseWheel = try values.decode(Bool.self, forKey: .reversesMouseWheel)
+            // Before schema 39 one switch reversed both directions.
+            reversesHorizontalScrolling = reversesMouseWheel
             mouseWheelSpeed = try values.decode(MouseWheelSpeed.self, forKey: .mouseWheelSpeed)
         }
         if version >= 35 { mouseHardware = try values.decode([MouseHardwareSettings].self, forKey: .mouseHardware) }
-        if version >= 36 {
-            smoothScrolling = try values.decode(Bool.self, forKey: .smoothScrolling)
-            smoothScrollingGlide = try values.decode(SmoothScrollingGlide.self, forKey: .smoothScrollingGlide)
-            smoothScrollingScope = try values.decode(SmoothScrollingScope.self, forKey: .smoothScrollingScope)
-            dismissedCompanionApps = try values.decode([String].self, forKey: .dismissedCompanionApps)
+        // Schemas 36–38 also held one smooth scrolling setting for all mice; it moved to each
+        // mouse in schema 39 and is not carried over, because it cannot say which mouse it meant.
+        if version >= 36 { dismissedCompanionApps = try values.decode([String].self, forKey: .dismissedCompanionApps) }
+        if version >= 39 {
+            reversesHorizontalScrolling = try values.decode(Bool.self, forKey: .reversesHorizontalScrolling)
+            hidesTrackpadGestureWarning = try values.decode(Bool.self, forKey: .hidesTrackpadGestureWarning)
         }
     }
 
@@ -191,11 +203,10 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try values.encode(mouseWheelSpeed, forKey: .mouseWheelSpeed)
         }
         if schemaVersion >= 35 { try values.encode(mouseHardware, forKey: .mouseHardware) }
-        if schemaVersion >= 36 {
-            try values.encode(smoothScrolling, forKey: .smoothScrolling)
-            try values.encode(smoothScrollingGlide, forKey: .smoothScrollingGlide)
-            try values.encode(smoothScrollingScope, forKey: .smoothScrollingScope)
-            try values.encode(dismissedCompanionApps, forKey: .dismissedCompanionApps)
+        if schemaVersion >= 36 { try values.encode(dismissedCompanionApps, forKey: .dismissedCompanionApps) }
+        if schemaVersion >= 39 {
+            try values.encode(reversesHorizontalScrolling, forKey: .reversesHorizontalScrolling)
+            try values.encode(hidesTrackpadGestureWarning, forKey: .hidesTrackpadGestureWarning)
         }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
@@ -274,6 +285,7 @@ nonisolated private extension Binding {
         introduced(in: 30, trigger.isTrackpad && action.shortcut == nil)
         introduced(in: 32, scope == .magicTrackpad)
         introduced(in: 34, holdsOutput || note != nil || tapShortcut != nil || (trigger.isTrackpad && !modifiers.isEmpty))
+        introduced(in: 39, application != nil)
         switch trigger {
         case .cornerTap: introduced(in: 28, true)
         case .trackpadClick: introduced(in: 29, true)

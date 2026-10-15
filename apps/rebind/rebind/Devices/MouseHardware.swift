@@ -1,5 +1,7 @@
 import Foundation
+import HIDPP
 import IOKit.hid
+import Synchronization
 
 /// A connected mouse as Settings shows it.
 nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
@@ -33,6 +35,10 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     @ObservationIgnored var storedSettings: () -> [MouseHardwareSettings] = { [] }
     /// Whether Rebind may write to mice of a vendor now (no companion app controls them).
     @ObservationIgnored var canWrite: (Int) -> Bool = { _ in true }
+    /// Receives presses (true) and releases of a diverted gesture button, on the HID report thread.
+    @ObservationIgnored var gestureButtonChanged: @Sendable (Bool) -> Void = { _ in }
+    /// Receives smooth scrolling per HID service that sends a mouse's wheel events.
+    @ObservationIgnored var smoothScrollingChanged: ([UInt64: SmoothScrollingSettings]) -> Void = { _ in }
 
     private final class Session {
         let io: HIDReportDevice
@@ -67,6 +73,7 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
 
     func stop() {
         guard let manager else { return }
+        releaseGestureButtons()
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = nil
@@ -144,6 +151,21 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
             list += found.isEmpty ? [base] : found
         }
         if list != mice { mice = list }
+        publishSmoothScrolling()
+    }
+
+    /// Tells the event tap which mouse glides: a wheel event names the HID service that sent it,
+    /// which sits below the mouse's device in the I/O Registry. Mice behind one receiver share
+    /// its services, so the first of them with smooth scrolling on decides for all.
+    func publishSmoothScrolling() {
+        let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
+        var bySender: [UInt64: SmoothScrollingSettings] = [:]
+        for (location, interfaces) in devices {
+            let located = mice.filter { $0.id == location || $0.id.hasPrefix(location + "#") }
+            guard let settings = located.lazy.compactMap({ stored[$0.deviceKey]?.smoothScrollingSettings }).first else { continue }
+            for sender in interfaces.flatMap(Self.serviceIDs) { bySender[sender] = settings }
+        }
+        smoothScrollingChanged(bySender)
     }
 
     /// Finds the HID++ mice at a location: the device itself, or each paired receiver slot.
@@ -192,6 +214,45 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
                                                 transport: Self.transport(of: pointer), vendorID: vendorID)] : found
         list.sort { $0.id < $1.id }
         if list != mice { mice = list }
+        publishSmoothScrolling()
+        listen(to: io, at: location, mice: logitech, states: states)
+    }
+
+    /// Routes the mouse's own reports: gesture button presses of mice that divert it, and a
+    /// receiver's notice that a mouse connected again, which needs the settings and the
+    /// diversion once more (both reset when a mouse reconnects).
+    private func listen(to io: HIDReportDevice, at location: String, mice logitech: [LogitechMouse],
+                        states: [(UInt8?, LogitechMouseState)]) {
+        let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
+        let vendorID = mice.first { $0.id.hasPrefix(location + "#") }?.vendorID ?? 0x046D
+        let diverted: [(index: UInt8, feature: UInt8)] = zip(logitech, states).compactMap { mouse, entry in
+            let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: entry.1.name ?? "")
+            guard entry.1.hasGestureButton, stored[key]?.usesGestureButton == true, canWrite(vendorID),
+                  let feature = mouse.controls?.featureIndex else { return nil }
+            return (mouse.slot ?? HIDPPConstants.receiverIndex, feature)
+        }
+        let pressed = Mutex(false)
+        let changed = gestureButtonChanged
+        io.setNotificationHandler { [weak self] report in
+            if report[2] == 0x41 {
+                // Bit 6 of the flags is set while the link is down.
+                if report.count > 4, report[4] & 0x40 == 0 {
+                    Task { @MainActor in self?.probe(location) }
+                }
+                return
+            }
+            for entry in diverted where report[1] == entry.index {
+                guard let controls = ReprogControls.pressedControls(in: report, featureIndex: entry.feature) else { continue }
+                let down = controls.contains(ReprogControls.gestureButton)
+                if pressed.withLock({ let was = $0; $0 = down; return was != down }) { changed(down) }
+            }
+        }
+    }
+
+    /// Gives every diverted gesture button back to its mouse, for example when Rebind quits.
+    func releaseGestureButtons() {
+        let all = sessions.values.flatMap(\.mice)
+        Self.queue.sync { for mouse in all { mouse.divertGestureButton(false) } }
     }
 
     /// A read that got no answer (a mouse going to sleep or away) keeps the last known state;
@@ -230,6 +291,23 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
         var entry: UInt64 = 0
         IORegistryEntryGetRegistryEntryID(IOHIDDeviceGetService(device), &entry)
         return "service-" + String(entry, radix: 16)
+    }
+
+    /// The registry IDs of a device and every service below it, such as its HID event service.
+    private nonisolated static func serviceIDs(of device: IOHIDDevice) -> [UInt64] {
+        let service = IOHIDDeviceGetService(device)
+        var ids: [UInt64] = []
+        var entry: UInt64 = 0
+        if IORegistryEntryGetRegistryEntryID(service, &entry) == KERN_SUCCESS { ids.append(entry) }
+        var iterator: io_iterator_t = 0
+        guard IORegistryEntryCreateIterator(service, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively),
+                                            &iterator) == KERN_SUCCESS else { return ids }
+        defer { IOObjectRelease(iterator) }
+        while case let child = IOIteratorNext(iterator), child != 0 {
+            if IORegistryEntryGetRegistryEntryID(child, &entry) == KERN_SUCCESS { ids.append(entry) }
+            IOObjectRelease(child)
+        }
+        return ids
     }
 
     private nonisolated static func usagePairs(_ device: IOHIDDevice) -> [(page: Int, usage: Int)] {

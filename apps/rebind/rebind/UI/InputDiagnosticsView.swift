@@ -94,7 +94,7 @@ struct InputDiagnosticsView: View {
 private extension InputDiagnostic {
     var inputLabel: String {
         switch kind {
-        case .button(let number): AppLocalization.string(.mouseButton(Int(number) + 1))
+        case .button(let number): InputLabels.buttonName(number)
         case .wheel(let direction): AppLocalization.string(direction.label)
         case .unsupportedScroll: AppLocalization.string(.diagnosticsUnsupportedScroll)
         }

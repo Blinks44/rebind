@@ -11,11 +11,22 @@ import Testing
 
     @Test func aSteppedWheelEventIsReversedAndMultipliedOnBothAxes() throws {
         let event = try wheel(vertical: 2, horizontal: -1)
-        ScrollEventAdapter.adjust(event, by: WheelAdjustment(reverses: true, multiplier: 3))
+        ScrollEventAdapter.adjust(event, by: WheelAdjustment(reverses: true, multiplier: 3, reversesHorizontally: true))
         #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis1) == -6)
         #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis2) == 3)
         #expect(event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) < 0)
         #expect(event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) > 0)
+    }
+
+    @Test func eachDirectionIsReversedOnItsOwn() throws {
+        let vertical = try wheel(vertical: 2, horizontal: -1)
+        ScrollEventAdapter.adjust(vertical, by: WheelAdjustment(reverses: true, multiplier: 1))
+        #expect(vertical.getIntegerValueField(.scrollWheelEventDeltaAxis1) == -2)
+        #expect(vertical.getIntegerValueField(.scrollWheelEventDeltaAxis2) == -1)
+        let horizontal = try wheel(vertical: 2, horizontal: -1)
+        ScrollEventAdapter.adjust(horizontal, by: WheelAdjustment(reverses: false, multiplier: 1, reversesHorizontally: true))
+        #expect(horizontal.getIntegerValueField(.scrollWheelEventDeltaAxis1) == 2)
+        #expect(horizontal.getIntegerValueField(.scrollWheelEventDeltaAxis2) == 1)
     }
 
     @Test func aContinuousWheelWithoutPhaseIsReversed() throws {

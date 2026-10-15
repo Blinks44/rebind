@@ -61,6 +61,8 @@ struct BindingEditor: View {
                     case .allKeyboards: keyboardTrigger
                     }
                     action
+                    RuleApplicationField(application: $draft.ruleApplication)
+                        .disabled(model.recording != nil)
                     VStack(alignment: .leading, spacing: 12) {
                         SectionLabel(.bindingNoteTitle)
                         ThemeTextField(title: .bindingNoteTitle, text: $draft.note, prompt: Text(.bindingNotePrompt))

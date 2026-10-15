@@ -15,6 +15,9 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
     var note: String?
     /// For a hold rule: sent when the trigger is released before the hold time.
     var tapShortcut: KeyboardShortcut?
+    /// The rule works only while this app is in front; nil means in every app. A rule for an
+    /// app replaces a rule for all apps with the same trigger there.
+    var application: ApplicationTarget?
     static let maximumNoteLength = 80
 
     var matchKey: MatchKey { MatchKey(trigger: trigger, modifiers: modifiers, isMagicTrackpad: scope == .magicTrackpad) }
@@ -29,12 +32,14 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
             && (!holdsOutput || (activation != .doublePress && trigger.canHoldOutput && action.canBeHeld))
             && (holdsOutput || !action.requiresHeldOutput)
             && (tapShortcut.map { activation == .hold && $0.isSupported } ?? true)
+            && (application?.isSupported ?? true)
     }
 }
 
 extension Binding {
     nonisolated private enum CodingKeys: String, CodingKey {
         case id, scope, trigger, modifiers, action, isEnabled, activation, holdDurationMilliseconds, holdsOutput, note, tapShortcut
+        case application
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -52,6 +57,7 @@ extension Binding {
         holdsOutput = values.contains(.holdsOutput) ? try values.decode(Bool.self, forKey: .holdsOutput) : false
         note = try values.decodeIfPresent(String.self, forKey: .note)
         tapShortcut = try values.decodeIfPresent(KeyboardShortcut.self, forKey: .tapShortcut)
+        application = try values.decodeIfPresent(ApplicationTarget.self, forKey: .application)
     }
 }
 

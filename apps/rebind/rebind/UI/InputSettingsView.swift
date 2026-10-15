@@ -39,20 +39,14 @@ struct InputSettingsView: View {
                        isOn: SwiftUI.Binding(get: { model.configuration.reversesMouseWheel },
                                              set: { model.setMouseWheel(reverses: $0) }))
                     .accessibilityIdentifier("input-reverse-wheel")
+                toggle(.reverseHorizontalScrolling, description: .reverseHorizontalScrollingDescription,
+                       isOn: SwiftUI.Binding(get: { model.configuration.reversesHorizontalScrolling },
+                                             set: { model.setMouseWheel(reversesHorizontally: $0) }))
                 choice(.mouseWheelSpeedTitle, SwiftUI.Binding(get: { model.configuration.mouseWheelSpeed },
                                                               set: { model.setMouseWheel(speed: $0) }), label: \.label)
                     .accessibilityIdentifier("input-wheel-speed")
-                Theme.separator.frame(height: 1).padding(.vertical, 4)
-                toggle(.smoothScrollingTitle, description: .smoothScrollingDescription,
-                       isOn: SwiftUI.Binding(get: { model.configuration.smoothScrolling },
-                                             set: { model.setSmoothScrolling(enabled: $0) }))
-                    .accessibilityIdentifier("input-smooth-scrolling")
-                if model.configuration.smoothScrolling {
-                    choice(.smoothScrollingGlide, SwiftUI.Binding(get: { model.configuration.smoothScrollingGlide },
-                                                                  set: { model.setSmoothScrolling(glide: $0) }), label: \.label)
-                    choice(.smoothScrollingScope, SwiftUI.Binding(get: { model.configuration.smoothScrollingScope },
-                                                                  set: { model.setSmoothScrolling(scope: $0) }), label: \.label)
-                }
+                Text(.smoothScrollingInDevices).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .disabled(model.storageLocked)
@@ -85,25 +79,6 @@ struct InputSettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title).font(Theme.caption).foregroundStyle(Theme.textSecondary)
             SegmentedPicker(selection: selection, title: title, options: Value.allCases, label: label, fillsWidth: true)
-        }
-    }
-}
-
-extension SmoothScrollingGlide {
-    var label: LocalizedStringResource {
-        switch self {
-        case .short: .glideShort
-        case .standard: .glideStandard
-        case .long: .glideLong
-        }
-    }
-}
-
-extension SmoothScrollingScope {
-    var label: LocalizedStringResource {
-        switch self {
-        case .steppedWheels: .smoothScrollingSteppedWheels
-        case .allWheels: .smoothScrollingAllWheels
         }
     }
 }

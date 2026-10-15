@@ -11,6 +11,8 @@ nonisolated struct BindingEditorDraft {
     var scrollDirection: ScrollDirection
     var holdsOutput: Bool
     var note: String
+    /// The app the rule is limited to; nil for every app.
+    var ruleApplication: ApplicationTarget?
     var tapOutput: KeyboardShortcut?
 
     var trackpadPreset: TrackpadPreset? {
@@ -36,6 +38,7 @@ nonisolated struct BindingEditorDraft {
         holdDurationMilliseconds = existing?.holdDurationMilliseconds ?? 500
         holdsOutput = existing?.holdsOutput ?? false
         note = existing?.note ?? ""
+        ruleApplication = existing?.application
         tapOutput = existing?.tapShortcut
         mouseTarget = .mouseTrigger
         pointerDirection = .left
@@ -109,6 +112,7 @@ nonisolated struct BindingEditorDraft {
         binding.holdsOutput = (holdsOutput || action.requiresHeldOutput) && binding.activation != .doublePress
             && source.canHoldOutput && action.canBeHeld
         binding.tapShortcut = binding.activation == .hold ? tapOutput : nil
+        binding.application = ruleApplication
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
         binding.note = trimmed.isEmpty ? nil : String(trimmed.prefix(Binding.maximumNoteLength))
             .trimmingCharacters(in: .whitespacesAndNewlines)

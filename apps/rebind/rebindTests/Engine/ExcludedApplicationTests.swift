@@ -79,15 +79,17 @@ import Testing
 @MainActor struct ExclusionTogglesAndSmoothScrollingTests {
     private let game = ApplicationTarget(url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game")
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
+    private let mouse: UInt64 = 0x1000017f2
+    private let glide = SmoothScrollingSettings(glide: .standard)
 
     private func mailbox(allowsBindings: Bool, allowsSmoothScrolling: Bool) -> EngineMailbox {
         var configuration = Configuration(isEnabled: true, bindings: [
             rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .shortcut(output))])
-        configuration.smoothScrolling = true
         configuration.excludedApplications = [ExcludedApplication(target: game, allowsBindings: allowsBindings,
                                                                   allowsSmoothScrolling: allowsSmoothScrolling)]
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
+        mailbox.setSmoothScrolling(bySender: [mouse: glide])
         mailbox.state.withLock { $0.status = .active }
         mailbox.setForegroundApplication(game.bundleIdentifier)
         return mailbox
@@ -96,29 +98,60 @@ import Testing
     @Test func bindingsAndSmoothScrollingAreExcludedIndependently() {
         let bindingsOnly = mailbox(allowsBindings: true, allowsSmoothScrolling: false)
         #expect(bindingsOnly.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
-        #expect(bindingsOnly.smoothScrolling == nil)
+        #expect(bindingsOnly.smoothScrolling(sender: mouse) == nil)
         let smoothOnly = mailbox(allowsBindings: false, allowsSmoothScrolling: true)
         #expect(smoothOnly.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false) == false)
-        #expect(smoothOnly.smoothScrolling == SmoothScrollingSettings(glide: .standard, scope: .steppedWheels))
-        smoothOnly.setForegroundApplication("com.apple.Safari")
-        #expect(smoothOnly.smoothScrolling != nil)
+        #expect(smoothOnly.smoothScrolling(sender: mouse) == glide)
         smoothOnly.state.withLock { $0.enabled = false }
-        #expect(smoothOnly.smoothScrolling == nil)
+        #expect(smoothOnly.smoothScrolling(sender: mouse) == nil)
     }
 
-    @Test func olderExclusionsKeepSkippingBindingsAndAllowSmoothScrolling() throws {
+    @Test func onlyTheMiceWithSmoothScrollingGlide() {
+        let mailbox = mailbox(allowsBindings: true, allowsSmoothScrolling: true)
+        #expect(mailbox.smoothScrolling(sender: mouse) == glide)
+        #expect(mailbox.smoothScrolling(sender: 42) == nil)
+        #expect(mailbox.smoothScrolling(sender: nil) == nil)
+    }
+
+    @Test func theAppUnderThePointerDecidesSmoothScrolling() {
+        let mailbox = mailbox(allowsBindings: false, allowsSmoothScrolling: false)
+        mailbox.setForegroundApplication("com.google.Chrome")
+        #expect(mailbox.smoothScrolling(sender: mouse) != nil)
+        // Chrome is in front, but the scroll goes to the excluded app under the pointer.
+        mailbox.setPointerApplication(game.bundleIdentifier)
+        #expect(mailbox.smoothScrolling(sender: mouse) == nil)
+        mailbox.setPointerApplication("com.google.Chrome")
+        #expect(mailbox.smoothScrolling(sender: mouse) != nil)
+        // Without a known pointer app, the app in front decides.
+        mailbox.setPointerApplication(nil)
+        mailbox.setForegroundApplication(game.bundleIdentifier)
+        #expect(mailbox.smoothScrolling(sender: mouse) == nil)
+    }
+
+    @Test func olderFilesMigrate() throws {
         var old = Configuration(isEnabled: true)
         old.excludedApplications = [ExcludedApplication(target: game, allowsBindings: false, allowsSmoothScrolling: true)]
+        old.reversesMouseWheel = true
+        old.reversesHorizontalScrolling = true
         old.schemaVersion = 35
         let data = try JSONEncoder().encode(old)
         #expect(String(decoding: data, as: UTF8.self).contains("allowsBindings") == false)
         let migrated = try JSONDecoder().decode(Configuration.self, from: data).migrated()
         #expect(migrated.schemaVersion == Configuration.currentSchemaVersion)
         #expect(migrated.excludedApplications == [ExcludedApplication(target: game, allowsBindings: false, allowsSmoothScrolling: true)])
+        // One switch reversed both directions before schema 39.
+        #expect(migrated.reversesMouseWheel && migrated.reversesHorizontalScrolling)
         var newer = Configuration()
-        newer.smoothScrolling = true
-        newer.schemaVersion = 35
+        newer.hidesTrackpadGestureWarning = true
+        newer.schemaVersion = 38
         #expect(throws: ConfigurationError.invalid) { try newer.migrated() }
+        var mouseSettings = Configuration()
+        mouseSettings.mouseHardware = [MouseHardwareSettings(deviceKey: "046d:M", smoothScrolling: true)]
+        mouseSettings.schemaVersion = 38
+        #expect(throws: ConfigurationError.invalid) { try mouseSettings.migrated() }
+        var outOfRange = Configuration()
+        outOfRange.mouseHardware = [MouseHardwareSettings(deviceKey: "046d:M", smoothScrollingDistance: 1000)]
+        #expect(throws: ConfigurationError.invalid) { try outOfRange.validate() }
     }
 
     @Test func aGlideEasesOutAndFinishesTheLastPoint() {
@@ -136,22 +169,32 @@ import Testing
         #expect(SmoothScroller.add(10, to: 50) == 60)
     }
 
+    @Test func aClickGlidesItsAcceleratedLinesTimesTheDistance() throws {
+        let line = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: -2, wheel2: 0, wheel3: 0))
+        for points in [20.0, 60, 400] {
+            #expect(SmoothScroller.distance(of: line, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: points)).y
+                    == -2 * points)
+        }
+        let pixel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: 6, wheel2: 0, wheel3: 0))
+        #expect(SmoothScroller.distance(of: pixel, settings: glide).y == 6)
+        #expect(SmoothScroller.distance(of: pixel, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: 30)).y == 3)
+        #expect(MouseHardwareSettings(deviceKey: "k", smoothScrolling: true).smoothScrollingSettings == glide)
+        #expect(MouseHardwareSettings(deviceKey: "k").smoothScrollingSettings == nil)
+    }
+
     @Test(arguments: [false, true])
     func glidesOnlyUnmodifiedPhaseLessWheels(_ continuous: Bool) throws {
-        let stepped = SmoothScrollingSettings(glide: .standard, scope: .steppedWheels)
-        let all = SmoothScrollingSettings(glide: .standard, scope: .allWheels)
         let event = try #require(CGEvent(scrollWheelEvent2Source: nil, units: continuous ? .pixel : .line, wheelCount: 1,
                                          wheel1: 3, wheel2: 0, wheel3: 0))
-        #expect(SmoothScroller.applies(to: event, settings: stepped) == !continuous)
-        #expect(SmoothScroller.applies(to: event, settings: all))
+        #expect(SmoothScroller.applies(to: event))
         event.flags = .maskCommand
-        #expect(SmoothScroller.applies(to: event, settings: all) == false)
+        #expect(SmoothScroller.applies(to: event) == false)
         event.flags = .maskShift
-        #expect(SmoothScroller.applies(to: event, settings: all) == false)
+        #expect(SmoothScroller.applies(to: event) == false)
         event.flags = .maskAlternate
-        #expect(SmoothScroller.applies(to: event, settings: all))
+        #expect(SmoothScroller.applies(to: event))
         event.setIntegerValueField(.scrollWheelEventScrollPhase, value: 2)
-        #expect(SmoothScroller.applies(to: event, settings: all) == false)
+        #expect(SmoothScroller.applies(to: event) == false)
     }
 
     @Test func hidingTheWarningIsRememberedPerApp() throws {

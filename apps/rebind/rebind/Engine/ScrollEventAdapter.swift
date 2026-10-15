@@ -28,24 +28,24 @@ nonisolated enum ScrollEventAdapter {
     /// Reverses or multiplies a mouse wheel event in place. Trackpad, Magic Mouse and momentum
     /// events are left exactly as the system produced them.
     static func adjust(_ event: CGEvent, by adjustment: WheelAdjustment) {
-        guard adjustment.factor != 1, isMouseWheel(event) else { return }
-        let axes: [(CGEventField, CGEventField, CGEventField)] = [
-            (.scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1),
-            (.scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2)
+        guard !adjustment.changesNothing, isMouseWheel(event) else { return }
+        let axes: [(CGEventField, CGEventField, CGEventField, Int64)] = [
+            (.scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1, adjustment.factor),
+            (.scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2,
+             adjustment.horizontalFactor)
         ]
-        let factor = Double(adjustment.factor)
-        for (lines, fixed, points) in axes {
+        for (lines, fixed, points, factor) in axes where factor != 1 {
             // Read all three first: writing the line delta makes Quartz recompute the others.
             // Point deltas of a continuous wheel are fractional, so they stay doubles.
             let lineDelta = event.getIntegerValueField(lines)
             let fixedDelta = event.getDoubleValueField(fixed)
             let pointDelta = event.getDoubleValueField(points)
             guard lineDelta != 0 || fixedDelta != 0 || pointDelta != 0 else { continue }
-            event.setIntegerValueField(lines, value: lineDelta * adjustment.factor)
-            event.setDoubleValueField(fixed, value: fixedDelta * factor)
-            event.setDoubleValueField(points, value: pointDelta * factor)
+            event.setIntegerValueField(lines, value: lineDelta * factor)
+            event.setDoubleValueField(fixed, value: fixedDelta * Double(factor))
+            event.setDoubleValueField(points, value: pointDelta * Double(factor))
         }
-        AttachedHIDScroll.scale(event, by: factor)
+        AttachedHIDScroll.scale(event, vertically: Double(adjustment.factor), horizontally: Double(adjustment.horizontalFactor))
     }
 
     static func direction(vertical: Int64, horizontal: Int64) -> ScrollDirection? {

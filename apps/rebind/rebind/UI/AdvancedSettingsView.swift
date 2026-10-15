@@ -123,11 +123,20 @@ struct AdvancedSettingsView: View {
     @ViewBuilder private var transferActions: some View {
         Button(.advancedConfigurationAction) { request = FileRequest(importURL: nil) }.disabled(busy).secondaryButton()
         Button(.advancedConfigurationSecondaryAction) { importing = true }.disabled(busy).secondaryButton()
+        showBackups
+    }
+
+    /// Daily copies kept at launch; any of them can be imported to restore the settings.
+    private var showBackups: some View {
+        Button(.advancedShowBackups) { NSWorkspace.shared.open(model.configurationBackupDirectory) }
+            .disabled(!FileManager.default.fileExists(atPath: model.configurationBackupDirectory.path))
+            .secondaryButton()
     }
 
     @ViewBuilder private var protectedActions: some View {
         Button(.advancedRevealOriginal) { NSWorkspace.shared.activateFileViewerSelecting([model.configurationFileURL]) }.secondaryButton()
         Button(.advancedExportOriginal) { request = FileRequest(importURL: nil) }.disabled(busy).secondaryButton()
+        showBackups
     }
 
     private func exportWithPanel() async {

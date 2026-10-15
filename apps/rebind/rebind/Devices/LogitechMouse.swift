@@ -9,8 +9,14 @@ nonisolated struct LogitechMouseState: Equatable, Sendable {
     var smartShiftSensitivity = 10
     var dpi: Int?
     var supportedDPI: [Int] = []
+    var highResolutionWheel: Bool?
+    /// The gesture button can be diverted to Rebind; whether it is, follows the stored setting.
+    var hasGestureButton = false
+    /// Battery charge in percent, and whether it is charging; nil without a battery feature.
+    var batteryPercentage: Int?
+    var batteryCharging = false
 
-    var hasSettings: Bool { wheelMode != nil || dpi != nil }
+    var hasSettings: Bool { wheelMode != nil || dpi != nil || highResolutionWheel != nil || hasGestureButton }
 }
 
 /// One HID++ 2.0 mouse, directly connected (Bluetooth, USB cable) or behind a receiver slot.
@@ -22,6 +28,10 @@ nonisolated final class LogitechMouse: @unchecked Sendable {
     private let deviceName: DeviceName?
     private let smartShift: SmartShift?
     private let adjustableDPI: AdjustableDPI?
+    private let hiResWheel: HiResWheel?
+    private let battery: Battery?
+    let controls: ReprogControls?
+    private let canDivertGestureButton: Bool
 
     /// Nil when nothing answers HID++ 2.0 at this address, or when it is not a pointing device.
     init?(io: HIDPPDeviceIO, slot: UInt8?) {
@@ -38,6 +48,14 @@ nonisolated final class LogitechMouse: @unchecked Sendable {
         }
         adjustableDPI = transport.featureIndex(for: .adjustableDPI)
             .map { AdjustableDPI(transport: transport, featureIndex: $0) }
+        hiResWheel = transport.featureIndex(for: .hiresWheel).map { HiResWheel(transport: transport, featureIndex: $0) }
+        if let index = transport.featureIndex(for: .unifiedBattery) {
+            battery = Battery(transport: transport, featureIndex: index, isUnified: true)
+        } else {
+            battery = transport.featureIndex(for: .batteryStatus).map { Battery(transport: transport, featureIndex: $0, isUnified: false) }
+        }
+        controls = transport.featureIndex(for: .reprogControlsV4).map { ReprogControls(transport: transport, featureIndex: $0) }
+        canDivertGestureButton = controls?.canDivert(ReprogControls.gestureButton) ?? false
         // A device without DEVICE_NAME is still a mouse when it has one of the settings.
         guard nameIndex != nil || smartShift != nil || adjustableDPI != nil else { return nil }
         self.slot = slot
@@ -54,13 +72,28 @@ nonisolated final class LogitechMouse: @unchecked Sendable {
             state.dpi = adjustableDPI.currentDPI()
             state.supportedDPI = adjustableDPI.supportedDPI
         }
+        state.highResolutionWheel = hiResWheel?.isHighResolutionWheelEnabled()
+        state.hasGestureButton = canDivertGestureButton
+        if let status = battery?.status() {
+            state.batteryPercentage = status.percentage
+            state.batteryCharging = status.isCharging
+        }
         return state
+    }
+
+    /// Diverts the gesture button to Rebind or gives it back to the mouse.
+    @discardableResult
+    func divertGestureButton(_ diverted: Bool) -> Bool {
+        guard canDivertGestureButton, let controls else { return false }
+        return controls.setDiverted(ReprogControls.gestureButton, diverted)
     }
 
     /// Writes the stored values the mouse supports, then reads back what it now uses.
     func apply(_ settings: MouseHardwareSettings) -> LogitechMouseState {
         if let smartShift, let mode = Self.mode(for: settings) { smartShift.setMode(mode) }
         if let adjustableDPI, let dpi = settings.dpi { _ = adjustableDPI.setDPI(dpi) }
+        if let hiResWheel, let enabled = settings.highResolutionWheel { _ = hiResWheel.setHighResolutionWheelEnabled(enabled) }
+        divertGestureButton(settings.usesGestureButton == true)
         return read()
     }
 

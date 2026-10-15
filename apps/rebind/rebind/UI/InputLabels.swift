@@ -34,12 +34,12 @@ enum InputLabels {
         case .cornerTap(let corner): label = AppLocalization.string(corner.title)
         case .trackpadClick(let fingers): label = AppLocalization.string(TrackpadPreset.clickTitle(fingers: fingers))
         case .key(let code): label = key(code)
-        case .mouseButton(let number): label = AppLocalization.string(.mouseButton(Int(number) + 1))
+        case .mouseButton(let number): label = buttonName(number)
         case .mouseGesture(let button, let direction):
-            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label).lowercased()))
+            label = buttonGesture(button, direction: AppLocalization.string(direction.label))
         case .scroll(let direction): label = AppLocalization.string(direction.label)
         case .buttonScroll(let button, let direction):
-            label = AppLocalization.string(.mouseGesture(Int(button) + 1, AppLocalization.string(direction.label).lowercased()))
+            label = buttonGesture(button, direction: AppLocalization.string(direction.label))
         }
         switch trigger {
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll:
@@ -48,6 +48,17 @@ enum InputLabels {
             if trigger.isTrackpad, !modifiers.glyphs.isEmpty { return modifiers.glyphs + " " + label }
             return modifiers.glyphs + label
         }
+    }
+
+    /// "Button 4", or the name of a button Quartz does not number, such as the gesture button.
+    static func buttonName(_ number: UInt32) -> String {
+        number == InputTrigger.gestureButton ? AppLocalization.string(.gestureButton)
+            : AppLocalization.string(.mouseButton(Int(number) + 1))
+    }
+
+    private static func buttonGesture(_ button: UInt32, direction: String) -> String {
+        button == InputTrigger.gestureButton ? AppLocalization.string(.gestureButtonGesture(direction.lowercased()))
+            : AppLocalization.string(.mouseGesture(Int(button) + 1, direction.lowercased()))
     }
 
     static func shortcut(_ shortcut: KeyboardShortcut) -> String { trigger(.key(shortcut.keyCode), modifiers: shortcut.modifiers) }
