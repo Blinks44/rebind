@@ -19,6 +19,7 @@ extension DeviceBattery.Kind {
         case .mouse: "computermouse"
         case .keyboard: "keyboard"
         case .trackpad: "rectangle.and.hand.point.up.left"
+        case .other: "battery.100"
         }
     }
 }

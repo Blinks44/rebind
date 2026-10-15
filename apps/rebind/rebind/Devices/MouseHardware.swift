@@ -21,12 +21,25 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
 
 /// The charge of a connected mouse, keyboard or trackpad, for the Menu Bar item.
 nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
-    enum Kind: Sendable { case mouse, keyboard, trackpad }
+    enum Kind: Sendable { case mouse, keyboard, trackpad, other }
     let id: String
     var name: String
     var kind: Kind
     var percentage: Int
     var isCharging: Bool
+    var vendorID: Int = 0
+
+    var deviceKey: String { MouseHardwareSettings.deviceKey(vendorID: vendorID, name: name) }
+}
+
+/// Discovered keyboards and battery devices that have no mouse settings.
+nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
+    let id: String
+    var name: String
+    var kind: DeviceBattery.Kind
+    var vendorID: Int
+
+    var deviceKey: String { MouseHardwareSettings.deviceKey(vendorID: vendorID, name: name) }
 }
 
 /// Lists connected mice and keeps supported Logitech mice set as stored. Discovery runs on
@@ -37,6 +50,17 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
     private(set) var mice: [ConnectedMouse] = []
     /// Charges of Logitech devices (mice and keyboards) and of devices macOS reports, by name.
     private(set) var batteries: [DeviceBattery] = []
+    private var keyboards: [String: [ConnectedAccessory]] = [:]
+
+    var accessories: [ConnectedAccessory] {
+        let keyboards = keyboards.sorted { $0.key < $1.key }.flatMap(\.value)
+        let known = Set(mice.map(\.deviceKey) + keyboards.map(\.deviceKey))
+        // Devices is for input hardware; a macOS battery reading alone does not qualify
+        // a headset or an unclassified accessory for a settings card.
+        return keyboards + batteries.filter { $0.kind != .other && !known.contains($0.deviceKey) }.map {
+            ConnectedAccessory(id: $0.id, name: $0.name, kind: $0.kind, vendorID: $0.vendorID)
+        }
+    }
     @ObservationIgnored private var logitechBatteries: [String: [DeviceBattery]] = [:]
     @ObservationIgnored private var batteryTimer: Timer?
     @ObservationIgnored private var manager: IOHIDManager?
@@ -111,6 +135,9 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
         sessions = [:]
         devices = [:]
         mice = []
+        keyboards = [:]
+        logitechBatteries = [:]
+        batteries = []
     }
 
     /// Reads every supported mouse again and writes its stored settings: when Devices opens,
@@ -150,6 +177,7 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
         if devices[location]?.isEmpty == true {
             devices[location] = nil
             logitechBatteries[location] = nil
+            keyboards[location] = nil
             publishBatteries()
             sessions.removeValue(forKey: location)?.io.close()
         }
@@ -175,12 +203,14 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
             let vendorID = (pointer ?? interfaces.first).flatMap { Self.property($0, kIOHIDVendorIDKey) as Int? } ?? 0
             // Only mice, keyboards and their receivers: a Logitech headset has a vendor interface too,
             // and asking it for HID++ devices only kept the queue waiting for seconds.
-            if sessions[location] == nil, vendorID == 0x046D, interfaces.contains(where: Self.isMouseOrKeyboard),
+            if sessions[location] == nil,
+               Self.allowsHIDPP(vendorID: vendorID, usages: interfaces.flatMap(Self.usagePairs)),
                let endpoint = interfaces.first(where: Self.carriesHIDPP), let io = HIDReportDevice(endpoint) {
                 sessions[location] = Session(io: io, location: location)
                 probe(location)
             }
             guard let pointer else { continue }
+            if let known = sessions[location]?.mice, !known.isEmpty, known.allSatisfy(\.isKeyboard) { continue }
             let base = ConnectedMouse(id: location, name: Self.property(pointer, kIOHIDProductKey) ?? "",
                                       manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
                                       transport: Self.transport(of: pointer), vendorID: vendorID)
@@ -243,10 +273,17 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
         session.mice = logitech + session.mice.filter { !answered.contains($0.slot) }
         session.probed = true
         listen(to: io, at: location, mice: logitech, states: states)
+        let freshKeyboards = states.filter { $0.1.isKeyboard }.map { slot, state in
+            ConnectedAccessory(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? "",
+                               kind: .keyboard, vendorID: 0x046D)
+        }
+        let answeredIDs = Set(states.map { "\(location)#\($0.0.map(String.init) ?? "direct")" })
+        keyboards[location] = freshKeyboards + (keyboards[location] ?? []).filter { !answeredIDs.contains($0.id) }
         let fresh = states.compactMap { slot, state in
             state.batteryPercentage.map {
                 DeviceBattery(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? "",
-                              kind: state.isKeyboard ? .keyboard : .mouse, percentage: $0, isCharging: state.batteryCharging)
+                              kind: state.isKeyboard ? .keyboard : .mouse, percentage: $0, isCharging: state.batteryCharging,
+                              vendorID: 0x046D)
             }
         }
         let freshIDs = Set(fresh.map(\.id))
@@ -264,7 +301,7 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
         let foundIDs = Set(found.map(\.id))
         let asleep = mice.filter { $0.id.hasPrefix(location + "#") && !foundIDs.contains($0.id) }
         var list = mice.filter { $0.id != location && !$0.id.hasPrefix(location + "#") }
-        list += found.isEmpty && asleep.isEmpty
+        list += found.isEmpty && asleep.isEmpty && !states.contains(where: { $0.1.isKeyboard })
             ? [ConnectedMouse(id: location, name: name, manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
                               transport: Self.transport(of: pointer), vendorID: vendorID)]
             : found + asleep
@@ -320,11 +357,14 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
             guard let percentage: Int = value("BatteryPercent"), let name: String = value("Product") else { continue }
             var entry: UInt64 = 0
             IORegistryEntryGetRegistryEntryID(service, &entry)
-            let lowered = name.lowercased()
-            let kind: DeviceBattery.Kind = lowered.contains("keyboard") ? .keyboard
-                : lowered.contains("trackpad") ? .trackpad : .mouse
+            // Classify by HID usages, never by an editable Bluetooth product name. Unknown
+            // services (including headsets) do not become mice just because they have a battery.
+            let page: Int = value(kIOHIDPrimaryUsagePageKey) ?? 0
+            let usage: Int = value(kIOHIDPrimaryUsageKey) ?? 0
+            let kind = Self.batteryKind(page: page, usage: usage) ?? .other
             // Whether it charges is not read: the flags are undocumented.
-            list.append(DeviceBattery(id: "system-\(entry)", name: name, kind: kind, percentage: percentage, isCharging: false))
+            list.append(DeviceBattery(id: "system-\(entry)", name: name, kind: kind, percentage: percentage,
+                                      isCharging: false, vendorID: value(kIOHIDVendorIDKey) ?? 0))
         }
         return list
     }
@@ -444,10 +484,19 @@ nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
             && !usagePairs(device).contains { $0.page == kHIDPage_Digitizer }
     }
 
-    private nonisolated static func isMouseOrKeyboard(_ device: IOHIDDevice) -> Bool {
-        usagePairs(device).contains {
+    nonisolated static func allowsHIDPP(vendorID: Int, usages: [(page: Int, usage: Int)]) -> Bool {
+        vendorID == 0x046D && usages.contains {
             $0.page == kHIDPage_GenericDesktop && ($0.usage == kHIDUsage_GD_Mouse || $0.usage == kHIDUsage_GD_Keyboard)
         }
+    }
+
+    nonisolated static func batteryKind(page: Int, usage: Int) -> DeviceBattery.Kind? {
+        if page == kHIDPage_GenericDesktop {
+            if usage == kHIDUsage_GD_Keyboard { return .keyboard }
+            if usage == kHIDUsage_GD_Mouse { return .mouse }
+        }
+        if page == kHIDPage_Digitizer && usage == kHIDUsage_Dig_TouchPad { return .trackpad }
+        return nil
     }
 
     /// The interface that can take HID++ output reports: a vendor-defined usage and room for one.

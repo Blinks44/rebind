@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// Connected mice: smooth scrolling for each, plus the hardware settings a Logitech mouse reports.
+/// Connected mice with settings, plus discovered keyboards and system battery devices.
 struct DevicesSettingsView: View {
     let model: AppModel
+
+    @State private var renaming: ConnectedAccessory?
 
     private var mice: [ConnectedMouse] { model.mouseHardware.mice }
 
@@ -17,12 +19,26 @@ struct DevicesSettingsView: View {
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
                 let controllers = Set(mice.compactMap { controller(of: $0) })
                 if !controllers.isEmpty { CompanionBanner(apps: CompanionApp.known.filter(controllers.contains)) }
-                if !mice.isEmpty {
+                if !mice.isEmpty || !model.mouseHardware.accessories.isEmpty {
                     ForEach(mice) { mouse in
                         MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
                                   hardwareLocked: controller(of: mouse) != nil,
-                                  save: model.setMouseHardware)
+                                  name: model.configuration.deviceName(for: mouse.deviceKey, original: mouse.name),
+                                  battery: model.mouseHardware.batteries.first { $0.id == mouse.id },
+                                  rename: {
+                                      renaming = ConnectedAccessory(id: mouse.id, name: mouse.name, kind: .mouse, vendorID: mouse.vendorID)
+                                  }, save: model.setMouseHardware)
                             .disabled(model.storageLocked)
+                    }
+                    ForEach(model.mouseHardware.accessories) { device in
+                        Card {
+                            DeviceIdentityView(name: model.configuration.deviceName(for: device.deviceKey, original: device.name),
+                                               original: device.name, subtitle: "", kind: device.kind,
+                                               battery: model.mouseHardware.batteries.first { $0.id == device.id },
+                                               rename: { renaming = device })
+                        }
+                        .accessibilityElement(children: .contain)
+                        .disabled(model.storageLocked)
                     }
                 } else {
                     emptyState.frame(maxWidth: .infinity).padding(.top, 88)
@@ -32,6 +48,9 @@ struct DevicesSettingsView: View {
             .detailMargins().padding(.bottom, 32)
         }
         .onAppear { model.mouseHardware.refresh() }
+        .sheet(item: $renaming) { device in
+            DeviceNameEditor(model: model, deviceKey: device.deviceKey, original: device.name)
+        }
     }
 
     private func controller(of mouse: ConnectedMouse) -> CompanionApp? {
@@ -58,6 +77,9 @@ private struct MouseCard: View {
     let stored: MouseHardwareSettings?
     /// A companion app rewrites the hardware settings; smooth scrolling is Rebind's own.
     let hardwareLocked: Bool
+    let name: String
+    let battery: DeviceBattery?
+    let rename: () -> Void
     let save: (MouseHardwareSettings) -> Void
 
     private var settings: MouseHardwareSettings { stored ?? MouseHardwareSettings(deviceKey: mouse.deviceKey) }
@@ -106,28 +128,8 @@ private struct MouseCard: View {
     private var separator: some View { Theme.separator.frame(height: 1).padding(.vertical, 16) }
 
     private var identity: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "computermouse").font(.system(size: 14, weight: .medium)).foregroundStyle(Theme.iconSecondary)
-                .frame(width: 32, height: 32).insetSurface(cornerRadius: 10).accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: mouse.name).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
-                    .accessibilityAddTraits(.isHeader)
-                if !subtitle.isEmpty {
-                    Text(verbatim: subtitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                }
-            }
-            Spacer(minLength: 12)
-            if let hardware = mouse.hardware, let percentage = hardware.batteryPercentage {
-                let charging = hardware.batteryCharging
-                Label {
-                    Text(charging ? .devicesBatteryCharging(percentage) : .devicesBattery(percentage))
-                } icon: {
-                    Image(systemName: DeviceBattery(id: "", name: "", kind: .mouse, percentage: percentage,
-                                                    isCharging: charging).symbol)
-                }
-                .font(Theme.callout).foregroundStyle(percentage <= 15 && !charging ? Theme.warningText : Theme.textSecondary)
-            }
-        }
+        DeviceIdentityView(name: name, original: mouse.name, subtitle: subtitle, kind: .mouse,
+                           battery: battery, rename: rename)
     }
 
     private var subtitle: String {

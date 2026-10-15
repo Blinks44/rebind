@@ -1,6 +1,129 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "deviceNamingHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used only in Rebind, including the battery menu. Up to 60 characters. Leave empty to use the original name. Identical models share a name."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используется только в Rebind, в том числе в меню заряда. До 60 символов. Оставьте пустым для заводского имени. У одинаковых моделей имя общее."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt nur in Rebind, auch im Batteriemenü. Bis zu 60 Zeichen. Leer lassen, um den Originalnamen zu verwenden. Gleiche Modelle teilen einen Namen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisé uniquement dans Rebind, y compris dans le menu de batterie. 60 caractères maximum. Laissez vide pour utiliser le nom d’origine. Les modèles identiques partagent un nom."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se usa en Rebind, incluido el menú de batería. Hasta 60 caracteres. Déjalo vacío para usar el nombre original. Los modelos idénticos comparten un nombre."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在 Rebind 内使用，包括电量菜单。最多 60 个字符。留空可使用原名称。相同型号共用一个名称。"
+          }
+        }
+      }
+    },
+    "deviceName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device name"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя устройства"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerätename"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom de l’appareil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del dispositivo"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备名称"
+          }
+        }
+      }
+    },
+    "renameDevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename Device"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переименовать устройство"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerät umbenennen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renommer l’appareil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrar dispositivo"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名设备"
+          }
+        }
+      }
+    },
     "%@" : {},
     "%@\n%@" : {
       "localizations" : {
@@ -23486,40 +23609,40 @@
     "devicesDescription" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit diesem Mac verbundene Mäuse. Sanftes Scrollen gibt es für jede Maus; Logitech-Mäuse zeigen zusätzlich ihre eigenen Einstellungen."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mice connected to this Mac. Smooth scrolling works for every mouse; Logitech mice also show the settings they support."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Souris connectées à ce Mac. Le défilement fluide fonctionne avec toutes ; les souris Logitech affichent aussi leurs propres réglages."
+            "value" : "Connected mice and supported battery devices. Rename them here for a shorter name in the battery menu."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Мыши, подключённые к этому Mac. Плавная прокрутка работает для любой мыши; у мышей Logitech есть и настройки, которые они поддерживают."
+            "value" : "Подключённые мыши и устройства с поддержкой заряда. Задайте короткое имя для меню заряда."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbundene Mäuse und unterstützte Batteriegeräte. Hier können Sie kürzere Namen für das Batteriemenü vergeben."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Souris connectées et appareils dont la batterie est prise en charge. Donnez-leur un nom plus court pour le menu de batterie."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ratones conectados a este Mac. El desplazamiento suave funciona con todos; los Logitech muestran además sus propios ajustes."
+            "value" : "Ratones conectados y dispositivos con batería compatible. Asígnales un nombre más corto para el menú de batería."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接到这台 Mac 的鼠标。平滑滚动适用于所有鼠标；罗技鼠标还会显示其支持的设置。"
+            "value" : "已连接的鼠标及支持显示电量的设备。可在此设置电量菜单中显示的简短名称。"
           }
         }
       }
@@ -23937,40 +24060,40 @@
     "devicesEmptyTitle" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Mäuse verbunden"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No mice connected"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune souris connectée"
+            "value" : "No supported devices connected"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Мыши не подключены"
+            "value" : "Нет подключённых устройств"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine unterstützten Geräte verbunden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun appareil compatible connecté"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay ratones conectados"
+            "value" : "No hay dispositivos compatibles conectados"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未连接鼠标"
+            "value" : "未连接支持的设备"
           }
         }
       }
@@ -23978,40 +24101,40 @@
     "devicesEmptyDescription" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verbinde eine Maus, um hier ihr sanftes Scrollen einzustellen. Logitech-Mäuse haben zusätzlich Rad- und Zeigereinstellungen."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connect a mouse to set up its smooth scrolling here. Logitech mice also get wheel and pointer speed settings."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connectez une souris pour régler ici son défilement fluide. Les souris Logitech ont aussi des réglages de molette et de vitesse du pointeur."
+            "value" : "Connect a mouse to adjust its settings, or a supported keyboard to see its battery and rename it."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подключите мышь, чтобы настроить здесь её плавную прокрутку. У мышей Logitech есть ещё настройки колеса и скорости указателя."
+            "value" : "Подключите мышь для настройки или поддерживаемую клавиатуру, чтобы увидеть заряд и изменить имя."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinden Sie eine Maus, um sie einzustellen, oder eine unterstützte Tastatur, um den Ladestand zu sehen und sie umzubenennen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connectez une souris pour la configurer, ou un clavier compatible pour voir sa batterie et le renommer."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conecta un ratón para ajustar aquí su desplazamiento suave. Los ratones Logitech tienen además ajustes de rueda y velocidad del puntero."
+            "value" : "Conecta un ratón para ajustarlo o un teclado compatible para ver su batería y cambiarle el nombre."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接鼠标即可在此设置其平滑滚动。罗技鼠标还提供滚轮和指针速度设置。"
+            "value" : "连接鼠标以调整设置，或连接支持的键盘以查看电量并重命名。"
           }
         }
       }

@@ -53,6 +53,9 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         let nameIndex = nameFeature == 0 ? nil : nameFeature
         let name = nameIndex.map { DeviceName(transport: transport, featureIndex: $0) }
         let kind = name?.kind()
+        // An unrecognised or unanswered type is not evidence of a mouse. Stop before
+        // battery/settings queries when DEVICE_NAME exists but cannot classify the device.
+        if nameIndex != nil, kind == nil { return nil }
         if let kind, ![.mouse, .trackball, .keyboard].contains(kind) { return nil }
         let isKeyboard = kind == .keyboard
         self.isKeyboard = isKeyboard
@@ -60,9 +63,14 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         let batterySources: [(HIDPPFeatureID, Battery.Source)] = [
             (.unifiedBattery, .unified), (.batteryStatus, .status), (.batteryVoltage, .voltage), (.adcMeasurement, .adcMeasurement)
         ]
-        battery = batterySources.lazy.compactMap { feature, source in
-            transport.featureIndex(for: feature).map { Battery(transport: transport, featureIndex: $0, source: source) }
-        }.first
+        var foundBattery: Battery?
+        for (feature, source) in batterySources {
+            if let index = transport.featureIndex(for: feature) {
+                foundBattery = Battery(transport: transport, featureIndex: index, source: source)
+                break
+            }
+        }
+        battery = foundBattery
         // A keyboard is only asked for its battery; its key list and lighting are not Rebind's.
         let mouseFeature = { (feature: HIDPPFeatureID) in isKeyboard ? nil : transport.featureIndex(for: feature) }
         if let index = mouseFeature(.smartShiftEnhanced) {

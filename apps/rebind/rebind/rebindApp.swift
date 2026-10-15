@@ -182,7 +182,9 @@ private struct RebindMenu: View {
                         settingsSection = .devices
                         RebindAppDelegate.showWindow { openSettings() }
                     } label: {
-                        Label { Text(verbatim: battery.name) } icon: { Image(systemName: battery.kind.symbol) }
+                        Label {
+                            Text(verbatim: model.configuration.deviceName(for: battery.deviceKey, original: battery.name))
+                        } icon: { Image(systemName: battery.kind.symbol) }
                     }
                     .badge(Text(battery.isCharging ? .batteryMenuCharging(battery.percentage) : .batteryMenuLevel(battery.percentage)))
                 }

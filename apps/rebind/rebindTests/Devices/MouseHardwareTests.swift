@@ -156,6 +156,8 @@ struct MouseHardwareExpectedStateTests {
 private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
     let maxOutputReportSize: Int? = HIDPPConstants.longReportLength
     private(set) var writes = 0
+    private(set) var featureQueries: [UInt16] = []
+    var kind: UInt8? = 0
 
     func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
                                                matching: @escaping (Data) -> Bool) -> Data? {
@@ -163,11 +165,14 @@ private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
         var payload: [UInt8] = []
         switch (bytes[2], bytes[3] >> 4) {
         case (0x00, 0):
+            featureQueries.append(UInt16(bytes[4]) << 8 | UInt16(bytes[5]))
             let features: [UInt16: UInt8] = [0x0005: 0x03, 0x1004: 0x05]
             payload = [features[UInt16(bytes[4]) << 8 | UInt16(bytes[5])] ?? 0]
         case (0x03, 0): payload = [4]
         case (0x03, 1): payload = Array("G915".utf8)
-        case (0x03, 2): payload = [0] // keyboard
+        case (0x03, 2):
+            guard let kind else { return nil }
+            payload = [kind]
         case (0x05, 1): payload = [45, 0x04, 0x00]
         default: writes += 1; return nil
         }
@@ -185,5 +190,15 @@ struct LogitechKeyboardTests {
         #expect(state.isKeyboard && state.name == "G915" && state.batteryPercentage == 45 && !state.hasSettings)
         _ = device.apply(MouseHardwareSettings(deviceKey: "k", dpi: 1600, usesGestureButton: true))
         #expect(device.isGestureButtonDiverted == false)
+        #expect(keyboard.featureQueries == [0x0005, 0x1004])
+        #expect(keyboard.writes == 0)
+    }
+
+    @Test(arguments: [UInt8?(1), 4, 7, 255, nil])
+    func nonInputAndUnknownTypesStopBeforeBatteryAndMouseQueries(_ kind: UInt8?) {
+        let io = MockKeyboard()
+        io.kind = kind
+        #expect(LogitechDevice(io: io, slot: 1) == nil)
+        #expect(io.featureQueries == [0x0005])
     }
 }

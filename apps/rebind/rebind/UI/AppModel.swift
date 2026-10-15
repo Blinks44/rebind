@@ -454,6 +454,21 @@ import Carbon
         companionApps.running.filter { app in mouseHardware.mice.contains { $0.vendorID == app.vendorID } }
     }
 
+    /// A display-only save: never reconfigure the engine or write mouse hardware settings.
+    func renameDevice(key: String, original: String, name: String) -> Bool {
+        guard !storageLocked else { return false }
+        do {
+            var updated = configuration
+            try updated.renameDevice(key: key, original: original, name: name)
+            if updated != configuration {
+                try persistConfiguration(updated)
+                configuration = updated
+            }
+            error = nil
+            return true
+        } catch { self.error = .storageWriteFailed; return false }
+    }
+
     /// Saves wheel and pointer settings for one mouse model and writes them to it.
     func setMouseHardware(_ settings: MouseHardwareSettings) {
         var updated = configuration
