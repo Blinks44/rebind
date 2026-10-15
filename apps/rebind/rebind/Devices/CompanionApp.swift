@@ -11,9 +11,13 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     let bundlePrefixes: [String]
     /// Helpers known only by their executable name.
     let executableNames: [String]
+    /// Processes of the vendor that do not control devices, such as an updater.
+    var ignoredBundleIdentifiers: [String] = []
     /// Whether it rewrites the wheel and pointer settings of the vendor's everyday mice, which
     /// Rebind then leaves alone. G HUB manages gaming mice only, so it does not lock Devices.
     var controlsHardwareSettings = true
+    /// Whether it manages gaming mice with onboard profiles (their DPI and profile mode).
+    var managesGamingMice = false
 
     /// Only identifiers checked against an installed bundle or the vendor's published ones.
     /// Logi Options+: com.logi.optionsplus (published) and its `logioptionsplus_agent` helper.
@@ -24,10 +28,13 @@ nonisolated struct CompanionApp: Hashable, Sendable {
         CompanionApp(name: "Logi Options+", vendorID: 0x046D,
                      bundlePrefixes: ["com.logi.optionsplus"], executableNames: ["logioptionsplus_agent"]),
         CompanionApp(name: "Logitech G HUB", vendorID: 0x046D,
-                     bundlePrefixes: ["com.logi.ghub"], executableNames: [], controlsHardwareSettings: false)
+                     bundlePrefixes: ["com.logi.ghub"], executableNames: [],
+                     ignoredBundleIdentifiers: ["com.logi.ghub.updater"], controlsHardwareSettings: false,
+                     managesGamingMice: true)
     ]
 
     func matches(bundleIdentifier: String?, executableName: String?) -> Bool {
+        if let bundleIdentifier, ignoredBundleIdentifiers.contains(bundleIdentifier) { return false }
         if let bundleIdentifier, bundlePrefixes.contains(where: {
             bundleIdentifier == $0 || bundleIdentifier.hasPrefix($0 + ".")
         }) { return true }
@@ -72,8 +79,9 @@ nonisolated struct CompanionApp: Hashable, Sendable {
         changed()
     }
 
-    /// The running app that rewrites hardware settings of this vendor's mice, if any.
-    func controller(ofVendor vendorID: Int) -> CompanionApp? {
-        running.first { $0.vendorID == vendorID && $0.controlsHardwareSettings }
+    /// The running app that rewrites hardware settings of this mouse, if any: Options+ for every
+    /// Logitech mouse, G HUB for gaming mice with onboard profiles.
+    func controller(ofVendor vendorID: Int, gaming: Bool = false) -> CompanionApp? {
+        running.first { $0.vendorID == vendorID && ($0.controlsHardwareSettings || (gaming && $0.managesGamingMice)) }
     }
 }

@@ -15,12 +15,12 @@ struct DevicesSettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
-                let controllers = model.mouseCompanionApps.filter(\.controlsHardwareSettings)
-                if !controllers.isEmpty { CompanionBanner(apps: controllers) }
+                let controllers = Set(mice.compactMap { controller(of: $0) })
+                if !controllers.isEmpty { CompanionBanner(apps: CompanionApp.known.filter(controllers.contains)) }
                 if !mice.isEmpty {
                     ForEach(mice) { mouse in
                         MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
-                                  hardwareLocked: model.companionApps.controller(ofVendor: mouse.vendorID) != nil,
+                                  hardwareLocked: controller(of: mouse) != nil,
                                   save: model.setMouseHardware)
                             .disabled(model.storageLocked)
                     }
@@ -32,6 +32,10 @@ struct DevicesSettingsView: View {
             .detailMargins().padding(.bottom, 32)
         }
         .onAppear { model.mouseHardware.refresh() }
+    }
+
+    private func controller(of mouse: ConnectedMouse) -> CompanionApp? {
+        model.companionApps.controller(ofVendor: mouse.vendorID, gaming: mouse.hardware?.hasOnboardProfiles ?? false)
     }
 
     private var emptyState: some View {
@@ -118,20 +122,11 @@ private struct MouseCard: View {
                 Label {
                     Text(charging ? .devicesBatteryCharging(percentage) : .devicesBattery(percentage))
                 } icon: {
-                    Image(systemName: charging ? "battery.100.bolt" : Self.batterySymbol(percentage))
+                    Image(systemName: DeviceBattery(id: "", name: "", kind: .mouse, percentage: percentage,
+                                                    isCharging: charging).symbol)
                 }
                 .font(Theme.callout).foregroundStyle(percentage <= 15 && !charging ? Theme.warningText : Theme.textSecondary)
             }
-        }
-    }
-
-    static func batterySymbol(_ percentage: Int) -> String {
-        switch percentage {
-        case ..<13: "battery.0"
-        case ..<38: "battery.25"
-        case ..<63: "battery.50"
-        case ..<88: "battery.75"
-        default: "battery.100"
         }
     }
 

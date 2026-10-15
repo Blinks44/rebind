@@ -28,6 +28,7 @@ public enum HIDPPFeatureID: UInt16, Sendable {
     case smartShiftEnhanced = 0x2111
     case hiresWheel = 0x2121
     case adjustableDPI = 0x2201
+    case onboardProfiles = 0x8100
 
     public var bytes: [UInt8] {
         [UInt8(rawValue >> 8), UInt8(rawValue & 0xFF)]

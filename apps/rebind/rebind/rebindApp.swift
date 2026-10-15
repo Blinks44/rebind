@@ -11,15 +11,22 @@ struct rebindApp: App {
                 set: { delegate.model.setPresencePreference(\.showsMenuBarIcon, to: $0) })
     }
 
+    private var opensWindowAtLaunch: Bool {
+        let configuration = delegate.model.configuration
+        return configuration.opensWindowAtLaunch || (!configuration.showsDockIcon && !configuration.showsMenuBarIcon)
+    }
+
     var body: some Scene {
         Window(.rebindWindowTitle, id: "main") {
             ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
                 .background { ActiveSpaceWindow() }
+                .background { MainWindowOpener() }
         }
             .windowToolbarStyle(.unified(showsTitle: false))
             .defaultSize(width: 1080, height: 720)
-            // "Start in the background" keeps the window closed at launch, including at login.
-            .defaultLaunchBehavior(delegate.model.configuration.opensWindowAtLaunch ? .automatic : .suppressed)
+            // "Start in the background" keeps the window closed at launch, including at login, unless
+            // Rebind shows neither a Dock nor a Menu Bar icon: then the window is its only way in.
+            .defaultLaunchBehavior(opensWindowAtLaunch ? .automatic : .suppressed)
             .restorationBehavior(.disabled)
             .commands {
                 CommandGroup(replacing: .appInfo) {
@@ -40,9 +47,11 @@ struct rebindApp: App {
                 .background { ActiveSpaceWindow() }
                 .environment(\.locale, delegate.model.activeLanguage.locale)
         }
-        MenuBarExtra("Rebind", image: delegate.model.rulesAreRunning ? "RebindMenuBar" : "RebindMenuBarPaused",
-                     isInserted: menuBarIconShown) {
-            RebindMenu(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+        MenuBarExtra(isInserted: menuBarIconShown) {
+            RebindMenu(model: delegate.model, settingsSection: $settingsSection)
+                .environment(\.locale, delegate.model.activeLanguage.locale)
+        } label: {
+            MenuBarIcon(isRunning: delegate.model.rulesAreRunning)
         }
     }
 }
@@ -119,12 +128,36 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Opens the main window from outside a view (set by `MainWindowOpener`).
+    static var openMainWindow: (() -> Void)?
+
+    /// A click on the Dock icon (or opening Rebind again from Finder) while it runs. Rebind
+    /// handles it itself: with Show in Dock off it may still be an accessory app, so a window
+    /// SwiftUI opened stayed inactive and looked minimized; and a window suppressed at launch
+    /// ("Start in the background") is not opened by SwiftUI at all. Become a regular app, then
+    /// bring back the existing window or open it.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        let existing = NSApp.windows.first {
+            $0.canBecomeMain && !($0 is NSPanel) && ($0.isVisible || $0.isMiniaturized)
+        }
+        Self.showWindow {
+            if let existing {
+                if existing.isMiniaturized { existing.deminiaturize(nil) }
+                existing.makeKeyAndOrderFront(nil)
+            } else {
+                Self.openMainWindow?()
+            }
+        }
+        return false
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationWillTerminate(_ notification: Notification) { model.stop() }
 }
 
 private struct RebindMenu: View {
     let model: AppModel
+    @SwiftUI.Binding var settingsSection: SettingsSection
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openSettings) private var openSettings
 
@@ -140,7 +173,45 @@ private struct RebindMenu: View {
             model.setEnabled(!model.configuration.isEnabled)
         }.disabled(model.storageLocked && !model.configuration.isEnabled)
         Button(.settingsTitle) { RebindAppDelegate.showWindow { openSettings() } }
+        let batteries = model.configuration.showsBatteryInMenu ? model.mouseHardware.batteries : []
+        if !batteries.isEmpty {
+            // Like the system's Bluetooth menu: the device, and its charge at the right edge.
+            Section(.batteryMenuTitle) {
+                ForEach(batteries) { battery in
+                    Button {
+                        settingsSection = .devices
+                        RebindAppDelegate.showWindow { openSettings() }
+                    } label: {
+                        Label { Text(verbatim: battery.name) } icon: { Image(systemName: battery.kind.symbol) }
+                    }
+                    .badge(Text(battery.isCharging ? .batteryMenuCharging(battery.percentage) : .batteryMenuLevel(battery.percentage)))
+                }
+            }
+        }
         Divider()
         Button(.quitRebind) { NSApp.terminate(nil) }.keyboardShortcut("q")
+    }
+}
+
+/// Hands the scene's `openWindow` action to the app delegate, which has no SwiftUI environment.
+private struct MainWindowOpener: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Color.clear.frame(width: 0, height: 0).accessibilityHidden(true)
+            .onAppear { RebindAppDelegate.openMainWindow = { openWindow(id: "main") } }
+    }
+}
+
+/// The Menu Bar icon, paused while rules cannot run. It exists from launch on, even when the
+/// window does not, so it also hands over the window-opening action.
+private struct MenuBarIcon: View {
+    let isRunning: Bool
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Image(isRunning ? "RebindMenuBar" : "RebindMenuBarPaused")
+            .accessibilityLabel(Text(verbatim: "Rebind"))
+            .onAppear { RebindAppDelegate.openMainWindow = { openWindow(id: "main") } }
     }
 }

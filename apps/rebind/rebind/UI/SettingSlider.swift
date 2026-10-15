@@ -26,7 +26,9 @@ struct SettingSlider: View {
                 Text(valueLabel(shown)).font(Theme.callout).monospacedDigit().foregroundStyle(Theme.textSecondary)
             }
             if values.count > 1 {
-                Slider(value: index, in: 0...Double(values.count - 1), step: 1) { editing in
+                // No `step`: macOS would draw a tick per value, a solid comb for a 12,000 DPI sensor.
+                // The binding snaps to the nearest accepted value instead.
+                Slider(value: index, in: 0...Double(values.count - 1)) { editing in
                     dragging = editing
                     if !editing { send() }
                 }

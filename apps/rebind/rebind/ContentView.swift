@@ -10,9 +10,13 @@ struct ContentView: View {
     @State private var setupPresentation = PermissionSetupPresentation()
     @State private var titlebarInset: CGFloat?
 
-    init(model: AppModel, initialDestination: MainDestination = .input(.allKeyboards)) {
+    /// The window reopens on the input category last shown (a window preference, not configuration).
+    private static let lastScopeKey = "MainWindowLastScope"
+
+    init(model: AppModel, initialDestination: MainDestination? = nil) {
         self.model = model
-        _selection = State(initialValue: initialDestination)
+        let lastScope = UserDefaults.standard.string(forKey: Self.lastScopeKey).flatMap(DeviceScope.init(rawValue:))
+        _selection = State(initialValue: initialDestination ?? .input(lastScope ?? .allKeyboards))
     }
 
     var body: some View {
@@ -53,6 +57,9 @@ struct ContentView: View {
             BindingEditor(model: model, scope: selection.scope, existing: selection.binding, isCopy: selection.isCopy)
         }
         .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
+        .onChange(of: selection) {
+            if case .input(let scope) = selection { UserDefaults.standard.set(scope.rawValue, forKey: Self.lastScopeKey) }
+        }
         .onChange(of: model.configuration.selectedProfileID) {
             editor = nil
             pendingDeletion = nil

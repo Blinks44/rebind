@@ -19,6 +19,11 @@ struct CompanionAppTests {
     @Test func ignoresUnrelatedProcesses() {
         #expect(running([("com.logi.optionsplusfake", nil), ("com.apple.finder", "Finder"), (nil, nil)]).isEmpty)
     }
+
+    @Test func theGHubUpdaterAloneIsNotGHub() {
+        #expect(running([("com.logi.ghub.updater", "lghub_updater")]).isEmpty)
+        #expect(running([("com.logi.ghub.updater", nil), ("com.logi.ghub.agent", nil)]) == ["Logitech G HUB"])
+    }
 }
 
 struct MouseHardwareSettingsTests {
@@ -51,12 +56,12 @@ struct MouseHardwareSettingsTests {
     }
 
     @Test func wheelChoicesMapToDeviceModes() {
-        #expect(LogitechMouse.mode(for: settings) == .smartShift(threshold: 12))
-        #expect(LogitechMouse.mode(for: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysClick)) == .alwaysRatchet)
-        #expect(LogitechMouse.mode(for: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin)) == .freeSpin)
-        #expect(LogitechMouse.mode(for: MouseHardwareSettings(deviceKey: "k", dpi: 800)) == nil)
-        #expect(LogitechMouse.settings(for: .smartShift(threshold: 200), sensitivity: 10) == (.smartShift, 50))
-        #expect(LogitechMouse.settings(for: .freeSpin, sensitivity: 7) == (.alwaysFreeSpin, 7))
+        #expect(LogitechDevice.mode(for: settings) == .smartShift(threshold: 12))
+        #expect(LogitechDevice.mode(for: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysClick)) == .alwaysRatchet)
+        #expect(LogitechDevice.mode(for: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin)) == .freeSpin)
+        #expect(LogitechDevice.mode(for: MouseHardwareSettings(deviceKey: "k", dpi: 800)) == nil)
+        #expect(LogitechDevice.settings(for: .smartShift(threshold: 200), sensitivity: 10) == (.smartShift, 50))
+        #expect(LogitechDevice.settings(for: .freeSpin, sensitivity: 7) == (.alwaysFreeSpin, 7))
     }
 }
 
@@ -91,7 +96,7 @@ private final class MockMouse: HIDPPDeviceIO, @unchecked Sendable {
 struct LogitechMouseTests {
     @Test func readsAndWritesSmartShiftAndDPI() throws {
         let device = MockMouse()
-        let mouse = try #require(LogitechMouse(io: device, slot: nil))
+        let mouse = try #require(LogitechDevice(io: device, slot: nil))
         let state = mouse.read()
         #expect(state.wheelMode == .smartShift && state.smartShiftSensitivity == 16 && state.dpi == 1000)
         #expect(state.supportedDPI.first == 200 && state.supportedDPI.last == 4000 && state.supportedDPI.count == 77)
@@ -103,7 +108,7 @@ struct LogitechMouseTests {
 
     @Test func nothingIsWrittenForUnsetValues() throws {
         let device = MockMouse()
-        let mouse = try #require(LogitechMouse(io: device, slot: nil))
+        let mouse = try #require(LogitechDevice(io: device, slot: nil))
         _ = mouse.apply(MouseHardwareSettings(deviceKey: "k"))
         #expect(device.writes.isEmpty)
     }
@@ -118,7 +123,7 @@ struct LogitechMouseTests {
 }
 
 struct MouseHardwareExpectedStateTests {
-    private let state = LogitechMouseState(name: "MX Master 2S", wheelMode: .smartShift, smartShiftSensitivity: 16,
+    private let state = LogitechDeviceState(name: "MX Master 2S", wheelMode: .smartShift, smartShiftSensitivity: 16,
                                            dpi: 1000, supportedDPI: [400, 800, 1000, 1600])
 
     @Test func aNewChoiceShowsAtOnceRoundedToWhatTheMouseAccepts() throws {
@@ -131,8 +136,54 @@ struct MouseHardwareExpectedStateTests {
     }
 
     @Test func featuresTheMouseLacksStayAbsent() throws {
-        let dpiOnly = LogitechMouseState(name: "M", dpi: 800, supportedDPI: [800, 1600])
+        let dpiOnly = LogitechDeviceState(name: "M", dpi: 800, supportedDPI: [800, 1600])
         let expected = try #require(MouseHardware.expected(dpiOnly, after: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysClick, dpi: 1600)))
         #expect(expected.wheelMode == nil && expected.dpi == 1600)
+    }
+}
+
+@MainActor struct GamingMouseLockTests {
+    @Test func gHubLocksOnlyGamingMiceAndOptionsPlusLocksAll() {
+        let monitor = CompanionAppMonitor()
+        let hub = CompanionApp.known.first { $0.name == "Logitech G HUB" }
+        let options = CompanionApp.known.first { $0.name == "Logi Options+" }
+        #expect(hub?.managesGamingMice == true && options?.controlsHardwareSettings == true)
+        #expect(monitor.controller(ofVendor: 0x046D, gaming: true) == nil)
+    }
+}
+
+/// A HID++ keyboard with only a battery: it is kept for its charge and never written to.
+private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
+    let maxOutputReportSize: Int? = HIDPPConstants.longReportLength
+    private(set) var writes = 0
+
+    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
+                                               matching: @escaping (Data) -> Bool) -> Data? {
+        let bytes = [UInt8](report)
+        var payload: [UInt8] = []
+        switch (bytes[2], bytes[3] >> 4) {
+        case (0x00, 0):
+            let features: [UInt16: UInt8] = [0x0005: 0x03, 0x1004: 0x05]
+            payload = [features[UInt16(bytes[4]) << 8 | UInt16(bytes[5])] ?? 0]
+        case (0x03, 0): payload = [4]
+        case (0x03, 1): payload = Array("G915".utf8)
+        case (0x03, 2): payload = [0] // keyboard
+        case (0x05, 1): payload = [45, 0x04, 0x00]
+        default: writes += 1; return nil
+        }
+        let reply = Data(bytes[0...3] + payload + [UInt8](repeating: 0, count: max(0, 16 - payload.count)))
+        return matching(reply) ? reply : nil
+    }
+}
+
+struct LogitechKeyboardTests {
+    @Test func aKeyboardReportsItsBatteryOnly() throws {
+        let keyboard = MockKeyboard()
+        let device = try #require(LogitechDevice(io: keyboard, slot: 2))
+        #expect(device.isKeyboard)
+        let state = device.read()
+        #expect(state.isKeyboard && state.name == "G915" && state.batteryPercentage == 45 && !state.hasSettings)
+        _ = device.apply(MouseHardwareSettings(deviceKey: "k", dpi: 1600, usesGestureButton: true))
+        #expect(device.isGestureButtonDiverted == false)
     }
 }

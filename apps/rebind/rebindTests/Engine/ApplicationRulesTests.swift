@@ -93,18 +93,22 @@ struct GestureButtonTriggerTests {
 }
 
 struct ConfigurationBackupFileTests {
-    @Test func aCopyIsKeptPerDayForAWeek() throws {
+    @Test func aCopyIsKeptPerChangeAndTheNewestTenStay() throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindBackups-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
-        try store.save(Configuration(isEnabled: true))
-        let day: TimeInterval = 86_400
-        for offset in 0..<10 { store.backUpLoadedFile(on: Date(timeIntervalSince1970: 1_800_000_000 + Double(offset) * day)) }
-        store.backUpLoadedFile(on: Date(timeIntervalSince1970: 1_800_000_000 + 9 * day + 60))
+        var configuration = Configuration(isEnabled: true)
+        for minute in 0..<12 {
+            configuration.isEnabled.toggle()
+            configuration.pointerGestureDistance = minute.isMultiple(of: 3) ? .short : .standard
+            try store.save(configuration)
+            store.backUpLoadedFile(on: Date(timeIntervalSince1970: 1_800_000_000 + Double(minute) * 60))
+        }
+        // The same contents again on a later launch add nothing.
+        store.backUpLoadedFile(on: Date(timeIntervalSince1970: 1_800_000_000 + 3600))
         let copies = try FileManager.default.contentsOfDirectory(atPath: store.backupDirectory.path).sorted()
         #expect(copies.count == ConfigurationStore.keptBackups)
-        #expect(copies.last == "configuration-2027-01-24.json")
-        let restored = try ConfigurationBackup(contentsOf: store.backupDirectory.appending(path: try #require(copies.last)))
-        #expect(restored.configuration.isEnabled)
+        let newest = try ConfigurationBackup(contentsOf: store.backupDirectory.appending(path: try #require(copies.last)))
+        #expect(newest.configuration == configuration)
     }
 }

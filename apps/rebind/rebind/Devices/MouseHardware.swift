@@ -14,18 +14,31 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     var transport: Transport
     var vendorID: Int
     /// What a supported Logitech mouse reports; nil for every other mouse.
-    var hardware: LogitechMouseState?
+    var hardware: LogitechDeviceState?
 
     var deviceKey: String { MouseHardwareSettings.deviceKey(vendorID: vendorID, name: name) }
+}
+
+/// The charge of a connected mouse, keyboard or trackpad, for the Menu Bar item.
+nonisolated struct DeviceBattery: Identifiable, Equatable, Sendable {
+    enum Kind: Sendable { case mouse, keyboard, trackpad }
+    let id: String
+    var name: String
+    var kind: Kind
+    var percentage: Int
+    var isCharging: Bool
 }
 
 /// Lists connected mice and keeps supported Logitech mice set as stored. Discovery runs on
 /// the main run loop; HID++ requests run one at a time on `queue` because each one waits
 /// for the mouse to answer.
 @MainActor @Observable final class MouseHardware {
-    nonisolated static let queue = DispatchQueue(label: "Rebind HID++", qos: .utility)
 
     private(set) var mice: [ConnectedMouse] = []
+    /// Charges of Logitech devices (mice and keyboards) and of devices macOS reports, by name.
+    private(set) var batteries: [DeviceBattery] = []
+    @ObservationIgnored private var logitechBatteries: [String: [DeviceBattery]] = [:]
+    @ObservationIgnored private var batteryTimer: Timer?
     @ObservationIgnored private var manager: IOHIDManager?
     @ObservationIgnored private var devices: [String: [IOHIDDevice]] = [:]
     /// Open HID++ endpoints and the mice found behind each, by IOKit location.
@@ -34,25 +47,35 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     /// The stored settings, written to a mouse of the same model whenever it connects.
     @ObservationIgnored var storedSettings: () -> [MouseHardwareSettings] = { [] }
     /// Whether Rebind may write to mice of a vendor now (no companion app controls them).
-    @ObservationIgnored var canWrite: (Int) -> Bool = { _ in true }
+    /// Arguments: vendor, and whether it is a gaming mouse with onboard profiles.
+    @ObservationIgnored var canWrite: (Int, Bool) -> Bool = { _, _ in true }
     /// Receives presses (true) and releases of a diverted gesture button, on the HID report thread.
     @ObservationIgnored var gestureButtonChanged: @Sendable (Bool) -> Void = { _ in }
     /// Receives smooth scrolling per HID service that sends a mouse's wheel events.
     @ObservationIgnored var smoothScrollingChanged: ([UInt64: SmoothScrollingSettings]) -> Void = { _ in }
 
+    /// One opened HID++ endpoint (a device or a receiver) and the devices found behind it. Its
+    /// requests wait for answers, so each endpoint has its own serial queue: a sleeping keyboard
+    /// never delays a mouse on another receiver.
     private final class Session {
         let io: HIDReportDevice
-        var mice: [LogitechMouse] = []
+        let queue: DispatchQueue
+        var mice: [LogitechDevice] = []
         var probed = false
-        init(io: HIDReportDevice) { self.io = io }
+        init(io: HIDReportDevice, location: String) {
+            self.io = io
+            queue = DispatchQueue(label: "Rebind HID++ \(location)", qos: .utility)
+        }
     }
 
     func start() {
         guard manager == nil else { return }
         let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-        // Pointing devices, plus the vendor-defined interfaces that carry HID++ on receivers.
+        // Pointing devices, Logitech keyboards (for their battery), and the vendor-defined interfaces
+        // that carry HID++.
         let matching: [[String: Int]] = [
             [kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_Mouse],
+            [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop, kIOHIDDeviceUsageKey: kHIDUsage_GD_Keyboard],
             [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: 0xFF00],
             [kIOHIDVendorIDKey: 0x046D, kIOHIDDeviceUsagePageKey: 0xFF43]
         ]
@@ -69,10 +92,17 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = manager
+        // Charges change slowly; a few reads every five minutes are enough for the Menu Bar.
+        batteryTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshBatteries() }
+        }
+        publishBatteries()
     }
 
     func stop() {
         guard let manager else { return }
+        batteryTimer?.invalidate()
+        batteryTimer = nil
         releaseGestureButtons()
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -94,12 +124,13 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     func apply(_ settings: MouseHardwareSettings) {
         for (location, session) in sessions where session.probed {
             for mouse in mice where mouse.deviceKey == settings.deviceKey && mouse.hardware != nil
-                && mouse.id.hasPrefix(location + "#") && canWrite(mouse.vendorID) {
+                && mouse.id.hasPrefix(location + "#")
+                && canWrite(mouse.vendorID, mouse.hardware?.hasOnboardProfiles ?? false) {
                 let slot = Self.slot(of: mouse.id)
                 let found = session.mice.first { $0.slot == slot }
                 // Show the choice at once; the mouse's answer replaces it a moment later.
                 update(id: mouse.id, state: Self.expected(mouse.hardware, after: settings))
-                Self.queue.async { [weak self] in
+                session.queue.async { [weak self] in
                     guard let state = found?.apply(settings) else { return }
                     Task { @MainActor in self?.update(id: mouse.id, state: state) }
                 }
@@ -118,6 +149,8 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
         devices[location]?.removeAll { $0 == device }
         if devices[location]?.isEmpty == true {
             devices[location] = nil
+            logitechBatteries[location] = nil
+            publishBatteries()
             sessions.removeValue(forKey: location)?.io.close()
         }
         scheduleRebuild()
@@ -137,16 +170,20 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     private func rebuild() {
         var list: [ConnectedMouse] = []
         for (location, interfaces) in devices.sorted(by: { $0.key < $1.key }) {
-            guard let pointer = interfaces.first(where: Self.isMouse) else { continue }
-            let vendorID = Self.property(pointer, kIOHIDVendorIDKey) as Int? ?? 0
+            let pointer = interfaces.first(where: Self.isMouse)
+            // A Logitech keyboard has no mouse interface but still reports its battery over HID++.
+            let vendorID = (pointer ?? interfaces.first).flatMap { Self.property($0, kIOHIDVendorIDKey) as Int? } ?? 0
+            // Only mice, keyboards and their receivers: a Logitech headset has a vendor interface too,
+            // and asking it for HID++ devices only kept the queue waiting for seconds.
+            if sessions[location] == nil, vendorID == 0x046D, interfaces.contains(where: Self.isMouseOrKeyboard),
+               let endpoint = interfaces.first(where: Self.carriesHIDPP), let io = HIDReportDevice(endpoint) {
+                sessions[location] = Session(io: io, location: location)
+                probe(location)
+            }
+            guard let pointer else { continue }
             let base = ConnectedMouse(id: location, name: Self.property(pointer, kIOHIDProductKey) ?? "",
                                       manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
                                       transport: Self.transport(of: pointer), vendorID: vendorID)
-            if sessions[location] == nil, vendorID == 0x046D,
-               let endpoint = interfaces.first(where: Self.carriesHIDPP), let io = HIDReportDevice(endpoint) {
-                sessions[location] = Session(io: io)
-                probe(location)
-            }
             let found = mice.filter { $0.id.hasPrefix(location + "#") }
             list += found.isEmpty ? [base] : found
         }
@@ -175,59 +212,134 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
         let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
         let base = mice.first { $0.id == location || $0.id.hasPrefix(location + "#") }
         let vendorID = base?.vendorID ?? 0x046D
-        let writable = canWrite(vendorID)
+        let writable = canWrite(vendorID, false)
+        let writableGaming = canWrite(vendorID, true)
         let fallbackName = base?.name ?? ""
-        Self.queue.async { [weak self] in
-            var found: [LogitechMouse] = []
-            var states: [(UInt8?, LogitechMouseState)] = []
-            if let direct = LogitechMouse(io: io, slot: nil) {
+        session.queue.async { [weak self] in
+            var found: [LogitechDevice] = []
+            var states: [(UInt8?, LogitechDeviceState)] = []
+            if let direct = LogitechDevice(io: io, slot: nil) {
                 found = [direct]
-            } else {
-                found = (1...6).compactMap { LogitechMouse(io: io, slot: $0) }
+            } else if ReceiverNotifications.enable(on: io) != .silent {
+                // A receiver: it now reports devices that connect again, and its slots are asked.
+                found = (1...6).compactMap { LogitechDevice(io: io, slot: $0) }
             }
             for mouse in found {
                 var state = mouse.read()
                 let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: state.name ?? fallbackName)
-                if writable, let saved = stored[key] { state = mouse.apply(saved) }
+                if state.hasOnboardProfiles ? writableGaming : writable, let saved = stored[key] { state = mouse.apply(saved) }
                 states.append((mouse.slot, state))
             }
             Task { @MainActor in self?.probed(location, io: io, found: found, states: states) }
         }
     }
 
-    private func probed(_ location: String, io: HIDReportDevice, found logitech: [LogitechMouse],
-                        states: [(UInt8?, LogitechMouseState)]) {
+    private func probed(_ location: String, io: HIDReportDevice, found logitech: [LogitechDevice],
+                        states: [(UInt8?, LogitechDeviceState)]) {
         guard let session = sessions[location], session.io === io else { return }
-        session.mice = logitech
+        // A device that went to sleep does not answer; it keeps its place, its last battery reading
+        // and its card until the receiver reports it again or the receiver goes away.
+        let answered = Set(logitech.map(\.slot))
+        session.mice = logitech + session.mice.filter { !answered.contains($0.slot) }
         session.probed = true
+        listen(to: io, at: location, mice: logitech, states: states)
+        let fresh = states.compactMap { slot, state in
+            state.batteryPercentage.map {
+                DeviceBattery(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? "",
+                              kind: state.isKeyboard ? .keyboard : .mouse, percentage: $0, isCharging: state.batteryCharging)
+            }
+        }
+        let freshIDs = Set(fresh.map(\.id))
+        logitechBatteries[location] = fresh + (logitechBatteries[location] ?? []).filter { !freshIDs.contains($0.id) }
+        publishBatteries()
         guard let pointer = devices[location]?.first(where: Self.isMouse) else { return }
         let vendorID = Self.property(pointer, kIOHIDVendorIDKey) as Int? ?? 0
         let name = Self.property(pointer, kIOHIDProductKey) ?? ""
-        let found = states.map { slot, state in
+        let found = states.filter { !$0.1.isKeyboard }.map { slot, state in
             ConnectedMouse(id: "\(location)#\(slot.map(String.init) ?? "direct")", name: state.name ?? name,
                            manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
                            transport: slot == nil ? Self.transport(of: pointer) : .receiver, vendorID: vendorID,
                            hardware: state.hasSettings ? state : nil)
         }
+        let foundIDs = Set(found.map(\.id))
+        let asleep = mice.filter { $0.id.hasPrefix(location + "#") && !foundIDs.contains($0.id) }
         var list = mice.filter { $0.id != location && !$0.id.hasPrefix(location + "#") }
-        list += found.isEmpty ? [ConnectedMouse(id: location, name: name, manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
-                                                transport: Self.transport(of: pointer), vendorID: vendorID)] : found
+        list += found.isEmpty && asleep.isEmpty
+            ? [ConnectedMouse(id: location, name: name, manufacturer: Self.property(pointer, kIOHIDManufacturerKey),
+                              transport: Self.transport(of: pointer), vendorID: vendorID)]
+            : found + asleep
         list.sort { $0.id < $1.id }
         if list != mice { mice = list }
         publishSmoothScrolling()
-        listen(to: io, at: location, mice: logitech, states: states)
+    }
+
+    /// Reads the charge of every device again: Logitech devices over HID++, others from macOS.
+    func refreshBatteries() {
+        for (location, session) in sessions where session.probed {
+            let devices = session.mice
+            session.queue.async { [weak self] in
+                let charges = devices.map { (slot: $0.slot, battery: $0.readBattery()) }
+                Task { @MainActor in self?.updateBatteries(at: location, charges: charges) }
+            }
+        }
+        publishBatteries()
+    }
+
+    private func updateBatteries(at location: String, charges: [(slot: UInt8?, battery: (percentage: Int?, charging: Bool))]) {
+        guard var known = logitechBatteries[location] else { return }
+        for charge in charges {
+            let id = "\(location)#\(charge.slot.map(String.init) ?? "direct")"
+            guard let index = known.firstIndex(where: { $0.id == id }), let percentage = charge.battery.percentage else { continue }
+            known[index].percentage = percentage
+            known[index].isCharging = charge.battery.charging
+        }
+        logitechBatteries[location] = known
+        publishBatteries()
+    }
+
+    private func publishBatteries() {
+        let logitech = logitechBatteries.sorted { $0.key < $1.key }.flatMap(\.value)
+        let names = Set(logitech.map(\.name))
+        let list = logitech + Self.systemBatteries().filter { !names.contains($0.name) }
+        if list != batteries { batteries = list }
+    }
+
+    /// Devices whose charge macOS itself reports (Magic Mouse, Keyboard and Trackpad, and other
+    /// Bluetooth devices handled by Apple's device management service).
+    private nonisolated static func systemBatteries() -> [DeviceBattery] {
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("AppleDeviceManagementHIDEventService"),
+                                           &iterator) == KERN_SUCCESS else { return [] }
+        defer { IOObjectRelease(iterator) }
+        var list: [DeviceBattery] = []
+        while case let service = IOIteratorNext(iterator), service != 0 {
+            defer { IOObjectRelease(service) }
+            func value<T>(_ key: String) -> T? {
+                IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? T
+            }
+            guard let percentage: Int = value("BatteryPercent"), let name: String = value("Product") else { continue }
+            var entry: UInt64 = 0
+            IORegistryEntryGetRegistryEntryID(service, &entry)
+            let lowered = name.lowercased()
+            let kind: DeviceBattery.Kind = lowered.contains("keyboard") ? .keyboard
+                : lowered.contains("trackpad") ? .trackpad : .mouse
+            // Whether it charges is not read: the flags are undocumented.
+            list.append(DeviceBattery(id: "system-\(entry)", name: name, kind: kind, percentage: percentage, isCharging: false))
+        }
+        return list
     }
 
     /// Routes the mouse's own reports: gesture button presses of mice that divert it, and a
     /// receiver's notice that a mouse connected again, which needs the settings and the
     /// diversion once more (both reset when a mouse reconnects).
-    private func listen(to io: HIDReportDevice, at location: String, mice logitech: [LogitechMouse],
-                        states: [(UInt8?, LogitechMouseState)]) {
+    private func listen(to io: HIDReportDevice, at location: String, mice logitech: [LogitechDevice],
+                        states: [(UInt8?, LogitechDeviceState)]) {
         let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
         let vendorID = mice.first { $0.id.hasPrefix(location + "#") }?.vendorID ?? 0x046D
         let diverted: [(index: UInt8, feature: UInt8)] = zip(logitech, states).compactMap { mouse, entry in
             let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: entry.1.name ?? "")
-            guard entry.1.hasGestureButton, stored[key]?.usesGestureButton == true, canWrite(vendorID),
+            guard entry.1.hasGestureButton, stored[key]?.usesGestureButton == true,
+                  canWrite(vendorID, entry.1.hasOnboardProfiles),
                   let feature = mouse.controls?.featureIndex else { return nil }
             return (mouse.slot ?? HIDPPConstants.receiverIndex, feature)
         }
@@ -251,23 +363,31 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
 
     /// Gives every diverted gesture button back to its mouse, for example when Rebind quits.
     func releaseGestureButtons() {
-        let all = sessions.values.flatMap(\.mice)
-        Self.queue.sync { for mouse in all { mouse.divertGestureButton(false) } }
+        let done = DispatchGroup()
+        for session in sessions.values {
+            let devices = session.mice
+            session.queue.async(group: done) {
+                for mouse in devices where mouse.isGestureButtonDiverted { mouse.divertGestureButton(false) }
+            }
+        }
+        // Quitting never waits long for a busy queue or a mouse that does not answer; a button
+        // left diverted is restored by the mouse itself when it next reconnects.
+        _ = done.wait(timeout: .now() + 1.5)
     }
 
     /// A read that got no answer (a mouse going to sleep or away) keeps the last known state;
     /// removal of the device clears it.
-    private func update(id: String, state: LogitechMouseState?) {
+    private func update(id: String, state: LogitechDeviceState?) {
         guard let state, state.hasSettings, let index = mice.firstIndex(where: { $0.id == id }),
               mice[index].hardware != state else { return }
         mice[index].hardware = state
     }
 
     /// What a mouse should report once these settings are written.
-    nonisolated static func expected(_ state: LogitechMouseState?, after settings: MouseHardwareSettings) -> LogitechMouseState? {
+    nonisolated static func expected(_ state: LogitechDeviceState?, after settings: MouseHardwareSettings) -> LogitechDeviceState? {
         guard var state else { return nil }
-        if state.wheelMode != nil, let mode = LogitechMouse.mode(for: settings) {
-            (state.wheelMode, state.smartShiftSensitivity) = LogitechMouse.settings(for: mode, sensitivity: state.smartShiftSensitivity)
+        if state.wheelMode != nil, let mode = LogitechDevice.mode(for: settings) {
+            (state.wheelMode, state.smartShiftSensitivity) = LogitechDevice.settings(for: mode, sensitivity: state.smartShiftSensitivity)
         }
         if state.dpi != nil, let dpi = settings.dpi {
             state.dpi = state.supportedDPI.min { abs($0 - dpi) < abs($1 - dpi) } ?? dpi
@@ -322,6 +442,12 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
             && property(device, kIOHIDPrimaryUsageKey) == kHIDUsage_GD_Mouse
             && property(device, kIOHIDBuiltInKey) != true
             && !usagePairs(device).contains { $0.page == kHIDPage_Digitizer }
+    }
+
+    private nonisolated static func isMouseOrKeyboard(_ device: IOHIDDevice) -> Bool {
+        usagePairs(device).contains {
+            $0.page == kHIDPage_GenericDesktop && ($0.usage == kHIDUsage_GD_Mouse || $0.usage == kHIDUsage_GD_Keyboard)
+        }
     }
 
     /// The interface that can take HID++ output reports: a vendor-defined usage and room for one.

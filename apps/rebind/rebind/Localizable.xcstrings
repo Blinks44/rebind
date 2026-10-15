@@ -1097,37 +1097,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Einstellungen, Profile und Belegungen in einer Datei sichern oder eine importieren. Rebind behält außerdem eine Kopie von jedem der letzten 7 Tage und fragt, bevor etwas ersetzt wird."
+            "value" : "Alle Einstellungen, Profile und Belegungen in einer Datei sichern oder eine importieren. Rebind behält außerdem Kopien der letzten 10 Fassungen, mit denen es gestartet ist, und fragt, bevor etwas ersetzt wird."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save all settings, profiles and bindings to a file, or import one. Rebind also keeps a copy from each of the last 7 days. It asks before replacing anything."
+            "value" : "Save all settings, profiles and bindings to a file, or import one. Rebind also keeps copies of the last 10 versions it started with. It asks before replacing anything."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrez tous les réglages, profils et règles dans un fichier, ou importez-en un. Rebind garde aussi une copie de chacun des 7 derniers jours et demande avant de remplacer quoi que ce soit."
+            "value" : "Enregistrez tous les réglages, profils et règles dans un fichier, ou importez-en un. Rebind garde aussi des copies des 10 dernières versions avec lesquelles il a démarré et demande avant de remplacer quoi que ce soit."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сохраните все настройки, профили и правила в файл или импортируйте его. Rebind также хранит копию за каждый из последних 7 дней. Перед заменой он спросит."
+            "value" : "Сохраните все настройки, профили и правила в файл или импортируйте его. Rebind также хранит копии последних 10 версий, с которыми запускался. Перед заменой он спросит."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda todos los ajustes, perfiles y reglas en un archivo o importa uno. Rebind también guarda una copia de cada uno de los últimos 7 días y pregunta antes de reemplazar nada."
+            "value" : "Guarda todos los ajustes, perfiles y reglas en un archivo o importa uno. Rebind también guarda copias de las 10 últimas versiones con las que se inició y pregunta antes de reemplazar nada."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将所有设置、配置文件和规则保存到文件，或导入文件。Rebind 还会保留最近 7 天每天的一份副本，替换前会先询问。"
+            "value" : "将所有设置、配置文件和规则保存到文件，或导入文件。Rebind 还会保留最近 10 个启动时版本的副本，替换前会先询问。"
           }
         }
       }
@@ -25502,6 +25502,212 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示备份"
+          }
+        }
+      }
+    },
+    "showBatteryInMenuBar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie im Menü"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery in menu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie dans le menu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заряд в меню"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batería en el menú"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在菜单中显示电量"
+          }
+        }
+      }
+    },
+    "showBatteryInMenuBarDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt den Ladestand verbundener Mäuse und Tastaturen im Rebind-Menü der Menüleiste."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lists the charge of connected mice and keyboards in the Rebind menu in the menu bar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche la charge des souris et claviers connectés dans le menu de Rebind de la barre des menus."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывает заряд подключённых мышей и клавиатур в меню Rebind в строке меню."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra la carga de los ratones y teclados conectados en el menú de Rebind de la barra de menús."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在菜单栏的 Rebind 菜单中显示已连接鼠标和键盘的电量。"
+          }
+        }
+      }
+    },
+    "batteryMenuTitle" : {
+      "extractionState" : "manual",
+      "comment" : "Menu Bar menu section with the charge of connected devices.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заряд"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batería"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电量"
+          }
+        }
+      }
+    },
+    "batteryMenuLevel %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %%"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %%"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %%"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
+    },
+    "batteryMenuCharging %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %% ⚡︎"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% ⚡︎"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %% ⚡︎"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% ⚡︎"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %% ⚡︎"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% ⚡︎"
           }
         }
       }

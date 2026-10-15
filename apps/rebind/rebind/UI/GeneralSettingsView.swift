@@ -25,6 +25,8 @@ struct GeneralSettingsView: View {
                     RebindAppDelegate.updateDockIcon(preferred: $0)
                 }
                 presenceToggle(.showInMenuBar, description: .showInMenuBarDescription, \.showsMenuBarIcon)
+                presenceToggle(.showBatteryInMenuBar, description: .showBatteryInMenuBarDescription, \.showsBatteryInMenu)
+                    .disabled(!model.configuration.showsMenuBarIcon)
                 if !model.configuration.showsDockIcon && !model.configuration.showsMenuBarIcon {
                     Banner(severity: .information, title: .hiddenEverywhereTitle, message: .hiddenEverywhereDescription)
                 }

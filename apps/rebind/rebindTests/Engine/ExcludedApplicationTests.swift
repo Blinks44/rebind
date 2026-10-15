@@ -177,7 +177,7 @@ import Testing
         }
         let pixel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: 6, wheel2: 0, wheel3: 0))
         #expect(SmoothScroller.distance(of: pixel, settings: glide).y == 6)
-        #expect(SmoothScroller.distance(of: pixel, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: 30)).y == 3)
+        #expect(SmoothScroller.distance(of: pixel, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: 25)).y == 3)
         #expect(MouseHardwareSettings(deviceKey: "k", smoothScrolling: true).smoothScrollingSettings == glide)
         #expect(MouseHardwareSettings(deviceKey: "k").smoothScrollingSettings == nil)
     }

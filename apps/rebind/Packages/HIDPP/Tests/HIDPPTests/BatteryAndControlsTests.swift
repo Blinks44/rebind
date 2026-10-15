@@ -6,13 +6,18 @@ import Foundation
 import XCTest
 
 final class BatteryAndControlsTests: XCTestCase {
-    func testReadsBothBatteryFeatures() {
-        XCTAssertEqual(Battery.status(from: [80, 0x08, 0x00], isUnified: true), .init(percentage: 80, isCharging: false))
-        XCTAssertEqual(Battery.status(from: [55, 0x04, 0x01], isUnified: true), .init(percentage: 55, isCharging: true))
-        XCTAssertEqual(Battery.status(from: [30, 20, 0x00], isUnified: false), .init(percentage: 30, isCharging: false))
-        XCTAssertEqual(Battery.status(from: [90, 50, 0x03], isUnified: false), .init(percentage: 90, isCharging: true))
-        XCTAssertNil(Battery.status(from: [0, 0, 0], isUnified: true))
-        XCTAssertNil(Battery.status(from: [50], isUnified: false))
+    func testReadsEveryBatteryFeature() {
+        XCTAssertEqual(Battery.status(from: [80, 0x08, 0x00], source: .unified), .init(percentage: 80, isCharging: false))
+        XCTAssertEqual(Battery.status(from: [55, 0x04, 0x01], source: .unified), .init(percentage: 55, isCharging: true))
+        XCTAssertEqual(Battery.status(from: [30, 20, 0x00], source: .status), .init(percentage: 30, isCharging: false))
+        XCTAssertEqual(Battery.status(from: [90, 50, 0x03], source: .status), .init(percentage: 90, isCharging: true))
+        XCTAssertNil(Battery.status(from: [0, 0, 0], source: .unified))
+        XCTAssertNil(Battery.status(from: [50], source: .status))
+        // 3,900 mV (0x0F3C) is about 62 %; bit 7 of the flags means external power.
+        XCTAssertEqual(Battery.status(from: [0x0F, 0x3C, 0x00], source: .voltage), .init(percentage: 62, isCharging: false))
+        XCTAssertEqual(Battery.status(from: [0x10, 0x68, 0x80], source: .voltage), .init(percentage: 100, isCharging: true))
+        XCTAssertEqual(Battery.percentage(millivolts: 3400), 0)
+        XCTAssertEqual(Battery.percentage(millivolts: 3860), 54)
     }
 
     func testDivertsTheGestureButtonOnlyWhenTheDeviceAllowsIt() throws {
@@ -48,5 +53,38 @@ final class BatteryAndControlsTests: XCTestCase {
         // A reply to Rebind's own request (software ID 8) or another feature is not an event.
         XCTAssertNil(ReprogControls.pressedControls(in: [0x11, 0x01, 0x09, 0x08] + pressed.dropFirst(4), featureIndex: 0x09))
         XCTAssertNil(ReprogControls.pressedControls(in: pressed, featureIndex: 0x0A))
+    }
+
+    func testSwitchesOnboardProfilesToHostMode() throws {
+        let device = MockHIDPPDevice()
+        device.responseProvider = { report in
+            let bytes = [UInt8](report)
+            let payload: [UInt8] = bytes[3] >> 4 == 2 ? [0x01] : []
+            return Data([0x11, bytes[1], bytes[2], bytes[3]] + payload + [UInt8](repeating: 0, count: 16 - payload.count))
+        }
+        let transport = try XCTUnwrap(HIDPPTransport(device: device, deviceIndex: 1))
+        let profiles = OnboardProfiles(transport: transport, featureIndex: 0x0C)
+        XCTAssertEqual(profiles.isHostMode(), false)
+        XCTAssertTrue(profiles.setHostMode())
+        XCTAssertEqual(Array(try XCTUnwrap(device.reports.last).prefix(5)), [0x11, 0x01, 0x0C, 0x18, 0x02])
+    }
+}
+
+final class ReceiverNotificationsTests: XCTestCase {
+    func testTurnsOnWirelessNotificationsAndKeepsOtherFlags() {
+        let device = MockHIDPPDevice()
+        device.responseProvider = { report in
+            let bytes = [UInt8](report)
+            return Data([0x10, 0xFF, bytes[2], 0x00, 0x00, bytes[2] == 0x81 ? 0x08 : bytes[5], 0x00])
+        }
+        XCTAssertEqual(ReceiverNotifications.enable(on: device), .enabled)
+        XCTAssertEqual(Array(try XCTUnwrap(device.reports.last)), [0x10, 0xFF, 0x80, 0x00, 0x00, 0x09, 0x00])
+    }
+
+    func testAnErrorMeansAReceiverAndSilenceMeansNone() {
+        let refusing = MockHIDPPDevice()
+        refusing.responseProvider = { _ in Data([0x10, 0xFF, 0x8F, 0x81, 0x00, 0x02, 0x00]) }
+        XCTAssertEqual(ReceiverNotifications.enable(on: refusing), .refused)
+        XCTAssertEqual(ReceiverNotifications.enable(on: MockHIDPPDevice()), .silent)
     }
 }

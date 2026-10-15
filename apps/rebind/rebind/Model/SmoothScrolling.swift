@@ -18,7 +18,7 @@ nonisolated enum SmoothScrollingGlide: String, Codable, CaseIterable, Hashable, 
 nonisolated enum SmoothScrollingDistance {
     static let range = 20...400
     static let step = 10
-    static let standard = 60
+    static let standard = 50
 }
 
 /// The smooth scrolling choice the event tap applies.

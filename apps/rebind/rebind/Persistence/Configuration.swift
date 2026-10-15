@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 39
+    static let currentSchemaVersion = 40
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -24,6 +24,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     var mouseWheelSpeed = MouseWheelSpeed.standard
     /// The user hid the "macOS may respond too" warning on the trackpad pages.
     var hidesTrackpadGestureWarning = false
+    /// Charges of connected mice and keyboards in the Menu Bar item's menu.
+    var showsBatteryInMenu = true
     /// Companion apps whose warning on the Mouse page the user hid.
     var dismissedCompanionApps: [String] = []
     /// Wheel and pointer settings Rebind writes to supported mice, one entry per model.
@@ -96,7 +98,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try validate()
             return self
         }
-        guard schemaVersion >= 39 || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
+        guard schemaVersion >= 40 || showsBatteryInMenu,
+              schemaVersion >= 39 || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
                                       && mouseHardware.allSatisfy(\.isSchema38)),
               schemaVersion >= 36 || (dismissedCompanionApps.isEmpty
                                       && excludedApplications.allSatisfy { !$0.allowsBindings && $0.allowsSmoothScrolling }),
@@ -134,6 +137,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         case showsDockIcon, showsMenuBarIcon, opensWindowAtLaunch, excludedApplications, pointerGestureDistance
         case reversesMouseWheel, mouseWheelSpeed, mouseHardware, dismissedCompanionApps
         case reversesHorizontalScrolling, hidesTrackpadGestureWarning
+        case showsBatteryInMenu = "showsBatteryInMenuBar"
     }
 
     init(from decoder: any Decoder) throws {
@@ -179,6 +183,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             reversesHorizontalScrolling = try values.decode(Bool.self, forKey: .reversesHorizontalScrolling)
             hidesTrackpadGestureWarning = try values.decode(Bool.self, forKey: .hidesTrackpadGestureWarning)
         }
+        if version >= 40 { showsBatteryInMenu = try values.decode(Bool.self, forKey: .showsBatteryInMenu) }
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -208,6 +213,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try values.encode(reversesHorizontalScrolling, forKey: .reversesHorizontalScrolling)
             try values.encode(hidesTrackpadGestureWarning, forKey: .hidesTrackpadGestureWarning)
         }
+        if schemaVersion >= 40 { try values.encode(showsBatteryInMenu, forKey: .showsBatteryInMenu) }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
             try values.encode(bindings, forKey: .bindings)

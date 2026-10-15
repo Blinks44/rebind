@@ -4,7 +4,7 @@ import IOKit.hid
 import Synchronization
 
 /// The thread whose run loop receives input reports of opened HID++ devices. Requests
-/// wait on `MouseHardware.queue` instead, so neither this thread nor the main thread
+/// wait on its session's queue in `MouseHardware` instead, so neither this thread nor the main thread
 /// ever blocks, and the main run loop does not wake for every report of a moving mouse.
 nonisolated enum HIDReportThread {
     /// Only thread-safe CFRunLoop calls (scheduling, perform-block, wake-up) touch it from
@@ -85,16 +85,17 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         // Every pointer report of the mouse arrives here too; only HID++ replies matter.
         guard length >= HIDPPConstants.shortReportLength,
               report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID else { return }
-        // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
-        if report[3] & 0x0F == 0 || report[2] == 0x41, let notify = notifications.withLock({ $0 }) {
-            notify(Array(UnsafeBufferPointer(start: report, count: length)))
-            return
-        }
+        // A waiting request picks its own reply among everything that arrives; a receiver's
+        // register reply looks like an event (software ID 0), so nothing is held back from it.
         let data = Data(bytes: report, count: length)
         inbox.withLock {
             guard let arrived = $0.arrived, $0.reports.count < 64 else { return }
             $0.reports.append(data)
             arrived.signal()
+        }
+        // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
+        if report[3] & 0x0F == 0 || report[2] == 0x41, let notify = notifications.withLock({ $0 }) {
+            notify(Array(UnsafeBufferPointer(start: report, count: length)))
         }
     }
 

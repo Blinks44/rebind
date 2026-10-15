@@ -142,7 +142,7 @@ import Carbon
         companionApps.changed = { [weak self] in self?.mouseHardware.refresh() }
         companionApps.start()
         mouseHardware.storedSettings = { [weak self] in self?.configuration.mouseHardware ?? [] }
-        mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0) == nil }
+        mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0, gaming: $1) == nil }
         let mailbox = mailbox
         mouseHardware.gestureButtonChanged = { down in
             mailbox.handleOffTapButton(InputTrigger.gestureButton, down: down,
