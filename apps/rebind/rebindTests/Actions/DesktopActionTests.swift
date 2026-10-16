@@ -108,7 +108,7 @@ struct DesktopActionTests {
         let audio = AudioOutputCapabilities(deviceID: 17, volume: true, mute: true)
         let calls = Mutex<[RebindAction]>([])
         let worker = ActionWorker(mailbox: mailbox, capabilities: { audio },
-            performAudio: { action, _ in calls.withLock { $0.append(.system(action)) }; return true },
+            performAudio: { action, _, _ in calls.withLock { $0.append(.system(action)) }; return .performed },
             sendShortcut: { shortcut in calls.withLock { $0.append(.shortcut(shortcut)) }; return true },
             performDock: { action, allowed in
                 #expect(allowed()); calls.withLock { $0.append(.dock(action)) }; return .performed

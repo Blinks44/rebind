@@ -13,7 +13,7 @@ import Synchronization
 nonisolated final class ActionWorker {
     private let mailbox: EngineMailbox
     private let capabilities: @Sendable () -> AudioOutputCapabilities
-    private let performAudio: @Sendable (SystemAction, UInt32) -> Bool
+    private let performAudio: @Sendable (SystemAction, UInt32, @Sendable () -> Bool) -> WindowActionResult
     private let sendTrackpadShortcut: @Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult
     private let sendShortcut: @Sendable (KeyboardShortcut) -> Bool
     private let sendHeldKey: @Sendable (HeldKeyCommand) -> Void
@@ -36,7 +36,9 @@ nonisolated final class ActionWorker {
 
     init(mailbox: EngineMailbox,
          capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
-         performAudio: @escaping @Sendable (SystemAction, UInt32) -> Bool = { CoreAudioOutput.perform($0, device: $1) },
+         performAudio: @escaping @Sendable (SystemAction, UInt32, @Sendable () -> Bool) -> WindowActionResult = {
+             CoreAudioOutput.isDefaultOutput($1) ? MediaKeySender.perform($0, canPerform: $2) : .unavailable
+         },
          sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
          sendHeldKey: @escaping @Sendable (HeldKeyCommand) -> Void = { ShortcutSender.postHeldKey($0) },
@@ -170,7 +172,7 @@ nonisolated final class ActionWorker {
             return
         case .system(let action):
             guard let device = dispatch.deviceID else { mailbox.actionFailed(dispatch); return }
-            result = performAudio(action, device) ? .performed : .unavailable
+            result = performAudio(action, device, canPerform)
         case .windowCycle(let action):
             if let performWindowCycle { result = performWindowCycle(action, canPerform) }
             else { result = WindowCycleExecutor.perform(action, revision: dispatch.revision, state: &windowCycle, canPerform: canPerform) }

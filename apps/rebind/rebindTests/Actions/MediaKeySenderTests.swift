@@ -76,4 +76,21 @@ struct MediaKeySenderTests {
         let up = try #require(posted.last.flatMap { NSEvent(cgEvent: $0) })
         #expect((up.data1 >> 8) & 0xff == 11 && up.data1 >> 16 == action.keyCode)
     }
+
+    @Test(arguments: SystemAction.allCases)
+    func soundActionsPostTheSystemSoundKeyPairAtHIDTap(_ action: SystemAction) throws {
+        #expect(action.keyCode == [.volumeUp: 0, .volumeDown: 1, .toggleMute: 7][action])
+        var posted: [CGEvent] = []
+        let result = MediaKeySender.perform(action, canPerform: { true }, post: { event, location in
+            #expect(location == .cghidEventTap)
+            posted.append(event)
+        })
+        #expect(result == .performed)
+        let native = try posted.map { try #require(NSEvent(cgEvent: $0)) }
+        #expect(native.map { $0.data1 } == [action.keyCode << 16 | 0xa00, action.keyCode << 16 | 0xb00])
+        #expect(native.allSatisfy { $0.subtype.rawValue == Int16(NX_SUBTYPE_AUX_CONTROL_BUTTONS) })
+        #expect(posted.allSatisfy { $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
+        let cancelled = MediaKeySender.perform(action, canPerform: { false }, post: { _, _ in Issue.record("Posted") })
+        #expect(cancelled == .cancelled)
+    }
 }

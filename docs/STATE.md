@@ -16,6 +16,7 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
+- **2026-10-16:** Volume/mute actions post the system sound keys after a user report (silent volume while muted, no HUD); tests pass, hardware check open ([history](history/2026-10.md#2026-10-16-volume-and-mute-through-the-system-sound-keys)).
 - **2026-10-16:** Volume actions use the virtual main volume (system volume-key control) after a user report that AirPods sometimes lost volume control; not reproduced, hands-free check open ([audio](verification/phase-4-audio.md)). User checklist results recorded; the shorter remaining checklist covers holds/modifiers, AirPods, per-app rules, gesture button, battery, trackpad, Magic devices and release ([history](history/2026-10.md#2026-10-16-airpods-volume-website-and-user-checklist)).
 - **2026-10-16:** Xcode 27.1 recommended project settings and the Utilities category applied; Debug/Release builds and 830 tests pass ([history](history/2026-10.md#2026-10-16-xcode-recommended-settings)).
 - **2026-10-16:** Menu Bar menu moved from SwiftUI `MenuBarExtra` to AppKit `NSStatusItem`/`NSMenu` for the Sketch battery row (device symbol, alias, right-aligned percentage and battery symbol). User confirmed the look; tests pass. Keyboard/VoiceOver/macOS 26 checks open ([REVIEW-001](tasks/REVIEW-001-production-review.md#saved-design-and-battery-menu)).

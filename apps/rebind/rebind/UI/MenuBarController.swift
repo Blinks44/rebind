@@ -103,7 +103,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             title.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: title.length))
             let item = NSMenuItem(title: row.name, action: nil, keyEquivalent: "")
             item.attributedTitle = title
-            item.image = NSImage(systemSymbolName: row.battery.kind.symbol, accessibilityDescription: nil)
+            // The small scale keeps wide symbols (keyboard, trackpad) within the 16 pt menu image
+            // slot, so the menu draws them at their own size instead of resampling them blurry.
+            item.image = NSImage(systemSymbolName: row.battery.kind.symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(.init(scale: .small))
             if #available(macOS 27, *) { item.preferredImageVisibility = .visible }
             let state = AppLocalization.string(row.battery.isCharging ? .devicesBatteryCharging(row.battery.percentage)
                                                    : .devicesBattery(row.battery.percentage), language: language)
@@ -119,8 +122,13 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             string: AppLocalization.string(.batteryMenuLevel(battery.percentage), language: language) + " ",
             attributes: [.font: font, .foregroundColor: low ? NSColor.systemRed : NSColor.secondaryLabelColor])
         let attachment = NSTextAttachment()
-        attachment.image = NSImage(systemSymbolName: battery.symbol, accessibilityDescription: nil)?
+        let image = NSImage(systemSymbolName: battery.symbol, accessibilityDescription: nil)?
             .withSymbolConfiguration(.init(pointSize: font.pointSize, weight: .regular))
+        attachment.image = image
+        // Whole-point bounds centred on the cap height keep the symbol on the pixel grid.
+        if let size = image?.size {
+            attachment.bounds = CGRect(x: 0, y: ((font.capHeight - size.height) / 2).rounded(), width: size.width, height: size.height)
+        }
         charge.append(NSAttributedString(attachment: attachment))
         charge.addAttribute(.font, value: font, range: NSRange(location: 0, length: charge.length))
         return charge

@@ -111,7 +111,7 @@ struct WindowActionTests {
         mailbox.state.withLock { $0.status = .active }
         let calls = Mutex(0)
         let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performAudio: { _, _ in Issue.record("Window action reached audio backend"); return false },
+            performAudio: { _, _, _ in Issue.record("Window action reached audio backend"); return .unavailable },
             sendShortcut: { _ in Issue.record("Window action reached keyboard backend"); return false },
             performWindow: { action, canPerform in
                 #expect(action == .close && canPerform())

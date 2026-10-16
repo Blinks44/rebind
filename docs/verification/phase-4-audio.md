@@ -12,13 +12,16 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   searchable Keyboard/Sound catalog. Record a keyboard shortcut or choose volume
   up, volume down, or toggle mute. Other system/window/media actions are not listed
   until implemented. Choosing an action never executes it; Save stores the rule.
-- Use only public Core Audio default-output properties: volume uses the HAL's virtual
-  main volume (`kAudioHardwareServiceDeviceProperty_VirtualMainVolume`, the control
-  behind the system volume keys; updated 2026-10-16), mute the main-element control. Volume adds or
-  subtracts 1/16 of the 0…1 scalar and clamps at the endpoints. This is a scalar step,
-  not a loudness/decibel guarantee. Volume leaves mute unchanged; mute is a separate
-  toggle. Rebind does not capture microphone/audio samples or require audio capture
-  permission. No private media events, shell/AppleScript or extra dependency.
+- Volume up/down and mute post the system sound keys (`NX_KEYTYPE_SOUND_UP/DOWN`,
+  `NX_KEYTYPE_MUTE`) as tagged auxiliary-control pairs through the same public path as
+  the [media keys](phase-4-media.md) (updated 2026-10-16). macOS applies them exactly like
+  its own keys: its step size, unmuting on a volume step, muting at zero and the system
+  volume HUD. Core Audio is read-only: public default-output properties decide whether
+  the actions are available (volume: the HAL's virtual main volume,
+  `kAudioHardwareServiceDeviceProperty_VirtualMainVolume`, the control behind the system
+  keys; mute: the main-element control). Rebind does not capture microphone/audio
+  samples or require audio capture permission. No private API, shell/AppleScript or
+  extra dependency.
 - Check volume/mute existence, readability and settable status independently.
   The virtual main volume covers outputs with channel-only controls and preserves
   their balance (the HAL scales the channels). Outputs without any volume control
@@ -28,7 +31,8 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   dispatch failure. Output identities are transient internal values, not an inventory
   or profile association. Pending audio calls target the captured default output;
   the native adapter rechecks it before writing and never redirects old work to a
-  replacement output. OS device changes can race with a platform call already accepted.
+  replacement output (it checks the default output right before posting the key). OS device
+  changes can race with a key already posted; macOS then applies it to the new output.
 - Matching/capture stays synchronous and allocation-light. One separate serial
   action thread handles HAL calls and balanced/tagged Quartz shortcut pulses. The
   shared queue is limited to 16 waiting actions, with at most one accepted call in
@@ -84,9 +88,16 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   reproduce. The likely cause (not confirmed) is that the output loses the main-element
   control for a while, for example in the Bluetooth hands-free mode while its microphone
   is in use. The capability filter then removed the volume rules (passthrough).
-  Volume now uses the virtual main volume. `apps/rebind/tools/audio-output-probe.swift`
+  Volume capability now uses the virtual main volume. `apps/rebind/tools/audio-output-probe.swift`
   lists every output's controls if it happens again. Hands-free and output-switch checks
   remain manual.
+
+- 2026-10-16, user report: after the system slider was moved to zero (muted), Rebind's
+  volume-up raised the volume silently while the output stayed muted, and the native
+  mute key then revealed ~80 %. Rebind also showed no volume HUD. Cause: direct Core Audio
+  writes left mute unchanged by contract and never trigger the system HUD. Volume and mute
+  now post the system sound keys. `dev.sh test`: 830 Swift Testing tests (new sound-key
+  pair test) and the native tests pass. HUD/unmute on hardware await the user's check.
 
 ## Manual checks
 
@@ -96,7 +107,8 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
    press and normal release, plus existing shortcut rules. Do not test loud output
    with headphones at high volume.
 2. Try **Increase Volume** and **Toggle Mute**, check endpoints and repeated mute
-   toggles. Changing volume while muted must not implicitly unmute. Confirm the
+   toggles. Changing volume while muted unmutes like the system keys, and every press
+   shows the system volume HUD. Confirm the
    actual sound/output UI, not only Rebind's queued diagnostic row.
 3. Try keyboard, a 1000 ms hold and modifier + discrete wheel. Check exact modifiers,
    one-shot hold, wheel throttle, pause/resume, emergency bypass and profile switch.

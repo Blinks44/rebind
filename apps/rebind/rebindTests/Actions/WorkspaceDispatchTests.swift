@@ -22,7 +22,7 @@ import Testing
         mailbox.finishWorkspace(request, failed: false)
         mailbox.state.withLock { $0.pending = [request.dispatch.action] }
         let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performAudio: { _, _ in Issue.record("Workspace action reached audio"); return false },
+            performAudio: { _, _, _ in Issue.record("Workspace action reached audio"); return .unavailable },
             sendShortcut: { _ in Issue.record("Workspace action reached keyboard"); return false },
             performWindow: { _, _ in Issue.record("Workspace action reached AX"); return .unavailable },
             prepareWorkspace: { action in action.url.map { .document($0) } }, secureInput: { false }, postingAllowed: { true })

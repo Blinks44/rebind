@@ -3,17 +3,6 @@ import Testing
 @testable import rebind
 
 struct ActionTests {
-    @Test(arguments: [Float32(0), 0.5, 1, -0.1, 1.1, .infinity, .nan])
-    func volumeStepClampsAndRejectsInvalidReadings(_ value: Float32) {
-        let up = CoreAudioOutput.adjustedVolume(value, action: .volumeUp)
-        let down = CoreAudioOutput.adjustedVolume(value, action: .volumeDown)
-        if value.isFinite && (0...1).contains(value) {
-            #expect(up == min(1, value + 0.0625))
-            #expect(down == max(0, value - 0.0625))
-        } else { #expect(up == nil && down == nil) }
-        #expect(CoreAudioOutput.adjustedVolume(value, action: .toggleMute) == nil)
-    }
-
     @Test func catalogRequiresARecordedShortcutAndSeparatesCapabilities() {
         #expect(ActionKind.keyboardShortcut.configuredAction(shortcut: nil) == nil)
         #expect(ActionKind.keyboardShortcut.configuredAction(shortcut: KeyboardShortcut(keyCode: 55, modifiers: [])) == nil)

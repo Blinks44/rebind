@@ -1,13 +1,12 @@
 import AudioToolbox
 import CoreAudio
 
-// Volume uses the HAL's virtual main volume, the control behind the system volume
-// keys: it also covers devices with channel-only controls (Bluetooth headsets in
-// the hands-free mode, many USB/HDMI outputs) and keeps their channel balance.
-// Mute stays the public main-element control.
+// Read-only capability checks for the default output. The actions themselves are
+// system sound keys (MediaKeySender), so macOS applies them and shows its HUD.
+// Volume checks the HAL's virtual main volume, the control behind those keys: it
+// also covers channel-only outputs (Bluetooth headsets in the hands-free mode,
+// many USB/HDMI outputs). Mute checks the public main-element control.
 nonisolated enum CoreAudioOutput {
-    static let volumeStep: Float32 = 1.0 / 16.0
-
     static func capabilities() -> AudioOutputCapabilities {
         guard let device = defaultDevice() else { return AudioOutputCapabilities() }
         return AudioOutputCapabilities(deviceID: device,
@@ -15,33 +14,8 @@ nonisolated enum CoreAudioOutput {
             mute: settable(device, selector: kAudioDevicePropertyMute) && muted(device) != nil)
     }
 
-    static func adjustedVolume(_ current: Float32, action: SystemAction) -> Float32? {
-        guard current.isFinite, (0...1).contains(current) else { return nil }
-        switch action {
-        case .volumeUp: return min(1, current + volumeStep)
-        case .volumeDown: return max(0, current - volumeStep)
-        case .toggleMute: return nil
-        }
-    }
-
-    static func perform(_ action: SystemAction, device: UInt32) -> Bool {
-        // Never redirect an already queued action to a newly selected output.
-        guard defaultDevice() == device else { return false }
-        switch action {
-        case .volumeUp, .volumeDown:
-            guard settable(device, selector: volumeSelector),
-                  let current = volume(device), let adjusted = adjustedVolume(current, action: action) else { return false }
-            var address = outputAddress(volumeSelector)
-            var value = adjusted
-            return AudioObjectSetPropertyData(device, &address, 0, nil, UInt32(MemoryLayout<Float32>.size), &value) == noErr
-        case .toggleMute:
-            guard settable(device, selector: kAudioDevicePropertyMute), let current = muted(device) else { return false }
-            var address = outputAddress(kAudioDevicePropertyMute)
-            var value: UInt32 = current ? 0 : 1
-            return AudioObjectSetPropertyData(device, &address, 0, nil, UInt32(MemoryLayout<UInt32>.size), &value) == noErr
-        }
-        // Core Audio acceptance is not an acoustic/delivery acknowledgement.
-    }
+    /// Never redirect an already queued action to a newly selected output.
+    static func isDefaultOutput(_ device: UInt32) -> Bool { defaultDevice() == device }
 
     private static func defaultDevice() -> AudioDeviceID? {
         var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
