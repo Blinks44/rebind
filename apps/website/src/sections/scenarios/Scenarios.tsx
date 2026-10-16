@@ -1,9 +1,9 @@
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@moduix/react/card'
 import { SimpleGrid } from '@moduix/react/simple-grid'
-import { Mouse } from 'lucide-react'
+import { Command, Mouse, MoveVertical } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Binding, Keycaps, Reveal, Section, SectionHeading, TriggerChip } from '~/components'
-import { actions } from '~/lib/actions'
+import { type Action, actions } from '~/lib/actions'
 import { m } from '~/paraglide/messages.js'
 import styles from './Scenarios.module.css'
 
@@ -31,6 +31,14 @@ export function Scenarios() {
           <Binding trigger={<Keycaps keys={['F16']} />} action={actions.runShortcut()} />
           <Binding trigger={<Keycaps keys={['⌥', 'G']} />} action={actions.openLink()} />
         </Scenario>
+        <Scenario title={m.scenario_dual_title()} text={m.scenario_dual_text()}>
+          <Binding trigger={<Press kind={m.press_single()} />} action={escape()} />
+          <Binding trigger={<Press kind={m.press_long()} />} action={actions.holdControl()} />
+        </Scenario>
+        <Scenario title={m.scenario_wheel_title()} text={m.scenario_wheel_text()} delay={0.08}>
+          <Binding trigger={<TriggerChip icon={MoveVertical}>{m.trigger_button4_wheel_up()}</TriggerChip>} action={actions.volumeUp()} />
+          <Binding trigger={<TriggerChip icon={MoveVertical}>{m.trigger_button4_wheel_down()}</TriggerChip>} action={actions.volumeDown()} />
+        </Scenario>
       </SimpleGrid>
     </Section>
   )
@@ -51,6 +59,9 @@ function Scenario(props: { title: string; text: string; delay?: number; children
     </Reveal>
   )
 }
+
+/** The short press of a dual-role key sends a plain shortcut; it is not a catalog action. */
+const escape = (): Action => ({ icon: Command, title: m.action_escape(), category: m.action_shortcut() })
 
 /** F13 with the kind of press that triggers the rule. */
 function Press({ kind }: { kind: string }) {

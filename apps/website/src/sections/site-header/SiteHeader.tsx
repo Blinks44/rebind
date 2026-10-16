@@ -17,6 +17,7 @@ export function SiteHeader() {
         </a>
         <nav className={styles.nav} aria-label={m.nav_sections()}>
           <a href={`${home}#scenarios`}>{m.nav_scenarios()}</a>
+          <a href={`${home}#devices`}>{m.nav_devices()}</a>
           <a href={`${home}#try`}>{m.nav_try()}</a>
           <a href={`${home}#faq`}>{m.nav_faq()}</a>
         </nav>

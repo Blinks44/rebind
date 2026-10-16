@@ -1,5 +1,6 @@
 export { ActionCatalog } from './action-catalog/ActionCatalog'
 export { CallToAction } from './call-to-action/CallToAction'
+export { Devices } from './devices/Devices'
 export { Faq } from './faq/Faq'
 export { Hero } from './hero/Hero'
 export { NotFound } from './not-found/NotFound'

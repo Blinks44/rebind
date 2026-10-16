@@ -18,7 +18,8 @@ The full-main overflow root cause was pinned vertical sizing inside NavigationSp
 
 - [x] Actual-state login/runtime, recovery feedback and current shared design-system implementation.
 - [x] Software transition/storage/ownership checks, full-window geometry and scoped native navigation/AX title checks.
-- [ ] Real registration/approval/removal, external OS changes, login/relaunch while paused or missing access.
+- [x] Real registration/removal, external Login Items change and login relaunch with the same profile and pause state: user-confirmed on the 2026-10-15 checklist (debug build), reported 2026-10-16.
+- [ ] Login relaunch with missing access.
 - [ ] Complete main/standard/Menu Bar traversal, keyboard/VoiceOver, six-language widths and accessibility preferences.
 - [ ] macOS 26; Intel only if claimed.
 

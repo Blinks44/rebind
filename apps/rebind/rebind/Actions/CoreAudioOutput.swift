@@ -1,14 +1,17 @@
+import AudioToolbox
 import CoreAudio
 
-// Only public, main-element output controls. Devices with channel-only controls
-// are unavailable in this slice; never flatten their channel balance ourselves.
+// Volume uses the HAL's virtual main volume, the control behind the system volume
+// keys: it also covers devices with channel-only controls (Bluetooth headsets in
+// the hands-free mode, many USB/HDMI outputs) and keeps their channel balance.
+// Mute stays the public main-element control.
 nonisolated enum CoreAudioOutput {
     static let volumeStep: Float32 = 1.0 / 16.0
 
     static func capabilities() -> AudioOutputCapabilities {
         guard let device = defaultDevice() else { return AudioOutputCapabilities() }
         return AudioOutputCapabilities(deviceID: device,
-            volume: settable(device, selector: kAudioDevicePropertyVolumeScalar) && volume(device) != nil,
+            volume: settable(device, selector: volumeSelector) && volume(device) != nil,
             mute: settable(device, selector: kAudioDevicePropertyMute) && muted(device) != nil)
     }
 
@@ -26,9 +29,9 @@ nonisolated enum CoreAudioOutput {
         guard defaultDevice() == device else { return false }
         switch action {
         case .volumeUp, .volumeDown:
-            guard settable(device, selector: kAudioDevicePropertyVolumeScalar),
+            guard settable(device, selector: volumeSelector),
                   let current = volume(device), let adjusted = adjustedVolume(current, action: action) else { return false }
-            var address = outputAddress(kAudioDevicePropertyVolumeScalar)
+            var address = outputAddress(volumeSelector)
             var value = adjusted
             return AudioObjectSetPropertyData(device, &address, 0, nil, UInt32(MemoryLayout<Float32>.size), &value) == noErr
         case .toggleMute:
@@ -62,8 +65,10 @@ nonisolated enum CoreAudioOutput {
             && AudioObjectIsPropertySettable(device, &address, &writable) == noErr && writable.boolValue
     }
 
+    private static let volumeSelector = kAudioHardwareServiceDeviceProperty_VirtualMainVolume
+
     private static func volume(_ device: AudioDeviceID) -> Float32? {
-        var address = outputAddress(kAudioDevicePropertyVolumeScalar)
+        var address = outputAddress(volumeSelector)
         var value: Float32 = 0
         var size = UInt32(MemoryLayout<Float32>.size)
         guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &value) == noErr,

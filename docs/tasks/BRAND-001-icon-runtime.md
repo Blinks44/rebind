@@ -15,7 +15,7 @@ Confirm the existing icon in real runtime contexts. Do not recreate it because a
 
 - [x] Native AppIcon.icon is the sole app-icon input; superseded PNG sets removed, fresh Debug/Release/artifact checks pass. Prior generated appearances/small-size and Finder evidence retained. Composer evidence.
 - [x] Separate vector Menu Bar template integrated; prior Debug/Release AppKit checks load at 18 pt with template rendering. Evidence.
-- [ ] Dock uses the delivered icon after normal user relaunch; live menu icon is clear in Light/Dark/selection states.
+- [x] Dock uses the delivered icon after normal user relaunch; live menu icon is clear in Light/Dark/selection states. User-confirmed in Light/Dark on the 2026-10-15 checklist, reported 2026-10-16.
 - [ ] Check actual user tint and high-contrast/transparency settings where relevant; record results and any limitation.
 - [ ] Confirm macOS 26 runtime appearances when available. Development-host/native generation-26 exports do not prove minimum-OS execution.
 

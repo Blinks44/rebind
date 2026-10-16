@@ -48,10 +48,10 @@ Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27: `apps/rebind/scripts/dev.sh 
 - [ ] Modifier from a mouse button: ⌘-click, ⇧-click selection, ⌘ + key, ⌥ + scroll; nothing stays held after pause, sleep or quit.
 - [ ] Dual-role key: tap sends the short-press shortcut, hold acts as the modifier; behavior when typing fast.
 - [ ] Trackpad gesture with each held key, alongside the same gesture without one.
-- [ ] Wheel reverse and speed on a stepped mouse; trackpad and Magic Mouse scrolling unchanged.
-- [ ] Profile export/import through the real panels; the paused Menu Bar icon in Light and Dark menu bars.
+- [x] Wheel reverse and speed on a stepped mouse; trackpad and Magic Mouse scrolling unchanged. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
+- [x] Profile export/import through the real panels; the paused Menu Bar icon in Light and Dark menu bars. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
 - [x] Sketch screens 34–38 (Light/Dark), saved 2026-10-13: hold with a short-press shortcut, trackpad held key, mouse wheel settings, profile export/import, support report.
-- [ ] Wheel under a held button on hardware: G603 side buttons with volume or tab actions, free-spinning wheels, click after an unused hold.
+- [x] Wheel under a held button on hardware: G603 side buttons with volume or tab actions, free-spinning wheels, click after an unused hold. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
 - [ ] Copy review 2026-10-13 was done by the agent, not by fluent readers; the German, French, Spanish and Chinese wording still needs one.
 - [x] Sketch screens 29–33 (Light/Dark), saved 2026-10-13: Button + Wheel editor, Repeat While Held with the note field, Input settings with gesture distance and excluded apps, Insert Text, and the binding options menu. Open: the Insert Text action shows a placeholder icon because `text.cursor` is not yet in the Sketch icon set.
 

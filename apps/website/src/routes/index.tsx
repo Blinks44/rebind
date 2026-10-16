@@ -4,7 +4,7 @@ import { getLatestRelease } from '~/lib/release'
 import { site } from '~/lib/site'
 import { getLocale, locales, localizeHref } from '~/paraglide/runtime.js'
 import { m } from '~/paraglide/messages.js'
-import { ActionCatalog, CallToAction, Faq, Hero, Scenarios, SiteFooter, SiteHeader, Stats, Steps, TrySection, Why } from '~/sections'
+import { ActionCatalog, CallToAction, Devices, Faq, Hero, Scenarios, SiteFooter, SiteHeader, Stats, Steps, TrySection, Why } from '~/sections'
 
 const ogLocales = { ru: 'ru_RU', en: 'en_US', de: 'de_DE', fr: 'fr_FR', es: 'es_ES', 'zh-Hans': 'zh_CN' }
 
@@ -79,6 +79,7 @@ function Landing() {
         <Hero release={release} />
         <Stats />
         <Scenarios />
+        <Devices />
         <TrySection />
         <ActionCatalog />
         <Why />

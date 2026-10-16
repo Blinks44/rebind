@@ -12,14 +12,17 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   searchable Keyboard/Sound catalog. Record a keyboard shortcut or choose volume
   up, volume down, or toggle mute. Other system/window/media actions are not listed
   until implemented. Choosing an action never executes it; Save stores the rule.
-- Use only public Core Audio default-output main-element properties. Volume adds or
+- Use only public Core Audio default-output properties: volume uses the HAL's virtual
+  main volume (`kAudioHardwareServiceDeviceProperty_VirtualMainVolume`, the control
+  behind the system volume keys; updated 2026-10-16), mute the main-element control. Volume adds or
   subtracts 1/16 of the 0…1 scalar and clamps at the endpoints. This is a scalar step,
   not a loudness/decibel guarantee. Volume leaves mute unchanged; mute is a separate
   toggle. Rebind does not capture microphone/audio samples or require audio capture
   permission. No private media events, shell/AppleScript or extra dependency.
-- Check main-volume/mute existence, readability and settable status independently.
-  Absent/fixed-volume/channel-only output controls are unavailable in this slice;
-  do not flatten channel balance or guess from an output model/transport. The picker
+- Check volume/mute existence, readability and settable status independently.
+  The virtual main volume covers outputs with channel-only controls and preserves
+  their balance (the HAL scales the channels). Outputs without any volume control
+  and channel-only mute remain unavailable; do not guess from an output model/transport. The picker
   disables unavailable actions, stored rules show a hint and leave input untouched.
 - Capability snapshots refresh once per second on the action worker, and after a
   dispatch failure. Output identities are transient internal values, not an inventory
@@ -75,6 +78,16 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
   trigger and OS were not restated. This does not verify all three actions,
   mute/endpoint semantics, output changes or cancellation/fault cases below.
 
+- 2026-10-16, user report: volume control sometimes stopped with AirPods while it
+  worked on the built-in speakers. While AirPods were connected, the agent saw both outputs
+  expose a writable main-element volume and virtual main volume, so the failure did not
+  reproduce. The likely cause (not confirmed) is that the output loses the main-element
+  control for a while, for example in the Bluetooth hands-free mode while its microphone
+  is in use. The capability filter then removed the volume rules (passthrough).
+  Volume now uses the virtual main volume. `apps/rebind/tools/audio-output-probe.swift`
+  lists every output's controls if it happens again. Hands-free and output-switch checks
+  remain manual.
+
 ## Manual checks
 
 1. Run one rebuilt Xcode copy with your existing permissions. In a disposable profile,
@@ -89,7 +102,7 @@ scenarios remain hardware gates; exact actions/triggers were not restated.
    one-shot hold, wheel throttle, pause/resume, emergency bypass and profile switch.
    Switch while a source is held; old pending actions must not appear after release.
 4. Change the default sound output. Within roughly one second, the chooser/list should
-   reflect its actual writable controls. For a fixed-volume or channel-only output,
+   reflect its actual writable controls. For a fixed-volume output,
    unavailable rules should pass the source through. Reconnect/sleep/wake and slow
    drivers need separate checks; never infer acoustic success from an enabled item.
 5. Restart and inspect saved profile/selection/actions. Cancel catalog/editor changes

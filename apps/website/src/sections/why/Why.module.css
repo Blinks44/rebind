@@ -1,4 +1,4 @@
-/* Two wide cards over three narrow ones. */
+/* Two wide cards over two rows of three narrow ones. */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -14,14 +14,6 @@
   grid-column: span 3;
   --moduix-card-title-font-size: 24px;
   --moduix-card-description-font-size: 16px;
-}
-
-.header {
-  padding-bottom: 24px;
-}
-
-.header > :first-child {
-  margin-bottom: 10px;
 }
 
 @media (max-width: 860px) {

@@ -7,13 +7,14 @@ import styles from './ActionCatalog.module.css'
 /** Two rows of catalog actions drifting in opposite directions, full-bleed past the content width. */
 export function ActionCatalog() {
   const catalog = Object.values(actions).map((action) => action())
+  const half = Math.ceil(catalog.length / 2)
   return (
     <section className={styles.catalog}>
       <Section flush>
         <SectionHeading title={m.actions_title()} lead={m.actions_lead()} />
       </Section>
-      <Row items={catalog.slice(0, 11)} />
-      <Row items={catalog.slice(11)} reverse />
+      <Row items={catalog.slice(0, half)} />
+      <Row items={catalog.slice(half)} reverse />
     </section>
   )
 }

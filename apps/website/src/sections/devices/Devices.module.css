@@ -1,0 +1,33 @@
+/* Lets every card in a row stretch to the tallest one. */
+.cell {
+  display: grid;
+}
+
+/* A small copy of the Menu Bar menu's battery rows. */
+.battery {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  color: var(--rebind-text-secondary);
+}
+
+.row + .row {
+  border-top: 1px solid var(--rebind-separator);
+}
+
+.name {
+  color: var(--rebind-text-primary);
+}
+
+.level {
+  font-variant-numeric: tabular-nums;
+}

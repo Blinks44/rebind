@@ -26,7 +26,7 @@
 
 - [x] Smooth scrolling engine and settings; exclusion toggles; hideable warning; Input cleanup; strings in six languages.
 - [x] Tests: ease-out step and direction change, which events glide (stepped/all, modifiers, phases), mailbox gating per app and when paused, schema 35 → 36 migration, warning dismissal persistence.
-- [ ] Hardware feel on stepped and high-resolution wheels for each glide length; a wheel binding still fires once per click; Cmd/Ctrl zoom and Shift horizontal scrolling unchanged; trackpad untouched; per-app toggles in a real app switch.
+- [x] Hardware feel on stepped and high-resolution wheels for each glide length; a wheel binding still fires once per click; Cmd/Ctrl zoom and Shift horizontal scrolling unchanged; trackpad untouched; per-app toggles in a real app switch. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
 - [ ] Running-app review against Sketch 42 (×), 44 and 45 in Light/Dark.
 
 ## Sketch source

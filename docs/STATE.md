@@ -12,14 +12,14 @@ Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [
 
 Keyboard/mouse capture, manual profiles/atomic storage (schema **41**, migrations 1–40), the shared action catalog and twelve built-in/external trackpad presets are implemented. Held outputs, per-app rules/exclusions, per-mouse smooth scrolling and Devices settings are present. Whole-app soft styling and EN/RU/DE/FR/ES/Simplified Chinese are integrated. Named happy-path subsets are confirmed; full runtime, safety, timing, external-hardware, accessibility and minimum-OS gates remain open. [CAPABILITIES](CAPABILITIES.md) owns the detailed matrix; it is not repeated here.
 
-The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; download awaits `site.githubRepo` and advertised Magic-device support. Brand Dock/Menu Bar/tint acceptance must use the current artwork.
+The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; download awaits `site.githubRepo` and advertised Magic-device support. Since 2026-10-16 it also presents smooth scrolling, Devices/Logitech/battery, dual-role keys, Button + Wheel, per-app rules, held repeat, backups and the wider catalog. Brand Dock/Menu Bar/tint acceptance must use the current artwork.
 
 ## Design source and recent changes
 
+- **2026-10-16:** Volume actions use the virtual main volume (system volume-key control) after a user report that AirPods sometimes lost volume control; not reproduced, hands-free check open ([audio](verification/phase-4-audio.md)). User checklist results recorded; the shorter remaining checklist covers holds/modifiers, AirPods, per-app rules, gesture button, battery, trackpad, Magic devices and release ([history](history/2026-10.md#2026-10-16-airpods-volume-website-and-user-checklist)).
 - **2026-10-16:** Xcode 27.1 recommended project settings and the Utilities category applied; Debug/Release builds and 830 tests pass ([history](history/2026-10.md#2026-10-16-xcode-recommended-settings)).
 - **2026-10-16:** Menu Bar menu moved from SwiftUI `MenuBarExtra` to AppKit `NSStatusItem`/`NSMenu` for the Sketch battery row (device symbol, alias, right-aligned percentage and battery symbol). User confirmed the look; tests pass. Keyboard/VoiceOver/macOS 26 checks open ([REVIEW-001](tasks/REVIEW-001-production-review.md#saved-design-and-battery-menu)).
 - **2026-10-16:** [Production review](tasks/REVIEW-001-production-review.md): third pass accepted the diff and last two commits; fixed double autorepeat for a shared held key; 828 + 17 tests pass. Earlier two passes: 827 Swift Testing + 17 native + 32 HIDPP pass; 41 TSan tests × 10. Builds/signatures pass. Sketch: 52 vertical Light/Dark pairs saved/rechecked. Exact battery row remains open.
-- **2026-10-16:** [Context maintenance](tasks/DOC-003-context-maintenance.md): contracts/handoffs reconciled; workflow skill 1.4.0 adds incremental maintenance and simplicity priorities.
 - **2026-10-16:** [Multi-vendor battery](tasks/DEVICE-003-multi-vendor-battery.md): generic inventory, native/HID data, opt-in Bluetooth BAS and known USB reads implemented/software-tested; named hardware/grant/reconnect checks pending.
 
 Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](DESIGN.md) locates it. The earlier Liquid Glass document of the same name is fully superseded. Older entries: [history](history/2026-10.md).
@@ -35,8 +35,8 @@ Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](D
 | [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | awaiting_verification | Unassigned | Verify named USB models, Bluetooth access/BAS, reconnect and Logitech regression; Sketch reconciliation saved. |
 | [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) | awaiting_verification | Unassigned | Check Rename/save/cancel/reset, battery menu and G915 after relaunch/reconnect, keyboard and VoiceOver. |
 | [INPUT-011](tasks/INPUT-011-apps-mice-gesture-button.md) | awaiting_verification | Unassigned | User checks gesture button, per-app rules and per-mouse smooth scrolling; current designs reconciled. |
-| [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | awaiting_verification | Unassigned | User checklist: glide feel per length, wheel bindings, Cmd/Ctrl/Shift and trackpad unchanged, per-app toggles, × on the warning, Light/Dark. |
-| [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | awaiting_verification | Unassigned | User checklist: Devices on the MX Master 2S, persistence, banner, wheel reverse/speed ("Passed on, changed" in diagnostics), trackpad unaffected, Light/Dark. |
+| [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | awaiting_verification | Unassigned | Hardware feel, wheel bindings, modifiers, exclusions and × user-confirmed; review against Sketch 42/44/45 remains. |
+| [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | awaiting_verification | Unassigned | MX Master 2S checklist user-confirmed; Options+ banner, Bluetooth-direct/Bolt and MX Master 3/3S remain. |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths. |
 | [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned | Walk the physical checklist for held output, modifiers, wheel, excluded apps, trackpad keys and the new actions. |
 | [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Current surfaces saved as 52 Light/Dark pairs; Magic Mouse editors await feasible presets. |
