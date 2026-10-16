@@ -1,6 +1,6 @@
 # Rebind: design direction and live source index
 
-Updated 2026-10-13. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-16. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under UI-013. Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
@@ -10,15 +10,15 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
-Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-14**, SHA-256 `2f2604b77e980d55139c864b582997adcd57114cb0f180802037cc67ec2f90c6`; IDs change after reopening, so resolve them live. [UI-022](tasks/UI-022-soft-design-system.md) records scope and limits.
+Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-16**, SHA-256 `fdd823443e23b7ffc8be91c6c528e27172bdbdc017c150d7b265c68adbbad30f`; IDs change after saving/reopening, so resolve them live. [Production review](tasks/REVIEW-001-production-review.md) and [UI-022](tasks/UI-022-soft-design-system.md) record scope and limits.
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 45 screens, each Light and Dark, built only from components |
+| 01 · Screens | 52 numbered pairs: Light left, Dark right; one vertical walkthrough, built from shared components/styles |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
-| 99 · Archive | The two original hand-drawn Keyboard frames |
+| 99 · Archive | Original hand-drawn Keyboard frames and superseded global-scroll/older Devices specimens |
 
 Screens are drawn **in English only** (user decision 2026-10-13): other languages are translated and checked in the app, not duplicated in Sketch. Icons are real SF Symbols outlines exported with `apps/rebind/tools/sf-symbol-svg.swift`; each `Icon/<name>` component is named after the symbol used in code, so add a symbol by exporting it rather than drawing it.
 
@@ -26,7 +26,9 @@ The code mirrors the variables in `apps/rebind/rebind/UI/DesignSystem/Theme.swif
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 
-Covered screens (45): Keyboard, Mouse, Trackpad and Magic Trackpad lists with empty, no-results, permission-needed and paused states; the Magic Mouse empty state; Keyboard, Mouse and Trackpad editors (recording, conflict, action picker and parameters, hold, wheel, held key, note); all Settings tabs including Devices (39–41: mice, Options+ warning, empty) and the Mouse page with a companion-app warning (42) and the gesture-button trigger (43, implemented 2026-10-15; the frame can drop its "Future" mark); Input with smooth scrolling (44) and excluded apps with Bindings / Smooth scrolling switches (45); profile management, naming, export and import; first-run setup; diagnostics; licenses; About. Not drawn: Magic Mouse editors (the presets are undecided, see [PLAN](PLAN.md)) and compact-width variants, which are checked in the app.
+The sequence runs from first-run setup through category lists, editors, profiles, Settings and diagnostics to About/licenses and the battery menu. Current Devices coverage includes generic keyboards/trackpads, unavailable charge, charging, local names and Rename, companion-app restrictions, per-mouse scrolling and optional Bluetooth allow/denied/restricted states. General includes Battery in menu; Language distinguishes a draft awaiting Apply from the saved choice awaiting reopen. Menu specimens use exported SF battery symbols and show a charging/local-name variant. Old global smoothing and duplicate Input specimens are archived. Current code/design default distance is 50 pt, the subsequent INPUT-011 user choice.
+
+Magic Mouse editors remain undrawn until the hardware probe establishes feasible presets (see [PLAN](PLAN.md)); compact-width/accessibility variants are verified in the app. Saved designs do not close hardware or native menu rendering acceptance.
 
 ## Rules that apply to every screen
 
@@ -46,6 +48,4 @@ The app icon is itself a full-bleed blue keycap with two opposing white arrows, 
 
 Save and review changes in Sketch; keep states, copy and annotations there. Update only this short locator/readiness index and a concise task/status note. The receiving agent reads Sketch directly. Record changed behavioral requirements in SPEC and native test results in verification; do not duplicate the visual source in Git.
 
-Device-name/keyboard follow-up (2026-10-15): [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) reuses the live Devices card and profile naming-sheet components in code. Rename and keyboard-only states are not yet drawn/reconciled in Sketch; no document edit was made.
-
-Multi-vendor battery follow-up (2026-10-16): [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) reuses the Devices header, caption and secondary button for optional Bluetooth access (allow / open privacy settings / restricted). The live Devices frames were re-inspected; this permission state and generic keyboard/trackpad inventory need Sketch reconciliation. No Sketch content was changed.
+Device-name/keyboard and multi-vendor battery follow-ups are reconciled in the saved 2026-10-16 source. Inspect these live states when implementing/verifying [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) and [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md); retain their native/hardware limits.

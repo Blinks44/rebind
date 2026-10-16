@@ -23,6 +23,13 @@ public enum ReceiverNotifications {
         case silent
     }
 
+    /// HID++ 1.0 connection notices use the short report. A long report can have a
+    /// HID++ 2.0 feature at index 0x41, which is unrelated to receiver connection state.
+    public static func isConnectionNotification(_ report: [UInt8]) -> Bool {
+        report.count >= HIDPPConstants.shortReportLength
+            && report[0] == HIDPPConstants.shortReportID && report[2] == 0x41
+    }
+
     /// Turns the flag on, keeping the receiver's other flags.
     @discardableResult
     public static func enable(on device: HIDPPDeviceIO, timeout: TimeInterval = 1) -> Outcome {
@@ -32,8 +39,10 @@ public enum ReceiverNotifications {
         case .some(nil): return .refused
         case .some(let current?):
             guard current[1] & wirelessFlag == 0 else { return .enabled }
-            return registerRequest(device, subID: setRegister, flags: enabling(current), timeout: timeout) == .some(nil)
-                ? .refused : .enabled
+            guard case .some(.some) = registerRequest(device, subID: setRegister, flags: enabling(current), timeout: timeout) else {
+                return .refused
+            }
+            return .enabled
         }
     }
 

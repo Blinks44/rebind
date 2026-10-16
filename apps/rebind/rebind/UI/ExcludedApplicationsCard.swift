@@ -86,7 +86,7 @@ struct ExcludedApplicationsCard: View {
 
     /// On: this feature keeps working while the app is in front.
     private func allowance(_ title: LocalizedStringResource, app: String, isOn: Bool,
-                           set: @escaping (Bool) -> Void) -> some View {
+                           set: @escaping @MainActor @Sendable (Bool) -> Void) -> some View {
         Toggle(isOn: SwiftUI.Binding(get: { isOn }, set: set)) { Text(title) }
             .toggleStyle(ThemeSwitchStyle()).labelsHidden()
             .frame(width: Self.columnWidth)

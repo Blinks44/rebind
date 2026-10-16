@@ -5,6 +5,15 @@ import Testing
 @testable import rebind
 
 struct CatalogActionTests {
+    @Test func aHeldNamedShortcutKeepsTheEditableRepeatOption() throws {
+        let shortcut = try #require(ActionKind.copy.fixedShortcut)
+        var binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [], action: .shortcut(shortcut))
+        #expect(ActionKind(binding: binding) == .copy)
+        binding.holdsOutput = true
+        #expect(ActionKind(binding: binding) == .keyboardShortcut)
+        #expect(ActionKind(binding: binding).canBeHeld)
+    }
+
     @Test func everyNamedShortcutIsDistinctSupportedAndRoundTrips() {
         let named = ActionKind.allCases.filter { $0.fixedShortcut != nil }
         #expect(named.count == 17)
@@ -63,5 +72,29 @@ struct CatalogActionTests {
         var old = Configuration(schemaVersion: 33, isEnabled: true, bindings: [binding])
         old.bindings[0].action = .windowLayout(.leftHalf)
         #expect(try old.migrated().schemaVersion == Configuration.currentSchemaVersion)
+    }
+
+    @Test func cancellingTextAfterADownStillReleasesThatKeyAndStopsBeforeTheNextChunk() {
+        var allowed = true
+        var posted: [CGEventType] = []
+        let text = String(repeating: "a", count: 100)
+        let result = TextSender.perform(text, canPerform: { allowed }, post: {
+            posted.append($0.type)
+            allowed = false
+        })
+        #expect(result == .cancelled)
+        #expect(posted == [.keyDown, .keyUp])
+    }
+
+    @Test func extendedGraphemesRespectTheQuartzLimitWithoutLosingScalars() {
+        let text = "a" + String(repeating: "\u{301}", count: 45) + "🫶🏽"
+        #expect(TextSnippet.isValid(text))
+        let chunks = TextSender.chunks(of: text)
+        #expect(chunks.allSatisfy { (1...TextSender.unitsPerEvent).contains($0.count) })
+        #expect(chunks.flatMap { $0 } == Array(text.utf16))
+        #expect(chunks.allSatisfy { String(decoding: $0, as: UTF16.self).utf16.elementsEqual($0) })
+        let excessive = "a" + String(repeating: "\u{301}", count: TextSnippet.maximumUTF16Length)
+        #expect(excessive.count == 1)
+        #expect(TextSnippet.isValid(excessive) == false)
     }
 }

@@ -17,6 +17,8 @@ nonisolated struct HeldKeyCommand: Sendable, Equatable {
     }
     var target: Target
     var phase: Phase
+    /// Other synthetic modifiers that remain down across this transition.
+    var otherModifiers: ModifierSet = []
 
     init(target: Target, phase: Phase) {
         self.target = target

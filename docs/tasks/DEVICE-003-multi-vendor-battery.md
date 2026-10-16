@@ -3,7 +3,7 @@
 - Updated: 2026-10-16
 - Stage: awaiting_verification
 - Owner: Unassigned; /root implementation session released 2026-10-16
-- Ownership checked: app edits on main `1a0801b` (DEVICE-002 was committed externally during source research); this task is uncommitted. Concurrent documentation maintenance preserved.
+- Current baseline: implementation is included in `fdaef8f` (confirmed by REVIEW-001); original checks below used `1a0801b` plus then-uncommitted files.
 - Owned surfaces: Devices discovery/battery adapters, Bluetooth purpose resource/project key and permission button, tests, battery-related SPEC/capability/state/research sections and bundled source notices
 - Requirements: SPEC §3.2; broad mouse/keyboard recognition and battery support, preserving the headset exclusion
 
@@ -16,7 +16,8 @@
 - [x] Existing Logitech HID++, local name identity, mouse settings and category-wide rules preserved. Interface/connection changes reject late battery results; one in-flight USB read per location. Non-configurable HID++ mice without a conventional pointer interface retain an identity card even when battery data is unavailable.
 - [x] Software build/tests, native fixture review, source/license audit and records complete.
 - [ ] Named Razer/SteelSeries USB hardware, standard HID/BAS peripherals, Bluetooth allow/deny/revoke/off/on and reconnect/sleep acceptance.
-- [ ] Runtime keyboard/VoiceOver focus and Sketch reconciliation of the permission state.
+- [x] Sketch inventory and Bluetooth allow/denied/restricted states saved through [REVIEW-001](REVIEW-001-production-review.md).
+- [ ] Runtime keyboard/VoiceOver focus.
 
 ## Implementation and source decisions
 
@@ -42,10 +43,10 @@ Agent-run 2026-10-16, Apple Silicon macOS 27.0.1 / Xcode 27 / Swift 6.4, `1a0801
 
 ## Sketch source and review
 
-Live Rebind Devices frame 46 (and existing 39–41 source index) re-resolved and inspected through MCP on 2026-10-16. Existing header/caption/secondary-button/card tokens reused. The optional Bluetooth permission state is a scoped native implementation addition requiring Sketch reconciliation; no Sketch content was edited or saved. Source review found and fixed stale connection handling, raw mouse/key interface rejection and unavailable-battery inventory retention. Full source audit/limitations are linked above.
+Initial implementation inspected Devices without editing Sketch. Subsequent [REVIEW-001](REVIEW-001-production-review.md) reconciled/saved inventory, unknown/charging battery, Rename and Bluetooth states in the current 52-pair walkthrough; [DESIGN](../DESIGN.md) owns the source/digest. That review also repaired HID++ late-result/authorization/queue and ADC issues; full regression, repeated sanitizer and library results are retained there. Hardware/permission limits above remain open.
 
 ## Next handoff
 
 Runtime: on this fresh build, connect a named Razer or SteelSeries USB device and a standard Bluetooth/HID battery device; verify identity, battery source, charging where supported, sleep/reconnect, optional Bluetooth authorization/revocation and G435 exclusion, then regression-check G915/G603 and local names. Record OS/model/transport and actual grant state. Unsupported/private protocols remain unknown; Razer proprietary BLE and Corsair USB are not claimed.
 
-Design: reconcile the prepared Devices Bluetooth access states and generic keyboard/trackpad cards in the established live Sketch source. Implementation is ready for those bounded runtime/design checks; broad product/platform acceptance remains open.
+Design reconciliation is saved. Inspect the current source during runtime review; broad product/platform acceptance remains open.

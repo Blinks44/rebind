@@ -6,12 +6,11 @@ import AppKit
 /// second, only while some app has smooth scrolling turned off, and publishes the result to
 /// the mailbox, where the tap reads it under the usual short lock.
 ///
-/// `@unchecked Sendable`: `timer` and `lastLocation` are touched only on `queue`.
+/// `@unchecked Sendable`: `timer` is touched only on `queue`.
 nonisolated final class PointerApplicationTracker: @unchecked Sendable {
     private let mailbox: EngineMailbox
     private let queue = DispatchQueue(label: "Rebind pointer app", qos: .utility)
     private var timer: DispatchSourceTimer?
-    private var lastLocation: CGPoint?
 
     init(mailbox: EngineMailbox) { self.mailbox = mailbox }
 
@@ -27,15 +26,14 @@ nonisolated final class PointerApplicationTracker: @unchecked Sendable {
             } else {
                 timer?.cancel()
                 timer = nil
-                lastLocation = nil
                 mailbox.setPointerApplication(nil)
             }
         }
     }
 
     private func poll() {
-        guard let location = CGEvent(source: nil)?.location, location != lastLocation else { return }
-        lastLocation = location
+        // Windows can move or change order beneath a stationary pointer.
+        guard let location = CGEvent(source: nil)?.location else { return }
         mailbox.setPointerApplication(Self.bundleIdentifier(at: location))
     }
 

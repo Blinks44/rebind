@@ -61,4 +61,21 @@ import Testing
         #expect(model.importProfiles(from: try ConfigurationBackup(configuration: Configuration())) == nil)
         #expect(model.configuration == full)
     }
+
+    @Test func aProfileReadStartedBeforeAWholeDocumentReplacementCannotImportLater() throws {
+        let store = store()
+        defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
+        let original = Configuration()
+        try store.save(original)
+        let model = AppModel(store: store)
+        let revision = model.configurationReplacementRevision
+        let backup = try ConfigurationBackup(configuration: original)
+        var replacement = original
+        try replacement.createProfile(name: "Replacement")
+        try model.replaceConfiguration(with: replacement, expected: original, revision: revision)
+        let current = model.configuration
+        #expect(model.importProfiles(from: backup, expectedRevision: revision) == nil)
+        #expect(model.configuration == current)
+        #expect(try store.load() == current)
+    }
 }

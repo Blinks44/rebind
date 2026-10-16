@@ -7,6 +7,7 @@ struct ProfileManagerView: View {
     @State private var editing: ProfileEditOperation?
     @State private var pendingDeletion: RuleProfile?
     @State private var importing = false
+    @State private var importURL: URL?
     @State private var notice: Notice?
 
     private struct Notice {
@@ -52,9 +53,9 @@ struct ProfileManagerView: View {
             Theme.separator.frame(height: 1)
             HStack(spacing: 10) {
                 Button(.newProfile, systemImage: "plus") { editing = .create }
-                    .secondaryButton().disabled(model.storageLocked || atLimit)
+                    .secondaryButton().disabled(model.storageLocked || atLimit || importURL != nil)
                 Button(.importProfile) { notice = nil; importing = true }
-                    .secondaryButton().disabled(model.storageLocked || atLimit)
+                    .secondaryButton().disabled(model.storageLocked || atLimit || importURL != nil)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
                     .primaryButton()
@@ -66,14 +67,22 @@ struct ProfileManagerView: View {
         .sheet(item: $editing) { ProfileNameEditor(model: model, operation: $0) }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             guard case .success(let url) = result else { return }
-            Task {
-                guard let backup = try? await ConfigurationFileOperations.readBackup(at: url),
-                      let count = model.importProfiles(from: backup) else {
+            importURL = url
+        }
+        .task(id: importURL) {
+            guard let url = importURL else { return }
+            defer { importURL = nil }
+            let revision = model.configurationReplacementRevision
+            do {
+                let backup = try await ConfigurationFileOperations.readBackup(at: url)
+                try Task.checkCancellation()
+                guard let count = model.importProfiles(from: backup, expectedRevision: revision) else {
                     notice = Notice(text: .profileImportFailed, isError: true)
                     return
                 }
                 notice = Notice(text: .profilesImported(count), isError: false)
-            }
+            } catch is CancellationError { }
+            catch { notice = Notice(text: .profileImportFailed, isError: true) }
         }
         .alert(.deleteProfile, isPresented: deletionPresented) {
             Button(.cancel, role: .cancel) { pendingDeletion = nil }

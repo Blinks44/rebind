@@ -56,7 +56,7 @@ import XCTest
 
     private func verifyLayout(_ model: AppModel, fixture: Fixture) async throws {
         let sizes = [NSSize(width: 600, height: 480), NSSize(width: 648, height: 600), NSSize(width: 808, height: 640)]
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
                 let controller = NSHostingController(rootView: SettingsView(model: model, selection: .constant(.general))
                     .environment(\.locale, Locale(identifier: language))

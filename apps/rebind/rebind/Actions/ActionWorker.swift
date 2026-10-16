@@ -105,9 +105,7 @@ nonisolated final class ActionWorker {
                 Thread.sleep(forTimeInterval: 0.02)
             }
             // Stopping marks every held key released; post what is still owed.
-            while let command = mailbox.nextHeldKey(at: DispatchTime.now().uptimeNanoseconds) {
-                ShortcutSender.postHeldKey(command)
-            }
+            while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) { }
         }
         thread.name = "Rebind actions"
         thread.qualityOfService = .userInitiated
@@ -127,7 +125,7 @@ nonisolated final class ActionWorker {
         if secure { mailbox.captureLost(status: .secureInput) }
         else if !allowed { mailbox.captureLost(status: .permissionRequired) }
         // After the checks above, so a key held when capture is lost is released at once.
-        if let command = mailbox.nextHeldKey(at: now) { sendHeldKey(command) }
+        mailbox.deliverNextHeldKey(at: now, send: sendHeldKey)
         guard !secure, allowed else { return }
         guard let dispatch = mailbox.nextAction() else { return }
         // Recheck after dequeue: configuration/edit/pause/capture-loss changes

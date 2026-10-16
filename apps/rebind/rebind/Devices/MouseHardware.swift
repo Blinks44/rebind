@@ -79,6 +79,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     @ObservationIgnored var canWrite: (Int, Bool) -> Bool = { _, _ in true }
     /// Receives presses (true) and releases of a diverted gesture button, on the HID report thread.
     @ObservationIgnored var gestureButtonChanged: @Sendable (Bool) -> Void = { _ in }
+    @ObservationIgnored private let gestureButtonInput = GestureButtonInput()
     /// Receives smooth scrolling per HID service that sends a mouse's wheel events.
     @ObservationIgnored var smoothScrollingChanged: ([UInt64: SmoothScrollingSettings]) -> Void = { _ in }
 
@@ -86,10 +87,18 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     /// requests wait for answers, so each endpoint has its own serial queue: a sleeping keyboard
     /// never delays a mouse on another receiver.
     private final class Session {
+        let id = UUID()
         let io: HIDReportDevice
         let queue: DispatchQueue
+        let writeAccess = DeviceWriteAccess()
+        let gestureOwnership = GestureButtonOwnership()
         var mice: [LogitechDevice] = []
         var probed = false
+        var isProbing = false
+        var needsProbe = false
+        var isReadingBattery = false
+        var applying: Set<String> = []
+        var pendingSettings: [String: MouseHardwareSettings] = [:]
         init(io: HIDReportDevice, location: String) {
             self.io = io
             queue = DispatchQueue(label: "Rebind HID++ \(location)", qos: .utility)
@@ -148,10 +157,12 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     func stop() {
+        gestureButtonInput.removeAll(changed: gestureButtonChanged)
         bluetoothBattery.stop()
         guard let manager else { return }
         batteryTimer?.invalidate()
         batteryTimer = nil
+        sessions.values.forEach { $0.writeAccess.update(standard: false, gaming: false) }
         releaseGestureButtons()
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -173,7 +184,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     /// that wakes from sleep is not noticed; it keeps its own settings anyway.
     func refresh() {
         guard manager != nil else { return }
-        for location in sessions.keys { probe(location) }
+        for (location, session) in sessions {
+            session.writeAccess.invalidate()
+            session.pendingSettings = [:]
+            probe(location)
+        }
         refreshBatteries()
     }
 
@@ -183,14 +198,31 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             for mouse in mice where mouse.deviceKey == settings.deviceKey && mouse.hardware != nil
                 && mouse.id.hasPrefix(location + "#")
                 && canWrite(mouse.vendorID, mouse.hardware?.hasOnboardProfiles ?? false) {
-                let slot = Self.slot(of: mouse.id)
-                let found = session.mice.first { $0.slot == slot }
-                // Show the choice at once; the mouse's answer replaces it a moment later.
-                update(id: mouse.id, state: Self.expected(mouse.hardware, after: settings))
-                session.queue.async { [weak self] in
-                    guard let state = found?.apply(settings) else { return }
-                    Task { @MainActor in self?.update(id: mouse.id, state: state) }
-                }
+                apply(settings, to: mouse, at: location, session: session)
+            }
+        }
+    }
+
+    private func apply(_ settings: MouseHardwareSettings, to mouse: ConnectedMouse, at location: String, session: Session) {
+        let gaming = mouse.hardware?.hasOnboardProfiles ?? false
+        session.writeAccess.update(standard: canWrite(mouse.vendorID, false), gaming: canWrite(mouse.vendorID, true))
+        guard session.writeAccess.allows(gaming: gaming), let found = session.mice.first(where: { $0.slot == Self.slot(of: mouse.id) }) else { return }
+        update(id: mouse.id, state: Self.expected(mouse.hardware, after: settings))
+        guard session.applying.insert(mouse.id).inserted else {
+            session.pendingSettings[mouse.id] = settings
+            return
+        }
+        let io = session.io, access = session.writeAccess
+        let revision = access.revision
+        session.queue.async { [weak self] in
+            let state = found.apply(settings, canWrite: { access.allows(gaming: gaming, revision: revision) })
+            Task { @MainActor in
+                guard let self, let current = self.sessions[location], current.io === io else { return }
+                current.applying.remove(mouse.id)
+                if let pending = current.pendingSettings.removeValue(forKey: mouse.id),
+                   let mouse = self.mice.first(where: { $0.id == mouse.id }) {
+                    self.apply(pending, to: mouse, at: location, session: current)
+                } else if access.revision == revision { self.update(id: mouse.id, state: state) }
             }
         }
     }
@@ -212,7 +244,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             peripheralBatteries[location] = nil
             bluetoothBattery.refresh()
             publishBatteries()
-            sessions.removeValue(forKey: location)?.io.close()
+            if let session = sessions.removeValue(forKey: location) {
+                gestureButtonInput.remove(connection: session.id, changed: gestureButtonChanged)
+                session.writeAccess.update(standard: false, gaming: false)
+                session.io.close()
+            }
         }
         scheduleRebuild()
     }
@@ -302,26 +338,33 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     /// Finds the HID++ mice at a location: the device itself, or each paired receiver slot.
     private func probe(_ location: String) {
         guard let session = sessions[location] else { return }
+        session.writeAccess.update(standard: canWrite(0x046D, false), gaming: canWrite(0x046D, true))
+        guard !session.isProbing else { session.needsProbe = true; return }
+        session.isProbing = true
         let io = session.io
+        let gestureOwnership = session.gestureOwnership
         let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
         let base = mice.first { $0.id == location || $0.id.hasPrefix(location + "#") }
         let vendorID = base?.vendorID ?? 0x046D
-        let writable = canWrite(vendorID, false)
-        let writableGaming = canWrite(vendorID, true)
+        let access = session.writeAccess
+        let revision = access.revision
         let fallbackName = base?.name ?? ""
         session.queue.async { [weak self] in
             var found: [LogitechDevice] = []
             var states: [(UInt8?, LogitechDeviceState)] = []
-            if let direct = LogitechDevice(io: io, slot: nil) {
+            if let direct = LogitechDevice(io: io, slot: nil, gestureOwnership: gestureOwnership) {
                 found = [direct]
             } else if ReceiverNotifications.enable(on: io) != .silent {
                 // A receiver: it now reports devices that connect again, and its slots are asked.
-                found = (1...6).compactMap { LogitechDevice(io: io, slot: $0) }
+                found = (1...6).compactMap { LogitechDevice(io: io, slot: $0, gestureOwnership: gestureOwnership) }
             }
             for mouse in found {
                 var state = mouse.read()
                 let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: state.name ?? fallbackName)
-                if state.hasOnboardProfiles ? writableGaming : writable, let saved = stored[key] { state = mouse.apply(saved) }
+                if let saved = stored[key] {
+                    let gaming = state.hasOnboardProfiles
+                    state = mouse.apply(saved, canWrite: { access.allows(gaming: gaming, revision: revision) })
+                }
                 states.append((mouse.slot, state))
             }
             Task { @MainActor in self?.probed(location, io: io, found: found, states: states) }
@@ -331,6 +374,10 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     private func probed(_ location: String, io: HIDReportDevice, found logitech: [LogitechDevice],
                         states: [(UInt8?, LogitechDeviceState)]) {
         guard let session = sessions[location], session.io === io else { return }
+        session.isProbing = false
+        defer {
+            if session.needsProbe { session.needsProbe = false; probe(location) }
+        }
         // A device that went to sleep does not answer; it keeps its place, its last battery reading
         // and its card until the receiver reports it again or the receiver goes away.
         let answered = Set(logitech.map(\.slot))
@@ -381,11 +428,13 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         bluetoothBattery.startIfAuthorized()
         bluetoothBattery.refresh()
         for location in batterySessions.keys { readPeripheralBattery(at: location) }
-        for (location, session) in sessions where session.probed {
+        for (location, session) in sessions where session.probed && !session.isReadingBattery {
+            session.isReadingBattery = true
             let devices = session.mice
+            let io = session.io
             session.queue.async { [weak self] in
                 let charges = devices.map { (slot: $0.slot, battery: $0.readBattery()) }
-                Task { @MainActor in self?.updateBatteries(at: location, charges: charges) }
+                Task { @MainActor in self?.updateBatteries(at: location, io: io, charges: charges) }
             }
         }
         publishBatteries()
@@ -410,16 +459,32 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         }
     }
 
-    private func updateBatteries(at location: String, charges: [(slot: UInt8?, battery: (percentage: Int?, charging: Bool))]) {
-        guard var known = logitechBatteries[location] else { return }
-        for charge in charges {
-            let id = "\(location)#\(charge.slot.map(String.init) ?? "direct")"
-            guard let index = known.firstIndex(where: { $0.id == id }), let percentage = charge.battery.percentage else { continue }
-            known[index].percentage = percentage
-            known[index].isCharging = charge.battery.charging
+    private func updateBatteries(at location: String, io: HIDReportDevice,
+                                 charges: [(slot: UInt8?, battery: (percentage: Int?, charging: Bool))]) {
+        guard sessions[location]?.io === io else { return }
+        sessions[location]?.isReadingBattery = false
+        let inputs = mice.map { ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID) }
+            + (logitechAccessories[location] ?? [])
+        let readings = charges.map { charge in
+            (id: "\(location)#\(charge.slot.map(String.init) ?? "direct")",
+             percentage: charge.battery.percentage, charging: charge.battery.charging)
         }
-        logitechBatteries[location] = known
+        logitechBatteries[location] = Self.refreshedBatteries(logitechBatteries[location] ?? [], inputs: inputs, readings: readings)
         publishBatteries()
+    }
+
+    nonisolated static func refreshedBatteries(_ previous: [DeviceBattery], inputs: [ConnectedAccessory],
+                                              readings: [(id: String, percentage: Int?, charging: Bool)]) -> [DeviceBattery] {
+        var known = previous
+        for reading in readings {
+            guard let percentage = reading.percentage, (0...100).contains(percentage),
+                  let input = inputs.first(where: { $0.id == reading.id }) else { continue }
+            let battery = DeviceBattery(id: input.id, name: input.name, kind: input.kind,
+                                        percentage: percentage, isCharging: reading.charging, vendorID: input.vendorID)
+            if let index = known.firstIndex(where: { $0.id == input.id }) { known[index] = battery }
+            else { known.append(battery) }
+        }
+        return known
     }
 
     private func publishBatteries() {
@@ -465,7 +530,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             func value<T>(_ key: String) -> T? {
                 IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? T
             }
-            guard let percentage: Int = value("BatteryPercent"), let name: String = value("Product") else { continue }
+            guard let percentage: Int = value("BatteryPercent"), (0...100).contains(percentage),
+                  let name: String = value("Product") else { continue }
             var entry: UInt64 = 0
             IORegistryEntryGetRegistryEntryID(service, &entry)
             // Classify by HID usages, never by an editable Bluetooth product name. Unknown
@@ -494,20 +560,27 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                   let feature = mouse.controls?.featureIndex else { return nil }
             return (mouse.slot ?? HIDPPConstants.receiverIndex, feature)
         }
-        let pressed = Mutex(false)
         let changed = gestureButtonChanged
-        io.setNotificationHandler { [weak self] report in
-            if report[2] == 0x41 {
+        guard let session = sessions[location], session.io === io else { return }
+        let input = gestureButtonInput, connection = session.id
+        let generation = input.configure(connection: connection, indices: Set(diverted.map(\.index)), changed: changed)
+        io.setNotificationHandler { [weak self, weak io] report in
+            if ReceiverNotifications.isConnectionNotification(report) {
                 // Bit 6 of the flags is set while the link is down.
-                if report.count > 4, report[4] & 0x40 == 0 {
-                    Task { @MainActor in self?.probe(location) }
+                if report[4] & 0x40 == 0 {
+                    Task { @MainActor in
+                        guard let self, let io, self.sessions[location]?.io === io else { return }
+                        self.probe(location)
+                    }
+                } else {
+                    input.receive(connection: connection, generation: generation, index: report[1], down: false, changed: changed)
                 }
                 return
             }
             for entry in diverted where report[1] == entry.index {
                 guard let controls = ReprogControls.pressedControls(in: report, featureIndex: entry.feature) else { continue }
                 let down = controls.contains(ReprogControls.gestureButton)
-                if pressed.withLock({ let was = $0; $0 = down; return was != down }) { changed(down) }
+                input.receive(connection: connection, generation: generation, index: entry.index, down: down, changed: changed)
             }
         }
     }
@@ -516,9 +589,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     func releaseGestureButtons() {
         let done = DispatchGroup()
         for session in sessions.values {
-            let devices = session.mice
+            let ownership = session.gestureOwnership
             session.queue.async(group: done) {
-                for mouse in devices where mouse.isGestureButtonDiverted { mouse.divertGestureButton(false) }
+                ownership.releaseAll()
             }
         }
         // Quitting never waits long for a busy queue or a mouse that does not answer; a button

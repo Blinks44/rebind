@@ -59,12 +59,12 @@ struct ModifierHoldTests {
     }
 
     @Test func modifierEventsAreTaggedFlagChangesThatSetAndClearTheFlag() {
-        let down = ShortcutSender.heldKeyEvents(HeldKeyCommand(target: .modifiers([.command, .shift]), phase: .press))
+        let down = ShortcutSender.heldKeyEvents(HeldKeyCommand(target: .modifiers([.command, .shift]), phase: .press), physicalModifiers: [])
         #expect(down.map(\.type) == [.flagsChanged, .flagsChanged])
         #expect(down.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [55, 56])
         #expect(down.allSatisfy { $0.flags.contains([.maskCommand, .maskShift])
             && $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
-        let up = ShortcutSender.heldKeyEvents(modifiers(.release))
+        let up = ShortcutSender.heldKeyEvents(modifiers(.release), physicalModifiers: [])
         #expect(up.count == 1 && up[0].type == .flagsChanged && !up[0].flags.contains(.maskCommand))
         #expect(ShortcutSender.heldKeyEvents(HeldKeyCommand(shortcut: escape, phase: .repeatPress)).first?
             .getIntegerValueField(.keyboardEventAutorepeat) == 1)
@@ -117,5 +117,28 @@ struct ModifierHoldTests {
         var old = configuration
         old.schemaVersion = 33
         #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+    }
+
+    @Test func overlappingModifierSetsReleaseOnlyUnownedFlags() throws {
+        let mailbox = EngineMailbox()
+        var first = modifierRule()
+        first.action = .modifier([.command, .shift])
+        var second = modifierRule()
+        second.trigger = .mouseButton(4)
+        second.action = .modifier([.option, .shift])
+        mailbox.configure(Configuration(isEnabled: true, bindings: [first, second]))
+        mailbox.state.withLock { $0.status = .active }
+        #expect(mailbox.handle(event(.down), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 0)?.target == .modifiers([.command, .shift]))
+        #expect(mailbox.handle(InputEvent(trigger: second.trigger, phase: .down), secureInput: false))
+        let down = try #require(mailbox.nextHeldKey(at: 1))
+        #expect(down.target == .modifiers(.option) && down.otherModifiers == [.command, .shift])
+        #expect(mailbox.handle(event(.up), secureInput: false))
+        let up = try #require(mailbox.nextHeldKey(at: 2))
+        #expect(up.target == .modifiers(.command) && up.otherModifiers == [.option, .shift])
+        let posted = ShortcutSender.heldKeyEvents(up, physicalModifiers: .maskControl)
+        #expect(posted.count == 1 && posted[0].flags == [.maskControl, .maskAlternate, .maskShift])
+        #expect(mailbox.handle(InputEvent(trigger: second.trigger, phase: .up), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 3)?.target == .modifiers([.option, .shift]))
     }
 }

@@ -19,18 +19,34 @@ nonisolated enum TextSender {
                 batch.append(event)
             }
         }
-        // Build everything first, then post complete down/up pairs without a gap.
-        guard canPerform() else { return .cancelled }
-        for event in batch { post(event) }
+        // Recheck between chunks, but always finish an accepted down/up pair.
+        for index in stride(from: 0, to: batch.count, by: 2) {
+            guard canPerform() else { return .cancelled }
+            post(batch[index])
+            post(batch[index + 1])
+        }
         return .performed
     }
 
-    /// Splits on character boundaries so a surrogate pair or combined emoji is never cut.
+    /// Prefer grapheme boundaries; unusually long graphemes split only between Unicode scalars.
+    /// Quartz's hard unit limit still applies to combining sequences longer than one event.
     static func chunks(of text: String) -> [[UniChar]] {
         var result: [[UniChar]] = []
         var current: [UniChar] = []
         for character in text {
             let units = Array(String(character).utf16)
+            if units.count > unitsPerEvent {
+                if !current.isEmpty { result.append(current); current = [] }
+                for scalar in String(character).unicodeScalars {
+                    let scalarUnits = Array(String(scalar).utf16)
+                    if current.count + scalarUnits.count > unitsPerEvent {
+                        result.append(current)
+                        current = []
+                    }
+                    current.append(contentsOf: scalarUnits)
+                }
+                continue
+            }
             if !current.isEmpty, current.count + units.count > unitsPerEvent {
                 result.append(current)
                 current = []

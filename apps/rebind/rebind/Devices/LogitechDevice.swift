@@ -37,12 +37,13 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     let controls: ReprogControls?
     private let onboardProfiles: OnboardProfiles?
     private let canDivertGestureButton: Bool
-    /// Whether Rebind diverted the gesture button and must give it back. Queue only.
-    private(set) var isGestureButtonDiverted = false
+    private let gestureOwnership: GestureButtonOwnership
+    /// Connection-scoped ownership survives replacement of this feature adapter.
+    var isGestureButtonDiverted: Bool { gestureOwnership.contains(slot ?? HIDPPConstants.receiverIndex) }
 
     /// Nil when nothing answers HID++ 2.0 at this address, or when it is neither a pointing device
     /// nor a keyboard with a battery.
-    init?(io: HIDPPDeviceIO, slot: UInt8?) {
+    init?(io: HIDPPDeviceIO, slot: UInt8?, gestureOwnership: GestureButtonOwnership = GestureButtonOwnership()) {
         guard let transport = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 1),
               let firstQuestion = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 2.5) else { return nil }
         // One question first. A wireless device behind a receiver may need most of a second to wake
@@ -89,6 +90,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         // a keyboard is listed only for its battery.
         guard isKeyboard ? battery != nil : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else { return nil }
         self.slot = slot
+        self.gestureOwnership = gestureOwnership
         self.transport = transport
         deviceName = name
     }
@@ -123,27 +125,32 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     func divertGestureButton(_ diverted: Bool) -> Bool {
         guard canDivertGestureButton, let controls, diverted || isGestureButtonDiverted else { return false }
         let done = controls.setDiverted(ReprogControls.gestureButton, diverted)
-        if done { isGestureButtonDiverted = diverted }
+        if done { gestureOwnership.setDiverted(diverted, at: slot ?? HIDPPConstants.receiverIndex, controls: controls) }
         return done
     }
 
     /// Writes the stored values the mouse supports, then reads back what it now uses.
-    func apply(_ settings: MouseHardwareSettings) -> LogitechDeviceState {
+    func apply(_ settings: MouseHardwareSettings, canWrite: () -> Bool = { true }) -> LogitechDeviceState {
         guard !isKeyboard else { return read() }
-        if let smartShift, let mode = Self.mode(for: settings) { smartShift.setMode(mode) }
+        guard canWrite() else { return read() }
+        if let smartShift, let mode = Self.mode(for: settings), canWrite() { smartShift.setMode(mode) }
         if let adjustableDPI, let dpi = settings.dpi {
             // Read the value back and try once more: a gaming mouse in onboard mode (or one that just
             // woke) may keep its profile's DPI. Host mode makes the written value stay; after the
             // mouse reconnects, the receiver's notice brings it here again.
             let target = adjustableDPI.supportedDPI(nearestTo: dpi)
             for _ in 0 ..< 2 {
-                if let onboardProfiles, onboardProfiles.isHostMode() == false { onboardProfiles.setHostMode() }
+                guard canWrite() else { return read() }
+                if let onboardProfiles, onboardProfiles.isHostMode() == false, canWrite() { onboardProfiles.setHostMode() }
+                guard canWrite() else { return read() }
                 _ = adjustableDPI.setDPI(dpi)
                 if adjustableDPI.currentDPI() == target { break }
             }
         }
-        if let hiResWheel, let enabled = settings.highResolutionWheel { _ = hiResWheel.setHighResolutionWheelEnabled(enabled) }
-        divertGestureButton(settings.usesGestureButton == true)
+        if let hiResWheel, let enabled = settings.highResolutionWheel, canWrite() {
+            _ = hiResWheel.setHighResolutionWheelEnabled(enabled)
+        }
+        if canWrite() { divertGestureButton(settings.usesGestureButton == true) }
         return read()
     }
 

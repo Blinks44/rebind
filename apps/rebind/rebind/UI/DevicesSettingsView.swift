@@ -19,7 +19,9 @@ struct DevicesSettingsView: View {
                 }
                 if model.mouseHardware.bluetoothBattery.authorization != .allowedAlways {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(.bluetoothBatteryDescription).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                        Text(model.mouseHardware.bluetoothBattery.authorization == .restricted
+                             ? LocalizedStringResource.bluetoothBatteryRestricted : .bluetoothBatteryDescription)
+                            .font(Theme.caption).foregroundStyle(Theme.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                         Button(model.mouseHardware.bluetoothBattery.authorization == .denied
                                ? LocalizedStringResource.bluetoothBatterySettings : .bluetoothBatteryAllow) {
@@ -220,7 +222,7 @@ private struct MouseCard: View {
     }
 
     private func toggle(_ title: LocalizedStringResource, _ description: LocalizedStringResource, isOn: Bool,
-                        set: @escaping (Bool) -> Void) -> some View {
+                        set: @escaping @MainActor @Sendable (Bool) -> Void) -> some View {
         Toggle(isOn: SwiftUI.Binding(get: { isOn }, set: set)) { label(title, description) }
             .toggleStyle(ThemeSwitchStyle())
     }

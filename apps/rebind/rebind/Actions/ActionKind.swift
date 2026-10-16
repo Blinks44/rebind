@@ -92,6 +92,12 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Keep the repeat control editable when a held shortcut also has a catalog command name.
+    init(binding: Binding) {
+        if binding.holdsOutput, binding.action.shortcut != nil { self = .keyboardShortcut }
+        else { self.init(action: binding.action) }
+    }
+
     var systemAction: SystemAction? {
         switch self {
         case .volumeUp: .volumeUp

@@ -20,7 +20,7 @@ nonisolated enum AttachedHIDScroll {
     private static let scrollY: UInt32 = 6 << 16 | 1
 
     // Immutable after the one-time lookup; C function pointers carry no state.
-    private nonisolated(unsafe) static let functions: (copy: Copy, get: Get, set: Set, sender: Sender)? = {
+    private static let functions: (copy: Copy, get: Get, set: Set, sender: Sender)? = {
         func symbol<T>(_ name: String) -> T? {
             dlsym(UnsafeMutableRawPointer(bitPattern: -2), name).map { unsafeBitCast($0, to: T.self) } // RTLD_DEFAULT
         }

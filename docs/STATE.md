@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-16**. Implementation HEAD `1a0801b` includes device names, keyboard visibility and the headset filter. [Multi-vendor inventory and battery](tasks/DEVICE-003-multi-vendor-battery.md) are uncommitted on that baseline. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-16**. Baseline `fdaef8f` includes [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md); [review fixes](tasks/REVIEW-001-production-review.md) are uncommitted. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -16,8 +16,9 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
-- **2026-10-16:** [Context maintenance](tasks/DOC-003-context-maintenance.md): current contracts/handoffs reconciled; obsolete design inventories condensed; incremental maintenance and simplicity priorities encoded in workflow skill 1.4.0.
-- **2026-10-16:** [Multi-vendor inventory/battery](tasks/DEVICE-003-multi-vendor-battery.md): external keyboards/trackpads across vendors; registry/HID battery data, opt-in standard Bluetooth BAS and known Razer/SteelSeries USB reads. Build and 802-test full regression pass; final scoped checks pass. New hardware and grant/reconnect acceptance pending.
+- **2026-10-16:** [Production review](tasks/REVIEW-001-production-review.md): third pass accepted the diff and last two commits; fixed double autorepeat for a shared held key; 828 + 17 tests pass. Earlier two passes: 827 Swift Testing + 17 native + 32 HIDPP pass; 41 TSan tests × 10. Builds/signatures pass. Sketch: 52 vertical Light/Dark pairs saved/rechecked. Exact battery row remains open.
+- **2026-10-16:** [Context maintenance](tasks/DOC-003-context-maintenance.md): contracts/handoffs reconciled; workflow skill 1.4.0 adds incremental maintenance and simplicity priorities.
+- **2026-10-16:** [Multi-vendor battery](tasks/DEVICE-003-multi-vendor-battery.md): generic inventory, native/HID data, opt-in Bluetooth BAS and known USB reads implemented/software-tested; named hardware/grant/reconnect checks pending.
 
 Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](DESIGN.md) locates it. The earlier Liquid Glass document of the same name is fully superseded. Older entries: [history](history/2026-10.md).
 
@@ -28,14 +29,15 @@ Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](D
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
-| [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | awaiting_verification | Unassigned | Verify named USB models, Bluetooth access/BAS, reconnect and Logitech regression; reconcile Sketch. |
-| [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) | awaiting_verification | Unassigned | Check Rename/save/cancel/reset, battery menu and G915 after relaunch/reconnect; reconcile Sketch and VoiceOver. |
-| [INPUT-011](tasks/INPUT-011-apps-mice-gesture-button.md) | awaiting_verification | Unassigned | Design the new Devices/Input/editor surfaces; user checks gesture button, per-app rules, per-mouse smooth scrolling. |
+| [REVIEW-001](tasks/REVIEW-001-production-review.md) | awaiting_verification | Unassigned | Verify holds/quit, gesture disconnect, glide and companion changes; implement/check the exact battery row. |
+| [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | awaiting_verification | Unassigned | Verify named USB models, Bluetooth access/BAS, reconnect and Logitech regression; Sketch reconciliation saved. |
+| [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) | awaiting_verification | Unassigned | Check Rename/save/cancel/reset, battery menu and G915 after relaunch/reconnect, keyboard and VoiceOver. |
+| [INPUT-011](tasks/INPUT-011-apps-mice-gesture-button.md) | awaiting_verification | Unassigned | User checks gesture button, per-app rules and per-mouse smooth scrolling; current designs reconciled. |
 | [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | awaiting_verification | Unassigned | User checklist: glide feel per length, wheel bindings, Cmd/Ctrl/Shift and trackpad unchanged, per-app toggles, × on the warning, Light/Dark. |
 | [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | awaiting_verification | Unassigned | User checklist: Devices on the MX Master 2S, persistence, banner, wheel reverse/speed ("Passed on, changed" in diagnostics), trackpad unaffected, Light/Dark. |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | awaiting_verification | Unassigned; integrated | Running-app review of focus, VoiceOver, localized widths. |
 | [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | awaiting_verification | Unassigned | Walk the physical checklist for held output, modifiers, wheel, excluded apps, trackpad keys and the new actions. |
-| [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Reconcile new Devices/Input/per-app/editor states; Magic Mouse editors await feasible presets. |
+| [UI-022](tasks/UI-022-soft-design-system.md) | in_design | Released | Current surfaces saved as 52 Light/Dark pairs; Magic Mouse editors await feasible presets. |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | awaiting_verification | Unassigned; tap editor released | Verify physical taps/coexistence, capture, keyboard/VoiceOver/preferences. |
 | [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | awaiting_verification | Unassigned | Connect a Magic Trackpad: discovery, gestures, reconnection; regression-check the built-in trackpad. |
 | [INPUT-007](tasks/INPUT-007-trackpad-action-catalog.md) | awaiting_verification | Unassigned | Run non-shortcut actions from trackpad rules and the brightness actions on hardware. |

@@ -34,6 +34,7 @@ struct RuleApplicationField: View {
             .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
             .modifier(ControlSurface()).keyboardFocusRing()
             .accessibilityLabel(Text(.bindingAppTitle))
+            .accessibilityValue(Text(verbatim: application?.displayName ?? AppLocalization.string(.bindingAllApps)))
             Text(rejected ? LocalizedStringResource.bindingAppRejected : .bindingAppHint)
                 .font(Theme.caption).foregroundStyle(rejected ? Theme.warningText : Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

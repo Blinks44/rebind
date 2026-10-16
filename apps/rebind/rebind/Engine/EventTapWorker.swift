@@ -8,7 +8,7 @@ import Synchronization
 // worker thread. Only the checked-Sendable Mutex mailbox crosses threads.
 nonisolated final class EventTapWorker {
     private let mailbox: EngineMailbox
-    private let scroller = SmoothScroller.start()
+    private let scroller: SmoothScroller
     private var port: CFMachPort?
     private var source: CFRunLoopSource?
     private var capturesPointerMotion = false
@@ -17,7 +17,10 @@ nonisolated final class EventTapWorker {
     private var hasPermissions = false
     private var lastRetryID: UInt64 = 0
 
-    init(mailbox: EngineMailbox) { self.mailbox = mailbox }
+    init(mailbox: EngineMailbox) {
+        self.mailbox = mailbox
+        scroller = SmoothScroller.start(mailbox: mailbox)
+    }
 
     static func start(mailbox: EngineMailbox) {
         let thread = Thread {
@@ -165,8 +168,8 @@ nonisolated final class EventTapWorker {
             // A click no binding took becomes a glide when its mouse has smooth scrolling on;
             // the original click is swallowed.
             if SmoothScroller.applies(to: event),
-               let smooth = mailbox.smoothScrolling(sender: AttachedHIDScroll.senderID(of: event)) {
-                scroller.feed(event, settings: smooth)
+               let smooth = mailbox.smoothScrollDispatch(sender: AttachedHIDScroll.senderID(of: event)) {
+                scroller.feed(event, dispatch: smooth)
                 return nil
             }
             return passed

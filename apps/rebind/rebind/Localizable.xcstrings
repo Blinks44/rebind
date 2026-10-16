@@ -1,6 +1,88 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "insertTextEncodingTooLong" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This text is too complex to type safely. Shorten it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Этот текст слишком сложный для безопасного ввода. Сократите его."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Text ist zu komplex für eine sichere Eingabe. Kürze ihn."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce texte est trop complexe pour être saisi correctement. Raccourcissez-le."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este texto es demasiado complejo para introducirlo de forma segura. Acórtalo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此文本过于复杂，无法安全输入。请缩短文本。"
+          }
+        }
+      }
+    },
+    "bluetoothBatteryRestricted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth access is restricted on this Mac. Battery levels remain available from other supported sources."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступ к Bluetooth ограничен на этом Mac. Заряд по-прежнему доступен из других поддерживаемых источников."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Bluetooth-Zugriff ist auf diesem Mac eingeschränkt. Batteriestände aus anderen unterstützten Quellen bleiben verfügbar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’accès au Bluetooth est restreint sur ce Mac. Le niveau de batterie reste disponible via les autres sources prises en charge."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El acceso a Bluetooth está restringido en este Mac. Los niveles de batería siguen disponibles a través de otras fuentes compatibles."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此 Mac 的蓝牙访问受到限制。仍可通过其他受支持的来源获取电量。"
+          }
+        }
+      }
+    },
     "bluetoothBatteryDescription" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -25799,37 +25881,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeigt den Ladestand verbundener Mäuse und Tastaturen im Rebind-Menü der Menüleiste."
+            "value" : "Zeigt den Ladestand verbundener Mäuse, Tastaturen und Trackpads im Rebind-Menü."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lists the charge of connected mice and keyboards in the Rebind menu in the menu bar."
+            "value" : "Lists the charge of connected mice, keyboards and trackpads in the Rebind menu."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Affiche la charge des souris et claviers connectés dans le menu de Rebind de la barre des menus."
+            "value" : "Affiche la charge des souris, claviers et trackpads connectés dans le menu de Rebind."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Показывает заряд подключённых мышей и клавиатур в меню Rebind в строке меню."
+            "value" : "Показывает заряд подключённых мышей, клавиатур и трекпадов в меню Rebind."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muestra la carga de los ratones y teclados conectados en el menú de Rebind de la barra de menús."
+            "value" : "Muestra la carga de los ratones, teclados y trackpads conectados en el menú de Rebind."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在菜单栏的 Rebind 菜单中显示已连接鼠标和键盘的电量。"
+            "value" : "在 Rebind 菜单中显示已连接鼠标、键盘和触控板的电量。"
           }
         }
       }

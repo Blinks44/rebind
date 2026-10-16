@@ -145,4 +145,76 @@ struct HeldOutputTests {
         #expect(AppModel.keyRepeat(delay: .nan, interval: .infinity)
             == KeyRepeatTiming(delayNanoseconds: 500_000_000, intervalNanoseconds: 80_000_000))
     }
+
+    @Test func overlappingTriggersShareTheOutputKeyUntilTheLastRelease() {
+        let first = InputTrigger.mouseButton(3), second = InputTrigger.mouseButton(4)
+        let mailbox = mailbox([binding(.shortcut(output), trigger: first), binding(.shortcut(output), trigger: second)])
+        #expect(mailbox.handle(event(.down, first), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 0) == command(.press))
+        #expect(mailbox.handle(event(.down, second), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 1) == nil)
+        #expect(mailbox.handle(event(.up, first), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 2) == nil)
+        #expect(mailbox.handle(event(.up, second), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 3) == command(.release))
+    }
+
+    @Test func aSharedOutputKeyRepeatsAtTheNormalRate() {
+        let first = InputTrigger.mouseButton(3), second = InputTrigger.mouseButton(4)
+        let mailbox = mailbox([binding(.shortcut(output), trigger: first), binding(.shortcut(output), trigger: second)])
+        #expect(mailbox.handle(event(.down, first), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 0) == command(.press))
+        #expect(mailbox.handle(event(.down, second), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 1) == nil)
+        #expect(mailbox.nextHeldKey(at: 500) == command(.repeatPress))
+        #expect(mailbox.nextHeldKey(at: 501) == nil)
+        #expect(mailbox.nextHeldKey(at: 600) == command(.repeatPress))
+        // The remaining owner continues the same stream after the first is released.
+        #expect(mailbox.handle(event(.up, first), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 601) == nil)
+        #expect(mailbox.nextHeldKey(at: 700) == command(.repeatPress))
+    }
+
+    @Test func stoppingAStepAndAKeyDrainsTheKeyRelease() {
+        let mailbox = mailbox([binding(.system(.volumeUp)), binding(.shortcut(output), trigger: .mouseButton(4))])
+        #expect(mailbox.handle(event(.down), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 0) == nil)
+        #expect(mailbox.handle(event(.down, .mouseButton(4)), secureInput: false))
+        #expect(mailbox.nextHeldKey(at: 1) == command(.press))
+        mailbox.stop()
+        #expect(mailbox.nextHeldKey(at: 2) == command(.release))
+        #expect(mailbox.nextHeldKey(at: 3) == nil)
+        #expect(mailbox.state.withLock { $0.held.isEmpty })
+    }
+
+    @Test func aQuickReleaseCannotOverfillThePendingQueue() {
+        let mailbox = mailbox([binding(.shortcut(output))])
+        #expect(mailbox.handle(event(.down), secureInput: false))
+        mailbox.state.withLock { $0.pending = Array(repeating: .doNothing, count: EngineMailbox.State.maximumPending) }
+        #expect(mailbox.handle(event(.up), secureInput: false))
+        #expect(mailbox.state.withLock { $0.pending.count } == EngineMailbox.State.maximumPending)
+    }
+
+    @Test func quittingCannotDeliverAReleaseBeforeAnInflightPress() {
+        let mailbox = mailbox([binding(.shortcut(output))])
+        #expect(mailbox.handle(event(.down), secureInput: false))
+        let entered = DispatchSemaphore(value: 0), proceed = DispatchSemaphore(value: 0), finished = DispatchSemaphore(value: 0)
+        let phases = Mutex<[HeldKeyCommand.Phase]>([])
+        Thread {
+            mailbox.deliverNextHeldKey(at: 0) { command in
+                entered.signal()
+                _ = proceed.wait(timeout: .now() + 2)
+                phases.withLock { $0.append(command.phase) }
+            }
+        }.start()
+        #expect(entered.wait(timeout: .now() + 2) == .success)
+        mailbox.stop()
+        Thread {
+            while mailbox.deliverNextHeldKey(at: 1, send: { command in phases.withLock { $0.append(command.phase) } }) { }
+            finished.signal()
+        }.start()
+        proceed.signal()
+        #expect(finished.wait(timeout: .now() + 2) == .success)
+        #expect(phases.withLock { $0 } == [.press, .release])
+    }
 }

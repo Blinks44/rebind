@@ -91,6 +91,7 @@ struct BindingCaptureField: View {
                 .frame(width: 28, height: 28).contentShape(.rect)
         }
             .buttonStyle(.plain)
+            .keyboardFocusRing(Circle())
             .accessibilityLabel(Text(isOutput ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
             .disabled(value == nil || recording != nil)
     }

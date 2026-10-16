@@ -54,6 +54,7 @@ nonisolated final class EngineMailbox: Sendable {
         var wheel: WheelAdjustment?
         /// Smooth scrolling of each mouse that has it on, by the registry ID of its HID service.
         var smoothScrollingBySender: [UInt64: SmoothScrollingSettings] = [:]
+        var smoothScrollingRevision: UInt64 = 0
         static let maximumHeldOutputs = 4
         var trackpadDispatch: ActionDispatch?
         var trackpadStatus: TrackpadCaptureStatus = .idle
@@ -89,7 +90,7 @@ nonisolated final class EngineMailbox: Sendable {
         /// under the pointer, which receives the scroll, opts out (the app in front when unknown).
         func activeSmoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {
             guard let sender, let settings = smoothScrollingBySender[sender], status == .active, enabled,
-                  !suspended, !stopped,
+                  !suspended, !stopped, !editing, recording == nil,
                   !((pointerBundleID ?? foregroundBundleID).map(smoothScrollingExclusions.contains) ?? false) else { return nil }
             return settings
         }
@@ -109,6 +110,7 @@ nonisolated final class EngineMailbox: Sendable {
         /// Invalidates dispatched and waiting work. Presses already swallowed keep their release.
         mutating func cancelQueuedWork() {
             actionRevision &+= 1
+            smoothScrollingRevision &+= 1
             pending.removeAll(keepingCapacity: true)
             cancelHeldOutputs()
             trackpadDispatch = nil
@@ -133,7 +135,7 @@ nonisolated final class EngineMailbox: Sendable {
             guard let index = held.firstIndex(where: { $0.trigger == trigger && !$0.released }) else { return }
             if held[index].pressedAt == nil {
                 let action = held.remove(at: index).action
-                if !action.requiresHeldOutput { pending.append(action) }
+                if !action.requiresHeldOutput, hasQueueSpace { pending.append(action) }
             } else { held[index].released = true }
         }
 
@@ -148,10 +150,38 @@ nonisolated final class EngineMailbox: Sendable {
 
         /// One step per worker pass: a due release first, then a press or repeat.
         mutating func nextHeldKey(at now: UInt64) -> HeldKeyCommand? {
-            if let index = held.firstIndex(where: \.released) {
+            while let index = held.firstIndex(where: \.released) {
                 let output = held.remove(at: index)
-                guard let target = output.action.heldKeyTarget else { return nil }
-                return HeldKeyCommand(target: target, phase: .release)
+                guard let target = output.action.heldKeyTarget else { continue }
+                let others = held.filter { $0.pressedAt != nil }
+                let modifiers = others.reduce(into: ModifierSet()) { flags, output in
+                    if case .modifier(let held) = output.action { flags.formUnion(held) }
+                }
+                var command: HeldKeyCommand
+                switch target {
+                case .shortcut(let shortcut):
+                    let sharing = held.indices.filter {
+                        held[$0].pressedAt != nil && held[$0].action.shortcut?.keyCode == shortcut.keyCode
+                    }
+                    guard sharing.isEmpty else {
+                        // The remaining owners continue the same repeat stream.
+                        let timings = sharing.map { held[$0] } + [output]
+                        let pressedAt = timings.compactMap(\.pressedAt).min()
+                        let lastRepeatAt = timings.compactMap(\.lastRepeatAt).max()
+                        for owner in sharing {
+                            held[owner].pressedAt = pressedAt
+                            held[owner].lastRepeatAt = lastRepeatAt
+                        }
+                        continue
+                    }
+                    command = HeldKeyCommand(target: target, phase: .release)
+                case .modifiers(let released):
+                    let unowned = released.subtracting(modifiers)
+                    guard !unowned.isEmpty else { continue }
+                    command = HeldKeyCommand(target: .modifiers(unowned), phase: .release)
+                }
+                command.otherModifiers = modifiers
+                return command
             }
             guard canDispatch else { return nil }
             for index in held.indices {
@@ -160,6 +190,10 @@ nonisolated final class EngineMailbox: Sendable {
                 if let pressedAt = output.pressedAt {
                     // A modifier is down once; only keys and step actions repeat.
                     if output.action.requiresHeldOutput { continue }
+                    // A shared key repeats once per interval: only its earliest owner repeats.
+                    if let keyCode = output.action.shortcut?.keyCode, held[..<index].contains(where: {
+                        $0.pressedAt != nil && $0.action.shortcut?.keyCode == keyCode
+                    }) { continue }
                     let last = output.lastRepeatAt
                     let next = last.map { $0 &+ keyRepeat.intervalNanoseconds } ?? pressedAt &+ keyRepeat.delayNanoseconds
                     isDue = now >= next
@@ -170,7 +204,23 @@ nonisolated final class EngineMailbox: Sendable {
                 }
                 guard isDue else { continue }
                 if let target = output.action.heldKeyTarget {
-                    return HeldKeyCommand(target: target, phase: output.pressedAt == nil ? .press : .repeatPress)
+                    let others = held.enumerated().filter { $0.offset != index && $0.element.pressedAt != nil }.map(\.element)
+                    let modifiers = others.reduce(into: ModifierSet()) { flags, output in
+                        if case .modifier(let held) = output.action { flags.formUnion(held) }
+                    }
+                    var command = HeldKeyCommand(target: target, phase: output.pressedAt == nil ? .press : .repeatPress)
+                    if output.pressedAt == nil {
+                        switch target {
+                        case .shortcut(let shortcut):
+                            if others.contains(where: { $0.action.shortcut?.keyCode == shortcut.keyCode }) { continue }
+                        case .modifiers(let pressed):
+                            let unowned = pressed.subtracting(modifiers)
+                            if unowned.isEmpty { continue }
+                            command.target = .modifiers(unowned)
+                        }
+                    }
+                    command.otherModifiers = modifiers
+                    return command
                 }
                 // A step action goes through the ordinary queue each time it is due.
                 if hasQueueSpace { pending.append(output.action) }
@@ -195,6 +245,7 @@ nonisolated final class EngineMailbox: Sendable {
                 recording = nil
             }
             actionRevision &+= 1
+            smoothScrollingRevision &+= 1
             pending.removeAll(keepingCapacity: true)
             cancelHeldOutputs()
             trackpadDispatch = nil
@@ -205,6 +256,7 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     let state = Mutex(State())
+    private let heldKeyDelivery = Mutex(())
 
     /// Explicit UI recovery only; no automatic retry or enable-state mutation.
     func retryCapture() {
@@ -261,6 +313,7 @@ nonisolated final class EngineMailbox: Sendable {
             let wasMatching = state.isMatching
             let previous = state.foregroundBundleID
             state.foregroundBundleID = bundleIdentifier
+            if previous != bundleIdentifier { state.smoothScrollingRevision &+= 1 }
             // Only apps with rules of their own change the rule set; other switches keep it.
             let rules = state.applicationRules
             let rulesChanged = previous != bundleIdentifier
@@ -315,7 +368,11 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     func setPointerApplication(_ bundleIdentifier: String?) {
-        state.withLock { $0.pointerBundleID = bundleIdentifier }
+        state.withLock {
+            guard $0.pointerBundleID != bundleIdentifier else { return }
+            $0.pointerBundleID = bundleIdentifier
+            $0.smoothScrollingRevision &+= 1
+        }
     }
 
     /// Smooth scrolling for a wheel event from this sender, or nil when it is off here.
@@ -323,11 +380,39 @@ nonisolated final class EngineMailbox: Sendable {
         state.withLock { $0.activeSmoothScrolling(sender: sender) }
     }
 
+    func smoothScrollDispatch(sender: UInt64?) -> SmoothScrollDispatch? {
+        state.withLock {
+            guard let sender, let settings = $0.activeSmoothScrolling(sender: sender) else { return nil }
+            return SmoothScrollDispatch(sender: sender, revision: $0.smoothScrollingRevision, settings: settings)
+        }
+    }
+
+    func smoothScrollIsCurrent(_ dispatch: SmoothScrollDispatch) -> Bool {
+        state.withLock {
+            $0.smoothScrollingRevision == dispatch.revision
+                && $0.activeSmoothScrolling(sender: dispatch.sender) == dispatch.settings
+        }
+    }
+
     func setSmoothScrolling(bySender settings: [UInt64: SmoothScrollingSettings]) {
-        state.withLock { $0.smoothScrollingBySender = settings }
+        state.withLock {
+            guard $0.smoothScrollingBySender != settings else { return }
+            $0.smoothScrollingBySender = settings
+            $0.smoothScrollingRevision &+= 1
+        }
     }
 
     func nextHeldKey(at now: UInt64) -> HeldKeyCommand? { state.withLock { $0.nextHeldKey(at: now) } }
+
+    /// Serializes worker posting with the final quit drain. The state lock is released before
+    /// posting; quitting cannot send an up before an already-dequeued down is delivered.
+    @discardableResult func deliverNextHeldKey(at now: UInt64, send: (HeldKeyCommand) -> Void) -> Bool {
+        heldKeyDelivery.withLock { _ in
+            guard let command = nextHeldKey(at: now) else { return false }
+            send(command)
+            return true
+        }
+    }
 
     func systemTransitionRequested(_ dispatch: ActionDispatch) {
         state.withLock {

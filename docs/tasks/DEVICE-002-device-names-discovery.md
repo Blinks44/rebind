@@ -6,7 +6,7 @@
 - Ownership checked: 2026-10-15 on `ca2e4c8`; prior INPUT-011 changes preserved; scoped ownership now released
 - Owned surfaces: device discovery/classification, device name persistence, Devices cards/name editor, battery menu labels, affected tests/catalog/docs
 - Requirements: SPEC §3.2 and Settings; user-requested local device names and G915 visibility
-- Code baseline: main initially `1401d30` with uncommitted INPUT-011 fixes; those fixes were committed externally as `ca2e4c8` during this session. This task remains uncommitted on that baseline
+- Code baseline: original work started on `1401d30` plus INPUT-011 fixes (subsequently `ca2e4c8`); implementation is included in `fdaef8f`, confirmed by REVIEW-001.
 
 ## Outcome and scope
 
@@ -19,11 +19,12 @@ Persist local display names for Devices and the battery menu without renaming ha
 - [x] Vendor-only headset gate and unknown/non-input HID++ kinds covered by regression tests; G435 gate checked against live descriptors.
 - [x] Build and affected tests pass; six-language Light/Dark specimens fit; final diff reviewed.
 - [ ] Running app: rename/save/cancel/reset, menu width, restart, receiver reconnect/wake and G915 card.
-- [ ] Keyboard/VoiceOver focus and Sketch reconciliation.
+- [x] Sketch inventory and Rename states saved through [REVIEW-001](REVIEW-001-production-review.md).
+- [ ] Keyboard/VoiceOver focus.
 
 ## Sketch source
 
-Live Rebind document inspected 2026-10-15 through MCP: Devices frames 39 and 46, existing shared controls; reuse the established card identity and naming-sheet pattern. No Sketch edits authorized or made. Rename/keyboard states need design reconciliation.
+Initial implementation inspected Devices and naming-sheet patterns without editing Sketch. On 2026-10-16 [REVIEW-001](REVIEW-001-production-review.md) saved inventory, Rename and battery/menu states. [DESIGN](../DESIGN.md) owns the current source/digest; native runtime/VoiceOver checks remain open.
 
 ## Implementation and verification
 
@@ -44,7 +45,7 @@ Manual acceptance: in the fresh app, rename G915 to a short name, check the batt
 
 ## Next handoff
 
-Implementation/runtime: verify the checklist above on the fresh Debug build without broadening the existing hardware claims. Design: reconcile keyboard-only cards and Rename states in the established Rebind Sketch source.
+Runtime: verify the checklist above on the fresh Debug build without broadening hardware claims. The keyboard/inventory and Rename designs are saved; inspect them live during comparison.
 
 
 ## Follow-up 2026-10-16: Headsets excluded from Devices

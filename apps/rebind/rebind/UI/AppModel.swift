@@ -180,15 +180,13 @@ import Carbon
     }
 
     func stop() {
+        cancelRecording()
+        mailbox.stop()
+        // Serialize with the action worker before any device shutdown can wait for I/O.
+        while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) { }
         previousApplication.stop()
         companionApps.stop()
         mouseHardware.stop()
-        cancelRecording()
-        mailbox.stop()
-        // The worker may not run again before the process exits: release held keys here.
-        while let command = mailbox.nextHeldKey(at: DispatchTime.now().uptimeNanoseconds) {
-            ShortcutSender.postHeldKey(command)
-        }
         trackpadCapture?.stop()
         trackpadCapture = nil
         pointerApplication.setRunning(false)
@@ -303,7 +301,7 @@ import Carbon
     }
 
     /// Drives the Menu Bar icon: the paused glyph whenever rules cannot run.
-    var rulesAreRunning: Bool { configuration.isEnabled && permissions.allowsRemapping && !storageLocked }
+    var rulesAreRunning: Bool { generalRuntime == .active }
 
     var generalRuntime: GeneralRuntimePresentation {
         GeneralRuntimePresentation(isEnabled: configuration.isEnabled, permissions: permissions,
@@ -584,7 +582,8 @@ import Carbon
 
     /// Adds every profile of a file next to the existing ones, with fresh identifiers and unused
     /// names. Nothing is replaced and the selection stays. Returns how many were added.
-    func importProfiles(from backup: ConfigurationBackup) -> Int? {
+    func importProfiles(from backup: ConfigurationBackup, expectedRevision: UInt64? = nil) -> Int? {
+        guard expectedRevision == nil || expectedRevision == configurationReplacementRevision else { return nil }
         var updated = configuration
         for source in backup.configuration.profiles {
             let base = String(source.title.prefix(76))

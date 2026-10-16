@@ -2,6 +2,13 @@ import CoreGraphics
 import Dispatch
 import Foundation
 import Synchronization
+import Carbon
+
+nonisolated struct SmoothScrollDispatch: Equatable, Sendable {
+    let sender: UInt64
+    let revision: UInt64
+    let settings: SmoothScrollingSettings
+}
 
 /// Turns mouse wheel clicks into a short glide of continuous scroll events, as LinearMouse's
 /// smoothed scrolling does, with a plain exponential ease-out instead of its velocity model.
@@ -14,6 +21,8 @@ nonisolated final class SmoothScroller: Sendable {
         var remainingY = 0.0
         var timeConstant = SmoothScrollingGlide.standard.timeConstant
         var flags: CGEventFlags = []
+        var dispatch: SmoothScrollDispatch?
+        var generation: UInt64 = 0
 
         var isIdle: Bool { remainingX == 0 && remainingY == 0 }
     }
@@ -21,10 +30,13 @@ nonisolated final class SmoothScroller: Sendable {
     static let frameInterval = 1.0 / 120
     private let glide = Mutex(Glide())
     private let wake = DispatchSemaphore(value: 0)
+    private let mailbox: EngineMailbox
+
+    private init(mailbox: EngineMailbox) { self.mailbox = mailbox }
 
     /// Starts the posting thread, which lives as long as the process (like the tap thread).
-    static func start() -> SmoothScroller {
-        let scroller = SmoothScroller()
+    static func start(mailbox: EngineMailbox) -> SmoothScroller {
+        let scroller = SmoothScroller(mailbox: mailbox)
         let thread = Thread { scroller.run() }
         thread.name = "Rebind smooth scrolling"
         thread.qualityOfService = .userInteractive
@@ -41,13 +53,15 @@ nonisolated final class SmoothScroller: Sendable {
     }
 
     /// Adds one wheel event's distance (after reverse and speed). Tap callback: no I/O.
-    func feed(_ event: CGEvent, settings: SmoothScrollingSettings) {
-        let (x, y) = Self.distance(of: event, settings: settings)
+    func feed(_ event: CGEvent, dispatch: SmoothScrollDispatch) {
+        let (x, y) = Self.distance(of: event, settings: dispatch.settings)
         let wasIdle = glide.withLock { glide in
             let wasIdle = glide.isIdle
+            if glide.dispatch != dispatch { glide = Glide(generation: glide.generation &+ 1) }
+            glide.dispatch = dispatch
             glide.remainingX = Self.add(x, to: glide.remainingX)
             glide.remainingY = Self.add(y, to: glide.remainingY)
-            glide.timeConstant = settings.glide.timeConstant
+            glide.timeConstant = dispatch.settings.glide.timeConstant
             glide.flags = event.flags
             return wasIdle
         }
@@ -68,11 +82,14 @@ nonisolated final class SmoothScroller: Sendable {
     }
 
     /// Stops a glide at once, for example when the tap is removed.
-    func cancel() { glide.withLock { $0 = Glide() } }
+    func cancel() { glide.withLock { $0 = Glide(generation: $0.generation &+ 1) } }
 
     /// A click the other way stops the glide instead of fighting it.
     static func add(_ delta: Double, to remaining: Double) -> Double {
-        remaining * delta < 0 ? delta : remaining + delta
+        guard delta.isFinite, remaining.isFinite else { return 0 }
+        // Bound malformed/accelerated driver values before conversion to integer pixels.
+        let distance = remaining * delta < 0 ? delta : remaining + delta
+        return min(max(distance, -100_000), 100_000)
     }
 
     /// The part of the remaining distance to move in one frame; the last point goes at once.
@@ -85,18 +102,32 @@ nonisolated final class SmoothScroller: Sendable {
             wake.wait()
             var carryX = 0.0
             var carryY = 0.0
+            var dispatch: SmoothScrollDispatch?
+            var generation: UInt64?
             var previous = DispatchTime.now().uptimeNanoseconds
             while true {
                 Thread.sleep(forTimeInterval: Self.frameInterval)
                 let now = DispatchTime.now().uptimeNanoseconds
                 let interval = Double(now - previous) / 1_000_000_000
                 previous = now
-                let frame = glide.withLock { glide -> (x: Double, y: Double, flags: CGEventFlags, done: Bool) in
+                let frame = glide.withLock { glide -> (x: Double, y: Double, flags: CGEventFlags, dispatch: SmoothScrollDispatch?, generation: UInt64, done: Bool) in
                     let x = Self.step(remaining: glide.remainingX, interval: interval, timeConstant: glide.timeConstant)
                     let y = Self.step(remaining: glide.remainingY, interval: interval, timeConstant: glide.timeConstant)
                     glide.remainingX -= x
                     glide.remainingY -= y
-                    return (x, y, glide.flags, glide.isIdle)
+                    return (x, y, glide.flags, glide.dispatch, glide.generation, glide.isIdle)
+                }
+                if dispatch != frame.dispatch || generation != frame.generation {
+                    carryX = 0; carryY = 0; dispatch = frame.dispatch; generation = frame.generation
+                }
+                guard let current = frame.dispatch, mailbox.smoothScrollIsCurrent(current),
+                      !IsSecureEventInputEnabled(), CGPreflightPostEventAccess() else {
+                    glide.withLock {
+                        if $0.generation == frame.generation { $0 = Glide(generation: $0.generation &+ 1) }
+                    }
+                    carryX = 0; carryY = 0
+                    if glide.withLock({ $0.isIdle }) { break }
+                    continue
                 }
                 // Events carry whole pixels; the fraction moves with the next frame.
                 carryX += frame.x

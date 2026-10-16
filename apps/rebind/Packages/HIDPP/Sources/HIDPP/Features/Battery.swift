@@ -38,7 +38,8 @@ public struct Battery {
 
     /// Unified: [percentage, level flags, charging status (1 charging, 2 slow, 3 full)].
     /// Status: [percentage, next level, status (1–4 charging or full)].
-    /// Voltage and ADC: [millivolts high, low, flags (bit 7: external power)].
+    /// Voltage: [millivolts high, low, flags (bit 7: external power)].
+    /// ADC: [millivolts high, low, flags (bit 0: connected, bit 1: charging)].
     static func status(from payload: [UInt8], source: Source) -> Status? {
         guard payload.count >= 3 else { return nil }
         switch source {
@@ -49,6 +50,10 @@ public struct Battery {
         case .voltage, .adcMeasurement:
             let millivolts = Int(payload[0]) << 8 | Int(payload[1])
             guard millivolts > 0 else { return nil }
+            if source == .adcMeasurement {
+                guard payload[2] & 0x01 != 0 else { return nil }
+                return Status(percentage: percentage(millivolts: millivolts), isCharging: payload[2] & 0x02 != 0)
+            }
             return Status(percentage: percentage(millivolts: millivolts), isCharging: payload[2] & 0x80 != 0)
         }
     }

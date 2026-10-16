@@ -29,7 +29,7 @@ struct BindingEditor: View {
         profileID = model.configuration.selectedProfileID
         configurationRevision = model.configurationReplacementRevision
         _draft = State(initialValue: BindingEditorDraft(scope: scope, existing: existing))
-        _actionKind = State(initialValue: existing.map { ActionKind(action: $0.action) } ?? .keyboardShortcut)
+        _actionKind = State(initialValue: existing.map(ActionKind.init(binding:)) ?? .keyboardShortcut)
         let workspace: WorkspaceAction?
         if case .workspace(let value) = existing?.action { workspace = value } else { workspace = nil }
         _application = State(initialValue: workspace?.application)
@@ -190,7 +190,9 @@ struct BindingEditor: View {
             } else if actionKind == .insertText {
                 ThemeTextField(title: .insertTextAction, text: $snippet, prompt: Text(.insertTextPrompt))
                     .disabled(model.recording != nil)
-                if snippet.count > TextSnippet.maximumLength {
+                if snippet.utf16.count > TextSnippet.maximumUTF16Length {
+                    Text(.insertTextEncodingTooLong).font(Theme.caption).foregroundStyle(Theme.warningText)
+                } else if snippet.count > TextSnippet.maximumLength {
                     Text(.insertTextTooLong).font(Theme.caption).foregroundStyle(Theme.warningText)
                 }
             } else if actionKind == .runAppleShortcut {

@@ -52,11 +52,12 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     private let closed = Mutex(false)
 
     init?(_ device: IOHIDDevice, receivesHIDPP: Bool = true) {
+        let input = IOHIDDeviceGetProperty(device, kIOHIDMaxInputReportSizeKey as CFString) as? Int ?? 0
+        guard (0...4096).contains(input) else { return nil }
         guard IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeNone)) == kIOReturnSuccess else { return nil }
         self.device = device
         self.receivesHIDPP = receivesHIDPP
         maxOutputReportSize = IOHIDDeviceGetProperty(device, kIOHIDMaxOutputReportSizeKey as CFString) as? Int
-        let input = IOHIDDeviceGetProperty(device, kIOHIDMaxInputReportSizeKey as CFString) as? Int ?? 0
         bufferLength = max(input, HIDPPConstants.longReportLength)
         buffer = .allocate(capacity: bufferLength)
         let context = Unmanaged.passRetained(self).toOpaque()
@@ -86,7 +87,7 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     private func receive(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
         // HID++ endpoints can also deliver pointer reports. Other replies are accepted only
         // on the known vendor battery interface selected by the discovery layer.
-        guard length > 0 else { return }
+        guard length > 0, length <= bufferLength else { return }
         if receivesHIDPP {
             guard length >= HIDPPConstants.shortReportLength,
                   report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID else { return }
@@ -100,7 +101,8 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
             arrived.signal()
         }
         // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
-        if receivesHIDPP, report[3] & 0x0F == 0 || report[2] == 0x41, let notify = notifications.withLock({ $0 }) {
+        if receivesHIDPP, report[3] & 0x0F == 0 || (report[0] == HIDPPConstants.shortReportID && report[2] == 0x41),
+           let notify = notifications.withLock({ $0 }) {
             notify(Array(UnsafeBufferPointer(start: report, count: length)))
         }
     }

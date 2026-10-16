@@ -472,7 +472,7 @@ struct TrackpadDoubleTapTests {
         disabled.isEnabled = false
         let single = rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [],
                                     action: .shortcut(shortcut))
-        var config = Configuration(isEnabled: true, bindings: [single, disabled])
+        let config = Configuration(isEnabled: true, bindings: [single, disabled])
         try config.validate()
         h.mailbox.configure(config)
         h.runtime = try #require(h.mailbox.trackpadRuntime())

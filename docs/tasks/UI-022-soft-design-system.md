@@ -1,6 +1,6 @@
 # UI-022: Soft design system and screen coverage
 
-- Updated: 2026-10-16 (documentation reconciliation; no new Sketch review)
+- Updated: 2026-10-16 (live reconciliation in REVIEW-001)
 - Stage: in_design
 - Owner: Unassigned; saved design released for implementation
 - Requirements: SPEC §§3.4–3.5, 4, 8, 10–11
@@ -14,7 +14,7 @@ The soft, opaque-first direction is established and was accepted after the user 
 - [x] Direction accepted; English-only Sketch and six-language app contract recorded.
 - [x] Real SF Symbols outlines and one raised-keycap trigger style adopted in Sketch/app; whole-app native adoption implemented in [UI-023](UI-023-main-window-soft-adoption.md).
 - [ ] Magic Mouse editors after hardware research determines the presets.
-- [ ] Reconcile newer local device names/keyboard/multi-vendor/Bluetooth states and per-app/editor changes from DEVICE-002/003 and INPUT-011 against live Sketch.
+- [x] Newer local device names/keyboard/multi-vendor/Bluetooth states and per-app/editor changes reconciled through [REVIEW-001](REVIEW-001-production-review.md); 52 numbered Light/Dark pairs saved in two vertical columns, including Language draft Apply and General battery states.
 - [ ] Native focus, VoiceOver, localized widths and adaptive preferences; these are app checks rather than Sketch proof.
 
 ## Retained decisions and dated evidence
@@ -27,4 +27,4 @@ Controls/content are opaque; only sidebar/menus may use system material. Sketch 
 
 ## Next handoff
 
-Design: inspect current live Sketch and the newer feature tasks, then draw/reconcile the missing Devices/Input/editor states using existing components. Magic Mouse presets still depend on its hardware probe. Implementation agents consume ready bounded states directly; initial main-window/system adoption and user direction approval are already complete.
+Design: draw Magic Mouse editors after its hardware probe establishes feasible presets. Implementation/runtime: consume the current 52-pair source directly; verify the new Devices states, native battery-menu layout and keyboard/VoiceOver/preferences. Initial main-window/system adoption and user direction approval are already complete.

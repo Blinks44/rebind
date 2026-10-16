@@ -30,14 +30,15 @@ nonisolated enum ShortcutSender {
         for event in heldKeyEvents(command) { event.post(tap: .cgSessionEventTap) }
     }
 
-    static func heldKeyEvents(_ command: HeldKeyCommand) -> [CGEvent] {
+    static func heldKeyEvents(_ command: HeldKeyCommand,
+                              physicalModifiers: CGEventFlags = CGEventSource.flagsState(.hidSystemState)) -> [CGEvent] {
         guard let source = CGEventSource(stateID: .privateState) else { return [] }
         switch command.target {
         case .shortcut(let shortcut):
             guard shortcut.isSupported,
                   let event = CGEvent(keyboardEventSource: source, virtualKey: shortcut.keyCode,
                                       keyDown: command.phase != .release) else { return [] }
-            event.flags = shortcut.modifiers.flags
+            event.flags = shortcut.modifiers.union(command.otherModifiers).flags
             event.setIntegerValueField(.eventSourceUserData, value: eventTag)
             if command.phase == .repeatPress { event.setIntegerValueField(.keyboardEventAutorepeat, value: 1) }
             return [event]
@@ -48,7 +49,8 @@ nonisolated enum ShortcutSender {
             return keys.filter { modifiers.contains($0.0) }.compactMap { _, key in
                 guard let event = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: command.phase != .release) else { return nil }
                 event.type = .flagsChanged
-                event.flags = command.phase == .release ? [] : modifiers.flags
+                let remaining = command.phase == .release ? command.otherModifiers : modifiers.union(command.otherModifiers)
+                event.flags = physicalModifiers.union(remaining.flags)
                 event.setIntegerValueField(.eventSourceUserData, value: eventTag)
                 return event
             }

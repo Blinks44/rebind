@@ -94,6 +94,33 @@ private final class MockMouse: HIDPPDeviceIO, @unchecked Sendable {
 }
 
 struct LogitechMouseTests {
+    @Test func aCompanionAppStartingDuringARequestPreventsLaterWrites() throws {
+        let device = MockMouse()
+        let mouse = try #require(LogitechDevice(io: device, slot: nil))
+        _ = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1600),
+                        canWrite: { device.writes.isEmpty })
+        #expect(device.writes.count == 1)
+        #expect(device.dpi == 1000)
+        let access = DeviceWriteAccess()
+        access.update(standard: true, gaming: false)
+        #expect(access.allows(gaming: false) && access.allows(gaming: true) == false)
+        access.update(standard: false, gaming: false)
+        #expect(access.allows(gaming: false) == false)
+    }
+
+    @Test func aQueuedWriteCannotRegainAuthorizationAfterARefreshOrCompanionRestart() {
+        let access = DeviceWriteAccess()
+        access.update(standard: true, gaming: true)
+        let queued = access.revision
+        access.update(standard: false, gaming: false)
+        access.update(standard: true, gaming: true)
+        #expect(!access.allows(gaming: false, revision: queued))
+        let refreshed = access.revision
+        #expect(access.allows(gaming: true, revision: refreshed))
+        access.invalidate()
+        #expect(!access.allows(gaming: true, revision: refreshed))
+    }
+
     @Test func readsAndWritesSmartShiftAndDPI() throws {
         let device = MockMouse()
         let mouse = try #require(LogitechDevice(io: device, slot: nil))

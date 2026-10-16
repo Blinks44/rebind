@@ -3,6 +3,16 @@ import Testing
 @testable import rebind
 
 struct PeripheralBatteryTests {
+    @Test func aLaterBatteryReplyCanPopulateAnInitiallyUnknownDevice() {
+        let device = ConnectedAccessory(id: "receiver#1", name: "Keyboard", kind: .keyboard, vendorID: 0x046D)
+        let known = MouseHardware.refreshedBatteries([], inputs: [device], readings: [(device.id, 49, false)])
+        #expect(known == [DeviceBattery(id: device.id, name: device.name, kind: .keyboard,
+                                      percentage: 49, isCharging: false, vendorID: device.vendorID)])
+        #expect(MouseHardware.refreshedBatteries(known, inputs: [device], readings: [(device.id, nil, false)]) == known)
+        #expect(MouseHardware.refreshedBatteries(known, inputs: [device], readings: [(device.id, 101, false)]) == known)
+        #expect(MouseHardware.refreshedBatteries([], inputs: [device], readings: [("old#1", 80, false)]).isEmpty)
+    }
+
     @Test func standardHIDRangesAreNormalizedWithoutClampingUnknownValues() {
         #expect(PeripheralBatteryReading.normalized(128, minimum: 0, maximum: 255)?.percentage == 50)
         #expect(PeripheralBatteryReading.normalized(5, minimum: 0, maximum: 10)?.percentage == 50)
