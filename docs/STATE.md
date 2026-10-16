@@ -4,7 +4,7 @@ Updated **2026-10-16**. Baseline `fdaef8f` includes [DEVICE-003](tasks/DEVICE-00
 
 ## Product and baseline
 
-Native macOS **26+**, SwiftUI/AppKit, local-only category-wide rules, one manually selected profile; physical attribution only for mouse settings. Scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Xcode 27 / Swift 6.4 / SDK 27, Apple Silicon macOS 27.0.1; minimum-OS/Intel unverified.
+Native macOS **26+**, SwiftUI/AppKit, local-only category-wide rules, one manually selected profile; physical attribution only for mouse settings. Scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Xcode 27.1 / Swift 6.4 / SDK 27, Apple Silicon macOS 27.0.1; minimum-OS/Intel unverified.
 
 Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md).
 
@@ -16,6 +16,7 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
+- **2026-10-16:** Xcode 27.1 recommended project settings and the Utilities category applied; Debug/Release builds and 830 tests pass ([history](history/2026-10.md#2026-10-16-xcode-recommended-settings)).
 - **2026-10-16:** Menu Bar menu moved from SwiftUI `MenuBarExtra` to AppKit `NSStatusItem`/`NSMenu` for the Sketch battery row (device symbol, alias, right-aligned percentage and battery symbol). User confirmed the look; tests pass. Keyboard/VoiceOver/macOS 26 checks open ([REVIEW-001](tasks/REVIEW-001-production-review.md#saved-design-and-battery-menu)).
 - **2026-10-16:** [Production review](tasks/REVIEW-001-production-review.md): third pass accepted the diff and last two commits; fixed double autorepeat for a shared held key; 828 + 17 tests pass. Earlier two passes: 827 Swift Testing + 17 native + 32 HIDPP pass; 41 TSan tests × 10. Builds/signatures pass. Sketch: 52 vertical Light/Dark pairs saved/rechecked. Exact battery row remains open.
 - **2026-10-16:** [Context maintenance](tasks/DOC-003-context-maintenance.md): contracts/handoffs reconciled; workflow skill 1.4.0 adds incremental maintenance and simplicity priorities.
