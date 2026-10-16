@@ -26,7 +26,7 @@ Adopt the useful macOS-applicable conventions from SwiftAgents:
 
 ## 4. SwiftUI and macOS UX rules
 
-- Prefer native controls: `NavigationSplitView`, `List`, `Table` where suitable, `Form`, `Settings`, `MenuBarExtra`, `Button`, `Toggle`, `Picker`, sheets, and standard keyboard focus behavior.
+- Prefer native controls: `NavigationSplitView`, `List`, `Table` where suitable, `Form`, `Settings`, `Button`, `Toggle`, `Picker`, sheets, and standard keyboard focus behavior. The Menu Bar menu is an AppKit `NSStatusItem`/`NSMenu` (`MenuBarController`), since a SwiftUI menu cannot carry the battery row's leading image and right-aligned column.
 - Prefer `foregroundStyle` over `foregroundColor`; prefer `clipShape(.rect(cornerRadius:))` where a rectangular clipping shape is needed; use current `onChange` overloads; use `Button` instead of a generic tap gesture for an actionable control.
 - Use `@Observable` rather than legacy `ObservableObject` for new shared UI state unless integration requires otherwise.
 - Use semantic SF Symbols with accessible text, useful tooltips, correct keyboard navigation, and meaningful accessibility labels.

@@ -4,12 +4,6 @@ import SwiftUI
 @main
 struct rebindApp: App {
     @NSApplicationDelegateAdaptor(RebindAppDelegate.self) private var delegate
-    @State private var settingsSection: SettingsSection = .general
-
-    private var menuBarIconShown: SwiftUI.Binding<Bool> {
-        SwiftUI.Binding(get: { delegate.model.configuration.showsMenuBarIcon },
-                set: { delegate.model.setPresencePreference(\.showsMenuBarIcon, to: $0) })
-    }
 
     private var opensWindowAtLaunch: Bool {
         let configuration = delegate.model.configuration
@@ -41,17 +35,11 @@ struct rebindApp: App {
         .windowResizability(.contentSize)
         .defaultLaunchBehavior(.suppressed)
         Settings {
-            SettingsView(model: delegate.model, selection: $settingsSection)
+            SettingsView(model: delegate.model, selection: Bindable(delegate.model).settingsSection)
                 .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
                 .background { ThemeCanvas() }
                 .background { ActiveSpaceWindow() }
                 .environment(\.locale, delegate.model.activeLanguage.locale)
-        }
-        MenuBarExtra(isInserted: menuBarIconShown) {
-            RebindMenu(model: delegate.model, settingsSection: $settingsSection)
-                .environment(\.locale, delegate.model.activeLanguage.locale)
-        } label: {
-            MenuBarIcon(isRunning: delegate.model.rulesAreRunning)
         }
     }
 }
@@ -62,6 +50,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
             || NSClassFromString("XCTestCase") != nil
     }
     let model: AppModel
+    private var menuBar: MenuBarController?
 
     override init() {
         let runningTests = Self.runningTests
@@ -84,6 +73,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         center.addObserver(self, selector: #selector(windowWillClose), name: NSWindow.willCloseNotification, object: nil)
         // The first window is created after launch finishes; decide once it exists.
         DispatchQueue.main.async { [model] in Self.updateDockIcon(preferred: model.configuration.showsDockIcon) }
+        menuBar = MenuBarController(model: model)
         model.start()
     }
 
@@ -155,65 +145,12 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) { model.stop() }
 }
 
-private struct RebindMenu: View {
-    let model: AppModel
-    @SwiftUI.Binding var settingsSection: SettingsSection
-    @Environment(\.openWindow) private var openWindow
-    @Environment(\.openSettings) private var openSettings
-
-    var body: some View {
-        Text(model.statusText)
-        // The window may be closed when an action fails; the menu is where it can still be seen.
-        if let error = model.error { Text(error) }
-        Button(.openRebind) { RebindAppDelegate.showWindow { openWindow(id: "main") } }
-        Menu(.profileTitle) {
-            ProfilePicker(model: model).pickerStyle(.inline)
-        }.disabled(model.storageLocked)
-        Button(model.configuration.isEnabled ? LocalizedStringResource.pauseBindings : .resumeBindings) {
-            model.setEnabled(!model.configuration.isEnabled)
-        }.disabled(model.storageLocked && !model.configuration.isEnabled)
-        Button(.settingsTitle) { RebindAppDelegate.showWindow { openSettings() } }
-        let batteries = model.configuration.showsBatteryInMenu ? model.mouseHardware.batteries : []
-        if !batteries.isEmpty {
-            // Like the system's Bluetooth menu: the device, and its charge at the right edge.
-            Section(.batteryMenuTitle) {
-                ForEach(batteries) { battery in
-                    Button {
-                        settingsSection = .devices
-                        RebindAppDelegate.showWindow { openSettings() }
-                    } label: {
-                        Label {
-                            Text(verbatim: model.configuration.deviceName(for: battery.deviceKey, original: battery.name))
-                        } icon: { Image(systemName: battery.kind.symbol) }
-                    }
-                    .badge(Text(battery.isCharging ? .batteryMenuCharging(battery.percentage) : .batteryMenuLevel(battery.percentage)))
-                }
-            }
-        }
-        Divider()
-        Button(.quitRebind) { NSApp.terminate(nil) }.keyboardShortcut("q")
-    }
-}
-
 /// Hands the scene's `openWindow` action to the app delegate, which has no SwiftUI environment.
 private struct MainWindowOpener: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Color.clear.frame(width: 0, height: 0).accessibilityHidden(true)
-            .onAppear { RebindAppDelegate.openMainWindow = { openWindow(id: "main") } }
-    }
-}
-
-/// The Menu Bar icon, paused while rules cannot run. It exists from launch on, even when the
-/// window does not, so it also hands over the window-opening action.
-private struct MenuBarIcon: View {
-    let isRunning: Bool
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some View {
-        Image(isRunning ? "RebindMenuBar" : "RebindMenuBarPaused")
-            .accessibilityLabel(Text(verbatim: "Rebind"))
             .onAppear { RebindAppDelegate.openMainWindow = { openWindow(id: "main") } }
     }
 }

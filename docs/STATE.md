@@ -16,6 +16,7 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
+- **2026-10-16:** Menu Bar menu moved from SwiftUI `MenuBarExtra` to AppKit `NSStatusItem`/`NSMenu` for the Sketch battery row (device symbol, alias, right-aligned percentage and battery symbol). User confirmed the look; tests pass. Keyboard/VoiceOver/macOS 26 checks open ([REVIEW-001](tasks/REVIEW-001-production-review.md#saved-design-and-battery-menu)).
 - **2026-10-16:** [Production review](tasks/REVIEW-001-production-review.md): third pass accepted the diff and last two commits; fixed double autorepeat for a shared held key; 828 + 17 tests pass. Earlier two passes: 827 Swift Testing + 17 native + 32 HIDPP pass; 41 TSan tests × 10. Builds/signatures pass. Sketch: 52 vertical Light/Dark pairs saved/rechecked. Exact battery row remains open.
 - **2026-10-16:** [Context maintenance](tasks/DOC-003-context-maintenance.md): contracts/handoffs reconciled; workflow skill 1.4.0 adds incremental maintenance and simplicity priorities.
 - **2026-10-16:** [Multi-vendor battery](tasks/DEVICE-003-multi-vendor-battery.md): generic inventory, native/HID data, opt-in Bluetooth BAS and known USB reads implemented/software-tested; named hardware/grant/reconnect checks pending.
@@ -25,7 +26,7 @@ Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](D
 ## Open work / next steps
 
 - **Next:** run `apps/rebind/tools/magic-mouse-probe.swift` with the Magic Mouse switched on (paired, was not connected on 2026-10-13); its contact counts decide which Magic Mouse presets are feasible and whether the sidebar section becomes real.
-- **Open from review:** running-app checks of keyboard focus, VoiceOver and all six languages at minimum width; Dock/tint acceptance of the new icon.
+- **Open from review:** running-app checks of keyboard focus, VoiceOver and all six languages at minimum width (including arrow keys/VoiceOver on the Menu Bar battery rows); Dock/tint acceptance of the new icon.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
