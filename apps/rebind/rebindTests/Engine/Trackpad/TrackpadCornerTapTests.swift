@@ -190,6 +190,43 @@ struct TrackpadCornerTapTests {
         #expect(h.click(.down, at: lift + 12_000_000) == false)
     }
 
+    /// Tap to click (with three-finger drag, also for three fingers) turns the tap itself
+    /// into a click after the lift; that click passes on and must not cancel the rule.
+    @Test(arguments: [0 as UInt32, 1])
+    func clickMadeFromAThreeFingerTapPassesAndKeepsTheRule(_ button: UInt32) throws {
+        var h = try Harness(corners: [], threeFingerTap: true)
+        let fingers: [(x: Float, y: Float)] = [(0.3, 0.5), (0.4, 0.5), (0.5, 0.5)]
+        h.consume(fingers, at: lift - 40_000_000)
+        h.consume(fingers, at: lift - 20_000_000)
+        h.consume([], at: lift)
+        let activity = h.mailbox.state.withLock { $0.inputActivity }
+        func press(_ phase: InputEvent.Phase, _ time: UInt64) -> Bool {
+            h.mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: phase, receivedAt: time), secureInput: false)
+        }
+        #expect(press(.down, lift + 12_000_000) == false)
+        #expect(press(.up, lift + 28_000_000) == false)
+        #expect(h.mailbox.state.withLock { $0.inputActivity } == activity)
+        #expect(h.mailbox.trackpadRuntime() == h.runtime)
+        #expect(h.ready(at: lift + 60_000_000) == .single(.threeFinger))
+    }
+
+    /// A finger on either surface makes the press possibly physical, so it still cancels.
+    @Test(arguments: [false, true])
+    func pressWithAFingerDownIsActivityEvenRightAfterATap(_ onMagicTrackpad: Bool) throws {
+        var h = try Harness(corners: [], threeFingerTap: true)
+        let fingers: [(x: Float, y: Float)] = [(0.3, 0.5), (0.4, 0.5), (0.5, 0.5)]
+        h.consume(fingers, at: lift - 40_000_000)
+        h.consume(fingers, at: lift - 20_000_000)
+        h.consume([], at: lift)
+        var touch = NativeTrackpadFrame(receipt: lift + 5_000_000, revision: 0, activity: 0, frame: 1, time: 4.005, count: 1)
+        touch.first = .init(id: 9, x: 0.5, y: 0.5, pressure: 45)
+        if onMagicTrackpad { h.mailbox.state.withLock { $0.magicTrackpadClicks.observe(touch) } }
+        else { h.consume([(0.5, 0.5)], at: lift + 5_000_000) }
+        let activity = h.mailbox.state.withLock { $0.inputActivity }
+        #expect(h.click(.down, at: lift + 12_000_000) == false)
+        #expect(h.mailbox.state.withLock { $0.inputActivity } != activity)
+    }
+
     @Test func pausedOrEditingRulesNeverConsumeAClick() throws {
         var h = try Harness(corners: [.topLeft])
         h.tap(x: 0.1, y: 0.9, endingAt: lift)

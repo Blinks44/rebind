@@ -32,6 +32,10 @@ Built-in trackpad, macOS 27.0.1, Debug build from the working tree: the user rep
 - [ ] False positives: clicking with one finger while others rest on the surface; an external mouse click while fingers rest on the trackpad.
 - [ ] Dragging started with a multi-finger press is lost while the rule exists; confirm this is acceptable.
 
+## User-reported regression: 2026-10-16
+
+With three-finger drag on, resting three or four fingers makes a click rule run after about 500 ms without a press. Fixed in [INPUT-013](INPUT-013-trackpad-review-fixes.md): three/four-finger rules require finger force (Force Touch) or a quick still press (Magic Trackpad).
+
 ## Next handoff
 
 User: on a named build add a three- or four-finger click rule and a two-finger click rule, press the trackpad accordingly and report missing clicks, double effects or accidental triggers.

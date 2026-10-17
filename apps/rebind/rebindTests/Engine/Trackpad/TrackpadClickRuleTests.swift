@@ -19,18 +19,19 @@ struct TrackpadClickRuleTests {
             mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
         }
 
-        mutating func rest(fingers: Int, at time: UInt64) {
+        /// Defaults to a Force Touch surface pressed hard enough to click.
+        mutating func rest(fingers: Int, at time: UInt64, force: Float = 120, reportsForce: Bool = true, shift: Float = 0) {
             var frame = NativeTrackpadFrame(receipt: time, revision: 0, activity: 0, frame: nextID,
                                             time: Double(time) / 1_000_000_000, count: fingers)
             nextID += 1
             let contacts = (0..<fingers).map {
-                ShortContactRecognizer.Contact(id: Int32($0), x: 0.3 + Float($0) * 0.1, y: 0.5, pressure: 120)
+                ShortContactRecognizer.Contact(id: Int32($0), x: 0.3 + Float($0) * 0.1 + shift, y: 0.5, pressure: force)
             }
             frame.first = contacts.first
             if fingers > 1 { frame.second = contacts[1] }
             if fingers > 2 { frame.third = contacts[2] }
             if fingers > 3 { frame.fourth = contacts[3] }
-            mailbox.state.withLock { $0.trackpadClicks.observe(frame) }
+            mailbox.state.withLock { $0.trackpadClicks.observe(frame, reportsForce: reportsForce) }
         }
 
         func button(_ number: UInt32, _ phase: InputEvent.Phase, at time: UInt64) -> Bool {
@@ -75,6 +76,53 @@ struct TrackpadClickRuleTests {
         #expect(h.button(0, .down, at: now + 20_000_000 + TrackpadClickFilter.maximumFrameAge + 1) == false)
         h.rest(fingers: 0, at: now + 400_000_000)
         #expect(h.button(0, .down, at: now + 405_000_000) == false)
+        #expect(h.queued.isEmpty)
+    }
+
+    /// Three-finger drag presses the button for resting fingers; on a Force Touch
+    /// surface only finger force tells a physical press apart (probe: rest ≤ 59, press ≥ 129).
+    @Test(arguments: [3, 4])
+    func forceTouchRunsTheRuleOnlyForAPhysicalPress(_ fingers: Int) {
+        var h = Harness()
+        h.rest(fingers: fingers, at: now, force: 59)
+        let activity = h.mailbox.state.withLock { $0.inputActivity }
+        #expect(h.button(0, .down, at: now + 5_000_000) == false)
+        #expect(h.button(0, .up, at: now + 900_000_000) == false)
+        #expect(h.queued.isEmpty)
+        #expect(h.mailbox.state.withLock { $0.inputActivity } != activity)
+        h.rest(fingers: fingers, at: now + 1_000_000_000, force: 129)
+        #expect(h.button(0, .down, at: now + 1_005_000_000))
+        #expect(h.queued == [.init(keyCode: UInt16(10 + fingers), modifiers: .command)])
+    }
+
+    /// Without force (a Magic Trackpad): a still press soon after the fingers land is
+    /// physical; macOS's own press for resting fingers came after about half a second.
+    @Test(arguments: [3, 4])
+    func withoutForceOnlyAQuickStillPressRunsTheRule(_ fingers: Int) {
+        var h = Harness()
+        func touch(at time: UInt64, shift: Float = 0) {
+            h.rest(fingers: 0, at: time - 10_000_000, reportsForce: false)
+            h.rest(fingers: fingers, at: time, force: 0, reportsForce: false)
+            h.rest(fingers: fingers, at: time + 100_000_000, force: 0, reportsForce: false, shift: shift)
+        }
+        touch(at: now)
+        #expect(h.button(0, .down, at: now + 136_000_000))
+        #expect(h.button(0, .up, at: now + 239_000_000))
+        #expect(h.queued.count == 1)
+        touch(at: now + 1_000_000_000)
+        h.rest(fingers: fingers, at: now + 1_530_000_000, force: 0, reportsForce: false)
+        #expect(h.button(0, .down, at: now + 1_538_000_000) == false)
+        #expect(h.button(0, .up, at: now + 2_700_000_000) == false)
+        touch(at: now + 3_000_000_000, shift: 0.1)
+        #expect(h.button(0, .down, at: now + 3_105_000_000) == false)
+        #expect(h.queued.count == 1)
+    }
+
+    /// A press on fingers whose landing was not observed cannot be timed, so it passes.
+    @Test func withoutForceAnUnobservedLandingPasses() {
+        var h = Harness()
+        h.rest(fingers: 3, at: now, force: 0, reportsForce: false)
+        #expect(h.button(0, .down, at: now + 5_000_000) == false)
         #expect(h.queued.isEmpty)
     }
 

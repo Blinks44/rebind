@@ -27,4 +27,4 @@ Controls/content are opaque; only sidebar/menus may use system material. Sketch 
 
 ## Next handoff
 
-Design: draw Magic Mouse editors after its hardware probe establishes feasible presets. Implementation/runtime: consume the current 52-pair source directly; verify the new Devices states, native battery-menu layout and keyboard/VoiceOver/preferences. Initial main-window/system adoption and user direction approval are already complete.
+Design: draw Magic Mouse editors after its hardware probe establishes feasible presets. Implementation/runtime: consume the current 53-pair source directly; verify the new Devices states, native battery-menu layout and keyboard/VoiceOver/preferences. Initial main-window/system adoption and user direction approval are already complete.

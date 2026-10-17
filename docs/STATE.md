@@ -16,6 +16,8 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
+- **2026-10-16:** [Pointer speed in the Menu Bar menu](tasks/DEVICE-004-menu-pointer-speed.md): Sketch pair 53 saved; per-mouse DPI slider implemented (2026-10-17), tests pass, running-app check open.
+- **2026-10-16:** [Trackpad review fixes](tasks/INPUT-013-trackpad-review-fixes.md): double taps survive idle frame gaps, tap-made clicks no longer cancel taps, stale disconnected devices fixed, resting-finger presses from three-finger drag no longer run click rules (force on Force Touch, timing on Magic Trackpad); tests pass, hardware checks open.
 - **2026-10-16:** Volume/mute actions post the system sound keys after a user report (silent volume while muted, no HUD); tests pass, hardware check open ([history](history/2026-10.md#2026-10-16-volume-and-mute-through-the-system-sound-keys)).
 - **2026-10-16:** Volume actions use the virtual main volume (system volume-key control) after a user report that AirPods sometimes lost volume control; not reproduced, hands-free check open ([audio](verification/phase-4-audio.md)). User checklist results recorded; the shorter remaining checklist covers holds/modifiers, AirPods, per-app rules, gesture button, battery, trackpad, Magic devices and release ([history](history/2026-10.md#2026-10-16-airpods-volume-website-and-user-checklist)).
 - **2026-10-16:** Xcode 27.1 recommended project settings and the Utilities category applied; Debug/Release builds and 830 tests pass ([history](history/2026-10.md#2026-10-16-xcode-recommended-settings)).
@@ -27,11 +29,13 @@ Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](D
 
 ## Open work / next steps
 
-- **Next:** run `apps/rebind/tools/magic-mouse-probe.swift` with the Magic Mouse switched on (paired, was not connected on 2026-10-13); its contact counts decide which Magic Mouse presets are feasible and whether the sidebar section becomes real.
+- **Next:** evaluate production Magic Mouse recognition/native coexistence ([INPUT-012](tasks/INPUT-012-magic-mouse-probe.md)). User guided classification: four one-finger/five two-finger candidates, zero candidates during rest/clicks/scroll; first window has boundary-skipped frames. Probe has 44 passing software checks. Production safety, action delivery and app integration remain open.
 - **Open from review:** running-app checks of keyboard focus, VoiceOver and all six languages at minimum width (including arrow keys/VoiceOver on the Menu Bar battery rows); Dock/tint acceptance of the new icon.
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
+| [DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md) | awaiting_verification | Unassigned | Check the menu slider in the running app on MX Master 2S (drag, Settings agreement, Light/Dark, keyboard/VoiceOver). |
+| [INPUT-013](tasks/INPUT-013-trackpad-review-fixes.md) | awaiting_verification | Unassigned | User rechecks double taps, three-finger tap and resting-finger click rules on both trackpads. |
 | [REVIEW-001](tasks/REVIEW-001-production-review.md) | awaiting_verification | Unassigned | Verify holds/quit, gesture disconnect, glide and companion changes; implement/check the exact battery row. |
 | [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | awaiting_verification | Unassigned | Verify named USB models, Bluetooth access/BAS, reconnect and Logitech regression; Sketch reconciliation saved. |
 | [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) | awaiting_verification | Unassigned | Check Rename/save/cancel/reset, battery menu and G915 after relaunch/reconnect, keyboard and VoiceOver. |

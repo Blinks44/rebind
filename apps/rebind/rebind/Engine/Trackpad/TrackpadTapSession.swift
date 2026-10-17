@@ -89,8 +89,10 @@ nonisolated struct TrackpadTapSession: Sendable {
             return gate.takeCancellation().map { .gate($0) }
         }
         let continuity = recognizer.continuity
-        let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts,
-                                           allowIdleFrameGaps: qualifiedGesture == nil && sequence?.hasPending != true)
+        // The device stops sending frames shortly after every finger lifts, so the
+        // second tap of a pair always starts after skipped frame IDs. A gap after an
+        // observed release is idle silence; the pair deadline still bounds it.
+        let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts)
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0) }
         if let candidate, let origin = recognizer.origin,
            let admissible = runtime.admissibleGesture(fingers: candidate.fingers, x: origin.x, y: origin.y),

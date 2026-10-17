@@ -72,6 +72,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     @ObservationIgnored private var batterySessions: [String: BatterySession] = [:]
     @ObservationIgnored private var peripheralBatteries: [String: DeviceBattery] = [:]
     @ObservationIgnored private var rebuildScheduled = false
+    /// Tells when macOS adds or removes a battery reading of its own (Magic devices).
+    @ObservationIgnored private var systemBatteryNotifications: IONotificationPortRef?
+    @ObservationIgnored private var systemBatteryIterators: [io_iterator_t] = []
     /// The stored settings, written to a mouse of the same model whenever it connects.
     @ObservationIgnored var storedSettings: () -> [MouseHardwareSettings] = { [] }
     /// Whether Rebind may write to mice of a vendor now (no companion app controls them).
@@ -147,6 +150,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = manager
+        observeSystemBatteries()
         bluetoothBattery.changed = { [weak self] in self?.publishBatteries() }
         bluetoothBattery.startIfAuthorized()
         // Charges change slowly; a few reads every five minutes are enough for the Menu Bar.
@@ -164,6 +168,10 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         batteryTimer = nil
         sessions.values.forEach { $0.writeAccess.update(standard: false, gaming: false) }
         releaseGestureButtons()
+        systemBatteryIterators.forEach { IOObjectRelease($0) }
+        systemBatteryIterators = []
+        if let systemBatteryNotifications { IONotificationPortDestroy(systemBatteryNotifications) }
+        systemBatteryNotifications = nil
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = nil
@@ -234,7 +242,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     private func removed(_ device: IOHIDDevice) {
-        let location = Self.location(of: device)
+        // A device that is going away may no longer report the properties its location
+        // was derived from; find it where it was filed when it arrived.
+        guard let location = devices.first(where: { $0.value.contains(device) })?.key else { return }
         devices[location]?.removeAll { $0 == device }
         if devices[location]?.isEmpty == true {
             devices[location] = nil
@@ -514,6 +524,32 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             let matched = DeviceBattery(id: input.id, name: input.name, kind: input.kind, percentage: battery.percentage,
                                     isCharging: battery.isCharging, vendorID: input.vendorID)
             return matched
+        }
+    }
+
+    /// The service holding macOS's own reading appears and goes away with the device,
+    /// independently of its HID interfaces; republish whenever it does.
+    private func observeSystemBatteries() {
+        guard let port = IONotificationPortCreate(kIOMainPortDefault) else { return }
+        IONotificationPortSetDispatchQueue(port, .main)
+        systemBatteryNotifications = port
+        let context = Unmanaged.passUnretained(self).toOpaque()
+        let callback: IOServiceMatchingCallback = { context, iterator in
+            // Draining the iterator re-arms the notification.
+            while case let service = IOIteratorNext(iterator), service != 0 { IOObjectRelease(service) }
+            guard let context else { return }
+            MainActor.assumeIsolated {
+                let hardware = Unmanaged<MouseHardware>.fromOpaque(context).takeUnretainedValue()
+                hardware.bluetoothBattery.refresh()
+                hardware.publishBatteries()
+            }
+        }
+        for type in [kIOFirstMatchNotification, kIOTerminatedNotification] {
+            var iterator: io_iterator_t = 0
+            guard IOServiceAddMatchingNotification(port, type, IOServiceMatching("AppleDeviceManagementHIDEventService"),
+                                                   callback, context, &iterator) == KERN_SUCCESS else { continue }
+            while case let service = IOIteratorNext(iterator), service != 0 { IOObjectRelease(service) }
+            systemBatteryIterators.append(iterator)
         }
     }
 

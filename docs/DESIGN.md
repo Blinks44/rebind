@@ -10,11 +10,11 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
-Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-16**, SHA-256 `fdd823443e23b7ffc8be91c6c528e27172bdbdc017c150d7b265c68adbbad30f`; IDs change after saving/reopening, so resolve them live. [Production review](tasks/REVIEW-001-production-review.md) and [UI-022](tasks/UI-022-soft-design-system.md) record scope and limits.
+Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-16**, SHA-256 `1a649a9fba1681f8b5a3b44050aa96e07e1b7010238f5c1bd84fd0ab588c5246`; IDs change after saving/reopening, so resolve them live. [Production review](tasks/REVIEW-001-production-review.md) and [UI-022](tasks/UI-022-soft-design-system.md) record scope and limits.
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 52 numbered pairs: Light left, Dark right; one vertical walkthrough, built from shared components/styles |
+| 01 · Screens | 53 numbered pairs: Light left, Dark right; one vertical walkthrough, built from shared components/styles |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template |
@@ -26,7 +26,7 @@ The code mirrors the variables in `apps/rebind/rebind/UI/DesignSystem/Theme.swif
 
 Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles reference those variables. Sketch has no variable modes, so each component exists once per theme. Reuse these sources; do not draw raw layers or hex colors on screens.
 
-The sequence runs from first-run setup through category lists, editors, profiles, Settings and diagnostics to About/licenses and the battery menu. Current Devices coverage includes generic keyboards/trackpads, unavailable charge, charging, local names and Rename, companion-app restrictions, per-mouse scrolling and optional Bluetooth allow/denied/restricted states. General includes Battery in menu; Language distinguishes a draft awaiting Apply from the saved choice awaiting reopen. Menu specimens use exported SF battery symbols and show a charging/local-name variant. Old global smoothing and duplicate Input specimens are archived. Current code/design default distance is 50 pt, the subsequent INPUT-011 user choice.
+The sequence runs from first-run setup through category lists, editors, profiles, Settings and diagnostics to About/licenses and the battery menu. Current Devices coverage includes generic keyboards/trackpads, unavailable charge, charging, local names and Rename, companion-app restrictions, per-mouse scrolling and optional Bluetooth allow/denied/restricted states. General includes Battery in menu; Language distinguishes a draft awaiting Apply from the saved choice awaiting reopen. Menu specimens use exported SF battery symbols and show a charging/local-name variant and a Pointer speed (DPI) slider section ([DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md)). Old global smoothing and duplicate Input specimens are archived. Current code/design default distance is 50 pt, the subsequent INPUT-011 user choice.
 
 Magic Mouse editors remain undrawn until the hardware probe establishes feasible presets (see [PLAN](PLAN.md)); compact-width/accessibility variants are verified in the app. Saved designs do not close hardware or native menu rendering acceptance.
 

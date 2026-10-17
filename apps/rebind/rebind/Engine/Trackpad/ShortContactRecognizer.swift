@@ -61,8 +61,7 @@ nonisolated struct ShortContactRecognizer: Sendable {
         needsNeutral = !isNeutral
     }
 
-    mutating func consume(frame: Int32, time: Double, contacts: [Contact],
-                          allowIdleFrameGaps: Bool = true) -> Candidate? {
+    mutating func consume(frame: Int32, time: Double, contacts: [Contact]) -> Candidate? {
         rejection = nil
         origin = nil
         guard time.isFinite, time >= 0, contacts.count <= 16,
@@ -76,10 +75,10 @@ nonisolated struct ShortContactRecognizer: Sendable {
             return nil
         }
         if let previousFrame, let previousTime {
-            // A forward gap after known release must not discard every new tap.
-            // Never bridge missing samples inside a stroke or a pending action;
+            // A forward gap after known release is idle silence, including between
+            // the taps of a pair. Never bridge missing samples inside a stroke;
             // backwards/repeated native IDs and nonmonotonic time still cancel.
-            let idleGap = allowIdleFrameGaps && stroke == nil && !needsNeutral
+            let idleGap = stroke == nil && !needsNeutral
                 && Int64(frame) > Int64(previousFrame) + 1
             if (Int64(frame) != Int64(previousFrame) + 1 && !idleGap)
                 || time <= previousTime || (stroke != nil && time - previousTime > 0.05) {

@@ -441,7 +441,7 @@ struct TrackpadIntegrationTests {
         case 4:
             var next = frame(4, count: 0, at: lift + 20_000_000); next.valid = false
             session.consume(next, at: lift + 20_000_000)
-        case 5: session.consume(frame(7, count: 0, at: lift + 20_000_000), at: lift + 20_000_000)
+        case 5: session.consume(frame(3, count: 0, at: lift + 20_000_000), at: lift + 20_000_000)
         case 6:
             var next = runtime; next.revision = 2
             session.update(runtime: next, foreground: 100)
@@ -449,6 +449,15 @@ struct TrackpadIntegrationTests {
         }
         let ready = session.takeReady(at: lift + 60_000_000)
         #expect(!ready)
+    }
+
+    /// The device goes silent after the release; the next empty frame skips IDs.
+    @Test func idleFrameGapAfterReleaseKeepsWaitingAction() {
+        var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
+        completed(&session, at: lift)
+        session.consume(frame(7, count: 0, at: lift + 20_000_000), at: lift + 20_000_000)
+        let ready = session.takeReady(at: lift + 60_000_000)
+        #expect(ready)
     }
 
     @Test func unknownReleaseThreeFingersAndLatePollNeverDispatch() {

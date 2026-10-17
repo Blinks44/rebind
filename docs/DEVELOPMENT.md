@@ -114,7 +114,7 @@ Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue
 
 The app target uses the vendored local MIT package `apps/rebind/Packages/HIDPP` for Logitech HID++. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
-The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices.
+The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices. `apps/rebind/tools/trackpad-click-probe.swift` prints trackpad button and pressure events beside the contact state, to tell physical presses from clicks macOS makes itself.
 
 ## Releasing without notarization
 

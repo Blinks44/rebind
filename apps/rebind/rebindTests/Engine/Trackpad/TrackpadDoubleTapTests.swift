@@ -238,21 +238,48 @@ struct TrackpadDoubleTapTests {
         #expect(h.ready(at: lift + 610_000_000) == nil)
     }
 
-    @Test(arguments: TrackpadSingleTap.allCases, 0...4)
+    @Test(arguments: TrackpadSingleTap.allCases, 0...3)
     func discontinuityWhileWaitingCancelsOldSingle(_ tap: TrackpadSingleTap, _ defect: Int) throws {
         var h = try Harness()
         h.tap(tap, endingAt: lift)
         #expect(h.ready(at: lift + 60_000_000) == nil)
-        var value = h.frame(fingers: 0, at: lift + 200_000_000, gap: defect == 4)
+        var value = h.frame(fingers: 0, at: lift + 200_000_000)
         switch defect {
         case 0: value.valid = false
         case 1: value.revision &+= 1
         case 2: value.receipt = lift + 400_000_000
-        case 3: value.receipt = lift + 99_999_999
-        default: break
+        default: value.receipt = lift + 99_999_999
         }
         h.session.consume(value, at: lift + 200_000_000)
         #expect(h.ready(at: lift + 500_000_000) == nil)
+    }
+
+    // The device goes silent after a release, so the next frame ID jumps. That
+    // silence must neither break a pair nor cancel the pending single.
+    @Test(arguments: TrackpadSingleTap.allCases, [false, true])
+    func idleSilenceBetweenTapsKeepsPairAndPendingSingle(_ tap: TrackpadSingleTap, _ secondTap: Bool) throws {
+        var h = try Harness()
+        h.tap(tap, endingAt: lift)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        h.nextID += 25
+        if secondTap {
+            h.tap(tap, endingAt: lift + 250_000_000)
+            #expect(h.ready(at: lift + 310_000_000) == .double(tap))
+        } else {
+            h.consume(fingers: 0, at: lift + 200_000_000)
+            #expect(h.ready(at: lift + 500_000_000) == .single(tap))
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func idleSilenceBetweenTwoFingerTapsKeepsPair(_ slow: Bool) throws {
+        var h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
+        h.tapTwoFinger(endingAt: lift)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        h.nextID += 40
+        let end = lift + (slow ? 400_000_000 : 200_000_000)
+        h.tapTwoFinger(endingAt: end)
+        #expect(h.ready(at: end + 60_000_000) == .twoFingerDouble)
     }
 
     @Test(arguments: TrackpadSingleTap.allCases)

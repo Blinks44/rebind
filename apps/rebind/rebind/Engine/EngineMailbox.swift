@@ -530,9 +530,15 @@ nonisolated final class EngineMailbox: Sendable {
         guard !event.isSynthetic, !event.trigger.isTrackpad else { return false }
         return state.withLock {
             // Trackpad click rules and configured corner taps replace the click itself.
-            if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput,
-               $0.consumesTrackpadClick(button: button, event: event) { return true }
-            return Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput)
+            var tapClick = false
+            if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput {
+                switch $0.resolveTrackpadClick(button: button, event: event) {
+                case .pass: break
+                case .tapClick: tapClick = true
+                case .consume, .run: return true
+                }
+            }
+            return Self.handleAndDiagnose(event, state: &$0, secureInput: secureInput, isTapClick: tapClick)
         }
     }
 
@@ -550,10 +556,12 @@ nonisolated final class EngineMailbox: Sendable {
         }
     }
 
-    private static func handleAndDiagnose(_ event: InputEvent, state: inout State, secureInput: Bool) -> Bool {
-        // Any real key/button/wheel activity invalidates a delayed touch action.
+    private static func handleAndDiagnose(_ event: InputEvent, state: inout State, secureInput: Bool,
+                                          isTapClick: Bool = false) -> Bool {
+        // Any real key/button/wheel activity invalidates a delayed touch action; a
+        // click macOS made from a tap is part of that tap, not new activity.
         // No key code/text is retained by the touch recognizer.
-        if event.phase != .drag { state.inputActivity &+= 1; state.trackpadDispatch = nil }
+        if event.phase != .drag, !isTapClick { state.inputActivity &+= 1; state.trackpadDispatch = nil }
         let queuedCount = state.pending.count + state.held.count
         let suppressed = handle(event, state: &state, secureInput: secureInput)
         // A wheel event passed on is reversed or sped up by the tap right after this.

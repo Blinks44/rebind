@@ -23,6 +23,8 @@ import Foundation
         let start: @convention(c) (UnsafeMutableRawPointer, Int32) -> Int32
         let stop: @convention(c) (UnsafeMutableRawPointer) -> Int32
         let register: @convention(c) (UnsafeMutableRawPointer, Callback?, UnsafeMutableRawPointer?) -> Bool
+        /// Optional: without it, no surface is treated as reporting finger force.
+        let supportsForce: (@convention(c) (UnsafeMutableRawPointer) -> Bool)?
 
         init?() {
             // New major OS releases require another private-ABI audit. This is a
@@ -45,6 +47,7 @@ import Foundation
             self.createDefault = createDefault; self.createList = createList; self.release = release
             self.isBuiltIn = isBuiltIn; self.deviceID = deviceID; self.dimensions = dimensions
             self.start = start; self.stop = stop; self.register = register
+            supportsForce = symbol("MTDeviceSupportsForce") as (@convention(c) (UnsafeMutableRawPointer) -> Bool)?
         }
     }
 
@@ -104,7 +107,9 @@ import Foundation
     }
 
     private init(mailbox: EngineMailbox, kind: Kind, device: UnsafeMutableRawPointer?, identifier: UInt64) {
-        buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicTrackpad: kind == .magicTrackpad)
+        // A Magic Trackpad reports no finger force through this framework (probe, 2026-10-16).
+        let reportsForce = device.map { Self.framework?.supportsForce?($0) == true } ?? false
+        buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicTrackpad: kind == .magicTrackpad, reportsForce: reportsForce)
         self.device = device
         self.identifier = identifier
         guard let device, let framework = Self.framework else { return }

@@ -38,7 +38,7 @@ struct MagicTrackpadTests {
         frame.first = .init(id: 0, x: 0.3, y: 0.5, pressure: 100)
         frame.second = .init(id: 1, x: 0.4, y: 0.5, pressure: 100)
         frame.third = .init(id: 2, x: 0.5, y: 0.5, pressure: 100)
-        mailbox.state.withLock { $0.magicTrackpadClicks.observe(frame) }
+        mailbox.state.withLock { $0.magicTrackpadClicks.observe(frame, reportsForce: true) }
         let down = InputEvent(trigger: .mouseButton(0), phase: .down, receivedAt: 4_005_000_000)
         #expect(mailbox.handle(down, secureInput: false))
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(0), phase: .up, receivedAt: 4_020_000_000), secureInput: false))

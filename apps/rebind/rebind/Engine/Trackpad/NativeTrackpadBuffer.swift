@@ -100,9 +100,12 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
     let mailbox: EngineMailbox
     /// Frames of an external Magic Trackpad feed its own click filter.
     let isMagicTrackpad: Bool
-    init(mailbox: EngineMailbox, isMagicTrackpad: Bool = false) {
+    /// Whether contact pressure carries finger force (Force Touch surfaces).
+    let reportsForce: Bool
+    init(mailbox: EngineMailbox, isMagicTrackpad: Bool = false, reportsForce: Bool = false) {
         self.mailbox = mailbox
         self.isMagicTrackpad = isMagicTrackpad
+        self.reportsForce = reportsForce
     }
 
     func receive(_ data: UnsafeRawPointer?, count: Int32,
@@ -117,8 +120,11 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
-        let magic = isMagicTrackpad
-        mailbox.state.withLock { magic ? $0.magicTrackpadClicks.observe(frame) : $0.trackpadClicks.observe(frame) }
+        let magic = isMagicTrackpad, force = reportsForce
+        mailbox.state.withLock {
+            magic ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
+                : $0.trackpadClicks.observe(frame, reportsForce: force)
+        }
         state.withLock { $0.append(frame, generation: generation) }
     }
 

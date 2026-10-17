@@ -81,6 +81,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
                 menu.addItem(row)
             }
         }
+        let speeds = pointerSpeedItems(language: language)
+        if !speeds.isEmpty {
+            menu.addItem(.separator())
+            menu.addItem(.sectionHeader(title: text(.devicesPointerSpeed)))
+            speeds.forEach(menu.addItem)
+        }
         menu.addItem(.separator())
         let quit = NSMenuItem(title: text(.quitRebind), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quit.target = NSApp
@@ -111,6 +117,31 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             let state = AppLocalization.string(row.battery.isCharging ? .devicesBatteryCharging(row.battery.percentage)
                                                    : .devicesBattery(row.battery.percentage), language: language)
             item.setAccessibilityLabel("\(row.name), \(state)")
+            return item
+        }
+    }
+
+    /// A DPI slider for each connected mouse that reports a choice of DPI, saved and written as
+    /// Settings → Devices does. Disabled while a companion app owns the mouse's settings.
+    private func pointerSpeedItems(language: AppLanguage) -> [NSMenuItem] {
+        let configuration = model.configuration
+        return model.mouseHardware.mice.compactMap { mouse in
+            guard let dpi = mouse.hardware?.dpi, let values = mouse.hardware?.supportedDPI, values.count > 1 else { return nil }
+            let name = configuration.deviceName(for: mouse.deviceKey, original: mouse.name)
+            let companion = model.companionApps.controller(ofVendor: mouse.vendorID, gaming: mouse.hardware?.hasOnboardProfiles ?? false)
+            let title = AppLocalization.string(.devicesPointerSpeed, language: language)
+            let view = MenuPointerSpeedView(
+                name: name, dpi: dpi, values: values, enabled: !model.storageLocked && companion == nil,
+                accessibilityLabel: "\(name), \(title)",
+                valueText: { AppLocalization.string(.devicesDPIValue($0), language: language) },
+                commit: { [model] value in
+                    var settings = model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey }
+                        ?? MouseHardwareSettings(deviceKey: mouse.deviceKey)
+                    settings.dpi = value
+                    model.setMouseHardware(settings)
+                })
+            let item = NSMenuItem()
+            item.view = view
             return item
         }
     }
