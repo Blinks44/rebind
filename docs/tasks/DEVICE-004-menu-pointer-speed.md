@@ -1,6 +1,6 @@
 # DEVICE-004: Pointer speed in the Menu Bar menu
 
-- Updated: 2026-10-17
+- Updated: 2026-10-18
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation session released 2026-10-17
 - Requirements: SPEC §3.2 (mouse hardware settings, Menu Bar menu); user request 2026-10-16 to change mouse DPI from the Menu Bar menu
@@ -17,6 +17,7 @@
 ## Implementation
 
 - `MenuPointerSpeedView` (AppKit, in an `NSMenuItem.view`, like the system Sound menu): symbol, local name, monospaced-digit value and an `NSSlider` over list indices without tick marks. Drag updates the label and commits once on release; keyboard/scroll changes commit at once.
+- 2026-10-18, user report (blue once with a focus ring on the thumb, gray on every later opening): a menu window never becomes key, and AppKit then draws the fill gray and ignores `trackFillColor`; the one blue opening was the slider becoming first responder. Reproduced in a non-key panel. `AccentSliderCell` draws the system bar and overlays the filled part in the accent color while enabled (matches a key-window slider), and the slider refuses first responder, like other menu content. A disabled slider names the companion app ([DEVICE-005](DEVICE-005-companion-dpi-reconnect.md)). Keyboard adjustment inside the menu is not offered; VoiceOver adjusts it through accessibility.
 - `MenuBarController.pointerSpeedItems` adds the section after Battery and saves through `AppModel.setMouseHardware`, which writes the mouse on the existing HID++ queue. No storage, engine or HID changes.
 
 ## Verification

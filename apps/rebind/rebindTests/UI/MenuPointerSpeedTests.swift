@@ -12,7 +12,8 @@ import Testing
         #expect(view.shownValue == 1600)
         #expect(view.slider.accessibilityValueDescription() == "1600 DPI")
         #expect(view.slider.accessibilityLabel() == "MX Master 3S, Pointer speed")
-        #expect(view.slider.trackFillColor == .controlAccentColor)
+        #expect(view.slider.cell is AccentSliderCell)
+        #expect(view.slider.refusesFirstResponder)
     }
 
     @Test func aChangeOutsideADragCommitsOnceAndSnaps() {

@@ -35,14 +35,16 @@ final class MenuPointerSpeedView: NSView {
         valueLabel.textColor = .secondaryLabelColor
         valueLabel.alignment = .right
 
+        slider.cell = AccentSliderCell()
         // No tick marks: a tick per value would draw a solid comb for a 12,000 DPI sensor.
         slider.minValue = 0
         slider.maxValue = Double(values.count - 1)
         slider.doubleValue = Double(values.firstIndex(of: committed) ?? 0)
         slider.isContinuous = true
         slider.isEnabled = enabled
-        // A menu's window never becomes key, so the slider would draw its inactive gray fill.
-        if enabled { slider.trackFillColor = .controlAccentColor }
+        // A menu takes the pointer, not keyboard focus: without this the slider could become the
+        // window's first responder on opening and show a focus ring nobody asked for.
+        slider.refusesFirstResponder = true
         slider.target = self
         slider.action = #selector(sliderMoved)
         slider.setAccessibilityLabel(accessibilityLabel)
@@ -95,5 +97,19 @@ final class MenuPointerSpeedView: NSView {
         let text = valueText(value)
         valueLabel.stringValue = text
         slider.setAccessibilityValueDescription(text)
+    }
+}
+
+/// The system bar with its filled part in the accent color. A menu's window never becomes key, and
+/// there AppKit draws the fill gray and ignores `trackFillColor`; checked on macOS 27 against the
+/// slider of a key window, which this matches.
+final class AccentSliderCell: NSSliderCell {
+    override func drawBar(inside rect: NSRect, flipped: Bool) {
+        super.drawBar(inside: rect, flipped: flipped)
+        guard isEnabled else { return }
+        var filled = rect
+        filled.size.width = max(0, knobRect(flipped: flipped).midX - rect.minX)
+        NSColor.controlAccentColor.setFill()
+        NSBezierPath(roundedRect: filled, xRadius: rect.height / 2, yRadius: rect.height / 2).fill()
     }
 }
