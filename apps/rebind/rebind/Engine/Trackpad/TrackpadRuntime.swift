@@ -94,7 +94,7 @@ extension EngineMailbox {
 
     @discardableResult nonisolated func submitTrackpad(_ runtime: TrackpadRuntime, gesture: TrackpadTapGesture,
                                                      pid: Int32, at now: UInt64) -> Bool {
-        state.withLock {
+        let queued = state.withLock {
             if gesture.isDoubleTap {
                 guard (1...2_000_000_000).contains($0.matcher.doublePressIntervalNanoseconds),
                       runtime.doubleTapIntervalNanoseconds == $0.matcher.doublePressIntervalNanoseconds else { return false }
@@ -113,5 +113,7 @@ extension EngineMailbox {
             $0.trackpadDispatch = dispatch
             return true
         }
+        if queued { signalWork() }
+        return queued
     }
 }

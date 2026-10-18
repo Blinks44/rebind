@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 import Synchronization
 
 nonisolated enum EngineStatus: Sendable {
@@ -228,6 +229,23 @@ nonisolated final class EngineMailbox: Sendable {
             return nil
         }
 
+        /// When the action worker has something to do: now for queued work, a held output to press
+        /// or release, otherwise the next repeat of a held key; nil when nothing is due.
+        func nextWorkDeadline(at now: UInt64) -> UInt64? {
+            if held.contains(where: \.released) { return now }
+            guard canDispatch else { return nil }
+            if (!pending.isEmpty || trackpadDispatch != nil) && workspaceRequest == nil { return now }
+            var deadline: UInt64?
+            for output in held {
+                guard let pressedAt = output.pressedAt else { return now }
+                // A modifier is down once; only keys and step actions repeat.
+                guard !output.action.requiresHeldOutput else { continue }
+                let due = output.lastRepeatAt.map { $0 &+ keyRepeat.intervalNanoseconds } ?? pressedAt &+ keyRepeat.delayNanoseconds
+                deadline = min(deadline ?? due, due)
+            }
+            return deadline
+        }
+
         func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
             actionRevision == dispatch.revision && canDispatch
                 && audioCapabilities.supports(dispatch.action)
@@ -257,6 +275,31 @@ nonisolated final class EngineMailbox: Sendable {
 
     let state = Mutex(State())
     private let heldKeyDelivery = Mutex(())
+    /// Wakes the action worker when work may have arrived; it sleeps otherwise.
+    private let work = DispatchSemaphore(value: 0)
+
+    /// The input tap thread's run loop, stopped early when it must reconsider its tap.
+    /// `@unchecked Sendable`: only `CFRunLoopStop`, which is thread-safe, is called from other threads.
+    private struct TapRunLoop: @unchecked Sendable { let loop: CFRunLoop }
+    private let tapRunLoop = Mutex<TapRunLoop?>(nil)
+
+    func setTapRunLoop(_ runLoop: CFRunLoop) { tapRunLoop.withLock { $0 = TapRunLoop(loop: runLoop) } }
+
+    /// Makes the tap thread install, remove or retime its tap now instead of on its next slice.
+    func wakeTap() { if let reference = tapRunLoop.withLock({ $0 }) { CFRunLoopStop(reference.loop) } }
+
+    /// Tells the action worker to look for work. Cheap enough for the tap callback: no
+    /// allocation, and a system call only when the worker is waiting.
+    func signalWork() { work.signal() }
+
+    /// The action worker's wait: until signalled, until the next held-key deadline, or at most
+    /// `idle` (it still rechecks audio output, Secure Input and permissions while idle).
+    func waitForWork(idle: UInt64 = 1_000_000_000) {
+        let now = DispatchTime.now().uptimeNanoseconds
+        let deadline = state.withLock { $0.nextWorkDeadline(at: now) } ?? now &+ idle
+        guard deadline > now else { return }
+        _ = work.wait(timeout: DispatchTime(uptimeNanoseconds: min(deadline, now &+ idle)))
+    }
 
     /// Explicit UI recovery only; no automatic retry or enable-state mutation.
     func retryCapture() {
@@ -265,6 +308,7 @@ nonisolated final class EngineMailbox: Sendable {
                   $0.status == .tapFailed || $0.status == .interrupted || $0.status == .outputFailed else { return }
             $0.retryID &+= 1
         }
+        wakeTap()
     }
 
     func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000,
@@ -304,6 +348,8 @@ nonisolated final class EngineMailbox: Sendable {
                                         reversesHorizontally: configuration.reversesHorizontalScrolling)
             $0.wheel = wheel.changesNothing ? nil : wheel
         }
+        signalWork()
+        wakeTap()
     }
 
     /// The app now in front. Entering or leaving an excluded app, or an app with rules of its
@@ -322,6 +368,8 @@ nonisolated final class EngineMailbox: Sendable {
             guard state.isMatching != wasMatching || rulesChanged else { return }
             state.cancelQueuedWork()
         }
+        signalWork()
+        wakeTap()
     }
 
     func updateWindowDisplays(_ snapshot: WindowDisplaySnapshot) {
@@ -336,6 +384,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.selectRules()
             $0.cancelQueuedWork()
         }
+        signalWork()
     }
 
     func nextAction() -> ActionDispatch? {
@@ -370,10 +419,20 @@ nonisolated final class EngineMailbox: Sendable {
     func setPointerApplication(_ bundleIdentifier: String?) {
         state.withLock {
             guard $0.pointerBundleID != bundleIdentifier else { return }
+            let exclusions = $0.smoothScrollingExclusions, foreground = $0.foregroundBundleID
+            func excluded(_ pointer: String?) -> Bool { (pointer ?? foreground).map(exclusions.contains) ?? false }
+            let changesDecision = excluded($0.pointerBundleID) != excluded(bundleIdentifier)
             $0.pointerBundleID = bundleIdentifier
-            $0.smoothScrollingRevision &+= 1
+            // A glide stops only when this changes whether it may glide, never on the first
+            // answer that merely confirms the app in front.
+            if changesDecision { $0.smoothScrollingRevision &+= 1 }
         }
     }
+
+    /// Receives each wheel click that may glide, from the tap (the pointer-app tracker).
+    private let scrollObserver = Mutex<(@Sendable () -> Void)?>(nil)
+    func setScrollObserver(_ observer: (@Sendable () -> Void)?) { scrollObserver.withLock { $0 = observer } }
+    func noteScroll() { scrollObserver.withLock { $0 }?() }
 
     /// Smooth scrolling for a wheel event from this sender, or nil when it is off here.
     func smoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {
@@ -422,6 +481,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.diagnostics.stop(clear: true)
             $0.cancelQueuedWork()
         }
+        signalWork()
     }
 
     func submitWorkspace(_ request: WorkspaceRequest) {
@@ -449,6 +509,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.workspaceRequest = nil
             $0.workspaceClaimed = false
         }
+        signalWork()
     }
 
     func actionFailed(_ dispatch: ActionDispatch) {
@@ -476,6 +537,7 @@ nonisolated final class EngineMailbox: Sendable {
             case .previousProfile: $0.profileStep -= 1
             }
         }
+        signalWork()
     }
 
     func record(_ request: RecordingRequest?) {
@@ -485,6 +547,8 @@ nonisolated final class EngineMailbox: Sendable {
             $0.recorded = nil
             $0.cancelQueuedWork()
         }
+        signalWork()
+        wakeTap()
     }
 
     func setEditing(_ editing: Bool) {
@@ -492,6 +556,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.editing = editing
             $0.cancelQueuedWork()
         }
+        signalWork()
     }
 
     func suspend(_ suspended: Bool) {
@@ -500,6 +565,8 @@ nonisolated final class EngineMailbox: Sendable {
             $0.suspended = suspended
             $0.resetCapture(status: .paused)
         }
+        signalWork()
+        wakeTap()
     }
 
     func captureLost(status: EngineStatus, pause: Bool = false) {
@@ -507,6 +574,7 @@ nonisolated final class EngineMailbox: Sendable {
             $0.resetCapture(status: status)
             if pause { $0.pause() }
         }
+        signalWork()
     }
 
     func stop() {
@@ -514,6 +582,8 @@ nonisolated final class EngineMailbox: Sendable {
             $0.stopped = true
             $0.resetCapture(status: .paused)
         }
+        signalWork()
+        wakeTap()
     }
 
     /// A press or release of a button that reaches Rebind outside the event tap (the diverted
@@ -528,6 +598,7 @@ nonisolated final class EngineMailbox: Sendable {
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
         guard !event.isSynthetic, !event.trigger.isTrackpad else { return false }
+        defer { signalIfWorkWaiting() }
         return state.withLock {
             // Trackpad click rules and configured corner taps replace the click itself.
             var tapClick = false
@@ -544,7 +615,8 @@ nonisolated final class EngineMailbox: Sendable {
 
     func handlePointerMotion(_ motion: PointerMotion, modifiers: ModifierSet, receivedAt: UInt64,
                              secureInput: Bool) -> Bool {
-        state.withLock { state in
+        defer { signalIfWorkWaiting() }
+        return state.withLock { state in
             guard !state.stopped, !state.suspended, !secureInput else {
                 state.resetCapture(status: secureInput ? .secureInput : .paused)
                 return false
@@ -572,12 +644,14 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     @discardableResult func startDiagnostics(at now: UInt64) -> Bool {
-        state.withLock {
+        let started = state.withLock {
             guard !$0.stopped, !$0.suspended else { return false }
             $0.diagnostics.start(at: now)
             $0.retryID &+= 1
             return true
         }
+        wakeTap()
+        return started
     }
 
     func stopDiagnostics(clear: Bool = false) { state.withLock { $0.diagnostics.stop(clear: clear) } }
@@ -657,6 +731,7 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     func pollHold(at now: UInt64, secureInput: Bool) {
+        defer { signalIfWorkWaiting() }
         state.withLock { state in
             guard !state.stopped, !state.suspended, !secureInput else {
                 state.resetCapture(status: secureInput ? .secureInput : .paused)
@@ -679,4 +754,16 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     func cancelHold() { state.withLock { $0.matcher.cancelHold() } }
+
+    /// Wakes the worker only when there is something queued or held, and the tap thread only
+    /// while a hold is timed, so unmatched input wakes neither.
+    private func signalIfWorkWaiting() {
+        let (work, timing) = state.withLock {
+            (!$0.pending.isEmpty || !$0.held.isEmpty, $0.matcher.holdKey != nil || $0.matcher.pointerGestureSource != nil)
+        }
+        if work { signalWork() }
+        // A hold that began off the tap (the gesture button) must be timed without waiting
+        // for the tap thread's idle slice.
+        if timing { wakeTap() }
+    }
 }

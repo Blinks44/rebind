@@ -79,6 +79,11 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         var head = 0
         var count = 0
         var overflow = false
+        /// When the last frame arrived; the consumer slows down once the surface has been quiet.
+        var lastReceipt: UInt64 = 0
+        /// The consumer polls slowly; the next frame calls `wake` once.
+        var sleeping = false
+        var wake: (@Sendable () -> Void)?
         mutating func clear() {
             generation &+= 1
             for index in frames.indices { frames[index] = nil }
@@ -110,8 +115,15 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
 
     func receive(_ data: UnsafeRawPointer?, count: Int32,
                  callbackFrame: Int32? = nil, callbackTime: Double? = nil) {
-        guard let generation = state.withLock({ $0.accepting ? $0.generation : nil }) else { return }
         let receipt = DispatchTime.now().uptimeNanoseconds
+        guard let (generation, wake) = state.withLock({ state -> (UInt64, (@Sendable () -> Void)?)? in
+            guard state.accepting else { return nil }
+            state.lastReceipt = receipt
+            defer { state.sleeping = false }
+            return (state.generation, state.sleeping ? state.wake : nil)
+        }) else { return }
+        // Only the first frame after a quiet period; it schedules a poll, nothing more.
+        wake?()
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
             guard state.canDispatch else { return nil }
             return (state.actionRevision, state.inputActivity)
@@ -129,6 +141,17 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
     }
 
     func setAccepting(_ accepting: Bool) { state.withLock { $0.clear(); $0.accepting = accepting } }
+    func setWake(_ wake: @escaping @Sendable () -> Void) { state.withLock { $0.wake = wake } }
+
+    /// Marks the buffer sleeping when nothing is waiting and no frame arrived since `cutoff`;
+    /// the next frame then calls the wake handler.
+    func sleepIfQuiet(since cutoff: UInt64) -> Bool {
+        state.withLock {
+            guard $0.accepting, $0.count == 0, !$0.overflow, $0.lastReceipt < cutoff else { return false }
+            $0.sleeping = true
+            return true
+        }
+    }
     func takeOverflow() -> Bool { state.withLock { let result = $0.overflow; $0.overflow = false; return result } }
     func pop() -> NativeTrackpadFrame? {
         state.withLock {

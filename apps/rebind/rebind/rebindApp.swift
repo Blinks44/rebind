@@ -51,6 +51,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     }
     let model: AppModel
     private var menuBar: MenuBarController?
+    private var terminationSignal: DispatchSourceSignal?
 
     override init() {
         let runningTests = Self.runningTests
@@ -68,6 +69,14 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !Self.runningTests else { return }
+        // `kill`, `launchctl` and installers end a process with SIGTERM, which skips
+        // applicationWillTerminate: held keys would stay down and the gesture button diverted.
+        // Quit normally instead, as for ⌘Q.
+        signal(SIGTERM, SIG_IGN)
+        let terminationSignal = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+        terminationSignal.setEventHandler { NSApp.terminate(nil) }
+        terminationSignal.resume()
+        self.terminationSignal = terminationSignal
         let center = NotificationCenter.default
         center.addObserver(self, selector: #selector(windowDidOpen), name: NSWindow.didBecomeMainNotification, object: nil)
         center.addObserver(self, selector: #selector(windowWillClose), name: NSWindow.willCloseNotification, object: nil)

@@ -31,7 +31,11 @@ import Carbon
     @ObservationIgnored private let languagePreferenceSaved: (AppLanguagePreference) -> Void
 
     @ObservationIgnored let mailbox = EngineMailbox()
-    @ObservationIgnored private lazy var pointerApplication = PointerApplicationTracker(mailbox: mailbox)
+    @ObservationIgnored private lazy var pointerApplication: PointerApplicationTracker = {
+        let tracker = PointerApplicationTracker(mailbox: mailbox)
+        mailbox.setScrollObserver { [tracker] in tracker.noteScroll() }
+        return tracker
+    }()
     @ObservationIgnored private let store: ConfigurationStore
     private(set) var trackpadStatus: TrackpadCaptureStatus = .idle
     @ObservationIgnored private var trackpadCapture: TrackpadCapture?
@@ -163,6 +167,7 @@ import Carbon
         trackpadCapture?.start()
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
+        timer?.tolerance = 0.05
         updatePointerTracking(configuration)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
@@ -208,7 +213,9 @@ import Carbon
     @objc func refresh() {
         if Date().timeIntervalSince(lastPermissionCheck) >= 0.5 {
             refreshSessionProtection()
-            permissions = readPermissions()
+            // Observation notifies on every assignment; unchanged values must not redraw the UI.
+            let current = readPermissions()
+            if permissions != current { permissions = current }
             refreshWindowDisplays()
             lastPermissionCheck = Date()
         }
@@ -226,11 +233,11 @@ import Carbon
             state.emergencyPause = false
             return result
         }
-        status = update.status
-        trackpadStatus = update.trackpadStatus
-        audioCapabilities = update.audioCapabilities
-        workspaceActionInProgress = update.workspaceActionInProgress
-        appleShortcutInProgress = update.appleShortcutInProgress
+        if status != update.status { status = update.status }
+        if trackpadStatus != update.trackpadStatus { trackpadStatus = update.trackpadStatus }
+        if audioCapabilities != update.audioCapabilities { audioCapabilities = update.audioCapabilities }
+        if workspaceActionInProgress != update.workspaceActionInProgress { workspaceActionInProgress = update.workspaceActionInProgress }
+        if appleShortcutInProgress != update.appleShortcutInProgress { appleShortcutInProgress = update.appleShortcutInProgress }
         refreshDiagnostics()
         if let captured = update.recorded, captured.request == recording {
             lastRecording = captured

@@ -88,7 +88,27 @@ import Dispatch
         if status == .idle {
             mailbox.recordTrackpadDiagnostic(.captureInactive)
             // Idle polling does not need the recognition cadence.
-            timer?.fireDate = Date().addingTimeInterval(0.1)
+            timer?.fireDate = Date().addingTimeInterval(0.5)
+        } else if surfacesAreQuiet(at: now) {
+            // No finger for longer than a double tap can wait: the next frame wakes the poll.
+            timer?.fireDate = Date().addingTimeInterval(0.25)
+        }
+    }
+
+    /// Whether every running surface has been without frames for its double-tap interval plus
+    /// half a second, so no tap or double tap can still be pending. Puts their buffers to sleep.
+    private func surfacesAreQuiet(at now: UInt64) -> Bool {
+        surfaces.allSatisfy { surface in
+            guard let device = surface.device, let session = surface.session else { return true }
+            let window = session.runtime.doubleTapIntervalNanoseconds &+ 500_000_000
+            return now > window && device.buffer.sleepIfQuiet(since: now - window)
+        }
+    }
+
+    /// Called from the touch callback (once per touch after a quiet period): poll now.
+    private nonisolated static func wakeHandler(for capture: TrackpadCapture) -> @Sendable () -> Void {
+        { [weak capture] in
+            DispatchQueue.main.async { MainActor.assumeIsolated { capture?.timer?.fireDate = Date() } }
         }
     }
 
@@ -104,11 +124,18 @@ import Dispatch
         if isMagic, surface.scannedAt.map({ now < $0 || now - $0 >= 2_000_000_000 }) ?? true {
             surface.scannedAt = now
             let found = NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicTrackpad)
-            if found !== surface.device { stop(&surface); surface.device = found }
+            if found !== surface.device {
+                stop(&surface)
+                surface.device = found
+                found?.buffer.setWake(Self.wakeHandler(for: self))
+            }
         }
         if surface.revision != runtime.revision {
             stop(&surface)
-            if !isMagic, surface.device == nil { surface.device = NativeTrackpadDevice.acquire(mailbox: mailbox) }
+            if !isMagic, surface.device == nil {
+                surface.device = NativeTrackpadDevice.acquire(mailbox: mailbox)
+                surface.device?.buffer.setWake(Self.wakeHandler(for: self))
+            }
             guard let device = surface.device, device.start() else {
                 mailbox.recordTrackpadDiagnostic(surface.device?.failed == true ? .captureFailed : .captureUnavailable)
                 // Latch this revision; a failing start is not retried every 10 ms.

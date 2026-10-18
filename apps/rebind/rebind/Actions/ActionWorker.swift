@@ -104,7 +104,8 @@ nonisolated final class ActionWorker {
             let worker = ActionWorker(mailbox: mailbox)
             while !mailbox.state.withLock({ $0.stopped }) {
                 autoreleasepool { worker.service(at: DispatchTime.now().uptimeNanoseconds) }
-                Thread.sleep(forTimeInterval: 0.02)
+                // Sleeps until the tap or the UI signals work, or a held key's next repeat is due.
+                mailbox.waitForWork()
             }
             // Stopping marks every held key released; post what is still owed.
             while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) { }

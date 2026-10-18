@@ -54,6 +54,7 @@ Review a UI-only component specimen first, then the actual editor/window in the 
 - Never assume a generic Quartz event can reliably identify which of two physical mice emitted it. Verify source attribution before enabling per-device behavior.
 - Do not intercept, store, display, or log typed text. Respect Secure Input / password contexts and limit debug diagnostics to safe event metadata.
 - Do not run UI updates, file writes, scripts, process launching, heavyweight gesture classification, or other blocking operations inside the synchronous tap callback.
+- Engine threads wait for events or the next real deadline; no fixed-interval polling while idle (a utility at rest should stay near 0 % CPU). A hold, repeat or touch sequence may use a short cadence only while it is in progress.
 - If a tap is disabled or permissions are revoked, fail safely: release synthetic held states, avoid trapping user input, and surface a useful status.
 - Work with **real** APIs and observed hardware behavior. Differentiate `implemented`, `verified on hardware`, `experimental`, `blocked`, and `not implemented`.
 

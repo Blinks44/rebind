@@ -35,17 +35,24 @@ nonisolated final class EventTapWorker {
     }
 
     private func run() {
+        // A port keeps the run loop waiting while no tap is installed.
+        RunLoop.current.add(NSMachPort(), forMode: .default)
+        mailbox.setTapRunLoop(CFRunLoopGetCurrent())
         defer { removeTap() }
         while !mailbox.state.withLock({ $0.stopped }) {
             autoreleasepool {
                 service()
-                if port != nil {
-                    CFRunLoopRunInMode(.defaultMode, 0.02, false)
-                } else {
-                    Thread.sleep(forTimeInterval: 0.05)
-                }
+                // Returns after each handled event, so a hold that just began is timed from here;
+                // the mailbox stops the loop early when rules, recording or pause change.
+                CFRunLoopRunInMode(.defaultMode, pollInterval(), true)
             }
         }
+    }
+
+    /// Short slices only while a hold or a pointer gesture is being timed; otherwise the thread
+    /// sleeps and still rechecks permissions and Secure Input twice a second.
+    private func pollInterval() -> CFTimeInterval {
+        mailbox.state.withLock { $0.matcher.holdKey != nil || $0.matcher.pointerGestureSource != nil } ? 0.01 : 0.5
     }
 
     private func service() {
@@ -186,6 +193,7 @@ nonisolated final class EventTapWorker {
             let passed = pass(event)
             // A click no binding took becomes a glide when its mouse has smooth scrolling on;
             // the original click is swallowed.
+            if SmoothScroller.applies(to: event) { mailbox.noteScroll() }
             if SmoothScroller.applies(to: event),
                let smooth = mailbox.smoothScrollDispatch(sender: AttachedHIDScroll.senderID(of: event)) {
                 scroller.feed(event, dispatch: smooth)
