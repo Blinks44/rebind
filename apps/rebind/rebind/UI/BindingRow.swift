@@ -73,6 +73,7 @@ struct BindingRow: View {
             switch binding.trigger {
             case .key(let code): Keycap(label: InputLabels.key(code))
             case .mouseButton: chip("computermouse")
+            case .magicMouseTap: chip("magicmouse")
             case .mouseGesture(_, let direction): chip("arrow.\(direction.rawValue)")
             case .scroll(let direction), .buttonScroll(_, let direction): chip("arrow.\(direction.rawValue)")
             default: chip("hand.tap")

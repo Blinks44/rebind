@@ -1,7 +1,5 @@
 import AppKit
-// The SDK imports the immutable AX prompt-option constant as a mutable global.
-// All AX permission UI calls below are confined to MainActor.
-@preconcurrency import ApplicationServices
+import ApplicationServices
 import Observation
 import Synchronization
 import Dispatch
@@ -39,6 +37,8 @@ import Carbon
     @ObservationIgnored private let store: ConfigurationStore
     private(set) var trackpadStatus: TrackpadCaptureStatus = .idle
     @ObservationIgnored private var trackpadCapture: TrackpadCapture?
+    @ObservationIgnored private var magicMouseCapture: MagicMouseCapture?
+    private(set) var magicMouseStatus: TrackpadCaptureStatus = .idle
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var workspaceTask: Task<Void, Never>?
     @ObservationIgnored private var lastPermissionCheck = Date.distantPast
@@ -165,6 +165,8 @@ import Carbon
         ActionWorker.start(mailbox: mailbox)
         trackpadCapture = TrackpadCapture(mailbox: mailbox)
         trackpadCapture?.start()
+        magicMouseCapture = MagicMouseCapture(mailbox: mailbox)
+        magicMouseCapture?.start()
         refresh()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         timer?.tolerance = 0.05
@@ -196,6 +198,8 @@ import Carbon
         mouseHardware.stop()
         trackpadCapture?.stop()
         trackpadCapture = nil
+        magicMouseCapture?.stop()
+        magicMouseCapture = nil
         pointerApplication.setRunning(false)
         workspaceTask?.cancel()
         workspaceTask = nil
@@ -221,7 +225,7 @@ import Carbon
         }
         // Copy the engine's state and clear its one-shot results in one short lock.
         let update = mailbox.state.withLock { state in
-            let result = (status: state.status, trackpadStatus: state.trackpadStatus,
+            let result = (status: state.status, trackpadStatus: state.trackpadStatus, magicMouseStatus: state.magicMouseStatus,
                           audioCapabilities: state.audioCapabilities,
                           workspaceActionInProgress: state.workspaceRequest != nil,
                           appleShortcutInProgress: state.appleShortcutInProgress,
@@ -233,8 +237,9 @@ import Carbon
             state.emergencyPause = false
             return result
         }
-        if status != update.status { status = update.status }
+        if status != update.status { status = update.status; magicMouseCapture?.configurationChanged() }
         if trackpadStatus != update.trackpadStatus { trackpadStatus = update.trackpadStatus }
+        if magicMouseStatus != update.magicMouseStatus { magicMouseStatus = update.magicMouseStatus }
         if audioCapabilities != update.audioCapabilities { audioCapabilities = update.audioCapabilities }
         if workspaceActionInProgress != update.workspaceActionInProgress { workspaceActionInProgress = update.workspaceActionInProgress }
         if appleShortcutInProgress != update.appleShortcutInProgress { appleShortcutInProgress = update.appleShortcutInProgress }
@@ -499,13 +504,13 @@ import Carbon
     func supportReport(information: AboutInformation = AboutInformation(),
                        system: String = ProcessInfo.processInfo.operatingSystemVersionString) -> String {
         let scopes: [(String, DeviceScope)] = [("keyboard", .allKeyboards), ("mouse", .allMice),
-                                               ("trackpad", .builtInTrackpad), ("magic trackpad", .magicTrackpad)]
+                                               ("trackpad", .builtInTrackpad), ("magic trackpad", .magicTrackpad), ("magic mouse", .magicMouse)]
         let rules = configuration.bindings
         var lines = [
             "Rebind \(information.version ?? "?") (\(information.build ?? "?"))",
             "macOS: \(system)",
             "Language: \(activeLanguage.rawValue) (preference: \(configuration.languagePreference.rawValue))",
-            "Bindings on: \(configuration.isEnabled); engine: \(status); trackpad: \(trackpadStatus)",
+            "Bindings on: \(configuration.isEnabled); engine: \(status); trackpad: \(trackpadStatus); magic mouse: \(magicMouseStatus)",
             "Accessibility: \(permissions.accessibility); event sending: \(permissions.posting); input monitoring: \(permissions.listening)",
             "Configuration: schema \(configuration.schemaVersion), locked: \(storageLocked)",
             "Profiles: \(configuration.profiles.count); bindings in all profiles: \(configuration.profiles.reduce(0) { $0 + $1.bindings.count })",
@@ -668,6 +673,7 @@ import Carbon
     }
 
     private func configureEngine(_ configuration: Configuration) {
+        magicMouseCapture?.configurationChanged()
         // Read AppKit's system preference on MainActor, never in the event callback.
         let interval = NSEvent.doubleClickInterval
         let nanoseconds: UInt64 = interval.isFinite && interval > 0 && interval <= 60
@@ -693,11 +699,9 @@ import Carbon
     }
 
     func requestAccessibility() {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
         refreshPermissions()
-        // macOS may not repeat a prompt after an earlier denial. Always provide
-        // a useful route to the actual setting when access is still missing.
+        // Open the pane directly; the asynchronous AX prompt would also show
+        // an alert offering to open the same settings.
         if !permissions.accessibility { openPrivacyPane("Privacy_Accessibility") }
     }
 

@@ -1,6 +1,6 @@
 # INPUT-002: Three-finger single tap engine and storage
 
-- Updated: 2026-10-12.
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged).
 - Stage: `awaiting_verification`; engine/data and UI-014 editor released, native/hardware acceptance open.
 - Owner: Unassigned; `/root` Swift implementation agent released engine/data ownership on 2026-10-11.
 - Ownership checked: `main` / `afb7411`, clean checkout at start. UI-013 remains owned by the separate Sketch design agent.
@@ -30,6 +30,10 @@ Typed per-preset routing, qualified native session handoff and schema 25 are imp
 
 Reviewed cancellation, one-slot/no-fallback output, profile/configuration invalidation, migration protection and four-finger regressions. Callback acquisition, worker sender, permissions, thresholds, editor layout and Sketch were preserved by this engine slice. No claim of physical three-finger verification; the subsequent editor/help reconciliation is recorded in UI-014. `git diff --check` passes.
 
+## Current manual evidence — recorded 2026-10-19
+
+Built-in three-finger single/double delivery is user-confirmed in checklist 3.1. Exact build/settings and timing were not supplied; Look Up may still conflict. External three/four-finger singles are separately confirmed after the October 19 correction in INPUT-014. Source and artifact limits: [October 18 manual checklist](../verification/manual-test-2026-10-18.md). No build/test rerun; retain `awaiting_verification` for remaining acceptance.
+
 ## Next handoff
 
-[UI-014](UI-014-trackpad-presets.md) subsequently integrated the four supported single/double preset identities and conflict guidance from released UI-013. Perform a user-led physical three/four tap comparison and native Look Up coexistence check on a named build. INPUT-001's existing confirmed subsets and open gates remain separate; full editor accessibility/material acceptance stays in UI-014.
+On the current corrected bundle, verify built-in regression, first tap after idle, measured accuracy/timing and Look Up coexistence through UI-014. Retain mixed-input/protected-context and editor accessibility gates.

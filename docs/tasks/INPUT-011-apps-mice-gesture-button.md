@@ -1,6 +1,6 @@
 # INPUT-011: Rules for one app, per-mouse smooth scrolling, Logitech gesture button, battery and wheel, settings backups
 
-- Updated: 2026-10-15
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged)
 - Stage: awaiting_verification
 - Owner: Unassigned; released 2026-10-15 by the implementation session
 - Ownership checked: 2026-10-15, uncommitted work on `main` after `4aff48c` (builds on [INPUT-010](INPUT-010-smooth-scrolling.md) and [DEVICE-001](DEVICE-001-mouse-devices.md)); released
@@ -44,8 +44,11 @@ Agent-observed on the user's Mac (read-only HID++ probes, no writes): G603 on Li
 
 ## Acceptance
 
+[October 18 checklist, received October 19](../verification/manual-test-2026-10-18.md): item 2.5 confirms responsive MX Master 2S gesture-button hold; 2.6 confirms background-window smooth-scrolling exclusion and preserved onset. Its introduction summarizes earlier per-app, gesture, battery and Bluetooth checks without variant/build details. Keep the detailed lifecycle/model matrix below open; no new build/test run.
+
 - [x] Code, strings in six languages, unit tests (778 Swift Testing + 15 layout; HIDPP package 29).
-- [ ] Hardware: gesture button press, hold and four directions on the MX Master 2S; diversion restored after the mouse sleeps/reconnects and given back after quit; battery value; high-resolution wheel on/off changes the wheel; smooth scrolling on one mouse and not on another at the same time; horizontal reverse with the tilt/thumb wheel.
+- [x] MX Master 2S gesture-button hold: checklist 2.5.
+- [ ] Remaining hardware: gesture button press and four directions on the MX Master 2S; diversion restored after the mouse sleeps/reconnects and given back after quit; battery value; high-resolution wheel on/off changes the wheel; smooth scrolling on one mouse and not on another at the same time; horizontal reverse with the tilt/thumb wheel.
 - [ ] Dock icon after closing the window (Show in Dock on and off); Quit from the Menu Bar is immediate; G603 DPI with and without G HUB; battery in the Menu Bar for the MX Master 2S, G915 TKL and Magic devices.
 - [ ] Rules for one app: a Chrome-only rule on Button 4 replaces the general rule in Chrome only; switching apps while holding a button.
 - [ ] Running-app review against the current saved Sketch frames.
@@ -56,4 +59,4 @@ The current live source includes per-mouse Devices controls, Input's two reverse
 
 ## Next handoff
 
-Runtime: complete the hardware checklist against the current saved design; then decide on Magic Mouse presets from its probe output. Design: add Magic Mouse editors once those presets are established.
+Runtime: complete gesture press/directions, reconnect/quit diversion and remaining multi-mouse/per-app/battery checks; retain the confirmed hold/background-exclusion subset. Magic Mouse now has an experimental one/two-finger app testing pool in INPUT-014. Design: add its missing populated/editor/recovery states to the current source.

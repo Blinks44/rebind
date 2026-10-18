@@ -1,6 +1,6 @@
 # INPUT-013: Trackpad taps, false clicks and stale devices after user review
 
-- Updated: 2026-10-18
+- Updated: 2026-10-19
 - Stage: awaiting_verification
 - Owner: Unassigned (code session released; hardware acceptance open)
 - Owned surfaces: `ShortContactRecognizer`, `TrackpadTapSession`, `TrackpadClickFilter`, `EngineMailbox.handle`, `MouseHardware` removal/battery publication, `tools/trackpad-click-probe.swift` and their tests.
@@ -47,14 +47,18 @@ Verification: new tests cover force 59 versus 129, a quick still press versus ma
 
 ## Open checks
 
-- [ ] User: on a fresh build, two/three/four-finger double taps and the three-finger single tap on both trackpads (Smart Zoom off for two fingers).
+- [October 18 checklist, received October 19](../verification/manual-test-2026-10-18.md), items 3.1–3.4: built-in three-finger single/double, two-finger double, physical three-finger click replacement and ordinary gestures are user-confirmed. Exact revision/settings and a separate resting-finger/dragging trial breakdown were not supplied. Look Up's checklist wording permits a visible conflict; native suppression is not established. The tested artifact is not identified, so these passes do not establish regression acceptance of the shared-adapter correction.
+
+- 2026-10-19 follow-up after shared-adapter correction: user confirms Magic Trackpad three/four-finger singles work. The three-finger ~500 ms delay disappeared after disabling the matching double rule, confirming the existing arbitration wait; see [INPUT-014](INPUT-014-magic-mouse-integration.md#magic-trackpad-discovery-regression--2026-10-19). Double/reconnect and measured timing acceptance remain open.
+
+- [ ] On the corrected current bundle: built-in regression and Magic Trackpad double taps, plus four-finger double delivery on both surfaces. Earlier built-in two/three-finger passes and later external singles are recorded separately above.
 - [x] User ran the probe on both trackpads (2026-10-16); discriminator implemented.
 - [ ] User: with three/four-finger click rules, resting fingers no longer trigger them, and quick presses still do, on both trackpads.
 - [ ] User: disconnect a Magic Trackpad/Mouse (batteries out) and confirm it leaves Devices and the battery menu within seconds.
 
 ## Next handoff
 
-User: on the fresh Debug build, first check three-finger taps with only the single enabled (no stray primary click and no double-pair wait), then with the double enabled (one action per pair); check normal clicks/dragging and the profile popup. Retain the other open hardware checks above. Code agent: if taps still fail, use the existing aggregate `--diagnose-trackpad` reasons and the named surface/settings to distinguish button-held/cancellation from raw-contact rejection; do not relax physical-click or continuity guards without evidence. Magic Mouse integration is the independent next engineering slice under INPUT-012.
+**Current handoff:** [INPUT-014](INPUT-014-magic-mouse-integration.md#magic-trackpad-discovery-regression--2026-10-19) corrected repeated discovery restarting the arming gate; subsequent external three/four-finger singles are user-confirmed. Next check external doubles/reconnect, first taps after idle, and the built-in regression on that corrected artifact. Retain normal-click/dragging/false-positive checks and profile-popup alignment. The dated built-in passes above are not tied to the corrected bundle. Use aggregate `--diagnose-trackpad` reasons for remaining failures; standalone probes do not replace app acceptance.
 
 ## Three-finger native clicks and selector alignment — 2026-10-18
 

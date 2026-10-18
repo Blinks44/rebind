@@ -20,7 +20,7 @@ struct BindingsView: View {
         case .allKeyboards: LocalizedStringResource("keyboardNavigationTitle", table: "Navigation")
         case .allMice: .mouseTitle
         case .builtInTrackpad: LocalizedStringResource("trackpadNavigationTitle", table: "Navigation")
-        case .magicTrackpad: scope.title
+        case .magicTrackpad, .magicMouse: scope.title
         }
     }
 
@@ -29,6 +29,7 @@ struct BindingsView: View {
         case .allKeyboards: .keyboardSubtitle
         case .allMice: .mouseSubtitle
         case .builtInTrackpad, .magicTrackpad: .trackpadSubtitle
+        case .magicMouse: .magicMouseSubtitle
         }
     }
 
@@ -66,6 +67,13 @@ struct BindingsView: View {
                 Banner(severity: .neutral, title: .remappingPaused, message: .remappingPausedDescription) {
                     Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked).secondaryButton()
                 }.padding(.top, 24)
+            } else if scope == .magicMouse {
+                Banner(severity: model.magicMouseStatus == .failed || model.magicMouseStatus == .unavailable ? .warning : .information,
+                    title: model.magicMouseStatus == .failed ? .magicMouseFailedTitle
+                        : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableTitle : .magicMouseExperimentalTitle,
+                    message: model.magicMouseStatus == .failed ? .magicMouseFailedHelp
+                        : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableHelp : .magicMouseExperimentalHelp)
+                    .padding(.top, 24)
             } else if scope == .allMice, !model.visibleMouseCompanionApps.isEmpty {
                 let apps = model.visibleMouseCompanionApps
                 CompanionBanner(apps: apps) { model.dismissCompanionWarning(for: apps) }.padding(.top, 24)

@@ -55,7 +55,10 @@ import Dispatch
 
     private func stopCapture() {
         for index in surfaces.indices { stop(&surfaces[index]) }
-        mailbox.state.withLock { $0.trackpadStatus = .idle; $0.trackpadDispatch = nil }
+        mailbox.state.withLock {
+            $0.trackpadStatus = .idle
+            if $0.trackpadDispatch?.trackpadTarget?.isMagicMouse != true { $0.trackpadDispatch = nil }
+        }
     }
 
     private func stop(_ surface: inout Surface) {
@@ -65,9 +68,15 @@ import Dispatch
     }
 
     @objc private func poll() {
+        service(allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
+                foregroundPID: foregroundPID(),
+                modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)))
+    }
+
+    /// Services both trackpads with one permission, foreground and held-modifier snapshot.
+    func service(allowingInput: Bool, foregroundPID pid: Int32?, modifiers: ModifierSet) {
         let now = DispatchTime.now().uptimeNanoseconds
-        guard !IsSecureEventInputEnabled(),
-              AXIsProcessTrusted(), CGPreflightPostEventAccess() else {
+        guard allowingInput else {
             mailbox.state.withLock { $0.trackpadDiagnostics = nil }
             stopCapture()
             timer?.fireDate = Date().addingTimeInterval(0.1)
@@ -76,14 +85,14 @@ import Dispatch
         reportDiagnostics()
         // Publish focus cancellation before snapshotting activity; otherwise
         // this poll could classify pre-switch contacts with the old runtime.
-        let pid = foregroundPID()
         mailbox.updateTrackpadForeground(pid)
         var statuses: [TrackpadCaptureStatus] = []
-        for index in surfaces.indices { statuses.append(service(&surfaces[index], pid: pid, now: now)) }
+        for index in surfaces.indices { statuses.append(service(&surfaces[index], pid: pid, modifiers: modifiers, now: now)) }
         let status = statuses.first { $0 != .idle } ?? .idle
         mailbox.state.withLock {
             $0.trackpadStatus = status
-            if status == .idle { $0.trackpadDispatch = nil }
+            // The bounded touch-output slot is shared with Magic Mouse capture.
+            if status == .idle, $0.trackpadDispatch?.trackpadTarget?.isMagicMouse != true { $0.trackpadDispatch = nil }
         }
         if status == .idle {
             mailbox.recordTrackpadDiagnostic(.captureInactive)
@@ -112,10 +121,9 @@ import Dispatch
         }
     }
 
-    private func service(_ surface: inout Surface, pid: Int32?, now: UInt64) -> TrackpadCaptureStatus {
+    private func service(_ surface: inout Surface, pid: Int32?, modifiers: ModifierSet, now: UInt64) -> TrackpadCaptureStatus {
         let isMagic = surface.kind == .magicTrackpad
-        // Read the held keys here, off the event tap; the session restarts whenever they change.
-        let modifiers = ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState))
+        // The pass's held-key snapshot selects the same modifiers for both surfaces.
         guard let runtime = mailbox.trackpadRuntime(magicTrackpad: isMagic, modifiers: modifiers) else {
             stop(&surface)
             return .idle

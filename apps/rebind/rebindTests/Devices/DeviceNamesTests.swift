@@ -46,7 +46,7 @@ struct DeviceNamesTests {
         configuration.deviceNames = [:]
         let data = try JSONEncoder().encode(configuration)
         let migrated = try JSONDecoder().decode(Configuration.self, from: data).migrated()
-        #expect(migrated.schemaVersion == 41 && migrated.deviceNames.isEmpty)
+        #expect(migrated.schemaVersion == Configuration.currentSchemaVersion && migrated.deviceNames.isEmpty)
     }
 }
 

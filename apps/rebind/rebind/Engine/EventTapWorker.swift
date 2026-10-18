@@ -65,7 +65,7 @@ nonisolated final class EventTapWorker {
         let control = mailbox.state.withLock {
             $0.diagnostics.expire(at: now)
             return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput,
-                    $0.isMatching && $0.hasPointerGestureRules, $0.diagnostics.isRunning)
+                    $0.needsPointerMotion, $0.diagnostics.isRunning)
         }
         if failureLatched { removeTap() }
         if !hasPermissions || control.2 {
@@ -128,7 +128,7 @@ nonisolated final class EventTapWorker {
                                    .otherMouseDown, .otherMouseUp, .otherMouseDragged,
                                    .leftMouseDragged, .rightMouseDragged, .scrollWheel]
         // Do not intercept the high-frequency idle motion stream unless enabled
-        // gesture rules need it. Some drivers deliver motion instead of dragging.
+        // pointer rules or Magic Mouse tap safety need it. Some drivers deliver motion instead of dragging.
         if capturePointerMotion { types.append(.mouseMoved) }
         return types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
     }

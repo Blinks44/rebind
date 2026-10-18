@@ -75,7 +75,7 @@ nonisolated struct InputDiagnostics: Sendable {
         case .mouseButton(let number): kind = .button(number)
         case .scroll(let direction): kind = .wheel(direction)
         case .key, .mouseGesture, .buttonScroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .trackpadClick: return
+             .twoFingerDoubleTap, .cornerTap, .trackpadClick, .magicMouseTap: return
         }
         let phase: InputDiagnostic.Phase
         switch event.phase {

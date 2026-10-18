@@ -13,7 +13,7 @@ A native macOS utility for mapping keyboard and mouse input to shortcuts and sys
 
 Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
 
-**Status:** under active development. Keyboard/mouse remapping and many action paths are implemented; full hardware, reliability and UI acceptance are still in progress. Trackpad support is experimental. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
+**Status:** under active development. Keyboard/mouse remapping and many action paths are implemented; full hardware, reliability and UI acceptance are still in progress. Trackpad and Magic Mouse gesture support are experimental. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
 
 ## Repository layout
 
@@ -32,6 +32,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Press, double press and hold. A hold binding can also send a shortcut on a short press.
 - Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
 - Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
+- Experimental Magic Mouse one- and two-finger taps, with an optional held modifier and the shared action catalog. App hardware acceptance is pending; native Smart Zoom and Mission Control can also respond to repeated taps.
 
 **Actions**
 
@@ -53,7 +54,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
-Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse gestures, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad support relies on a private macOS interface and is experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
+Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad and Magic Mouse touch capture rely on a private macOS interface and are experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
 
 ## Requirements
 

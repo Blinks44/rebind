@@ -1,6 +1,6 @@
 # INPUT-006: Physical trackpad clicks with 2, 3 or 4 fingers
 
-- Updated: 2026-10-13.
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged).
 - Stage: `awaiting_verification`.
 - Owner: Released (code agent, 2026-10-13 session).
 - Requirements: SPEC §§3.4, 4, 9; PLAN Phase 5.
@@ -36,6 +36,10 @@ Built-in trackpad, macOS 27.0.1, Debug build from the working tree: the user rep
 
 With three-finger drag on, resting three or four fingers makes a click rule run after about 500 ms without a press. Fixed in [INPUT-013](INPUT-013-trackpad-review-fixes.md): three/four-finger rules require finger force (Force Touch) or a quick still press (Magic Trackpad).
 
+## Current manual evidence — recorded 2026-10-19
+
+Checklist 3.3 confirms built-in physical three-finger click replacement. No separate resting-finger/dragging trial breakdown, exact revision or four-finger result was supplied; preserve the broader open checks above. Source and artifact limits: [October 18 manual checklist](../verification/manual-test-2026-10-18.md). No build/test rerun; retain `awaiting_verification` for remaining acceptance.
+
 ## Next handoff
 
-User: on a named build add a three- or four-finger click rule and a two-finger click rule, press the trackpad accordingly and report missing clicks, double effects or accidental triggers.
+Verify the other click counts/surfaces and deliberate-press versus resting-finger/mixed-mouse negatives on the current corrected bundle; record secondary-click/Force Click settings and dragging behavior.

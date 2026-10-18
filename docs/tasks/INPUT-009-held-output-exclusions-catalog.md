@@ -1,6 +1,6 @@
 # INPUT-009: Held output, excluded apps, wider action catalog and rule management
 
-- Updated: 2026-10-13.
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged).
 - Stage: `awaiting_verification`.
 - Owner: Released (code agent, 2026-10-13 session).
 - Requirements: SPEC §§2, 3.3, 4, 5, 9 (additions dated 2026-10-13).
@@ -39,14 +39,18 @@ Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27: `apps/rebind/scripts/dev.sh 
 
 ## Open checks
 
-- [ ] Running app: every new control (hold toggle, note field, excluded-apps card, gesture distance, copy-to-profile menu) in Light/Dark and all six languages; none has been seen rendered.
-- [ ] Held shortcut on hardware: arrows/Delete repeat, a game or push-to-talk hold, release after pause, sleep, lock and quitting Rebind while held.
+- [October 18 checklist, received October 19](../verification/manual-test-2026-10-18.md), 2.2–2.3: dual-role Esc/Control works including first press after a quiet minute; held arrow repeats evenly and stops on release. The report also summarizes earlier holds/modifiers checks without variant details. These are confirmed happy paths; interruption cleanup, fast typing and games/push-to-talk below remain open. Insert Text 5.1 is blank.
+
+- [ ] Running app: every new control (hold toggle, note field, excluded-apps card, gesture distance, copy-to-profile menu) in Light/Dark and all six languages; complete control/state coverage remains open.
+- [x] Ordinary held-arrow repeat and release: checklist 2.3, reported October 19.
+- [ ] Remaining held-output hardware checks: Delete, games/push-to-talk and release after pause, sleep, lock and quit.
 - [ ] Excluded app: switch into and out of a listed app with keyboard, mouse and trackpad rules; full-screen games.
 - [ ] Insert Text in native, Electron and terminal apps; non-Latin text and emoji.
 - [ ] Named commands, screenshots, quarters and Move to Next Display (two displays) on hardware.
 - [ ] Translations of the new strings (DE/FR/ES/Simplified Chinese) by fluent readers.
 - [ ] Modifier from a mouse button: ⌘-click, ⇧-click selection, ⌘ + key, ⌥ + scroll; nothing stays held after pause, sleep or quit.
-- [ ] Dual-role key: tap sends the short-press shortcut, hold acts as the modifier; behavior when typing fast.
+- [x] Dual-role Esc/Control happy path, including first press after a quiet minute: checklist 2.2.
+- [ ] Dual-role behavior when typing fast and other shortcut/modifier variants.
 - [ ] Trackpad gesture with each held key, alongside the same gesture without one.
 - [x] Wheel reverse and speed on a stepped mouse; trackpad and Magic Mouse scrolling unchanged. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
 - [x] Profile export/import through the real panels; the paused Menu Bar icon in Light and Dark menu bars. User-confirmed on the 2026-10-15 checklist (debug build, MX Master 2S/G603/Mi mice), reported 2026-10-16.
@@ -61,4 +65,4 @@ Update check (waits for the GitHub repository, PLAN item 4), a click under a hel
 
 ## Next handoff
 
-User: try the new rule options on the built app and report what works. Code agent: "continue the feature-gap work" resolves to the list above. Design agent: the remaining undrawn states are listed in Open checks.
+Code/runtime: next verify Insert Text with Russian text and emoji in TextEdit, Terminal and a browser on an identified bundle; repair reproduced failures. Then complete held-output interruption cleanup and the remaining checks above. Design: use the current saved source and the remaining undrawn states in Open checks.

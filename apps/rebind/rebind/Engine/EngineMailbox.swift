@@ -32,6 +32,9 @@ nonisolated final class EngineMailbox: Sendable {
         var actionRevision: UInt64 = 0
         var actionFailed: RebindAction?
         var hasPointerGestureRules = false
+        var hasMagicMouseRules = false
+        /// Native mouse motion is also needed to reject a tap while the mouse body moves.
+        var needsPointerMotion: Bool { isMatching && (hasPointerGestureRules || hasMagicMouseRules) }
         var enabled = false
         /// Bundle identifiers of apps in which Rebind skips bindings, gestures and wheel changes.
         var excludedApplications: Set<String> = []
@@ -62,6 +65,8 @@ nonisolated final class EngineMailbox: Sendable {
         var trackpadDiagnostics: TrackpadDiagnostics?
         var trackpadClicks = TrackpadClickFilter()
         var magicTrackpadClicks = TrackpadClickFilter()
+        var magicMouseActivity: UInt64 = 0
+        var magicMouseStatus: TrackpadCaptureStatus = .idle
         var inputActivity: UInt64 = 0
         var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?
@@ -102,6 +107,7 @@ nonisolated final class EngineMailbox: Sendable {
             let capabilities = audioCapabilities
             rules = all.filter { capabilities.supports($0.value.action) }
             hasPointerGestureRules = rules.keys.contains { $0.trigger.isPointerGesture }
+            hasMagicMouseRules = rules.keys.contains { $0.trigger.isMagicMouse }
         }
 
         /// Whether rules may match at all; ownership and the emergency bypass work regardless.
@@ -250,7 +256,7 @@ nonisolated final class EngineMailbox: Sendable {
             actionRevision == dispatch.revision && canDispatch
                 && audioCapabilities.supports(dispatch.action)
                 && (dispatch.trackpadTarget.map {
-                    $0.pid == foregroundPID && $0.inputActivity == inputActivity
+                    $0.pid == foregroundPID && $0.inputActivity == ($0.isMagicMouse ? magicMouseActivity : inputActivity)
                 } ?? true)
         }
 
@@ -597,9 +603,13 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
-        guard !event.isSynthetic, !event.trigger.isTrackpad else { return false }
+        guard !event.isSynthetic, !event.trigger.isTouchGesture else { return false }
         defer { signalIfWorkWaiting() }
         return state.withLock {
+            // Mouse tap recognition must see every real event, including native tap-made clicks
+            // that the trackpad path intentionally excludes from its own activity counter.
+            $0.magicMouseActivity &+= 1
+            if $0.trackpadDispatch?.trackpadTarget?.isMagicMouse == true { $0.trackpadDispatch = nil }
             // Trackpad click rules and configured corner taps replace the click itself.
             var tapClick = false
             if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput {
@@ -623,6 +633,10 @@ nonisolated final class EngineMailbox: Sendable {
             guard !state.stopped, !state.suspended, !secureInput else {
                 state.resetCapture(status: secureInput ? .secureInput : .paused)
                 return false
+            }
+            if motion.deltaX != 0 || motion.deltaY != 0 {
+                state.magicMouseActivity &+= 1
+                if state.trackpadDispatch?.trackpadTarget?.isMagicMouse == true { state.trackpadDispatch = nil }
             }
             guard let source = state.matcher.pointerGestureSource else { return false }
             let event = InputEvent(trigger: source, modifiers: modifiers, phase: .drag,
@@ -675,6 +689,7 @@ nonisolated final class EngineMailbox: Sendable {
                 return
             }
             $0.inputActivity &+= 1
+            $0.magicMouseActivity &+= 1
             $0.trackpadDispatch = nil
             $0.matcher.cancelHold()
             $0.diagnostics.append(kind: .unsupportedScroll, phase: .scroll, modifiers: modifiers,

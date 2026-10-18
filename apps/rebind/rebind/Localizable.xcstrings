@@ -1,6 +1,581 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "magicMouseEditorScope %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse · %@"
+          }
+        }
+      },
+      "comment" : "The single placeholder is the selected profile name."
+    },
+    "magicMouseExperimentalHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test taps, ordinary clicks and scrolling before relying on these rules."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверьте касания, обычные клики и прокрутку, прежде чем полагаться на эти правила."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen, normale Klicks und Scrollen testen, bevor Sie sich auf diese Regeln verlassen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testez les touchers, les clics habituels et le défilement avant de vous fier à ces règles."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba los toques, los clics normales y el desplazamiento antes de depender de estas reglas."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在依赖这些规则之前，请先测试轻点、普通点击和滚动。"
+          }
+        }
+      }
+    },
+    "magicMouseExperimentalTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimental gestures"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Экспериментальные жесты"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentelle Gesten"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestes expérimentaux"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestos experimentales"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "实验性手势"
+          }
+        }
+      }
+    },
+    "magicMouseFailedHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnect your Magic Mouse or reopen Rebind, then try again."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Переподключите Magic Mouse или заново откройте Rebind, затем попробуйте снова."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse erneut verbinden oder Rebind neu öffnen und noch einmal versuchen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnectez votre Magic Mouse ou rouvrez Rebind, puis réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a conectar el Magic Mouse o abre Rebind de nuevo y vuelve a intentarlo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请重新连接 Magic Mouse 或重新打开 Rebind，然后重试。"
+          }
+        }
+      }
+    },
+    "magicMouseFailedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse gestures unavailable"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жесты Magic Mouse недоступны"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse-Gesten nicht verfügbar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestes Magic Mouse indisponibles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestos del Magic Mouse no disponibles"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse 手势不可用"
+          }
+        }
+      }
+    },
+    "magicMouseGestureTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse gesture"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жест Magic Mouse"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse-Geste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geste Magic Mouse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesto del Magic Mouse"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse 手势"
+          }
+        }
+      }
+    },
+    "magicMouseOneFingerConflict" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart Zoom may also respond to repeated taps. Turn it off in System Settings → Mouse to use repeated one-finger taps here."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart Zoom тоже может реагировать на повторные касания. Для повторных касаний одним пальцем отключите его в Системных настройках → Мышь."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart Zoom kann auch auf wiederholtes Tippen reagieren. Für wiederholtes Tippen mit einem Finger hier unter Systemeinstellungen → Maus ausschalten."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le zoom intelligent peut aussi réagir aux touchers répétés. Désactivez-le dans Réglages Système → Souris pour utiliser ici des touchers répétés avec un doigt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El zoom inteligente también puede responder a toques repetidos. Desactívalo en Ajustes del Sistema → Ratón para usar aquí toques repetidos con un dedo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智能缩放也可能响应连续轻点。若要在此使用单指连续轻点，请在系统设置 → 鼠标中将其关闭。"
+          }
+        }
+      }
+    },
+    "magicMouseOneFingerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap · 1 finger"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Касание · 1 палец"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen · 1 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher · 1 doigt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque · 1 dedo"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点 · 1 根手指"
+          }
+        }
+      }
+    },
+    "magicMouseSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assign actions to taps on the mouse surface."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назначайте действия касаниям поверхности мыши."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktionen durch Tippen auf die Mausoberfläche auslösen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attribuez des actions aux touchers de la surface de la souris."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asigna acciones a los toques en la superficie del ratón."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为鼠标表面的轻点操作分配动作。"
+          }
+        }
+      }
+    },
+    "magicMouseTapHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap lightly, then lift all fingers. Keep the mouse still and do not press it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Легко коснитесь поверхности, затем уберите все пальцы. Не двигайте мышь и не нажимайте на неё."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leicht tippen und alle Finger anheben. Die Maus dabei weder bewegen noch drücken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez légèrement, puis levez tous les doigts. Ne déplacez pas la souris et ne cliquez pas."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca suavemente y levanta todos los dedos. No muevas el ratón ni lo pulses."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻触后抬起所有手指。保持鼠标静止，不要按下鼠标。"
+          }
+        }
+      }
+    },
+    "magicMouseTwoFingerConflict" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission Control may also respond to repeated taps. Turn its two-finger double tap off in System Settings → Mouse to use repeated taps here."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission Control тоже может реагировать на повторные касания. Для повторных касаний здесь отключите двойное касание двумя пальцами в Системных настройках → Мышь."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission Control kann auch auf wiederholtes Tippen reagieren. Dafür das Doppeltippen mit zwei Fingern unter Systemeinstellungen → Maus ausschalten."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission Control peut aussi réagir aux touchers répétés. Désactivez le double toucher avec deux doigts dans Réglages Système → Souris pour utiliser ici des touchers répétés."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission Control también puede responder a toques repetidos. Desactiva el doble toque con dos dedos en Ajustes del Sistema → Ratón para usar aquí toques repetidos."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调度中心也可能响应连续轻点。若要在此使用连续轻点，请在系统设置 → 鼠标中关闭双指连点两下手势。"
+          }
+        }
+      }
+    },
+    "magicMouseTwoFingerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap · 2 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Касание · 2 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen · 2 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher · 2 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque · 2 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点 · 2 根手指"
+          }
+        }
+      }
+    },
+    "magicMouseUnavailableHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect a Magic Mouse, lift all fingers and try again."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключите Magic Mouse, уберите все пальцы с поверхности и попробуйте снова."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse verbinden, alle Finger anheben und erneut versuchen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connectez une Magic Mouse, levez tous les doigts et réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta un Magic Mouse, levanta todos los dedos e inténtalo de nuevo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请连接 Magic Mouse，抬起所有手指，然后重试。"
+          }
+        }
+      }
+    },
+    "magicMouseUnavailableTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse unavailable"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse недоступна"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse nicht verfügbar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse indisponible"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse no disponible"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic Mouse 不可用"
+          }
+        }
+      }
+    },
     "insertTextEncodingTooLong" : {
       "extractionState" : "manual",
       "localizations" : {

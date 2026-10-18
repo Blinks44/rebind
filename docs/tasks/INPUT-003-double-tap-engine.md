@@ -1,6 +1,6 @@
 # INPUT-003: Three/four-finger double tap engine and storage
 
-- Updated: 2026-10-12.
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged).
 - Stage: `awaiting_verification`; engine/data and UI-014 editor released, hardware acceptance open.
 - Owner: Unassigned; `/root` Swift agent released engine/data ownership on 2026-10-12.
 - Ownership checked: `main` / `afb7411` plus INPUT-002 uncommitted engine/data changes; UI-013 is now saved/released; its Sketch and completion notes are independent work.
@@ -30,6 +30,10 @@ Distinct single/double identities, schema 26 migrations, runtime interval/rule s
 
 Reviewed configured-only routing, lone/pair/third-tap arbitration, deadline exclusivity, receipt/poll separation, delayed-click and movement/loss cancellation/recovery, one-slot output, profile/focus invalidation, schema protection and four-language labels. The native classifier's duration/travel/placement limits, callback acquisition and worker sender remain preserved. Untimed nonzero frames now fail closed. No editor/Sketch/real configuration edits or agent commit. `git diff --check` passes.
 
+## Current manual evidence — recorded 2026-10-19
+
+Built-in three-finger double delivery is user-confirmed in checklist 3.1. Four-finger/external doubles, measured timing and full native/click exclusion are not established. The later shared-adapter artifact still needs affected regression. Source and artifact limits: [October 18 manual checklist](../verification/manual-test-2026-10-18.md). No build/test rerun; retain `awaiting_verification` for remaining acceptance.
+
 ## Next handoff
 
-Verify physical three/four single/double taps through the integrated UI-014 editor on a named build, including timing, click exclusion and native coexistence. Two-finger doubles/clicks/corners and broader actions/modifiers remain independent engine slices; full native accessibility/material acceptance stays in UI-014.
+Verify four-finger and external double taps, first pair after idle and the built-in regression on a named current bundle. Preserve native coexistence/click safety and full UI-014 accessibility gates.

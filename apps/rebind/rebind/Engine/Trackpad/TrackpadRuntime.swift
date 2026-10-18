@@ -13,6 +13,8 @@ nonisolated struct TrackpadDispatchTarget: Equatable, Sendable {
     var queuedAt: UInt64 = 0
     /// The modifier key the matched rule requires; it is expected to be down while the output is sent.
     var modifiers: ModifierSet = []
+    /// Shares the bounded touch-output slot, with a separate raw activity counter.
+    var isMagicMouse = false
 }
 
 nonisolated struct TrackpadRuntime: Equatable, Sendable {
@@ -79,6 +81,7 @@ extension EngineMailbox {
             // Activation notifications can arrive after the final PID is already
             // visible, so the notification itself also invalidates the snapshot.
             $0.inputActivity &+= 1
+            $0.magicMouseActivity &+= 1
             $0.foregroundPID = pid
             $0.trackpadDispatch = nil
         }

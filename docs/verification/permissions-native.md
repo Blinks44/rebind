@@ -109,3 +109,18 @@ Final checks on the repaired source, baseline `main` / `acce2f4` plus the existi
 | Release `Rebind.app/Contents/MacOS/Rebind` | `f16315306938e279ab5f0b1a108da13ec92719b4d89561c16b18ddfb79e0c263` |
 
 **Next:** actual grant/revocation and VoiceOver/accessibility-preference acceptance remain user-controlled gates. The reproduced layout failure is repaired; General/Input implementation and whole-app soft styling have since been integrated; current continuation is in UI-001/STATE. No Sketch save or Git commit, new capability claim or user configuration/permission change.
+
+
+## Direct Accessibility settings route — 2026-10-19
+
+User report: selecting Accessibility access opened System Settings and a system modal offering to open those same settings at the same time. Source review on `main` `497b0d1` found both operations in `AppModel.requestAccessibility`: `AXIsProcessTrustedWithOptions` with prompting enabled, followed immediately by the privacy-pane URL while access was still missing. Apple's [AX API documentation](https://developer.apple.com/documentation/applicationservices/1459186-axisprocesstrustedwithoptions) confirms that prompting is asynchronous and does not change the immediate trust result; that result cannot be used as evidence that no prompt appeared.
+
+Correction, uncommitted `apps/rebind/rebind/UI/AppModel.swift`: remove the prompted AX call and its now-unneeded preconcurrency import. The shared setup/recovery/Settings action refreshes actual permissions and directly opens Accessibility settings only when AX access is missing. Focus return, Check Again and periodic preflights continue to read the actual grant; opening settings never authorizes capture/output. Event-posting consent is separate and unchanged. No screen geometry, product copy, translations or Sketch source changed.
+
+Verification on Apple Silicon macOS 27.0.1 / Xcode 27.1:
+
+- `REBIND_DERIVED_DATA=/tmp/rebind-permission-fix-derived apps/rebind/scripts/dev.sh build`: **BUILD SUCCEEDED**.
+- Same output root, `apps/rebind/scripts/dev.sh test -only-testing:rebindTests/InputPermissionsTests -only-testing:rebindTests/AppModelPermissionSetupTests -only-testing:rebindTests/PermissionSetupPresentationTests`: **15 Swift Testing tests in 3 suites pass**, `TEST SUCCEEDED`. These cover grant stages, rechecks/revocation, recording cancellation, preserved configuration/pause, setup deferral and one-time presentation; they do not invoke a real permission request. No new test abstraction or test mirroring the removed call was added.
+- The first restricted build stopped at SwiftPM/compiler cache permissions (exit 74); the normal-access build/test above passed. Existing AppIntents metadata warning remains. Local logs/results stay outside Git.
+
+The test host's existing test-mode guard does not load real configuration or start interception. No production app launch, native settings opening, grant/revocation, real remapping, Sketch save or Git commit was performed. Runtime acceptance remains open: on the identified new bundle, check first-use and previously denied access, confirm only the settings pane opens, confirm the running app can be found/added in the pane, then check grant recognition on return and revocation recovery. Existing Finder reveal is available in Settings → Permissions. Do not infer first-install listing or TCC behavior from the injected tests.

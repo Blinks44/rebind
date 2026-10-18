@@ -2,9 +2,9 @@
 
 - Updated: 2026-10-18 (readiness review).
 - Stage: `awaiting_verification`.
-- Owner: Released; production recognition/native coexistence work next.
+- Owner: Released; current app integration/physical acceptance is owned by INPUT-014.
 - Owned surfaces: standalone `apps/rebind/tools/magic-mouse-probe.swift`, affected state/evidence.
-- Baseline: `main`, probe changes uncommitted; app engine unchanged.
+- Baseline: historical standalone probe evidence below predates app integration; current engine/editor work is in INPUT-014.
 - Requirements: SPEC §3.5 G1/G2, PLAN Magic Mouse research gate.
 
 ## Outcome
@@ -23,7 +23,7 @@ Completed sequences now receive a provisional one/two-finger tap verdict or reje
 
 ## Next
 
-The updated guided classification run met its bounded observed candidate/negative expectations (see below); no identical rerun is required before independent engineering. Next evaluate production recognition with per-contact motion/identity validation, reliable button activity and discontinuity handling, native coexistence, and a focused audit of the app adapter's Boolean callback-registration declaration. Native Smart Zoom/Mission Control settings/effects and mouse model/transport remain unknown. Three/four-finger contacts are observed but outside this prototype's candidate pool. Do not infer a release preset pool from this single run.
+The guided classification run met its bounded observed candidate/negative expectations below; no identical rerun is required. [INPUT-014](INPUT-014-magic-mouse-integration.md) now owns production recognition, native callback ABI correction, app integration and remaining physical action/coexistence/reconnect acceptance. Native settings and exact mouse model/transport still need to be recorded. Three/four contacts are observed but outside the current app testing pool; do not infer release support from the probe.
 
 ## Diagnostic classification — 2026-10-16
 
@@ -76,6 +76,6 @@ Corrected `--rest` user run: 147 frames, zero invalid; zero-contact=6, two=1, th
 
 ## App testing readiness — 2026-10-18
 
-Source/task review only; no new mouse experiment or app support added. Existing guided classification is enough to proceed with independent engineering; do not ask the user to repeat the same generic probe first. The app still has no Magic Mouse gesture adapter/editor/dispatch integration. Next implement and software-test a bounded one/two-finger stationary-tap candidate path with per-contact identity/travel, reliable button and scroll exclusion, discontinuity/staleness/neutral-state recovery and guarded output. Audit the callback ABI first: the probe uses Void registration after the observed correction, while `NativeTrackpadDevice` still declares Boolean success. Existing earlier evidence identifies this mismatch; no ABI correction was made in this task.
+Source/task review only; no new mouse experiment or app support added. Existing guided classification is enough to proceed with independent engineering; do not ask the user to repeat the same generic probe first. The resulting experimental app adapter/editor/dispatch integration is now owned by [INPUT-014](INPUT-014-magic-mouse-integration.md). Its bounded one/two-finger stationary-tap candidate path is software-tested with per-contact identity/travel, reliable button and scroll exclusion, discontinuity/staleness/neutral-state recovery and guarded output. The callback registration Void correction is applied to the shared native adapter in INPUT-014, using the earlier probe evidence and refreshed ABI reference. This probe record makes no new app hardware-support claim.
 
 After integration, the useful user test is inside Rebind: named mouse model/transport/OS and native Smart Zoom/Mission Control settings, repeated configured taps versus ordinary rest/click/scroll, action delivery, pause and disconnect/reconnect. Native-double coexistence determines whether a single must wait or the supported setting must exclude that conflict. This is a development candidate scope, not a supported/release preset decision or authorization to edit Sketch/real rules.

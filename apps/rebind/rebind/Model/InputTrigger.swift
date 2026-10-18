@@ -18,6 +18,15 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     /// A physical press of the trackpad with 2, 3 or 4 fingers resting on it.
     case trackpadClick(fingers: Int)
 
+    /// Experimental stationary single taps on the Magic Mouse surface.
+    case magicMouseTap(fingers: Int)
+
+    var isTouchGesture: Bool { isTrackpad || isMagicMouse }
+    var isMagicMouse: Bool {
+        if case .magicMouseTap = self { return true }
+        return false
+    }
+
     var isTrackpad: Bool {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
@@ -67,6 +76,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap, .trackpadClick: .builtInTrackpad
+        case .magicMouseTap: .magicMouse
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
         }
@@ -80,6 +90,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap: true
         case .trackpadClick(let fingers): (2...4).contains(fingers)
+        case .magicMouseTap(let fingers): (1...2).contains(fingers)
         }
     }
 }

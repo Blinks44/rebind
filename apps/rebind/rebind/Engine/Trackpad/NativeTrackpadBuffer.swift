@@ -107,10 +107,12 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
     let isMagicTrackpad: Bool
     /// Whether contact pressure carries finger force (Force Touch surfaces).
     let reportsForce: Bool
-    init(mailbox: EngineMailbox, isMagicTrackpad: Bool = false, reportsForce: Bool = false) {
+    let isMagicMouse: Bool
+    init(mailbox: EngineMailbox, isMagicTrackpad: Bool = false, reportsForce: Bool = false, isMagicMouse: Bool = false) {
         self.mailbox = mailbox
         self.isMagicTrackpad = isMagicTrackpad
         self.reportsForce = reportsForce
+        self.isMagicMouse = isMagicMouse
     }
 
     func receive(_ data: UnsafeRawPointer?, count: Int32,
@@ -126,16 +128,18 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         wake?()
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
             guard state.canDispatch else { return nil }
-            return (state.actionRevision, state.inputActivity)
+            return (state.actionRevision, isMagicMouse ? state.magicMouseActivity : state.inputActivity)
         }
         guard let snapshot else { return }
         let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
         let magic = isMagicTrackpad, force = reportsForce
-        mailbox.state.withLock {
-            magic ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
-                : $0.trackpadClicks.observe(frame, reportsForce: force)
+        if !isMagicMouse {
+            mailbox.state.withLock {
+                magic ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
+                    : $0.trackpadClicks.observe(frame, reportsForce: force)
+            }
         }
         state.withLock { $0.append(frame, generation: generation) }
     }

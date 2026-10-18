@@ -1,6 +1,6 @@
 # REVIEW-002: Idle energy and app-wide review
 
-- Updated: 2026-10-18
+- Updated: 2026-10-19
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation session released 2026-10-18
 - Requirements: ENGINEERING §5 (bounded callbacks, safe failure); user request 2026-10-18 for an app-wide bug review against how comparable apps work
@@ -26,6 +26,11 @@
 - 2026-10-18: `dev.sh test`: 853 Swift Testing tests in 132 suites + 17 native tests pass, including new `IdleWakeTests` (work deadlines, wake latency, pointer-app decision, trackpad buffer wake).
 - 2026-10-18, idle, same Mac, `top` 4 × 5 s: installed build 6.9–7.6 % CPU; new Debug build 1.7 % (unoptimized; remaining samples spread over the 2 s companion-app scan, the 250 ms trackpad poll and the UI refresh). A Release measurement is open.
 - 2026-10-18: `kill -TERM` quits the Debug build at once; release of a held key and the gesture button on SIGTERM not observed on hardware.
-- [ ] Hardware: dual-role hold timing, held-key repeat, first trackpad tap after a quiet minute, smooth-scrolling exclusion with the pointer over a background app.
+- [x] Tester checklist 2.1–2.3, 2.5–2.6: near-zero idle CPU/low energy impact, dual-role Esc/Control including first press after a quiet minute, even held-arrow repeat with immediate stop, responsive MX Master 2S gesture hold, and correct background-window smooth-scrolling exclusion including scroll onset.
+- [ ] First trackpad single/double tap after a quiet minute (2.4 left blank).
+- [ ] Release idle CPU measurement with sample duration and named artifact.
+- [ ] Held-key and gesture-button release on SIGTERM, plus broader protected-context/lifecycle safety.
 
-Next step: user walks section 2 of the 2026-10-18 manual checklist on the Debug build; measure Release idle CPU before the next release.
+Evidence: [October 18 checklist, recorded October 19](../verification/manual-test-2026-10-18.md). Exact tested revision/OS not supplied; CPU and latency reports are qualitative. No new build/test run. Stage remains `awaiting_verification`.
+
+Next step: check the first trackpad single/double after idle on the current bundle, then measure Release idle CPU and verify held-state cleanup on termination.

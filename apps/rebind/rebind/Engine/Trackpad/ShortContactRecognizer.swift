@@ -3,6 +3,8 @@ import Foundation
 // Short stationary contact classification. A physical click can satisfy these bounds;
 // do not dispatch a tap action without an independent click-exclusion signal.
 nonisolated struct ShortContactRecognizer: Sendable {
+    enum Surface: Sendable { case trackpad, magicMouse }
+
     enum Rejection: String, Sendable {
         case invalidMetadata = "invalid-metadata", frameGap = "frame-gap", nativeTime = "native-time"
         case neutralRequired = "neutral-required", changedContacts = "changed-contacts"
@@ -30,6 +32,8 @@ nonisolated struct ShortContactRecognizer: Sendable {
         var origins: [Int32: Contact] = [:]
         var peakCount = 0
         var peakFrames = 0
+        var peakStarted: Double = 0
+        var peakEnded: Double?
         var previousCount = 0
         var previousIDs: Set<Int32> = []
         var firstLift: Double?
@@ -46,9 +50,19 @@ nonisolated struct ShortContactRecognizer: Sendable {
 
     // Allow natural rolling placement/lift and slight fingertip movement.
     // Keep individual-contact travel checks: a stable centroid can hide a pinch.
-    private static let maximumDuration = 0.4
-    private static let fingerSpread = 0.15
-    private static let maximumTravel: Float = 0.04
+    private let minimumDuration: Double
+    private let maximumDuration: Double
+    private let fingerSpread: Double
+    private let maximumTravel: Float
+    private let minimumPeakDuration: Double
+
+    init(surface: Surface = .trackpad) {
+        minimumDuration = surface == .magicMouse ? 0.02 : 0.03
+        maximumDuration = surface == .magicMouse ? 0.2 : 0.4
+        fingerSpread = 0.15
+        maximumTravel = surface == .magicMouse ? 0.025 : 0.04
+        minimumPeakDuration = surface == .magicMouse ? 0.02 : 0
+    }
 
     // Unknown frame time/identity (including upstream empty arrays) cannot finish
     // a candidate safely. An empty frame still establishes contact neutrality.
@@ -98,9 +112,9 @@ nonisolated struct ShortContactRecognizer: Sendable {
             guard stroke.valid else { rejection = stroke.rejection; return nil }
             guard TrackpadTapSequence.candidateFingerCounts.contains(stroke.peakCount),
                   stroke.origins.count == stroke.peakCount else { rejection = .fingerCount; return nil }
-            guard time - stroke.started >= 0.03, time - stroke.started <= Self.maximumDuration else { rejection = .duration; return nil }
-            guard stroke.peakFrames >= 2 else { rejection = .transientPeak; return nil }
-            guard stroke.firstLift.map({ time - $0 <= Self.fingerSpread }) ?? true else { rejection = .liftSpread; return nil }
+            guard time - stroke.started >= minimumDuration, time - stroke.started <= maximumDuration else { rejection = .duration; return nil }
+            guard stroke.peakFrames >= 2, (stroke.peakEnded ?? time) - stroke.peakStarted >= minimumPeakDuration else { rejection = .transientPeak; return nil }
+            guard stroke.firstLift.map({ time - $0 <= fingerSpread }) ?? true else { rejection = .liftSpread; return nil }
             let sum = stroke.origins.values.reduce((x: Float(0), y: Float(0))) { ($0.x + $1.x, $0.y + $1.y) }
             origin = (sum.x / Float(stroke.peakCount), sum.y / Float(stroke.peakCount))
             return Candidate(fingers: stroke.peakCount,
@@ -117,18 +131,21 @@ nonisolated struct ShortContactRecognizer: Sendable {
         if contacts.count > current.peakCount {
             current.peakCount = contacts.count
             current.peakFrames = 0
+            current.peakStarted = time
+            current.peakEnded = nil
         }
+        if contacts.count < current.peakCount, current.peakEnded == nil { current.peakEnded = time }
         if contacts.count == current.peakCount {
             current.peakFrames += 1
         }
         for contact in contacts {
             if let origin = current.origins[contact.id] {
                 let dx = contact.x - origin.x, dy = contact.y - origin.y
-                if dx * dx + dy * dy > Self.maximumTravel * Self.maximumTravel {
+                if dx * dx + dy * dy > maximumTravel * maximumTravel {
                     current.valid = false; if current.rejection == nil { current.rejection = .travel }
                 }
             } else {
-                if time - current.started > Self.fingerSpread || current.firstLift != nil || current.origins.count >= 4 {
+                if time - current.started > fingerSpread || current.firstLift != nil || current.origins.count >= 4 {
                     current.valid = false
                     if current.rejection == nil { current.rejection = current.firstLift != nil ? .changedContacts : .placementSpread }
                 }
@@ -137,9 +154,9 @@ nonisolated struct ShortContactRecognizer: Sendable {
             }
             current.pressure = max(current.pressure, contact.pressure)
         }
-        if time - current.started > Self.maximumDuration || current.firstLift.map({ time - $0 > Self.fingerSpread }) ?? false {
+        if time - current.started > maximumDuration || current.firstLift.map({ time - $0 > fingerSpread }) ?? false {
             current.valid = false
-            if current.rejection == nil { current.rejection = time - current.started > Self.maximumDuration ? .duration : .liftSpread }
+            if current.rejection == nil { current.rejection = time - current.started > maximumDuration ? .duration : .liftSpread }
         }
         current.previousCount = contacts.count
         current.previousIDs = ids

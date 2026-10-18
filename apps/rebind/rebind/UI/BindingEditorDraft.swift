@@ -24,7 +24,15 @@ nonisolated struct BindingEditorDraft {
         }
     }
 
-    /// The single key a trackpad gesture requires, or none.
+    var magicMousePreset: MagicMousePreset {
+        get { trigger.flatMap { MagicMousePreset(trigger: $0.trigger) } ?? .oneFingerTap }
+        set {
+            trigger = MatchKey(trigger: newValue.trigger, modifiers: trackpadModifiers)
+            activation = .press
+        }
+    }
+
+    /// The single key a touch gesture requires, or none.
     var trackpadModifiers: ModifierSet {
         get { trigger.map { ModifierSet.trackpadChoices.contains($0.modifiers) ? $0.modifiers : [] } ?? [] }
         set { trigger?.modifiers = newValue }
@@ -32,7 +40,8 @@ nonisolated struct BindingEditorDraft {
 
     init(scope: DeviceScope, existing: Binding?) {
         trigger = existing?.matchKey.pressSource
-            ?? (scope.isTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: []) : nil)
+            ?? (scope.isTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: [])
+                : scope == .magicMouse ? MatchKey(trigger: .magicMouseTap(fingers: 1), modifiers: []) : nil)
         output = existing?.action.shortcut
         activation = existing?.activation ?? .press
         holdDurationMilliseconds = existing?.holdDurationMilliseconds ?? 500

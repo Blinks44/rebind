@@ -1,9 +1,9 @@
 # DEVICE-005: G HUB coexistence, faster DPI on reconnect, tap recovery
 
-- Updated: 2026-10-18
+- Updated: 2026-10-19
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation session released 2026-10-18
-- Requirements: SPEC §3.2 (mouse hardware settings, companion apps), §275 (event-tap timeouts); user report 2026-10-18 (G HUB and Rebind switch DPI back and forth; after G HUB quits or the mouse reconnects it stays at an unknown DPI for 5–15 s; menu slider sometimes gray)
+- Requirements: SPEC §3.2 (mouse hardware settings, companion apps), §6 (event-tap timeouts); user report 2026-10-18 (G HUB and Rebind switch DPI back and forth; after G HUB quits or the mouse reconnects it stays at an unknown DPI for 5–15 s; menu slider sometimes gray)
 
 ## Findings
 
@@ -22,9 +22,13 @@
 ## Verification
 
 - 2026-10-18: `dev.sh test`: 846 Swift Testing tests in 131 suites + 17 native tests pass, including new checks for bundle naming of launchd helpers, the process scan, slot order, DPI-first write order, the companion note in the menu and the recovery budget.
-- [ ] With G HUB running (window closed): Rebind detects it, does not write the gaming mouse, the menu slider shows the note; after quitting G HUB from its tray the stored DPI returns within ~2 s.
-- [ ] Mouse power cycle / sleep with G HUB not running: stored DPI arrives noticeably faster than before.
+- [x] Tester checklist 1.1–1.2: background G HUB is detected, slider disabled with the note, DPI oscillation stops; tray Quit restores Rebind DPI and slider in approximately two seconds. This observes behavior, not individual HID writes.
+- [x] Tester checklist 1.3: reconnect/wake DPI check marked passed with G HUB absent; no elapsed seconds or distinction between power-cycle and sleep supplied.
 - [ ] Options+ agent detection on a machine with Options+.
-- [ ] Menu slider is accent-colored when enabled on the running app (Light/Dark).
+- [x] Tester checklist 1.4: enabled slider stays blue without the thumb focus ring on reopening; drag and Devices agree. Separate Light/Dark coverage not specified.
+- [ ] Separate Light/Dark and accessibility review of the menu; see DEVICE-004.
+- [ ] Hardware event-tap timeout/recovery, including held-output release and the retry-budget fallback.
 
-Next step: user runs the debug build and walks the checklist above with the Lightspeed gaming mouse and G HUB.
+Evidence: [October 18 checklist, recorded October 19](../verification/manual-test-2026-10-18.md). Exact build/mouse/OS were not supplied; no tests rerun for this documentation update. Stage remains `awaiting_verification` for the checks above.
+
+Next step: verify Options+ background detection and event-tap recovery on an identified current build; do not repeat the passed G HUB happy path unless affected code changes.

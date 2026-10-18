@@ -1,6 +1,6 @@
 # DEVICE-004: Pointer speed in the Menu Bar menu
 
-- Updated: 2026-10-18
+- Updated: 2026-10-19
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation session released 2026-10-17
 - Requirements: SPEC §3.2 (mouse hardware settings, Menu Bar menu); user request 2026-10-16 to change mouse DPI from the Menu Bar menu
@@ -11,8 +11,8 @@
 - [x] `MenuBarController`: one custom-view menu item per connected mouse that reports DPI (`LogitechDeviceState.dpi` with `supportedDPI`); no section when none does. It is independent of the Battery-in-menu setting.
 - [x] The slider steps through the mouse's own list (same values as Settings → Devices), updates the label while dragging and writes/saves once on release through the existing `MouseHardwareSettings.dpi` path; both surfaces show the same value. Disabled while storage is locked or a companion app owns the mouse settings.
 - [x] Copy reuses `devicesPointerSpeed` and `devicesDPIValue` (all six languages exist); the slider's accessibility label is the device name plus "Pointer speed", its value the localized DPI.
-- [ ] Spoken VoiceOver, keyboard reach inside the menu and six-language widths in the running app.
-- [ ] Native check on MX Master 2S: drag/release, reopen menu, Settings agreement, keyboard/VoiceOver.
+- [x] Tester checklist 1.4: drag changes DPI, Devices agrees, reopening keeps the blue fill without a thumb focus ring. Mouse model and appearance were not specified.
+- [ ] Named-device Light/Dark review, VoiceOver adjustment and six-language widths. Direct keyboard adjustment inside this custom menu item is not offered; verify the Settings route and record the keyboard-access limitation.
 
 ## Implementation
 
@@ -23,6 +23,6 @@
 ## Verification
 
 - 2026-10-17: `dev.sh test`: 841 Swift Testing tests in 130 suites + 17 native tests pass, including 3 new `MenuPointerSpeedTests` (nearest-value start, snap + single commit, disabled state).
-- Not yet run: the menu in the running app (the installed Rebind was running, so the debug build was not launched alongside it).
+- 2026-10-19: [October 18 manual checklist](../verification/manual-test-2026-10-18.md) confirms the running-app slider subset above; exact build, mouse and appearance not supplied. No build/test rerun for the documentation update.
 
-Next step: with the installed Rebind quit, run the debug build and check drag/release on MX Master 2S, Settings agreement, Light/Dark against Sketch pair 53, keyboard and VoiceOver.
+Next step: on a named current bundle, verify Light/Dark against Sketch pair 53, VoiceOver adjustment, localized widths and a reachable keyboard route through Devices. Retain `awaiting_verification` until these checks or explicit capability limits are recorded.

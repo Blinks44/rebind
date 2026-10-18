@@ -1,10 +1,10 @@
 # UI-001: Coherent first-run and permission recovery
 
-- Updated: 2026-10-16 (documentation reconciliation)
+- Updated: 2026-10-19 (duplicate Accessibility prompt correction)
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation released
 - Requirements: SPEC §§6–8, 10–11; S2
-- Code baseline: initial native slice `acce2f4`, feedback adoption `59f5754`; integrated implementation exists in `1a0801b`. No new app checks in this cleanup.
+- Code baseline: initial native slice `acce2f4`, feedback adoption `59f5754`; integrated implementation exists in `1a0801b`. Current correction: `497b0d1` plus uncommitted `UI/AppModel.swift`; build and 15 selected permission tests pass.
 
 ## Current outcome
 
@@ -13,6 +13,8 @@ First-run setup/defer, one-time permission recovery, main notice, Settings → P
 Actual Accessibility/event-posting preflights gate capture/output; Input Monitoring is not required by the current tap. Grant state is distinct from engine failure, Secure Input, deliberate pause and storage lock. Setup-later keeps manual editing/profile access; requests and return/focus checks never imply a successful grant. Revocation cancels capture/recording/output while retaining saved rules and intent; avoid repeated modal interruption.
 
 ## Evidence and remaining acceptance
+
+**2026-10-19:** removed the prompted AX call that displayed a redundant system alert alongside the direct System Settings opening. Setup, recovery and Settings share the corrected action; actual grant preflights/return checks remain. Debug build and 15 existing permission/setup tests in three suites pass. [Cause, commands and runtime limits](../verification/permissions-native.md#direct-accessibility-settings-route--2026-10-19). No layout/copy/Sketch changes or actual grant manipulation.
 
 [Native evidence](../verification/permissions-native.md) retains final artifact digests, commands, 508 Swift Testing cases plus a native layout case, source-release checks and the full-main overflow repair across 72 locale/grant/rule/size combinations. Missing-grant navigation, editor cancellation and isolated deferral were checked; actual grants and spoken VoiceOver were not.
 
@@ -26,4 +28,4 @@ The 2026-10-12 feedback adoption passed 18 selected functions, 656 native viewpo
 
 ## Next handoff
 
-Verify first-run and permissions on the named bundle using the native walkthrough; the user controls real grants and configured input. Record actual results and limits. General/Input/Language/Advanced and whole-app styling already exist; do not implement them again from old handoff notes.
+First verify the corrected direct route on the new bundle: first use and prior denial, no duplicate alert, app listing/addition, grant recognition on return, then revocation recovery. Continue the native walkthrough; the user controls real grants and configured input. Record actual results and limits. General/Input/Language/Advanced and whole-app styling already exist; do not implement them again from old handoff notes.

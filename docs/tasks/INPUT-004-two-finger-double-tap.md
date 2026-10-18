@@ -1,6 +1,6 @@
 # INPUT-004: Two-finger double-tap engine and storage
 
-- Updated: 2026-10-16 (documentation reconciliation; dated checks unchanged).
+- Updated: 2026-10-19 (manual evidence reconciliation; original software runs unchanged).
 - Stage: `awaiting_verification`.
 - Owner: Kilo code agent (this chat); engine/data ownership released.
 - Ownership checked: 2026-10-12 / `main` `8e8a06e`; concurrent `/root` agent owns uncommitted UI-021 main-shell surfaces (ContentView/rebindApp/MainSidebar*/Navigation.xcstrings/EditorMenuSelector/ProfilePicker/MouseBindingsView and their layout tests). No file overlap; both uncommitted work preserved.
@@ -40,6 +40,10 @@ Agent-observed on macOS 27.0.1 (26A434) / arm64, Xcode 27.0 / Swift 6.4 / SDK 27
 
 Physical/hardware acceptance requires the user on a named build. Editor exposure is complete. The earlier concurrent Settings matrix failure is historical; UI-023 records subsequent full-window adoption/checks.
 
+## Current manual evidence — recorded 2026-10-19
+
+Built-in two-finger double delivery is user-confirmed in checklist 3.2; secondary click and Smart Zoom remain functional. Native settings/double effects and exact artifact were not supplied; this is no suppression proof. Source and artifact limits: [October 18 manual checklist](../verification/manual-test-2026-10-18.md). No build/test rerun; retain `awaiting_verification` for remaining acceptance.
+
 ## Next handoff
 
-Verify physical two-finger double timing, lone-tap behavior and Smart Zoom/secondary-click coexistence on a named current build using the integrated preset. Complete current editor/accessibility checks through UI-014.
+On a named current bundle verify built-in regression, lone-tap behavior, external pairs and Smart Zoom/secondary-click coexistence. Complete editor/accessibility checks through UI-014.

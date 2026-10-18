@@ -34,8 +34,10 @@ the system selection. For another Xcode installation:
 DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer apps/rebind/scripts/dev.sh build
 ```
 
-Build output is under ignored `apps/rebind/build/DerivedData/`. Do not run concurrent
-Xcode build commands against the same DerivedData directory. Extra arguments
+Build output is under ignored `apps/rebind/build/DerivedData/`. Set `REBIND_DERIVED_DATA`
+to an absolute alternate directory for an isolated build/test/run, preserving a different
+app artifact currently being tested on hardware. Do not pass a second `-derivedDataPath`.
+Do not run concurrent Xcode build commands against the same DerivedData directory. Extra arguments
 are forwarded to `xcodebuild`, for example:
 
 ```sh

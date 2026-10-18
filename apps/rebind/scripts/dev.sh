@@ -20,7 +20,9 @@ fi
 
 command_name="${1:-build}"
 if [[ $# -gt 0 ]]; then shift; fi
-common_args=(-project rebind.xcodeproj -scheme rebind -destination 'platform=macOS' -derivedDataPath "$repo_root/build/DerivedData")
+# An isolated build can preserve a different app artifact being tested on hardware.
+derived_data="${REBIND_DERIVED_DATA:-$repo_root/build/DerivedData}"
+common_args=(-project rebind.xcodeproj -scheme rebind -destination 'platform=macOS' -derivedDataPath "$derived_data")
 
 case "$command_name" in
     doctor)
@@ -42,7 +44,7 @@ case "$command_name" in
         ;;
     run)
         xcodebuild build "${common_args[@]}" -configuration Debug "$@"
-        exec open "$repo_root/build/DerivedData/Build/Products/Debug/Rebind.app"
+        exec open "$derived_data/Build/Products/Debug/Rebind.app"
         ;;
     *)
         echo "Usage: $0 {doctor|build|release|build-for-testing|test|resolve|run} [xcodebuild arguments]" >&2

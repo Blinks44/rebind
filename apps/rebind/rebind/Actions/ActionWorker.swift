@@ -83,7 +83,7 @@ nonisolated final class ActionWorker {
         self.sendHeldKey = sendHeldKey
         self.sendTrackpadShortcut = sendTrackpadShortcut ?? { shortcut, target, canPerform in
             ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
-                                diagnose: { mailbox.recordTrackpadDiagnostic($0) })
+                                diagnose: { if !target.isMagicMouse { mailbox.recordTrackpadDiagnostic($0) } })
         }
         self.performMouse = performMouse
         self.performMedia = performMedia
@@ -138,7 +138,7 @@ nonisolated final class ActionWorker {
         guard mailbox.dispatchIsCurrent(dispatch) else { return }
         // A delayed touch action is dropped rather than executed late, whatever it does.
         if let target = dispatch.trackpadTarget, now > target.expiresAt {
-            mailbox.recordTrackpadDiagnostic(.outputExpired)
+            if !target.isMagicMouse { mailbox.recordTrackpadDiagnostic(.outputExpired) }
             return
         }
         let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
@@ -150,10 +150,12 @@ nonisolated final class ActionWorker {
         case .shortcut(let shortcut):
             if let target = dispatch.trackpadTarget {
                 result = sendTrackpadShortcut(shortcut, target, canPerform)
-                switch result {
-                case .performed: mailbox.recordTrackpadDiagnostic(.outputPosted)
-                case .cancelled: mailbox.recordTrackpadDiagnostic(.outputCancelled)
-                case .unavailable: mailbox.recordTrackpadDiagnostic(.outputUnavailable)
+                if !target.isMagicMouse {
+                    switch result {
+                    case .performed: mailbox.recordTrackpadDiagnostic(.outputPosted)
+                    case .cancelled: mailbox.recordTrackpadDiagnostic(.outputCancelled)
+                    case .unavailable: mailbox.recordTrackpadDiagnostic(.outputUnavailable)
+                    }
                 }
             } else { result = sendShortcut(shortcut) ? .performed : .unavailable }
         case .lockScreen, .sleepSystem:

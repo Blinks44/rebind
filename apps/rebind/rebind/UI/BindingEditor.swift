@@ -58,6 +58,7 @@ struct BindingEditor: View {
                     case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) },
                                                       recordTapOutput: { record(.tapOutput) })
                     case .builtInTrackpad, .magicTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
+                    case .magicMouse: MagicMouseTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                     case .allKeyboards: keyboardTrigger
                     }
                     action
@@ -116,6 +117,7 @@ struct BindingEditor: View {
         .onChange(of: draft.holdDurationMilliseconds) { model.cancelRecording() }
         .onChange(of: draft.pointerDirection) { model.cancelRecording() }
         .onChange(of: draft.scrollDirection) { model.cancelRecording() }
+        .onChange(of: draft.magicMousePreset) { model.cancelRecording(); recordingRequest = nil }
         .onChange(of: draft.trackpadPreset) {
             model.cancelRecording()
             recordingRequest = nil
@@ -143,6 +145,7 @@ struct BindingEditor: View {
         case .allMice: return .mouseEditorScope(profile)
         case .builtInTrackpad: return .trackpadEditorScope(profile)
         case .magicTrackpad: return .magicTrackpadEditorScope(profile)
+        case .magicMouse: return .magicMouseEditorScope(profile)
         case .allKeyboards: return .keyboardEditorScope(profile)
         }
     }
@@ -236,7 +239,7 @@ struct BindingEditor: View {
 
     private var actionHint: LocalizedStringResource? {
         if actionKind == .keyboardShortcut {
-            return scope == .allMice ? .mouseOutputHelp : scope.isTrackpad ? .trackpadOutputHelp : nil
+            return scope == .allMice ? .mouseOutputHelp : scope.isTouchSurface ? .trackpadOutputHelp : nil
         }
         if actionKind == .runAppleShortcut || actionKind.needsWorkspaceParameters { return nil }
         if actionKind == .doNothing { return .doNothingHint }
@@ -265,6 +268,12 @@ struct BindingEditor: View {
         if scope.isTrackpad, let preset = draft.trackpadPreset {
             Banner(severity: .warning, title: .trackpadSystemGestureWarning,
                            message: preset.systemGestureHelp) {
+                Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
+            }
+        }
+        if scope == .magicMouse {
+            Banner(severity: .warning, title: .trackpadSystemGestureWarning,
+                   message: draft.magicMousePreset.systemGestureHelp) {
                 Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
             }
         }
@@ -312,7 +321,7 @@ struct BindingEditor: View {
     }
 
     private var conflictHelp: LocalizedStringResource {
-        scope.isTrackpad ? .trackpadConflictHelp : .mouseConflictHelp
+        scope.isTouchSurface ? .trackpadConflictHelp : .mouseConflictHelp
     }
 
     private func openSystemSettings() {

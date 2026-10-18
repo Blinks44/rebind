@@ -26,6 +26,7 @@ enum InputLabels {
     static func trigger(_ trigger: InputTrigger, modifiers: ModifierSet) -> String {
         let label: String
         switch trigger {
+        case .magicMouseTap(let fingers): label = AppLocalization.string((MagicMousePreset(rawValue: fingers) ?? .oneFingerTap).title)
         case .fourFingerTap: label = AppLocalization.string(.fourFingerTap)
         case .threeFingerTap: label = AppLocalization.string(.threeFingerTap)
         case .threeFingerDoubleTap: label = AppLocalization.string(.threeFingerDoubleTap)
@@ -45,7 +46,7 @@ enum InputLabels {
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll:
             return modifiers.glyphs.isEmpty ? label : modifiers.glyphs + " " + label
         default:
-            if trigger.isTrackpad, !modifiers.glyphs.isEmpty { return modifiers.glyphs + " " + label }
+            if trigger.isTouchGesture, !modifiers.glyphs.isEmpty { return modifiers.glyphs + " " + label }
             return modifiers.glyphs + label
         }
     }
@@ -150,6 +151,7 @@ extension DeviceScope {
         case .allMice: .allMice
         case .builtInTrackpad: .builtInTrackpad
         case .magicTrackpad: LocalizedStringResource("magicTrackpadNavigationTitle", table: "Navigation")
+        case .magicMouse: LocalizedStringResource("magicMouseNavigationTitle", table: "Navigation")
         }
     }
     var symbol: String {
@@ -158,6 +160,7 @@ extension DeviceScope {
         case .allMice: "computermouse"
         case .builtInTrackpad: "rectangle.and.hand.point.up.left"
         case .magicTrackpad: "hand.tap"
+        case .magicMouse: "magicmouse"
         }
     }
 }

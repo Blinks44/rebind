@@ -33,8 +33,9 @@ struct MainSidebar: View {
                 MainSidebarButton(title: DeviceScope.magicTrackpad.title, symbol: DeviceScope.magicTrackpad.symbol,
                     isSelected: selection == .input(.magicTrackpad)) { selection = .input(.magicTrackpad) }
                     .accessibilityIdentifier("sidebar-magic-trackpad")
-                MainSidebarButton(title: LocalizedStringResource("magicMouseNavigationTitle", table: "Navigation"), symbol: "magicmouse") { }
-                    .disabled(true).help(Text(.magicMouseNotAvailable))
+                MainSidebarButton(title: DeviceScope.magicMouse.title, symbol: DeviceScope.magicMouse.symbol,
+                    isSelected: selection == .input(.magicMouse)) { selection = .input(.magicMouse) }
+                    .accessibilityIdentifier("sidebar-magic-mouse")
             }.padding(.top, 18)
 
             Spacer(minLength: 16)

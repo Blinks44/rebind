@@ -201,6 +201,8 @@ gesture-type/finger/direction controls. Curate the release pool against native
 macOS reservations and actual hardware evidence; never infer the pool from
 Trackpad or expose arbitrary gesture construction.
 
+The first app testing pool is stationary one- and two-finger single taps, each optionally with one held Command, Option, Control or Shift. These are experimental candidates based on INPUT-012 observation, with basic app delivery user-confirmed in INPUT-014; broader hardware support remains unverified. Preserve physical clicks, pointer motion and scrolling; native Smart Zoom/Mission Control remain active unless the user changes their settings. User decision 2026-10-19: preserve fast single taps without waiting for native-double arbitration; explain that overlapping native gestures must be disabled manually to avoid both effects. Desired actions may be assigned to available Rebind triggers; native Magic Mouse double taps are not in the current preset pool. Broader gestures above remain research-gated. [INPUT-014](tasks/INPUT-014-magic-mouse-integration.md) owns integration and physical acceptance.
+
 **Acceptance G1:** Only gestures verified on a real Magic Mouse are marked supported.  
 **Acceptance G2:** Device disconnect/reconnect and gesture cancellation do not leave stuck input states.
 

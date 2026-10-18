@@ -3,5 +3,9 @@ nonisolated enum DeviceScope: String, Codable, Hashable, Sendable {
     /// An external Magic Trackpad: the same gesture presets as the built-in one, with its own rules.
     case magicTrackpad
 
+    case magicMouse
+
+    var isTouchSurface: Bool { isTrackpad || self == .magicMouse }
+
     var isTrackpad: Bool { self == .builtInTrackpad || self == .magicTrackpad }
 }

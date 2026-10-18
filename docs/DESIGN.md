@@ -1,6 +1,6 @@
 # Rebind: design direction and live source index
 
-Updated 2026-10-16. [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-18 (Magic Mouse live-source review; no Sketch edits/save). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under UI-013. Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
@@ -10,7 +10,7 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
-Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Last save/review **2026-10-16**, SHA-256 `1a649a9fba1681f8b5a3b44050aa96e07e1b7010238f5c1bd84fd0ab588c5246`; IDs change after saving/reopening, so resolve them live. [Production review](tasks/REVIEW-001-production-review.md) and [UI-022](tasks/UI-022-soft-design-system.md) record scope and limits.
+Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Latest scoped live review **2026-10-18** (Magic Mouse/shared controls), current on-disk SHA-256 `e4973b7c9144d35c15336e91c48f5122bee3440abf3639befca19964ca08ba83`; no save was made by the reviewer. The earlier 2026-10-16 save/review is recorded in [production review](tasks/REVIEW-001-production-review.md). IDs change after saving/reopening, so resolve them live; [UI-022](tasks/UI-022-soft-design-system.md) records broader scope and limits.
 
 | Page | Content |
 | --- | --- |
@@ -28,7 +28,7 @@ Every color is a `Light/…` or `Dark/…` Color Variable; layer and text styles
 
 The sequence runs from first-run setup through category lists, editors, profiles, Settings and diagnostics to About/licenses and the battery menu. Current Devices coverage includes generic keyboards/trackpads, unavailable charge, charging, local names and Rename, companion-app restrictions, per-mouse scrolling and optional Bluetooth allow/denied/restricted states. General includes Battery in menu; Language distinguishes a draft awaiting Apply from the saved choice awaiting reopen. Menu specimens use exported SF battery symbols and show a charging/local-name variant and a Pointer speed (DPI) slider section ([DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md)). Old global smoothing and duplicate Input specimens are archived. Current code/design default distance is 50 pt, the subsequent INPUT-011 user choice.
 
-Magic Mouse editors remain undrawn until the hardware probe establishes feasible presets (see [PLAN](PLAN.md)); compact-width/accessibility variants are verified in the app. Saved designs do not close hardware or native menu rendering acceptance.
+Dedicated Magic Mouse Sketch editor, populated and recovery states remain undrawn. The 2026-10-18 [INPUT-014 review](tasks/INPUT-014-magic-mouse-integration.md#pre-test-review--2026-10-18) inspected the live Magic Mouse empty screen, Light/Dark trackpad held-key editors and shared sources against isolated native renders. Selector/held-key geometry and shared styling agree; experimental guidance and the longer scrolling editor serve the current testing pool. Full-state parity, keyboard/VoiceOver and adaptive preferences remain open; six-language minimum-size layout checks pass. No Sketch edit/save was made. Saved designs do not close hardware or native menu rendering acceptance.
 
 ## Rules that apply to every screen
 

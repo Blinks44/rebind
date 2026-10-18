@@ -25,8 +25,8 @@ nonisolated struct Binding: Codable, Identifiable, Equatable, Sendable {
         (scope == trigger.scope || (scope == .magicTrackpad && trigger.isTrackpad)) && trigger.isSupported && action.isSupported
             && modifiers.subtracting(.supported).isEmpty
             && matchKey != MatchKey.emergencyBypass
-            && (activation == .press || (!trigger.isScroll && !trigger.holdsButton && !trigger.isTrackpad))
-            && (!trigger.isTrackpad || modifiers.isEmpty || ModifierSet.trackpadChoices.contains(modifiers))
+            && (activation == .press || (!trigger.isScroll && !trigger.holdsButton && !trigger.isTouchGesture))
+            && (!trigger.isTouchGesture || modifiers.isEmpty || ModifierSet.trackpadChoices.contains(modifiers))
             && (100...5000).contains(holdDurationMilliseconds)
             && (note.map(Self.isValidNote) ?? true)
             && (!holdsOutput || (activation != .doublePress && trigger.canHoldOutput && action.canBeHeld))
