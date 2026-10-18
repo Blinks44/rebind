@@ -12,6 +12,7 @@ import Testing
         #expect(view.shownValue == 1600)
         #expect(view.slider.accessibilityValueDescription() == "1600 DPI")
         #expect(view.slider.accessibilityLabel() == "MX Master 3S, Pointer speed")
+        #expect(view.slider.trackFillColor == .controlAccentColor)
     }
 
     @Test func aChangeOutsideADragCommitsOnceAndSnaps() {
@@ -27,6 +28,14 @@ import Testing
     @Test func disabledSliderCannotChange() {
         let view = makeView(dpi: 800, enabled: false) { _ in }
         #expect(!view.slider.isEnabled)
+    }
+
+    @Test func aCompanionAppNoteExplainsTheDisabledSlider() {
+        let view = MenuPointerSpeedView(name: "PRO", dpi: 800, values: values, enabled: false, note: "Logitech G HUB is running",
+                                        accessibilityLabel: "PRO, Pointer speed", valueText: { "\($0) DPI" }, commit: { _ in })
+        #expect(!view.slider.isEnabled)
+        #expect(view.slider.accessibilityHelp() == "Logitech G HUB is running")
+        #expect(view.slider.accessibilityValueDescription() == "800 DPI")
     }
 
     private func makeView(dpi: Int, enabled: Bool = true, commit: @escaping (Int) -> Void) -> MenuPointerSpeedView {

@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-16**. Baseline `fdaef8f` includes [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md); [review fixes](tasks/REVIEW-001-production-review.md) are uncommitted. Runtime/accessibility/safety/Dock acceptance remains open.
+Updated **2026-10-18**. Baseline `fdaef8f` includes [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md); [review fixes](tasks/REVIEW-001-production-review.md) are uncommitted. Runtime/accessibility/safety/Dock acceptance remains open.
 
 ## Product and baseline
 
@@ -16,6 +16,7 @@ The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; do
 
 ## Design source and recent changes
 
+- **2026-10-18:** [G HUB coexistence, faster DPI, tap recovery](tasks/DEVICE-005-companion-dpi-reconnect.md): background G HUB/Options+ helpers detected, stored DPI written first on (re)connect, menu slider explains a companion lock, disabled event tap recovers; tests pass, hardware checks open.
 - **2026-10-16:** [Pointer speed in the Menu Bar menu](tasks/DEVICE-004-menu-pointer-speed.md): Sketch pair 53 saved; per-mouse DPI slider implemented (2026-10-17), tests pass, running-app check open.
 - **2026-10-16:** [Trackpad review fixes](tasks/INPUT-013-trackpad-review-fixes.md): double taps survive idle frame gaps, tap-made clicks no longer cancel taps, stale disconnected devices fixed, resting-finger presses from three-finger drag no longer run click rules (force on Force Touch, timing on Magic Trackpad); tests pass, hardware checks open.
 - **2026-10-16:** Volume/mute actions post the system sound keys after a user report (silent volume while muted, no HUD); tests pass, hardware check open ([history](history/2026-10.md#2026-10-16-volume-and-mute-through-the-system-sound-keys)).
@@ -34,6 +35,7 @@ Source: **Rebind.sketch** (English, Light/Dark) is the design source; [DESIGN](D
 
 | Task | Stage | Owner | Concrete next step |
 | --- | --- | --- | --- |
+| [DEVICE-005](tasks/DEVICE-005-companion-dpi-reconnect.md) | awaiting_verification | Unassigned | With G HUB running/quitting and the gaming mouse reconnecting, check detection, DPI timing and the menu note. |
 | [DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md) | awaiting_verification | Unassigned | Check the menu slider in the running app on MX Master 2S (drag, Settings agreement, Light/Dark, keyboard/VoiceOver). |
 | [INPUT-013](tasks/INPUT-013-trackpad-review-fixes.md) | awaiting_verification | Unassigned | User rechecks double taps, three-finger tap and resting-finger click rules on both trackpads. |
 | [REVIEW-001](tasks/REVIEW-001-production-review.md) | awaiting_verification | Unassigned | Verify holds/quit, gesture disconnect, glide and companion changes; implement/check the exact battery row. |

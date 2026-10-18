@@ -1,4 +1,5 @@
 import AppKit
+import Darwin
 
 /// A mouse maker's own app that talks to its mice directly. While it runs, it can take
 /// extra buttons away from macOS (and so from Rebind) and overwrite wheel and pointer
@@ -21,7 +22,8 @@ nonisolated struct CompanionApp: Hashable, Sendable {
 
     /// Only identifiers checked against an installed bundle or the vendor's published ones.
     /// Logi Options+: com.logi.optionsplus (published) and its `logioptionsplus_agent` helper.
-    /// G HUB: com.logi.ghub and com.logi.ghub.agent, read from an installed G HUB on 2026-10-15.
+    /// G HUB: com.logi.ghub (also its launchd-started `lghub_system_tray`) and com.logi.ghub.agent,
+    /// read from an installed G HUB on 2026-10-15 and rechecked 2026-10-18.
     /// Other vendors (Razer Synapse, SteelSeries GG, the old Logitech Options) are not listed
     /// until their identifiers are verified the same way.
     static let known = [
@@ -48,11 +50,17 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     }
 }
 
-/// Follows companion apps as they launch and quit. Their helpers run in the background,
-/// which the launch notifications do not cover, so this observes the process list itself.
+/// Follows companion apps as they launch and quit. Their device helpers (G HUB's agent,
+/// the Options+ agent) are started by launchd, not Launch Services, so they never appear in
+/// `NSWorkspace.runningApplications`; the whole process list is read instead. macOS has no public
+/// launch notification for such processes, so a cheap scan repeats every two seconds, and
+/// Launch Services changes trigger one at once.
 @MainActor @Observable final class CompanionAppMonitor {
     private(set) var running: [CompanionApp] = []
     @ObservationIgnored private var observation: NSKeyValueObservation?
+    @ObservationIgnored private var timer: Timer?
+    /// Bundle identifiers by executable path; a process's bundle never changes.
+    @ObservationIgnored private var bundleIdentifiers: [String: String?] = [:]
     /// Called after the set of running apps changes.
     @ObservationIgnored var changed: () -> Void = {}
 
@@ -62,16 +70,28 @@ nonisolated struct CompanionApp: Hashable, Sendable {
         observation = NSWorkspace.shared.observe(\.runningApplications) { [weak self] _, _ in
             Task { @MainActor in self?.refresh() }
         }
+        timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refresh() }
+        }
+        timer?.tolerance = 0.5
     }
 
     func stop() {
         observation?.invalidate()
         observation = nil
+        timer?.invalidate()
+        timer = nil
     }
 
     func refresh() {
-        let processes = NSWorkspace.shared.runningApplications.map {
-            (bundleIdentifier: $0.bundleIdentifier, executableName: $0.executableURL?.lastPathComponent)
+        let paths = Self.executablePaths()
+        let processes = paths.map { path in
+            let bundleIdentifier = bundleIdentifiers[path] ?? {
+                let identifier = Self.bundleIdentifier(ofExecutable: path)
+                bundleIdentifiers[path] = identifier
+                return identifier
+            }()
+            return (bundleIdentifier: bundleIdentifier, executableName: Optional((path as NSString).lastPathComponent))
         }
         let found = CompanionApp.running(in: processes)
         guard found != running else { return }
@@ -83,5 +103,26 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     /// Logitech mouse, G HUB for gaming mice with onboard profiles.
     func controller(ofVendor vendorID: Int, gaming: Bool = false) -> CompanionApp? {
         running.first { $0.vendorID == vendorID && ($0.controlsHardwareSettings || (gaming && $0.managesGamingMice)) }
+    }
+
+    /// The executable of every process this user can see.
+    private nonisolated static func executablePaths() -> [String] {
+        let capacity = proc_listallpids(nil, 0)
+        guard capacity > 0 else { return [] }
+        // Room for processes that start between the two calls.
+        var pids = [pid_t](repeating: 0, count: Int(capacity) + 64)
+        let count = pids.withUnsafeMutableBytes { proc_listallpids($0.baseAddress, Int32($0.count)) }
+        guard count > 0 else { return [] }
+        var buffer = [CChar](repeating: 0, count: Int(MAXPATHLEN) * 4)
+        return pids.prefix(Int(count)).compactMap { pid in
+            guard pid > 0, proc_pidpath(pid, &buffer, UInt32(buffer.count)) > 0 else { return nil }
+            return String(cString: buffer)
+        }
+    }
+
+    /// The identifier of the innermost bundle whose `Contents/MacOS` holds the executable.
+    nonisolated static func bundleIdentifier(ofExecutable path: String) -> String? {
+        guard let range = path.range(of: "/Contents/MacOS/", options: .backwards) else { return nil }
+        return Bundle(path: String(path[..<range.lowerBound]))?.bundleIdentifier
     }
 }

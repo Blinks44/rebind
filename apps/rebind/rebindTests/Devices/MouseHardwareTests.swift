@@ -20,9 +20,34 @@ struct CompanionAppTests {
         #expect(running([("com.logi.optionsplusfake", nil), ("com.apple.finder", "Finder"), (nil, nil)]).isEmpty)
     }
 
+    @Test func launchdHelpersAreNamedByTheirEnclosingBundle() {
+        #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/System/Applications/Calculator.app/Contents/MacOS/Calculator")
+                == "com.apple.calculator")
+        #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/usr/bin/true") == nil)
+        #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/nonexistent/X.app/Contents/MacOS/X") == nil)
+        // G HUB's launchd tray helper sits in the main bundle; its updater's crash handler in the updater's.
+        #expect(running([("com.logi.ghub", "lghub_system_tray")]) == ["Logitech G HUB"])
+        #expect(running([("com.logi.ghub.updater", "logi_crashpad_handler")]).isEmpty)
+    }
+
+    @MainActor @Test func theProcessScanSeesBackgroundProcesses() {
+        // This test process is not a Launch Services app, yet the scan must not come up empty.
+        let monitor = CompanionAppMonitor()
+        monitor.refresh()
+        #expect(monitor.running.allSatisfy { CompanionApp.known.contains($0) })
+    }
+
     @Test func theGHubUpdaterAloneIsNotGHub() {
         #expect(running([("com.logi.ghub.updater", "lghub_updater")]).isEmpty)
         #expect(running([("com.logi.ghub.updater", nil), ("com.logi.ghub.agent", nil)]) == ["Logitech G HUB"])
+    }
+}
+
+struct ProbeOrderTests {
+    @Test func aSlotThatJustConnectedIsAskedFirst() {
+        #expect(MouseHardware.probeOrder(first: nil) == [1, 2, 3, 4, 5, 6])
+        #expect(MouseHardware.probeOrder(first: 3) == [3, 1, 2, 4, 5, 6])
+        #expect(MouseHardware.probeOrder(first: 0xFF) == [1, 2, 3, 4, 5, 6])
     }
 }
 
@@ -99,8 +124,9 @@ struct LogitechMouseTests {
         let mouse = try #require(LogitechDevice(io: device, slot: nil))
         _ = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1600),
                         canWrite: { device.writes.isEmpty })
+        // Only the first write (pointer speed) went out; the wheel mode was never written.
         #expect(device.writes.count == 1)
-        #expect(device.dpi == 1000)
+        #expect(device.dpi == 1600 && device.mode == [0x02, 16, 10])
         let access = DeviceWriteAccess()
         access.update(standard: true, gaming: false)
         #expect(access.allows(gaming: false) && access.allows(gaming: true) == false)
@@ -129,7 +155,8 @@ struct LogitechMouseTests {
         #expect(state.supportedDPI.first == 200 && state.supportedDPI.last == 4000 && state.supportedDPI.count == 77)
 
         let applied = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1610)) // nearest: 1600
-        #expect(device.writes == [[0x0E, 0x18, 0x01, 0x00, 0x00], [0x0F, 0x38, 0x00, 0x06, 0x40]])
+        // Pointer speed first: a mouse that just connected moves at its own speed until then.
+        #expect(device.writes == [[0x0F, 0x38, 0x00, 0x06, 0x40], [0x0E, 0x18, 0x01, 0x00, 0x00]])
         #expect(applied.wheelMode == .alwaysFreeSpin && applied.dpi == 1600)
     }
 

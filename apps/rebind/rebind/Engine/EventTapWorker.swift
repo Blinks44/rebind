@@ -16,6 +16,8 @@ nonisolated final class EventTapWorker {
     private var lastPermissionCheck = Date.distantPast
     private var hasPermissions = false
     private var lastRetryID: UInt64 = 0
+    /// When macOS last disabled the tap and it was turned back on, newest last.
+    private var recoveries: [UInt64] = []
 
     init(mailbox: EngineMailbox) {
         self.mailbox = mailbox
@@ -73,9 +75,17 @@ nonisolated final class EventTapWorker {
         // A disabled/invalid tap may stop delivering callbacks altogether. Check
         // on its owning thread before draining output, not just in the callback.
         if let port, !CFMachPortIsValid(port) || !CGEvent.tapIsEnabled(tap: port) {
-            failureLatched = true
-            mailbox.captureLost(status: .interrupted, pause: true)
-            removeTap()
+            if CFMachPortIsValid(port), Self.mayRecover(at: now, recent: &recoveries) {
+                // macOS disables a tap that answered too slowly once (under heavy load, after
+                // wake). Turn it back on, as other remappers do; events that passed meanwhile
+                // leave unknown press state, so capture starts clean. Repeated loss stays latched.
+                mailbox.captureLost(status: .paused)
+                CGEvent.tapEnable(tap: port, enable: true)
+            } else {
+                failureLatched = true
+                mailbox.captureLost(status: .interrupted, pause: true)
+                removeTap()
+            }
         }
         if port == nil, (control.0 || control.1 || control.4 || control.6), !failureLatched {
             installTap(capturePointerMotion: control.5)
@@ -92,6 +102,16 @@ nonisolated final class EventTapWorker {
         }
         guard port != nil, !secure, !failureLatched else { return }
         mailbox.pollHold(at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled())
+    }
+
+    /// At most three automatic recoveries a minute; beyond that something keeps the tap
+    /// from working and the user resumes deliberately.
+    static func mayRecover(at now: UInt64, recent: inout [UInt64], limit: Int = 3,
+                           window: UInt64 = 60_000_000_000) -> Bool {
+        recent.removeAll { now &- $0 >= window }
+        guard recent.count < limit else { return false }
+        recent.append(now)
+        return true
     }
 
     static func eventMask(capturePointerMotion: Bool) -> CGEventMask {
@@ -138,9 +158,8 @@ nonisolated final class EventTapWorker {
 
     private func receive(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-            failureLatched = true
-            mailbox.captureLost(status: .interrupted, pause: true)
-            // Do not re-enable in the callback. Let the user deliberately resume.
+            // Not re-enabled here: `service` on this thread recovers or latches the failure
+            // within one run-loop slice.
             return Unmanaged.passUnretained(event)
         }
         guard event.getIntegerValueField(.eventSourceUserData) != ShortcutSender.eventTag else {

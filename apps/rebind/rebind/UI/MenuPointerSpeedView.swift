@@ -11,7 +11,9 @@ final class MenuPointerSpeedView: NSView {
     let slider = NSSlider()
     private var committed: Int
 
-    init(name: String, dpi: Int, values: [Int], enabled: Bool, accessibilityLabel: String,
+    /// `note` replaces the value while the slider is disabled for a reason the user can fix,
+    /// such as a companion app that owns the mouse's settings.
+    init(name: String, dpi: Int, values: [Int], enabled: Bool, note: String? = nil, accessibilityLabel: String,
          valueText: @escaping (Int) -> String, commit: @escaping (Int) -> Void) {
         self.values = values
         self.valueText = valueText
@@ -39,6 +41,8 @@ final class MenuPointerSpeedView: NSView {
         slider.doubleValue = Double(values.firstIndex(of: committed) ?? 0)
         slider.isContinuous = true
         slider.isEnabled = enabled
+        // A menu's window never becomes key, so the slider would draw its inactive gray fill.
+        if enabled { slider.trackFillColor = .controlAccentColor }
         slider.target = self
         slider.action = #selector(sliderMoved)
         slider.setAccessibilityLabel(accessibilityLabel)
@@ -63,6 +67,13 @@ final class MenuPointerSpeedView: NSView {
             slider.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
         ])
         show(committed)
+        if let note {
+            valueLabel.stringValue = note
+            valueLabel.lineBreakMode = .byTruncatingTail
+            // The name stays readable; a long note gives way first.
+            valueLabel.setContentCompressionResistancePriority(.defaultLow - 1, for: .horizontal)
+            slider.setAccessibilityHelp(note)
+        }
     }
 
     @available(*, unavailable)

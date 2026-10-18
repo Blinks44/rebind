@@ -1,5 +1,6 @@
 import Foundation
 import HIDPP
+import Synchronization
 
 /// What a HID++ mouse or keyboard reports about the settings Rebind can change. A nil part means
 /// the device lacks that feature, so its row is not shown. Keyboards only report their battery.
@@ -29,14 +30,24 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     let slot: UInt8?
     let isKeyboard: Bool
     private let transport: HIDPPTransport
-    private let deviceName: DeviceName?
+    /// Read once: it never changes while the device stays at this address, and reading it
+    /// takes several requests.
+    let name: String?
     private let smartShift: SmartShift?
     private let adjustableDPI: AdjustableDPI?
     private let hiResWheel: HiResWheel?
     private let battery: Battery?
     let controls: ReprogControls?
     private let onboardProfiles: OnboardProfiles?
-    private let canDivertGestureButton: Bool
+    /// Asks the mouse about every control, one request each, so it waits until the stored
+    /// pointer speed has been written.
+    private var canDivertGestureButton: Bool {
+        if let known = gestureButtonSupport.withLock({ $0 }) { return known }
+        let found = controls?.canDivert(ReprogControls.gestureButton) ?? false
+        gestureButtonSupport.withLock { $0 = found }
+        return found
+    }
+    private let gestureButtonSupport = Mutex<Bool?>(nil)
     private let gestureOwnership: GestureButtonOwnership
     /// Connection-scoped ownership survives replacement of this feature adapter.
     var isGestureButtonDiverted: Bool { gestureOwnership.contains(slot ?? HIDPPConstants.receiverIndex) }
@@ -85,18 +96,20 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         hiResWheel = mouseFeature(.hiresWheel).map { HiResWheel(transport: transport, featureIndex: $0) }
         controls = mouseFeature(.reprogControlsV4).map { ReprogControls(transport: transport, featureIndex: $0) }
         onboardProfiles = mouseFeature(.onboardProfiles).map { OnboardProfiles(transport: transport, featureIndex: $0) }
-        canDivertGestureButton = controls?.canDivert(ReprogControls.gestureButton) ?? false
         // A device without DEVICE_NAME is still a mouse when it has one of the settings;
         // a keyboard is listed only for its battery.
         guard isKeyboard ? battery != nil : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else { return nil }
         self.slot = slot
         self.gestureOwnership = gestureOwnership
         self.transport = transport
-        deviceName = name
+        self.name = name?.name()
     }
 
+    /// A gaming mouse with onboard profiles, which G HUB manages while it runs.
+    var hasOnboardProfiles: Bool { onboardProfiles != nil }
+
     func read() -> LogitechDeviceState {
-        var state = LogitechDeviceState(name: deviceName?.name(), isKeyboard: isKeyboard)
+        var state = LogitechDeviceState(name: name, isKeyboard: isKeyboard)
         if isKeyboard {
             (state.batteryPercentage, state.batteryCharging) = readBattery()
             return state
@@ -110,7 +123,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         }
         state.highResolutionWheel = hiResWheel?.isHighResolutionWheelEnabled()
         state.hasGestureButton = canDivertGestureButton
-        state.hasOnboardProfiles = onboardProfiles != nil
+        state.hasOnboardProfiles = hasOnboardProfiles
         (state.batteryPercentage, state.batteryCharging) = readBattery()
         return state
     }
@@ -129,11 +142,11 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         return done
     }
 
-    /// Writes the stored values the mouse supports, then reads back what it now uses.
+    /// Writes the stored values the mouse supports, pointer speed first because a mouse that just
+    /// connected moves at its own until then, and reads back what it now uses.
     func apply(_ settings: MouseHardwareSettings, canWrite: () -> Bool = { true }) -> LogitechDeviceState {
         guard !isKeyboard else { return read() }
         guard canWrite() else { return read() }
-        if let smartShift, let mode = Self.mode(for: settings), canWrite() { smartShift.setMode(mode) }
         if let adjustableDPI, let dpi = settings.dpi {
             // Read the value back and try once more: a gaming mouse in onboard mode (or one that just
             // woke) may keep its profile's DPI. Host mode makes the written value stay; after the
@@ -147,6 +160,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
                 if adjustableDPI.currentDPI() == target { break }
             }
         }
+        if let smartShift, let mode = Self.mode(for: settings), canWrite() { smartShift.setMode(mode) }
         if let hiResWheel, let enabled = settings.highResolutionWheel, canWrite() {
             _ = hiResWheel.setHighResolutionWheelEnabled(enabled)
         }

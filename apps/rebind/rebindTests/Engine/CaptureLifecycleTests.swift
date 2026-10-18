@@ -56,6 +56,16 @@ struct CaptureLifecycleTests {
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
     }
 
+    @Test func aDisabledTapRecoversAtMostThreeTimesAMinute() {
+        var recent: [UInt64] = []
+        let second: UInt64 = 1_000_000_000
+        #expect((0..<3).allSatisfy { EventTapWorker.mayRecover(at: UInt64($0) * second, recent: &recent) })
+        #expect(!EventTapWorker.mayRecover(at: 10 * second, recent: &recent))
+        // The first recovery leaves the window after a minute.
+        #expect(EventTapWorker.mayRecover(at: 60 * second, recent: &recent))
+        #expect(!EventTapWorker.mayRecover(at: 60 * second + 1, recent: &recent))
+    }
+
     @Test func outputFailureClearsPointerCaptureAsWellAsOutput() {
         let mailbox = EngineMailbox()
         let binding = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left),

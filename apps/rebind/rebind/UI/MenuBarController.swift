@@ -132,6 +132,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             let title = AppLocalization.string(.devicesPointerSpeed, language: language)
             let view = MenuPointerSpeedView(
                 name: name, dpi: dpi, values: values, enabled: !model.storageLocked && companion == nil,
+                note: companion.map { AppLocalization.string(.companionRunningOne($0.name), language: language) },
                 accessibilityLabel: "\(name), \(title)",
                 valueText: { AppLocalization.string(.devicesDPIValue($0), language: language) },
                 commit: { [model] value in

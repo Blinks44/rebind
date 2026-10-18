@@ -99,6 +99,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         var probed = false
         var isProbing = false
         var needsProbe = false
+        /// The receiver slot that just reported a connection, asked first by the next probe.
+        var firstSlot: UInt8?
         var isReadingBattery = false
         var applying: Set<String> = []
         var pendingSettings: [String: MouseHardwareSettings] = [:]
@@ -346,11 +348,16 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     /// Finds the HID++ mice at a location: the device itself, or each paired receiver slot.
-    private func probe(_ location: String) {
+    /// Each mouse gets its stored settings as soon as it is found, before the next slot is asked,
+    /// and `firstSlot` (a mouse that just connected) is asked before the others.
+    private func probe(_ location: String, firstSlot: UInt8? = nil) {
         guard let session = sessions[location] else { return }
         session.writeAccess.update(standard: canWrite(0x046D, false), gaming: canWrite(0x046D, true))
+        if let firstSlot { session.firstSlot = firstSlot }
         guard !session.isProbing else { session.needsProbe = true; return }
         session.isProbing = true
+        let slots = Self.probeOrder(first: session.firstSlot)
+        session.firstSlot = nil
         let io = session.io
         let gestureOwnership = session.gestureOwnership
         let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
@@ -362,23 +369,33 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         session.queue.async { [weak self] in
             var found: [LogitechDevice] = []
             var states: [(UInt8?, LogitechDeviceState)] = []
+            func settled(_ mouse: LogitechDevice) -> LogitechDeviceState {
+                let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: mouse.name ?? fallbackName)
+                let gaming = mouse.hasOnboardProfiles
+                // Applying reads the state back, so a stored mouse is not read twice.
+                return stored[key].map { mouse.apply($0, canWrite: { access.allows(gaming: gaming, revision: revision) }) }
+                    ?? mouse.read()
+            }
             if let direct = LogitechDevice(io: io, slot: nil, gestureOwnership: gestureOwnership) {
                 found = [direct]
+                states = [(nil, settled(direct))]
             } else if ReceiverNotifications.enable(on: io) != .silent {
                 // A receiver: it now reports devices that connect again, and its slots are asked.
-                found = (1...6).compactMap { LogitechDevice(io: io, slot: $0, gestureOwnership: gestureOwnership) }
-            }
-            for mouse in found {
-                var state = mouse.read()
-                let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: state.name ?? fallbackName)
-                if let saved = stored[key] {
-                    let gaming = state.hasOnboardProfiles
-                    state = mouse.apply(saved, canWrite: { access.allows(gaming: gaming, revision: revision) })
+                for slot in slots {
+                    guard let mouse = LogitechDevice(io: io, slot: slot, gestureOwnership: gestureOwnership) else { continue }
+                    let state = settled(mouse)
+                    found.append(mouse)
+                    states.append((slot, state))
                 }
-                states.append((mouse.slot, state))
             }
             Task { @MainActor in self?.probed(location, io: io, found: found, states: states) }
         }
+    }
+
+    /// Receiver slots 1–6, the one that just connected first.
+    nonisolated static func probeOrder(first: UInt8?) -> [UInt8] {
+        guard let first, (1...6).contains(first) else { return Array(1...6) }
+        return [first] + (1...6).filter { $0 != first }
     }
 
     private func probed(_ location: String, io: HIDReportDevice, found logitech: [LogitechDevice],
@@ -606,7 +623,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                 if report[4] & 0x40 == 0 {
                     Task { @MainActor in
                         guard let self, let io, self.sessions[location]?.io === io else { return }
-                        self.probe(location)
+                        self.probe(location, firstSlot: report[1])
                     }
                 } else {
                     input.receive(connection: connection, generation: generation, index: report[1], down: false, changed: changed)
