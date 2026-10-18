@@ -1,6 +1,6 @@
 # INPUT-012: Controlled Magic Mouse contact observation
 
-- Updated: 2026-10-16.
+- Updated: 2026-10-18 (readiness review).
 - Stage: `awaiting_verification`.
 - Owner: Released; production recognition/native coexistence work next.
 - Owned surfaces: standalone `apps/rebind/tools/magic-mouse-probe.swift`, affected state/evidence.
@@ -73,3 +73,9 @@ Further user run: released after four seconds; 137 frames, zero invalid, three-c
 Code inspection/reproduction found a probe defect: reset discarded the already observed neutral baseline, although idle devices need not deliver a fresh empty frame at GO. Reset now preserves only a known neutral baseline; active/unknown states still require release. Invalid frames clear that baseline. Added `--rest`, last contact count and skipped frame diagnostics. Xcode Swift typecheck passes; temporary injected regression checks pass for a neutral boundary followed by a four-second three-contact hold/release, exclusion of active-boundary contacts, and unknown-baseline exclusion. Guided hardware verification of this correction remains open; no production engine change.
 
 Corrected `--rest` user run: 147 frames, zero invalid; zero-contact=6, two=1, three=140; last_contacts=0, boundary_skipped_frames=0. One completed sequence, peak=3, duration=2,819 ms, movement=0.002, no button observed. This confirms one continuous observed three-contact sequence followed by neutral release, without the prior boundary omission or repeated short completed contacts. The measured 2.819 seconds is not the instructed four seconds; actual placement/release timing was not independently measured. This single trial does not establish general false-positive safety, production gesture recognition or native coexistence. Evidence-only update; no test/build rerun.
+
+## App testing readiness — 2026-10-18
+
+Source/task review only; no new mouse experiment or app support added. Existing guided classification is enough to proceed with independent engineering; do not ask the user to repeat the same generic probe first. The app still has no Magic Mouse gesture adapter/editor/dispatch integration. Next implement and software-test a bounded one/two-finger stationary-tap candidate path with per-contact identity/travel, reliable button and scroll exclusion, discontinuity/staleness/neutral-state recovery and guarded output. Audit the callback ABI first: the probe uses Void registration after the observed correction, while `NativeTrackpadDevice` still declares Boolean success. Existing earlier evidence identifies this mismatch; no ABI correction was made in this task.
+
+After integration, the useful user test is inside Rebind: named mouse model/transport/OS and native Smart Zoom/Mission Control settings, repeated configured taps versus ordinary rest/click/scroll, action delivery, pause and disconnect/reconnect. Native-double coexistence determines whether a single must wait or the supported setting must exclude that conflict. This is a development candidate scope, not a supported/release preset decision or authorization to edit Sketch/real rules.

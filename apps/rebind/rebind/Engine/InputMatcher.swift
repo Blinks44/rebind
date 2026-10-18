@@ -12,6 +12,8 @@ nonisolated struct InputEvent: Sendable {
     // Pure tests can omit this and supply deterministic timestamps above.
     var receivedAt: UInt64?
     var motion: PointerMotion?
+    /// Quartz Touch subtype; it identifies touch-generated mouse events, not a physical device.
+    var isTouchClick = false
 }
 
 nonisolated struct MatchDecision: Equatable, Sendable {

@@ -605,7 +605,10 @@ nonisolated final class EngineMailbox: Sendable {
             if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput {
                 switch $0.resolveTrackpadClick(button: button, event: event) {
                 case .pass: break
-                case .tapClick: tapClick = true
+                case .tapClick:
+                    // A recent lift cannot explain an ordinary mouse press. The
+                    // release of an attributed tap click remains paired regardless of subtype.
+                    tapClick = event.phase != .down || event.isTouchClick
                 case .consume, .run: return true
                 }
             }

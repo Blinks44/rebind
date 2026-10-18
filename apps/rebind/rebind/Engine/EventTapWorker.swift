@@ -1,4 +1,5 @@
 import ApplicationServices
+import AppKit
 import Carbon
 import Foundation
 import Dispatch
@@ -224,7 +225,8 @@ nonisolated final class EventTapWorker {
         let input = InputEvent(trigger: trigger, modifiers: ModifierSet(flags: event.flags), phase: phase,
                                isRepeat: type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) != 0,
                                timestamp: event.timestamp, receivedAt: DispatchTime.now().uptimeNanoseconds,
-                               motion: phase == .drag ? PointerMotion.from(event) : nil)
+                               motion: phase == .drag ? PointerMotion.from(event) : nil,
+                               isTouchClick: event.getIntegerValueField(.mouseEventSubtype) == Int64(NSEvent.EventSubtype.touch.rawValue))
         return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
     }
 

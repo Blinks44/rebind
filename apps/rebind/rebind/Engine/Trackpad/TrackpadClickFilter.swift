@@ -5,7 +5,10 @@
 // No finger touches the surface when it arrives, so it is not a physical press: it
 // must not cancel a light-tap rule the way a real click does. For a one-finger tap
 // inside a corner that has an enabled rule, the click is consumed so the rule
-// (dispatched by the tap session) replaces it.
+// (dispatched by the tap session) replaces it. A qualified three-finger tap rule
+// also replaces its native Touch primary click, including while a double-tap pair
+// waits. That narrower path validates per-finger motion/identity/continuity and
+// capture arming/revision/activity; it never consumes other mouse subtypes.
 //
 // Physical clicks: a press while 2–4 fingers rest on the surface runs the matching
 // click rule instead of the click. Two fingers count only for the secondary button,
@@ -44,15 +47,44 @@ nonisolated struct TrackpadClickFilter: Sendable {
         /// Where each finger (at most four) first touched, to notice a drag.
         var origins: NativeTrackpadFrame
         var moved = false
+        var tapValid = true
+        var peakFrames = 1
+        var firstLift: Double?
+        var last: NativeTrackpadFrame
+        var peakForce: Float
+
+        func continues(with frame: NativeTrackpadFrame) -> Bool {
+            guard let previousID = last.frame, let id = frame.frame,
+                  let previousTime = last.time, let time = frame.time else { return false }
+            return Int64(id) == Int64(previousID) + 1 && time > previousTime && time - previousTime <= 0.05
+                && frame.revision == last.revision && frame.activity == last.activity
+        }
     }
 
     private var stroke: Stroke?
     private var neutral = false
-    private var release: (corner: TrackpadCorner?, at: UInt64)?
+    private var release: (corner: TrackpadCorner?, tapFingers: Int?, at: UInt64, revision: UInt64, activity: UInt64)?
     private var touching: (count: Int, at: UInt64, force: Float)?
     private var reportsForce = false
+    private var tapReplacementStartsAt: UInt64?
     private var consumedButton: UInt32?
     private var tapClickButton: UInt32?
+
+    /// Restart tap attribution with the session's independent three-second arming gate.
+    /// Keep ownership of already swallowed button releases across capture restarts.
+    mutating func beginCapture(at now: UInt64) {
+        stroke = nil
+        neutral = false
+        release = nil
+        touching = nil
+        tapReplacementStartsAt = now <= UInt64.max - TrackpadTapGate.armingDelay
+            ? now + TrackpadTapGate.armingDelay : nil
+    }
+
+    func canReplaceThreeFingerTap(revision: UInt64, activity: UInt64, at now: UInt64) -> Bool {
+        guard let tapReplacementStartsAt, now >= tapReplacementStartsAt, let release else { return false }
+        return release.revision == revision && release.activity == activity
+    }
 
     /// Whether a recent frame shows fingers on this surface.
     func isTouching(at now: UInt64) -> Bool {
@@ -74,7 +106,12 @@ nonisolated struct TrackpadClickFilter: Sendable {
         }
         guard frame.count > 0, let contact = frame.first else {
             if let stroke, stroke.frames >= 2, (0.03...0.4).contains(time - stroke.started) {
-                release = (stroke.valid ? TrackpadCorner.containing(x: stroke.x, y: stroke.y) : nil, frame.receipt)
+                let tapValid = stroke.tapValid && !stroke.moved && stroke.peakFrames >= 2
+                    && stroke.origins.count == stroke.fingers && stroke.continues(with: frame)
+                    && (stroke.firstLift.map { time - $0 <= 0.15 } ?? true)
+                    && (!reportsForce || stroke.peakForce < Self.pressForce)
+                release = (stroke.valid ? TrackpadCorner.containing(x: stroke.x, y: stroke.y) : nil,
+                           tapValid ? stroke.fingers : nil, frame.receipt, frame.revision, frame.activity)
             }
             stroke = nil
             neutral = true
@@ -84,11 +121,18 @@ nonisolated struct TrackpadClickFilter: Sendable {
         guard var current = stroke else {
             if neutral {
                 stroke = Stroke(started: time, startedAt: frame.receipt, id: contact.id, x: contact.x, y: contact.y,
-                                fingers: frame.count, valid: frame.count == 1, origins: frame)
+                                fingers: frame.count, valid: frame.count == 1, origins: frame, last: frame, peakForce: force)
             }
             neutral = false
             return
         }
+        if !current.continues(with: frame) { current.tapValid = false }
+        current.last.forEachContact { previous in
+            if frame.contact(previous.id) == nil, current.firstLift == nil { current.firstLift = time }
+        }
+        if current.firstLift != nil, frame.count > current.last.count { current.tapValid = false }
+        if frame.count > current.fingers { current.peakFrames = 0 }
+        if frame.count >= current.fingers { current.peakFrames += 1 }
         let dx = contact.x - current.x, dy = contact.y - current.y
         if frame.count != 1 || contact.id != current.id || dx * dx + dy * dy > 0.04 * 0.04 { current.valid = false }
         frame.forEachContact { contact in
@@ -96,11 +140,16 @@ nonisolated struct TrackpadClickFilter: Sendable {
                 let dx = contact.x - origin.x, dy = contact.y - origin.y
                 if dx * dx + dy * dy > 0.04 * 0.04 { current.moved = true }
             } else {
+                if time - current.started > 0.15 || current.firstLift != nil || current.origins.count >= 4 {
+                    current.tapValid = false
+                }
                 current.origins.add(contact)
             }
         }
         current.fingers = max(current.fingers, frame.count)
         current.frames += 1
+        current.last = frame
+        current.peakForce = max(current.peakForce, force)
         stroke = current
     }
 
@@ -113,7 +162,8 @@ nonisolated struct TrackpadClickFilter: Sendable {
 
     /// Resolves one primary/secondary button event. A consumed press also consumes its drags and release.
     mutating func resolve(button: UInt32, phase: InputEvent.Phase, at now: UInt64,
-                          hasCornerRule: (TrackpadCorner) -> Bool, hasClickRule: (Int) -> Bool) -> Decision {
+                          hasCornerRule: (TrackpadCorner) -> Bool, hasClickRule: (Int) -> Bool,
+                          replacesThreeFingerTap: Bool = false) -> Decision {
         switch phase {
         case .up:
             if tapClickButton == button { tapClickButton = nil; return .tapClick }
@@ -128,8 +178,11 @@ nonisolated struct TrackpadClickFilter: Sendable {
             tapClickButton = nil
             // A press while the finger is down is a physical click, not a tap.
             stroke?.valid = false
+            stroke?.tapValid = false
             if stroke == nil, neutral, let release, now >= release.at, now - release.at <= Self.tapClickWindow {
-                if button == 0, let corner = release.corner, hasCornerRule(corner) {
+                let replacesCorner = button == 0 && release.corner.map(hasCornerRule) == true
+                let replacesTap = button == 0 && release.tapFingers == 3 && replacesThreeFingerTap
+                if replacesCorner || replacesTap {
                     consumedButton = button
                     return .consume
                 }
@@ -167,6 +220,8 @@ nonisolated private extension NativeTrackpadFrame {
     mutating func add(_ contact: ShortContactRecognizer.Contact) {
         if first == nil { first = contact } else if second == nil { second = contact }
         else if third == nil { third = contact } else if fourth == nil { fourth = contact }
+        else { return }
+        count += 1
     }
 }
 
@@ -179,16 +234,29 @@ extension EngineMailbox.State {
         func rule(_ trigger: InputTrigger, _ magic: Bool) -> RebindAction? {
             active ? rules[MatchKey(trigger: trigger, modifiers: event.modifiers, isMagicTrackpad: magic)]?.action : nil
         }
-        // Each surface keeps its own contact state; the one that explains the press decides.
+        // Only a fresh, stationary, fully released three-finger stroke may explain
+        // a native Touch click. Non-Touch events and presses with fingers still down
+        // retain passthrough; the Touch subtype is not physical-device attribution.
         let now = event.receivedAt ?? event.timestamp
+        let revision = actionRevision, activity = inputActivity
+        let canReplaceTap = event.isTouchClick && event.phase == .down
+            && !trackpadClicks.isTouching(at: now) && !magicTrackpadClicks.isTouching(at: now)
+        func replacesTap(_ magic: Bool) -> Bool {
+            canReplaceTap && (rule(.threeFingerTap, magic) != nil || rule(.threeFingerDoubleTap, magic) != nil)
+        }
+        // Each surface keeps its own contact state; the one that explains the press decides.
         var decision = trackpadClicks.resolve(button: button, phase: event.phase, at: now,
             hasCornerRule: { rule(.cornerTap($0), false) != nil },
-            hasClickRule: { rule(.trackpadClick(fingers: $0), false) != nil })
+            hasClickRule: { rule(.trackpadClick(fingers: $0), false) != nil },
+            replacesThreeFingerTap: replacesTap(false)
+                && trackpadClicks.canReplaceThreeFingerTap(revision: revision, activity: activity, at: now))
         var magic = false
         if decision == .pass || decision == .tapClick {
             let other = magicTrackpadClicks.resolve(button: button, phase: event.phase, at: now,
                 hasCornerRule: { rule(.cornerTap($0), true) != nil },
-                hasClickRule: { rule(.trackpadClick(fingers: $0), true) != nil })
+                hasClickRule: { rule(.trackpadClick(fingers: $0), true) != nil },
+                replacesThreeFingerTap: replacesTap(true)
+                    && magicTrackpadClicks.canReplaceThreeFingerTap(revision: revision, activity: activity, at: now))
             if other != .pass, other != .tapClick {
                 decision = other
                 magic = true

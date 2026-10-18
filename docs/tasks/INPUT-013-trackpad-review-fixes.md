@@ -1,11 +1,12 @@
 # INPUT-013: Trackpad taps, false clicks and stale devices after user review
 
-- Updated: 2026-10-16 (false-click fix)
+- Updated: 2026-10-18
 - Stage: awaiting_verification
-- Owner: Unassigned (code agent session released)
+- Owner: Unassigned (code session released; hardware acceptance open)
 - Owned surfaces: `ShortContactRecognizer`, `TrackpadTapSession`, `TrackpadClickFilter`, `EngineMailbox.handle`, `MouseHardware` removal/battery publication, `tools/trackpad-click-probe.swift` and their tests.
+- Follow-up surfaces (2026-10-18): `EventTapWorker`, `InputEvent`, `TrackpadCapture`, `TrackpadClickFilter`, `TrackpadTapClickReplacementTests`, `AnchoredMenu`, `MenuSelector`, `ProfilePicker`, `BindingsView`; affected evidence.
 - Requirements: SPEC §§3.4, 4 (trackpad presets), Devices/battery; PLAN Phase 5.
-- Code baseline: `main` `da415e4`; uncommitted on top (INPUT-012 probe work from another session is also uncommitted and untouched).
+- Code baseline: `main` `772c704`; clean tree at startup. Current follow-up owns the tap/click regression and associated tests/evidence.
 
 ## Outcome and scope
 
@@ -53,4 +54,25 @@ Verification: new tests cover force 59 versus 129, a quick still press versus ma
 
 ## Next handoff
 
-User: on a fresh build, check the open boxes above. Code agent: if Magic Trackpad presses after a longer rest must run the rule, look for a force source for that device (for example its HID force reports) before loosening the 400 ms bound.
+User: on the fresh Debug build, first check three-finger taps with only the single enabled (no stray primary click and no double-pair wait), then with the double enabled (one action per pair); check normal clicks/dragging and the profile popup. Retain the other open hardware checks above. Code agent: if taps still fail, use the existing aggregate `--diagnose-trackpad` reasons and the named surface/settings to distinguish button-held/cancellation from raw-contact rejection; do not relax physical-click or continuity guards without evidence. Magic Mouse integration is the independent next engineering slice under INPUT-012.
+
+## Three-finger native clicks and selector alignment — 2026-10-18
+
+User reports delayed/missed three-finger single/double taps and primary clicks instead; four-finger taps work well. The precise running artifact, current surface and system settings were not restated, so this is a regression report, not a measured latency/accuracy result.
+
+The former fix deliberately passed the primary click made by three-finger drag through. A completed stationary three-finger stroke now replaces that primary click only for the public Touch event subtype, an enabled matching single/double rule on that category with the exact modifiers, known release and no finger on either surface. Its bounded fixed-slot checks mirror the recognizer's per-finger movement/identity, placement/lift, two peak frames, duration and continuity requirements; Force Touch click-level force excludes replacement. Capture arming (three seconds), rule revision and input activity must still match. A new capture resets attribution before starting the observer; already consumed releases remain owned. Non-Touch clicks, physical presses during contact, moved/uncertain/stale strokes and inactive rules retain passthrough. An ordinary non-Touch press after a recent lift now also cancels pending tap output, rather than being mistaken for a native tap-made click. No general gesture cancellation or physical-device attribution is claimed; mixed simultaneous touch devices remain a hardware gate.
+
+Timing contract is unchanged: a single with no matching double rule is ready after the independent **60 ms** click check. If both rules exist, the single waits the system double-click interval (commonly **500 ms**); a recognized pair is ready 60 ms after its second release. No arbitrary shortened interval or early single action was introduced. Native Look Up/Zoom and drag-clicks arising while fingers remain down are still coexistence limits; do not infer their cancellation from the after-release replacement.
+
+The profile selector used SwiftUI Menu's placement, unlike the existing explicit NSMenu selectors. `AnchoredMenu` now shares the latter's content-frame anchoring, native tracking and keyboard-focus restoration between profile selection and other selectors; the profile button's geometry/text/icon are preserved. Profile changes still save transactionally; the management command remains separate. Sketch MCP is unavailable, so this is a placement-mechanics correction, with no visual redesign or parity claim.
+
+Agent verification, macOS 27.0.1 / Xcode 27.1, baseline `772c704` plus this uncommitted change:
+
+- `dev.sh build` passed; targeted `dev.sh test` rebuilt the changed app and passed **94 Swift Testing tests in seven suites**: tap-click replacement, corner taps, click rules, single taps, doubles, scheduling and short contacts. New cases cover both categories, the single's 60 ms bound, double/native-click pairs without a leaked single, non-Touch passthrough, movement, frame gaps, four-finger exclusion, force, stale revision/activity, editing, new contact, exact modifiers, arming and release ownership after pause.
+- Two native `MainWindowLayoutTests` pass: `testKeyboardScreensRenderAtSketchSize` and `testPermissionNoticeDoesNotExpandNavigationBeyondTheWindow` (72 size/language/permission/rule combinations in the latter). These use isolated models and never start capture/load real rules.
+- A temporary standalone AppKit menu fixture reports the popup window and 196 pt trigger at the same screen x (**0 pt** difference). This checks NSMenu placement away from screen edges, not every actual app menu/appearance/VoiceOver state. Fixture/logs stay outside Git.
+- The first unrestricted run stopped progressing in `AboutLayoutTests.testFindCanReopenWithoutEditingOrResettingSelection`; a process sample showed XCTest blocked in issue symbolication, and the run was interrupted (Xcode cleanup exited 75). The unchanged full rerun on 2026-10-18 at 23:06–23:10 completed successfully: **858 Swift Testing tests in 133 suites + 17 native XCTest tests, zero failures**, `dev.sh test` exit 0 / `TEST SUCCEEDED`. About Find passed in 0.790 seconds; total test operation took 270.559 seconds. Evidence: local `apps/rebind/build/DerivedData/Logs/Test/Test-rebind-2026.10.18_23-06-02-+0300.xcresult`. AppKit emitted non-fatal QoS/window-count warnings; the earlier stall's cause is not established by the successful retry. No source/test changes were needed for the rerun. No hardware remapping, settings/grant change, commit or Sketch edit was performed.
+
+Research refresh: Apple's public NSMenu positioning contract supports the shared anchor; the installed AppKit SDK names `NSEvent.EventSubtype.touch`, matching the earlier probe's subtype 3. BetterTouchTool's [developer discussion](https://community.folivora.ai/t/please-help-cant-assign-middle-click-to-three-finger-tap/18692) describes a separate three-finger-drag compatibility mode; [current release notes](https://updates.folivora.ai/bettertouchtool_release_notes.html) also acknowledge macOS 27 drag changes. Neither establishes BTT's private implementation. The earlier [library audit](../research/touch-library-audit.md) remains the reuse decision; refreshed GitHub README/SPI searches did not establish a drop-in replacement. One pinned Subsurface source-page fetch failed. No third-party source copied or dependency added.
+
+Final review: source-event ownership and bounded callbacks reviewed; the related 94-test run and subsequent unchanged full 858 + 17 test rerun pass after the non-Touch activity guard. `git diff --check` passes; affected local document links reviewed. Required physical checks remain open, so the task stays `awaiting_verification`.

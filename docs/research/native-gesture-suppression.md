@@ -6,7 +6,7 @@ Date: 2026-10-12. Baseline `main` / `59f5754` plus UI-016 editor changes. This i
 
 `EventTapWorker` installs an active session Quartz tap and returns `nil` when the bounded mailbox owns a matched keyboard/conventional mouse/wheel event. The installed macOS 27 SDK's `CGEventTypes.h` callback contract explicitly permits deleting an event this way. Unmatched/synthetic/protected-context events retain existing passthrough and down/up safeguards. This establishes a software mechanism, not interception of every system shortcut: a system action handled before the session tap or in a protected context may remain unavailable.
 
-The isolated `NativeTrackpadDevice` contact callback returns `Void`, copies accepted contact metadata to the bounded buffer and starts its own observer with mode 0. There is no event-replacement/deletion channel in this adapter. Stopping that observer stops Rebind's observation; it does not establish cancellation of macOS recognition. The current tap presets must retain the no-suppression/coexistence guidance.
+The isolated `NativeTrackpadDevice` contact callback returns `Void`, copies accepted contact metadata to the bounded buffer and starts its own observer with mode 0. There is no event-replacement/deletion channel in this adapter. Stopping that observer stops Rebind's observation; it does not establish cancellation of macOS recognition. The current tap presets must retain general native-gesture coexistence guidance. After-release primary Touch clicks are a narrow Quartz-event exception described below.
 
 ## Refreshed sources and evidence limits
 
@@ -24,3 +24,7 @@ A future bounded acquisition/coexistence probe must identify the exact native co
 ## Broader source audit follow-up
 
 The [2026-10-12 touch-library audit](touch-library-audit.md) subsequently retrieved pinned OpenMultitouchSupport manager/listener source, metadata and full MIT license, closing the fetch limitation above for that snapshot. Eleven additional candidates were reviewed at the stated evidence depth. Real limited Quartz scroll filtering exists in CalmMouse; MagicBind's mouse tap is listen-only. No reviewed candidate establishes selective cancellation of the full native Trackpad/Magic Mouse gesture pool. This updates source coverage without changing the current engine or hardware evidence.
+
+## Three-finger after-release clicks — 2026-10-18
+
+[INPUT-013](../tasks/INPUT-013-trackpad-review-fixes.md#three-finger-native-clicks-and-selector-alignment--2026-10-18) adds matched-only primary-click replacement to the existing active Quartz path, using a completed, stationary, continuous three-finger stroke and the public AppKit Touch subtype. Existing callback fixed slots and native/event activity gates are retained; no new capture dependency or private gesture event number. The first tap's primary click is also replaced when a double rule is waiting. This does not cancel Look Up, Zoom, native drags pressed during contact or arbitrary system gestures, and subtype does not establish physical-device attribution. Physical/mixed-device coexistence is awaiting verification. Sources, bounded tests and reuse decision are in the task.

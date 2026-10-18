@@ -109,29 +109,7 @@ struct BindingsView: View {
 
     private var statusRow: some View {
         HStack(spacing: 16) {
-            Menu {
-                ProfilePicker(model: model).pickerStyle(.inline).labelsHidden()
-                Divider()
-                Button(.manageProfiles, action: manageProfiles)
-            } label: {
-                HStack(spacing: 10) {
-                    Image(systemName: "square.on.square").font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Theme.accent).frame(width: 16)
-                    Text(verbatim: model.configuration.selectedProfile?.title ?? "")
-                        .font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary).lineLimit(1)
-                    Spacer(minLength: 0)
-                    Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(Theme.iconSecondary)
-                }
-                .padding(.leading, 14).padding(.trailing, 16)
-                .frame(width: 196, height: Theme.controlHeight).contentShape(.capsule)
-            }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            .modifier(ControlSurface())
-            .keyboardFocusRing()
-            .disabled(model.storageLocked)
-            .accessibilityLabel(Text(.profileTitle))
-            .accessibilityIdentifier("bindings-profile")
+            ProfilePicker(model: model, manageProfiles: manageProfiles)
 
             Text(verbatim: "\(AppLocalization.string(.mouseBindingCount(bindings.count))), \(AppLocalization.string(.mouseEnabledCount(bindings.filter(\.isEnabled).count)))")
                 .font(Theme.callout).foregroundStyle(Theme.textSecondary).lineLimit(1)

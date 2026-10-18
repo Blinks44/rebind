@@ -14,55 +14,27 @@ struct MenuSelector<Selection: Hashable>: View {
     var menuActionTitle: LocalizedStringResource?
     var menuAction: (() -> Void)?
     @Environment(\.locale) private var locale
-    @Environment(\.isEnabled) private var isEnabled
-    @State private var anchorView = NSView()
-    @State private var menuRequested = false
-    @FocusState private var focused: Bool
 
     var body: some View {
-        Button {
-            let event = NSApp.currentEvent?.type
-            requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
-        } label: {
+        AnchoredMenu(select: select, makeMenu: makeMenu) {
             SelectorLabel(title: label(selection),
-                                height: compact ? Theme.compactControlHeight : Theme.controlHeight,
-                                horizontalInset: compact ? 12 : 16, singleLine: singleLine)
+                          height: compact ? Theme.compactControlHeight : Theme.controlHeight,
+                          horizontalInset: compact ? 12 : 16, singleLine: singleLine)
         }
-            .buttonStyle(.plain)
-            .background { MenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
-            .modifier(ControlSurface())
-            .focused($focused)
-            .keyboardFocusRing()
-            .accessibilityLabel(Text(title)).accessibilityValue(Text(label(selection)))
-            .onKeyPress(.downArrow) {
-                guard isEnabled else { return .ignored }
-                requestMenu(restoreKeyboardFocus: true)
-                return .handled
-            }
+        .accessibilityLabel(Text(title)).accessibilityValue(Text(label(selection)))
     }
 
-    private func requestMenu(restoreKeyboardFocus: Bool) {
-        guard isEnabled, !menuRequested else { return }
-        menuRequested = true
-        // Return from the button/AX action before AppKit enters its nested menu-tracking loop.
-        DispatchQueue.main.async { showMenu(restoreKeyboardFocus: restoreKeyboardFocus) }
+    private func select(_ index: Int) {
+        if index == choices.count, let menuAction {
+            menuAction()
+            return
+        }
+        guard choices.indices.contains(index) else { return }
+        selection = choices[index]
     }
 
-    private func showMenu(restoreKeyboardFocus: Bool) {
-        defer { menuRequested = false }
-        guard isEnabled, anchorView.window != nil else { return }
-        defer { focused = restoreKeyboardFocus }
+    private func makeMenu(target: MenuSelectionTarget) -> NSMenu {
         let menu = NSMenu()
-        menu.autoenablesItems = false
-        menu.minimumWidth = anchorView.bounds.width
-        let target = MenuSelectionTarget { index in
-            if index == choices.count, let menuAction {
-                menuAction()
-                return
-            }
-            guard choices.indices.contains(index) else { return }
-            selection = choices[index]
-        }
         for (index, choice) in choices.enumerated() {
             if index > 0, startsGroup(choice) { menu.addItem(.separator()) }
             var resource = label(choice)
@@ -83,9 +55,6 @@ struct MenuSelector<Selection: Hashable>: View {
             item.tag = choices.count
             menu.addItem(item)
         }
-        // A nil positioning item anchors the menu content frame, including its checkmark column.
-        // AppKit still adjusts placement at screen edges and owns dismissal/keyboard tracking.
-        let origin = NSPoint(x: anchorView.bounds.minX, y: anchorView.bounds.minY - 8)
-        withExtendedLifetime(target) { _ = menu.popUp(positioning: nil, at: origin, in: anchorView) }
+        return menu
     }
 }

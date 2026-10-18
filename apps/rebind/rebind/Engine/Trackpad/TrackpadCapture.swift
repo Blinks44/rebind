@@ -136,6 +136,10 @@ import Dispatch
                 surface.device = NativeTrackpadDevice.acquire(mailbox: mailbox)
                 surface.device?.buffer.setWake(Self.wakeHandler(for: self))
             }
+            mailbox.state.withLock {
+                if isMagic { $0.magicTrackpadClicks.beginCapture(at: now) }
+                else { $0.trackpadClicks.beginCapture(at: now) }
+            }
             guard let device = surface.device, device.start() else {
                 mailbox.recordTrackpadDiagnostic(surface.device?.failed == true ? .captureFailed : .captureUnavailable)
                 // Latch this revision; a failing start is not retried every 10 ms.

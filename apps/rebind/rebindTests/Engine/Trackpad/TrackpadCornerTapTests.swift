@@ -201,7 +201,7 @@ struct TrackpadCornerTapTests {
         h.consume([], at: lift)
         let activity = h.mailbox.state.withLock { $0.inputActivity }
         func press(_ phase: InputEvent.Phase, _ time: UInt64) -> Bool {
-            h.mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: phase, receivedAt: time), secureInput: false)
+            h.mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: phase, receivedAt: time, isTouchClick: true), secureInput: false)
         }
         #expect(press(.down, lift + 12_000_000) == false)
         #expect(press(.up, lift + 28_000_000) == false)

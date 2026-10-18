@@ -164,7 +164,7 @@ Rules are category-wide within one manually selected profile. Device inventory a
 
 Use the same curated preset pool for the built-in trackpad and any connected external trackpad-shaped surface. They are separate input categories with independent rules; the external category is not a selector for a particular physical device.
 
-- Single tap with 3 or 4 fingers, without pressing the trackpad.
+- Single tap with 3 or 4 fingers, without pressing the trackpad. For a configured three-finger single/double tap, replace the native primary Touch click only when a qualified completed stationary stroke safely explains it; preserve physical presses, movement and unmatched input.
 - Double tap with 2, 3 or 4 fingers. A lone two-finger tap has no rule fallback; delay a single only when a corresponding double-tap rule needs disambiguation.
 - Physical click with 2, 3 or 4 contacts. Contact count or a pressure threshold alone does not prove a click; two fingers count only when macOS reports the secondary button. A configured click rule replaces that click.
 - One-finger tap in each of the four corners. With Tap to click enabled, consume the click synthesized from a configured corner tap so the rule replaces it.
@@ -175,7 +175,7 @@ Present one selector of complete gestures, such as `Double tap · 3 fingers` or 
 
 General one/two-finger single taps, five-finger gestures, holds, swipes (including diagonals), pinch, rotation and Force Click are outside this scope. Leave unmatched scrolling and system navigation intact. Magic Mouse has its own research gate (§3.5).
 
-Raw contact observation does not establish native gesture suppression. Apart from the configured click/corner replacement above, preserve native gestures and disclose possible double effects. Verify Look Up/data detectors, Smart Zoom, secondary click, Mission Control, Spaces, scrolling, App Exposé and relevant system settings. Never label a rule a clean replacement without evidence.
+Raw contact observation does not establish native gesture suppression. Apart from the configured click/corner/after-release tap-click replacement above, preserve native gestures and disclose possible double effects. Verify Look Up/data detectors, Smart Zoom, secondary click, Mission Control, Spaces, scrolling, App Exposé and relevant system settings. Never label a rule a clean replacement without evidence.
 
 [CAPABILITIES](CAPABILITIES.md) and [trackpad tasks](tasks/README.md) own implemented subsets, dated software/hardware results and remaining timing, coexistence, recovery and platform acceptance. They do not expand release support through compilation alone.
 
