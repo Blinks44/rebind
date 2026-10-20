@@ -6,7 +6,7 @@ Build commands, signing, permission troubleshooting and local diagnostics for co
 
 
 Use full Xcode with Swift 6.2+ and a macOS 26+ SDK. The app runs on macOS 26+.
-The last recorded development environment (2026-10-16) used Xcode 27.1 (27A9275), Swift 6.4, macOS SDK 27,
+The last recorded development environment (2026-10-20) used Xcode 27.1 (27A9275), Swift 6.4, macOS SDK 27,
 and macOS 27.0.1 (26A434) on Apple Silicon. macOS 26 runtime compatibility
 and Intel runtime behavior still need testing.
 
@@ -61,6 +61,19 @@ Tests do not post global input or start the event tap;
 they use temporary configuration files. Real event interception and shortcut
 delivery still require the documented manual checks.
 
+Debug UI walkthroughs can use the production window/editor/Settings hierarchy without
+loading real rules or starting the input engine:
+
+```sh
+open -n apps/rebind/build/DerivedData/Build/Products/Debug/Rebind.app --args --application-fixture
+```
+
+`--application-fixture` seeds do-nothing rules in disposable temporary storage and disables
+category-preference persistence. Main-window permission values are injected. The smaller
+`--keyboard-fixture` exercises shared controls only. Both are Debug-only; they do not prove
+actual permissions, recording delivery or hardware remapping. See [UI-024](tasks/UI-024-keyboard-navigation.md)
+and the [final acceptance queue](verification/release-candidate.md).
+
 ## Signing and permissions
 
 Keep bundle ID `blinks44.rebind` and the existing automatic signing settings stable.
@@ -82,7 +95,7 @@ paths. See the
 For repeatable permission persistence tests, prefer a suitable existing Apple
 Development identity/team in Xcode and keep bundle identity and launch location
 stable. A locally signed build can be tested after granting access, but ad-hoc
-rebuilds can invalidate TCC grants. Releases are signed with one stable self-signed certificate and are not
+rebuilds can invalidate TCC grants. Releases are signed with the shared pinned Apple Development certificate and are not
 notarized; see [Releasing without notarization](#releasing-without-notarization). Permission requests
 are explicit UI actions; status uses actual AX and Quartz preflight checks. The engine starts only when the configuration is enabled or
 recording is requested and required access is available. Grant access explicitly to the copy you intend to run; do not reset TCC as a build step.
@@ -120,13 +133,19 @@ The standalone TrackpadProbe package that established contact acquisition was re
 
 ## Releasing without notarization
 
-Rebind is distributed outside the App Store and is not notarized. `apps/rebind/scripts/release.sh` builds Release, signs the bundle with one stable self-signed certificate (default name **Rebind Release**, override with `REBIND_SIGN_IDENTITY`) under the hardened runtime, and writes `apps/rebind/build/release/Rebind-<version>-<build>.dmg` with its SHA-256 for GitHub Releases. The disk image (app, Applications shortcut and an arrow on `scripts/dmg/background.tiff`) needs the `create-dmg` tool (`brew install create-dmg`, MIT); without it the script falls back to a zip. Regenerate the background with `apps/rebind/tools/dmg-background.swift` and `tiffutil -cathidpicheck`.
+Rebind is distributed outside the App Store and is not notarized. `apps/rebind/scripts/release.sh` builds Release, signs the bundle with the shared pinned Apple Development certificate (same existing certificate as Monny; override with `REBIND_SIGN_IDENTITY`, optional keychain with `REBIND_SIGN_KEYCHAIN`) under the hardened runtime, and writes `apps/rebind/build/release/Rebind-<version>-<build>.dmg` and prints its SHA-256 for GitHub Releases. The complete publication sequence is in [RELEASING](RELEASING.md). The disk image (app, Applications shortcut and an arrow on `scripts/dmg/background.tiff`) needs the `create-dmg` tool (`brew install create-dmg`, MIT); without it packaging stops before building. The source is the saved Brand/Distribution/DMG frame in Rebind.sketch; export only its background child at 1×/2× and combine with `tiffutil -cathidpicheck`. Source and verification: [REL-002](tasks/REL-002-branded-dmg.md). No separate background generator is kept.
 
-- The certificate is created once in Keychain Access (the script prints the steps when it is missing). **Back up its `.p12`.** macOS ties the Accessibility grant to the signature; a release signed with a different certificate makes every user grant the permission again.
-- Do not sign releases with an "Apple Development" certificate: its designated requirement embeds the account's e-mail address in the published signature, and the certificate expires yearly.
+- Release resolves one exact name/fingerprint including self-signed identities; missing/ambiguous matches stop before building and never generate a replacement. Full build/backup/reinstall instructions: [SIGNING](SIGNING.md).
+- The certificate is created once in Keychain Access (the script prints the steps when it is missing). **Back up its `.p12`.** macOS permission identity depends on the signature and bundle identity. A signer transition can require a new grant; test preservation between distinct stable-signer builds.
+- The current local installation candidate uses the shared Apple Development identity. Build 3 is a deliberate transition from Rebind Release and may need a fresh Accessibility grant; keep that signer stable afterwards. Developer ID/notarized distribution and other-Mac acceptance remain open.
 - Gatekeeper still blocks the first launch of a downloaded copy until the user chooses **Open Anyway** in System Settings → Privacy & Security; the README explains this to users.
 - Moving to Developer ID and notarization later changes the signature once: users confirm the Accessibility permission one more time.
 
 ## Contribution workflow
 
 Inspect the existing implementation and [current state](STATE.md) before choosing a slice. Read [engineering standards](ENGINEERING.md) for native input, Swift/concurrency, localization and security requirements. UI work follows [DESIGN](DESIGN.md) and current Sketch frames. Build/test the affected behavior, record the required runtime/manual checks and preserve unrelated work. [WORKFLOW](WORKFLOW.md) describes durable task records and handoff. Detailed per-action behavior and checks live in [verification](verification/); the root README stays a concise public overview.
+
+
+### Manual update checks
+
+Rebind → Check for Updates requests public release metadata from Blinks44/rebind only when invoked. Use a stable published GitHub Release tagged vMAJOR.MINOR.PATCH; drafts/prereleases are not offered. Public updates must increment CFBundleShortVersionString: build-number-only changes are not advertised as a newer version. Before the first publication the command explicitly reports no release. It opens the latest release page after user activation and never installs automatically. See [REL-003](tasks/REL-003-final-app-readiness.md) for verification and the final tester handoff.

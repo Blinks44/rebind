@@ -64,7 +64,8 @@ nonisolated final class EventTapWorker {
         let now = DispatchTime.now().uptimeNanoseconds
         let control = mailbox.state.withLock {
             $0.diagnostics.expire(at: now)
-            return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput,
+            $0.magicMouseNative.expireScroll(at: now)
+            return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput || $0.magicMouseNative.hasOwnedInput,
                     $0.needsPointerMotion, $0.diagnostics.isRunning)
         }
         if failureLatched { removeTap() }
@@ -179,6 +180,12 @@ nonisolated final class EventTapWorker {
                                                secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
         }
         if type == .scrollWheel {
+            let phase = event.getIntegerValueField(.scrollWheelEventScrollPhase)
+            let momentum = event.getIntegerValueField(.scrollWheelEventMomentumPhase)
+            if (phase != 0 || momentum != 0), mailbox.tracksMagicMouseSource,
+               mailbox.handleMagicMouseScroll(sender: AttachedHIDScroll.senderID(of: event), phase: phase, momentum: momentum,
+                    direction: phase & 1 != 0 ? Self.fingerScrollDirection(of: event) : nil, modifiers: ModifierSet(flags: event.flags),
+                    at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled()) { return nil }
             guard var input = ScrollEventAdapter.input(from: event) else {
                 // Smooth/momentum/diagonal input still cancels a pending hold,
                 // while passing through unchanged and never creating a wheel action.
@@ -227,7 +234,24 @@ nonisolated final class EventTapWorker {
                                timestamp: event.timestamp, receivedAt: DispatchTime.now().uptimeNanoseconds,
                                motion: phase == .drag ? PointerMotion.from(event) : nil,
                                isTouchClick: event.getIntegerValueField(.mouseEventSubtype) == Int64(NSEvent.EventSubtype.touch.rawValue))
-        return mailbox.handle(input, secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
+        let sender: UInt64?
+        if case .mouseButton(let button) = trigger, button <= 1, mailbox.tracksMagicMouseSource {
+            sender = AttachedHIDScroll.senderID(of: event)
+        } else { sender = nil }
+        return mailbox.handle(input, secureInput: IsSecureEventInputEnabled(), sender: sender) ? nil : pass(event)
+    }
+
+    /// AppKit exposes the device inversion flag; this local wrapper reads metadata only.
+    static func fingerScrollDirection(of event: CGEvent) -> ScrollDirection? {
+        guard let native = NSEvent(cgEvent: event) else { return nil }
+        return fingerScrollDirection(vertical: native.scrollingDeltaY, horizontal: native.scrollingDeltaX,
+                                     inverted: native.isDirectionInvertedFromDevice)
+    }
+
+    static func fingerScrollDirection(vertical: Double, horizontal: Double, inverted: Bool) -> ScrollDirection? {
+        guard vertical.isFinite, horizontal.isFinite, abs(vertical) > abs(horizontal) else { return nil }
+        let physical = inverted ? -vertical : vertical
+        return physical > 0 ? .up : .down
     }
 
     /// Hands an event on, with any modifier Rebind is holding for the user added to it.

@@ -4,15 +4,30 @@ import SwiftUI
 @main
 struct rebindApp: App {
     @NSApplicationDelegateAdaptor(RebindAppDelegate.self) private var delegate
+    @State private var updateChecker = UpdateChecker()
 
     private var opensWindowAtLaunch: Bool {
         let configuration = delegate.model.configuration
         return configuration.opensWindowAtLaunch || (!configuration.showsDockIcon && !configuration.showsMenuBarIcon)
     }
 
+    @ViewBuilder private var mainContent: some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture") {
+            KeyboardNavigationFixture()
+        } else if ProcessInfo.processInfo.arguments.contains("--application-fixture") {
+            ApplicationUIFixture()
+        } else {
+            ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+        }
+        #else
+        ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+        #endif
+    }
+
     var body: some Scene {
         Window(.rebindWindowTitle, id: "main") {
-            ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+            mainContent
                 .background { ActiveSpaceWindow() }
                 .background { MainWindowOpener() }
         }
@@ -23,8 +38,13 @@ struct rebindApp: App {
             .defaultLaunchBehavior(opensWindowAtLaunch ? .automatic : .suppressed)
             .restorationBehavior(.disabled)
             .commands {
+                BindingsCommands()
                 CommandGroup(replacing: .appInfo) {
                     AboutCommand(language: delegate.model.activeLanguage)
+                    Button(AppLocalization.string(updateChecker.isChecking ? .checkingUpdates : .checkForUpdates,
+                                                  language: delegate.model.activeLanguage)) {
+                        updateChecker.check(language: delegate.model.activeLanguage)
+                    }.disabled(updateChecker.isChecking || delegate.model.recording != nil)
                 }
             }
         Window(.aboutTitle, id: "about") {
@@ -46,7 +66,11 @@ struct rebindApp: App {
 
 final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     private static var runningTests: Bool {
-        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture")
+            || ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
+        #endif
+        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
             || NSClassFromString("XCTestCase") != nil
     }
     let model: AppModel
@@ -55,7 +79,12 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
 
     override init() {
         let runningTests = Self.runningTests
-        model = AppModel(loadConfiguration: !runningTests, languagePreferenceSaved: { preference in
+        // Secondary scenes must also stay away from production storage in debug fixtures/tests.
+        let store: ConfigurationStore = runningTests
+            ? ConfigurationStore(url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindTestScene-\(UUID())").appending(path: "configuration.json"))
+            : .applicationStore
+        model = AppModel(store: store, loadConfiguration: !runningTests, languagePreferenceSaved: { preference in
             if !runningTests { AppLanguageDefaults(defaults: .standard).apply(preference) }
         })
         super.init()

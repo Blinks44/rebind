@@ -13,7 +13,7 @@ import XCTest
                      NSSize(width: 1280, height: 800)]
         let grants = [InputPermissions(), InputPermissions(accessibility: true),
                       InputPermissions(accessibility: true, posting: true)]
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for permissions in grants {
                 for hasRules in [false, true] {
                     var configuration = Configuration()
@@ -156,11 +156,29 @@ import XCTest
     }
 
     func testSettingsDoesNotExpandNavigationBeyondTheWindow() async throws {
+        try await checkSettingsFixtures([.paused, .active, .missingAccess, .engineError, .approval])
+    }
+
+    func testPermissionsDoNotExpandNavigationBeyondTheWindow() async throws {
+        try await checkSettingsFixtures([.permissionsMissing, .permissionsAllowed, .permissionsPosting,
+                                         .permissionsPaused, .permissionsEngineError])
+    }
+
+    func testInputAndLanguageDoNotExpandNavigationBeyondTheWindow() async throws {
+        try await checkSettingsFixtures([.input, .language, .languageReopen, .languageLocked])
+    }
+
+    func testAdvancedDoesNotExpandNavigationBeyondTheWindow() async throws {
+        try await checkSettingsFixtures([.advanced, .advancedLocked])
+    }
+
+    /// Keep each native test's window/render lifetime bounded while retaining the same state matrix.
+    private func checkSettingsFixtures(_ fixtures: [SettingsFixture]) async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindMainSettings-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let sizes = [NSSize(width: 880, height: 600), NSSize(width: 1040, height: 640),
                      NSSize(width: 1157, height: 750), NSSize(width: 1280, height: 800)]
-        for fixture in SettingsFixture.allCases {
+        for fixture in fixtures {
             let store = ConfigurationStore(url: directory.appending(path: "\(fixture.rawValue)/configuration.json"))
             var configuration = Configuration(isEnabled: fixture != .paused && fixture != .permissionsPaused)
             configuration.hasCompletedSetup = true
@@ -179,7 +197,7 @@ import XCTest
                 $0.status = fixture == .engineError || fixture == .permissionsEngineError ? .tapFailed : .active
             }
             model.refresh()
-            for language in ["en", "ru", "de", "fr"] {
+            for language in AppLanguage.allCases.map(\.rawValue) {
                 for appearance in [ColorScheme.light, .dark] {
                     let controller = NSHostingController(rootView: ContentView(model: model,
                         initialDestination: fixture.destination)

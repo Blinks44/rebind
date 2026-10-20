@@ -18,9 +18,11 @@ labels: bug
 - Rebind version (About Rebind):
 - macOS version:
 - Mac (Apple silicon / Intel):
-- Input device (keyboard, mouse model, built-in trackpad, Magic Trackpad):
+- Input device (keyboard, mouse model, built-in trackpad, Magic Trackpad, Magic Mouse):
 
 **Permissions**
 Does Settings → Permissions in Rebind show any warning?
 
-Please do not include passwords or other private text.
+If useful, paste Settings → Advanced → Copy Report. It excludes binding contents. Include relevant native gesture/Natural Scrolling settings for touch problems.
+
+Do not upload configurations, backups, passwords or other private text.

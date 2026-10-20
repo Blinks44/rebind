@@ -86,7 +86,7 @@ struct ThemeSwitchStyle: ToggleStyle {
                 .frame(width: 38, height: 22)
                 .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: configuration.isOn)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
         .keyboardFocusRing()
         .opacity(isEnabled ? 1 : 0.45)
     }
@@ -156,6 +156,7 @@ struct ThemeTextField: View {
     var prompt: Text?
     var symbol: String?
     var autofocus = false
+    var focusRequest: UUID?
     var onSubmit: () -> Void = { }
     @FocusState private var isFocused: Bool
 
@@ -172,6 +173,7 @@ struct ThemeTextField: View {
         .padding(.horizontal, symbol == nil ? 16 : 14).frame(height: Theme.controlHeight)
         .modifier(ControlSurface(isFocused: isFocused))
         .onAppear { if autofocus { isFocused = true } }
+        .onChange(of: focusRequest) { if focusRequest != nil { isFocused = true } }
     }
 }
 
@@ -185,7 +187,7 @@ struct CircleIconButton: View {
             Image(systemName: symbol).font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.textPrimary)
                 .frame(width: 28, height: 28).contentShape(.circle)
         }
-        .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing(Circle())
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).modifier(ControlSurface()).keyboardFocusRing(Circle())
     }
 }
 
@@ -193,14 +195,17 @@ struct CircleIconButton: View {
 struct OptionsMenu<Content: View>: View {
     let label: LocalizedStringResource
     @ViewBuilder var content: Content
+    @Environment(\.locale) private var locale
 
     var body: some View {
-        Menu { content } label: {
+        AnchoredMenu(select: { _ in }, makeMenu: { _ in
+            NSHostingMenu(rootView: content.environment(\.locale, locale))
+        }, drawsSurface: false) {
             Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
         }
-        .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-        .keyboardFocusRing(Circle()).accessibilityLabel(Text(label))
+        .fixedSize()
+        .accessibilityLabel(Text(label))
     }
 }
 
@@ -227,7 +232,14 @@ struct SegmentedPicker<Value: Hashable>: View {
                         .contentShape(.capsule)
                         .background { if selection == option { Color.clear.modifier(ControlSurface()) } }
                 }
-                .buttonStyle(.plain).focused($focused, equals: option).keyboardFocusRing()
+                .buttonStyle(.plain)
+                .focusable(interactions: .edit)
+                .onKeyPress(.space) {
+                    guard isEnabled else { return .ignored }
+                    selection = option
+                    return .handled
+                }
+                .focused($focused, equals: option).keyboardFocusRing(isFocused: focused == option)
             }
         }
         .padding(4)

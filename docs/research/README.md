@@ -1,6 +1,6 @@
 # Rebind: current mechanism and dependency decisions
 
-Current decisions reconciled 2026-10-16 against source and task records; no new mechanism experiment was performed by the documentation cleanup. The [touch-library audit](touch-library-audit.md) is a dated candidate review, not a current implementation inventory. Check dates/revisions when changing a mechanism. [Dependency/reference register](DEPENDENCIES.md) retains licenses, pinned sources, maintenance and prior decisions. [Historical research](../history/implementation-through-2026-10-10.md#research-findings--blockers) retains reasoning and superseded approaches.
+Affected decisions reconciled 2026-10-20 against source and task records; no new mechanism experiment was performed by the documentation cleanup. The [touch-library audit](touch-library-audit.md) is a dated candidate review, not a current implementation inventory. Check dates/revisions when changing a mechanism. [Dependency/reference register](DEPENDENCIES.md) retains licenses, pinned sources, maintenance and prior decisions. [Historical research](../history/implementation-through-2026-10-10.md#research-findings--blockers) retains reasoning and superseded approaches.
 
 ## Current adoption and boundaries
 
@@ -24,9 +24,9 @@ Current decisions reconciled 2026-10-16 against source and task records; no new 
 - **R-01 trackpad:** raw contacts do not establish tap/click exclusivity, source attribution or suppression. Integrated output exists but responsiveness/recovery acceptance remains open.
 - **R-02 rule routing:** physical-device rules remain outside scope; Settings inventory/mouse attribution is separate. Historical Unknown sender is not proof of platform impossibility.
 - **R-03 mouse drivers:** numeric button model exists and G603 subsets work; buttons beyond 5, driver changes and detailed passthrough need hardware evidence.
-- **R-04 Magic Mouse:** experimental one/two-finger app testing pool in [INPUT-014](../tasks/INPUT-014-magic-mouse-integration.md); physical app action/coexistence/reconnect acceptance remains open, with no supported-hardware claim.
+- **R-04 Magic Mouse:** six Experimental tap/click/vertical-scroll presets in [INPUT-015](../tasks/INPUT-015-touch-release-scope.md); basic delivery is user-confirmed. Detailed settings/cancellation/platform matrices remain qualified. No new recognizer is needed by the REL-004 release gap review.
 - **R-05 actions:** many paths implemented with subset user confirmation; operation acceptance/posting does not prove visual completion and every platform combination.
-- **R-06 signing/permissions:** local ad-hoc builds previously verified; stable identity, revoked grants and distribution need further evidence/credentials. No root/security shortcuts.
+- **R-06 signing/permissions:** local ad-hoc builds previously verified; the stable identity and encrypted restore/signing test now exist (REL-001). Revoked-grant and distinct same-signer update evidence remain open. No root/security shortcuts.
 
 ## Recording a new decision
 
@@ -36,4 +36,4 @@ Update DEPENDENCIES when adding/removing/reusing third-party code or changing it
 
 2026-10-16: [Multi-vendor battery audit](multi-vendor-batteries.md) selects native IOKit/CoreBluetooth plus small MIT Razer/SteelMouse read-only source adaptations; no extra package/runtime/driver. Exact hardware/transport acceptance remains in DEVICE-003.
 
-2026-10-16: [Production review](../tasks/REVIEW-001-production-review.md) refreshed Apple menu APIs and Logitech/Solaar/Linux protocol comparisons. Local HIDPP ADC flags/SET acknowledgement and short-report receiver notification classification corrected; the additional review checked the latter against Linux HID++. No GPL code copied or dependency added. Standard NSMenuItem image + attributed title/attachment can represent the battery row; the compiled prototype's interactive visual check is blocked by ScreenCaptureKit -3811, and native menu integration remains open.
+2026-10-16: [Production review](../tasks/REVIEW-001-production-review.md) refreshed Apple menu APIs and Logitech/Solaar/Linux protocol comparisons. Local HIDPP ADC flags/SET acknowledgement and short-report receiver notification classification corrected; the additional review checked the latter against Linux HID++. No GPL code copied or dependency added. Standard NSMenuItem image + attributed title/attachment can represent the battery row; the compiled prototype's interactive visual check is blocked by ScreenCaptureKit -3811, and native menu integration subsequently shipped; current keyboard/VoiceOver/macOS 26 acceptance remains in REVIEW-001.

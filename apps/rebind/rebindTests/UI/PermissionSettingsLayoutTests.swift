@@ -20,7 +20,7 @@ import XCTest
             let model = AppModel(store: store, readPermissions: { permissions },
                 loginItem: LoginItemModel(service: LoginItemServiceStub()),
                 preferredLanguages: ["en"], languagePreferenceSaved: { _ in })
-            for language in ["en", "ru", "de", "fr"] {
+            for language in AppLanguage.allCases.map(\.rawValue) {
                 for appearance in [ColorScheme.light, .dark] {
                     let controller = NSHostingController(rootView: SettingsView(model: model, selection: .constant(.permissions))
                         .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))

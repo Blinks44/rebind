@@ -9,7 +9,8 @@ struct MagicMouseTriggerEditor: View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.triggerTitle)
             MenuSelector(selection: $draft.magicMousePreset, title: .magicMouseGestureTitle,
-                         choices: MagicMousePreset.allCases, label: { $0.title })
+                         choices: MagicMousePreset.allCases, label: { $0.title },
+                         startsGroup: { [.threeFingerClick, .twoFingerScrollUp].contains($0) })
                 .frame(maxWidth: .infinity, minHeight: 36)
                 .disabled(isRecording)
                 .accessibilityIdentifier("magic-mouse-preset-selector")
@@ -26,7 +27,7 @@ struct MagicMouseTriggerEditor: View {
                 Text(.trackpadModifierHint).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            Text(.magicMouseTapHelp).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+            Text(draft.magicMousePreset.help).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

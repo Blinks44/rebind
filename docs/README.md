@@ -4,6 +4,8 @@ The [root README](../README.md) is the public project overview: what Rebind does
 
 | Document | Purpose |
 | --- | --- |
+| [USAGE](USAGE.md) | Setup, examples, conflicts, safety and recovery for users |
+| [RELEASING](RELEASING.md) | Maintainer release procedure, GitHub assets, installation/update checks and website |
 | [DEVELOPMENT](DEVELOPMENT.md) | Build/test commands, toolchain/signing, permissions and local diagnostics |
 | [SPEC](SPEC.md) | Required product behavior and acceptance |
 | [CAPABILITIES](CAPABILITIES.md) | Actual implementation/evidence and limits |

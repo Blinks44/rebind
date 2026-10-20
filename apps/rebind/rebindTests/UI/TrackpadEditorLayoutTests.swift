@@ -10,11 +10,12 @@ import XCTest
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         let shortcut = RebindAction.shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command))
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
                 for scenario in 0..<10 {
+                    let scope: DeviceScope = scenario >= 5 ? .magicTrackpad : .builtInTrackpad
                     let preset = TrackpadPreset.allCases[scenario % TrackpadPreset.allCases.count]
-                    var existing: rebind.Binding? = rebind.Binding(scope: .builtInTrackpad,
+                    var existing: rebind.Binding? = rebind.Binding(scope: scope,
                         trigger: preset.trigger, modifiers: [], action: shortcut)
                     if scenario == 4 { existing = nil }
                     if scenario == 9 { existing?.isEnabled = false }
@@ -28,7 +29,7 @@ import XCTest
                         readPermissions: { InputPermissions(accessibility: scenario != 6, posting: scenario != 6) })
                     if scenario == 7 { model.recording = RecordingRequest(target: .output) }
                     let controller = NSHostingController(rootView: BindingEditor(model: model,
-                        scope: .builtInTrackpad, existing: existing)
+                        scope: scope, existing: existing)
                         .environment(\.locale, Locale(identifier: language))
                         .preferredColorScheme(appearance))
                     let window = NSWindow(contentViewController: controller)

@@ -38,3 +38,7 @@ xcuserdata/
 **/.swiftpm/security/
 
 # Package.swift and Package.resolved remain versioned; never ignore .swiftpm wholesale.
+
+# Private signing identity exports are credentials, never repository source.
+*.p12
+*.pfx

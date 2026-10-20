@@ -34,3 +34,12 @@
 Evidence: [October 18 checklist, recorded October 19](../verification/manual-test-2026-10-18.md). Exact tested revision/OS not supplied; CPU and latency reports are qualitative. No new build/test run. Stage remains `awaiting_verification`.
 
 Next step: check the first trackpad single/double after idle on the current bundle, then measure Release idle CPU and verify held-state cleanup on termination.
+
+
+## Release measurement and rejected polling trial — 2026-10-20
+
+REL-003 measures a signed Release in a disposable empty configuration, paused and without Accessibility access, on macOS 27.0.1 / MacBookPro18,2. Open-window samples after ten-second warm-up: 3.1/1.8/1.8/1.5% CPU at five-second intervals, approximately 36 MiB. A later sequence is 1.5/1.6/1.6/1.5%, approximately 41 MiB; CUA reopened/rebound a window after the close action, so this is not accepted as a window-closed benchmark.
+
+The profile showed repeated TCC preflights. Slower paused UI checks and fully idle worker guards were investigated separately; software checks passed (27 scoped methods, then 907 logic methods), including Resume permission refresh and owned-key release. Runtime rechecks remained around 1.4–1.6%. All experimental polling code and trial-only tests were removed before release packaging because there was no measured CPU benefit. The final original-engine + manual-update-check source passes 903 logic methods; no energy improvement is claimed.
+
+The remaining performance gate needs real grants and normal rules, plus callback/action latency and hardware interruption/first-touch acceptance. Latest package/evidence is in [REL-003](REL-003-final-app-readiness.md). Existing user-confirmed qualitative idle/hold/repeat acceptance remains preserved.

@@ -5,6 +5,8 @@ import SwiftUI
 struct AnchoredMenu<Label: View>: View {
     let select: (Int) -> Void
     let makeMenu: (MenuSelectionTarget) -> NSMenu
+    /// Icon-only row menus keep the same native tracking without a selector capsule.
+    var drawsSurface = true
     @ViewBuilder let label: Label
     @Environment(\.isEnabled) private var isEnabled
     @State private var anchorView = NSView()
@@ -16,11 +18,11 @@ struct AnchoredMenu<Label: View>: View {
             let event = NSApp.currentEvent?.type
             requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
         } label: { label }
-            .buttonStyle(.plain)
+            .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
             .background { MenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
-            .modifier(ControlSurface())
+            .background { if drawsSurface { Color.clear.modifier(ControlSurface()) } }
             .focused($focused)
-            .keyboardFocusRing()
+            .keyboardFocusRing(isFocused: focused)
             .onKeyPress(.downArrow) {
                 guard isEnabled else { return .ignored }
                 requestMenu(restoreKeyboardFocus: true)

@@ -6,7 +6,7 @@ import XCTest
 /// Resource and native UI checks do not load configuration or start input capture.
 @MainActor final class AboutLayoutTests: XCTestCase {
     func testLocalizedAboutAndNoticesFitNativeWindows() async throws {
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
                 try await check(AboutView()
                     .environment(\.locale, Locale(identifier: language))
@@ -25,7 +25,7 @@ import XCTest
     }
 
     func testLicenseTextIsReadOnlySelectableSearchableAndLocalized() async throws {
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             let text = try XCTUnwrap(AboutInformation().notices)
             let controller = NSHostingController(rootView: ReadOnlyNoticesText(text: text)
                 .environment(\.locale, Locale(identifier: language)))

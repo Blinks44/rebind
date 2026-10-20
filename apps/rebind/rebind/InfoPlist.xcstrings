@@ -55,7 +55,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind читает заряд подключённых Bluetooth-мышей, клавиатур и трекпадов."
+            "value" : "Rebind использует Bluetooth, чтобы показывать заряд подключённых мышей, клавиатур и трекпадов."
           }
         },
         "zh-Hans" : {

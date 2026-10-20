@@ -135,7 +135,17 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
                                             revision: snapshot.0, activity: snapshot.1,
                                             callbackFrame: callbackFrame, callbackTime: callbackTime)
         let magic = isMagicTrackpad, force = reportsForce
-        if !isMagicMouse {
+        if isMagicMouse {
+            // Stop/restart may retire an admitted callback while it copies native memory.
+            // This lock order is buffer -> mailbox; lifecycle operations never nest them.
+            state.withLock { queue in
+                guard queue.accepting, queue.generation == generation else { return }
+                mailbox.state.withLock {
+                    guard $0.canDispatch, $0.actionRevision == frame.revision else { return }
+                    $0.magicMouseNative.observe(frame)
+                }
+            }
+        } else {
             mailbox.state.withLock {
                 magic ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
                     : $0.trackpadClicks.observe(frame, reportsForce: force)

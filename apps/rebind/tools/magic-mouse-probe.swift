@@ -1,6 +1,6 @@
 // Magic Mouse feasibility probe for SPEC §3.5 / PLAN Phase 6. Not part of Rebind.app.
 //
-//   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift apps/rebind/tools/magic-mouse-probe.swift [seconds | --guided | --rest | --self-test]
+//   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift apps/rebind/tools/magic-mouse-probe.swift [seconds | --guided | --rest | --click-scroll | --self-test]
 //
 // Lists multitouch devices, then observes contact frames from every external one
 // for the given time (default 30 s, 1–60). It measures contacts: nothing is
@@ -9,6 +9,7 @@
 
 import CoreGraphics
 import Foundation
+import IOKit
 
 typealias Device = UnsafeMutableRawPointer
 typealias Callback = @convention(c) (Device, UnsafeMutableRawPointer?, Int32, Double, Int32, UnsafeMutableRawPointer) -> Void
@@ -55,6 +56,7 @@ final class Observation {
     var armed = false
     var lastTouching: Int?
     var skippedFrames = 0
+    var lastReceipt: Double?
 
     init() { sequences.reserveCapacity(256) }
 
@@ -145,6 +147,7 @@ final class Observation {
     func receive(_ data: UnsafeRawPointer?, count: Int32) {
         lock.lock(); defer { lock.unlock() }
         frames += 1
+        lastReceipt = ProcessInfo.processInfo.systemUptime
         guard (0...16).contains(count), count == 0 || data != nil else { invalid += 1; current = nil; armed = false; lastTouching = nil; return }
         var touching = 0
         var sumX: Float = 0, sumY: Float = 0
@@ -165,6 +168,95 @@ final class Observation {
         sample(touching: touching, x: touching > 0 ? sumX / Float(touching) : 0,
                y: touching > 0 ? sumY / Float(touching) : 0,
                time: ProcessInfo.processInfo.systemUptime, pressed: pressed)
+    }
+}
+
+// Diagnostic-only correlation. Never taps keyboard/motion events or suppresses/posts input.
+final class PointerAudit {
+    typealias Copy = @convention(c) (CGEvent) -> Unmanaged<CFTypeRef>?
+    typealias Sender = @convention(c) (CFTypeRef) -> UInt64
+    let observations: [Observation]
+    let sourceIDs: Set<UInt64>
+    let copy: Copy?
+    let sender: Sender?
+    var counts: [String: Int] = [:]
+    var tap: CFMachPort?
+    var source: CFRunLoopSource?
+
+    init(observations: [Observation], sourceIDs: Set<UInt64>) {
+        self.observations = observations
+        self.sourceIDs = sourceIDs
+        let scope = UnsafeMutableRawPointer(bitPattern: -2)
+        copy = dlsym(scope, "CGEventCopyIOHIDEvent").map { unsafeBitCast($0, to: Copy.self) }
+        sender = dlsym(scope, "IOHIDEventGetSenderID").map { unsafeBitCast($0, to: Sender.self) }
+    }
+
+    func start() -> Bool {
+        let types: [CGEventType] = [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp, .scrollWheel]
+        let mask = types.reduce(CGEventMask(0)) { $0 | (1 << $1.rawValue) }
+        tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap, options: .listenOnly,
+            eventsOfInterest: mask, callback: { _, type, event, context in
+                if let context {
+                    Unmanaged<PointerAudit>.fromOpaque(context).takeUnretainedValue().record(type, event: event)
+                }
+                return Unmanaged.passUnretained(event)
+            }, userInfo: Unmanaged.passUnretained(self).toOpaque())
+        guard let tap, let source = CFMachPortCreateRunLoopSource(nil, tap, 0) else { return false }
+        self.source = source
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+        return true
+    }
+
+    func record(_ type: CGEventType, event: CGEvent) {
+        guard type == .leftMouseDown || type == .leftMouseUp || type == .rightMouseDown
+            || type == .rightMouseUp || type == .scrollWheel else { return }
+        let now = ProcessInfo.processInfo.systemUptime
+        let contacts = observations.map { observation -> Int in
+            observation.lock.lock(); defer { observation.lock.unlock() }
+            guard let receipt = observation.lastReceipt, now >= receipt, now - receipt <= 0.1 else { return -1 }
+            return observation.lastTouching ?? -1
+        }.max() ?? -1
+        let attached = copy?(event)?.takeRetainedValue()
+        let hidID = attached.flatMap { sender?($0) } ?? 0
+        let fieldID = CGEventField(rawValue: 87).map { UInt64(bitPattern: event.getIntegerValueField($0)) } ?? 0
+        let phase = event.getIntegerValueField(.scrollWheelEventScrollPhase)
+        let momentum = event.getIntegerValueField(.scrollWheelEventMomentumPhase)
+        let delta = event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1)
+        let direction = delta == 0 ? "zero" : delta > 0 ? "positive" : "negative"
+        let key = "type=\(type.rawValue) contacts=\(contacts) hid_source=\(sourceIDs.contains(hidID)) field87_source=\(sourceIDs.contains(fieldID)) phase=\(phase) momentum=\(momentum) vertical=\(direction)"
+        if counts[key] != nil || counts.count < 128 { counts[key, default: 0] += 1 }
+    }
+
+    func report() {
+        for key in counts.keys.sorted() { print("  \(key) events=\(counts[key] ?? 0)") }
+        counts.removeAll(keepingCapacity: true)
+    }
+
+    func stop() {
+        if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
+        if let tap { CFMachPortInvalidate(tap) }
+        source = nil; tap = nil
+    }
+}
+
+func senderIDs(under service: io_service_t) -> Set<UInt64> {
+    var result: Set<UInt64> = []
+    var id: UInt64 = 0
+    if IORegistryEntryGetRegistryEntryID(service, &id) == KERN_SUCCESS { result.insert(id) }
+    var iterator: io_iterator_t = 0
+    guard IORegistryEntryCreateIterator(service, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &iterator) == KERN_SUCCESS else { return result }
+    defer { IOObjectRelease(iterator) }
+    while case let child = IOIteratorNext(iterator), child != 0 {
+        if IORegistryEntryGetRegistryEntryID(child, &id) == KERN_SUCCESS { result.insert(id) }
+        IOObjectRelease(child)
+    }
+    return result
+}
+
+func observeWait(_ duration: Double) {
+    let deadline = ProcessInfo.processInfo.systemUptime + duration
+    while ProcessInfo.processInfo.systemUptime < deadline {
+        _ = CFRunLoopRunInMode(.defaultMode, min(0.01, max(0, deadline - ProcessInfo.processInfo.systemUptime)), false)
     }
 }
 
@@ -236,8 +328,9 @@ if CommandLine.arguments.contains("--self-test") {
     exit(0)
 }
 
+let clickScrollOnly = CommandLine.arguments.contains("--click-scroll")
 let restOnly = CommandLine.arguments.contains("--rest")
-let guided = restOnly || CommandLine.arguments.contains("--guided")
+let guided = clickScrollOnly || restOnly || CommandLine.arguments.contains("--guided")
 let seconds = min(max(CommandLine.arguments.dropFirst().first.flatMap(Double.init) ?? 30, 1), 60)
 guard let handle = dlopen("/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport", RTLD_LAZY) else {
     print("MultitouchSupport is unavailable"); exit(1)
@@ -254,6 +347,7 @@ let dimensions = symbol("MTDeviceGetSensorSurfaceDimensions",
 // Registration has no documented Boolean success result; do not gate start on it.
 let register = symbol("MTRegisterContactFrameCallbackWithRefcon", as: (@convention(c) (Device, Callback?, UnsafeMutableRawPointer?) -> Void).self)
 let start = symbol("MTDeviceStart", as: (@convention(c) (Device, Int32) -> Int32).self)
+let getService = symbol("MTDeviceGetService", as: (@convention(c) (Device) -> io_service_t).self)
 let stop = symbol("MTDeviceStop", as: (@convention(c) (Device) -> Int32).self)
 
 let version = ProcessInfo.processInfo.operatingSystemVersionString
@@ -263,6 +357,8 @@ let deviceObjects = createList()?.takeRetainedValue() as? [AnyObject] ?? []
 let devices = deviceObjects.map { Unmanaged.passUnretained($0).toOpaque() }
 var observed: [(Int32, Device, Observation)] = []
 var externalCount = 0
+var mouseObservations: [Observation] = []
+var mouseSources: Set<UInt64> = []
 for device in devices {
     var family: Int32 = 0, width: Int32 = 0, height: Int32 = 0
     _ = familyID(device, &family)
@@ -282,6 +378,10 @@ for device in devices {
         continue
     }
     observed.append((family, device, observation))
+    if !builtIn, family == 112, width < height {
+        mouseObservations.append(observation)
+        mouseSources.formUnion(senderIDs(under: getService(device)))
+    }
 }
 guard !observed.isEmpty else {
     if externalCount == 0 {
@@ -291,6 +391,12 @@ guard !observed.isEmpty else {
     }
     exit(2)
 }
+let pointerAudit = clickScrollOnly ? PointerAudit(observations: mouseObservations, sourceIDs: mouseSources) : nil
+if let pointerAudit, !pointerAudit.start() {
+    print("Mouse-event observation unavailable. No permission prompt or setting change was requested.")
+    for (_, device, _) in observed { _ = stop(device) }
+    exit(3)
+}
 print(guided ? "Observing \(observed.count) external device(s) in guided mode…"
       : "Observing \(observed.count) external device(s) for \(Int(seconds)) s…")
 if guided {
@@ -298,7 +404,12 @@ if guided {
     print("Button state is session-wide and sampled, so very short clicks can be missed.")
     print("Tap candidates: 1/2 fingers, 20–200 ms, centroid movement at most 0.025, no observed button.")
     print("No actions are performed. Native gestures remain active; candidates are provisional.")
-    let phases = restOnly ? [
+    let phases = clickScrollOnly ? [
+        "THREE-FINGER CLICK: hold 3 fingers on the Magic Mouse and make 5 physical presses, lifting fully between presses.",
+        "ORDINARY CLICK: make 5 usual one-finger physical clicks; do not use a trackpad.",
+        "TWO-FINGER UP: move TWO fingers upward on the mouse surface in 5 separate strokes, lifting between strokes.",
+        "TWO-FINGER DOWN: move TWO fingers downward in 5 separate strokes, lifting between strokes."
+    ] : restOnly ? [
         "REST: hold 3 fingers still for 4 seconds, then lift your entire hand and wait."
     ] : [
         "ONE-FINGER TAP: lift all fingers first, then make 5 light taps without clicking, lifting completely each time.",
@@ -310,25 +421,27 @@ if guided {
         "THREE/FOUR CONTACTS: place 3 fingers, lift; then 4 fingers, lift. Do not click."
     ]
     print("Preparation: briefly touch the mouse, then lift ALL fingers to establish an empty surface. You have 5 seconds.")
-    Thread.sleep(forTimeInterval: 5)
+    observeWait(5)
     let window: Double = restOnly ? 12 : 8
     for (index, prompt) in phases.enumerated() {
         print("\nPhase \(index + 1)/\(phases.count), starts in 3 seconds: \(prompt)")
-        Thread.sleep(forTimeInterval: 3)
+        observeWait(3)
         for (_, _, observation) in observed { observation.reset() }
+        pointerAudit?.counts.removeAll(keepingCapacity: true)
         print("GO — \(Int(window)) seconds")
         let deadline = ProcessInfo.processInfo.systemUptime + window
         while ProcessInfo.processInfo.systemUptime < deadline {
             let pressed = buttonPressed()
             for (_, _, observation) in observed { observation.markButton(pressed) }
-            Thread.sleep(forTimeInterval: 0.01)
+            observeWait(0.01)
         }
         let settleUntil = ProcessInfo.processInfo.systemUptime + 0.060
         while ProcessInfo.processInfo.systemUptime < settleUntil {
             let pressed = buttonPressed()
             for (_, _, observation) in observed { observation.markButton(pressed) }
-            Thread.sleep(forTimeInterval: 0.005)
+            observeWait(0.005)
         }
+        pointerAudit?.report()
         for (family, _, observation) in observed {
             print("family=\(family)")
             observation.reportSequences()
@@ -347,6 +460,7 @@ if guided {
         observation.reportSequences()
     }
 }
+pointerAudit?.stop()
 for (family, device, observation) in observed {
     _ = stop(device)
     observation.lock.lock()

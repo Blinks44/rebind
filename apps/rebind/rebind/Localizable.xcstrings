@@ -49,37 +49,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test taps, ordinary clicks and scrolling before relying on these rules."
+            "value" : "Taps, three-finger clicks and two-finger scrolling run bindings. For one- or two-finger taps, turn off overlapping Smart Zoom and Mission Control gestures in macOS Mouse settings."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Проверьте касания, обычные клики и прокрутку, прежде чем полагаться на эти правила."
+            "value" : "Можно назначить действия касаниям, нажатию тремя пальцами и прокрутке двумя пальцами. Для касаний одним или двумя пальцами отключите совпадающие жесты Smart Zoom и Mission Control в настройках мыши macOS."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen, normale Klicks und Scrollen testen, bevor Sie sich auf diese Regeln verlassen."
+            "value" : "Tippen, Klicken mit drei Fingern und Scrollen mit zwei Fingern lösen Belegungen aus. Deaktivieren Sie für Ein- oder Zweifingertippen die überlagernden Gesten für Smart Zoom und Mission Control in den macOS-Mauseinstellungen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testez les touchers, les clics habituels et le défilement avant de vous fier à ces règles."
+            "value" : "Les touchers, les clics à trois doigts et le défilement à deux doigts déclenchent les règles. Pour les touchers à un ou deux doigts, désactivez les gestes correspondants du zoom intelligent et de Mission Control dans les réglages Souris de macOS."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba los toques, los clics normales y el desplazamiento antes de depender de estas reglas."
+            "value" : "Los toques, los clics con tres dedos y el desplazamiento con dos dedos activan las reglas. Para los toques con uno o dos dedos, desactiva los gestos coincidentes del zoom inteligente y Mission Control en los ajustes de Ratón de macOS."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在依赖这些规则之前，请先测试轻点、普通点击和滚动。"
+            "value" : "轻点、三指点按和双指滚动可触发规则。使用单指或双指轻点时，请在 macOS 鼠标设置中关闭冲突的智能缩放和调度中心手势。"
           }
         }
       }
@@ -90,37 +90,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Experimental gestures"
+            "value" : "Magic Mouse gestures are experimental"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Экспериментальные жесты"
+            "value" : "Жесты Magic Mouse экспериментальные"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Experimentelle Gesten"
+            "value" : "Magic Mouse-Gesten sind experimentell"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestes expérimentaux"
+            "value" : "Les gestes Magic Mouse sont expérimentaux"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestos experimentales"
+            "value" : "Los gestos del Magic Mouse son experimentales"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "实验性手势"
+            "value" : "Magic Mouse 手势为实验性功能"
           }
         }
       }
@@ -131,37 +131,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reconnect your Magic Mouse or reopen Rebind, then try again."
+            "value" : "Reconnect your Magic Mouse or reopen Rebind, then try again. Your bindings stay saved."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Переподключите Magic Mouse или заново откройте Rebind, затем попробуйте снова."
+            "value" : "Переподключите Magic Mouse или заново откройте Rebind и попробуйте снова. Правила сохраняются."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse erneut verbinden oder Rebind neu öffnen und noch einmal versuchen."
+            "value" : "Verbinden Sie die Magic Mouse erneut oder öffnen Sie Rebind erneut und versuchen Sie es noch einmal. Ihre Belegungen bleiben gespeichert."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reconnectez votre Magic Mouse ou rouvrez Rebind, puis réessayez."
+            "value" : "Reconnectez votre Magic Mouse ou rouvrez Rebind, puis réessayez. Vos règles restent enregistrées."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a conectar el Magic Mouse o abre Rebind de nuevo y vuelve a intentarlo."
+            "value" : "Vuelve a conectar el Magic Mouse o abre Rebind de nuevo e inténtalo otra vez. Las reglas siguen guardadas."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请重新连接 Magic Mouse 或重新打开 Rebind，然后重试。"
+            "value" : "重新连接 Magic Mouse 或重新打开 Rebind，然后重试。规则仍会保存。"
           }
         }
       }
@@ -172,37 +172,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse gestures unavailable"
+            "value" : "Magic Mouse gestures could not start"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Жесты Magic Mouse недоступны"
+            "value" : "Не удалось запустить жесты Magic Mouse"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse-Gesten nicht verfügbar"
+            "value" : "Magic Mouse-Gesten konnten nicht gestartet werden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestes Magic Mouse indisponibles"
+            "value" : "Impossible de démarrer les gestes Magic Mouse"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestos del Magic Mouse no disponibles"
+            "value" : "No se pudieron iniciar los gestos del Magic Mouse"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse 手势不可用"
+            "value" : "无法启动 Magic Mouse 手势"
           }
         }
       }
@@ -254,37 +254,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Smart Zoom may also respond to repeated taps. Turn it off in System Settings → Mouse to use repeated one-finger taps here."
+            "value" : "One-finger double tap activates Smart Zoom. Turn it off in macOS Mouse settings to avoid both actions."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Smart Zoom тоже может реагировать на повторные касания. Для повторных касаний одним пальцем отключите его в Системных настройках → Мышь."
+            "value" : "Двойное касание одним пальцем включает Smart Zoom. Отключите его в настройках мыши macOS, чтобы избежать двойных действий."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Smart Zoom kann auch auf wiederholtes Tippen reagieren. Für wiederholtes Tippen mit einem Finger hier unter Systemeinstellungen → Maus ausschalten."
+            "value" : "Doppeltippen mit einem Finger aktiviert Smart Zoom. Schalten Sie es in den macOS-Mauseinstellungen aus, um doppelte Aktionen zu vermeiden."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le zoom intelligent peut aussi réagir aux touchers répétés. Désactivez-le dans Réglages Système → Souris pour utiliser ici des touchers répétés avec un doigt."
+            "value" : "Le double toucher avec un doigt active le zoom intelligent. Désactivez-le dans les réglages Souris de macOS pour éviter les doubles actions."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El zoom inteligente también puede responder a toques repetidos. Desactívalo en Ajustes del Sistema → Ratón para usar aquí toques repetidos con un dedo."
+            "value" : "El doble toque con un dedo activa el zoom inteligente. Desactívalo en los ajustes de Ratón de macOS para evitar ambas acciones."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "智能缩放也可能响应连续轻点。若要在此使用单指连续轻点，请在系统设置 → 鼠标中将其关闭。"
+            "value" : "单指连点两下会触发智能缩放。请在 macOS 鼠标设置中将其关闭，以免同时触发两个操作。"
           }
         }
       }
@@ -325,7 +325,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轻点 · 1 根手指"
+            "value" : "轻点 · 单指"
           }
         }
       }
@@ -336,37 +336,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assign actions to taps on the mouse surface."
+            "value" : "Choose what each tap, click or scroll does."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Назначайте действия касаниям поверхности мыши."
+            "value" : "Выберите действия для касаний, нажатий и прокрутки."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktionen durch Tippen auf die Mausoberfläche auslösen."
+            "value" : "Aktionen für Tippen, Klicken und Scrollen wählen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attribuez des actions aux touchers de la surface de la souris."
+            "value" : "Choisissez les actions des touchers, clics et défilements."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asigna acciones a los toques en la superficie del ratón."
+            "value" : "Elige qué hace cada toque, clic o desplazamiento."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "为鼠标表面的轻点操作分配动作。"
+            "value" : "选择轻点、点按和滚动的作用。"
           }
         }
       }
@@ -418,37 +418,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mission Control may also respond to repeated taps. Turn its two-finger double tap off in System Settings → Mouse to use repeated taps here."
+            "value" : "Two-finger double tap opens Mission Control. Turn it off in macOS Mouse settings to avoid both actions."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mission Control тоже может реагировать на повторные касания. Для повторных касаний здесь отключите двойное касание двумя пальцами в Системных настройках → Мышь."
+            "value" : "Двойное касание двумя пальцами открывает Mission Control. Отключите его в настройках мыши macOS, чтобы избежать двойных действий."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mission Control kann auch auf wiederholtes Tippen reagieren. Dafür das Doppeltippen mit zwei Fingern unter Systemeinstellungen → Maus ausschalten."
+            "value" : "Doppeltippen mit zwei Fingern öffnet Mission Control. Schalten Sie es in den macOS-Mauseinstellungen aus, um doppelte Aktionen zu vermeiden."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mission Control peut aussi réagir aux touchers répétés. Désactivez le double toucher avec deux doigts dans Réglages Système → Souris pour utiliser ici des touchers répétés."
+            "value" : "Le double toucher avec deux doigts ouvre Mission Control. Désactivez-le dans les réglages Souris de macOS pour éviter les doubles actions."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mission Control también puede responder a toques repetidos. Desactiva el doble toque con dos dedos en Ajustes del Sistema → Ratón para usar aquí toques repetidos."
+            "value" : "El doble toque con dos dedos abre Mission Control. Desactívalo en los ajustes de Ratón de macOS para evitar ambas acciones."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "调度中心也可能响应连续轻点。若要在此使用连续轻点，请在系统设置 → 鼠标中关闭双指连点两下手势。"
+            "value" : "双指连点两下会打开调度中心。请在 macOS 鼠标设置中将其关闭，以免同时触发两个操作。"
           }
         }
       }
@@ -489,7 +489,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轻点 · 2 根手指"
+            "value" : "轻点 · 双指"
           }
         }
       }
@@ -500,37 +500,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connect a Magic Mouse, lift all fingers and try again."
+            "value" : "Connect your mouse, lift all fingers and try again. Your bindings stay saved and can still be edited."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подключите Magic Mouse, уберите все пальцы с поверхности и попробуйте снова."
+            "value" : "Подключите мышь, уберите все пальцы и попробуйте снова. Правила сохраняются, их по-прежнему можно редактировать."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse verbinden, alle Finger anheben und erneut versuchen."
+            "value" : "Verbinden Sie die Maus, heben Sie alle Finger an und versuchen Sie es erneut. Ihre Belegungen bleiben gespeichert und bearbeitbar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connectez une Magic Mouse, levez tous les doigts et réessayez."
+            "value" : "Connectez votre souris, levez tous les doigts et réessayez. Vos règles restent enregistrées et modifiables."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conecta un Magic Mouse, levanta todos los dedos e inténtalo de nuevo."
+            "value" : "Conecta el ratón, levanta todos los dedos e inténtalo de nuevo. Las reglas siguen guardadas y puedes editarlas."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请连接 Magic Mouse，抬起所有手指，然后重试。"
+            "value" : "连接鼠标，抬起所有手指后重试。规则仍会保存，你也可以继续编辑。"
           }
         }
       }
@@ -541,37 +541,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse unavailable"
+            "value" : "Magic Mouse is not connected"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse недоступна"
+            "value" : "Magic Mouse не подключена"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse nicht verfügbar"
+            "value" : "Magic Mouse ist nicht verbunden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse indisponible"
+            "value" : "Magic Mouse n’est pas connectée"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse no disponible"
+            "value" : "El Magic Mouse no está conectado"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse 不可用"
+            "value" : "未连接 Magic Mouse"
           }
         }
       }
@@ -594,7 +594,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Text ist zu komplex für eine sichere Eingabe. Kürze ihn."
+            "value" : "Dieser Text ist zu komplex für eine sichere Eingabe. Kürzen Sie ihn."
           }
         },
         "fr" : {
@@ -670,7 +670,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разрешите доступ к Bluetooth, чтобы читать заряд подключённых мышей, клавиатур и трекпадов. Некоторые устройства не передают заряд."
+            "value" : "Разрешите доступ к Bluetooth, чтобы видеть заряд подключённых мышей, клавиатур и трекпадов. Некоторые устройства не передают эту информацию."
           }
         },
         "de" : {
@@ -1015,37 +1015,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tasten und Mauseingaben mit macOS-Aktionen und Tastaturkurzbefehlen belegen."
+            "value" : "Tasten, Maustasten und Gesten mit Tastenkombinationen und macOS-Aktionen belegen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remap keys and mouse input to macOS actions and shortcuts."
+            "value" : "Assign shortcuts and macOS actions to keys, mouse buttons and gestures."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Associez les touches et les entrées de la souris à des actions et raccourcis macOS."
+            "value" : "Associez touches, boutons de souris et gestes à des raccourcis et actions macOS."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Переназначайте клавиши и ввод мыши на действия и сочетания клавиш macOS."
+            "value" : "Назначайте сочетания клавиш и действия macOS клавишам, кнопкам мыши и жестам."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asigna teclas y botones del ratón a acciones y atajos de macOS."
+            "value" : "Asigna atajos y acciones de macOS a teclas, botones del ratón y gestos."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将按键和鼠标输入重新映射为 macOS 操作和快捷键。"
+            "value" : "为按键、鼠标按钮和手势分配快捷键与 macOS 操作。"
           }
         }
       }
@@ -1168,7 +1168,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "许可"
+            "value" : "许可证"
           }
         }
       }
@@ -1209,7 +1209,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法读取许可信息。请重新打开 Rebind 或重新安装此 App。"
+            "value" : "无法读取许可证。请重新打开 Rebind 或重新安装此 App。"
           }
         }
       }
@@ -1649,7 +1649,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Активировать запущенное приложение"
+            "value" : "Переключиться на запущенное приложение"
           }
         },
         "es" : {
@@ -1848,7 +1848,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoutez une règle : choisissez ce que vous pressez et ce qui doit se passer."
+            "value" : "Ajoutez une règle : choisissez une touche, un bouton ou un geste, puis son action."
           }
         },
         "ru" : {
@@ -2000,37 +2000,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Einstellungen, Profile und Belegungen in einer Datei sichern oder eine importieren. Rebind behält außerdem Kopien der letzten 10 Fassungen, mit denen es gestartet ist, und fragt, bevor etwas ersetzt wird."
+            "value" : "Exportieren Sie alle Einstellungen, Profile und Belegungen oder importieren Sie ein Backup. Rebind behält auch die letzten 10 unterschiedlichen Konfigurationen vom App-Start und fragt vor dem Ersetzen nach."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save all settings, profiles and bindings to a file, or import one. Rebind also keeps copies of the last 10 versions it started with. It asks before replacing anything."
+            "value" : "Export all settings, profiles and bindings to a file, or import a backup. Rebind also keeps the last 10 different configurations loaded at launch. It asks before replacing anything."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrez tous les réglages, profils et règles dans un fichier, ou importez-en un. Rebind garde aussi des copies des 10 dernières versions avec lesquelles il a démarré et demande avant de remplacer quoi que ce soit."
+            "value" : "Exportez tous les réglages, profils et règles, ou importez une sauvegarde. Rebind conserve aussi les 10 dernières configurations différentes chargées au lancement et demande confirmation avant tout remplacement."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сохраните все настройки, профили и правила в файл или импортируйте его. Rebind также хранит копии последних 10 версий, с которыми запускался. Перед заменой он спросит."
+            "value" : "Сохраните все настройки, профили и правила в файл или восстановите их из копии. Rebind также хранит последние 10 разных конфигураций, загруженных при запуске. Перед заменой данных появится запрос."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda todos los ajustes, perfiles y reglas en un archivo o importa uno. Rebind también guarda copias de las 10 últimas versiones con las que se inició y pregunta antes de reemplazar nada."
+            "value" : "Exporta todos los ajustes, perfiles y reglas, o importa una copia. Rebind también conserva las últimas 10 configuraciones distintas cargadas al iniciar y pide confirmación antes de reemplazar datos."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将所有设置、配置文件和规则保存到文件，或导入文件。Rebind 还会保留最近 10 个启动时版本的副本，替换前会先询问。"
+            "value" : "导出所有设置、配置文件和规则，或导入备份。Rebind 还会保留启动时载入的最近 10 份不同配置，替换数据前会先询问。"
           }
         }
       }
@@ -2264,7 +2264,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Фаза"
+            "value" : "Этап"
           }
         },
         "es" : {
@@ -2287,7 +2287,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tastennr."
+            "value" : "Maustastennr."
           }
         },
         "en" : {
@@ -4227,7 +4227,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已导入 %#@count1@和 %#@count2@。规则处于暂停状态：启用前请先检查。"
+            "value" : "已导入 %#@count1@ 和 %#@count2@。规则已暂停，请检查后再启用。"
           },
           "substitutions" : {
             "count1" : {
@@ -4954,7 +4954,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在你确认替换期间，配置发生了变化。未替换任何内容。请重新选择备份或重新还原。"
+            "value" : "在确认替换期间，配置发生了变化。未替换任何内容。请重新选择备份或重新还原。"
           }
         }
       }
@@ -7876,37 +7876,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schaltet den Auslöser ab: Rebind fängt ihn ab und sendet nichts."
+            "value" : "Führt keine Rebind-Aktion aus. Tasten und Maustasten werden blockiert; macOS kann auf Touch-Gesten weiterhin reagieren."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Turns the trigger off: Rebind swallows it and sends nothing."
+            "value" : "Runs no Rebind action. Keys and mouse buttons are blocked; macOS may still respond to touch gestures."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desactiva el activador: Rebind lo intercepta y no envía nada."
+            "value" : "No ejecuta ninguna acción de Rebind. Bloquea teclas y botones; macOS puede seguir respondiendo a los gestos táctiles."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Désactive le déclencheur : Rebind l’intercepte et n’envoie rien."
+            "value" : "N’exécute aucune action Rebind. Les touches et boutons sont bloqués ; macOS peut encore réagir aux gestes tactiles."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отключает триггер: Rebind перехватывает его и ничего не отправляет."
+            "value" : "Не выполняет действие Rebind. Клавиши и кнопки мыши блокируются; на жесты касания macOS может отреагировать."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停用此触发器：Rebind 会拦截它，不发送任何内容。"
+            "value" : "不执行 Rebind 操作。按键和鼠标按钮会被拦截，但 macOS 仍可能响应触控手势。"
           }
         }
       }
@@ -8779,7 +8779,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solange eine dieser Apps im Vordergrund ist, lässt Rebind weg, was du hier ausschaltest. Praktisch für Spiele, virtuelle Maschinen und Remote-Desktops."
+            "value" : "Solange eine dieser Apps im Vordergrund ist, sind die hier deaktivierten Funktionen von Rebind ausgeschaltet. Praktisch für Spiele, virtuelle Maschinen und Remote-Desktops."
           }
         },
         "en" : {
@@ -8803,7 +8803,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пока одно из этих приложений на переднем плане, Rebind пропускает то, что вы здесь выключили. Полезно для игр, виртуальных машин и удалённых рабочих столов."
+            "value" : "Когда одно из этих приложений на переднем плане, выбранные здесь функции Rebind отключаются. Полезно для игр, виртуальных машин и удалённых рабочих столов."
           }
         },
         "zh-Hans" : {
@@ -9049,7 +9049,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Длинный"
+            "value" : "Большая"
           }
         },
         "zh-Hans" : {
@@ -9090,7 +9090,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Короткий"
+            "value" : "Малая"
           }
         },
         "zh-Hans" : {
@@ -9131,7 +9131,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Стандартный"
+            "value" : "Обычная"
           }
         },
         "zh-Hans" : {
@@ -9172,7 +9172,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Длина жеста"
+            "value" : "Расстояние движения"
           }
         },
         "zh-Hans" : {
@@ -10802,13 +10802,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En attente… Appuyez sur une touche ou sur Échap pour annuler."
+            "value" : "En attente… Appuyez sur une touche ou un bouton. Échap annule l’enregistrement."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Слушаю… Нажмите клавишу или кнопку либо Escape для отмены."
+            "value" : "Ожидание ввода… Нажмите клавишу или кнопку. Escape отменяет запись."
           }
         },
         "es" : {
@@ -12799,7 +12799,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gewünschte Modifikatoren halten. Escape bricht die Erfassung ab."
+            "value" : "Halten Sie die gewünschten Sondertasten. Escape bricht die Erfassung ab."
           }
         },
         "en" : {
@@ -13414,7 +13414,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Mausradschritt mit den gewünschten Modifikatoren erfassen. Scrollen mit dem Trackpad, träges und diagonales Scrollen verhalten sich wie gewohnt."
+            "value" : "Erfassen Sie einen Mausradschritt mit den gewünschten Sondertasten. Trackpad-, Nachlauf- und diagonales Scrollen bleiben unverändert."
           }
         },
         "en" : {
@@ -13426,7 +13426,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrez un pas de molette avec les modificateurs souhaités. Le défilement au trackpad, inertiel et diagonal reste inchangé."
+            "value" : "Enregistrez un cran de molette avec les touches de modification souhaitées. Le défilement au trackpad, inertiel et diagonal reste inchangé."
           }
         },
         "ru" : {
@@ -13508,7 +13508,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faites défiler la molette d’un pas"
+            "value" : "Faites tourner la molette d’un cran"
           }
         },
         "ru" : {
@@ -16411,37 +16411,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihre Belegungen bleiben auf diesem Mac. Rebind speichert weder eingegebenen Text noch Passwörter."
+            "value" : "Ihre Belegungen bleiben auf diesem Mac. Rebind protokolliert nicht, was Sie tippen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your bindings stay on this Mac. Rebind does not save typed text or passwords."
+            "value" : "Your bindings stay on this Mac. Rebind does not log what you type."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vos règles restent sur ce Mac. Rebind n’enregistre ni le texte saisi ni les mots de passe."
+            "value" : "Vos règles restent sur ce Mac. Rebind ne conserve aucun historique de votre saisie."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ваши правила остаются на этом Mac. Rebind не сохраняет вводимый текст и пароли."
+            "value" : "Правила хранятся на этом Mac. Rebind не ведёт журнал того, что вы печатаете."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus reglas se quedan en este Mac. Rebind no guarda el texto que escribes ni tus contraseñas."
+            "value" : "Tus reglas se quedan en este Mac. Rebind no guarda un historial de lo que escribes."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的规则只保存在这台 Mac 上。Rebind 不会保存你输入的文字或密码。"
+            "value" : "规则保存在这台 Mac 上。Rebind 不会记录你的键盘输入历史。"
           }
         }
       }
@@ -17307,9 +17307,7 @@
         }
       }
     },
-    "Rebind" : {
-
-    },
+    "Rebind" : {},
     "rebindActions" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -21466,37 +21464,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wählen Sie eine andere Geste oder bearbeiten Sie die vorhandene Belegung in diesem Profil."
+            "value" : "Wählen Sie eine andere Geste oder gehaltene Taste, oder bearbeiten Sie die vorhandene Belegung in diesem Profil und dieser Eingabekategorie."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose another gesture or edit the existing binding in this profile."
+            "value" : "Choose another gesture or held key, or edit the existing binding in this profile and input category."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez un autre geste ou modifiez la règle existante dans ce profil."
+            "value" : "Choisissez un autre geste ou une autre touche maintenue, ou modifiez la règle existante dans ce profil et cette catégorie d’entrée."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выберите другой жест или измените существующее правило в этом профиле."
+            "value" : "Выберите другой жест или удерживаемую клавишу либо измените существующее правило в этом профиле и категории ввода."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige otro gesto o edita la regla existente en este perfil."
+            "value" : "Elige otro gesto o tecla mantenida, o edita la regla existente en este perfil y categoría de entrada."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请选择其他手势，或编辑此配置文件中已有的规则。"
+            "value" : "请选择其他手势或按住的按键，或编辑此配置文件和输入类别中已有的规则。"
           }
         }
       }
@@ -24474,7 +24472,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit SmartShift rastet das Rad schrittweise ein und dreht frei, wenn du schnell scrollst."
+            "value" : "Mit SmartShift rastet das Rad schrittweise ein und dreht frei, wenn Sie schnell scrollen."
           }
         },
         "en" : {
@@ -24486,7 +24484,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec SmartShift, la molette avance cran par cran et tourne librement quand vous défilez vite."
+            "value" : "Avec SmartShift, la molette avance cran par cran et tourne librement quand vous faites défiler rapidement."
           }
         },
         "ru" : {
@@ -24679,7 +24677,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie schnell du scrollen musst, bevor das Rad frei dreht."
+            "value" : "Wie schnell Sie scrollen müssen, bevor das Rad frei dreht."
           }
         },
         "en" : {
@@ -24703,7 +24701,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué tan rápido debes desplazarte para que la rueda gire libremente."
+            "value" : "La velocidad de desplazamiento a partir de la cual la rueda gira libremente."
           }
         },
         "zh-Hans" : {
@@ -25132,37 +25130,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die App kann Maustasten und -einstellungen übernehmen. Wenn etwas nicht klappt, beende oder deinstalliere sie."
+            "value" : "Diese Apps können Maustasten und Einstellungen steuern. Wenn Rebind nicht reagiert, beenden Sie diese Apps und versuchen Sie es erneut."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "It can take over mouse buttons and settings. If something doesn’t work, turn it off or uninstall it."
+            "value" : "These apps may control mouse buttons and settings. If Rebind does not respond, quit them and retry."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’app peut s’approprier les boutons et réglages de la souris. En cas de souci, quittez-la ou désinstallez-la."
+            "value" : "Ces apps peuvent contrôler les boutons et réglages de la souris. Si Rebind ne réagit pas, quittez-les et réessayez."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Оно может перехватывать кнопки и настройки мыши. Если что-то не работает, выключите или удалите его."
+            "value" : "Эти приложения могут управлять кнопками и настройками мыши. Если Rebind не реагирует, завершите их и попробуйте снова."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puede quedarse con los botones y ajustes del ratón. Si algo falla, ciérrala o desinstálala."
+            "value" : "Estas apps pueden controlar los botones y ajustes del ratón. Si Rebind no responde, ciérralas y vuelve a intentarlo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "它可能会接管鼠标按键和设置。如有问题，请关闭或卸载它。"
+            "value" : "这些 App 可能会控制鼠标按钮和设置。如果 Rebind 没有响应，请退出这些 App 后重试。"
           }
         }
       }
@@ -26157,7 +26155,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "应用"
+            "value" : "App"
           }
         }
       }
@@ -26198,7 +26196,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有应用"
+            "value" : "所有 App"
           }
         }
       }
@@ -26209,7 +26207,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App auswählen …"
+            "value" : "App auswählen…"
           }
         },
         "en" : {
@@ -26239,7 +26237,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择应用…"
+            "value" : "选取 App…"
           }
         }
       }
@@ -26280,7 +26278,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "针对单个应用的规则仅在该应用位于前台时生效，并在其中替代触发器相同的通用规则。"
+            "value" : "针对单个 App 的规则仅在该 App 位于前台时生效，并取代输入相同的通用规则。"
           }
         }
       }
@@ -26291,7 +26289,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese App kann nicht gewählt werden. Wähle eine andere App als Rebind."
+            "value" : "Diese App kann nicht gewählt werden. Wählen Sie eine andere App als Rebind."
           }
         },
         "en" : {
@@ -26321,7 +26319,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法选择此应用。请选择 Rebind 以外的应用。"
+            "value" : "无法选择此 App。请选择 Rebind 以外的 App。"
           }
         }
       }
@@ -26374,7 +26372,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sicherungen zeigen"
+            "value" : "Backups anzeigen"
           }
         },
         "en" : {
@@ -26570,6 +26568,826 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld%%"
+          }
+        }
+      }
+    },
+    "checkForUpdates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить обновления…"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Updates suchen…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher des mises à jour…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
+          }
+        }
+      }
+    },
+    "checkingUpdates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking for Updates…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверка обновлений…"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche nach Updates…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de mises à jour…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando actualizaciones…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查更新…"
+          }
+        }
+      }
+    },
+    "externalTrackpadDisconnectedHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect an external trackpad to use these bindings. You can still edit them here. Built-in Trackpad bindings are separate."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключите внешний трекпад, чтобы использовать эти правила. Их по-прежнему можно редактировать. Для встроенного трекпада действуют отдельные правила."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinden Sie ein externes Trackpad, um diese Belegungen zu verwenden. Sie können sie weiterhin bearbeiten. Für das integrierte Trackpad gelten eigene Belegungen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connectez un trackpad externe pour utiliser ces règles. Vous pouvez toujours les modifier ici. Le trackpad intégré possède ses propres règles."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta un trackpad externo para usar estas reglas. Puedes seguir editándolas aquí. El trackpad integrado tiene reglas independientes."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接外置触控板后即可使用这些规则。你仍可在此编辑规则。内建触控板使用独立的规则。"
+          }
+        }
+      }
+    },
+    "externalTrackpadDisconnectedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No external trackpad is connected"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Внешний трекпад не подключён"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein externes Trackpad verbunden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun trackpad externe connecté"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ningún trackpad externo conectado"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未连接外置触控板"
+          }
+        }
+      }
+    },
+    "magicMouseClickHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press the mouse while three fingers rest on its surface. The action replaces that click."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Положите три пальца на поверхность мыши и нажмите на неё. Действие заменит это нажатие."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drücken Sie die Maus, während drei Finger auf ihrer Oberfläche liegen. Die Aktion ersetzt diesen Klick."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posez trois doigts sur la souris, puis cliquez. L’action remplace ce clic."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apoya tres dedos en la superficie del ratón y haz clic. La acción sustituye ese clic."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将三根手指放在鼠标表面，再按下鼠标。操作会取代此次点按。"
+          }
+        }
+      }
+    },
+    "magicMouseScrollHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move two fingers in the chosen direction. Each recognized stroke runs the action once instead of scrolling. Unclear starts scroll normally. Direction follows your fingers, regardless of Natural Scrolling."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проведите двумя пальцами в выбранном направлении. Каждый распознанный жест выполняет действие один раз вместо прокрутки. Если начало жеста не распознано, прокрутка работает как обычно. Направление следует за пальцами и не зависит от «Естественной прокрутки»."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegen Sie zwei Finger in die gewählte Richtung. Jede erkannte Bewegung löst die Aktion einmal aus, statt zu scrollen. Wird der Beginn nicht erkannt, wird normal gescrollt. Die Richtung folgt Ihren Fingern, unabhängig von „Natürliches Scrollen“."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacez deux doigts dans la direction choisie. Chaque geste reconnu exécute l’action une fois au lieu de faire défiler. Si le début n’est pas reconnu, le défilement reste normal. La direction suit vos doigts, indépendamment du défilement naturel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve dos dedos en la dirección elegida. Cada gesto reconocido ejecuta la acción una vez en lugar de desplazar. Si no se reconoce el inicio, el desplazamiento sigue normal. La dirección sigue tus dedos, independientemente del desplazamiento natural."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用双指向所选方向移动。每个识别到的手势会执行一次操作，取代滚动。若未能识别起始动作，则照常滚动。方向以手指移动为准，不受“自然滚动”影响。"
+          }
+        }
+      }
+    },
+    "magicMouseThreeFingerClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click · 3 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажатие · 3 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klick · 3 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic · 3 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic · 3 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按 · 三指"
+          }
+        }
+      }
+    },
+    "magicMouseThreeFingerTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap · 3 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Касание · 3 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen · 3 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher · 3 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque · 3 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点 · 三指"
+          }
+        }
+      }
+    },
+    "magicMouseTwoFingerScrollDown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll down · 2 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прокрутка вниз · 2 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach unten scrollen · 2 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défilement vers le bas · 2 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desplazar abajo · 2 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向下滚动 · 双指"
+          }
+        }
+      }
+    },
+    "magicMouseTwoFingerScrollUp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll up · 2 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прокрутка вверх · 2 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach oben scrollen · 2 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défilement vers le haut · 2 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desplazar arriba · 2 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向上滚动 · 双指"
+          }
+        }
+      }
+    },
+    "touchNativeGestureTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off the overlapping macOS gesture"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отключите совпадающий жест macOS"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überlagernde macOS-Geste ausschalten"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactivez le geste macOS correspondant"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactiva el gesto coincidente de macOS"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭冲突的 macOS 手势"
+          }
+        }
+      }
+    },
+    "updateAvailableTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An update is available"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступно обновление"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Update ist verfügbar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une mise à jour est disponible"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay una actualización disponible"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用更新"
+          }
+        }
+      }
+    },
+    "updateCheckFailedMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your internet connection and try again."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверьте подключение к интернету и попробуйте ещё раз."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifiez votre connexion Internet et réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprueba tu conexión a internet e inténtalo de nuevo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请检查网络连接后重试。"
+          }
+        }
+      }
+    },
+    "updateCheckFailedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t check for updates"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось проверить обновления"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates konnten nicht geprüft werden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de rechercher des mises à jour"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron buscar actualizaciones"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查更新"
+          }
+        }
+      }
+    },
+    "updateCurrentTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind is up to date"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Установлена последняя версия"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind ist auf dem neuesten Stand"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind est à jour"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind está actualizado"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind 已是最新版本"
+          }
+        }
+      }
+    },
+    "updateNoReleaseMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A public release hasn’t been published yet. Try again later."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Публичная версия ещё не опубликована. Попробуйте позже."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine öffentliche Version wurde noch nicht veröffentlicht. Versuchen Sie es später erneut."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune version publique n’a encore été publiée. Réessayez plus tard."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no se ha publicado una versión pública. Inténtalo más tarde."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未发布公开版本。请稍后重试。"
+          }
+        }
+      }
+    },
+    "updateNoReleaseTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No releases yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Релизов пока нет"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Veröffentlichung"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune version publiée"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay versiones publicadas"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚无发布版本"
+          }
+        }
+      }
+    },
+    "updateOpenRelease" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Release Page"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть страницу релиза"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versionsseite öffnen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir la page de la version"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir página de la versión"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开版本页面"
+          }
+        }
+      }
+    },
+    "updateAvailableMessage %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind %1$@ is available. You’re using %2$@."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступна версия Rebind %1$@. Сейчас установлена %2$@."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind %1$@ ist verfügbar. Sie verwenden %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind %1$@ est disponible. Vous utilisez la version %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind %1$@ está disponible. Usas la versión %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind %1$@ 已发布。你正在使用 %2$@。"
+          }
+        }
+      }
+    },
+    "updateCurrentMessage %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re using Rebind %@."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Установлена версия Rebind %@."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie verwenden Rebind %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous utilisez Rebind %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usas Rebind %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你正在使用 Rebind %@。"
           }
         }
       }

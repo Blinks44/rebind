@@ -16,7 +16,7 @@ import XCTest
             for hasAccess in [false, true] {
                 let model = AppModel(store: store,
                     readPermissions: { InputPermissions(accessibility: hasAccess, posting: hasAccess) })
-                for language in ["en", "ru", "de", "fr"] {
+                for language in AppLanguage.allCases.map(\.rawValue) {
                     for appearance in [ColorScheme.light, .dark] {
                         let controller = NSHostingController(rootView: ContentView(model: model,
                             initialDestination: .input(.allMice))
@@ -51,7 +51,7 @@ import XCTest
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindMouseEditor-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
                 for existing in fixtures.map(Optional.some) + [nil] {
                     var configuration = Configuration(bindings: existing.map { [$0] } ?? [])

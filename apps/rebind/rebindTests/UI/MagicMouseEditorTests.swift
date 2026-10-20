@@ -21,8 +21,9 @@ import Testing
 
     @Test(arguments: AppLanguage.allCases)
     func presetNamesAndGuidanceAreTranslated(_ language: AppLanguage) {
-        let strings: [LocalizedStringResource] = [.magicMouseOneFingerTap, .magicMouseTwoFingerTap, .magicMouseSubtitle,
-            .magicMouseTapHelp, .magicMouseOneFingerConflict, .magicMouseTwoFingerConflict, .magicMouseExperimentalTitle,
+        let strings: [LocalizedStringResource] = [.magicMouseOneFingerTap, .magicMouseTwoFingerTap, .magicMouseThreeFingerTap, .magicMouseSubtitle,
+            .magicMouseThreeFingerClick, .magicMouseTwoFingerScrollUp, .magicMouseTwoFingerScrollDown,
+            .magicMouseClickHelp, .magicMouseScrollHelp, .magicMouseTapHelp, .magicMouseOneFingerConflict, .magicMouseTwoFingerConflict, .magicMouseExperimentalTitle,
             .magicMouseExperimentalHelp, .magicMouseUnavailableTitle, .magicMouseUnavailableHelp,
             .magicMouseFailedTitle, .magicMouseFailedHelp]
         for resource in strings {

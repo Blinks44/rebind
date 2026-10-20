@@ -4,6 +4,7 @@ import SwiftUI
 struct BindingsView: View {
     let model: AppModel
     let scope: DeviceScope
+    var allowsSearch = true
     let add: () -> Void
     let edit: (Binding) -> Void
     let duplicate: (Binding) -> Void
@@ -11,6 +12,7 @@ struct BindingsView: View {
     let manageProfiles: () -> Void
     let openPermissions: () -> Void
     @State private var search = ""
+    @State private var searchFocusRequest: UUID?
 
     private var bindings: [Binding] { model.configuration.bindings.filter { $0.scope == scope } }
     private var visible: [Binding] { bindings.filter { BindingList.matches($0, search: search) } }
@@ -54,6 +56,7 @@ struct BindingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay { if visible.isEmpty { emptyState } }
         }
+        .focusedSceneValue(\.findBindings, allowsSearch ? { searchFocusRequest = UUID() } : nil)
         .onChange(of: model.configuration.selectedProfileID) { search = "" }
     }
 
@@ -74,6 +77,9 @@ struct BindingsView: View {
                     message: model.magicMouseStatus == .failed ? .magicMouseFailedHelp
                         : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableHelp : .magicMouseExperimentalHelp)
                     .padding(.top, 24)
+            } else if scope == .magicTrackpad, model.mouseHardware.externalTrackpadConnected == false {
+                Banner(severity: .warning, title: .externalTrackpadDisconnectedTitle,
+                       message: .externalTrackpadDisconnectedHelp).padding(.top, 24)
             } else if scope == .allMice, !model.visibleMouseCompanionApps.isEmpty {
                 let apps = model.visibleMouseCompanionApps
                 CompanionBanner(apps: apps) { model.dismissCompanionWarning(for: apps) }.padding(.top, 24)
@@ -108,10 +114,10 @@ struct BindingsView: View {
                 Text(subtitle).font(Theme.body).foregroundStyle(Theme.textSecondary).lineLimit(2)
             }
             Spacer(minLength: 12)
-            ThemeTextField(title: .mouseSearchBindings, text: $search, symbol: "magnifyingglass")
+            ThemeTextField(title: .mouseSearchBindings, text: $search, symbol: "magnifyingglass", focusRequest: searchFocusRequest)
                 .frame(minWidth: 140, idealWidth: 220, maxWidth: 220)
                 .accessibilityIdentifier("bindings-search")
-            addButton.fixedSize()
+            addButton.fixedSize().keyboardShortcut("n", modifiers: .command)
         }
     }
 
@@ -125,7 +131,7 @@ struct BindingsView: View {
             Button {
                 if model.permissions.allowsRemapping { model.setEnabled(!model.configuration.isEnabled) } else { openPermissions() }
             } label: { StatusPill(kind: statusKind) }
-                .buttonStyle(.plain)
+                .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
                 .keyboardFocusRing()
                 .disabled(model.storageLocked && !model.configuration.isEnabled)
                 .help(Text("\(Text(model.statusText))\n\(Text(.emergencyHint))"))
@@ -169,7 +175,7 @@ struct BindingsView: View {
                     .multilineTextAlignment(.center).frame(maxWidth: 420).padding(.top, 8)
                 addButton.padding(.top, 24)
             } else {
-                Button(.mouseClearSearch) { search = "" }.buttonStyle(.plain)
+                Button(.mouseClearSearch) { search = "" }.buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
                     .font(Theme.bodyStrong).foregroundStyle(Theme.accent).padding(.top, 20)
             }
         }

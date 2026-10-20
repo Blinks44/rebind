@@ -4,6 +4,7 @@
 
 | Topic | Evidence / current owner |
 | --- | --- |
+| Final release pass | [Remaining acceptance queue](release-candidate.md), [final app preparation and package](../tasks/REL-003-final-app-readiness.md); previously confirmed subsets retained |
 | October 18 manual checklist | [Reported passes, artifact limits and remaining checks](manual-test-2026-10-18.md); DEVICE-004/005, REVIEW-002 and INPUT-009/013/014 |
 | Keyboard/mouse and lifecycle | [Phase 1](phase-1.md), `phase-2-*`; [CAPABILITIES](../CAPABILITIES.md) routes specific input subsets |
 | Actions | `phase-4-*`; per-action contracts, dated checks and manual fault/guard walkthroughs |
@@ -15,3 +16,5 @@
 | Superseded visual handoffs | [Historical settings design](../history/settings-design-through-2026-10-11.md); current visuals come from DESIGN + live Sketch |
 
 Keep dated commands, revision/environment, evidence source, meaningful result and limits. Current walkthroughs/open checks must remain discoverable from their task; an old report or successful build does not close them. Screenshots stay local under WORKFLOW. Remove a redundant report only after unique evidence/decisions and every open check are preserved and incoming links repaired.
+
+[Pre-release copy/documentation audit](../tasks/REL-004-release-copy-and-documentation-audit.md) records the 1.0.0/2 candidate, six-language layout/site checks and remaining browser/runtime limits. [Release procedure](../RELEASING.md).

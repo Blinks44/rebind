@@ -6,12 +6,13 @@ Thanks for your interest. Rebind is a small, free macOS app maintained in spare 
 
 Open an issue and include:
 
+- your Rebind version/build from **About Rebind**;
 - your macOS version and Mac model (Apple silicon or Intel);
-- the input device involved (keyboard, mouse model, built-in trackpad, Magic Trackpad);
+- the input device involved (keyboard, mouse model, built-in trackpad, Magic Trackpad or Magic Mouse);
 - what you did, what you expected and what happened;
 - whether Rebind shows a warning in **Settings → Permissions**.
 
-Never paste passwords or other private text. Rebind does not record what you type, and a report does not need it. For security problems, follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
+For a support report, use **Settings → Advanced → Copy Report**. Do not attach your configuration or backups to a public issue. Never paste passwords or other private text. Rebind does not record what you type, and a report does not need it. For security problems, follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
 
 ## Proposing a change
 

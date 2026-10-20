@@ -4,16 +4,19 @@ import UniformTypeIdentifiers
 /// Where a rule works: every app, or only while one chosen app is in front.
 struct RuleApplicationField: View {
     @SwiftUI.Binding var application: ApplicationTarget?
+    @Environment(\.locale) private var locale
     @State private var choosing = false
     @State private var rejected = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.bindingAppTitle)
-            Menu {
-                Button(.bindingAllApps) { application = nil }
-                Button(.bindingChooseApp) { rejected = false; choosing = true }
-            } label: {
+            AnchoredMenu(select: { _ in }, makeMenu: { _ in
+                NSHostingMenu(rootView: Group {
+                    Button(.bindingAllApps) { application = nil }
+                    Button(.bindingChooseApp) { rejected = false; choosing = true }
+                }.environment(\.locale, locale))
+            }) {
                 HStack(spacing: 10) {
                     if let application {
                         Image(nsImage: NSWorkspace.shared.icon(forFile: application.url.path)).resizable()
@@ -31,8 +34,6 @@ struct RuleApplicationField: View {
                 .font(Theme.body).foregroundStyle(Theme.textPrimary).lineLimit(1)
                 .padding(.horizontal, 16).frame(height: Theme.controlHeight).contentShape(.capsule)
             }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
-            .modifier(ControlSurface()).keyboardFocusRing()
             .accessibilityLabel(Text(.bindingAppTitle))
             .accessibilityValue(Text(verbatim: application?.displayName ?? AppLocalization.string(.bindingAllApps)))
             Text(rejected ? LocalizedStringResource.bindingAppRejected : .bindingAppHint)

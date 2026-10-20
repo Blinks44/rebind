@@ -28,7 +28,7 @@ struct Banner<Actions: View>: View {
                     Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(Theme.iconSecondary).frame(width: 22, height: 22).contentShape(.rect)
                 }
-                .buttonStyle(.plain).keyboardFocusRing(Circle())
+                .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).keyboardFocusRing(Circle())
                 .accessibilityLabel(Text(.bannerHide)).help(Text(.bannerHide))
             }
         }

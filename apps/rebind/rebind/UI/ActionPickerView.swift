@@ -12,7 +12,7 @@ struct ActionPickerView: View {
         Button { search = ""; presented = true } label: {
             SelectorLabel(title: selection.title, symbol: selection.symbol)
         }
-        .buttonStyle(.plain).modifier(ControlSurface()).keyboardFocusRing()
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).modifier(ControlSurface()).keyboardFocusRing()
         .accessibilityLabel(Text(.chooseAction)).accessibilityValue(Text(selection.title))
         .disabled(model.recording != nil)
         .popover(isPresented: $presented, arrowEdge: .bottom) { list }
@@ -81,7 +81,7 @@ struct ActionPickerView: View {
             .opacity(available ? 1 : 0.45)
             .contentShape(.rect)
         }
-        .buttonStyle(.plain).keyboardFocusRing(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).keyboardFocusRing(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .disabled(!available).padding(.horizontal, 4)
         .onHover { hovered = $0 ? kind : (hovered == kind ? nil : hovered) }
     }

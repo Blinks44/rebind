@@ -48,6 +48,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 @MainActor @Observable final class MouseHardware {
 
     private(set) var mice: [ConnectedMouse] = []
+    /// Nil until HID discovery is available; independent of capture admission and finger activity.
+    private(set) var externalTrackpadConnected: Bool?
     /// Charges of Logitech devices (mice and keyboards) and of devices macOS reports, by name.
     private(set) var batteries: [DeviceBattery] = []
     let bluetoothBattery = BluetoothBatteryMonitor()
@@ -66,6 +68,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     @ObservationIgnored private var logitechBatteries: [String: [DeviceBattery]] = [:]
     @ObservationIgnored private var batteryTimer: Timer?
     @ObservationIgnored private var manager: IOHIDManager?
+    @ObservationIgnored private var discoveryAvailable = false
     @ObservationIgnored private var devices: [String: [IOHIDDevice]] = [:]
     /// Open HID++ endpoints and the mice found behind each, by IOKit location.
     @ObservationIgnored private var sessions: [String: Session] = [:]
@@ -150,8 +153,15 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             MainActor.assumeIsolated { Unmanaged<MouseHardware>.fromOpaque(context).takeUnretainedValue().removed(device) }
         }, context)
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
-        IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+        let discoveryResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = manager
+        discoveryAvailable = discoveryResult == kIOReturnSuccess
+        if discoveryAvailable {
+            // Include the initial inventory before publishing absence, including the zero-device case.
+            let initialDevices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> ?? []
+            initialDevices.forEach { added($0) }
+            scheduleRebuild()
+        }
         observeSystemBatteries()
         bluetoothBattery.changed = { [weak self] in self?.publishBatteries() }
         bluetoothBattery.startIfAuthorized()
@@ -177,6 +187,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = nil
+        externalTrackpadConnected = nil
+        discoveryAvailable = false
         sessions.values.forEach { $0.io.close() }
         sessions = [:]
         devices = [:]
@@ -239,6 +251,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     private func added(_ device: IOHIDDevice) {
         let location = Self.location(of: device)
+        guard devices[location]?.contains(device) != true else { return }
         devices[location, default: []].append(device)
         scheduleRebuild()
     }
@@ -277,6 +290,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     private func rebuild() {
+        if discoveryAvailable {
+            externalTrackpadConnected = devices.values.joined().contains { Self.inputKind(of: $0) == .trackpad }
+        }
         var list: [ConnectedMouse] = []
         var accessories: [ConnectedAccessory] = []
         for (location, interfaces) in devices.sorted(by: { $0.key < $1.key }) {

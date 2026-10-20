@@ -21,10 +21,17 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     /// Experimental stationary single taps on the Magic Mouse surface.
     case magicMouseTap(fingers: Int)
 
+    /// A physical press with three contacts, distinct from a light tap.
+    case magicMouseClick(fingers: Int)
+    /// Two-finger vertical finger movement; independent of Natural Scrolling.
+    case magicMouseScroll(ScrollDirection)
+
     var isTouchGesture: Bool { isTrackpad || isMagicMouse }
     var isMagicMouse: Bool {
-        if case .magicMouseTap = self { return true }
-        return false
+        switch self {
+        case .magicMouseTap, .magicMouseClick, .magicMouseScroll: true
+        default: false
+        }
     }
 
     var isTrackpad: Bool {
@@ -76,7 +83,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap, .trackpadClick: .builtInTrackpad
-        case .magicMouseTap: .magicMouse
+        case .magicMouseTap, .magicMouseClick, .magicMouseScroll: .magicMouse
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
         }
@@ -90,7 +97,9 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap: true
         case .trackpadClick(let fingers): (2...4).contains(fingers)
-        case .magicMouseTap(let fingers): (1...2).contains(fingers)
+        case .magicMouseTap(let fingers): (1...3).contains(fingers)
+        case .magicMouseClick(let fingers): fingers == 3
+        case .magicMouseScroll(let direction): direction == .up || direction == .down
         }
     }
 }

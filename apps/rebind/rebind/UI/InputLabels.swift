@@ -26,7 +26,8 @@ enum InputLabels {
     static func trigger(_ trigger: InputTrigger, modifiers: ModifierSet) -> String {
         let label: String
         switch trigger {
-        case .magicMouseTap(let fingers): label = AppLocalization.string((MagicMousePreset(rawValue: fingers) ?? .oneFingerTap).title)
+        case .magicMouseTap, .magicMouseClick, .magicMouseScroll:
+            label = AppLocalization.string((MagicMousePreset(trigger: trigger) ?? .oneFingerTap).title)
         case .fourFingerTap: label = AppLocalization.string(.fourFingerTap)
         case .threeFingerTap: label = AppLocalization.string(.threeFingerTap)
         case .threeFingerDoubleTap: label = AppLocalization.string(.threeFingerDoubleTap)

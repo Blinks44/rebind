@@ -5,6 +5,7 @@ struct MainSidebarButton: View {
     let title: LocalizedStringResource
     let symbol: String
     var isSelected = false
+    var keyboardFocus: Bool? = nil
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.colorSchemeContrast) private var contrast
@@ -33,7 +34,13 @@ struct MainSidebarButton: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .keyboardFocusRing(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .focusable(interactions: .edit)
+        .onKeyPress(.space) {
+            guard isEnabled else { return .ignored }
+            action()
+            return .handled
+        }
+        .keyboardFocusRing(RoundedRectangle(cornerRadius: 14, style: .continuous), isFocused: keyboardFocus)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onHover { isHovered = $0 }
         .transaction { $0.animation = nil }

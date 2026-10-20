@@ -29,6 +29,10 @@ Agent-observed 2026-10-13, macOS 27.0.1 / Xcode 27, software evidence only: new 
 - [ ] Disconnect/reconnect, sleep/wake, and a Magic Mouse connected at the same time (must not be taken for a trackpad).
 - [ ] Tap to click and click rules on the external surface, including its Force Touch click behavior.
 
+## User follow-up — 2026-10-19
+
+User reports the external trackpad tested and working like the built-in one, with overall behavior satisfactory. Exact artifact, model/settings and a preset-by-preset matrix were not supplied. This confirms the exercised general external behavior; remaining specifically enumerated timing/reconnect/sleep/click-safety/platform checks above are not automatically closed. Do not ask to repeat the entire external smoke pass.
+
 ## Next handoff
 
-User: switch the Magic Trackpad on, add a rule in the Magic Trackpad section and try a tap, a corner and a click; also confirm a built-in trackpad rule still works.
+Retain the supplied general external-trackpad acceptance; focus on the remaining named checks only if affected or required for final release. Keyboard-navigation repair is UI-024; bounded gesture additions are INPUT-015.

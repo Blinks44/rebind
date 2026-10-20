@@ -16,7 +16,7 @@ export const getLatestRelease = createServerFn({ method: 'GET' }).handler(async 
 
 async function fetchLatestRelease(repo: string): Promise<Release | null> {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
-    headers: { Accept: 'application/vnd.github+json' },
+    headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'Rebind-Website' },
   })
   if (!response.ok) return null
   const data = (await response.json()) as { tag_name: string; assets: { name: string; browser_download_url: string }[] }

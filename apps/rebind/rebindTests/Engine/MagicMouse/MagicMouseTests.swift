@@ -15,7 +15,7 @@ struct MagicMouseTests {
         var session: MagicMouseTapSession
         var nextID: Int32 = 0
 
-        init(fingers: [Int] = [1, 2], modifiers: ModifierSet = [], buttonsDown: Bool = false) throws {
+        init(fingers: [Int] = [1, 2, 3], modifiers: ModifierSet = [], buttonsDown: Bool = false) throws {
             let bindings = fingers.map {
                 rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: $0), modifiers: modifiers,
                                action: .shortcut(.init(keyCode: UInt16(12 + $0), modifiers: .command)))
@@ -35,6 +35,7 @@ struct MagicMouseTests {
             if count > 0 { frame.first = .init(id: 0, x: 0.4 + shift, y: 0.5, pressure: 0) }
             if count > 1 { frame.second = .init(id: 1, x: 0.6, y: 0.5, pressure: 0) }
             if count > 2 { frame.third = .init(id: 2, x: 0.5, y: 0.7, pressure: 0) }
+            if count > 3 { frame.fourth = .init(id: 3, x: 0.5, y: 0.3, pressure: 0) }
             session.consume(frame, at: time)
         }
 
@@ -49,7 +50,7 @@ struct MagicMouseTests {
         mutating func ready(at time: UInt64) -> Int? { session.takeReady(from: buffer, at: time) }
     }
 
-    @Test(arguments: [1, 2])
+    @Test(arguments: [1, 2, 3])
     func qualifiedTapUsesTargetedWorkerOnce(_ fingers: Int) throws {
         var h = try Harness()
         h.tap(fingers, endingAt: lift)
@@ -72,7 +73,7 @@ struct MagicMouseTests {
         #expect(outputs.withLock { $0 } == [.init(keyCode: UInt16(12 + fingers), modifiers: .command)])
     }
 
-    @Test(arguments: [1, 2], 0...7)
+    @Test(arguments: [1, 2, 3], 0...7)
     func otherInputOrContextCancelsPendingOutput(_ fingers: Int, _ cause: Int) throws {
         var h = try Harness()
         h.tap(fingers, endingAt: lift)
@@ -99,10 +100,10 @@ struct MagicMouseTests {
     func unqualifiedContactsNeverBecomeActions(_ defect: Int) throws {
         var h = try Harness(buttonsDown: defect == 0)
         h.contact(0, at: lift - 80_000_000)
-        h.contact(defect == 1 ? 3 : 2, at: lift - 60_000_000)
+        h.contact(defect == 1 ? 4 : 2, at: lift - 60_000_000)
         if defect == 2 { h.nextID += 1 }
         if defect != 3 {
-            h.contact(defect == 1 ? 3 : 2, at: lift - 40_000_000, shift: defect == 4 ? 0.03 : 0)
+            h.contact(defect == 1 ? 4 : 2, at: lift - 40_000_000, shift: defect == 4 ? 0.03 : 0)
         }
         h.contact(0, at: defect == 5 ? lift + 200_000_000 : lift)
         if defect == 6 { h.session.interrupt() }
@@ -176,10 +177,10 @@ struct MagicMouseTests {
         #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: 1, pid: 100, at: lift + 1) == false)
     }
 
-    @Test func sustainedContactsAndCompressedNativeTimeCannotBecomeQuickTaps() throws {
+    @Test(arguments: [1, 2, 3]) func sustainedContactsAndCompressedNativeTimeCannotBecomeQuickTaps(_ fingers: Int) throws {
         var held = try Harness()
         held.contact(0, at: lift - 20_000_000)
-        for index in 0..<12 { held.contact(1, at: lift + UInt64(index) * 20_000_000) }
+        for index in 0..<12 { held.contact(fingers, at: lift + UInt64(index) * 20_000_000) }
         held.contact(0, at: lift + 240_000_000)
         #expect(held.ready(at: lift + 300_000_000) == nil)
 

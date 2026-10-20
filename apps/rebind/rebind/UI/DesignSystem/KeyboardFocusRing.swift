@@ -25,7 +25,18 @@ struct KeyboardFocusRing<Outline: InsettableShape>: ViewModifier {
     @FocusState private var isFocused: Bool
 
     func body(content: Content) -> some View {
-        content.focused($isFocused).focusEffectDisabled()
+        content.focused($isFocused)
+            .modifier(KeyboardFocusAppearance(shape: shape, isFocused: isFocused))
+    }
+}
+
+/// Decorates a control's existing focus state without installing a competing binding.
+private struct KeyboardFocusAppearance<Outline: InsettableShape>: ViewModifier {
+    let shape: Outline
+    let isFocused: Bool
+
+    func body(content: Content) -> some View {
+        content.focusEffectDisabled()
             .overlay {
                 if isFocused && KeyboardFocusVisibility.shared.isKeyboardDriven {
                     shape.strokeBorder(Theme.accent, lineWidth: 2).allowsHitTesting(false)
@@ -35,6 +46,14 @@ struct KeyboardFocusRing<Outline: InsettableShape>: ViewModifier {
 }
 
 extension View {
+    @ViewBuilder func keyboardFocusRing(_ shape: some InsettableShape = Capsule(style: .circular), isFocused: Bool?) -> some View {
+        if let isFocused {
+            modifier(KeyboardFocusAppearance(shape: shape, isFocused: isFocused))
+        } else {
+            modifier(KeyboardFocusRing(shape: shape))
+        }
+    }
+
     func keyboardFocusRing(_ shape: some InsettableShape = Capsule(style: .circular)) -> some View {
         modifier(KeyboardFocusRing(shape: shape))
     }

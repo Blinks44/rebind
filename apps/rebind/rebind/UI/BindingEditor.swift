@@ -265,17 +265,15 @@ struct BindingEditor: View {
     }
 
     @ViewBuilder private var feedback: some View {
-        if scope.isTrackpad, let preset = draft.trackpadPreset {
-            Banner(severity: .warning, title: .trackpadSystemGestureWarning,
+        if validationError != .conflict, scope.isTrackpad, let preset = draft.trackpadPreset {
+            Banner(severity: .information, title: .trackpadSystemGestureWarning,
                            message: preset.systemGestureHelp) {
                 Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
             }
         }
-        if scope == .magicMouse {
-            Banner(severity: .warning, title: .trackpadSystemGestureWarning,
-                   message: draft.magicMousePreset.systemGestureHelp) {
-                Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
-            }
+        if validationError != .conflict, scope == .magicMouse, let gestureHelp = draft.magicMousePreset.systemGestureHelp {
+            Banner(severity: .information, title: .touchNativeGestureTitle,
+                   message: gestureHelp)
         }
         if !model.canRecord {
             Banner(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,

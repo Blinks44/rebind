@@ -13,7 +13,7 @@ A native macOS utility for mapping keyboard and mouse input to shortcuts and sys
 
 Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
 
-**Status:** under active development. Keyboard/mouse remapping and many action paths are implemented; full hardware, reliability and UI acceptance are still in progress. Trackpad and Magic Mouse gesture support are experimental. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
+**Status:** preparing the first public release. The current app has passed the maintainer’s overall manual check. Trackpad and Magic Mouse gestures remain experimental; platform, device and accessibility coverage has limits. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
 
 ## Repository layout
 
@@ -32,7 +32,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Press, double press and hold. A hold binding can also send a shortcut on a short press.
 - Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
 - Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
-- Experimental Magic Mouse one- and two-finger taps, with an optional held modifier and the shared action catalog. App hardware acceptance is pending; native Smart Zoom and Mission Control can also respond to repeated taps.
+- Experimental Magic Mouse taps with one, two or three fingers, a physical three-finger click and two-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
 
 **Actions**
 
@@ -50,8 +50,9 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Excluded apps, such as games and virtual machines, with bindings and smooth scrolling switched off separately.
 - Reverse vertical and horizontal scrolling separately, speed up the wheel, smooth scrolling set per mouse, adjustable mouse gesture distance.
 - Logitech mice: SmartShift wheel mode and sensitivity, pointer resolution (DPI), high-resolution wheel, battery charge, and the gesture button as a trigger; kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
-- A daily copy of the settings for the last week, besides full export and import.
+- Automatic backups of the last 10 different configurations loaded at launch, plus full export/import and individual profile files.
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
+- Manual update checks from **Rebind → Check for Updates**; downloads and installation remain manual.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
 Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad and Magic Mouse touch capture rely on a private macOS interface and are experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
@@ -66,20 +67,14 @@ The project has been built and inspected on Apple Silicon with a newer macOS/Xco
 
 ## Install
 
-Rebind is free and open source. It is signed by the maintainer but **not notarized by Apple** (notarization requires a paid developer membership), so macOS asks you to confirm the first launch.
+Rebind is free and open source. Current installation candidates use an **Apple Development certificate** and are **not notarized by Apple**; this is a local testing route, with installation on other Macs still unverified. macOS may block the downloaded app until you explicitly allow that copy. The first public release is still being prepared; a source-code ZIP is not an installer.
 
-1. Download the latest `Rebind-….dmg` from the [Releases](../../releases) page and open it.
+1. Download the latest `Rebind-….dmg` from the [Releases](https://github.com/Blinks44/rebind/releases) page and open it.
 2. Drag **Rebind** onto the **Applications** folder, then open it from there. macOS shows a warning that it could not verify the app; close the warning.
 3. Open **System Settings → Privacy & Security**, scroll down to the message about Rebind and click **Open Anyway**, then confirm.
 4. Rebind opens and guides you through the one permission it needs, **Accessibility**.
 
-You do this once. Updates are signed with the same certificate, so the Accessibility permission stays in place; after downloading an update, macOS asks for the **Open Anyway** confirmation again.
-
-Prefer the terminal? This removes the download flag instead of step 3:
-
-```sh
-xattr -dr com.apple.quarantine /Applications/Rebind.app
-```
+Updates use the same signing identity, but Accessibility access surviving an update still needs verification between two distinct Release builds. macOS may ask you to approve a downloaded update again. See [Apple’s first-launch instructions](https://support.apple.com/en-us/102445).
 
 If you would rather not trust a prebuilt app, build it yourself from this repository (below).
 
@@ -119,7 +114,9 @@ Pause from the menu bar whenever needed. While capture is active, **⌃⌥⇧⌘
 
 The selected profile supplies the active bindings. A global Quartz event tap captures supported keyboard/mouse input and a bounded matcher decides whether to pass it through or trigger an action. Actions run separately from the synchronous event callback; synthesized events are tagged to prevent feedback loops. The experimental trackpad path uses an isolated private multitouch adapter.
 
-Configuration is stored locally at `~/Library/Application Support/Rebind/configuration.json` using versioned JSON and atomic writes. Typed text is not logged or persisted. Secure Input and permission/lifecycle checks guard recording and dispatch.
+Configuration is stored locally at `~/Library/Application Support/Rebind/configuration.json` using versioned JSON and atomic writes. Rebind does not keep a history of what you type. Text you deliberately save in an Insert Text action is part of your unencrypted local configuration and backups; do not store passwords there. Secure Input and permission/lifecycle checks guard recording and dispatch.
+
+Input processing makes no network requests and sends no analytics. **Check for Updates** contacts the public GitHub Releases API only when selected; it sends no bindings, input or device data. Opening a website or running an Apple Shortcut follows the action you configure.
 
 ## Technology
 
@@ -133,7 +130,7 @@ Configuration is stored locally at `~/Library/Application Support/Rebind/configu
 | Tests | Swift Testing with an Xcode-hosted test target |
 | Build and assets | Xcode, SF Symbols, Sketch, Icon Composer |
 
-The app target's only Swift package is the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and carry compatibility limits. The standalone research probe has separate pinned dependencies. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+The app target's only Swift package is the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and carry compatibility limits. The current standalone mouse/click probes add no dependencies; the earlier TrackpadProbe package was removed after integration. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
 
 ## Acknowledgements
 
@@ -148,6 +145,8 @@ Rebind builds on the work of these open-source projects. Each is credited with i
 
 ## Documentation
 
+- [User guide](docs/USAGE.md): setup, everyday examples, conflicts and recovery.
+- [Release guide](docs/RELEASING.md): versioning, signed DMG, GitHub assets and website publication.
 - [Development guide](docs/DEVELOPMENT.md): build, tests, signing and detailed local setup.
 - [Capabilities](docs/CAPABILITIES.md): implementation status, verified subsets and limitations.
 - [Specification](docs/SPEC.md) and [roadmap](docs/PLAN.md): product requirements and remaining work.

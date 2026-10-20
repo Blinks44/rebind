@@ -61,7 +61,7 @@ nonisolated struct MagicMouseTapSession: Sendable {
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0); return }
         if let candidate, let start = contactStartedAt, frame.receipt >= start,
            (20_000_000...300_000_000).contains(frame.receipt - start),
-           (1...2).contains(candidate.fingers), runtime.actions[candidate.fingers] != nil,
+           (1...3).contains(candidate.fingers), runtime.actions[candidate.fingers] != nil,
            foreground != nil,
            gate.candidate(fingers: candidate.fingers, at: frame.receipt, buttons: frame.activity, observerReady: true) {
             pending = candidate.fingers

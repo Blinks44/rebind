@@ -34,6 +34,19 @@ import XCTest
                         XCTAssertGreaterThanOrEqual(bounds.minY, -1)
                         XCTAssertLessThanOrEqual(bounds.maxY, height + 1)
                         XCTAssertLessThanOrEqual(scroll.documentView?.frame.width ?? 0, scroll.contentView.bounds.width + 1)
+                        if height == 640, language == .en {
+                            if let document = scroll.documentView {
+                                document.scroll(NSPoint(x: 0, y: max(0, document.bounds.height - scroll.contentView.bounds.height)))
+                                controller.view.layoutSubtreeIfNeeded()
+                            }
+                            let bitmap = try XCTUnwrap(controller.view.bitmapImageRepForCachingDisplay(in: controller.view.bounds))
+                            controller.view.cacheDisplay(in: controller.view.bounds, to: bitmap)
+                            let png = try XCTUnwrap(bitmap.representation(using: .png, properties: [:]))
+                            let attachment = XCTAttachment(data: png, uniformTypeIdentifier: "public.png")
+                            attachment.name = "magic-mouse-\(preset)-\(scheme)"
+                            attachment.lifetime = .keepAlways
+                            add(attachment)
+                        }
                     }
                 }
             }

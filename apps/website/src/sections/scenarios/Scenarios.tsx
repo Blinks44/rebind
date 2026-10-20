@@ -18,8 +18,8 @@ export function Scenarios() {
         </Scenario>
         <Scenario title={m.scenario_presses_title()} text={m.scenario_presses_text()} delay={0.08}>
           <Binding trigger={<Press kind={m.press_single()} />} action={actions.playPause()} />
-          <Binding trigger={<Press kind={m.press_double()} />} action={actions.nextTrack()} />
-          <Binding trigger={<Press kind={m.press_long()} />} action={actions.mute()} />
+          <Binding trigger={<Press keyName="F14" kind={m.press_double()} />} action={actions.nextTrack()} />
+          <Binding trigger={<Press keyName="F15" kind={m.press_long()} />} action={actions.mute()} />
         </Scenario>
         <Scenario title={m.scenario_windows_title()} text={m.scenario_windows_text()}>
           <Binding trigger={<Keycaps keys={['⌃', '⌥', '←']} />} action={actions.leftHalf()} />
@@ -63,11 +63,11 @@ function Scenario(props: { title: string; text: string; delay?: number; children
 /** The short press of a dual-role key sends a plain shortcut; it is not a catalog action. */
 const escape = (): Action => ({ icon: Command, title: m.action_escape(), category: m.action_shortcut() })
 
-/** F13 with the kind of press that triggers the rule. */
-function Press({ kind }: { kind: string }) {
+/** A distinct key for each example; one input cannot have competing activation rules. */
+function Press({ kind, keyName = 'F13' }: { kind: string; keyName?: string }) {
   return (
     <>
-      <Keycaps keys={['F13']} />
+      <Keycaps keys={[keyName]} />
       <span className={styles.press}>{kind}</span>
     </>
   )

@@ -6,13 +6,25 @@ import Dispatch
 /// Main-actor device lifecycle and bounded dequeue; the callback only copies frames.
 @MainActor final class MagicMouseCapture: NSObject {
     private let mailbox: EngineMailbox
-    private var device: NativeTrackpadDevice?
+    private var device: (any MagicMouseCaptureDevice)?
     private var session: MagicMouseTapSession?
     private var revision: UInt64?
     private var scannedAt: UInt64?
     private var timer: Timer?
+    private let acquireDevice: () -> (any MagicMouseCaptureDevice)?
+    private let clock: () -> UInt64
+    private var controlRevision: UInt64?
+    private var controlAllowsCapture: Bool?
 
-    init(mailbox: EngineMailbox) { self.mailbox = mailbox }
+    /// The scheduled deadline, including a distant deadline when capture is dormant.
+    var nextPollDate: Date? { timer?.fireDate }
+
+    init(mailbox: EngineMailbox, acquireDevice: (() -> (any MagicMouseCaptureDevice)?)? = nil,
+         clock: @escaping () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }) {
+        self.mailbox = mailbox
+        self.acquireDevice = acquireDevice ?? { NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicMouse) }
+        self.clock = clock
+    }
 
     func start() {
         guard timer == nil else { return }
@@ -24,6 +36,16 @@ import Dispatch
 
     /// Configuration/status changes wake an otherwise dormant observer without idle polling.
     func configurationChanged() { timer?.fireDate = Date() }
+
+    /// Piggybacks on the model's existing refresh; unchanged state never wakes capture.
+    /// Editing/recording and exclusions can change admission without changing tap status.
+    func refreshControl() {
+        let control = mailbox.state.withLock { ($0.actionRevision, $0.canDispatch && $0.hasMagicMouseRules) }
+        guard controlRevision != control.0 || controlAllowsCapture != control.1 else { return }
+        controlRevision = control.0
+        controlAllowsCapture = control.1
+        configurationChanged()
+    }
 
     func stop() {
         timer?.invalidate(); timer = nil
@@ -55,25 +77,30 @@ import Dispatch
     }
 
     @objc private func poll() {
-        let now = DispatchTime.now().uptimeNanoseconds
+        service(allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
+                foregroundPID: foregroundPID(),
+                modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
+                buttonsDown: (0..<64).contains {
+                    CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
+                })
+    }
+
+    /// One bounded service pass; environment and acquisition are isolated from recognition.
+    func service(allowingInput: Bool, foregroundPID pid: Int32?, modifiers: ModifierSet, buttonsDown: Bool) {
+        let now = clock()
         guard mailbox.magicMouseRuntime() != nil else {
             stopCapture()
             mailbox.state.withLock { $0.magicMouseStatus = .idle }
             timer?.fireDate = .distantFuture
             return
         }
-        guard !IsSecureEventInputEnabled(), AXIsProcessTrusted(), CGPreflightPostEventAccess() else {
+        guard allowingInput else {
             stopCapture()
             mailbox.state.withLock { $0.magicMouseStatus = .idle }
             timer?.fireDate = Date().addingTimeInterval(0.5)
             return
         }
-        let pid = foregroundPID()
         mailbox.updateTrackpadForeground(pid)
-        let modifiers = ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState))
-        let buttonsDown = (0..<64).contains {
-            CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
-        }
         guard let runtime = mailbox.magicMouseRuntime(modifiers: modifiers, buttonsDown: buttonsDown) else {
             stopCapture()
             mailbox.state.withLock { $0.magicMouseStatus = .idle }
@@ -82,7 +109,7 @@ import Dispatch
         }
         if scannedAt.map({ now < $0 || now - $0 >= 2_000_000_000 }) ?? true {
             scannedAt = now
-            let found = NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicMouse)
+            let found = acquireDevice()
             if found !== device {
                 stopCapture()
                 device = found
@@ -112,8 +139,8 @@ import Dispatch
             return
         }
         session?.update(runtime: runtime, foreground: pid)
-        session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds })
-        let decisionTime = DispatchTime.now().uptimeNanoseconds
+        session?.consumeBufferedFrames(from: device.buffer, clock: clock)
+        let decisionTime = clock()
         if let fingers = session?.takeReady(from: device.buffer, at: decisionTime), let pid {
             _ = mailbox.submitMagicMouse(runtime, fingers: fingers, pid: pid, at: decisionTime)
         }

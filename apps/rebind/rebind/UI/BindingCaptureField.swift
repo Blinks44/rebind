@@ -31,7 +31,7 @@ struct BindingCaptureField: View {
                     Spacer(minLength: 8)
                     Button(.cancelRecording, action: cancel).focused($cancelFocused)
                         .keyboardShortcut(.cancelAction)
-                        .secondaryButton()
+                        .secondaryButton(isFocused: cancelFocused)
                 }
             } else {
                 if wrapsControls {
@@ -80,7 +80,7 @@ struct BindingCaptureField: View {
 
     private var recordButton: some View {
         Button(isOutput ? LocalizedStringResource.editorRecordOutput : .editorRecordTrigger, action: record)
-            .secondaryButton()
+            .secondaryButton(isFocused: recordFocused)
             .accessibilityLabel(Text(isOutput ? LocalizedStringResource.recordOutput : .recordTrigger))
             .focused($recordFocused).disabled(!canRecord || recording != nil)
     }
@@ -90,7 +90,7 @@ struct BindingCaptureField: View {
             Image(systemName: "xmark.circle.fill").font(.system(size: 15)).foregroundStyle(Theme.iconTertiary)
                 .frame(width: 28, height: 28).contentShape(.rect)
         }
-            .buttonStyle(.plain)
+            .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
             .keyboardFocusRing(Circle())
             .accessibilityLabel(Text(isOutput ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
             .disabled(value == nil || recording != nil)

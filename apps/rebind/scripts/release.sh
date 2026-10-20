@@ -1,70 +1,123 @@
 #!/bin/bash
-# Builds a Release copy of Rebind, signs it with one stable certificate and
-# packages it for GitHub Releases: a disk image when `create-dmg` is installed
-# (brew install create-dmg), otherwise a zip.
-#
-# Rebind is not notarized (that needs the paid Apple Developer Program), so macOS
-# blocks the first launch until the user allows it in System Settings. Signing
-# every release with the SAME certificate still matters: macOS ties the
-# Accessibility permission to the signature, and a stable signature lets the
-# permission survive updates.
-#
-#   apps/rebind/scripts/release.sh                 # uses the "Rebind Release" certificate
-#   REBIND_SIGN_IDENTITY="Other Name" apps/rebind/scripts/release.sh
+# Package with an existing identity; key creation is never part of a release.
 set -euo pipefail
+exec python3 - "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)" <<'PYTHON'
+#!/usr/bin/env python3
+"""Build with an existing signing identity; never create keys or install a service."""
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
 
-app_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-identity="${REBIND_SIGN_IDENTITY:-Rebind Release}"
-products="$app_root/build/DerivedData/Build/Products/Release"
-output="$app_root/build/release"
+APP_ROOT = Path(sys.argv[1])
+OUTPUT = APP_ROOT / "build" / "release"
+KEYCHAIN = os.environ.get("REBIND_SIGN_KEYCHAIN")
+# Pin the existing shared development certificate; never silently change signer.
+IDENTITY = os.environ.get("REBIND_SIGN_IDENTITY", "69D383553450694A1E9D78650B3FC6E69446BD4F")
 
-if ! security find-identity -v -p codesigning | grep -Fq "$identity"; then
-    cat >&2 <<EOF
-No code-signing certificate named "$identity" was found in your keychain.
 
-Create it once (it is free and stays on your Mac):
-  1. Open Keychain Access → Certificate Assistant → Create a Certificate…
-  2. Name: $identity · Identity Type: Self-Signed Root · Certificate Type: Code Signing
-  3. Tick "Let me override defaults" and set the validity to 3650 days; accept the other defaults.
-  4. Export the certificate with its private key (.p12) and keep the backup safe:
-     losing it means every user must grant Rebind's permissions again after the next update.
-EOF
-    exit 1
-fi
+def run(*args, quiet=False):
+    result = subprocess.run([str(a) for a in args], stdout=subprocess.PIPE if quiet else None,
+                            stderr=subprocess.PIPE if quiet else None)
+    if result.returncode:
+        # Never echo command arguments: keychain commands contain credentials.
+        detail = result.stderr.decode(errors="replace").strip() if quiet and result.stderr else ""
+        raise RuntimeError(f"{Path(str(args[0])).name} failed (exit {result.returncode})" + (f": {detail}" if detail else ""))
+    return result.stdout
 
-# Build without Xcode signing, then sign the finished bundle ourselves so the
-# result does not depend on a development team or a provisioning profile.
-"$app_root/scripts/dev.sh" release -quiet CODE_SIGNING_ALLOWED=NO
 
-app="$products/Rebind.app"
-codesign --force --options runtime --timestamp=none --sign "$identity" "$app"
-codesign --verify --strict --deep "$app"
+def signing_identity():
+    args = ["security", "find-identity", "-p", "codesigning"]
+    if KEYCHAIN:
+        args.append(KEYCHAIN)
+    output = run(*args, quiet=True).decode()
+    # Self-signed identities may be excluded by -v; exact fingerprint authentication is
+    # performed by codesign/native fixture checks, without adding system trust exceptions.
+    found = {fingerprint for fingerprint, name in re.findall(r'\d+\) ([A-Fa-f0-9]{40}) "([^"\n]+)"', output)
+             if name == IDENTITY or fingerprint.lower() == IDENTITY.lower()}
+    if len(found) != 1:
+        raise RuntimeError(
+            "Expected exactly one signing identity. Import the existing certificate AND private key "
+            "from its .p12 backup into Keychain Access. Preserve the "
+            "original signing identity. No new certificate was created.")
+    return next(iter(found))
 
-version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")"
-build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")"
-mkdir -p "$output"
 
-if command -v create-dmg >/dev/null; then
-    # A disk image with the app, an Applications shortcut and an arrow between them.
-    archive="$output/Rebind-$version-$build.dmg"
-    staging="$(mktemp -d)"
-    trap 'rm -rf "$staging"' EXIT
-    ditto "$app" "$staging/Rebind.app"
-    rm -f "$archive"
-    create-dmg --volname "Rebind" --volicon "$app/Contents/Resources/AppIcon.icns" \
-        --background "$app_root/scripts/dmg/background.tiff" --window-size 660 400 \
-        --icon-size 128 --icon "Rebind.app" 170 190 --app-drop-link 490 190 \
-        --hide-extension "Rebind.app" --no-internet-enable "$archive" "$staging" >/dev/null
-    codesign --force --timestamp=none --sign "$identity" "$archive"
-else
-    echo "create-dmg is not installed (brew install create-dmg); packaging a zip instead." >&2
-    archive="$output/Rebind-$version-$build.zip"
-    rm -f "$archive"
-    ditto -c -k --keepParent "$app" "$archive"
-fi
+def normalize_bundle_permissions(bundle):
+    # Xcode/ditto can preserve owner-only modes from an earlier build. Distribution
+    # must allow system services and other users to read code and its signing metadata.
+    for path in [bundle, *bundle.rglob("*")]:
+        if path.is_symlink():
+            continue
+        mode = path.stat().st_mode
+        path.chmod(0o755 if path.is_dir() or mode & 0o111 else 0o644)
 
-echo
-echo "Signed with: $identity"
-codesign -d -r- "$app" 2>&1 | grep designated
-echo "Archive:     $archive"
-echo "SHA-256:     $(shasum -a 256 "$archive" | cut -d' ' -f1)"
+
+def main():
+    # This command creates public app artifacts, never private signing keys.
+    os.umask(0o022)
+    if not shutil.which("create-dmg"):
+        raise RuntimeError("Install create-dmg once with: brew install create-dmg")
+    fingerprint = signing_identity()
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    log = OUTPUT / "build.log"
+    with log.open("w") as stream:
+        result = subprocess.run([str(APP_ROOT / "scripts" / "dev.sh"), "release", "-quiet", "CODE_SIGNING_ALLOWED=NO"], stdout=stream, stderr=subprocess.STDOUT)
+    if result.returncode:
+        raise RuntimeError(f"Release build failed; inspect {log}")
+    destination = OUTPUT / "Rebind.app"
+    if destination.exists():
+        shutil.rmtree(destination)
+    run("ditto", APP_ROOT / "build/DerivedData/Build/Products/Release/Rebind.app", destination)
+    sign = ["codesign", "--force", "--options", "runtime", "--timestamp=none", "--sign", fingerprint]
+    if KEYCHAIN:
+        sign.extend(["--keychain", KEYCHAIN])
+    # Current release contains no dynamic packages. Fail rather than silently
+    # introducing library-validation exceptions if that bundle contract changes.
+    if list(destination.rglob("*.dylib")) or list(destination.rglob("*.framework")):
+        raise RuntimeError("Review nested dynamic code signing before packaging this bundle")
+    normalize_bundle_permissions(destination)
+    run(*sign, destination, quiet=True)
+    for path in [destination, *destination.rglob("*")]:
+        if path.is_symlink():
+            continue
+        mode = path.stat().st_mode
+        if not mode & 0o004 or (path.is_dir() and not mode & 0o001):
+            raise RuntimeError("Packaged app must be readable by system services and other users")
+    run("codesign", "--verify", "--strict", "--deep", destination, quiet=True)
+    import plistlib
+    info = plistlib.loads((destination / "Contents/Info.plist").read_bytes())
+    version = str(info["CFBundleShortVersionString"])
+    build = str(info["CFBundleVersion"])
+    if not all(re.fullmatch(r"[A-Za-z0-9._-]+", item) for item in [version, build]):
+        raise RuntimeError("Invalid version/build for package filename")
+    dmg = OUTPUT / f"Rebind-{version}-{build}.dmg"
+    with tempfile.TemporaryDirectory(prefix="rebind-dmg-") as staging:
+        run("ditto", destination, Path(staging) / "Rebind.app")
+        run("create-dmg", "--overwrite", "--volname", "Rebind",
+            "--volicon", destination / "Contents/Resources/AppIcon.icns",
+            "--background", APP_ROOT / "scripts/dmg/background.tiff",
+            "--window-size", "660", "420", "--icon-size", "128", "--text-size", "13",
+            "--icon", "Rebind.app", "170", "210", "--hide-extension", "Rebind.app",
+            "--app-drop-link", "490", "210", "--no-internet-enable", dmg, staging)
+    run(*sign, dmg, quiet=True)
+    run("codesign", "--verify", "--strict", dmg, quiet=True)
+    run("hdiutil", "verify", dmg, quiet=True)
+    run("shasum", "-a", "256", dmg)
+    print(f"Signing certificate: {fingerprint}")
+    print(f"Package: {dmg}")
+    print("No app installed or permissions changed.")
+    print("This artifact is signed but not notarized. Clean-Mac installation remains unverified.")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (RuntimeError, OSError) as error:
+        print(f"Preparation stopped: {error}", file=sys.stderr)
+        sys.exit(1)
+
+PYTHON

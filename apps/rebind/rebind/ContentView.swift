@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     let model: AppModel
+    private let persistsWindowSelection: Bool
     @Environment(\.openWindow) private var openWindow
     @State private var selection: MainDestination = .input(.allKeyboards)
     @State private var editor: EditorSelection?
@@ -13,8 +14,9 @@ struct ContentView: View {
     /// The window reopens on the input category last shown (a window preference, not configuration).
     private static let lastScopeKey = "MainWindowLastScope"
 
-    init(model: AppModel, initialDestination: MainDestination? = nil) {
+    init(model: AppModel, initialDestination: MainDestination? = nil, persistsWindowSelection: Bool = true) {
         self.model = model
+        self.persistsWindowSelection = persistsWindowSelection
         let lastScope = UserDefaults.standard.string(forKey: Self.lastScopeKey).flatMap(DeviceScope.init(rawValue:))
         _selection = State(initialValue: initialDestination ?? .input(lastScope ?? .allKeyboards))
     }
@@ -26,11 +28,14 @@ struct ContentView: View {
                 .background { MainWindowSizing(titlebarInset: $titlebarInset).allowsHitTesting(false).accessibilityHidden(true) }
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("main-sidebar")
+                .focusSection()
             Group {
                 switch selection {
                 case .input(let scope):
                     BindingsView(model: model, scope: scope,
-                        add: { editor = EditorSelection(scope: scope, binding: nil) },
+                        allowsSearch: editor == nil && pendingDeletion == nil && !showingProfiles
+                            && setupPresentation.context == nil,
+                        add: addBinding,
                         edit: { editor = EditorSelection(scope: scope, binding: $0) },
                         duplicate: { editor = EditorSelection(scope: scope, binding: $0.duplicated(), isCopy: true) },
                         delete: { pendingDeletion = $0 },
@@ -41,6 +46,7 @@ struct ContentView: View {
             }.frame(minWidth: 640, maxWidth: .infinity, maxHeight: .infinity)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("main-detail")
+                .focusSection()
         }
         .background { ThemeCanvas() }
         .frame(minWidth: 880, minHeight: titlebarInset.map { max(0, 600 - $0) })
@@ -58,7 +64,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
         .onChange(of: selection) {
-            if case .input(let scope) = selection { UserDefaults.standard.set(scope.rawValue, forKey: Self.lastScopeKey) }
+            if persistsWindowSelection, case .input(let scope) = selection {
+                UserDefaults.standard.set(scope.rawValue, forKey: Self.lastScopeKey)
+            }
         }
         .onChange(of: model.configuration.selectedProfileID) {
             editor = nil
@@ -85,6 +93,13 @@ struct ContentView: View {
                 pendingDeletion = nil
             }
         } message: { Text(.deleteBindingConfirmation) }
+    }
+
+    /// Command-N may retain its native key-equivalent registration across category changes.
+    /// Resolve the destination from window state when invoked, not from a captured detail scope.
+    private func addBinding() {
+        guard case .input(let scope) = selection else { return }
+        editor = EditorSelection(scope: scope, binding: nil)
     }
 
     private var deletionPresented: SwiftUI.Binding<Bool> {

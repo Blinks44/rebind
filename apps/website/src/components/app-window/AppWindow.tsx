@@ -71,8 +71,8 @@ const tabs = [
     title: m.app_magic_mouse,
     subtitle: m.app_gestures_subtitle,
     rows: (): Row[] => [
-      { trigger: <TriggerChip icon={MousePointer2}>{m.trigger_two_swipe_left()}</TriggerChip>, action: actions.previousDesktop() },
-      { trigger: <TriggerChip icon={MousePointer2}>{m.trigger_two_swipe_right()}</TriggerChip>, action: actions.nextDesktop() },
+      { trigger: <TriggerChip icon={MousePointer2}>{m.trigger_two_scroll_up()}</TriggerChip>, action: actions.volumeUp() },
+      { trigger: <TriggerChip icon={MousePointer2}>{m.trigger_three_click()}</TriggerChip>, action: actions.closeWindow() },
       { trigger: <TriggerChip icon={MousePointer2}>{m.trigger_two_tap()}</TriggerChip>, action: actions.missionControl() },
     ],
   },

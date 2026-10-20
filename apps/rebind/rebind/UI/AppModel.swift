@@ -237,7 +237,8 @@ import Carbon
             state.emergencyPause = false
             return result
         }
-        if status != update.status { status = update.status; magicMouseCapture?.configurationChanged() }
+        if status != update.status { status = update.status }
+        magicMouseCapture?.refreshControl()
         if trackpadStatus != update.trackpadStatus { trackpadStatus = update.trackpadStatus }
         if magicMouseStatus != update.magicMouseStatus { magicMouseStatus = update.magicMouseStatus }
         if audioCapabilities != update.audioCapabilities { audioCapabilities = update.audioCapabilities }

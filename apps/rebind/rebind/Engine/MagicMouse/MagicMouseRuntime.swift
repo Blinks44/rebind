@@ -15,7 +15,7 @@ extension EngineMailbox {
         state.withLock {
             guard $0.canDispatch, $0.hasMagicMouseRules else { return nil }
             var actions: [Int: RebindAction] = [:]
-            for fingers in 1...2 {
+            for fingers in 1...3 {
                 actions[fingers] = $0.rules[MatchKey(trigger: .magicMouseTap(fingers: fingers), modifiers: modifiers)]?.action
             }
             return MagicMouseRuntime(revision: $0.actionRevision, activity: $0.magicMouseActivity,
@@ -26,7 +26,7 @@ extension EngineMailbox {
     @discardableResult nonisolated func submitMagicMouse(_ runtime: MagicMouseRuntime, fingers: Int,
                                                         pid: Int32, at now: UInt64) -> Bool {
         let queued = state.withLock {
-            guard !runtime.buttonsDown, (1...2).contains(fingers), now <= UInt64.max - 100_000_000,
+            guard !runtime.buttonsDown, (1...3).contains(fingers), now <= UInt64.max - 100_000_000,
                   $0.pending.isEmpty, $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
                   $0.actionRevision == runtime.revision, $0.magicMouseActivity == runtime.activity,
                   $0.foregroundPID == pid, let action = runtime.actions[fingers],

@@ -1,41 +1,38 @@
 # Rebind: current state
 
-Updated **2026-10-19**. Baseline `main` `497b0d1` includes [Magic Mouse integration and shared-adapter corrections](tasks/INPUT-014-magic-mouse-integration.md). [October 18 manual results](verification/manual-test-2026-10-18.md) are recorded with artifact limits; remaining runtime/accessibility/safety/Dock acceptance stays open.
+Updated **2026-10-20**. Baseline `main` `e070ec9` plus substantial preserved uncommitted touch/UI/update/signing work. No commit/publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
-## Product and baseline
+## Product and evidence
 
-Native macOS **26+**, SwiftUI/AppKit, local-only category-wide rules, one manually selected profile; physical attribution only for mouse settings. Scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Xcode 27.1 / Swift 6.4 / SDK 27, Apple Silicon macOS 27.0.1; minimum-OS/Intel unverified.
+Native macOS **26+**, Swift 6 / SwiftUI/AppKit. Scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Current environment: Xcode 27.1 / Swift 6.4 / SDK 27, Apple silicon macOS 27.0.1. Minimum-OS and Intel execution remain unverified.
 
-Contracts/evidence: [WORKFLOW](WORKFLOW.md), [PLAN](PLAN.md), [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md).
+Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries and atomic storage are implemented. Schema **44**, migrations 1–43. Trackpads retain **12 presets per category**; Magic Mouse has **six Experimental tap/click/vertical-scroll presets**, with basic delivery user-confirmed. Rules are category-wide; physical-device attribution is only for mouse settings. No automatic profile selection. Soft styling and six languages are integrated. [SPEC](SPEC.md) owns contracts; [CAPABILITIES](CAPABILITIES.md) owns tested subsets/limits.
 
-## What already exists
+The user reports a successful overall final manual pass with no bugs found on October 20. Preserve that acceptance and do not repeat the whole walkthrough without an affected change. Artifact/environment and individual scenario coverage remain unspecified: see [release queue](verification/release-candidate.md#tester-report--2026-10-20). Earlier named October 18 hardware results remain in [their record](verification/manual-test-2026-10-18.md).
 
-Keyboard/mouse capture, manual profiles/atomic storage (schema **42**, migrations 1–41), the shared action catalog and twelve built-in/external trackpad presets are implemented. Magic Mouse has an experimental one/two-finger single-tap app testing pool (basic delivery user-confirmed; native-double conflict and broader acceptance open). Held outputs, per-app rules/exclusions, per-mouse smooth scrolling and Devices settings are present. Whole-app soft styling and EN/RU/DE/FR/ES/Simplified Chinese are integrated. Named happy-path subsets are confirmed; full runtime, safety, timing, external-hardware, accessibility and minimum-OS gates remain open. [CAPABILITIES](CAPABILITIES.md) owns the detailed matrix; it is not repeated here.
+## Current release work
 
-The website is prepared for Cloudflare at `rebind.moduix.dev`, not published; download awaits `site.githubRepo` and advertised Magic-device support. Since 2026-10-16 it also presents smooth scrolling, Devices/Logitech/battery, dual-role keys, Button + Wheel, per-app rules, held repeat, backups and the wider catalog. Brand Dock/Menu Bar/tint acceptance must use the current artwork.
+[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) now supplies **1.0.0 (3)** with shared Apple Development signing. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: `Blinks44/rebind` / `rebind.moduix.dev`, **not deployed**. Download needs a stable DMG. Browser visual review remains separate from local SSR/build checks.
 
-## Design source and recent changes
+Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md) owns the 1.0/1 candidate, 903 logic passes and 25 native passes/two skips. Its rejected polling experiments did not improve isolated paused/no-grant CPU (~1.5%); granted normal-profile performance stays open. [UI-024](tasks/UI-024-keyboard-navigation.md) owns keyboard/menu/focus repair; [INPUT-015](tasks/INPUT-015-touch-release-scope.md) owns the finite touch pool and [DESIGN](DESIGN.md) locates saved Sketch. Prior dated details remain in these tasks and [history](history/2026-10.md).
 
-**Rebind.sketch**, English Light/Dark, is located in [DESIGN](DESIGN.md); it supersedes Liquid Glass. Earlier dated results: [October history](history/2026-10.md) and owning tasks.
+[REL-001](tasks/REL-001-signing-workflow.md) aligns release.sh with Monny: one pinned existing **Apple Development** identity, DMG-only build/release output, readable bundle modes. Build **1.0.0 (3)** is installed/running; Accessibility/window/input smoke remains. The old self-signed key/backups are retained; the current shared P12 is now exported; restore/signing verification and off-device copy remain open: [SIGNING](SIGNING.md). [REL-002](tasks/REL-002-branded-dmg.md) owns the DMG artwork/Finder check. Update preservation needs two distinct stable-signed installed builds, separate from an Xcode/ad-hoc signer transition.
 
-- **October 19 permissions fix:** [UI-001](tasks/UI-001-permissions-onboarding.md) removes the redundant system AX alert alongside the direct settings opening; `UI/AppModel.swift` is uncommitted. Debug build and **15 permission/setup tests** pass. First-use/denial, app listing and actual grant/return/revocation checks remain open.
-- **October 19 manual-results update:** [October 18 checklist](verification/manual-test-2026-10-18.md) confirms G HUB/DPI/menu slider, qualitative low idle energy, dual-role/repeat/gesture holds, background scroll exclusions and built-in tap/click/ordinary-gesture subsets. Exact tested artifact/settings are unknown. Blank checks remain open; no build/test rerun.
-- **Touch follow-up:** [INPUT-014](tasks/INPUT-014-magic-mouse-integration.md) fixes discovery restarting capture before arming; **879 logic + 19 native tests**, isolated Debug/signature pass. External 3/4-finger singles and basic Magic Mouse taps user-confirmed. Fast mouse singles retained; overlapping native gestures must be disabled manually. Timing/safety/reconnect and dedicated Sketch states remain open. [INPUT-013](tasks/INPUT-013-trackpad-review-fixes.md) owns native tap-click replacement and selector anchoring; supplied built-in passes are not tied to the corrected adapter artifact.
-- **Other integrated fixes:** [idle/SIGTERM](tasks/REVIEW-002-idle-energy.md), [G HUB/DPI/tap recovery](tasks/DEVICE-005-companion-dpi-reconnect.md), [menu DPI slider](tasks/DEVICE-004-menu-pointer-speed.md). Passed happy paths and remaining acceptance are separated in those records. [Production review](tasks/REVIEW-001-production-review.md) owns the battery menu and 52 Sketch pairs; [multi-vendor battery](tasks/DEVICE-003-multi-vendor-battery.md) and [audio](verification/phase-4-audio.md) retain their evidence/limits.
+## Open task index
 
-## Open work / next steps
-
-- **Next engineering slice:** verify Insert Text with Russian/emoji in TextEdit, Terminal and a browser, then keyboard traversal/focus in the main window, editor and Settings; fix reproduced defects. Hardware: first trackpad single/double after idle, external category separation/doubles/reconnect, current-bundle built-in regression and Magic Mouse ordinary-input safety/pause/reconnect with native overlaps disabled. Dedicated Magic Mouse Sketch states remain open.
-- **Open from review:** running-app checks of keyboard focus, VoiceOver and all six languages at minimum width (including arrow keys/VoiceOver on the Menu Bar battery rows); Dock/tint acceptance of the new icon.
-
-All listed tasks are `awaiting_verification`, with no active owner, except UI-022 (`in_design`, ownership released). Detailed implementation handoffs remain in the task records.
+Priority: REL-004 candidate/handoff, then update preservation and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
 
 | Task | Concrete next step |
 | --- | --- |
-| [REVIEW-002](tasks/REVIEW-002-idle-energy.md) | First trackpad pair/single after idle, SIGTERM held-state cleanup, Release CPU. |
+| [REL-001](tasks/REL-001-signing-workflow.md) | Build 3 installed/running; check Accessibility/window/input, verify the exported key restore/off-device copy, then verify a subsequent same-signer update. |
+| [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; current build/signing candidate is REL-001 build 3. |
+| [REL-003](tasks/REL-003-final-app-readiness.md) | Overall tester pass preserved; REL-004 owns the newer copy candidate. Same-signer/platform checks remain. |
+| [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
+| [UI-024](tasks/UI-024-keyboard-navigation.md) | Normal-build VoiceOver/preferences, import/export and exact editor focus return; disposable profile/confirmation paths pass. |
+| [REVIEW-002](tasks/REVIEW-002-idle-energy.md) | Idle-first-touch, SIGTERM release, granted Release CPU. |
 | [DEVICE-005](tasks/DEVICE-005-companion-dpi-reconnect.md) | G HUB/DPI passed; Options+ detection and tap-timeout recovery remain. |
 | [DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md) | Drag/reopen/Devices passed; Light/Dark, VoiceOver, widths, keyboard route. |
-| [INPUT-014](tasks/INPUT-014-magic-mouse-integration.md) | Mouse timing/safety/pause/reconnect; external doubles; Sketch states. |
+| [INPUT-014](tasks/INPUT-014-magic-mouse-integration.md) | Runtime pass confirmed; core designs saved; next native reconciliation/accessibility. |
 | [INPUT-013](tasks/INPUT-013-trackpad-review-fixes.md) | Current-bundle regression, external doubles/reconnect, false clicks, popup. |
 | [REVIEW-001](tasks/REVIEW-001-production-review.md) | Remaining held-state/quit/glide safety; battery-menu keyboard/VoiceOver/macOS 26. |
 | [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | Named USB models, Bluetooth/BAS, reconnect, Logitech regression. |
@@ -45,9 +42,9 @@ All listed tasks are `awaiting_verification`, with no active owner, except UI-02
 | [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | MX Master 2S subset passed; Options+, Bluetooth/Bolt, MX Master 3/3S. |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | Keyboard focus, VoiceOver, all localized widths. |
 | [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | Insert Text in three apps; interruption cleanup; remaining catalog/modifiers. |
-| [UI-022](tasks/UI-022-soft-design-system.md) | Reconcile Magic Mouse editor with the implemented testing pool. |
+| [UI-022](tasks/UI-022-soft-design-system.md) | Touch copy/status adopted; verify physical status, native accessibility and parity. |
 | [UI-014](tasks/UI-014-trackpad-presets.md) | Physical coexistence/capture, keyboard/VoiceOver/preferences. |
-| [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | Category separation, doubles/reconnect and built-in regression. |
+| [INPUT-008](tasks/INPUT-008-magic-trackpad.md) | General external behavior user-confirmed; remaining named reconnect/timing/safety checks. |
 | [INPUT-007](tasks/INPUT-007-trackpad-action-catalog.md) | Non-shortcut trackpad actions and brightness on hardware. |
 | [INPUT-006](tasks/INPUT-006-trackpad-clicks.md) | Three-finger replacement passed; other counts, false clicks/settings. |
 | [INPUT-005](tasks/INPUT-005-corner-taps.md) | Corners, Tap to click off/on, accidental palm contact. |
@@ -64,4 +61,5 @@ All listed tasks are `awaiting_verification`, with no active owner, except UI-02
 | [UI-009](tasks/UI-009-mouse-design.md) | Capture/timing/native accessibility of integrated styling. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | Fresh-bundle Dock/Menu Bar; tint and macOS 26 separately. |
 
-Release gates are listed in [PLAN](PLAN.md).
+
+Each row routes remaining evidence, not a request to rerun every accepted happy path. Concrete release procedure: [RELEASING](RELEASING.md). Broader platform/device claims require new evidence; retain explicit limits meanwhile.

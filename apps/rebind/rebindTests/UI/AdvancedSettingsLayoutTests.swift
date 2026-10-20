@@ -41,7 +41,7 @@ import XCTest
             case "exportFailed": await page.export(to: store.url)
             default: break
             }
-            for language in ["en", "ru", "de", "fr"] {
+            for language in AppLanguage.allCases.map(\.rawValue) {
                 for scheme in [ColorScheme.light, .dark] {
                     let controller = NSHostingController(rootView: AdvancedSettingsView(model: model, editing: page)
                         .environment(\.locale, Locale(identifier: language)).preferredColorScheme(scheme))
@@ -80,12 +80,12 @@ import XCTest
         }
     }
 
-    func testFiveSettingsSectionsAndDiagnosticsFitFourLanguages() async throws {
+    func testFiveSettingsSectionsAndDiagnosticsFitAllLanguages() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindAdvancedShell-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
             readPermissions: { InputPermissions() }, loginItem: LoginItemModel(service: LoginItemServiceStub()))
-        for language in ["en", "ru", "de", "fr"] {
+        for language in AppLanguage.allCases.map(\.rawValue) {
             for scheme in [ColorScheme.light, .dark] {
                 let controller = NSHostingController(rootView: SettingsView(model: model, selection: .constant(.advanced))
                     .environment(\.locale, Locale(identifier: language)).preferredColorScheme(scheme))

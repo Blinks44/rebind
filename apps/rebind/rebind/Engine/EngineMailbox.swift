@@ -65,6 +65,7 @@ nonisolated final class EngineMailbox: Sendable {
         var trackpadDiagnostics: TrackpadDiagnostics?
         var trackpadClicks = TrackpadClickFilter()
         var magicTrackpadClicks = TrackpadClickFilter()
+        var magicMouseNative = MagicMouseNativeFilter()
         var magicMouseActivity: UInt64 = 0
         var magicMouseStatus: TrackpadCaptureStatus = .idle
         var inputActivity: UInt64 = 0
@@ -274,6 +275,7 @@ nonisolated final class EngineMailbox: Sendable {
             cancelHeldOutputs()
             trackpadDispatch = nil
             matcher.resetAfterCaptureLoss()
+            magicMouseNative = MagicMouseNativeFilter()
             diagnostics.stop(clear: true)
             self.status = status
         }
@@ -412,6 +414,11 @@ nonisolated final class EngineMailbox: Sendable {
 
     func dispatchIsCurrent(_ dispatch: ActionDispatch) -> Bool {
         state.withLock { $0.dispatchIsCurrent(dispatch) }
+    }
+
+    /// Avoid attached-HID metadata work when no Magic Mouse rules or trailing events need it.
+    var tracksMagicMouseSource: Bool {
+        state.withLock { $0.hasMagicMouseRules || $0.magicMouseNative.hasOwnedInput }
     }
 
     /// Checked for every event the tap passes on; empty unless a modifier rule is held.
@@ -602,7 +609,7 @@ nonisolated final class EngineMailbox: Sendable {
         _ = handle(event, secureInput: secureInput)
     }
 
-    func handle(_ event: InputEvent, secureInput: Bool) -> Bool {
+    func handle(_ event: InputEvent, secureInput: Bool, sender: UInt64? = nil) -> Bool {
         guard !event.isSynthetic, !event.trigger.isTouchGesture else { return false }
         defer { signalIfWorkWaiting() }
         return state.withLock {
@@ -610,9 +617,22 @@ nonisolated final class EngineMailbox: Sendable {
             // that the trackpad path intentionally excludes from its own activity counter.
             $0.magicMouseActivity &+= 1
             if $0.trackpadDispatch?.trackpadTarget?.isMagicMouse == true { $0.trackpadDispatch = nil }
+            if case .mouseButton(let button) = event.trigger, button <= 1 {
+                let action = $0.rules[MatchKey(trigger: .magicMouseClick(fingers: 3), modifiers: event.modifiers)]?.action
+                let active = !secureInput && $0.canDispatch && $0.foregroundPID != nil && $0.hasQueueSpace && action != nil
+                var admitted = false
+                if $0.magicMouseNative.click(sender: sender, button: button, phase: event.phase,
+                    revision: $0.actionRevision, at: event.receivedAt ?? event.timestamp, admit: { admitted = active; return active }) {
+                    $0.inputActivity &+= 1
+                    $0.matcher.cancelHold()
+                    if admitted, let action { $0.pending.append(action) }
+                    return true
+                }
+            }
             // Trackpad click rules and configured corner taps replace the click itself.
             var tapClick = false
-            if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput {
+            if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput,
+               !$0.magicMouseNative.containsSource(sender) {
                 switch $0.resolveTrackpadClick(button: button, event: event) {
                 case .pass: break
                 case .tapClick:

@@ -62,7 +62,10 @@ struct DestructiveButtonStyle: ButtonStyle {
 
 extension View {
     /// Apply these to one `Button` each, so every button gets its own keyboard focus ring.
-    func primaryButton() -> some View { buttonStyle(PrimaryButtonStyle()).keyboardFocusRing() }
-    func secondaryButton() -> some View { buttonStyle(SecondaryButtonStyle()).keyboardFocusRing() }
-    func destructiveButton() -> some View { buttonStyle(DestructiveButtonStyle()).keyboardFocusRing() }
+    func primaryButton() -> some View { buttonStyle(KeyboardButtonStyle(PrimaryButtonStyle())).keyboardFocusRing() }
+    func secondaryButton() -> some View { buttonStyle(KeyboardButtonStyle(SecondaryButtonStyle())).keyboardFocusRing() }
+    func secondaryButton(isFocused: Bool) -> some View {
+        buttonStyle(KeyboardButtonStyle(SecondaryButtonStyle())).keyboardFocusRing(isFocused: isFocused)
+    }
+    func destructiveButton() -> some View { buttonStyle(KeyboardButtonStyle(DestructiveButtonStyle())).keyboardFocusRing() }
 }

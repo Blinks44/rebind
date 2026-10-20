@@ -1,3 +1,5 @@
+import Synchronization
+import Dispatch
 import Darwin
 import Foundation
 import IOKit
@@ -71,6 +73,7 @@ import IOKit
     let buffer: NativeTrackpadBuffer
     private let connection: Connection?
     private var device: UnsafeMutableRawPointer? { connection?.device }
+    private var mouseSources: Set<UInt64> = []
     private var running = false
     private(set) var available = false
     private(set) var failed = false
@@ -135,6 +138,19 @@ import IOKit
         buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicTrackpad: kind == .magicTrackpad, reportsForce: reportsForce, isMagicMouse: kind == .magicMouse)
         self.connection = connection
         guard let device, let framework = Self.framework else { return }
+        if kind == .magicMouse {
+            let service = framework.service(device)
+            var id: UInt64 = 0
+            if IORegistryEntryGetRegistryEntryID(service, &id) == KERN_SUCCESS { mouseSources.insert(id) }
+            var iterator: io_iterator_t = 0
+            if IORegistryEntryCreateIterator(service, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &iterator) == KERN_SUCCESS {
+                defer { IOObjectRelease(iterator) }
+                while case let child = IOIteratorNext(iterator), child != 0 {
+                    if IORegistryEntryGetRegistryEntryID(child, &id) == KERN_SUCCESS { mouseSources.insert(id) }
+                    IOObjectRelease(child)
+                }
+            }
+        }
         // Permanent process-owned device retains the buffer independently of UI.
         let context = Unmanaged.passUnretained(buffer).toOpaque()
         framework.register(device, { _, data, count, time, frame, context in
@@ -148,6 +164,9 @@ import IOKit
     @discardableResult func start() -> Bool {
         guard available, !failed, let device, let framework = Self.framework else { return false }
         guard !running else { return true }
+        if buffer.isMagicMouse {
+            buffer.mailbox.state.withLock { $0.magicMouseNative.begin(sources: mouseSources, at: DispatchTime.now().uptimeNanoseconds) }
+        }
         buffer.setAccepting(true)
         // Mode 0 matches the verified probe. No private settings/gesture suppression.
         running = framework.start(device, 0) == 0
@@ -157,6 +176,7 @@ import IOKit
 
     func stop() {
         buffer.setAccepting(false)
+        if buffer.isMagicMouse { buffer.mailbox.state.withLock { $0.magicMouseNative.invalidateContacts() } }
         guard running, let device, let framework = Self.framework else { return }
         running = false
         if framework.stop(device) != 0 { failed = true }
