@@ -130,7 +130,7 @@ Use associated-value enums or similarly clear models for trigger and action vari
 - Battery in the Menu Bar menu (2026-10-15, on by default): a "Battery" section lists connected Logitech mice and keyboards (HID++) and devices macOS reports, each with its charge.
 - Gaming mice with onboard profiles are managed by G HUB while it runs; Rebind then leaves their hardware settings alone (2026-10-15).
 - Logitech extras (2026-10-15): battery charge, the high-resolution wheel switch, and the gesture button as a trigger ("Gesture button", alone or with a direction) once enabled for that mouse; Rebind diverts it over HID++ and gives it back when it quits. Wheel bindings act on the original click; Command, Control and Shift clicks and trackpad/Magic Mouse scrolling are never smoothed. Excluded apps can switch bindings and smooth scrolling off separately; smooth scrolling follows the app under the pointer, which receives the scroll, and bindings follow the app in front.
-- Button-hold + wheel step (2026-10-13): while a middle or extra button is held, each discrete wheel step in a configured direction runs its rule, with the same throttling. Using the wheel means the hold is not a click or a pointer gesture.
+- Button-hold + wheel step (2026-10-13): while a middle or extra button is held, each discrete wheel step in a configured direction runs its rule, with the same throttling. Using the wheel means the hold is not a click or a pointer gesture. Wheel-rule directions (including held-button combinations) follow Rebind’s vertical/horizontal reversal settings; wheel speed does not affect trigger selection (2026-10-20).
 - Interactive **Record Mouse Button** UI. Never require users to type button codes.
 - **Do not hard-code 5, 8, or 12 as a maximum.** Record numeric button identifiers actually delivered by Quartz. A model table is not evidence of remappable button counts; claim a hardware button only after its events are observed.
 - Note that OEM utilities, onboard profiles, virtual keyboards, and vendor drivers may convert a 'mouse button' into some other event or consume it entirely.
@@ -296,7 +296,7 @@ Required runtime behavior:
 
 ## 8. Background behavior (CORE)
 
-- Menu Bar menu: Open Rebind, select active Profile, Enable/Disable Bindings, Settings, Quit; status/permission hint when relevant.
+- Menu Bar menu: Open Rebind, select active Profile, Enable/Disable Bindings, Settings, Quit; status/permission hint when relevant. Settings has a gear icon and opens the Settings destination inside the main window; Command-comma uses the same route, and battery rows open its Devices section (2026-10-20).
 - Closing the window **does not quit** the remapping engine; a user-configurable menu-bar-only experience is welcome if straightforward.
 - **Launch at Login** using ServiceManagement (`SMAppService`) where appropriate; show real state and errors.
 - Avoid duplicate engine instances when reopening the window or relaunching.
@@ -316,7 +316,7 @@ Required runtime behavior:
 
 ### Presence (2026-10-13)
 
-General settings let the user hide the Dock icon, hide the Menu Bar icon and start without opening the window (including at login). With the Dock icon hidden, Rebind still appears in the Dock while one of its windows is open and leaves it when the last window closes; it keeps running until quit from the menu or with Command-Q. With both icons hidden, opening Rebind again shows its window. Rebind's windows open on the Space the user is on rather than switching back to the Space where they were first shown.
+General settings let the user hide the Dock icon, hide the Menu Bar icon and start without opening the window (including at login). With the Dock icon hidden, Rebind still appears in the Dock while one of its windows is open and leaves it when the last window closes; it keeps running until quit from the menu or with Command-Q. With both icons hidden, opening Rebind again shows its window. Rebind's windows open on the Space the user is on rather than switching back to the Space where they were first shown. The main window remembers its size across quitting/relaunching without reopening during background startup. An explicit Open Rebind action brings it onto the active desktop, including with Stage Manager (2026-10-20).
 
 ### Information architecture
 
@@ -336,7 +336,7 @@ DEVICES                          Keyboard / Mouse / Trackpad
   About
 ```
 
-The sidebar lists input categories. Keep Settings and About visibly separated near the bottom. Put a compact profile picker and management button above the rules; no separate Profiles/Workflows/Actions navigation.
+The sidebar lists input categories. Keep Settings and About visibly separated near the bottom. Keep a fixed 24 pt gap between the profile/status area and the rules card. Only rows inside the stationary rounded card scroll; its background, border and corners stay fixed. Short lists fit their rows; long lists fill the available height and align their bottom edge with the sidebar (8 pt window inset), including after scrolling and resizing (2026-10-20). Put a compact profile picker and management button above the rules; no separate Profiles/Workflows/Actions navigation.
 
 ### Key screens
 

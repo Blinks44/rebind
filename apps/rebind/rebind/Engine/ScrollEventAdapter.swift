@@ -11,7 +11,7 @@ nonisolated enum ScrollEventAdapter {
             && event.getIntegerValueField(.scrollWheelEventMomentumPhase) == 0
     }
 
-    static func input(from event: CGEvent) -> InputEvent? {
+    static func input(from event: CGEvent, adjustment: WheelAdjustment? = nil) -> InputEvent? {
         guard isMouseWheel(event),
               event.getIntegerValueField(.eventSourceUserData) != ShortcutSender.eventTag,
               event.getIntegerValueField(.scrollWheelEventDeltaAxis3) == 0 else { return nil }
@@ -20,7 +20,16 @@ nonisolated enum ScrollEventAdapter {
         let continuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
         let vertical = event.getIntegerValueField(continuous ? .scrollWheelEventPointDeltaAxis1 : .scrollWheelEventDeltaAxis1)
         let horizontal = event.getIntegerValueField(continuous ? .scrollWheelEventPointDeltaAxis2 : .scrollWheelEventDeltaAxis2)
-        guard let direction = direction(vertical: vertical, horizontal: horizontal) else { return nil }
+        guard var direction = direction(vertical: vertical, horizontal: horizontal) else { return nil }
+        // Match the direction the user configured for scrolling, without multiplying deltas or
+        // mutating the event before matching. Speed must never change trigger recognition.
+        switch direction {
+        case .up where adjustment?.reverses == true: direction = .down
+        case .down where adjustment?.reverses == true: direction = .up
+        case .left where adjustment?.reversesHorizontally == true: direction = .right
+        case .right where adjustment?.reversesHorizontally == true: direction = .left
+        default: break
+        }
         return InputEvent(trigger: .scroll(direction), modifiers: ModifierSet(flags: event.flags),
                           phase: .scroll, timestamp: event.timestamp)
     }

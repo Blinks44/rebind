@@ -186,7 +186,7 @@ nonisolated final class EventTapWorker {
                mailbox.handleMagicMouseScroll(sender: AttachedHIDScroll.senderID(of: event), phase: phase, momentum: momentum,
                     direction: phase & 1 != 0 ? Self.fingerScrollDirection(of: event) : nil, modifiers: ModifierSet(flags: event.flags),
                     at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled()) { return nil }
-            guard var input = ScrollEventAdapter.input(from: event) else {
+            guard var input = ScrollEventAdapter.input(from: event, adjustment: mailbox.wheelAdjustment) else {
                 // Smooth/momentum/diagonal input still cancels a pending hold,
                 // while passing through unchanged and never creating a wheel action.
                 mailbox.handleUnsupportedScroll(modifiers: ModifierSet(flags: event.flags),

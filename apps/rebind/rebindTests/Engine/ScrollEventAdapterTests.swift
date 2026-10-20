@@ -3,6 +3,42 @@ import Testing
 @testable import rebind
 
 struct ScrollEventAdapterTests {
+    @Test(arguments: [ScrollDirection.up, .down, .left, .right], [false, true])
+    func configuredDirectionSelectsTheExpectedHeldButtonAction(_ direction: ScrollDirection, reversed: Bool) throws {
+        let vertical: Int32 = direction == .up ? 1 : direction == .down ? -1 : 0
+        let horizontal: Int32 = direction == .left ? 1 : direction == .right ? -1 : 0
+        let event = try wheel(vertical: vertical, horizontal: horizontal)
+        let adjustment = WheelAdjustment(reverses: reversed, multiplier: 3, reversesHorizontally: reversed)
+        let input = try #require(ScrollEventAdapter.input(from: event, adjustment: adjustment))
+        let expected: ScrollDirection
+        switch direction {
+        case .up: expected = reversed ? .down : .up
+        case .down: expected = reversed ? .up : .down
+        case .left: expected = reversed ? .right : .left
+        case .right: expected = reversed ? .left : .right
+        }
+        let rules = InputMatcher.compile(ScrollDirection.allCases.map {
+            rebind.Binding(scope: .allMice, trigger: .buttonScroll(button: 4, direction: $0),
+                           modifiers: [], action: $0 == expected ? .system(.volumeUp) : .system(.volumeDown))
+        })
+        var matcher = InputMatcher()
+        _ = matcher.handle(InputEvent(trigger: .mouseButton(4), phase: .down), rules: rules, enabled: true)
+        #expect(matcher.handle(input, rules: rules, enabled: true).action == .system(.volumeUp))
+        #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis1) == Int64(vertical))
+        #expect(event.getIntegerValueField(.scrollWheelEventDeltaAxis2) == Int64(horizontal))
+    }
+
+    @Test func reversalKeepsAxesIndependentAndRejectsPhasedAndDiagonalInput() throws {
+        let adjustment = WheelAdjustment(reverses: true, multiplier: 2)
+        #expect(ScrollEventAdapter.input(from: try wheel(vertical: 0, horizontal: 1), adjustment: adjustment)?.trigger == .scroll(.left))
+        #expect(ScrollEventAdapter.input(from: try wheel(vertical: 1, horizontal: 1), adjustment: adjustment) == nil)
+        let pixel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
+                                        wheel1: -4, wheel2: 0, wheel3: 0))
+        #expect(ScrollEventAdapter.input(from: pixel, adjustment: adjustment)?.trigger == .scroll(.up))
+        pixel.setIntegerValueField(.scrollWheelEventScrollPhase, value: 2)
+        #expect(ScrollEventAdapter.input(from: pixel, adjustment: adjustment) == nil)
+    }
+
     private func wheel(vertical: Int32 = 1, horizontal: Int32 = 0) throws -> CGEvent {
         try #require(CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
                              wheel1: vertical, wheel2: horizontal, wheel3: 0))

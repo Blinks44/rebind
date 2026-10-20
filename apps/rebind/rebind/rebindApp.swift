@@ -30,6 +30,7 @@ struct rebindApp: App {
             mainContent
                 .background { ActiveSpaceWindow() }
                 .background { MainWindowOpener() }
+                .background { MainWindowPersistence() }
         }
             .windowToolbarStyle(.unified(showsTitle: false))
             .defaultSize(width: 1080, height: 720)
@@ -39,6 +40,12 @@ struct rebindApp: App {
             .restorationBehavior(.disabled)
             .commands {
                 BindingsCommands()
+                CommandGroup(replacing: .appSettings) {
+                    Button(.settingsTitle) {
+                        delegate.model.requestedSettingsSection = delegate.model.settingsSection
+                        RebindAppDelegate.showWindow { RebindAppDelegate.openMainWindow?() }
+                    }.keyboardShortcut(",", modifiers: .command)
+                }
                 CommandGroup(replacing: .appInfo) {
                     AboutCommand(language: delegate.model.activeLanguage)
                     Button(AppLocalization.string(updateChecker.isChecking ? .checkingUpdates : .checkForUpdates,
@@ -54,13 +61,6 @@ struct rebindApp: App {
         .defaultSize(width: 440, height: 448)
         .windowResizability(.contentSize)
         .defaultLaunchBehavior(.suppressed)
-        Settings {
-            SettingsView(model: delegate.model, selection: Bindable(delegate.model).settingsSection)
-                .frame(minWidth: 600, idealWidth: 760, minHeight: 480, idealHeight: 600)
-                .background { ThemeCanvas() }
-                .background { ActiveSpaceWindow() }
-                .environment(\.locale, delegate.model.activeLanguage.locale)
-        }
     }
 }
 
@@ -136,24 +136,29 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         if hasWindow { NSApp.activate() }
     }
 
+    private static var pendingWindowOpening: (() -> Void)?
+
     /// Opens a window from the Menu Bar item and brings Rebind to the front. As an accessory app,
     /// Rebind first becomes a regular app: switching the policy later, when the window becomes main,
     /// deactivates the app after the click's activation and the window can stay behind other apps.
-    /// The rest waits one run-loop turn: the policy change and the closing menu settle first. An
-    /// activation requested in the same turn can be dropped, and a window that appears while Rebind
-    /// is inactive opens behind other apps or, with Stage Manager, in the strip at the side.
+    /// App activation is asynchronous: wait for the actual activation notification before opening
+    /// a window, otherwise Stage Manager can put the new window straight into its inactive strip.
     static func showWindow(_ open: @escaping () -> Void) {
         if NSApp.activationPolicy() != .regular { NSApp.setActivationPolicy(.regular) }
         DispatchQueue.main.async {
-            NSApp.activate()
-            open()
-            // The window SwiftUI just opened or reused is the frontmost one; make sure it leads.
-            DispatchQueue.main.async {
-                NSApp.orderedWindows.first { $0.canBecomeMain && $0.isVisible && !($0 is NSPanel) }?
-                    .makeKeyAndOrderFront(nil)
-                NSApp.activate()
+            if NSApp.isActive {
+                open()
+            } else {
+                pendingWindowOpening = open
+                NSRunningApplication.current.activate(options: [.activateAllWindows])
             }
         }
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        let open = Self.pendingWindowOpening
+        Self.pendingWindowOpening = nil
+        open?()
     }
 
     /// Opens the main window from outside a view (set by `MainWindowOpener`).

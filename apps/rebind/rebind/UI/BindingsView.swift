@@ -48,13 +48,15 @@ struct BindingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            summary
-            // An empty ScrollView collapses to its content width; keep it as wide as the detail.
-            ScrollView {
-                if !visible.isEmpty { card.padding(.top, 24).detailMargins().padding(.bottom, 32) }
+            summary.padding(.bottom, 24)
+            if visible.isEmpty {
+                ScrollView { }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay { emptyState }
+            } else {
+                card.detailMargins().padding(.bottom, 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay { if visible.isEmpty { emptyState } }
         }
         .focusedSceneValue(\.findBindings, allowsSearch ? { searchFocusRequest = UUID() } : nil)
         .onChange(of: model.configuration.selectedProfileID) { search = "" }
@@ -140,17 +142,24 @@ struct BindingsView: View {
     }
 
     private var card: some View {
-        VStack(spacing: 0) {
-            ForEach(visible) { binding in
-                BindingRow(binding: binding, model: model, edit: { edit(binding) },
-                           duplicate: { duplicate(binding) }, delete: { delete(binding) })
-                    .overlay(alignment: .top) {
-                        if binding.id != visible.first?.id {
-                            Theme.separator.frame(height: 1).padding(.horizontal, 20)
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(visible) { binding in
+                    BindingRow(binding: binding, model: model, edit: { edit(binding) },
+                               duplicate: { duplicate(binding) }, delete: { delete(binding) })
+                        .overlay(alignment: .top) {
+                            if binding.id != visible.first?.id {
+                                Theme.separator.frame(height: 1).padding(.horizontal, 20)
+                            }
                         }
-                    }
+                }
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
+        // Rows have a shared fixed height. A short card hugs its rows; a long one fills the
+        // available space, keeping its surface and corners stationary around the viewport.
+        .frame(maxHeight: CGFloat(visible.count) * Theme.rowHeight)
+        .clipShape(.rect(cornerRadius: Theme.cardRadius, style: .continuous))
         .background {
             RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(Theme.cardSurface)
                 .shadow(color: Theme.shadowAmbient, radius: 0.5, y: 1)

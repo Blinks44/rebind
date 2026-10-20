@@ -15,9 +15,11 @@ Use **release.sh** for installed copies. It builds Release, copies the app into 
 Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identity:
 
 - **Version** (`MARKETING_VERSION`): currently `1.0.0`; change for a user-visible release.
-- **Build** (`CURRENT_PROJECT_VERSION`): currently `3`; increment for every candidate, including the same marketing version.
+- **Build** (`CURRENT_PROJECT_VERSION`): currently `5` in source; the previously installed candidate is build `3`.
 
-Keep Debug/Release values consistent. The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-3.dmg`. It never increments versions or publishes. The update checker compares marketing versions; see [RELEASING](RELEASING.md).
+The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
+
+The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-5.dmg` for the current source. It never increments versions or publishes. The update checker compares marketing versions; see [RELEASING](RELEASING.md).
 
 ## Signing key
 

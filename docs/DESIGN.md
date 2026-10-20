@@ -10,6 +10,8 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
+Native correction requested 2026-10-20: the rules card retains the existing 24 pt profile/header gap, with a stationary rounded surface and scrolling rows. Short lists fit their content; filled lists align with the sidebar bottom at the 8 pt window inset. This latest user direction extends frame 06’s short-list specimen; menu Settings adds `gearshape` and opens Settings inside the main window. [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) owns implementation/verification. Live frames 06 and 53 inspected; no Sketch edit/save accompanies this scoped code correction.
+
 Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Latest scoped save/review **2026-10-20**: REL-004 corrects backup, privacy, About, companion-app and six-preset mouse guidance in Light/Dark and removes stale next steps in Foundations 07–09. The grouped six-choice screen-58 menu and Foundations 10 remain current. Saved SHA-256 `039b3def609a8aeed54ea2cbc96da56de20b24541acddfecb67f86efc4b2467a`; changed contexts screenshot-reviewed through MCP. [Audit evidence](tasks/REL-004-release-copy-and-documentation-audit.md). Earlier full-document review remains in [production review](tasks/REVIEW-001-production-review.md). IDs change after saving/reopening, so resolve them live; [UI-022](tasks/UI-022-soft-design-system.md) records broader scope and limits.
 
 | Page | Content |

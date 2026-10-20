@@ -6,7 +6,9 @@ Updated 2026-10-20. This is the final-pass queue, not evidence that a release ha
 
 After the final tester handoff and Release installation guidance, the user reports completing the checks successfully with no bugs found. Record this as a successful overall manual pass; do not request the same general walkthrough again without a reproduced defect or an affected code change. The report does not individually identify scenarios, artifact hash, OS/device/settings, CPU/latency values, VoiceOver or minimum-OS coverage. The report followed the supplied 1.0/1 candidate, not the later 1.0.0/2 copy audit; its installed hash was not independently confirmed. Detailed checkboxes below retain their evidence requirements; this report does not establish every platform/device combination.
 
-Next: prepare the release handoff, retaining separate checks for an update between two distinct stable-signer builds, macOS 26 and measured performance/accessibility evidence where not explicitly reported. First published-release update detection and website publication remain distribution work. No new app code or test run accompanies this report.
+Later October 20 testing found reversed button-wheel directions, a disappearing scrolled-list gap, an unwanted separate Settings window, lost window size and Stage Manager opening failure. [FIX-001](../tasks/FIX-001-wheel-and-window-regressions.md) owns the uncommitted fixes and scoped retest; the earlier general pass does not accept these changed paths.
+
+Next: verify those five scenarios on an updated installed candidate, then prepare the release handoff, retaining separate checks for an update between two distinct stable-signer builds, macOS 26 and measured performance/accessibility evidence where not explicitly reported. First published-release update detection and website publication remain distribution work. No new app code or test run accompanies this report.
 
 ## Preserve existing acceptance
 

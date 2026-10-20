@@ -64,6 +64,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingProfiles) { ProfileManagerView(model: model) }
         .onChange(of: selection) {
+            if case .settings(let section) = selection { model.settingsSection = section }
             if persistsWindowSelection, case .input(let scope) = selection {
                 UserDefaults.standard.set(scope.rawValue, forKey: Self.lastScopeKey)
             }
@@ -78,8 +79,10 @@ struct ContentView: View {
             showingProfiles = false
         }
         .onAppear {
+            openRequestedSettings()
             setupPresentation.beginIfNeeded(needsSetup: model.needsPermissionSetup)
         }
+        .onChange(of: model.requestedSettingsSection) { openRequestedSettings() }
         .onChange(of: model.permissions.allowsRemapping) { wasAllowed, isAllowed in
             // Recover once while idle. Active editors and later revocations keep the inline notice.
             setupPresentation.permissionsChanged(wasAllowed: wasAllowed, isAllowed: isAllowed,
@@ -102,6 +105,13 @@ struct ContentView: View {
         editor = EditorSelection(scope: scope, binding: nil)
     }
 
+    private func openRequestedSettings() {
+        guard let section = model.requestedSettingsSection else { return }
+        model.settingsSection = section
+        selection = .settings(section)
+        model.requestedSettingsSection = nil
+    }
+
     private var deletionPresented: SwiftUI.Binding<Bool> {
         SwiftUI.Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } })
     }
@@ -110,7 +120,10 @@ struct ContentView: View {
         SwiftUI.Binding(get: {
             if case .settings(let section) = selection { return section }
             return .general
-        }, set: { selection = .settings($0) })
+        }, set: {
+            model.settingsSection = $0
+            selection = .settings($0)
+        })
     }
 }
 

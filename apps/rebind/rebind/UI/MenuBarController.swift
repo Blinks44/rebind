@@ -8,8 +8,6 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     private let model: AppModel
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private var visibilityObservation: NSKeyValueObservation?
-    /// Set by `SceneActions`, which has SwiftUI's environment.
-    fileprivate var openSettings: (() -> Void)?
 
     init(model: AppModel) {
         self.model = model
@@ -22,7 +20,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         statusItem.menu = menu
         if let button = statusItem.button {
             button.setAccessibilityLabel("Rebind")
-            button.addSubview(NSHostingView(rootView: SceneActions(controller: self)))
+            button.addSubview(NSHostingView(rootView: SceneActions()))
         }
         update()
         // Command-dragging the icon out of the menu bar hides it; keep the preference in step.
@@ -68,7 +66,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
         menu.addItem(item(text(configuration.isEnabled ? .pauseBindings : .resumeBindings), #selector(toggleBindings),
                           enabled: !(model.storageLocked && !configuration.isEnabled)))
-        menu.addItem(item(text(.settingsTitle), #selector(openSettingsWindow)))
+        let settings = item(text(.settingsTitle), #selector(openSettingsWindow))
+        settings.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
+        if #available(macOS 27, *) { settings.preferredImageVisibility = .visible }
+        menu.addItem(settings)
 
         let batteries = configuration.showsBatteryInMenu ? model.mouseHardware.batteries : []
         if !batteries.isEmpty {
@@ -199,22 +200,20 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     private func showSettings() {
-        RebindAppDelegate.showWindow { [openSettings] in openSettings?() }
+        model.requestedSettingsSection = model.settingsSection
+        openMainWindow()
     }
 }
 
 /// Hands SwiftUI's window actions to AppKit. It lives in the Menu Bar button, which exists from
 /// launch on, even when no window does.
 private struct SceneActions: View {
-    let controller: MenuBarController
     @Environment(\.openWindow) private var openWindow
-    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         Color.clear.frame(width: 0, height: 0).accessibilityHidden(true)
             .onAppear {
                 RebindAppDelegate.openMainWindow = { openWindow(id: "main") }
-                controller.openSettings = { openSettings() }
             }
     }
 }

@@ -13,8 +13,9 @@ import Carbon
     private(set) var configurationReplacementRevision: UInt64 = 0
     var error: LocalizedStringResource?
     var recording: RecordingRequest?
-    /// The Settings window's tab; the Menu Bar's battery rows open Devices.
+    /// The remembered Settings section and a pending route from menu/command actions.
     var settingsSection: SettingsSection = .general
+    var requestedSettingsSection: SettingsSection?
     var lastRecording: RecordedInput?
     private(set) var diagnostics = DiagnosticSnapshot()
     private(set) var audioCapabilities = AudioOutputCapabilities()
