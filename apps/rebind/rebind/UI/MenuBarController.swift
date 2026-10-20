@@ -181,7 +181,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     @objc private func openMainWindow() {
-        RebindAppDelegate.showWindow { RebindAppDelegate.openMainWindow?() }
+        RebindAppDelegate.mainWindow.show()
     }
 
     @objc private func selectProfile(_ sender: NSMenuItem) {
@@ -213,7 +213,9 @@ private struct SceneActions: View {
     var body: some View {
         Color.clear.frame(width: 0, height: 0).accessibilityHidden(true)
             .onAppear {
-                RebindAppDelegate.openMainWindow = { openWindow(id: "main") }
+                RebindAppDelegate.mainWindow.installSceneOpener {
+                    openWindow(id: "main")
+                }
             }
     }
 }

@@ -13,7 +13,10 @@ struct rebindApp: App {
 
     @ViewBuilder private var mainContent: some View {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture") {
+        if RebindAppDelegate.isWindowFixture {
+            ContentView(model: delegate.model, persistsWindowSelection: false)
+                .environment(\.locale, delegate.model.activeLanguage.locale)
+        } else if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture") {
             KeyboardNavigationFixture()
         } else if ProcessInfo.processInfo.arguments.contains("--application-fixture") {
             ApplicationUIFixture()
@@ -29,7 +32,7 @@ struct rebindApp: App {
         Window(.rebindWindowTitle, id: "main") {
             mainContent
                 .background { ActiveSpaceWindow() }
-                .background { MainWindowOpener() }
+                .background { MainWindowRegistration(presenter: RebindAppDelegate.mainWindow) }
                 .background { MainWindowPersistence() }
         }
             .windowToolbarStyle(.unified(showsTitle: false))
@@ -43,7 +46,7 @@ struct rebindApp: App {
                 CommandGroup(replacing: .appSettings) {
                     Button(.settingsTitle) {
                         delegate.model.requestedSettingsSection = delegate.model.settingsSection
-                        RebindAppDelegate.showWindow { RebindAppDelegate.openMainWindow?() }
+                        RebindAppDelegate.mainWindow.show()
                     }.keyboardShortcut(",", modifiers: .command)
                 }
                 CommandGroup(replacing: .appInfo) {
@@ -65,7 +68,16 @@ struct rebindApp: App {
 }
 
 final class RebindAppDelegate: NSObject, NSApplicationDelegate {
+    static var isWindowFixture: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("--window-fixture")
+        #else
+        false
+        #endif
+    }
+
     private static var runningTests: Bool {
+        if isWindowFixture { return true }
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture")
             || ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
@@ -88,6 +100,11 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
             if !runningTests { AppLanguageDefaults(defaults: .standard).apply(preference) }
         })
         super.init()
+        if Self.isWindowFixture {
+            model.setPresencePreference(\.opensWindowAtLaunch, to: false)
+            model.setPresencePreference(\.showsDockIcon, to: false)
+            model.completePermissionSetup()
+        }
         if !runningTests {
             AppLocalization.configureAtLaunch(model.activeLanguage)
             if !model.storageLocked {
@@ -97,7 +114,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        guard !Self.runningTests else { return }
+        guard !Self.runningTests || Self.isWindowFixture else { return }
         // `kill`, `launchctl` and installers end a process with SIGTERM, which skips
         // applicationWillTerminate: held keys would stay down and the gesture button diverted.
         // Quit normally instead, as for ⌘Q.
@@ -112,7 +129,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         // The first window is created after launch finishes; decide once it exists.
         DispatchQueue.main.async { [model] in Self.updateDockIcon(preferred: model.configuration.showsDockIcon) }
         menuBar = MenuBarController(model: model)
-        model.start()
+        if !Self.isWindowFixture { model.start() }
     }
 
     @objc private func windowDidOpen(_ notification: Notification) {
@@ -136,33 +153,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
         if hasWindow { NSApp.activate() }
     }
 
-    private static var pendingWindowOpening: (() -> Void)?
-
-    /// Opens a window from the Menu Bar item and brings Rebind to the front. As an accessory app,
-    /// Rebind first becomes a regular app: switching the policy later, when the window becomes main,
-    /// deactivates the app after the click's activation and the window can stay behind other apps.
-    /// App activation is asynchronous: wait for the actual activation notification before opening
-    /// a window, otherwise Stage Manager can put the new window straight into its inactive strip.
-    static func showWindow(_ open: @escaping () -> Void) {
-        if NSApp.activationPolicy() != .regular { NSApp.setActivationPolicy(.regular) }
-        DispatchQueue.main.async {
-            if NSApp.isActive {
-                open()
-            } else {
-                pendingWindowOpening = open
-                NSRunningApplication.current.activate(options: [.activateAllWindows])
-            }
-        }
-    }
-
-    func applicationDidBecomeActive(_ notification: Notification) {
-        let open = Self.pendingWindowOpening
-        Self.pendingWindowOpening = nil
-        open?()
-    }
-
-    /// Opens the main window from outside a view (set by `MainWindowOpener`).
-    static var openMainWindow: (() -> Void)?
+    static let mainWindow = MainWindowPresenter()
 
     /// A click on the Dock icon (or opening Rebind again from Finder) while it runs. Rebind
     /// handles it itself: with Show in Dock off it may still be an accessory app, so a window
@@ -170,30 +161,10 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     /// ("Start in the background") is not opened by SwiftUI at all. Become a regular app, then
     /// bring back the existing window or open it.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
-        let existing = NSApp.windows.first {
-            $0.canBecomeMain && !($0 is NSPanel) && ($0.isVisible || $0.isMiniaturized)
-        }
-        Self.showWindow {
-            if let existing {
-                if existing.isMiniaturized { existing.deminiaturize(nil) }
-                existing.makeKeyAndOrderFront(nil)
-            } else {
-                Self.openMainWindow?()
-            }
-        }
+        Self.mainWindow.show()
         return false
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationWillTerminate(_ notification: Notification) { model.stop() }
-}
-
-/// Hands the scene's `openWindow` action to the app delegate, which has no SwiftUI environment.
-private struct MainWindowOpener: View {
-    @Environment(\.openWindow) private var openWindow
-
-    var body: some View {
-        Color.clear.frame(width: 0, height: 0).accessibilityHidden(true)
-            .onAppear { RebindAppDelegate.openMainWindow = { openWindow(id: "main") } }
-    }
 }

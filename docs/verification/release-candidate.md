@@ -10,6 +10,10 @@ Later October 20 testing found reversed button-wheel directions, a disappearing 
 
 Next: verify those five scenarios on an updated installed candidate, then prepare the release handoff, retaining separate checks for an update between two distinct stable-signer builds, macOS 26 and measured performance/accessibility evidence where not explicitly reported. First published-release update detection and website publication remain distribution work. No new app code or test run accompanies this report.
 
+## Scoped follow-up — 2026-10-20
+
+Tester confirms the wheel/card/settings/size fixes, working update preservation, keyboard navigation and sleep/pause/permission-loss recovery. After the build-7 Monny comparison, tester accepts improved repeated window opening and closes the regression for now; research/native evidence and exact report limits are in [FIX-001](../tasks/FIX-001-wheel-and-window-regressions.md). Exact installed build/hash unspecified. VoiceOver is untested. Keep current Apple Development signing for further tests; publication and website deployment are deferred until checks finish.
+
 ## Preserve existing acceptance
 
 The user confirms general external-trackpad behavior, all six Magic Mouse gestures, and the earlier named ordinary-input/idle/edit/record/pause/reconnect smoke pass. G HUB/DPI, ordinary hold/repeat and background-scroll subsets are also reported. Do not repeat their entire feature inventory solely because UI focus changed. The compact-options fix and basic production-hierarchy editor/Settings/Command-N/F routes are verified in an engine-free live window (UI-024); profile creation/switching and deletion-cancel focus return also pass in disposable storage. The later REL-003 walkthrough also verifies Add/Edit invoking-control restoration and import/export panel cancellation/focus return. Full normal-build VoiceOver/preferences, actual file transactions and destructive operations remain separate. Affected layout suites now cover six languages in Light/Dark; fluent proofreading remains open.

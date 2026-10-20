@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-20**. Parent baseline `main` `ad412de`; wheel/window fixes, stationary rules card and build-number policy are included in one follow-up commit. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-20**. Baseline `main` `9bb23e2`; repeated menu-opening repair and scoped tester acceptance are included in one follow-up commit. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and evidence
 
@@ -12,7 +12,7 @@ The earlier October 20 overall manual pass is preserved; later testing found fiv
 
 ## Current release work
 
-Source is now **1.0.0 (5)** for FIX-001, including the stationary rounded rules card with internal scrolling and sidebar-bottom alignment. Debug/Release Build values match; Debug build and native layout checks pass. AGENTS/WORKFLOW require the implementing agent to increment Build for every new app change set before final verification/handoff. Build 5 has not been packaged or installed by this task; the last recorded installed build is 3.
+Source is now **1.0.0 (7)**: build 6 always shows the window per tester, but still intermittently opens into the Stage Manager strip. Build 7 now matches the inspected Monny activation-before-show order and reuses the native window without reopening its scene. Six focused native functions pass; the tester accepts the improved opening behavior and closes FIX-001 for now (exact installed artifact/cycle matrix unspecified). User confirms wheel/card/settings/geometry, update preservation, keyboard navigation and sleep/pause/permission-loss checks; exact installed hash/build is unspecified. VoiceOver is open. Current Apple Development signing stays for testing; publication/site work is deferred. [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) owns research, changes and evidence.
 
 [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) now supplies **1.0.0 (3)** with shared Apple Development signing. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: `Blinks44/rebind` / `rebind.moduix.dev`, **not deployed**. Download needs a stable DMG. Browser visual review remains separate from local SSR/build checks.
 
@@ -22,11 +22,10 @@ Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md)
 
 ## Open task index
 
-Priority: verify FIX-001 on the next installed candidate, then REL-004 candidate/handoff, then update preservation and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
+Priority: remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
 
 | Task | Concrete next step |
 | --- | --- |
-| [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) | Wheel/window logic checks and updated stationary-card native checks pass; verify the updated installed build’s card, physical reversed wheel, menu Settings, size/relaunch and Stage Manager. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Build 3 installed/running; check Accessibility/window/input, verify the exported key restore/off-device copy, then verify a subsequent same-signer update. |
 | [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; current build/signing candidate is REL-001 build 3. |
 | [REL-003](tasks/REL-003-final-app-readiness.md) | Overall tester pass preserved; REL-004 owns the newer copy candidate. Same-signer/platform checks remain. |

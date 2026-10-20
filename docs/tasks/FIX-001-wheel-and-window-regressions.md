@@ -1,8 +1,8 @@
 # FIX-001: Wheel direction and main-window regressions
 
 - Updated: 2026-10-20
-- Stage: awaiting_verification
-- Owner: current implementation chat
+- Stage: done
+- Owner: unassigned; implementation and scoped tester acceptance complete
 - Ownership checked: main `ad412de`, clean checkout; implementation released; scoped review complete
 - Owned surfaces: wheel adapter/tap, main window lifecycle/menu/navigation, rules viewport, related tests and records
 - Requirements: SPEC §§3.2, 7–8 (wheel, menu, background launch, active Space, resizable window)
@@ -26,7 +26,7 @@ Implementation is complete, based on `ad412de`:
 - `BindingsView` places the 24 pt gap outside the card and moves the background/border/rounded clipping to the viewport around the scrolling rows. The existing 72 pt row metric limits short-card height without a separate measurement system; long cards fill the available height, ending at the sidebar’s 8 pt bottom inset.
 - Menu and Command-comma send a consumable Settings request to `ContentView`; battery rows select Devices. Removed the separate Settings scene; existing sections/localizations remain shared.
 - `MainWindowPersistence` restores/saves the native frame under a stable name, independently of disabled scene restoration/background-launch suppression.
-- Window opening waits for `applicationDidBecomeActive`, or opens immediately if already active, after the activation-policy/menu transition. Uses public AppKit activation with all-windows activation rather than assuming a run-loop delay proves activation. Scope of success remains subject to actual Stage Manager verification.
+- Build 6 supersedes the activation-gated implementation: scene opening is unconditional after leaving menu tracking; the exact registered main window is deminiaturized/ordered forward and activation is requested. Activation notification only finishes focus, never gates creation. The app-lifetime menu host alone installs the SwiftUI opener; the closing main scene no longer overwrites it.
 
 Native references: [activation options](https://developer.apple.com/documentation/appkit/nsapplication/activationoptions), [cooperative activation](https://developer.apple.com/videos/play/wwdc2023/10054/), and [native frame restoration](https://developer.apple.com/documentation/appkit/nswindow/setframeusingname(_:)). Installed SDK headers confirm activation is asynchronous. Existing native APIs suffice; no dependency or new input/action mechanism.
 
@@ -52,17 +52,40 @@ Latest user direction: preserve all four rounded card corners and scroll only th
 - Full-window local native snapshots reviewed: short Light card, long scrolled Light card and compact long Dark card. Long card’s lower edge matches the sidebar, corners remain visible, rows scroll inside, short card does not fill the page. These isolated fixtures do not prove live VoiceOver, scrollbar-preference or keyboard-focus behavior; generated rule labels follow the test host’s global localization.
 - Earlier wheel/window/hardware acceptance remains as recorded; no engine change in this follow-up. `apps/rebind/scripts/dev.sh build` succeeds; the built Info.plist is **1.0.0 (5)**. Affected local links and `git diff --check` pass.
 
+## Repeated menu opening repair and tester report — 2026-10-20
+
+Baseline `9bb23e2`; current uncommitted source **1.0.0 (6)**. User reports the latest wheel/card/settings/geometry checks pass, update preserves working configuration/access, keyboard navigation works, and sleep/pause/permission loss recover correctly. Exact tested installed hash/build/settings are not supplied; retain this as scoped tester evidence, not an agent-observed platform matrix. VoiceOver remains untested. Current Apple Development signing is explicitly retained for further testing; Developer ID is not a prerequisite for that testing. Publication/site work remains deferred.
+
+Repeated Menu Bar Open is still intermittent after the initial open. Code review found two independent defects: a closing scene overwrote the app-lifetime opener, and scene creation depended on an activation notification that is not guaranteed. An isolated background fixture of the old code recorded a show request with inactive app and no subsequent opener/activation message during the failed UI request. That confirms the activation gate can prevent creation; it does not independently prove every tester failure had that cause.
+
+Research: Apple's [OpenWindowAction](https://developer.apple.com/documentation/swiftui/openwindowaction) creates/orders the identified Window; [NSApplication activation](https://developer.apple.com/documentation/appkit/nsapplication/activate()) is a request. [Rectangle AppDelegate](https://github.com/rxhanson/Rectangle/blob/main/Rectangle/AppDelegate.swift) keeps a window controller and calls showWindow with activation rather than waiting for activation; [SettingsWindowController](https://github.com/sindresorhus/Settings/blob/main/Sources/Settings/SettingsWindowController.swift) uses the same native pattern and modern activate on macOS 14+. Current upstream sources inspected 2026-10-20. Settings is MIT; Rectangle was behavioral reference only, no source copied/license adoption. No package installed or dependency needed for existing AppKit operations. Maccy's app delegate also retains its panel, but popup-specific mechanics are not adopted.
+
+Implementation: `MainWindowPresenter` owns the pending scene request and weak main-window reference; `MainWindowRegistration` reports the actual scene window without replacing SwiftUI’s delegate. Menu, Settings and Dock/Finder reopen share this route. Removed main-scene opener and activation-gated closure. A Debug `--window-fixture` exercises real menu/presence/scene behavior with temporary configuration and no engine startup, permissions, login registration or device discovery.
+
+Verification:
+
+- Build 6 Debug build succeeds. `dev.sh test` selecting `MainWindowPresenterTests` + `WindowRegressionTests`: **6 functions pass**, no skips/failures. Local result `Test-rebind-2026.10.20_16-13-46-+0300.xcresult` in normal DerivedData test logs.
+- Twelve native close/show cycles succeed with activation deliberately withheld; pending request survives late scene-opener/window registration. Existing geometry/Settings/card tests pass. These tests use native windows but do not automate actual status-menu clicks or Stage Manager.
+- Separate ad-hoc UI fixture with a distinct temporary bundle ID: CUA eventually observes actual Rebind main window, sidebar and Settings controls after reopening; response was severely delayed, so repeated native menu/Stage Manager acceptance is **not** claimed. Fixture stopped; installed Rebind unchanged. First temporary copy signing needed deep signing because test plug-ins were present; production signing is unchanged.
+- No visual styling, input engine or real rules changed. No install, publication or new Git commit. `git diff --check` passes. Existing test-host layout-recursion/AppIntents warnings remain qualified.
+
+## Stage Manager follow-up / Monny comparison — 2026-10-20
+
+Tester confirms build-6 behavior always creates/shows a window, but approximately half of menu opens immediately put it into Stage Manager's inactive strip. Monny does not exhibit this on the same user's setup. This supersedes any implication that visibility alone accepted foreground behavior.
+
+Read-only comparison of the user-identified Monny checkout: `apps/monny/monny/monnyApp.swift`, `openDashboard` promotes activation policy, leaves menu tracking, calls `NSApp.activate()`, then deminiaturizes/orders its existing dashboard; `openWindow` is used only if no dashboard exists. Rebind build 6 did the reverse ordering, invoked the scene opener on every show, and added an activation-notification second focus path. No Monny files changed or source copied.
+
+Build **1.0.0 (7)** now follows that native ordering: promote policy → next main-loop turn → `NSApp.activate()` → deminiaturize/unhide/order the known main window, or request the scene only if no window exists. Removed all-windows activation and the second activation-observer path. App-lifetime opener and pending cold-start registration remain. This is a code-supported correction of the ordering difference, not proof that Stage Manager's compositor behavior is fixed.
+
+`dev.sh test` with MainWindowPresenterTests + WindowRegressionTests: **6 functions pass**, no failures/skips; local `Test-rebind-2026.10.20_16-29-48-+0300.xcresult`. Twelve close/show cycles verify reuse without any scene-open call for an existing window. Added a further assertion that each activation request precedes window visibility; **2 presenter functions pass**, no skips/failures; local `Test-rebind-2026.10.20_16-30-44-+0300.xcresult`. Native test output includes rendering-fence timeout warnings and the earlier Settings layout warning; no product workaround added. `dev.sh build` succeeds and the built Info.plist reports **1.0.0 (7)**; affected local links and `git diff --check` pass. No installed-app replacement or live Stage Manager claim.
+
+## Scoped acceptance — 2026-10-20
+
+After the build-7 Monny-order follow-up, the tester reports improvement and explicitly accepts closing the window-opening issue for now. Together with the earlier wheel/card/settings/geometry acceptance, this closes FIX-001’s bounded regression scope. Exact installed hash/build, number of cycles and platform/settings matrix are not independently supplied; this is tester acceptance, not a claim of exhaustive Stage Manager verification. No new test/build accompanies this documentation update.
+
 ## Next
 
-On the next updated installed build, verify only the affected scenarios:
-
-1. With vertical reverse enabled, hold mouse button 5 and use wheel up/down for volume up/down; then check reverse off and ordinary scrolling. Preserve the current rules.
-2. Scroll/resize a long rules list and confirm the permanent top gap, stationary rounded card and bottom alignment with the sidebar; check short/search/empty lists and keyboard/VoiceOver reachability of offscreen rows.
-3. Open Settings from the menu and Command-comma, and Devices from a battery row: one main window, with the gear visible in the menu.
-4. Resize, quit, relaunch in background, then open: remembered size and no automatic startup window.
-5. With Stage Manager already enabled, repeat the background-launch → menu Open Rebind path and confirm a frontmost window on the current desktop. Also check closed/minimized window and Dock/Finder reopen.
-
-Record the installed artifact/signer/OS and observed results. Last recorded installed build 3 has not been replaced by this task; software checks do not close the physical/Stage Manager gates.
+Continue the release queue with VoiceOver/accessibility preferences and another-Mac/current-signature installation. Do not repeat the accepted window/wheel/card/update/safety checks without a new regression or affected change. If foreground opening recurs, reopen this task with the installed build and reproduction sequence. The opening repair, tests, build 7 and scoped acceptance records are included together in the follow-up commit; publication/site deployment remain deferred.
 
 ## Commit handoff
 
