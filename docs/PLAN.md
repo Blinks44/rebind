@@ -1,6 +1,6 @@
 # Rebind: roadmap
 
-Updated 2026-10-20. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
+Updated 2026-10-21. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
 
 ## Current release scope
 
@@ -12,7 +12,7 @@ Outside current scope: Caps Lock, Fn/Globe and left/right modifier distinction; 
 
 ## Next
 
-1. **Finish accessibility review:** FIX-001’s wheel/window/card regressions are tester-accepted and closed. Preserve accepted keyboard/sleep/pause/permission-loss and update behavior; VoiceOver and accessibility preferences remain separately qualified. Reopen window verification only if a new regression is reported.
+1. **Verify window-action compatibility, then finish accessibility review:** [FIX-002](tasks/FIX-002-window-action-compatibility.md) repairs a reproduced Chrome/ChatGPT focused-application AX failure in build 8; actual minimize/gesture verification is pending. FIX-001’s wheel/window/card regressions are tester-accepted and closed. Preserve accepted keyboard/sleep/pause/permission-loss and update behavior; VoiceOver and accessibility preferences remain separately qualified. Keep the new external-app action regression separate from the accepted Rebind-window opening repair.
 2. **Preserve update acceptance:** user confirms the update works and configuration/access remain usable; exact installed hash/build is unspecified. Keep the same Apple Development identity for further testing; no Developer ID migration is planned now. Another-Mac/current-signature installation remains unverified.
 3. **Resolve support claims:** test macOS 26 on an available Mac; keep Intel unverified unless actually tested. Retain task-specific hardware/safety limits and report real-grant normal-profile CPU/latency only when measured. The old isolated paused/no-grant CPU result (~1.5%) is not active-rule performance.
 4. **Publish deliberately:** review/commit source, match tag/version, rebuild/final-check the signed DMG, upload DMG + checksums in a GitHub draft, then publish a stable release and verify download/update discovery. The repository is public; no published release existed at last check. `site.githubRepo`/`site.url` are configured; website deployment follows the DMG. [RELEASING](RELEASING.md) gives the procedure; no publication is automatic.

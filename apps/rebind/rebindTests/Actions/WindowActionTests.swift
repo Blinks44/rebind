@@ -5,6 +5,49 @@ import Testing
 @testable import rebind
 
 struct WindowActionTests {
+    @Test func frontmostApplicationIsResolvedDirectlyFromItsProcess() {
+        var created: [pid_t] = []
+        let app = AXWindowAccessibility.focusedApplication(processID: { 42 }, makeApplication: {
+            created.append($0)
+            return "app-\($0)"
+        }, isFrontmost: { $0 == "app-42" })
+        #expect(app == "app-42")
+        #expect(created == [42])
+    }
+
+    @Test(arguments: [nil, 0, -1] as [pid_t?])
+    func missingOrInvalidFrontmostProcessIsRejected(_ pid: pid_t?) {
+        let app: String? = AXWindowAccessibility.focusedApplication(processID: { pid }, makeApplication: { _ in
+            Issue.record("Invalid process reached AX application creation")
+            return "app"
+        }, isFrontmost: { _ in
+            Issue.record("Invalid process reached AX focus lookup")
+            return true
+        })
+        #expect(app == nil)
+    }
+
+    @Test func staleWorkspaceFocusIsRejectedByDirectAXRead() {
+        let app = AXWindowAccessibility.focusedApplication(processID: { 42 }, makeApplication: { $0 },
+                                                          isFrontmost: { _ in false })
+        #expect(app == nil)
+    }
+
+    @Test(arguments: [nil, 43] as [pid_t?])
+    func appSwitchDuringAXReadDoesNotRetarget(_ nextPID: pid_t?) {
+        var pid: pid_t? = 42
+        var created: [pid_t] = []
+        let app = AXWindowAccessibility.focusedApplication(processID: { pid }, makeApplication: {
+            created.append($0)
+            return $0
+        }, isFrontmost: { _ in
+            pid = nextPID
+            return true
+        })
+        #expect(app == nil)
+        #expect(created == [42])
+    }
+
     @Test(arguments: WindowAction.allCases)
     func nativeOperationsUseOnlyTheirSpecificTarget(_ action: WindowAction) {
         let client = FakeWindowAccessibility()

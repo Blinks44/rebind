@@ -8,18 +8,18 @@ apps/rebind/scripts/dev.sh test    # tests
 apps/rebind/scripts/release.sh     # signed DMG for installation/testing
 ```
 
-Use **release.sh** for installed copies. It builds Release, copies the app into `apps/rebind/build/release/`, signs it under Hardened Runtime, creates the branded DMG, checks signatures/image integrity and prints SHA-256. Missing create-dmg is an error; no alternate ZIP workflow. It never installs, publishes, creates keys or changes permissions. Ordinary Debug builds are separate from signed installation packages.
+After each completed set of app fixes or improvements and its required checks, the implementing agent runs **release.sh** and reports the verified DMG path for the user to install manually. This is part of the normal handoff; no separate packaging request is needed. Documentation-only, test-only, website-only and Sketch-only changes do not require repackaging. Use **release.sh** for installed copies. It builds Release, copies the app into `apps/rebind/build/release/`, signs it under Hardened Runtime, creates the branded DMG, checks signatures/image integrity and prints SHA-256. Missing create-dmg is an error; no alternate ZIP workflow. It never installs, publishes, creates keys or changes permissions. Ordinary Debug builds are separate from signed installation packages.
 
 ## Release version and build
 
 Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identity:
 
 - **Version** (`MARKETING_VERSION`): currently `1.0.0`; change for a user-visible release.
-- **Build** (`CURRENT_PROJECT_VERSION`): currently `7` in source; the previously installed candidate is build `3`.
+- **Build** (`CURRENT_PROJECT_VERSION`): currently `8` in source; the last inspected installed copy is build `7`.
 
 The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
 
-The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-7.dmg` for the current source. It never increments versions or publishes. The update checker compares marketing versions; see [RELEASING](RELEASING.md).
+The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-8.dmg` for the current source. It never increments versions or publishes. The update checker compares marketing versions; see [RELEASING](RELEASING.md).
 
 ## Signing key
 

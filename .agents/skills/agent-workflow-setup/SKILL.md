@@ -3,7 +3,7 @@ name: agent-workflow-setup
 description: Set up, migrate, or audit durable agent workflows for development projects of any language, platform or discipline. Adapt project instructions, public documentation, current state, handoffs, relevant skills and Git ignore rules to the actual project. Use for configuring the workflow itself, rather than ordinary implementation under an existing workflow.
 license: MIT
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # Agent Workflow Setup
@@ -61,6 +61,8 @@ Encode these outcomes in the project workflow, using its language and convention
 3. Contract → implementation: when relevant, identify saved design/engineering/API/data contract version and stable source IDs, behavior/components/states; record justified implementation differences. Refresh sources before dependent work. Contract/design readiness, implementation and verification remain separate; skip visual handoffs when the project has no UI.
 4. Verify/review: check changed behavior and relevant visual/accessibility/localization/security/platform constraints. Review the final diff against acceptance. Mock tests and successful compilation do not prove runtime/hardware acceptance.
 5. Finish/interruption: persist actual checks/failures, limits, changed contracts/state and one actionable next step before the final handoff when possible. After an abrupt interruption, reconcile the diff; do not assume the last record was saved.
+
+When the user expects an installable artifact after changes, encode that delivery contract in the project entry point and completion rules: after the required checks, run the existing local packaging command, verify the final artifact/version, and report its path for manual installation without requiring another packaging request. Distinguish a compilation-only build from the installable deliverable. Preserve the project's build-number policy, avoid repackaging changes that do not affect the shipped product, and report packaging failures rather than offering a stale artifact. Packaging authorization does not authorize installation, publication or deployment. Keep exact commands/output paths in the owning project instructions; do not impose one project's release script on other projects.
 
 Interpret routine requests by intended action/outcome and established context in the user's language. Examples are illustrations, not required wording or keyword commands. Tool/language mentions constrain the relevant source/implementation; they do not define a role by themselves or authorize tool installation/stack migration. Encode [role-aware selection](references/adoption.md#short-requests-and-role-aware-continuation) in project instructions. Resolve task IDs/paths yourself by meaning, title, requirements and artifacts; do not make the user locate a record or reconstruct the previous chat. Resume the current compatible task, or select the highest-priority actionable slice for the requested role. A named feature selects that outcome; derive bounded acceptance, reuse existing work and ask only about material missing behavior.
 

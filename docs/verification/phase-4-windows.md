@@ -1,15 +1,18 @@
 # Phase 4: Active window/application actions
 
 Scope: SPEC §5, A1/A2, current Phase 4 slice. **Implemented and software-tested;
-all four ordinary action happy paths are user-confirmed.** Cancellation, unsupported
-targets, revoked access and latency still require manual checks.
+earlier ordinary happy paths are user-confirmed.** The October 21 Chrome/ChatGPT
+compatibility regression is repaired in build 8 but awaits native execution/gesture
+verification: [FIX-002](../tasks/FIX-002-window-action-compatibility.md). Cancellation,
+unsupported targets, revoked access and latency still require manual checks.
 
 ## Execution contract
 
 - Shared searchable **Windows and Applications** group for every supported input
   category. Four actions: close active window, minimize active window, toggle full
   screen via the window's public full-screen button, hide active application.
-- Public AX only: `AXFocusedApplication`, `AXFocusedWindow`, `AXCloseButton`,
+- Public AppKit/AX only: `NSWorkspace.frontmostApplication` supplies a live PID,
+  confirmed by direct `AXFrontmost` and a second PID sample; `AXFocusedWindow`, `AXCloseButton`,
   `AXFullScreenButton` + `AXPress`; settable `AXMinimized`/`AXHidden` booleans.
   No AppleScript, menu traversal, fixed keyboard shortcut, private full-screen
   attribute, whole-window inventory or additional dependency.
@@ -23,8 +26,8 @@ targets, revoked access and latency still require manual checks.
   tap's CFRunLoop or UI actor. No per-event task or additional queue.
 - Each IPC request gets at most a 150 ms AX messaging timeout and the adapter stops
   starting requests after its 450 ms budget. Timeouts are best-effort OS request
-  limits, not measured worst-case latency. The system-wide object's timeout sets
-  this process's AX default; other elements get their own bounded timeout. A slow
+  limits, not measured worst-case latency. Each AX handle gets its own bounded
+  timeout without changing the process-wide default. A slow
   AX target can temporarily delay this serial action worker, not input interception.
 - An accepted AX request cannot be recalled. Focus checking and mutation are not
   atomic across applications; a final-check-to-call race remains a platform limit.

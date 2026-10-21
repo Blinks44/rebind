@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-20**. Baseline `main` `9bb23e2`; repeated menu-opening repair and scoped tester acceptance are included in one follow-up commit. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-21**. Baseline `main` `5bafe80`; the window-action compatibility repair and DMG handoff workflow are included in the follow-up commit containing this record. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and evidence
 
@@ -12,22 +12,25 @@ The earlier October 20 overall manual pass is preserved; later testing found fiv
 
 ## Current release work
 
-Source is now **1.0.0 (7)**: build 6 always shows the window per tester, but still intermittently opens into the Stage Manager strip. Build 7 now matches the inspected Monny activation-before-show order and reuses the native window without reopening its scene. Six focused native functions pass; the tester accepts the improved opening behavior and closes FIX-001 for now (exact installed artifact/cycle matrix unspecified). User confirms wheel/card/settings/geometry, update preservation, keyboard navigation and sleep/pause/permission-loss checks; exact installed hash/build is unspecified. VoiceOver is open. Current Apple Development signing stays for testing; publication/site work is deferred. [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) owns research, changes and evidence.
+Source is **1.0.0 (8)**: [FIX-002](tasks/FIX-002-window-action-compatibility.md) replaces the failing Chrome/ChatGPT system-wide AX focused-app query with AppKit PID discovery plus direct AXFrontmost validation. Debug/Release packaging and 42 focused software functions pass. Verified local DMG: `apps/rebind/build/release/Rebind-1.0.0-8.dmg`; native execution and Button 5 + down remain open. Installed app is build 7. AGENTS/WORKFLOW and the local workflow skill now require this DMG handoff after app changes; the user installs manually.
 
-[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) now supplies **1.0.0 (3)** with shared Apple Development signing. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: `Blinks44/rebind` / `rebind.moduix.dev`, **not deployed**. Download needs a stable DMG. Browser visual review remains separate from local SSR/build checks.
+[FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) retains tester acceptance of wheel/card/settings/geometry, update preservation, keyboard navigation, sleep/pause/permission loss and improved build-7 foreground opening (Monny activation-before-show/window reuse; six native functions pass). Exact accepted artifact/cycle matrix unspecified; VoiceOver remains open. Current Apple Development testing continues; publication/site deferred.
+
+[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) introduced shared Apple Development signing in build 3. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: `Blinks44/rebind` / `rebind.moduix.dev`, **not deployed**. Download needs a stable DMG. Browser visual review remains separate from local SSR/build checks.
 
 Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md) owns the 1.0/1 candidate, 903 logic passes and 25 native passes/two skips. Its rejected polling experiments did not improve isolated paused/no-grant CPU (~1.5%); granted normal-profile performance stays open. [UI-024](tasks/UI-024-keyboard-navigation.md) owns keyboard/menu/focus repair; [INPUT-015](tasks/INPUT-015-touch-release-scope.md) owns the finite touch pool and [DESIGN](DESIGN.md) locates saved Sketch. Prior dated details remain in these tasks and [history](history/2026-10.md).
 
-[REL-001](tasks/REL-001-signing-workflow.md) aligns release.sh with Monny: one pinned existing **Apple Development** identity, DMG-only build/release output, readable bundle modes. Build **1.0.0 (3)** is installed/running; Accessibility/window/input smoke remains. The old self-signed key/backups are retained; the current shared P12 is now exported; restore/signing verification and off-device copy remain open: [SIGNING](SIGNING.md). [REL-002](tasks/REL-002-branded-dmg.md) owns the DMG artwork/Finder check. Update preservation needs two distinct stable-signed installed builds, separate from an Xcode/ad-hoc signer transition.
+[REL-001](tasks/REL-001-signing-workflow.md) aligns release.sh with Monny: one pinned existing **Apple Development** identity, DMG-only build/release output, readable bundle modes. Historical build-3 installation/smoke evidence stays in its record; the installed app is now build 7, with build-8 compatibility verification in FIX-002. The old self-signed key/backups are retained; the current shared P12 is now exported; restore/signing verification and off-device copy remain open: [SIGNING](SIGNING.md). [REL-002](tasks/REL-002-branded-dmg.md) owns the DMG artwork/Finder check. Update preservation needs two distinct stable-signed installed builds, separate from an Xcode/ad-hoc signer transition.
 
 ## Open task index
 
-Priority: remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
+Priority: verify the new window-action compatibility repair, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
 
 | Task | Concrete next step |
 | --- | --- |
-| [REL-001](tasks/REL-001-signing-workflow.md) | Build 3 installed/running; check Accessibility/window/input, verify the exported key restore/off-device copy, then verify a subsequent same-signer update. |
-| [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; current build/signing candidate is REL-001 build 3. |
+| [FIX-002](tasks/FIX-002-window-action-compatibility.md) | Manually install the verified build-8 DMG, then check Button 5 + down in Finder/Chrome/ChatGPT; agent-run window mutations still need explicit authorization. |
+| [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; verify exported-key restore/off-device copy and another-Mac/current-signature installation. |
+| [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; FIX-002 owns build-8 compatibility verification with the REL-001 signer. |
 | [REL-003](tasks/REL-003-final-app-readiness.md) | Overall tester pass preserved; REL-004 owns the newer copy candidate. Same-signer/platform checks remain. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
 | [UI-024](tasks/UI-024-keyboard-navigation.md) | Normal-build VoiceOver/preferences, import/export and exact editor focus return; disposable profile/confirmation paths pass. |

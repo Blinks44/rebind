@@ -1,3 +1,4 @@
+import AppKit
 import ApplicationServices
 import Dispatch
 import Darwin
@@ -70,12 +71,33 @@ nonisolated enum WindowActionExecutor {
 }
 
 nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCyclingAccessibility {
-    private let system = AXUIElementCreateSystemWide()
     private let startedAt = DispatchTime.now().uptimeNanoseconds
     private let budget: UInt64 = 450_000_000
 
     var trusted: Bool { AXIsProcessTrusted() }
-    var application: AXUIElement? { element(kAXFocusedApplicationAttribute, of: system) }
+    var application: AXUIElement? {
+        // Chromium apps can return noValue/cannotComplete for the system-wide
+        // AXFocusedApplication even though their own window attributes work.
+        // AppKit supplies the PID; direct AXFrontmost validates it against a
+        // stale workspace snapshot before any executor can use the handle.
+        Self.focusedApplication(processID: {
+            guard let app = NSWorkspace.shared.frontmostApplication,
+                  !app.isTerminated, app.isActive else { return nil }
+            return app.processIdentifier
+        }, makeApplication: AXUIElementCreateApplication, isFrontmost: {
+            (value(kAXFrontmostAttribute, of: $0) as? Bool) == true
+        })
+    }
+
+    static func focusedApplication<Element>(processID: () -> pid_t?, makeApplication: (pid_t) -> Element,
+                                           isFrontmost: (Element) -> Bool) -> Element? {
+        guard let pid = processID(), pid > 0 else { return nil }
+        let app = makeApplication(pid)
+        // The AX read can wait while the user switches apps. Never return a
+        // different target within one lookup or accept a stale AppKit result.
+        guard isFrontmost(app), processID() == pid else { return nil }
+        return app
+    }
 
     func processID(of element: AXUIElement) -> pid_t? {
         var pid: pid_t = 0
@@ -194,7 +216,7 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
         let now = DispatchTime.now().uptimeNanoseconds
         guard now >= startedAt, now - startedAt < budget else { return false }
         let remaining = Float(budget - (now - startedAt)) / 1_000_000_000
-        // The system-wide object's timeout also sets this process's AX default.
+        // Set each handle's timeout without changing the process-wide default.
         // All subsequent calls are bounded individually and by the slice budget.
         return AXUIElementSetMessagingTimeout(element, min(0.15, remaining)) == .success
     }
