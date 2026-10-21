@@ -124,7 +124,7 @@
   "faq_access_q": "Why does the app need Accessibility access?",
   "faq_access_a": "Accessibility lets Rebind recognize your chosen keys, buttons and gestures and perform actions in other apps. Rebind does not keep a typing history. You can pause bindings at any time.",
   "faq_warning_q": "Why does macOS show a warning on first launch?",
-  "faq_warning_a": "Rebind uses a self-signed certificate and is not notarized by Apple. After trying to open the downloaded app, go to System Settings → Privacy & Security and choose Open Anyway if you trust this copy. macOS may ask again after an update.",
+  "faq_warning_a": "Rebind is not notarized by Apple. After trying to open the downloaded app, go to System Settings → Privacy & Security and choose Open Anyway if you trust this copy. macOS may ask again after an update.",
   "faq_mac_q": "Which Mac do I need?",
   "faq_mac_a": "Requires macOS 26 or later. Tested on Apple silicon with macOS 27. Minimum-version and Intel testing are still pending; a universal build is not a compatibility guarantee.",
   "cta_title": "Make your Mac work your way",

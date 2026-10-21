@@ -37,7 +37,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse · %@"
+            "value" : "妙控鼠标 · %@"
           }
         }
       },
@@ -120,7 +120,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse 手势为实验性功能"
+            "value" : "妙控鼠标手势为实验性功能"
           }
         }
       }
@@ -161,7 +161,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重新连接 Magic Mouse 或重新打开 Rebind，然后重试。规则仍会保存。"
+            "value" : "重新连接妙控鼠标或重新打开 Rebind，然后重试。规则仍会保存。"
           }
         }
       }
@@ -202,7 +202,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法启动 Magic Mouse 手势"
+            "value" : "无法启动妙控鼠标手势"
           }
         }
       }
@@ -243,7 +243,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Magic Mouse 手势"
+            "value" : "妙控鼠标手势"
           }
         }
       }
@@ -260,7 +260,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Двойное касание одним пальцем включает Smart Zoom. Отключите его в настройках мыши macOS, чтобы избежать двойных действий."
+            "value" : "Двойное касание одним пальцем включает Smart Zoom. Отключите его в настройках мыши macOS, чтобы не срабатывали оба действия."
           }
         },
         "de" : {
@@ -383,7 +383,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Легко коснитесь поверхности, затем уберите все пальцы. Не двигайте мышь и не нажимайте на неё."
+            "value" : "Слегка коснитесь поверхности и уберите все пальцы. Не двигайте мышь и не нажимайте на неё."
           }
         },
         "de" : {
@@ -424,7 +424,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Двойное касание двумя пальцами открывает Mission Control. Отключите его в настройках мыши macOS, чтобы избежать двойных действий."
+            "value" : "Двойное касание двумя пальцами открывает Mission Control. Отключите его в настройках мыши macOS, чтобы не срабатывали оба действия."
           }
         },
         "de" : {
@@ -571,7 +571,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未连接 Magic Mouse"
+            "value" : "未连接妙控鼠标"
           }
         }
       }
@@ -588,7 +588,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Этот текст слишком сложный для безопасного ввода. Сократите его."
+            "value" : "Этот текст слишком сложен, чтобы надёжно его ввести. Сократите его."
           }
         },
         "de" : {
@@ -629,7 +629,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Доступ к Bluetooth ограничен на этом Mac. Заряд по-прежнему доступен из других поддерживаемых источников."
+            "value" : "Доступ к Bluetooth на этом Mac ограничен. Заряд из других поддерживаемых источников по-прежнему виден."
           }
         },
         "de" : {
@@ -5744,7 +5744,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für die aktuelle Tonausgabe nicht verfügbar. Die Taste funktioniert wie gewohnt."
+            "value" : "Für die aktuelle Tonausgabe nicht verfügbar. Die Taste oder Maustaste funktioniert wie gewohnt."
           }
         },
         "en" : {
@@ -7794,7 +7794,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In dieser macOS-Version nicht verfügbar. Die Taste funktioniert wie gewohnt."
+            "value" : "In dieser macOS-Version nicht verfügbar. Die Taste oder Maustaste funktioniert wie gewohnt."
           }
         },
         "en" : {
@@ -8633,7 +8633,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Универсальный доступ включён. Rebind ещё нужно разрешение отправлять сочетания клавиш и клики в другие приложения."
+            "value" : "Универсальный доступ включён. Осталось разрешить Rebind отправлять сочетания клавиш и клики в другие приложения."
           }
         },
         "es" : {
@@ -8809,7 +8809,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当其中某个应用位于前台时，Rebind 会跳过你在此关闭的功能。适用于游戏、虚拟机和远程桌面。"
+            "value" : "当其中某个 App位于前台时，Rebind 会跳过你在此关闭的功能。适用于游戏、虚拟机和远程桌面。"
           }
         }
       }
@@ -9049,7 +9049,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Большая"
+            "value" : "Длинная"
           }
         },
         "zh-Hans" : {
@@ -9090,7 +9090,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Малая"
+            "value" : "Короткая"
           }
         },
         "zh-Hans" : {
@@ -9172,7 +9172,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Расстояние движения"
+            "value" : "Длина жеста"
           }
         },
         "zh-Hans" : {
@@ -9413,7 +9413,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживайте столько времени, чтобы выполнить действие один раз. Если отпустить раньше, действие отменится."
+            "value" : "Столько нужно удерживать, чтобы действие сработало один раз. Если отпустить раньше, оно не сработает."
           }
         },
         "es" : {
@@ -18052,7 +18052,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihre Belegungen sind gespeichert. Tasten funktionieren wie gewohnt."
+            "value" : "Ihre Belegungen sind gespeichert. Tasten und Maustasten funktionieren wie gewohnt."
           }
         },
         "en" : {
@@ -18515,7 +18515,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réactivez Rebind pour reprendre vos règles."
+            "value" : "Autorisez à nouveau Rebind pour réactiver vos règles."
           }
         },
         "ru" : {
@@ -19902,7 +19902,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versetzt den Mac in den Ruhezustand. Das anschließende Loslassen der Taste kann ihn wieder aufwecken. Ob ein Passwort nötig ist, hängt von Ihren Einstellungen ab."
+            "value" : "Versetzt den Mac in den Ruhezustand. Das anschließende Loslassen der Taste oder Maustaste kann ihn wieder aufwecken. Ob ein Passwort nötig ist, hängt von Ihren Einstellungen ab."
           }
         },
         "en" : {
@@ -24408,7 +24408,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Со SmartShift колесо прокручивается с шагами и раскручивается свободно, когда вы крутите быстро."
+            "value" : "Со SmartShift колесо крутится с щелчками, а при быстрой прокрутке переходит на свободный ход."
           }
         },
         "es" : {
@@ -24490,7 +24490,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Всегда с шагами"
+            "value" : "Всегда с щелчками"
           }
         },
         "es" : {
@@ -24531,7 +24531,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Всегда свободно"
+            "value" : "Всегда свободный ход"
           }
         },
         "es" : {
@@ -24613,7 +24613,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Насколько быстро нужно крутить, чтобы колесо начало вращаться свободно."
+            "value" : "Насколько быстро нужно крутить колесо, чтобы оно перешло на свободный ход."
           }
         },
         "es" : {
@@ -24765,7 +24765,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нет подключённых устройств"
+            "value" : "Поддерживаемые устройства не подключены"
           }
         },
         "de" : {
@@ -25646,7 +25646,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Наклон колеса и боковое колесо прокручивают в стороны наоборот."
+            "value" : "Наклон колеса и боковое колесо прокручивают вбок в обратную сторону."
           }
         },
         "es" : {
@@ -25833,7 +25833,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Als Auslöser in Mausbelegungen nutzen, allein oder mit einer Bewegung. macOS erkennt sie allein nicht."
+            "value" : "Als Auslöser in Mausbelegungen nutzen, allein oder mit einer Bewegung. Ohne Rebind erkennt macOS sie nicht."
           }
         },
         "en" : {
@@ -25845,25 +25845,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilisez-le comme déclencheur dans les règles de souris, seul ou avec un mouvement. macOS ne le voit pas seul."
+            "value" : "Utilisez-le comme déclencheur dans les règles de souris, seul ou avec un mouvement. Sans Rebind, macOS ne le détecte pas."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Используйте её как триггер в правилах мыши, отдельно или с движением. Сама по себе macOS её не видит."
+            "value" : "Используйте её как триггер в правилах мыши, отдельно или с движением. Без Rebind macOS эту кнопку не видит."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Úsalo como activador en las reglas del ratón, solo o con un movimiento. macOS no lo detecta por sí mismo."
+            "value" : "Úsalo como activador en las reglas del ratón, solo o con un movimiento. Sin Rebind, macOS no lo detecta."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在鼠标规则中将它用作触发器，可单独使用或配合移动。macOS 本身无法识别它。"
+            "value" : "在鼠标规则中将它用作触发器，可单独使用或配合移动。没有 Rebind 时，macOS 无法识别它。"
           }
         }
       }
@@ -27100,7 +27100,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "触控板和 Magic Mouse"
+            "value" : "触控板和妙控鼠标"
           }
         }
       }

@@ -201,11 +201,12 @@ nonisolated final class EventTapWorker {
             let passed = pass(event)
             // A click no binding took becomes a glide when its mouse has smooth scrolling on;
             // the original click is swallowed.
-            if SmoothScroller.applies(to: event) { mailbox.noteScroll() }
-            if SmoothScroller.applies(to: event),
-               let smooth = mailbox.smoothScrollDispatch(sender: AttachedHIDScroll.senderID(of: event)) {
-                scroller.feed(event, dispatch: smooth)
-                return nil
+            if SmoothScroller.applies(to: event) {
+                mailbox.noteScroll()
+                if let smooth = mailbox.smoothScrollDispatch(sender: AttachedHIDScroll.senderID(of: event)) {
+                    scroller.feed(event, dispatch: smooth)
+                    return nil
+                }
             }
             return passed
         }

@@ -1,6 +1,6 @@
 # REL-004: Pre-release product, copy and documentation audit
 
-- Updated: 2026-10-20
+- Updated: 2026-10-21
 - Stage: awaiting_verification
 - Owner: Unassigned; local audit complete, candidate/runtime/publication review pending
 - Baseline: main e070ec9 plus preserved uncommitted touch/UI/update/signing work
@@ -74,3 +74,8 @@ Final website build/type check also passes after the last Chinese metadata refin
 User subsequently authorizes signing/release alignment with Monny. [REL-001](REL-001-signing-workflow.md#unified-default-pipeline-verified--2026-10-20) owns build 1.0.0 (3), the shared Apple Development signer and installed/running check. This supersedes build 2 as the current candidate without invalidating the dated copy/layout tests above. Old self-signed build 1/2 → new development-signed build 3 is a signer transition; it cannot close the old same-signer update gate. Accessibility/window/input smoke and two subsequent development-signed update builds remain. No publication.
 
 Before any website publication, reconcile the undeployed six-language installation FAQ with the newer Apple Development test-candidate signing route; its earlier self-signed wording predates REL-001 alignment. Website publishing remains outside this signing task.
+
+
+## Final copy pass — 2026-10-21
+
+Second full read of the six-language catalog and website before release; fixes and evidence are in [history](../history/2026-10.md#2026-10-21-final-pre-release-review). English/Sketch copy unchanged. Remaining: visual check of the changed Russian/German strings at minimum width in build 11.

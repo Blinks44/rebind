@@ -124,7 +124,7 @@
   "faq_access_q": "¿Por qué necesita la app acceso a Accesibilidad?",
   "faq_access_a": "Accesibilidad permite que Rebind reconozca las teclas, botones y gestos elegidos y realice acciones en otras apps. Rebind no guarda un historial de escritura. Puedes pausar las reglas cuando quieras.",
   "faq_warning_q": "¿Por qué macOS muestra un aviso la primera vez?",
-  "faq_warning_a": "Rebind usa un certificado autofirmado y no está certificado por Apple. Tras intentar abrir la app descargada, ve a Ajustes del Sistema → Privacidad y seguridad y elige «Abrir igualmente» si confías en esa copia. macOS puede volver a pedir confirmación después de actualizar.",
+  "faq_warning_a": "Rebind no está certificado por Apple. Tras intentar abrir la app descargada, ve a Ajustes del Sistema → Privacidad y seguridad y elige «Abrir igualmente» si confías en esa copia. macOS puede volver a pedir confirmación después de actualizar.",
   "faq_mac_q": "¿Qué Mac necesito?",
   "faq_mac_a": "Requiere macOS 26 o posterior. Probado en chips de Apple con macOS 27. Las pruebas de la versión mínima y de Intel siguen pendientes; una compilación universal no garantiza compatibilidad.",
   "cta_title": "Haz que tu Mac funcione a tu manera",

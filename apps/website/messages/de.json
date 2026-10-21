@@ -124,7 +124,7 @@
   "faq_access_q": "Warum braucht die App Zugriff auf die Bedienungshilfen?",
   "faq_access_a": "Der Zugriff auf Bedienungshilfen erlaubt Rebind, gewählte Tasten, Maustasten und Gesten zu erkennen und Aktionen in anderen Apps auszuführen. Rebind speichert keinen Eingabeverlauf. Du kannst Belegungen jederzeit pausieren.",
   "faq_warning_q": "Warum warnt macOS beim ersten Start?",
-  "faq_warning_a": "Rebind ist selbst signiert und nicht von Apple notarisiert. Versuche zuerst, die geladene App zu öffnen. Wenn du dieser Kopie vertraust, wähle dann in Systemeinstellungen → Datenschutz & Sicherheit „Dennoch öffnen“. Nach einem Update kann macOS erneut nachfragen.",
+  "faq_warning_a": "Rebind ist nicht von Apple notarisiert. Versuche zuerst, die geladene App zu öffnen. Wenn du dieser Kopie vertraust, wähle dann in Systemeinstellungen → Datenschutz & Sicherheit „Dennoch öffnen“. Nach einem Update kann macOS erneut nachfragen.",
   "faq_mac_q": "Welchen Mac brauche ich?",
   "faq_mac_a": "Benötigt macOS 26 oder neuer. Getestet auf Apple Chips mit macOS 27. Tests der Mindestversion und auf Intel stehen noch aus; ein Universal-Build garantiert keine Kompatibilität.",
   "cta_title": "Richte deinen Mac nach deinen Regeln ein",

@@ -124,7 +124,7 @@
   "faq_access_q": "为什么需要“辅助功能”权限？",
   "faq_access_a": "“辅助功能”权限让 Rebind 识别所选按键、按钮和手势，并在其他 App 中执行操作。Rebind 不保存键盘输入历史，你可以随时暂停规则。",
   "faq_warning_q": "为什么首次打开时 macOS 会发出警告？",
-  "faq_warning_a": "Rebind 使用自签名证书，未经过 Apple 公证。尝试打开下载的 App 后，如果你信任此副本，可在“系统设置”→“隐私与安全性”中选择“仍要打开”。更新后 macOS 可能会再次要求确认。",
+  "faq_warning_a": "Rebind 未经过 Apple 公证。尝试打开下载的 App 后，如果你信任此副本，可在“系统设置”→“隐私与安全性”中选择“仍要打开”。更新后 macOS 可能会再次要求确认。",
   "faq_mac_q": "需要什么样的 Mac？",
   "faq_mac_a": "需要 macOS 26 或更高版本。已在运行 macOS 27 的 Apple 芯片 Mac 上测试。最低系统版本与 Intel 测试尚未完成，通用构建本身并不保证兼容性。",
   "cta_title": "让 Mac 按你的方式工作",
