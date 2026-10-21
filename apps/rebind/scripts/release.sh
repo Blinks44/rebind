@@ -56,6 +56,22 @@ def normalize_bundle_permissions(bundle):
         path.chmod(0o755 if path.is_dir() or mode & 0o111 else 0o644)
 
 
+def write_appcast(dmg, version):
+    # Sparkle signs the finished DMG with the EdDSA key in the login keychain (generate_keys).
+    # The appcast is uploaded with the DMG; the app reads it from the latest GitHub release.
+    tool = APP_ROOT / "build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast"
+    if not tool.exists():
+        raise RuntimeError("Sparkle tools are missing; run scripts/dev.sh resolve")
+    appcast = OUTPUT / "appcast.xml"
+    release = f"https://github.com/Blinks44/rebind/releases/download/v{version}/"
+    with tempfile.TemporaryDirectory(prefix="rebind-appcast-") as staging:
+        shutil.copy2(dmg, staging)
+        run(tool, "--download-url-prefix", release,
+            "--full-release-notes-url", f"https://github.com/Blinks44/rebind/releases/tag/v{version}",
+            "--link", "https://github.com/Blinks44/rebind", "-o", appcast, staging, quiet=True)
+    return appcast
+
+
 def main():
     # This command creates public app artifacts, never private signing keys.
     os.umask(0o022)
@@ -75,11 +91,21 @@ def main():
     sign = ["codesign", "--force", "--options", "runtime", "--timestamp=none", "--sign", fingerprint]
     if KEYCHAIN:
         sign.extend(["--keychain", KEYCHAIN])
-    # Current release contains no dynamic packages. Fail rather than silently
-    # introducing library-validation exceptions if that bundle contract changes.
-    if list(destination.rglob("*.dylib")) or list(destination.rglob("*.framework")):
+    # Sparkle is the only embedded framework. Fail rather than silently adding
+    # library-validation exceptions if that bundle contract changes.
+    frameworks = destination / "Contents/Frameworks"
+    sparkle = frameworks / "Sparkle.framework"
+    if list(destination.rglob("*.dylib")) or sorted(frameworks.iterdir()) != [sparkle]:
         raise RuntimeError("Review nested dynamic code signing before packaging this bundle")
     normalize_bundle_permissions(destination)
+    # Hardened runtime library validation needs Sparkle signed by the app's identity, inside out
+    # (https://sparkle-project.org/documentation/sandboxing/#code-signing).
+    current = sparkle / "Versions/Current"
+    run(*sign, current / "XPCServices/Installer.xpc", quiet=True)
+    run(*sign, "--preserve-metadata=entitlements", current / "XPCServices/Downloader.xpc", quiet=True)
+    run(*sign, current / "Autoupdate", quiet=True)
+    run(*sign, current / "Updater.app", quiet=True)
+    run(*sign, sparkle, quiet=True)
     run(*sign, destination, quiet=True)
     for path in [destination, *destination.rglob("*")]:
         if path.is_symlink():
@@ -107,8 +133,10 @@ def main():
     run("codesign", "--verify", "--strict", dmg, quiet=True)
     run("hdiutil", "verify", dmg, quiet=True)
     run("shasum", "-a", "256", dmg)
+    appcast = write_appcast(dmg, version)
     print(f"Signing certificate: {fingerprint}")
     print(f"Package: {dmg}")
+    print(f"Appcast: {appcast}")
     print("No app installed or permissions changed.")
     print("This artifact is signed but not notarized. Clean-Mac installation remains unverified.")
 

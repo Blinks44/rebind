@@ -277,7 +277,7 @@ Required runtime behavior:
 - Account for event-tap timeouts/disable notifications, sleep/wake, fast user switching as applicable, system lock/unlock, device loss, and revoked permissions.
 - Fail open on invalid rules and unexpected errors. Pausing/disabling must restore passthrough and release synthetic states.
 - Do not perform blocking UI/persistence/script work on the event callback thread. Record only safe metadata in diagnostic mode, and bound log volume.
-- Avoid collecting key content, password input, or clipboard data; no background surveillance, network calls from input processing, or telemetry. The user-invoked Check for Updates command may request public GitHub release metadata without configuration, input or device data; it never checks on startup or installs automatically.
+- Avoid collecting key content, password input, or clipboard data; no background surveillance, network calls from input processing, or telemetry. Software updates use Sparkle (decision 2026-10-21): it reads the EdDSA-signed appcast attached to the latest GitHub release once a day while automatic checks are on (default on; Settings → General and first-run Ready step) and whenever the user chooses Check for Updates. It sends no system profile, configuration, input or device data and asks before installing.
 - Prevent unsafe remappings from causing inaccessible controls. Provide a visible Menu Bar emergency disable; evaluate an optional emergency key combo that cannot itself be swallowed by a custom rule.
 - Sensitive OS contexts may forbid input injection or interception. Treat these cases honestly.
 
@@ -287,7 +287,7 @@ Required runtime behavior:
 
 ## 7. Permissions and onboarding (CORE)
 
-- Show first-launch guidance for actual Accessibility and event-posting checks. Input Monitoring is not a startup gate for the current active Quartz tap; Automation remains action-specific. Optional Bluetooth battery access is requested explicitly in Devices (§3.2) and does not gate normal input rules.
+- Show first-launch guidance once as three steps in one sheet (decision 2026-10-21): Welcome (what Rebind does, privacy), Access (actual Accessibility and event-posting checks; skipped when already granted) and Ready (Open at login, automatic update checks, menu bar hint, Add First Binding). Set Up Later on Access closes the guidance without Ready. Lost access later shows only the access content. Input Monitoring is not a startup gate for the current active Quartz tap; Automation remains action-specific. Optional Bluetooth battery access is requested explicitly in Devices (§3.2) and does not gate normal input rules.
 - Check actual state using the best available public APIs for the capture/dispatch method. macOS permission UI and state are not always perfectly synchronized; do not treat button taps as proof of authorization.
 - Buttons to open the right System Settings pane; re-check after return, focus, or explicit Refresh.
 - Give helpful errors for failure to create an event tap and permission changes.

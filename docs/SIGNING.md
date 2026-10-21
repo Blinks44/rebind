@@ -8,18 +8,18 @@ apps/rebind/scripts/dev.sh test    # tests
 apps/rebind/scripts/release.sh     # signed DMG for installation/testing
 ```
 
-After each completed set of app fixes or improvements and its required checks, the implementing agent runs **release.sh** and reports the verified DMG path for the user to install manually. This is part of the normal handoff; no separate packaging request is needed. Documentation-only, test-only, website-only and Sketch-only changes do not require repackaging. Use **release.sh** for installed copies. It builds Release, copies the app into `apps/rebind/build/release/`, signs it under Hardened Runtime, creates the branded DMG, checks signatures/image integrity and prints SHA-256. Missing create-dmg is an error; no alternate ZIP workflow. It never installs, publishes, creates keys or changes permissions. Ordinary Debug builds are separate from signed installation packages.
+After each completed set of app fixes or improvements and its required checks, the implementing agent runs **release.sh** and reports the verified DMG path for the user to install manually. This is part of the normal handoff; no separate packaging request is needed. Documentation-only, test-only, website-only and Sketch-only changes do not require repackaging. Use **release.sh** for installed copies. It builds Release, copies the app into `apps/rebind/build/release/`, signs Sparkle's nested code and the app under Hardened Runtime, creates the branded DMG, checks signatures/image integrity, prints SHA-256 and writes the signed Sparkle `appcast.xml` beside the DMG. Missing create-dmg is an error; no alternate ZIP workflow. It never installs, publishes, creates keys or changes permissions. A missing update signing key stops packaging. Ordinary Debug builds are separate from signed installation packages.
 
 ## Release version and build
 
 Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identity:
 
 - **Version** (`MARKETING_VERSION`): currently `1.0.0`; change for a user-visible release.
-- **Build** (`CURRENT_PROJECT_VERSION`): currently `8` in source; the last inspected installed copy is build `7`.
+- **Build** (`CURRENT_PROJECT_VERSION`): currently `9` in source; the last inspected installed copy is build `7`. Sparkle compares this number, so a published update must have a larger build than every earlier published one.
 
 The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
 
-The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-8.dmg` for the current source. It never increments versions or publishes. The update checker compares marketing versions; see [RELEASING](RELEASING.md).
+The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-9.dmg` for the current source. It never increments versions or publishes. See [RELEASING](RELEASING.md).
 
 ## Signing key
 
@@ -50,3 +50,15 @@ Subsequent same-signer updates must preserve rules/profiles and be checked for a
 ## Advanced use
 
 `REBIND_SIGN_IDENTITY` selects an exact certificate name/fingerprint; `REBIND_SIGN_KEYCHAIN` selects an existing unlocked keychain. Normal releases need neither. There is only one package directory, `build/release/`; no separate signer-specific output/configuration or cross-repository script dependency. Keep the same intended identity in both repositories when deliberately updating their pinned fingerprint.
+
+## Update signing key
+
+Sparkle verifies every downloaded update with an **EdDSA (ed25519) key**, separate from the code-signing certificate. The private key was created once on 2026-10-21 with Sparkle's `generate_keys` and is stored in the login keychain (item account `ed25519`); the public key is `SUPublicEDKey` in `apps/rebind/Info.plist`. `release.sh` uses it through `generate_appcast`; macOS may ask once to allow keychain access.
+
+Losing this private key means installed copies can no longer accept updates; they would have to be replaced manually. Export it once to an encrypted backup next to `AppleDevelopment.p12` and keep an off-device copy:
+
+```sh
+apps/rebind/build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys -x ~/Documents/DeveloperSigning/sparkle_ed25519.key
+```
+
+The exported file is the plain private key: keep it only in that private folder (or inside an encrypted archive) and never in Git. Restore with `generate_keys -f <file>`. Never generate a new key for an app that already shipped updates.

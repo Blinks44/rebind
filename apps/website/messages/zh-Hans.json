@@ -104,7 +104,7 @@
   "why_native_title": "为 macOS 而生，而非移植",
   "why_native_text": "基于 SwiftUI 和 AppKit，支持浅色与深色外观，常驻菜单栏。看起来、用起来都像系统自带的工具。",
   "why_private_title": "你的输入只属于你",
-  "why_private_text": "Rebind 不记录键盘输入历史，也不发送使用统计。规则保存在 Mac 上，只有手动检查更新时才会连接 GitHub。",
+  "why_private_text": "Rebind 不记录键盘输入历史，也不发送使用统计。规则保存在 Mac 上。它只会为检查更新连接 GitHub：每天一次或在你手动检查时，并且可以关闭。",
   "why_profiles_title": "不同任务，不同配置",
   "why_profiles_text": "工作、剪辑、游戏，各有一套规则。在菜单栏里即可切换配置。",
   "why_pause_title": "一键暂停",

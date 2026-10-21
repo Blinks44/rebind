@@ -87,7 +87,8 @@ App Sandbox is disabled for the specified global input filtering, synthesis,
 and Accessibility actions outside the Mac App Store. Hardened Runtime and
 build-script sandboxing are enabled. Release disables Xcode base-entitlement
 injection; Debug retains Xcode's debugger/test-runner entitlements. No custom
-entitlements, helpers or drivers are added. The app uses the local MIT HIDPP package;
+entitlements or drivers are added. The app uses the local MIT HIDPP package and the
+embedded Sparkle framework (its own updater helpers);
 isolated dynamic private APIs are used for explicitly experimental trackpad/Dock/lock
 paths. See the
 [current mechanism decisions](research/README.md) and bundled third-party notices.
@@ -127,7 +128,7 @@ Alongside cancellation/output counters, `frame-age-*` records receipt-to-dequeue
 
 ## Packages and research tools
 
-The app target uses the vendored local MIT package `apps/rebind/Packages/HIDPP` for Logitech HID++. Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
+The app target uses the vendored local MIT package `apps/rebind/Packages/HIDPP` for Logitech HID++ and the remote MIT package Sparkle 2.10.0 for updates (`Package.resolved` is versioned). Source adaptations and isolated private APIs are documented in [research](research/README.md), the [dependency/reference register](research/DEPENDENCIES.md) and [bundled notices](../apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
 The standalone TrackpadProbe package that established contact acquisition was removed on 2026-10-13 once its engine was integrated; it remains in Git history (last present in `64dadc3`). `apps/rebind/tools/magic-mouse-probe.swift` is the current single-file probe for external multitouch devices. `apps/rebind/tools/trackpad-click-probe.swift` prints trackpad button and pressure events beside the contact state, to tell physical presses from clicks macOS makes itself.
 
@@ -146,6 +147,6 @@ Rebind is distributed outside the App Store and is not notarized. `apps/rebind/s
 Inspect the existing implementation and [current state](STATE.md) before choosing a slice. Read [engineering standards](ENGINEERING.md) for native input, Swift/concurrency, localization and security requirements. UI work follows [DESIGN](DESIGN.md) and current Sketch frames. Build/test the affected behavior, record the required runtime/manual checks and preserve unrelated work. [WORKFLOW](WORKFLOW.md) describes durable task records and handoff. Detailed per-action behavior and checks live in [verification](verification/); the root README stays a concise public overview.
 
 
-### Manual update checks
+### Updates (Sparkle)
 
-Rebind → Check for Updates requests public release metadata from Blinks44/rebind only when invoked. Use a stable published GitHub Release tagged vMAJOR.MINOR.PATCH; drafts/prereleases are not offered. Public updates must increment CFBundleShortVersionString: build-number-only changes are not advertised as a newer version. Before the first publication the command explicitly reports no release. It opens the latest release page after user activation and never installs automatically. See [REL-003](tasks/REL-003-final-app-readiness.md) for verification and the final tester handoff.
+Rebind embeds Sparkle 2.10.0 (SPM, exact version). `apps/rebind/Info.plist` is merged into the generated Info.plist and sets `SUFeedURL` (`https://github.com/Blinks44/rebind/releases/latest/download/appcast.xml`), `SUPublicEDKey`, `SUEnableAutomaticChecks` and a daily `SUScheduledCheckInterval`. Sparkle compares `CFBundleVersion`, so every published build needs a larger build number. `release.sh` signs Sparkle's nested code with the app identity and writes `build/release/appcast.xml` with `generate_appcast`, which signs the DMG with the EdDSA private key from the login keychain (created once with Sparkle's `generate_keys`; see [SIGNING](SIGNING.md#update-signing-key)). Upload the DMG and `appcast.xml` to the same stable GitHub release. Drafts and prereleases are not offered because `latest/download` resolves only the latest published release. See [REL-005](tasks/REL-005-onboarding-and-updates.md).

@@ -104,7 +104,7 @@
   "why_native_title": "Für macOS gebaut, nicht portiert",
   "why_native_text": "SwiftUI und AppKit, helles und dunkles Erscheinungsbild, ein Symbol in der Menüleiste. Rebind sieht aus und verhält sich wie ein Systemwerkzeug.",
   "why_private_title": "Deine Eingaben bleiben bei dir",
-  "why_private_text": "Rebind protokolliert keine Texteingaben und sendet keine Nutzungsdaten. Belegungen bleiben auf deinem Mac. Nur die manuelle Updatesuche fragt GitHub ab.",
+  "why_private_text": "Rebind protokolliert keine Texteingaben und sendet keine Nutzungsdaten. Belegungen bleiben auf deinem Mac. GitHub wird nur für die Updatesuche kontaktiert, einmal täglich oder auf Wunsch; das lässt sich abschalten.",
   "why_profiles_title": "Profile für jede Aufgabe",
   "why_profiles_text": "Arbeit, Schnitt, Spiele: Jede Aufgabe bekommt eigene Belegungen. Das Profil wechselst du in der Menüleiste.",
   "why_pause_title": "Pause mit einem Klick",

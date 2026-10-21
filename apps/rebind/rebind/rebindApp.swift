@@ -4,7 +4,6 @@ import SwiftUI
 @main
 struct rebindApp: App {
     @NSApplicationDelegateAdaptor(RebindAppDelegate.self) private var delegate
-    @State private var updateChecker = UpdateChecker()
 
     private var opensWindowAtLaunch: Bool {
         let configuration = delegate.model.configuration
@@ -51,10 +50,9 @@ struct rebindApp: App {
                 }
                 CommandGroup(replacing: .appInfo) {
                     AboutCommand(language: delegate.model.activeLanguage)
-                    Button(AppLocalization.string(updateChecker.isChecking ? .checkingUpdates : .checkForUpdates,
-                                                  language: delegate.model.activeLanguage)) {
-                        updateChecker.check(language: delegate.model.activeLanguage)
-                    }.disabled(updateChecker.isChecking || delegate.model.recording != nil)
+                    Button(AppLocalization.string(.checkForUpdates, language: delegate.model.activeLanguage)) {
+                        RebindAppDelegate.updater.checkForUpdates()
+                    }.disabled(!RebindAppDelegate.updater.canCheckForUpdates || delegate.model.recording != nil)
                 }
             }
         Window(.aboutTitle, id: "about") {
@@ -154,6 +152,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     static let mainWindow = MainWindowPresenter()
+    static let updater = AppUpdater(startsUpdater: !runningTests)
 
     /// A click on the Dock icon (or opening Rebind again from Finder) while it runs. Rebind
     /// handles it itself: with Show in Dock off it may still be an accessory app, so a window

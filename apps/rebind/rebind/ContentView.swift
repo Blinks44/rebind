@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var pendingDeletion: Binding?
     @State private var showingProfiles = false
     @State private var setupPresentation = PermissionSetupPresentation()
+    @State private var addsBindingAfterSetup = false
     @State private var titlebarInset: CGFloat?
 
     /// The window reopens on the input category last shown (a window preference, not configuration).
@@ -56,8 +57,14 @@ struct ContentView: View {
         .toolbar { ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1) }.sharedBackgroundVisibility(.hidden) }
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-        .sheet(item: $setupPresentation.context) { context in
-            PermissionSetupView(model: model, context: context)
+        .sheet(item: $setupPresentation.context, onDismiss: {
+            // A second sheet cannot open while the first is still closing.
+            guard addsBindingAfterSetup else { return }
+            addsBindingAfterSetup = false
+            selection = .input(.allKeyboards)
+            editor = EditorSelection(scope: .allKeyboards, binding: nil)
+        }) { context in
+            PermissionSetupView(model: model, context: context, addFirstBinding: { addsBindingAfterSetup = true })
         }
         .sheet(item: $editor) { selection in
             BindingEditor(model: model, scope: selection.scope, existing: selection.binding, isCopy: selection.isCopy)
@@ -80,7 +87,7 @@ struct ContentView: View {
         }
         .onAppear {
             openRequestedSettings()
-            setupPresentation.beginIfNeeded(needsSetup: model.needsPermissionSetup)
+            setupPresentation.beginIfNeeded(needsSetup: model.needsFirstRunSetup)
         }
         .onChange(of: model.requestedSettingsSection) { openRequestedSettings() }
         .onChange(of: model.permissions.allowsRemapping) { wasAllowed, isAllowed in

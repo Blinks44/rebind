@@ -52,7 +52,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Logitech mice: SmartShift wheel mode and sensitivity, pointer resolution (DPI), high-resolution wheel, battery charge, and the gesture button as a trigger; kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
 - Automatic backups of the last 10 different configurations loaded at launch, plus full export/import and individual profile files.
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
-- Manual update checks from **Rebind → Check for Updates**; downloads and installation remain manual.
+- Updates through [Sparkle](https://sparkle-project.org): Rebind checks once a day (or on **Check for Updates**) and asks before installing a signed update.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
 Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad and Magic Mouse touch capture rely on a private macOS interface and are experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
@@ -116,7 +116,7 @@ The selected profile supplies the active bindings. A global Quartz event tap cap
 
 Configuration is stored locally at `~/Library/Application Support/Rebind/configuration.json` using versioned JSON and atomic writes. Rebind does not keep a history of what you type. Text you deliberately save in an Insert Text action is part of your unencrypted local configuration and backups; do not store passwords there. Secure Input and permission/lifecycle checks guard recording and dispatch.
 
-Input processing makes no network requests and sends no analytics. **Check for Updates** contacts the public GitHub Releases API only when selected; it sends no bindings, input or device data. Opening a website or running an Apple Shortcut follows the action you configure.
+Input processing makes no network requests and sends no analytics. The update check downloads the public appcast from GitHub Releases once a day (turn it off in **Settings → General**) or when you choose **Check for Updates**; it sends no bindings, input, device or system data. Opening a website or running an Apple Shortcut follows the action you configure.
 
 ## Technology
 

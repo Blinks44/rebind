@@ -717,9 +717,9 @@ import Carbon
     }
     @objc func refreshPermissions() { lastPermissionCheck = .distantPast; refresh() }
 
-    /// First-run guidance is needed only before acknowledgement and when access is missing.
-    var needsPermissionSetup: Bool {
-        !configuration.hasCompletedSetup && !permissions.allowsRemapping && !storageLocked
+    /// First-run guidance is shown once, until it is finished or deferred.
+    var needsFirstRunSetup: Bool {
+        !configuration.hasCompletedSetup && !storageLocked
     }
 
     /// Atomically acknowledges setup without enabling, reconfiguring or replacing rules.

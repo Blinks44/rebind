@@ -19691,88 +19691,6 @@
         }
       }
     },
-    "setupPurpose" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tasten und Maustasten mit Tastenkombinationen und macOS-Aktionen belegen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Map keys and mouse buttons to shortcuts and macOS actions."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Associez les touches et boutons de souris à des raccourcis et actions macOS."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Назначайте клавишам и кнопкам мыши сочетания клавиш и действия macOS."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Asigna atajos y acciones de macOS a teclas y botones del ratón."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将按键和鼠标按钮映射为快捷键和 macOS 操作。"
-          }
-        }
-      }
-    },
-    "setupTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rebind einrichten"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set up Rebind"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configurer Rebind"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Настройте Rebind"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configura Rebind"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置 Rebind"
-          }
-        }
-      }
-    },
     "showApplicationInFinder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26613,47 +26531,6 @@
         }
       }
     },
-    "checkingUpdates" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checking for Updates…"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Проверка обновлений…"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suche nach Updates…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche de mises à jour…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscando actualizaciones…"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在检查更新…"
-          }
-        }
-      }
-    },
     "externalTrackpadDisconnectedHelp" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -27023,371 +26900,864 @@
         }
       }
     },
-    "updateAvailableTitle" : {
+    "welcomeTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An update is available"
+            "value" : "Welcome to Rebind"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Доступно обновление"
+            "value" : "Добро пожаловать в Rebind"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Update ist verfügbar"
+            "value" : "Willkommen bei Rebind"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une mise à jour est disponible"
+            "value" : "Bienvenue dans Rebind"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hay una actualización disponible"
+            "value" : "Te damos la bienvenida a Rebind"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有可用更新"
+            "value" : "欢迎使用 Rebind"
           }
         }
       }
     },
-    "updateCheckFailedMessage" : {
+    "welcomePurpose" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Check your internet connection and try again."
+            "value" : "Give keys, mouse buttons and taps new actions."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Проверьте подключение к интернету и попробуйте ещё раз."
+            "value" : "Назначайте клавишам, кнопкам мыши и касаниям новые действия."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+            "value" : "Geben Sie Tasten, Maustasten und Tippgesten neue Aktionen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifiez votre connexion Internet et réessayez."
+            "value" : "Donnez de nouvelles actions aux touches, aux boutons de souris et aux touchers."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión a internet e inténtalo de nuevo."
+            "value" : "Da nuevas acciones a teclas, botones del ratón y toques."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请检查网络连接后重试。"
+            "value" : "为按键、鼠标按钮和轻点赋予新的操作。"
           }
         }
       }
     },
-    "updateCheckFailedTitle" : {
+    "welcomeKeysTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn’t check for updates"
+            "value" : "Keys and mouse buttons"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не удалось проверить обновления"
+            "value" : "Клавиши и кнопки мыши"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Updates konnten nicht geprüft werden"
+            "value" : "Tasten und Maustasten"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de rechercher des mises à jour"
+            "value" : "Touches et boutons de souris"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudieron buscar actualizaciones"
+            "value" : "Teclas y botones del ratón"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法检查更新"
+            "value" : "按键和鼠标按钮"
           }
         }
       }
     },
-    "updateCurrentTitle" : {
+    "welcomeKeysDescription" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind is up to date"
+            "value" : "Turn a key, an extra button or the wheel into a shortcut or action."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Установлена последняя версия"
+            "value" : "Превратите клавишу, дополнительную кнопку или колесо в сочетание клавиш или действие."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind ist auf dem neuesten Stand"
+            "value" : "Machen Sie aus einer Taste, einer Zusatztaste oder dem Mausrad eine Tastenkombination oder Aktion."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind est à jour"
+            "value" : "Transformez une touche, un bouton supplémentaire ou la molette en raccourci ou en action."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind está actualizado"
+            "value" : "Convierte una tecla, un botón adicional o la rueda en un atajo o una acción."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind 已是最新版本"
+            "value" : "将按键、额外按钮或滚轮变成快捷键或操作。"
           }
         }
       }
     },
-    "updateNoReleaseMessage" : {
+    "welcomeTouchTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A public release hasn’t been published yet. Try again later."
+            "value" : "Trackpad and Magic Mouse"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Публичная версия ещё не опубликована. Попробуйте позже."
+            "value" : "Трекпад и Magic Mouse"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine öffentliche Version wurde noch nicht veröffentlicht. Versuchen Sie es später erneut."
+            "value" : "Trackpad und Magic Mouse"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune version publique n’a encore été publiée. Réessayez plus tard."
+            "value" : "Trackpad et Magic Mouse"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no se ha publicado una versión pública. Inténtalo más tarde."
+            "value" : "Trackpad y Magic Mouse"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "尚未发布公开版本。请稍后重试。"
+            "value" : "触控板和 Magic Mouse"
           }
         }
       }
     },
-    "updateNoReleaseTitle" : {
+    "welcomeTouchDescription" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No releases yet"
+            "value" : "Choose a ready-made tap or click from a short list."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Релизов пока нет"
+            "value" : "Выберите готовое касание или нажатие из короткого списка."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch keine Veröffentlichung"
+            "value" : "Wählen Sie ein fertiges Tippen oder Klicken aus einer kurzen Liste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune version publiée"
+            "value" : "Choisissez un toucher ou un clic prêt à l’emploi dans une courte liste."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay versiones publicadas"
+            "value" : "Elige un toque o un clic predefinido de una lista breve."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "尚无发布版本"
+            "value" : "从简短列表中选择现成的轻点或点按。"
           }
         }
       }
     },
-    "updateOpenRelease" : {
+    "welcomeAppsTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Release Page"
+            "value" : "Bindings for one app"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть страницу релиза"
+            "value" : "Правила для одного приложения"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versionsseite öffnen"
+            "value" : "Belegungen für eine App"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrir la page de la version"
+            "value" : "Règles pour une app"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir página de la versión"
+            "value" : "Reglas para una app"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开版本页面"
+            "value" : "针对单个 App 的规则"
           }
         }
       }
     },
-    "updateAvailableMessage %@ %@" : {
+    "welcomeAppsDescription" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind %1$@ is available. You’re using %2$@."
+            "value" : "Limit a binding to one app, or keep separate profiles."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Доступна версия Rebind %1$@. Сейчас установлена %2$@."
+            "value" : "Ограничьте правило одним приложением или ведите отдельные профили."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind %1$@ ist verfügbar. Sie verwenden %2$@."
+            "value" : "Beschränken Sie eine Belegung auf eine App oder nutzen Sie getrennte Profile."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind %1$@ est disponible. Vous utilisez la version %2$@."
+            "value" : "Limitez une règle à une app ou gardez des profils séparés."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind %1$@ está disponible. Usas la versión %2$@."
+            "value" : "Limita una regla a una app o usa perfiles separados."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind %1$@ 已发布。你正在使用 %2$@。"
+            "value" : "将规则限定于某个 App，或使用不同的配置文件。"
           }
         }
       }
     },
-    "updateCurrentMessage %@" : {
+    "welcomePauseTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You’re using Rebind %@."
+            "value" : "Pause at any time"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Установлена версия Rebind %@."
+            "value" : "Пауза в любой момент"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sie verwenden Rebind %@."
+            "value" : "Jederzeit pausieren"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vous utilisez Rebind %@."
+            "value" : "Pause à tout moment"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usas Rebind %@."
+            "value" : "Pausa cuando quieras"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你正在使用 Rebind %@。"
+            "value" : "随时暂停"
+          }
+        }
+      }
+    },
+    "welcomePauseDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If something feels wrong, turn bindings off from the menu bar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Если что-то пошло не так, выключите правила в строке меню."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn etwas nicht stimmt, schalten Sie die Belegungen über die Menüleiste aus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En cas de problème, désactivez les règles depuis la barre des menus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si algo no va bien, desactiva las reglas desde la barra de menús."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如有异常，可从菜单栏关闭规则。"
+          }
+        }
+      }
+    },
+    "setupStep %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шаг %1$lld из %2$lld"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schritt %1$lld von %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape %1$lld sur %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso %1$lld de %2$lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第 %1$lld 步，共 %2$lld 步"
+          }
+        }
+      },
+      "comment" : "First-run footer. The placeholders are the current step and the number of steps."
+    },
+    "accessStepTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Accessibility"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Разрешите универсальный доступ"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Bedienungshilfen“ erlauben"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez l’accessibilité"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permite Accesibilidad"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许辅助功能"
+          }
+        }
+      }
+    },
+    "accessStepPurpose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bindings need this one permission to work in other apps."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правилам нужно только это разрешение, чтобы работать в других приложениях."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belegungen brauchen nur diese eine Berechtigung, um in anderen Apps zu funktionieren."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les règles n’ont besoin que de cette autorisation pour fonctionner dans les autres apps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las reglas solo necesitan este permiso para funcionar en otras apps."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "规则只需这一项权限即可在其他 App 中使用。"
+          }
+        }
+      }
+    },
+    "readyTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind is ready"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind готов к работе"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind ist bereit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind est prêt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind está listo"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind 已准备就绪"
+          }
+        }
+      }
+    },
+    "readyStepPurpose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bindings keep working after you close this window."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правила продолжают работать после закрытия этого окна."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belegungen funktionieren weiter, wenn Sie dieses Fenster schließen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les règles continuent de fonctionner une fois cette fenêtre fermée."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las reglas siguen funcionando aunque cierres esta ventana."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭此窗口后，规则仍会继续生效。"
+          }
+        }
+      }
+    },
+    "accessOnTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility is on"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Универсальный доступ включён"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Bedienungshilfen“ ist aktiviert"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’accessibilité est activée"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesibilidad está activada"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辅助功能已开启"
+          }
+        }
+      }
+    },
+    "accessOnMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind can now recognize your triggers and perform actions."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Теперь Rebind распознаёт ваши триггеры и выполняет действия."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind kann jetzt Ihre Auslöser erkennen und Aktionen ausführen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind peut maintenant reconnaître vos déclencheurs et exécuter les actions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind ya puede reconocer tus activadores y realizar acciones."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind 现在可以识别你的触发器并执行操作。"
+          }
+        }
+      }
+    },
+    "menuBarHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find Rebind in the menu bar to pause bindings, switch profiles or quit."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind находится в строке меню: там можно поставить правила на паузу, сменить профиль или выйти."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind finden Sie in der Menüleiste: Dort können Sie Belegungen pausieren, Profile wechseln oder Rebind beenden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind se trouve dans la barre des menus : vous pouvez y suspendre les règles, changer de profil ou quitter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind está en la barra de menús: desde ahí puedes pausar las reglas, cambiar de perfil o salir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind 位于菜单栏，可在那里暂停规则、切换配置文件或退出。"
+          }
+        }
+      }
+    },
+    "addFirstBinding" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add First Binding"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавить первое правило"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erste Belegung hinzufügen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter une première règle"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir la primera regla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加第一条规则"
+          }
+        }
+      }
+    },
+    "automaticUpdates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates automatically"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автоматически проверять обновления"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatisch nach Updates suchen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher automatiquement les mises à jour"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones automáticamente"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动检查更新"
+          }
+        }
+      }
+    },
+    "automaticUpdatesDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind looks for a new version once a day and asks before installing it."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind раз в день ищет новую версию и спрашивает перед установкой."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind sucht einmal täglich nach einer neuen Version und fragt vor der Installation."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind recherche une nouvelle version une fois par jour et demande avant de l’installer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind busca una nueva versión una vez al día y pregunta antes de instalarla."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebind 每天检查一次新版本，安装前会先询问你。"
           }
         }
       }

@@ -13,9 +13,9 @@ import Testing
         InputPermissions(accessibility: true),
         InputPermissions(accessibility: true, posting: true)
     ])
-    func newInstallationOnlyNeedsGuidanceForMissingRequiredAccess(_ grants: InputPermissions) {
+    func newInstallationShowsFirstRunGuidanceWithAnyGrants(_ grants: InputPermissions) {
         let model = AppModel(loadConfiguration: false, readPermissions: { grants })
-        #expect(model.needsPermissionSetup == (grants.allowsRemapping == false))
+        #expect(model.needsFirstRunSetup)
         #expect(model.configuration.isEnabled == false)
     }
 
@@ -31,7 +31,7 @@ import Testing
         let model = AppModel(store: store, readPermissions: { InputPermissions() })
         model.mailbox.configure(original)
         model.mailbox.state.withLock { $0.pending = [binding.action] }
-        #expect(model.needsPermissionSetup)
+        #expect(model.needsFirstRunSetup)
         #expect(model.completePermissionSetup())
         var expected = original
         expected.hasCompletedSetup = true
@@ -39,7 +39,7 @@ import Testing
         #expect(model.mailbox.state.withLock { $0.enabled == enabled && $0.profileID == original.selectedProfileID })
         #expect(model.mailbox.state.withLock { $0.pending == [binding.action] })
         let reopened = AppModel(store: store, readPermissions: { InputPermissions() })
-        #expect(reopened.needsPermissionSetup == false)
+        #expect(reopened.needsFirstRunSetup == false)
         #expect(reopened.configuration == expected)
         #expect(reopened.permissions.requirement == .accessibility)
     }
@@ -51,7 +51,7 @@ import Testing
         let model = AppModel(store: store, loadConfiguration: false, readPermissions: { InputPermissions() })
         model.mailbox.configure(Configuration())
         #expect(model.completePermissionSetup() == false)
-        #expect(model.needsPermissionSetup)
+        #expect(model.needsFirstRunSetup)
         #expect(model.configuration.hasCompletedSetup == false)
         #expect(model.mailbox.state.withLock { $0.enabled == false })
         #expect(model.error != nil)
@@ -65,7 +65,7 @@ import Testing
         let bytes = Data(contents.utf8)
         try bytes.write(to: store.url)
         let model = AppModel(store: store, readPermissions: { InputPermissions() })
-        #expect(model.needsPermissionSetup == false)
+        #expect(model.needsFirstRunSetup == false)
         #expect(model.completePermissionSetup() == false)
         #expect(try Data(contentsOf: store.url) == bytes)
     }

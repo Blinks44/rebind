@@ -104,7 +104,7 @@
   "why_native_title": "Made for macOS, not ported to it",
   "why_native_text": "SwiftUI and AppKit, light and dark appearance, an icon in the menu bar. It looks and behaves like a system utility.",
   "why_private_title": "What you type stays with you",
-  "why_private_text": "Rebind does not log what you type or send analytics. Bindings stay on your Mac. Only Check for Updates contacts GitHub, when you choose it.",
+  "why_private_text": "Rebind does not log what you type or send analytics. Bindings stay on your Mac. It only contacts GitHub to check for updates, once a day or when you ask; you can turn this off.",
   "why_profiles_title": "A profile for every task",
   "why_profiles_text": "Work, editing, games: each gets its own set of bindings. Switch profiles from the menu bar.",
   "why_pause_title": "Pause in one click",

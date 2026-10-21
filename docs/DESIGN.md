@@ -1,6 +1,6 @@
 # Rebind: design direction and live source index
 
-Updated 2026-10-20 (pre-release English copy and interaction handoffs saved/reviewed). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-21 (three-step first run and Sparkle update controls saved/reviewed). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under UI-013. Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
@@ -12,11 +12,13 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 Native correction requested 2026-10-20: the rules card retains the existing 24 pt profile/header gap, with a stationary rounded surface and scrolling rows. Short lists fit their content; filled lists align with the sidebar bottom at the 8 pt window inset. This latest user direction extends frame 06’s short-list specimen; menu Settings adds `gearshape` and opens Settings inside the main window. [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) owns implementation/verification. Live frames 06 and 53 inspected; no Sketch edit/save accompanies this scoped code correction.
 
+Latest save **2026-10-21** ([REL-005](tasks/REL-005-onboarding-and-updates.md)): first run is now three steps in the same 560 × 580 sheet: **64 · Setup · Welcome**, **01 · Setup · Access** (retitled, former "First run") and **65 · Setup · Ready**, placed in that order at the top of the Screens page; screen 31 adds the "Check for updates automatically" card; menus 51–53 add Check for Updates…; Foundations **11 · First run and updates** holds the interaction contract. Sparkle's own update windows are native and not redrawn. Light/Dark screenshot-reviewed. Saved SHA-256 `1b8cd6b11016cc24aa93ac58e89602234f000bb93f6ae339068441b14398540c`.
+
 Open **Rebind.sketch** (renamed from "Rebind - new.sketch" on 2026-10-14) through Sketch MCP (load `mcp`, then `use`; resolve the open document by name). Latest scoped save/review **2026-10-20**: REL-004 corrects backup, privacy, About, companion-app and six-preset mouse guidance in Light/Dark and removes stale next steps in Foundations 07–09. The grouped six-choice screen-58 menu and Foundations 10 remain current. Saved SHA-256 `039b3def609a8aeed54ea2cbc96da56de20b24541acddfecb67f86efc4b2467a`; changed contexts screenshot-reviewed through MCP. [Audit evidence](tasks/REL-004-release-copy-and-documentation-audit.md). Earlier full-document review remains in [production review](tasks/REVIEW-001-production-review.md). IDs change after saving/reopening, so resolve them live; [UI-022](tasks/UI-022-soft-design-system.md) records broader scope and limits.
 
 | Page | Content |
 | --- | --- |
-| 01 · Screens | 63 numbered pairs: Light left, Dark right; one vertical walkthrough, built from shared components/styles |
+| 01 · Screens | 65 numbered pairs: Light left, Dark right; one vertical walkthrough starting 64 → 01 → 65, built from shared components/styles |
 | 02 · Foundations | Color variables, typography, shape/spacing/elevation, component overviews, principles and native mapping |
 | 03 · Components | Symbol sources named `Theme/Group/Variant`, plus theme-neutral `Icon/<SF Symbol name>` |
 | 04 · Brand | App icon artwork as scale-safe paths (also used as the in-app logo), Menu Bar template; Brand/Distribution/DMG · Light with background-only export and separate native Finder preview |

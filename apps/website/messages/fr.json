@@ -104,7 +104,7 @@
   "why_native_title": "Conçu pour macOS, pas porté",
   "why_native_text": "SwiftUI et AppKit, apparence claire ou sombre, une icône dans la barre des menus. Rebind a l’allure et le comportement d’un utilitaire système.",
   "why_private_title": "Vos saisies restent chez vous",
-  "why_private_text": "Rebind ne conserve aucun historique de saisie et n’envoie aucune statistique. Les règles restent sur votre Mac. Seule la recherche de mises à jour contacte GitHub, à votre demande.",
+  "why_private_text": "Rebind ne conserve aucun historique de saisie et n’envoie aucune statistique. Les règles restent sur votre Mac. Il ne contacte GitHub que pour rechercher des mises à jour, une fois par jour ou à votre demande ; vous pouvez le désactiver.",
   "why_profiles_title": "Un profil pour chaque usage",
   "why_profiles_text": "Travail, montage, jeux : à chaque activité ses règles. On change de profil depuis la barre des menus.",
   "why_pause_title": "En pause d’un clic",

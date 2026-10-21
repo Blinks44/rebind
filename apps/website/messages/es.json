@@ -104,7 +104,7 @@
   "why_native_title": "Hecho para macOS, no adaptado",
   "why_native_text": "SwiftUI y AppKit, aspecto claro y oscuro, un icono en la barra de menús. Tiene el aspecto y el comportamiento de una utilidad del sistema.",
   "why_private_title": "Lo que escribes es solo tuyo",
-  "why_private_text": "Rebind no guarda un historial de lo que escribes ni envía analíticas. Las reglas se quedan en tu Mac. Solo contacta con GitHub cuando eliges buscar actualizaciones.",
+  "why_private_text": "Rebind no guarda un historial de lo que escribes ni envía analíticas. Las reglas se quedan en tu Mac. Solo contacta con GitHub para buscar actualizaciones, una vez al día o cuando lo pidas, y puedes desactivarlo.",
   "why_profiles_title": "Un perfil para cada tarea",
   "why_profiles_text": "Trabajo, edición, juegos: cada actividad tiene sus propias reglas. El perfil se cambia desde la barra de menús.",
   "why_pause_title": "Pausa con un clic",

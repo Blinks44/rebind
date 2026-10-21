@@ -89,6 +89,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             speeds.forEach(menu.addItem)
         }
         menu.addItem(.separator())
+        menu.addItem(item(text(.checkForUpdates), #selector(checkForUpdates),
+                          enabled: RebindAppDelegate.updater.canCheckForUpdates))
         let quit = NSMenuItem(title: text(.quitRebind), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quit.target = NSApp
         menu.addItem(quit)
@@ -178,6 +180,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = enabled
         return item
+    }
+
+    @objc private func checkForUpdates() {
+        RebindAppDelegate.updater.checkForUpdates()
     }
 
     @objc private func openMainWindow() {
