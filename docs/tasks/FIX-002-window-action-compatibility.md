@@ -1,8 +1,8 @@
 # FIX-002: Window actions across Finder, Chrome and ChatGPT
 
 - Updated: 2026-10-21
-- Stage: awaiting_verification
-- Owner: current implementation chat; implementation ready, runtime handoff open
+- Stage: done
+- Owner: Unassigned; user-verified 2026-10-21
 - Ownership checked: 2026-10-21, main `5bafe80`; clean starting checkout, no overlapping edits observed
 - Owned surfaces: WindowActionExecutor/AXWindowAccessibility, WindowActionTests, project build number, task/STATE/PLAN/capability/research evidence
 - Requirements: SPEC §5 Windows and applications; existing focus, permission and cancellation safeguards
@@ -17,7 +17,7 @@ Repair the reported minimize failure in Chrome and ChatGPT while Finder works wi
 - [x] Identify the failing AX stage and compare application capabilities without collecting window content.
 - [x] Repair application discovery with regression coverage, retaining bounded worker execution and focus/cancellation gates.
 - [x] Build the incremented app and run affected tests; separate injected coverage from application/hardware evidence.
-- [ ] Confirm repaired native action execution and the actual Button 5 + down gesture in Finder, Chrome and ChatGPT on build 8.
+- [x] Confirm repaired native action execution and the actual Button 5 + down gesture in Finder, Chrome and ChatGPT (user-confirmed on installed build 10, 2026-10-21).
 - [x] Update task, STATE and affected evidence with a concrete next step.
 
 ## Cause and correction
@@ -72,4 +72,4 @@ Final code review: no mutation retry, permission request, event-path work, conte
 
 ## Next handoff
 
-Install `apps/rebind/build/release/Rebind-1.0.0-8.dmg` manually, then test the actual Button 5 + down rule on an unlocked desktop. Confirm Finder, Chrome and ChatGPT minimize once and restore normally; record the installed artifact and result. Agent-run real-window actions still need explicit authorization after the earlier review rejection. Check other affected layout/full-screen/cycle actions only if relevant. Keep stage awaiting_verification until runtime evidence exists; installed build 7 cannot validate this change.
+Done: user confirmed on build 10 (2026-10-21). Former step: install the build-8 DMG manually, then test the actual Button 5 + down rule on an unlocked desktop. Confirm Finder, Chrome and ChatGPT minimize once and restore normally; record the installed artifact and result. Agent-run real-window actions still need explicit authorization after the earlier review rejection. Check other affected layout/full-screen/cycle actions only if relevant. Keep stage awaiting_verification until runtime evidence exists; installed build 7 cannot validate this change.

@@ -46,12 +46,9 @@ private struct KeyboardFocusAppearance<Outline: InsettableShape>: ViewModifier {
 }
 
 extension View {
-    @ViewBuilder func keyboardFocusRing(_ shape: some InsettableShape = Capsule(style: .circular), isFocused: Bool?) -> some View {
-        if let isFocused {
-            modifier(KeyboardFocusAppearance(shape: shape, isFocused: isFocused))
-        } else {
-            modifier(KeyboardFocusRing(shape: shape))
-        }
+    /// For a control that already tracks its own focus state.
+    func keyboardFocusRing(_ shape: some InsettableShape = Capsule(style: .circular), isFocused: Bool) -> some View {
+        modifier(KeyboardFocusAppearance(shape: shape, isFocused: isFocused))
     }
 
     func keyboardFocusRing(_ shape: some InsettableShape = Capsule(style: .circular)) -> some View {

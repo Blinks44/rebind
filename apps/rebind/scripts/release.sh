@@ -14,6 +14,8 @@ import tempfile
 
 APP_ROOT = Path(sys.argv[1])
 OUTPUT = APP_ROOT / "build" / "release"
+# dev.sh honours the same override, so the packaged app is the one just built.
+DERIVED_DATA = Path(os.environ.get("REBIND_DERIVED_DATA", APP_ROOT / "build" / "DerivedData"))
 KEYCHAIN = os.environ.get("REBIND_SIGN_KEYCHAIN")
 # Pin the existing shared development certificate; never silently change signer.
 IDENTITY = os.environ.get("REBIND_SIGN_IDENTITY", "69D383553450694A1E9D78650B3FC6E69446BD4F")
@@ -59,10 +61,13 @@ def normalize_bundle_permissions(bundle):
 def write_appcast(dmg, version):
     # Sparkle signs the finished DMG with the EdDSA key in the login keychain (generate_keys).
     # The appcast is uploaded with the DMG; the app reads it from the latest GitHub release.
-    tool = APP_ROOT / "build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast"
+    tool = DERIVED_DATA / "SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast"
     if not tool.exists():
         raise RuntimeError("Sparkle tools are missing; run scripts/dev.sh resolve")
     appcast = OUTPUT / "appcast.xml"
+    # generate_appcast appends to an existing feed. Each release publishes its own appcast with
+    # only its DMG, so an earlier local build must never be listed as an available update.
+    appcast.unlink(missing_ok=True)
     release = f"https://github.com/Blinks44/rebind/releases/download/v{version}/"
     with tempfile.TemporaryDirectory(prefix="rebind-appcast-") as staging:
         shutil.copy2(dmg, staging)
@@ -87,7 +92,7 @@ def main():
     destination = OUTPUT / "Rebind.app"
     if destination.exists():
         shutil.rmtree(destination)
-    run("ditto", APP_ROOT / "build/DerivedData/Build/Products/Release/Rebind.app", destination)
+    run("ditto", DERIVED_DATA / "Build/Products/Release/Rebind.app", destination)
     sign = ["codesign", "--force", "--options", "runtime", "--timestamp=none", "--sign", fingerprint]
     if KEYCHAIN:
         sign.extend(["--keychain", KEYCHAIN])

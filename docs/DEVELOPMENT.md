@@ -69,8 +69,7 @@ open -n apps/rebind/build/DerivedData/Build/Products/Debug/Rebind.app --args --a
 ```
 
 `--application-fixture` seeds do-nothing rules in disposable temporary storage and disables
-category-preference persistence. Main-window permission values are injected. The smaller
-`--keyboard-fixture` exercises shared controls only. Both are Debug-only; they do not prove
+category-preference persistence. Main-window permission values are injected. It is Debug-only and does not prove
 actual permissions, recording delivery or hardware remapping. See [UI-024](tasks/UI-024-keyboard-navigation.md)
 and the [final acceptance queue](verification/release-candidate.md).
 

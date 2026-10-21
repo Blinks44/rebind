@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-21**. Baseline `main` `86c9e92` plus uncommitted [REL-005](tasks/REL-005-onboarding-and-updates.md) (first run and Sparkle). No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-21**. Baseline `main` `86c9e92` `7aa1a7d` (first run and Sparkle, [REL-005](tasks/REL-005-onboarding-and-updates.md)) plus the uncommitted build-10 review fixes. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and evidence
 
@@ -12,7 +12,7 @@ The earlier October 20 overall manual pass is preserved; later testing found fiv
 
 ## Current release work
 
-Source is **1.0.0 (9)**: [REL-005](tasks/REL-005-onboarding-and-updates.md) adds the three-step first run (Welcome, Access, Ready) designed in Sketch and replaces the manual GitHub checker with Sparkle 2.10.0 (daily checks by default, EdDSA-signed appcast written by release.sh, key in the login keychain). Runtime first-run walkthrough, EdDSA key backup and the first end-to-end update between two published builds are open.
+Source is **1.0.0 (10)** (build 10: [review of the October 17–21 changes](history/2026-10.md), verified DMG `apps/rebind/build/release/Rebind-1.0.0-10.dmg`): [REL-005](tasks/REL-005-onboarding-and-updates.md) adds the three-step first run (Welcome, Access, Ready) designed in Sketch and replaces the manual GitHub checker with Sparkle 2.10.0 (daily checks by default, EdDSA-signed appcast written by release.sh, key in the login keychain). User confirmed on installed build 10 (2026-10-21): first-run walkthrough, FIX-002 window actions (Button 5 + down in Finder/Chrome/ChatGPT) and off-device signing/EdDSA key backups. The first end-to-end update between two published builds is open.
 
 Build 8: [FIX-002](tasks/FIX-002-window-action-compatibility.md) replaces the failing Chrome/ChatGPT system-wide AX focused-app query with AppKit PID discovery plus direct AXFrontmost validation. Debug/Release packaging and 42 focused software functions pass. Verified local DMG: `apps/rebind/build/release/Rebind-1.0.0-8.dmg`; native execution and Button 5 + down remain open. Installed app is build 7. AGENTS/WORKFLOW and the local workflow skill now require this DMG handoff after app changes; the user installs manually.
 
@@ -26,13 +26,12 @@ Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md)
 
 ## Open task index
 
-Priority: verify the new window-action compatibility repair, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
+Priority: publish v1.0.0, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
 
 | Task | Concrete next step |
 | --- | --- |
-| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Install build 9; walk through first run; back up the EdDSA key; verify the update path after the first two releases. |
-| [FIX-002](tasks/FIX-002-window-action-compatibility.md) | Manually install the verified build-8 DMG, then check Button 5 + down in Finder/Chrome/ChatGPT; agent-run window mutations still need explicit authorization. |
-| [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; verify exported-key restore/off-device copy and another-Mac/current-signature installation. |
+| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Publish v1.0.0 with appcast; verify the update path with the next build; first-run accessibility/locales. |
+| [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; FIX-002 owns build-8 compatibility verification with the REL-001 signer. |
 | [REL-003](tasks/REL-003-final-app-readiness.md) | Overall tester pass preserved; REL-004 owns the newer copy candidate. Same-signer/platform checks remain. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |

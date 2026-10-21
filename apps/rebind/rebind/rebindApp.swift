@@ -15,8 +15,6 @@ struct rebindApp: App {
         if RebindAppDelegate.isWindowFixture {
             ContentView(model: delegate.model, persistsWindowSelection: false)
                 .environment(\.locale, delegate.model.activeLanguage.locale)
-        } else if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture") {
-            KeyboardNavigationFixture()
         } else if ProcessInfo.processInfo.arguments.contains("--application-fixture") {
             ApplicationUIFixture()
         } else {
@@ -32,7 +30,6 @@ struct rebindApp: App {
             mainContent
                 .background { ActiveSpaceWindow() }
                 .background { MainWindowRegistration(presenter: RebindAppDelegate.mainWindow) }
-                .background { MainWindowPersistence() }
         }
             .windowToolbarStyle(.unified(showsTitle: false))
             .defaultSize(width: 1080, height: 720)
@@ -77,8 +74,7 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     private static var runningTests: Bool {
         if isWindowFixture { return true }
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--keyboard-fixture")
-            || ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
+        if ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
         #endif
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
             || NSClassFromString("XCTestCase") != nil

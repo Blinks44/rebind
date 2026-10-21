@@ -8,7 +8,5 @@
 	<string>oGWZ8ocwMVjjx4uyV/+yMpuJEP4dmb1aoAcJTuk2/3E=</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
-	<key>SUScheduledCheckInterval</key>
-	<integer>86400</integer>
 </dict>
 </plist>

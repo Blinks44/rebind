@@ -113,10 +113,10 @@ nonisolated struct CompanionApp: Hashable, Sendable {
         var pids = [pid_t](repeating: 0, count: Int(capacity) + 64)
         let count = pids.withUnsafeMutableBytes { proc_listallpids($0.baseAddress, Int32($0.count)) }
         guard count > 0 else { return [] }
-        var buffer = [CChar](repeating: 0, count: Int(MAXPATHLEN) * 4)
+        var buffer = [UInt8](repeating: 0, count: Int(MAXPATHLEN) * 4)
         return pids.prefix(Int(count)).compactMap { pid in
-            guard pid > 0, proc_pidpath(pid, &buffer, UInt32(buffer.count)) > 0 else { return nil }
-            return String(cString: buffer)
+            let length = pid > 0 ? proc_pidpath(pid, &buffer, UInt32(buffer.count)) : 0
+            return length > 0 ? String(decoding: buffer.prefix(Int(length)), as: UTF8.self) : nil
         }
     }
 

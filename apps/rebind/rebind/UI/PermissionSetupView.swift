@@ -139,7 +139,8 @@ struct PermissionSetupView: View {
                 .primaryButton().keyboardShortcut(.defaultAction)
             case .access:
                 if !model.permissions.allowsRemapping {
-                    Button(.setUpLater) { finishSetup() }.keyboardShortcut(.cancelAction).secondaryButton()
+                    // Escape is not available on first run (Sketch Foundations 11): leaving is deliberate.
+                    Button(.setUpLater) { finishSetup() }.secondaryButton()
                 }
                 Button(.`continue`) {
                     model.refreshPermissions()

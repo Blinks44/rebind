@@ -5,7 +5,7 @@ struct MainSidebarButton: View {
     let title: LocalizedStringResource
     let symbol: String
     var isSelected = false
-    var keyboardFocus: Bool? = nil
+    var keyboardFocus: Bool
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.colorSchemeContrast) private var contrast

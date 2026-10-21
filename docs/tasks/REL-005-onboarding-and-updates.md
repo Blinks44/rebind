@@ -21,10 +21,11 @@ Not in scope: notarization/Developer ID, delta updates, beta channels, embedded 
 
 - [x] Sketch: 64 Welcome, 01 Access, 65 Ready, General updates card, menu items and Foundations 11 contract in Light/Dark; saved and screenshot-reviewed.
 - [x] Native first-run steps, update controls and menu items; six-language strings; Debug build without warnings.
-- [ ] First launch on a clean configuration: Welcome → Access (no access) / Ready (access granted), Set Up Later, Add First Binding opens the Keyboard editor, Done; keyboard Return, VoiceOver and all six languages at minimum sheet size.
+- [x] First launch on a clean configuration with build 10: user reports the first-run walkthrough works (2026-10-21).
+- [ ] First-run keyboard Return, VoiceOver and all six languages at minimum sheet size.
 - [ ] Check for Updates… before the first release shows Sparkle's error (no appcast yet); after publishing, reports up to date.
 - [ ] End-to-end update between two published Sparkle builds (offer, download, EdDSA check, install, relaunch) with rules and Accessibility preserved; also from the accessory (no Dock icon) mode.
-- [ ] Off-device backup of the EdDSA private key.
+- [x] Off-device backup of the EdDSA private key (local export verified 2026-10-21; user reports the off-device copy done the same day).
 
 ## Sketch source
 
@@ -36,10 +37,12 @@ Changed: `rebind/UI/PermissionSetupView.swift`, `rebind/UI/UpdateSettingsRow.swi
 
 Verification 2026-10-21 (Apple silicon, macOS 27.0.1, Xcode 27.1): Debug build without warnings; full `dev.sh test`: 935 tests passed (2469 cases with arguments), 2 skipped, 0 failed. `release.sh`: signed `apps/rebind/build/release/Rebind-1.0.0-9.dmg`, SHA-256 `1d39e666583e03553ba383e82927522f01bb02f1062ae0577cfd78b7b9604487`; Sparkle.framework and app signed with the pinned Apple Development identity (team GJ35NZKDRS, hardened runtime), `codesign --verify --strict --deep` passes; `appcast.xml` (build 9, minimum macOS 26.0) EdDSA signature verified with `sign_update --verify`. Not installed, no runtime walkthrough, nothing published.
 
+Review 2026-10-21, **1.0.0 (10)**: appcast regenerated from scratch per release (the previous step appended earlier local builds), packaging follows `REBIND_DERIVED_DATA`, Set Up Later without Escape per Foundations 11, redundant `SUScheduledCheckInterval` removed. Full tests pass; signed `apps/rebind/build/release/Rebind-1.0.0-10.dmg`; appcast lists only build 10. See [history](../history/2026-10.md).
+
 ## Open checks / dependency
 
 Runtime checks above need the installed build 9 and a clean or reset configuration (Settings → Advanced → reset, after exporting a backup). The end-to-end update needs the first two GitHub releases; until then only the error/up-to-date paths can be observed.
 
 ## Next handoff
 
-Install the build-9 DMG, walk through the first run once (or after a reset), then publish v1.0.0 with `appcast.xml` and verify the update path with the next build. Export the EdDSA key backup before the first publication.
+Publish v1.0.0 with `appcast.xml` (see [RELEASING](../RELEASING.md)) and verify the update path with the next build. First-run accessibility/locale checks stay with the accessibility pass.

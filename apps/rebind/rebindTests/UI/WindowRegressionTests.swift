@@ -10,7 +10,7 @@ import Testing
         defer { NSWindow.removeFrame(usingName: name) }
         func makeWindow() -> NSWindow {
             let controller = NSHostingController(rootView: Color.clear.frame(minWidth: 880, minHeight: 600)
-                .background { MainWindowPersistence(frameName: name) })
+                .background { MainWindowRegistration(presenter: MainWindowPresenter(activate: {}), frameName: name) })
             let window = NSWindow(contentViewController: controller)
             window.isReleasedWhenClosed = false
             window.setFrame(NSRect(x: 100, y: 100, width: 1080, height: 720), display: false)

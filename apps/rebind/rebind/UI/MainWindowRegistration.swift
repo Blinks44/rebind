@@ -1,22 +1,35 @@
 import AppKit
 import SwiftUI
 
-/// Reports the actual main window without taking over SwiftUI's window delegate or lifecycle.
+/// Reports the actual main window without taking over SwiftUI's window delegate or lifecycle,
+/// and saves its geometry independently of scene restoration, which stays disabled for
+/// background launch.
 struct MainWindowRegistration: NSViewRepresentable {
     let presenter: MainWindowPresenter
+    var frameName = "RebindMainWindow"
 
     final class Probe: NSView {
         var presenter: MainWindowPresenter?
+        var frameName = ""
 
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
-            if let window { presenter?.register(window) }
+            guard let window else { return }
+            presenter?.register(window)
+            // Let SwiftUI apply its initial default size and content constraints first.
+            let name = frameName
+            DispatchQueue.main.async { [weak window] in
+                guard let window else { return }
+                window.setFrameUsingName(name)
+                window.setFrameAutosaveName(name)
+            }
         }
     }
 
     func makeNSView(context: Context) -> Probe {
         let view = Probe()
         view.presenter = presenter
+        view.frameName = frameName
         return view
     }
 
