@@ -70,3 +70,5 @@ Priority: publish v1.0.0, then remaining accessibility/platform/distribution che
 
 
 Each row routes remaining evidence, not a request to rerun every accepted happy path. Concrete release procedure: [RELEASING](RELEASING.md). Broader platform/device claims require new evidence; retain explicit limits meanwhile.
+
+Claude Code integration: native `AGENTS.md` loading (2.1.277+), no root `CLAUDE.md` adapter; shared skills via `.claude/skills`. See [verification](history/2026-10.md#2026-10-22-use-agentsmd-directly-in-claude-code).
