@@ -73,3 +73,5 @@ Priority: publish v1.0.0, then remaining accessibility/platform/distribution che
 Each row routes remaining evidence, not a request to rerun every accepted happy path. Concrete release procedure: [RELEASING](RELEASING.md). Broader platform/device claims require new evidence; retain explicit limits meanwhile.
 
 Repository maintenance (2026-10-22): Claude co-author trailers removed from history; future commit attribution disabled in `.claude/settings.json`. See [history](history/2026-10.md#2026-10-22-remove-claude-commit-co-authorship). Historical commit IDs predate this rewrite. GitHub Contributors cache refresh remains external.
+
+Claude Code integration: native `AGENTS.md` loading (2.1.277+), no root `CLAUDE.md` adapter; shared skills via `.claude/skills`. See [verification](history/2026-10.md#2026-10-22-use-agentsmd-directly-in-claude-code).

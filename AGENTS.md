@@ -72,6 +72,8 @@ Keep STATE around 1–2 pages, PLAN a short roadmap, and AGENTS practical. Retai
 
 ## 5. Relevant skills
 
+Claude Code 2.1.277+ reads `AGENTS.md` directly when no project or ancestor `CLAUDE.md` / `CLAUDE.local.md` takes precedence. The `.claude/skills` symlink exposes the same skills to Claude Code.
+
 Read only relevant `.agents/skills/<name>/SKILL.md` and its required references. Provenance/licenses/review notes: `.agents/skills/manifest.json`; review policy and macOS overrides: ENGINEERING.
 
 - Ordinary SwiftUI/UI work: `swiftui-pro` + `swiftui-design-principles`.
