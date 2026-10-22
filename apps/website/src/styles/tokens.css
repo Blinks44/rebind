@@ -1,0 +1,36 @@
+/* Rebind.sketch > 05 · Website > Implementation notes, reviewed 2026-10-22.
+   Calm owns control geometry; the website uses the Light theme only. */
+:root {
+  color-scheme: light;
+  --moduix-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --moduix-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --moduix-background: #f5f7fb;
+  --moduix-foreground: #111318;
+  --moduix-primary: #2f66f5;
+  --moduix-primary-foreground: #ffffff;
+  --moduix-card: #ffffffd9;
+  --moduix-card-foreground: #111318;
+  --moduix-popover: #fffffff2;
+  --moduix-popover-foreground: #111318;
+  --moduix-border: #0f172a0f;
+  --moduix-muted-foreground: #3c3c43bf;
+  --moduix-accent: #2f66f51f;
+  --moduix-accent-foreground: #111318;
+  --moduix-ring: #2f66f5;
+  --moduix-button-radius: var(--moduix-radius-full);
+  --moduix-menu-trigger-radius: var(--moduix-radius-full);
+  --rebind-canvas-top: #f5f7fb;
+  --rebind-canvas-bottom: #edf1f8;
+  --rebind-canvas-glow: #dce7ff8c;
+  --rebind-text-secondary: #3c3c43bf;
+  --rebind-text-tertiary: #3c3c434d;
+  --rebind-separator: #0f172a12;
+  --rebind-keycap-top: #ffffff;
+  --rebind-keycap-bottom: #eef1f6;
+  --rebind-keycap-ledge: #d3d9e4;
+  --rebind-keycap-border: #0f172a1a;
+  --rebind-keycap-highlight: #ffffffe6;
+  --rebind-keycap-text: #1b2230;
+  --rebind-content-width: 75rem;
+  --rebind-page-gutter: clamp(1.25rem, 4vw, 3rem);
+}

@@ -56,3 +56,7 @@ Save and review changes in Sketch; keep states, copy and annotations there. Upda
 Device-name/keyboard and multi-vendor battery follow-ups are reconciled in the saved 2026-10-16 source. Inspect these live states when implementing/verifying [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) and [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md); retain their native/hardware limits.
 
 DMG source saved and screenshot-reviewed on 2026-10-19: [REL-002](tasks/REL-002-branded-dmg.md). Fixed light background uses Rebind canvas/card styles and blue accent, with no translated instructional text baked into the image. Finder supplies real icons and filenames. One shipping Retina TIFF is exported from Sketch; no duplicated code generator.
+
+## Website
+
+Reviewed read-only 2026-10-22: **Rebind.sketch → 05 · Website** owns the second-version landing, 404, desktop/mobile navigation and language-menu states, installation alert and `Website · Implementation notes`. The website is **light only**, moduix Calm with blue primary, capsule controls, canvas gradient and Light/Keycap variables; this is separate from the native app's Light/Dark contract. Its language switcher is moduix Menu with a RadioItemGroup of localized links, not Select. The initialization/tokens are ready; full layout and behavior transfer is iteration two ([WEB-001](tasks/WEB-001-landing-page.md)). Sketch was inspected without edits or saves.

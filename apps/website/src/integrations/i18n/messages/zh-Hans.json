@@ -1,0 +1,13 @@
+{
+  "metaTitle": "Rebind | Mac 输入重映射工具",
+  "metaDescription": "将按键、鼠标按钮和支持的手势映射到快捷键和 macOS 操作。免费开源的原生 Mac 应用，支持配置文件和针对应用的绑定。",
+  "heading": "你的按键，你的快捷方式。",
+  "description": "将按键和鼠标按钮映射到快捷键和 macOS 操作。",
+  "github": "在 GitHub 上查看",
+  "language": "语言",
+  "skip": "跳转到内容",
+  "notFoundHeading": "此按键尚未绑定任何操作",
+  "notFoundDescription": "你要查找的页面不存在或已移动。",
+  "home": "返回首页",
+  "notFoundTitle": "找不到页面 | Rebind"
+}

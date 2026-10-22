@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-21**. Baseline `main` `86c9e92` `7aa1a7d` (first run and Sparkle, [REL-005](tasks/REL-005-onboarding-and-updates.md)) plus the uncommitted build-10 review fixes. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-22**. Baseline `main` `2ca3b59` (old website cleared after app build-11 review); new website foundation and its documentation are uncommitted. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and evidence
 
@@ -18,7 +18,7 @@ Build 8: [FIX-002](tasks/FIX-002-window-action-compatibility.md) replaces the fa
 
 [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) retains tester acceptance of wheel/card/settings/geometry, update preservation, keyboard navigation, sleep/pause/permission loss and improved build-7 foreground opening (Monny activation-before-show/window reuse; six native functions pass). Exact accepted artifact/cycle matrix unspecified; VoiceOver remains open. Current Apple Development testing continues; publication/site deferred.
 
-[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) introduced shared Apple Development signing in build 3. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: `Blinks44/rebind` / `rebind.moduix.dev`, **not deployed**. Download needs a stable DMG. Browser visual review remains separate from local SSR/build checks.
+[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) introduced shared Apple Development signing in build 3. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: [WEB-001](tasks/WEB-001-landing-page.md) owns the reviewed six-language foundation at `apps/website/` for `rebind.moduix.dev`. Ready for `Rebind.sketch → 05 · Website` design transfer; shells remain noindex, not deployed. Final visual/localization/download acceptance stays open.
 
 Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md) owns the 1.0/1 candidate, 903 logic passes and 25 native passes/two skips. Its rejected polling experiments did not improve isolated paused/no-grant CPU (~1.5%); granted normal-profile performance stays open. [UI-024](tasks/UI-024-keyboard-navigation.md) owns keyboard/menu/focus repair; [INPUT-015](tasks/INPUT-015-touch-release-scope.md) owns the finite touch pool and [DESIGN](DESIGN.md) locates saved Sketch. Prior dated details remain in these tasks and [history](history/2026-10.md).
 
@@ -26,10 +26,11 @@ Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md)
 
 ## Open task index
 
-Priority: publish v1.0.0, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. Records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
+Priority: publish v1.0.0, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. App records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
 
 | Task | Concrete next step |
 | --- | --- |
+| [WEB-001](tasks/WEB-001-landing-page.md) | ready_for_implementation: transfer the live website design into the verified foundation; then visual/localization/download and authorized production checks. |
 | [REL-005](tasks/REL-005-onboarding-and-updates.md) | Publish v1.0.0 with appcast; verify the update path with the next build; first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; FIX-002 owns build-8 compatibility verification with the REL-001 signer. |

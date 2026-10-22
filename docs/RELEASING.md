@@ -55,7 +55,7 @@ Check launch, saved rules, real permission status and a short binding smoke test
 
 ## 6. Publish the site and support links
 
-The website now points to `Blinks44/rebind` and `https://rebind.moduix.dev`. It discovers the latest stable release with a DMG and caches the result for up to 10 minutes. Until a suitable release exists or if GitHub is unavailable, Download stays disabled.
+The rebuilt website foundation points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). The old MVP and its release-discovery code were removed. Before publishing, transfer the final Sketch design, connect an actual stable release DMG, finish six-language/installation review and set `site.indexingEnabled` to true. The initialization shell deliberately remains noindex and has no download button.
 
 From `apps/website`, run:
 
@@ -64,6 +64,6 @@ pnpm build
 pnpm preview
 ```
 
-Check `/`, `/ru`, `/de`, `/fr`, `/es`, `/zh`: language navigation, actual Download target, FAQ limits, small-screen text and keyboard demo. `preview` is local. When the DMG and support wording are ready, use **pnpm deploy** from that folder to publish to Cloudflare. This requires your Cloudflare account access; deployment is a separate explicit action.
+Run `pnpm check`; with preview on port 4173, run `pnpm test:smoke`. Check `/`, `/ru/`, `/de/`, `/fr/`, `/es/`, `/zh-Hans/`: language navigation, actual Download target, FAQ limits, small-screen text and keyboard demo. `preview` is local. When the DMG and support wording are ready, use **pnpm deploy** from that folder to publish to Cloudflare. This requires your Cloudflare account access; deployment is a separate explicit action.
 
 Enable GitHub private vulnerability reporting as described by [GitHub](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository) (Settings → Advanced Security → Private vulnerability reporting); confirm the **Security → Report a vulnerability** route exists. Keep the public bug template, [security policy](../SECURITY.md), [changelog](../CHANGELOG.md) and release notes current. Do not announce broader hardware or platform support than the evidence permits.
