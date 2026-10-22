@@ -78,4 +78,4 @@ Before any website publication, reconcile the undeployed six-language installati
 
 ## Final copy pass — 2026-10-21
 
-Second full read of the six-language catalog and website before release; fixes and evidence are in [history](../history/2026-10.md#2026-10-21-final-pre-release-review). English/Sketch copy unchanged. Remaining: visual check of the changed Russian/German strings at minimum width in build 11.
+Second full read of the six-language catalog and website before release; fixes and evidence are in [history](../history/2026-10.md#2026-10-21-final-pre-release-review). English/Sketch copy unchanged. User confirmed the changed strings on build 11 (2026-10-22).
