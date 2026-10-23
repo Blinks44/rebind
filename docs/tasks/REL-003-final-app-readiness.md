@@ -1,13 +1,15 @@
 # REL-003: Finish available app release work
 
-- Updated: 2026-10-20
+- Updated: 2026-10-23
 - Stage: awaiting_verification
 - Owner: Unassigned; available app implementation/checks complete, overall tester pass reported; identified distribution/platform evidence pending
 - Ownership checked: main e070ec9 plus preserved uncommitted touch/UI/signing work
 - Owned surfaces: Updates/, application menu/catalog and update tests, final acceptance evidence; performance trials removed
 - Requirements: PLAN release preparation; SPEC §§9–11 and §15; latest request to finish available app work
 
-## Outcome
+## Historical outcome
+
+Current handoff: [REL-005](REL-005-onboarding-and-updates.md) replaced the manual checker below with Sparkle; [STATE](../STATE.md) identifies the current package. This record retains the earlier readiness/performance evidence, not current updater behavior.
 
 The planned manual update command is implemented. Public unauthenticated GitHub API confirms Blinks44/rebind exists (200); latest release returns 404 before the first publication. The app menu checks only on explicit invocation, using an ephemeral session with no cookies/credentials/cache and bounded request/resource timeouts. It sends no input, settings or device data. Numeric version comparison handles v-prefixed release tags and omitted zero components; drafts/prereleases, malformed responses and errors are never reported as up to date. Native localized alerts distinguish new/current/no-release/error; new versions open the fixed GitHub latest-release page only after the user's button press. No auto-download, install or startup polling. Six languages are included. [GitHub REST mechanism](https://docs.github.com/en/rest/releases/releases#get-the-latest-release); no dependency added.
 
@@ -24,11 +26,7 @@ A measured paused Release consumed 1.5–3.1% CPU with a disposable empty config
 
 ## Remaining acceptance and handoff
 
-No first public release exists, so real newer-release delivery/opening remains pending; response interpretation has injected coverage. Public GitHub is no longer a publication dependency, but website links/deployment are separate work. Release tags should use vMAJOR.MINOR.PATCH; update comparison uses the marketing version, so public updates must increment it.
-
-At the earlier REL-003 preparation the installed app did not use the stable Rebind Release designated requirement; REL-004 subsequently confirms installed 1.0/1 now does. The first transition can require a fresh Accessibility grant; grant survival must be tested between two distinct builds signed with the same stable identity. Preserve an export before replacing the app. Never treat permission regrant during a signer transition as proof of same-signer update failure.
-
-The 1.0/1 artifact below is retained for the same-signer update rehearsal; [REL-004](REL-004-release-copy-and-documentation-audit.md) owns the newer 1.0.0/2 copy candidate. Use the short ordered checklist in [release candidate](../verification/release-candidate.md). macOS 26, hardware interruption/settings/idle-first-touch, real TCC transitions, fluent proofreading and measured callback/action latency remain open. No install, publication or Git commit.
+Current distribution acceptance is in [REL-005](REL-005-onboarding-and-updates.md) and the [release queue](../verification/release-candidate.md): first Sparkle update between published builds, another-Mac/current-signature installation and qualified platform/safety/performance checks. Sparkle compares build numbers; the old manual marketing-version-only update policy is superseded. Historical self-signed 1.0/1 and copy 1.0.0/2 candidates below are not current install recommendations. Preserve the October 20 overall tester pass and later scoped acceptance; do not repeat the general walkthrough without an affected change.
 
 
 ## Previous candidate — 2026-10-20
@@ -43,4 +41,4 @@ The isolated paused/no-grant CPU result remains approximately 1.5%; neither the 
 
 ## Tester acceptance — 2026-10-20
 
-The user reports completing the requested checks successfully, with no bugs found. This is overall user acceptance of the current app work, not agent-observed hardware evidence or a scenario-by-scenario certification. Exact installed hash, test environment and individual accessibility/performance/platform results were not supplied; retain the existing identified-candidate and evidence limits in the [release queue](../verification/release-candidate.md#tester-report--2026-10-20). No new defect or implementation work is identified. Stage remains awaiting_verification for the separate distribution/platform gates. Next: prepare release notes/package handoff, verify two distinct stable-signer builds preserve rules/access, and resolve minimum-OS/support claims before publication. No app changes, builds, installation, publication or Git commit in this documentation update.
+The user reports completing the requested checks successfully, with no bugs found. This is overall user acceptance of the current app work, not agent-observed hardware evidence or a scenario-by-scenario certification. Exact installed hash, test environment and individual accessibility/performance/platform results were not supplied; retain the existing identified-candidate and evidence limits in the [release queue](../verification/release-candidate.md#tester-report--2026-10-20). No new defect or implementation work is identified. Stage remains awaiting_verification for the separate distribution/platform gates. Next: use the current release queue for identified distribution/platform checks; notes, packaging and subsequent scoped acceptance are already recorded in newer owners. No app changes, builds, installation, publication or Git commit in this documentation update.

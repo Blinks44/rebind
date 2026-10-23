@@ -1,6 +1,6 @@
 # REL-004: Pre-release product, copy and documentation audit
 
-- Updated: 2026-10-21
+- Updated: 2026-10-23
 - Stage: awaiting_verification
 - Owner: Unassigned; local audit complete, candidate/runtime/publication review pending
 - Baseline: main e070ec9 plus preserved uncommitted touch/UI/update/signing work
@@ -8,6 +8,8 @@
 - Requirements: user-requested final feature-gap review, ordinary-user wording in all six languages, current instructions/README/website and actionable GitHub DMG release plan; SPEC §§3–11, 13, 15–16
 
 ## Outcome and boundaries
+
+The app audit and build-11 changed-copy check are complete within their recorded scope. [STATE](../STATE.md) identifies the current package; [REL-005](REL-005-onboarding-and-updates.md) owns Sparkle and [WEB-001](WEB-001-landing-page.md) owns the replacement website. Earlier website details below describe the removed MVP. Remaining release/platform/proofreading gates are in the [release queue](../verification/release-candidate.md).
 
 Audit implemented functionality before recommending additional scope. Repair misleading or unclear copy, stale release/support claims and broken public links. Keep native input behavior and the accepted preset pool stable unless a concrete critical defect requires a separate fix. Review live English Sketch and preserve reusable components/layout. Prepare release instructions and notes locally; no Git commit/tag/push, installation, permission/rule changes, GitHub publication or website deployment is authorized by this audit.
 
@@ -24,7 +26,7 @@ Inspected current trigger/action, configuration/profile, Settings and update imp
 | Stop/recover safely | Menu/window pause, emergency pause, permission recovery, lifecycle release and protected storage already exist. Retain detailed runtime limits; no new input feature needed. |
 | Tailor input to apps/tasks | Per-app rules, exclusions, manual profiles, search, duplication and notes already exist. No automatic profile expansion. |
 | Protect settings and troubleshoot | Full/profile export/import, startup backups and private-content-free support report already exist. Added a user guide and clearer bug/support instructions instead of another diagnostics system. |
-| Discover a new version | Manual GitHub checker exists. Website repository/download wiring fixed. Automatic updater needs a separate feed/signature/install/lifecycle design and is not required for the first release. |
+| Discover a new version | At the audit, a manual checker existed; REL-005 subsequently replaced it with Sparkle. The former website wiring is superseded by WEB-001. |
 | Easier first bindings | Optional starter presets could help after release. Examples now match actual conflict/gesture rules; automatic rule creation is not added. |
 | Undo window placement | Useful post-release candidate, but needs per-window history/lifecycle/display policy and separate acceptance. Existing halves/quarters/center/fill are sufficient for the current release. |
 | More gestures/macros | No critical gap demonstrated. Keep 12 presets per trackpad category and six Experimental mouse presets. Avoid another recognizer or automation platform before release. |
@@ -52,9 +54,7 @@ English source reviewed through live MCP, including screen text and nested text 
 
 ## Remaining acceptance / next handoff
 
-Preserve the user's successful general manual report. Next: export configuration, replace the previous stable-signed candidate with the new distinct candidate and verify saved rules plus actual Accessibility access. A short affected copy/layout smoke pass suffices; do not repeat the accepted basic gesture inventory. Minimum macOS 26, full normal-build VoiceOver/preferences, fluent-reader proofreading, detailed device matrices and measured granted-profile CPU/callback/action latency remain separately limited in PLAN/tasks. The app/site copy audit is not native-speaker certification.
-
-Before public release, review/commit the intended source, align the tag with the rebuilt tested DMG, close or disclose remaining gates, attach DMG/checksums to a GitHub draft, verify downloads and update behavior, then review/deploy the website. Instructions and prepared notes are linked from RELEASING. No additional input feature is a prerequisite identified by this audit.
+Preserve overall tester acceptance and the installed build-11 copy/accessibility pass. Current targeted acceptance is routed through the release queue; macOS 26, fluent proofreading, detailed hardware matrices and granted-profile CPU/callback/action latency remain qualified. No extra input feature was identified as a release prerequisite. [RELEASING](../RELEASING.md) owns authorized source/tag/package/publication steps; no new permission to publish follows from this record.
 
 ## Final local candidate — 2026-10-20
 
@@ -71,9 +71,7 @@ Final website build/type check also passes after the last Chinese metadata refin
 
 ## Current signing candidate handoff — 2026-10-20
 
-User subsequently authorizes signing/release alignment with Monny. [REL-001](REL-001-signing-workflow.md#unified-default-pipeline-verified--2026-10-20) owns build 1.0.0 (3), the shared Apple Development signer and installed/running check. This supersedes build 2 as the current candidate without invalidating the dated copy/layout tests above. Old self-signed build 1/2 → new development-signed build 3 is a signer transition; it cannot close the old same-signer update gate. Accessibility/window/input smoke and two subsequent development-signed update builds remain. No publication.
-
-Before any website publication, reconcile the undeployed six-language installation FAQ with the newer Apple Development test-candidate signing route; its earlier self-signed wording predates REL-001 alignment. Website publishing remains outside this signing task.
+Build 3 superseded the historical build-2 copy candidate with Apple Development signing ([REL-001](REL-001-signing-workflow.md#unified-default-pipeline-verified--2026-10-20)). Later candidates and accepted runtime checks are in STATE/release queue; the old self-signed → Apple Development transition remains distinct from same-signer update acceptance. The old website FAQ was corrected October 21 and that site was subsequently replaced by WEB-001; neither is an outstanding copy-audit action.
 
 
 ## Final copy pass — 2026-10-21

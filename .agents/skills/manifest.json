@@ -56,7 +56,7 @@
       "upstream_commit_date": "2026-03-29T15:28:00Z",
       "reviewed_on": "2026-10-09",
       "license": "MIT",
-      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts."
+      "normalization": "Added full upstream MIT LICENSE; installed reviewed skill/references/agent files only; no repository AGENTS, plugin bundles or executable scripts. 2026-10-23 hygiene adaptation: replaced two upstream workstation-absolute example paths with portable file names; instructional content and license preserved."
     },
     {
       "name": "swiftui-performance-audit",

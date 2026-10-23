@@ -6,7 +6,7 @@
 - Ownership checked: main `2ca3b59`; website source and affected website documentation owned by this implementation turn, released at handoff
 - Owned surfaces: `apps/website/`, website sections in shared documentation; Sketch inspected read-only
 - Requirements: [SPEC §17](../SPEC.md#17-public-website), user request 2026-10-22 for the same reviewed foundation as Monny
-- Code baseline: main `2ca3b59`; website and documentation uncommitted
+- Code baseline: initialized after `2ca3b59`; foundation is tracked in current `main` (`11cef13` at the 2026-10-23 documentation review). Original checks below remain dated 2026-10-22.
 
 ## Outcome and scope
 

@@ -1,6 +1,6 @@
 # Rebind: shared development workflow
 
-Updated 2026-10-21. [AGENTS](../AGENTS.md) is the entry point for code and design work. This workflow defines durable context, ownership and completion; it does not authorize new agents, messages, remappings, permission changes or publication.
+Updated 2026-10-23. [AGENTS](../AGENTS.md) is the entry point for code and design work. This workflow defines durable context, ownership and completion; it does not authorize new agents, messages, remappings, permission changes or publication.
 
 ## Document responsibilities
 
@@ -70,7 +70,7 @@ Shared documentation, instructions, comments and skills use English; conversatio
 
 Keep stable contracts, current state/tasks, significant decisions and concise reproducible verification. Report date, known build/OS/device/settings, observed result, evidence source and limits. Distinguish agent observation, tester report and injected tests. Unknown conditions remain unknown; a vague confirmation does not close broad acceptance.
 
-Keep transcripts, quoted replies, personal absolute paths, real rules/configurations, migration backups and temporary logs out of commits. Use portable source names/access instructions. Screenshots/exports stay in temporary storage outside the repository by default; written results must remain useful without them. Version an image only for a documented deliverable, shipped asset, required visual-test baseline or defect evidence that text cannot preserve. Preserve existing justified assets; policy changes do not automatically delete/untrack them.
+Keep transcripts, quoted replies, personal absolute paths, real rules/configurations, migration backups and temporary logs out of commits. Use portable source names/access instructions. Before committing, inspect the exact diff and untracked files for accidental private content; ignore rules do not protect already tracked files. Removing a file from the working tree does not erase earlier Git commits; any sensitive historical content needs a separately scoped history/credential response. Screenshots/exports stay in temporary storage outside the repository by default; written results must remain useful without them. Version an image only for a documented deliverable, shipped asset, required visual-test baseline or defect evidence that text cannot preserve. Preserve existing justified assets; policy changes do not automatically delete/untrack them.
 
 The commented `.gitignore` owns actual Xcode/SPM/editor/local-output exclusions. For new paths, inspect nested rules, test ignored and kept samples with `git check-ignore -v --no-index`, and inspect `git ls-files --cached --ignored --exclude-standard`. Keep shared context, source/design inputs and lockfiles visible. Do not blanket-ignore client directories or image extensions; do not auto-untrack files. See the skill's [hygiene reference](../.agents/skills/agent-workflow-setup/references/repository-hygiene.md).
 

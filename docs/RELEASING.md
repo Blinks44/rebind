@@ -6,17 +6,17 @@ Maintainer checklist for a public GitHub DMG release and the website. Run comman
 
 Preserve the [successful general tester report](verification/release-candidate.md#tester-report--2026-10-20). For copy-only changes, repeat affected language/layout checks and a short smoke pass instead of the whole gesture inventory. Resolve or explicitly disclose remaining [release gates](PLAN.md#release-gates), particularly minimum macOS 26 execution, accessibility coverage and same-signer update preservation. Do not claim Intel has been tested when it has not.
 
-Export your configuration before replacing the installed app. Use the shared pinned **Apple Development** certificate for the current local candidate; export its encrypted private-key backup off-device and keep its password separately. The previous Rebind Release backup is a different identity. See [SIGNING](SIGNING.md).
+Export your configuration before replacing the installed app. Use the shared pinned **Apple Development** certificate for the current local candidate; export its encrypted private-key backup off-device and keep its password separately. See [SIGNING](SIGNING.md).
 
 Review the intended source changes and commit them before making a public tag. A tag must identify all source changes included in the tested package, rather than an older HEAD. Do not include local output, personal configuration or private signing files in the commit.
 
 ## 2. Set the version and build
 
-In Xcode, choose the **rebind** app target → **General** → **Identity**. For the first stable release use **Version 1.0.0**, with a new **Build** number greater than 1. Keep Debug and Release values consistent; the current signing-alignment candidate is 1.0.0 (3); the copy audit prepared 1.0.0 (2), and the prior candidate is 1.0 (1). Do not change the bundle identifier or signing identity.
+In Xcode, choose the **rebind** app target → **General** → **Identity**. Use **Version 1.0.0** for the first stable release and keep Debug/Release build values consistent. Read the current candidate from [STATE](STATE.md) and the Xcode project. Do not change the bundle identifier or signing identity.
 
-Source now uses **1.0.0 (11)**, the release candidate: build 9 added the first run and Sparkle updates ([REL-005](tasks/REL-005-onboarding-and-updates.md)), builds 10–11 are review and copy fixes. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.0.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
+Source is **1.0.0 (14)**; [REL-005](tasks/REL-005-onboarding-and-updates.md) owns first run/Sparkle, and STATE links final packaging evidence. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.0.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
 
-For the remaining permission-preservation check, build/install two distinct builds with the same certificate, bundle identifier and Applications location, incrementing the build number. Confirm rules/profiles and actual Accessibility access survive. The self-signed build 1/2 → shared Apple Development build 3 change is a signer transition and may require a fresh grant; it does not test same-signer updates. Use two subsequent Apple Development builds to verify permission preservation.
+For an identified permission-preservation check, use two distinct builds with the same certificate, bundle identifier and Applications location, incrementing the build number. Confirm rules/profiles and actual Accessibility access survive. The self-signed build 1/2 → shared Apple Development build 3 change is a signer transition and may require a fresh grant; it does not test same-signer updates. Use two subsequent Apple Development builds to verify permission preservation.
 
 ## 3. Build the distributable
 
@@ -27,15 +27,15 @@ apps/rebind/scripts/release.sh
 
 `release.sh` signs and verifies the app and DMG, verifies image integrity, prints the archive path and SHA-256 and writes `appcast.xml` (the Sparkle feed, EdDSA-signed with the [update signing key](SIGNING.md#update-signing-key)) next to the DMG. It does not install or publish. Install `create-dmg` if needed (`brew install create-dmg`); missing create-dmg now stops packaging, keeping one DMG workflow. Resolve a missing signing identity by restoring its original backup, not generating a replacement.
 
-For version 1.0.0 and build 3, the output is `apps/rebind/build/release/Rebind-1.0.0-3.dmg`. Use the actual filename if your build number differs. Create a checksum file in the same folder:
+For version 1.0.0 and build 14, the output is `apps/rebind/build/release/Rebind-1.0.0-14.dmg`. Use the actual filename if your build number differs. Create a checksum file in the same folder:
 
 ```sh
 cd apps/rebind/build/release
-shasum -a 256 Rebind-1.0.0-3.dmg > SHA256SUMS.txt
+shasum -a 256 Rebind-1.0.0-14.dmg > SHA256SUMS.txt
 shasum -a 256 -c SHA256SUMS.txt
 ```
 
-Test the packaged copy, record its hash/version/OS/device and make no source changes after that final build without rebuilding/rechecking affected areas. Older 1.0/1 hashes in task history do not identify this new artifact.
+Test the packaged copy, record its hash/version/OS/device and make no source changes after that final build without rebuilding/rechecking affected areas. Historical package hashes do not identify a later rebuild.
 
 Current Apple Development candidates are for local testing; public customer distribution is not verified. Do not present the steps below as evidence of supported distribution signing or publish merely because packaging passes.
 

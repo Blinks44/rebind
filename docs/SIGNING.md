@@ -15,11 +15,11 @@ After each completed set of app fixes or improvements and its required checks, t
 Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identity:
 
 - **Version** (`MARKETING_VERSION`): currently `1.0.0`; change for a user-visible release.
-- **Build** (`CURRENT_PROJECT_VERSION`): currently `10` in source; the last inspected installed copy is build `7`. Sparkle compares this number, so a published update must have a larger build than every earlier published one.
+- **Build** (`CURRENT_PROJECT_VERSION`): currently `14` in source; inspect the installed copy separately. Sparkle compares this number, so a published update must have a larger build than every earlier published one.
 
 The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
 
-The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-10.dmg` for the current source. It never increments versions or publishes. See [RELEASING](RELEASING.md).
+The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-14.dmg` for the current source. It never increments versions or publishes. See [RELEASING](RELEASING.md).
 
 ## Signing key
 
@@ -33,11 +33,9 @@ Apple Development is our current **local testing** route without a paid Develope
 
 ## Backup and macOS reinstall
 
-The old self-signed `Monny.p12` and `Rebind.p12` backups were removed from `~/Documents/DeveloperSigning/` on 2026-10-21 at the user's request; both apps use only the Apple Development identity. The old identities may still exist in the login keychain and are no longer used.
+Back up the current Apple Development identity through Keychain Access → My Certificates as an encrypted PKCS#12 file, outside the repository. It must include the private key; a public certificate or app/DMG cannot restore it. Keep the export password separately in a password manager and retain an off-device copy. Current export, restore verification and off-device copy were tester-confirmed on 2026-10-21; historical self-signed identities are no longer used.
 
-The current Apple Development identity has been exported through Keychain Access → My Certificates to encrypted `AppleDevelopment.p12` in that folder (2026-10-20), for both apps. The file is nonempty, rejects an empty-password MAC check and is owner-readable only. User reports restore verification and an off-device copy done (2026-10-21). Store its export password in your password manager, separately from the file, and keep an off-device copy. A public .cer or app/DMG cannot recover the private key. No signing folders, keys or passwords belong in Git.
-
-After reinstalling macOS, install Xcode/create-dmg, restore the repositories, import `AppleDevelopment.p12` into the login keychain using its export password, check its fingerprint/expiry and run the same release.sh. The certificate must include its private key in My Certificates. If missing/expired, stop and plan the identity transition; generating a same-named replacement does not restore it.
+After reinstalling macOS, install Xcode/create-dmg, restore the repository and import the backup into the login keychain. Check the exact fingerprint/expiry and private-key presence, then run release.sh. If the identity is missing/expired, stop and plan an explicit transition; a same-named replacement is a different identity. Never put signing folders, keys or passwords in Git.
 
 ## Install and update
 
@@ -55,10 +53,10 @@ Subsequent same-signer updates must preserve rules/profiles and be checked for a
 
 Sparkle verifies every downloaded update with an **EdDSA (ed25519) key**, separate from the code-signing certificate. The private key was created once on 2026-10-21 with Sparkle's `generate_keys` and is stored in the login keychain (item account `ed25519`); the public key is `SUPublicEDKey` in `apps/rebind/Info.plist`. `release.sh` uses it through `generate_appcast`; macOS may ask once to allow keychain access.
 
-Losing this private key means installed copies can no longer accept updates; they would have to be replaced manually. Exported on 2026-10-21 to `~/Documents/DeveloperSigning/sparkle_ed25519.key` (signature verified against the build-10 appcast); user reports an off-device copy done the same day. Export command:
+Losing this private key means installed copies can no longer accept updates; they would have to be replaced manually. The export was signature-verified against the build-10 appcast on 2026-10-21; the tester reported an off-device copy the same day. To export a recovery copy, set `REBIND_SIGNING_BACKUP_DIR` to an existing private directory outside the repository, then run:
 
 ```sh
-apps/rebind/build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys -x ~/Documents/DeveloperSigning/sparkle_ed25519.key
+apps/rebind/build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys -x "${REBIND_SIGNING_BACKUP_DIR:?Set a private backup directory}/sparkle_ed25519.key"
 ```
 
-The exported file is the plain private key: keep it only in that private folder (or inside an encrypted archive) and never in Git. Restore with `generate_keys -f <file>`. Never generate a new key for an app that already shipped updates.
+The exported file is the plain private key: keep it only in private storage outside the repository (or inside an encrypted archive) and never in Git. Restore with `generate_keys -f <file>`. Never generate a new key for an app that already shipped updates.

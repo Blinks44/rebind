@@ -1,42 +1,34 @@
 # Rebind: current state
 
-Updated **2026-10-23**. Baseline `main` `2ca3b59` (old website cleared after app build-11 review); new website foundation and its documentation are uncommitted. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-23**, checkout `main` / `11cef13`. Docs cleanup uncommitted; prior menu evidence preserved. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
-## Product and evidence
+## Product and current artifact
 
-Native macOS **26+**, Swift 6 / SwiftUI/AppKit. Scheme/module `rebind`, product `Rebind.app`, bundle `blinks44.rebind`. Current environment: Xcode 27.1 / Swift 6.4 / SDK 27, Apple silicon macOS 27.0.1. Minimum-OS and Intel execution remain unverified.
+Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `blinks44.rebind`. Recorded environment: Apple silicon macOS 27.0.1, Xcode 27.1 / Swift 6.4 / SDK 27. macOS 26/Intel execution remains unverified.
 
-Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries and atomic storage are implemented. Schema **44**, migrations 1–43. Trackpads retain **12 presets per category**; Magic Mouse has **six Experimental tap/click/vertical-scroll presets**, with basic delivery user-confirmed. Rules are category-wide; physical-device attribution is only for mouse settings. No automatic profile selection. Soft styling and six languages are integrated. [SPEC](SPEC.md) owns contracts; [CAPABILITIES](CAPABILITIES.md) owns tested subsets/limits.
+Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, atomic storage and six languages are implemented. Schema **44** (migrations 1–43). Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**, basic delivery tester-confirmed. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and live Sketch locator.
 
-The earlier October 20 overall manual pass is preserved; later testing found five wheel/window/layout regressions, now owned by [FIX-001](tasks/FIX-001-wheel-and-window-regressions.md). Preserve that acceptance and do not repeat the whole walkthrough without an affected change. Artifact/environment and individual scenario coverage remain unspecified: see [release queue](verification/release-candidate.md#tester-report--2026-10-20). Earlier named October 18 hardware results remain in [their record](verification/manual-test-2026-10-18.md).
+Source **1.0.0 (14)** at `11cef13`: explicit Settings `gear` and Command-comma. Latest recorded verified package: `apps/rebind/build/release/Rebind-1.0.0-14.dmg`; [checksum and open installed-menu check](history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). No new app packaging for docs-only cleanup.
 
-## Current release work
+## Acceptance and remaining release work
 
-Source is **1.0.0 (13)**; Settings now uses AppKit’s native menu image and Command-comma, matching Monny’s context menu (build 12 compared the wrong surface). Verified DMG `apps/rebind/build/release/Rebind-1.0.0-13.dmg`; [evidence and remaining visual check](history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). Earlier build 11: [final pre-release review](history/2026-10.md#2026-10-21-final-pre-release-review), six-language copy fixes; verified DMG `apps/rebind/build/release/Rebind-1.0.0-11.dmg`; build 10 reviewed the October 17–21 changes: [REL-005](tasks/REL-005-onboarding-and-updates.md) adds the three-step first run (Welcome, Access, Ready) designed in Sketch and replaces the manual GitHub checker with Sparkle 2.10.0 (daily checks by default, EdDSA-signed appcast written by release.sh, key in the login keychain). User confirmed on installed build 10 (2026-10-21): first-run walkthrough, FIX-002 window actions (Button 5 + down in Finder/Chrome/ChatGPT) and off-device signing/EdDSA key backups. The first end-to-end update between two published builds is open.
+Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update subsets ([FIX-001](tasks/FIX-001-wheel-and-window-regressions.md), done); October 21 build-10 first run and Finder/Chrome/ChatGPT actions ([FIX-002](tasks/FIX-002-window-action-compatibility.md), done), key backups; October 22 build-11 copy, VoiceOver, contrast/motion and minimum-width languages. [Release queue](verification/release-candidate.md) retains dates, unknown conditions and narrower outstanding cases. Do not request another accepted whole-app pass without affected changes.
 
-Build 8: [FIX-002](tasks/FIX-002-window-action-compatibility.md) replaces the failing Chrome/ChatGPT system-wide AX focused-app query with AppKit PID discovery plus direct AXFrontmost validation. Debug/Release packaging and 42 focused software functions pass. Verified local DMG: `apps/rebind/build/release/Rebind-1.0.0-8.dmg`; native execution and Button 5 + down remain open. Installed app is build 7. AGENTS/WORKFLOW and the local workflow skill now require this DMG handoff after app changes; the user installs manually.
+[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle 2.10.0 daily updates; first update between published builds remains open. [SIGNING](SIGNING.md) owns Apple Development/non-notarized testing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and targeted accessibility gates remain in [PLAN](PLAN.md#release-gates) and tasks. Earlier paused/no-grant ~1.5% CPU is not active-rule evidence.
 
-[FIX-001](tasks/FIX-001-wheel-and-window-regressions.md) retains tester acceptance of wheel/card/settings/geometry, update preservation, keyboard navigation, sleep/pause/permission loss and improved build-7 foreground opening (Monny activation-before-show/window reuse; six native functions pass). Exact accepted artifact/cycle matrix unspecified; VoiceOver remains open. Current Apple Development testing continues; publication/site deferred.
-
-[REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) owns the pre-release wording/feature-gap/documentation audit and historical **1.0.0 (2)** copy candidate; [REL-001](tasks/REL-001-signing-workflow.md) introduced shared Apple Development signing in build 3. Six-language copy, claims and docs are reconciled; no critical new input feature was identified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the user/maintainer handoff. Website: [WEB-001](tasks/WEB-001-landing-page.md) owns the reviewed six-language foundation at `apps/website/` for `rebind.moduix.dev`. Ready for `Rebind.sketch → 05 · Website` design transfer; shells remain noindex, not deployed. Final visual/localization/download acceptance stays open.
-
-Earlier implementation evidence: [REL-003](tasks/REL-003-final-app-readiness.md) owns the 1.0/1 candidate, 903 logic passes and 25 native passes/two skips. Its rejected polling experiments did not improve isolated paused/no-grant CPU (~1.5%); granted normal-profile performance stays open. [UI-024](tasks/UI-024-keyboard-navigation.md) owns keyboard/menu/focus repair; [INPUT-015](tasks/INPUT-015-touch-release-scope.md) owns the finite touch pool and [DESIGN](DESIGN.md) locates saved Sketch. Prior dated details remain in these tasks and [history](history/2026-10.md).
-
-[REL-001](tasks/REL-001-signing-workflow.md) aligns release.sh with Monny: one pinned existing **Apple Development** identity, DMG-only build/release output, readable bundle modes. Historical build-3 installation/smoke evidence stays in its record; the installed app is now build 7, with build-8 compatibility verification in FIX-002. The old self-signed key/backups are retained; the current shared P12 is now exported; restore/signing verification and off-device copy remain open: [SIGNING](SIGNING.md). [REL-002](tasks/REL-002-branded-dmg.md) owns the DMG artwork/Finder check. Update preservation needs two distinct stable-signed installed builds, separate from an Xcode/ad-hoc signer transition.
+Website foundation is tracked at `apps/website/`; [WEB-001](tasks/WEB-001-landing-page.md) owns live Sketch transfer and final six-language visual/download checks. Shells remain noindex/undeployed. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the public handoff; publication/deployment require authorization.
 
 ## Open task index
 
-Priority: publish v1.0.0, then remaining accessibility/platform/distribution checks and [release gates](PLAN.md#release-gates). No new recognizers. App records below retain `awaiting_verification` unless stated otherwise; ownership is in REL-004. Preserve general tester acceptance and detailed limits.
+Finish current-menu/release checks; no new recognizers. Tasks own detailed acceptance/ownership; REL-003/004 preparation routes through the release queue.
 
 | Task | Concrete next step |
 | --- | --- |
 | [WEB-001](tasks/WEB-001-landing-page.md) | ready_for_implementation: transfer the live website design into the verified foundation; then visual/localization/download and authorized production checks. |
 | [REL-005](tasks/REL-005-onboarding-and-updates.md) | Publish v1.0.0 with appcast; verify the update path with the next build; first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
-| [REL-004](tasks/REL-004-release-copy-and-documentation-audit.md) | Copy audit preserved; FIX-002 owns build-8 compatibility verification with the REL-001 signer. |
-| [REL-003](tasks/REL-003-final-app-readiness.md) | Overall tester pass preserved; REL-004 owns the newer copy candidate. Same-signer/platform checks remain. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
-| [UI-024](tasks/UI-024-keyboard-navigation.md) | Normal-build VoiceOver/preferences, import/export and exact editor focus return; disposable profile/confirmation paths pass. |
+| [UI-024](tasks/UI-024-keyboard-navigation.md) | Targeted normal-build focus/preferences and file transactions; preserve build-11 accessibility acceptance. |
 | [REVIEW-002](tasks/REVIEW-002-idle-energy.md) | Idle-first-touch, SIGTERM release, granted Release CPU. |
 | [DEVICE-005](tasks/DEVICE-005-companion-dpi-reconnect.md) | G HUB/DPI passed; Options+ detection and tap-timeout recovery remain. |
 | [DEVICE-004](tasks/DEVICE-004-menu-pointer-speed.md) | Drag/reopen/Devices passed; Light/Dark, VoiceOver, widths, keyboard route. |
@@ -69,9 +61,6 @@ Priority: publish v1.0.0, then remaining accessibility/platform/distribution che
 | [UI-009](tasks/UI-009-mouse-design.md) | Capture/timing/native accessibility of integrated styling. |
 | [BRAND-001](tasks/BRAND-001-icon-runtime.md) | Fresh-bundle Dock/Menu Bar; tint and macOS 26 separately. |
 
+Rows route open evidence; preserve accepted paths. Finished outcomes remain in [tasks](tasks/README.md) and optional [history](history/README.md).
 
-Each row routes remaining evidence, not a request to rerun every accepted happy path. Concrete release procedure: [RELEASING](RELEASING.md). Broader platform/device claims require new evidence; retain explicit limits meanwhile.
-
-Repository maintenance (2026-10-22): Claude co-author trailers removed from history; future commit attribution disabled in `.claude/settings.json`. See [history](history/2026-10.md#2026-10-22-remove-claude-commit-co-authorship). Historical commit IDs predate this rewrite. GitHub Contributors cache refresh remains external.
-
-Claude Code integration: native `AGENTS.md` loading (2.1.277+), no root `CLAUDE.md` adapter; shared skills via `.claude/skills`. See [verification](history/2026-10.md#2026-10-22-use-agentsmd-directly-in-claude-code).
+Claude Code uses native AGENTS.md loading (2.1.277+) and `.claude/skills`; no root CLAUDE.md adapter. Historical commit references can predate the October 22 attribution-only rewrite. [DOC-003](tasks/DOC-003-context-maintenance.md) records the latest documentation/hygiene review.

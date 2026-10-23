@@ -1,6 +1,6 @@
 # FIX-002: Window actions across Finder, Chrome and ChatGPT
 
-- Updated: 2026-10-21
+- Updated: 2026-10-23
 - Stage: done
 - Owner: Unassigned; user-verified 2026-10-21
 - Ownership checked: 2026-10-21, main `5bafe80`; clean starting checkout, no overlapping edits observed
@@ -66,10 +66,10 @@ Workflow review covers app fix → package handoff, docs-only → no package, pa
 
 Automatic approval review rejected a proposed native minimize/restore test as an unrequested user-visible change. It did not execute. Do not execute window actions without explicit user authorization. The safer exact-production-source preflight cancelled every action before mutation, but could not reach any application window: the workspace reported `com.apple.loginwindow`, and app activation did not change it. That run proves neither successful repaired discovery nor repaired window execution; do not mistake lock-screen results for another app compatibility failure.
 
-The failure stage and direct capabilities were observed while the desktop was available before the change. Software tests and compilation verify the correction and existing safeguards. Native execution of the repaired client, physical trigger delivery, broader layout/cycle/full-screen behavior, macOS 26 and Intel remain unverified. Earlier accepted behavior and its limits are preserved in [window evidence](../verification/phase-4-windows.md).
+The failure stage and direct capabilities were observed while the desktop was available before the change. Software tests and compilation verify the correction and existing safeguards. At that pre-test stage repaired native execution and physical delivery were unverified. Tester acceptance on installed build 10 subsequently closes the reported minimize/trigger case; broader layout/cycle/full-screen behavior, macOS 26 and Intel remain separately qualified. Earlier accepted behavior and its limits are preserved in [window evidence](../verification/phase-4-windows.md).
 
 Final code review: no mutation retry, permission request, event-path work, content collection or loss of executor focus/cancellation checks. Remaining AppKit snapshot lag fails closed through direct AXFrontmost validation; final-check-to-mutation races remain the existing platform limit.
 
 ## Next handoff
 
-Done: user confirmed on build 10 (2026-10-21). Former step: install the build-8 DMG manually, then test the actual Button 5 + down rule on an unlocked desktop. Confirm Finder, Chrome and ChatGPT minimize once and restore normally; record the installed artifact and result. Agent-run real-window actions still need explicit authorization after the earlier review rejection. Check other affected layout/full-screen/cycle actions only if relevant. Keep stage awaiting_verification until runtime evidence exists; installed build 7 cannot validate this change.
+Done: tester confirmed the actual Button 5 + down scenario in Finder, Chrome and ChatGPT on installed build 10 (2026-10-21). No repeat of the superseded build-8 installation handoff is needed. Broader action/platform cases stay in [window evidence](../verification/phase-4-windows.md) and the [release queue](../verification/release-candidate.md); agent-run real-window mutations still require explicit authorization.

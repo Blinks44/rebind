@@ -42,3 +42,14 @@ xcuserdata/
 # Private signing identity exports are credentials, never repository source.
 *.p12
 *.pfx
+
+# Local environment secrets; safe examples remain shareable.
+.env*
+!.env.example
+
+# Private per-user agent overrides; shared settings and skills remain versioned.
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Known Sparkle private-key export basename; the public Info.plist key stays visible.
+sparkle_ed25519.key
