@@ -67,7 +67,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         menu.addItem(item(text(configuration.isEnabled ? .pauseBindings : .resumeBindings), #selector(toggleBindings),
                           enabled: !(model.storageLocked && !configuration.isEnabled)))
         let settings = item(text(.settingsTitle), #selector(openSettingsWindow))
-        settings.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
+        settings.keyEquivalent = ","
+        settings.image = NSImage(systemSymbolName: "gear", accessibilityDescription: nil)
         if #available(macOS 27, *) { settings.preferredImageVisibility = .visible }
         menu.addItem(settings)
 

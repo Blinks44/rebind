@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-22**. Baseline `main` `2ca3b59` (old website cleared after app build-11 review); new website foundation and its documentation are uncommitted. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-23**. Baseline `main` `2ca3b59` (old website cleared after app build-11 review); new website foundation and its documentation are uncommitted. No publication. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and evidence
 
@@ -12,7 +12,7 @@ The earlier October 20 overall manual pass is preserved; later testing found fiv
 
 ## Current release work
 
-Source is **1.0.0 (11)** (build 11: [final pre-release review](history/2026-10.md#2026-10-21-final-pre-release-review), six-language copy fixes; verified DMG `apps/rebind/build/release/Rebind-1.0.0-11.dmg`; build 10 reviewed the October 17–21 changes): [REL-005](tasks/REL-005-onboarding-and-updates.md) adds the three-step first run (Welcome, Access, Ready) designed in Sketch and replaces the manual GitHub checker with Sparkle 2.10.0 (daily checks by default, EdDSA-signed appcast written by release.sh, key in the login keychain). User confirmed on installed build 10 (2026-10-21): first-run walkthrough, FIX-002 window actions (Button 5 + down in Finder/Chrome/ChatGPT) and off-device signing/EdDSA key backups. The first end-to-end update between two published builds is open.
+Source is **1.0.0 (13)**; Settings now uses AppKit’s native menu image and Command-comma, matching Monny’s context menu (build 12 compared the wrong surface). Verified DMG `apps/rebind/build/release/Rebind-1.0.0-13.dmg`; [evidence and remaining visual check](history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). Earlier build 11: [final pre-release review](history/2026-10.md#2026-10-21-final-pre-release-review), six-language copy fixes; verified DMG `apps/rebind/build/release/Rebind-1.0.0-11.dmg`; build 10 reviewed the October 17–21 changes: [REL-005](tasks/REL-005-onboarding-and-updates.md) adds the three-step first run (Welcome, Access, Ready) designed in Sketch and replaces the manual GitHub checker with Sparkle 2.10.0 (daily checks by default, EdDSA-signed appcast written by release.sh, key in the login keychain). User confirmed on installed build 10 (2026-10-21): first-run walkthrough, FIX-002 window actions (Button 5 + down in Finder/Chrome/ChatGPT) and off-device signing/EdDSA key backups. The first end-to-end update between two published builds is open.
 
 Build 8: [FIX-002](tasks/FIX-002-window-action-compatibility.md) replaces the failing Chrome/ChatGPT system-wide AX focused-app query with AppKit PID discovery plus direct AXFrontmost validation. Debug/Release packaging and 42 focused software functions pass. Verified local DMG: `apps/rebind/build/release/Rebind-1.0.0-8.dmg`; native execution and Button 5 + down remain open. Installed app is build 7. AGENTS/WORKFLOW and the local workflow skill now require this DMG handoff after app changes; the user installs manually.
 
