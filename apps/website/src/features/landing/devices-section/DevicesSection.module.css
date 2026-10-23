@@ -1,0 +1,92 @@
+.section {
+  padding: 96px 20px 72px;
+  text-align: center;
+}
+.eyebrow {
+  color: var(--moduix-primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  margin: 0;
+}
+.title {
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  margin: 20px 0 16px;
+  letter-spacing: -1.6px;
+}
+.lead {
+  max-width: 700px;
+  margin: auto;
+  color: var(--rebind-text-secondary);
+  font-size: 20px;
+  line-height: 28px;
+}
+.tabs {
+  margin-top: 32px;
+  --moduix-tabs-gap: 0px;
+  --moduix-tabs-radius: 999px;
+  --moduix-tabs-list-bg: #0f172a0a;
+  --moduix-tabs-list-gap: 0px;
+  --moduix-tabs-list-padding: 4px;
+  --moduix-tabs-tab-radius: 999px;
+  --moduix-tabs-tab-height: 36px;
+  --moduix-tabs-tab-padding-x: 18px;
+  --moduix-tabs-tab-font-size: 14px;
+  --moduix-tabs-indicator-radius: 999px;
+  --moduix-tabs-indicator-bg: #fff;
+  --moduix-tabs-indicator-shadow: 0 2px 5px #0f172a0f;
+}
+.scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 0 8px;
+}
+.list {
+  width: max-content;
+  max-width: none;
+  flex: none;
+  margin-inline: auto;
+}
+.panel {
+  padding: 32px 0 0;
+  border: 0;
+  background: transparent;
+}
+.panel > picture {
+  max-width: 1040px;
+  margin: auto;
+}
+.note {
+  color: var(--rebind-text-secondary);
+  max-width: 800px;
+  margin: 28px auto 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+@media (max-width: 700px) {
+  .section {
+    padding-block: 48px;
+  }
+  .title {
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: -0.7px;
+    margin: 12px 0 16px;
+  }
+  .lead {
+    font-size: 17px;
+    line-height: 26px;
+  }
+  .list {
+    margin-inline: 0;
+  }
+  .panel {
+    padding-top: 20px;
+  }
+  .note {
+    font-size: 12px;
+  }
+}

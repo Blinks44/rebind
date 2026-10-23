@@ -1,0 +1,11 @@
+.picture {
+  --moduix-image-radius: 0px;
+  display: block;
+  min-width: 0;
+  filter: drop-shadow(0 24px 30px #0f172a24);
+}
+.picture img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

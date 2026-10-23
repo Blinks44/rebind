@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-23**, checkout `main` / `11cef13`. Docs cleanup uncommitted; prior menu evidence preserved. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-23**, checkout `main` / `e3540f3`. Website iteration-two changes are uncommitted; prior app/menu evidence is preserved. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -16,7 +16,7 @@ Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update sub
 
 [REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle 2.10.0 daily updates; first update between published builds remains open. [SIGNING](SIGNING.md) owns Apple Development/non-notarized testing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and targeted accessibility gates remain in [PLAN](PLAN.md#release-gates) and tasks. Earlier paused/no-grant ~1.5% CPU is not active-rule evidence.
 
-Website foundation is tracked at `apps/website/`; [WEB-001](tasks/WEB-001-landing-page.md) owns live Sketch transfer and final six-language visual/download checks. Shells remain noindex/undeployed. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the public handoff; publication/deployment require authorization.
+Website iteration two is implemented at `apps/website/` from live Rebind.sketch: landing/404, responsive navigation, keycap demo, five device panels, features, privacy, installation and FAQ. Saved Sketch/source parity corrections align device-window corners, menus/Drawer dimensions, caption contrast and 404 surfaces. Six-language SSR/SEO, moduix/CSS Modules and automatic Vite WebP processing are ready; 15 tests, seven Worker smoke tests and dry-run packaging pass. [WEB-001](tasks/WEB-001-landing-page.md) owns final device/interaction/accessibility/translation/download checks. Noindex and the Releases fallback remain; nothing is deployed. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the public handoff; publication/deployment require authorization.
 
 ## Open task index
 
@@ -24,7 +24,7 @@ Finish current-menu/release checks; no new recognizers. Tasks own detailed accep
 
 | Task | Concrete next step |
 | --- | --- |
-| [WEB-001](tasks/WEB-001-landing-page.md) | ready_for_implementation: transfer the live website design into the verified foundation; then visual/localization/download and authorized production checks. |
+| [WEB-001](tasks/WEB-001-landing-page.md) | awaiting_verification: desktop/narrow Drawer/menu and 404 → home title checks passed; finish physical-phone/all-section, keyboard/VoiceOver, reduced motion and translations, then release/download and authorized deployment. |
 | [REL-005](tasks/REL-005-onboarding-and-updates.md) | Publish v1.0.0 with appcast; verify the update path with the next build; first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |

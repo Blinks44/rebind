@@ -1,4 +1,4 @@
-/* Rebind.sketch > 05 · Website > Implementation notes, reviewed 2026-10-22.
+/* Rebind.sketch > 05 · Website > Implementation notes, reviewed 2026-10-23.
    Calm owns control geometry; the website uses the Light theme only. */
 :root {
   color-scheme: light;
@@ -23,7 +23,7 @@
   --rebind-canvas-bottom: #edf1f8;
   --rebind-canvas-glow: #dce7ff8c;
   --rebind-text-secondary: #3c3c43bf;
-  --rebind-text-tertiary: #3c3c434d;
+  --rebind-text-tertiary: #3c3c43bf;
   --rebind-separator: #0f172a12;
   --rebind-keycap-top: #ffffff;
   --rebind-keycap-bottom: #eef1f6;
@@ -31,6 +31,9 @@
   --rebind-keycap-border: #0f172a1a;
   --rebind-keycap-highlight: #ffffffe6;
   --rebind-keycap-text: #1b2230;
+  --rebind-card-border: #ffffffcc;
+  --rebind-card-shadow: 0 24px 60px #0f172a12, 0 1px 2px #0f172a0a;
+  --rebind-track: #0f172a08;
   --rebind-content-width: 75rem;
   --rebind-page-gutter: clamp(1.25rem, 4vw, 3rem);
 }

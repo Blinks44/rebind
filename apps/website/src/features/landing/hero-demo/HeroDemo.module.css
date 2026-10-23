@@ -1,0 +1,184 @@
+.demo {
+  --moduix-card-radius: 32px;
+  width: min(960px, calc(100% - 40px));
+  margin: 50px auto 0;
+  padding: 44px 64px 32px;
+  background: var(--moduix-card);
+  border: 1px solid var(--rebind-card-border);
+  box-shadow: var(--rebind-card-shadow);
+}
+.mapping {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) 80px minmax(0, 356px);
+  gap: 20px;
+  align-items: center;
+}
+.caption {
+  color: var(--rebind-text-tertiary);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 32px;
+}
+.keys {
+  display: flex;
+  gap: 16px;
+}
+.arrow {
+  color: #3c3c434d;
+  padding-top: 40px;
+  text-align: center;
+}
+.arrow svg {
+  width: 40px;
+  height: 40px;
+}
+.arrow svg:last-child {
+  display: none;
+}
+.action {
+  min-height: 104px;
+  border: 1px solid var(--rebind-separator);
+  border-radius: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+}
+.tile {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  color: var(--moduix-primary);
+  background: var(--moduix-accent);
+  flex: none;
+}
+.action strong {
+  font-size: 18px;
+  font-weight: 600;
+  display: block;
+}
+.action div > span {
+  display: block;
+  margin-top: 6px;
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+}
+.bottom {
+  margin-top: 44px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rebind-separator);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.bottom p {
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.examples button {
+  --moduix-button-font-size-sm: 10px;
+  background: var(--moduix-accent);
+  color: var(--moduix-primary);
+}
+.mobileControls {
+  display: none;
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .demo {
+    padding-inline: 32px;
+  }
+  .mapping {
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 12px;
+  }
+  .keys {
+    gap: 10px;
+    --moduix-kbd-height: 64px;
+  }
+  .keys > kbd {
+    min-width: 64px;
+    min-height: 64px;
+    font-size: 32px;
+  }
+  .bottom {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 700px) {
+  .demo {
+    padding: 24px;
+    margin-top: 32px;
+    --moduix-card-radius: 24px;
+  }
+  .mapping {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .caption {
+    text-align: center;
+    margin: 0 0 20px;
+    font-size: 11px;
+  }
+  .keys {
+    justify-content: center;
+  }
+  .arrow {
+    padding: 0;
+  }
+  .arrow svg {
+    width: 24px;
+    height: 24px;
+  }
+  .arrow svg:first-child {
+    display: none;
+  }
+  .arrow svg:last-child {
+    display: inline;
+  }
+  .result > .caption,
+  .bottom {
+    display: none;
+  }
+  .action {
+    min-height: 84px;
+    padding: 16px;
+    gap: 16px;
+    border-radius: 16px;
+  }
+  .tile {
+    width: 48px;
+    height: 48px;
+  }
+  .mobileControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: #0f172a1a;
+    border: 0;
+    border-radius: 9px;
+    padding: 0;
+    cursor: pointer;
+  }
+  .dot[aria-pressed='true'] {
+    width: 16px;
+    background: var(--moduix-primary);
+  }
+}

@@ -1,6 +1,7 @@
 // Run against `pnpm build && pnpm preview --port 4173 --strictPort`.
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { readFile } from 'node:fs/promises'
 import settings from '../../project.inlang/settings.json' with { type: 'json' }
 import { site } from '../config/site.ts'
 
@@ -17,6 +18,32 @@ for (const locale of settings.locales) {
     const response = await fetch(new URL(path, origin))
     assert.equal(response.status, 200)
     const html = await response.text()
+    const messages = JSON.parse(
+      await readFile(
+        new URL(`../integrations/i18n/messages/${locale}.json`, import.meta.url),
+        'utf8',
+      ),
+    )
+    assert.equal(html.match(/<h1\b/g)?.length, 1)
+    for (const key of [
+      'heroTitle',
+      'heroAccent',
+      'devicesTitle',
+      'actionsTitle',
+      'featuresTitle',
+      'privacyTitle',
+      'installTitle',
+      'questions',
+      'ctaTitle',
+    ])
+      assert.ok(html.includes(messages[key]), `Missing section ${locale}/${key}`)
+    for (const id of ['features', 'devices', 'actions', 'install', 'faq'])
+      assert.ok(html.includes(`id="${id}"`))
+    assert.ok(html.includes('type="image/webp"'))
+    assert.ok(html.includes('data-slot="image-root"'))
+    assert.ok(html.includes('loading="lazy"'))
+    assert.ok(html.includes(messages.faqA6))
+    assert.ok(html.includes('xattr -dr com.apple.quarantine /Applications/Rebind.app'))
     assert.ok(html.includes(`lang="${locale}"`))
     assert.equal(html.match(/<title>/g)?.length, 1)
     assert.equal(html.match(/name="description"/g)?.length, 1)

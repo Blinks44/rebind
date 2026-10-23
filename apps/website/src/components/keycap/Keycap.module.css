@@ -1,0 +1,33 @@
+.cap,
+.large {
+  --moduix-kbd-border-color: var(--rebind-keycap-border);
+  --moduix-kbd-color: var(--rebind-keycap-text);
+  --moduix-kbd-font-family: var(--moduix-font-sans);
+  --moduix-kbd-font-weight: 500;
+  background: linear-gradient(var(--rebind-keycap-top), var(--rebind-keycap-bottom));
+  box-shadow:
+    inset 0 1px 0 var(--rebind-keycap-highlight),
+    0 4px 0 var(--rebind-keycap-ledge),
+    0 9px 8px #0f172a14;
+}
+.cap {
+  --moduix-kbd-height: 36px;
+  --moduix-kbd-font-size: 12px;
+  --moduix-kbd-radius: 7px;
+  --moduix-kbd-padding-x: 10px;
+}
+.large {
+  --moduix-kbd-height: 96px;
+  --moduix-kbd-min-width: 96px;
+  --moduix-kbd-font-size: 44px;
+  --moduix-kbd-radius: 20px;
+  --moduix-kbd-padding-x: 12px;
+}
+@media (max-width: 700px) {
+  .large {
+    --moduix-kbd-height: 64px;
+    --moduix-kbd-min-width: 64px;
+    --moduix-kbd-font-size: 32px;
+    --moduix-kbd-radius: 16px;
+  }
+}

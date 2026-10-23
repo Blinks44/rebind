@@ -3,7 +3,6 @@
 @import './styles/tokens.css';
 
 html {
-  background: linear-gradient(180deg, var(--rebind-canvas-top), var(--rebind-canvas-bottom));
   color: var(--moduix-foreground);
   font-family: var(--moduix-font-sans);
 }
@@ -11,17 +10,26 @@ body {
   margin: 0;
   min-width: 20rem;
 }
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-:focus-visible {
+a:focus-visible:not([data-scope]) {
   outline: 2px solid var(--moduix-primary);
   outline-offset: 4px;
 }
 ::selection {
   background: var(--moduix-primary);
   color: var(--moduix-primary-foreground);
+}
+
+html {
+  scroll-behavior: smooth;
+  background:
+    radial-gradient(ellipse 650px 500px at 50% 100px, var(--rebind-canvas-glow), transparent),
+    linear-gradient(var(--rebind-canvas-top), var(--rebind-canvas-bottom));
+}
+section[id] {
+  scroll-margin-top: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
