@@ -35,8 +35,10 @@
 }
 .arrow {
   color: #3c3c434d;
+  font-size: 26px;
+  line-height: 31px;
 }
-.arrow svg:last-child {
+.arrow span:last-child {
   display: none;
 }
 .action {
@@ -134,11 +136,13 @@
   }
   .arrow {
     width: 100%;
+    font-size: 20px;
+    line-height: 24px;
   }
-  .arrow svg:first-child {
+  .arrow span:first-child {
     display: none;
   }
-  .arrow svg:last-child {
+  .arrow span:last-child {
     display: inline;
   }
   .content h1 {

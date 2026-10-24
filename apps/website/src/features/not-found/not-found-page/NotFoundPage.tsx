@@ -2,7 +2,7 @@ import { Button } from '@moduix/react/button'
 import { Card } from '@moduix/react/card'
 import { Empty } from '@moduix/react/empty'
 import { Link } from '@tanstack/react-router'
-import { CircleHelp, ArrowRight, ArrowDown } from 'lucide-react'
+import { CircleHelp } from 'lucide-react'
 import { Keycap } from '@/components/keycap'
 import { site } from '@/config/site'
 import { m } from '@/integrations/i18n/paraglide/messages'
@@ -21,8 +21,8 @@ export function NotFoundPage() {
             ))}
           </div>
           <span className={styles.arrow}>
-            <ArrowRight />
-            <ArrowDown />
+            <span>→</span>
+            <span>↓</span>
           </span>
           <div className={styles.action}>
             <CircleHelp size={28} />

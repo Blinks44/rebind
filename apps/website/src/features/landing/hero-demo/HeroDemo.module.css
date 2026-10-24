@@ -30,11 +30,11 @@
   padding-top: 40px;
   text-align: center;
 }
-.arrow svg {
-  width: 40px;
-  height: 40px;
+.arrow span {
+  font-size: 40px;
+  line-height: 48px;
 }
-.arrow svg:last-child {
+.arrow span:last-child {
   display: none;
 }
 .action {
@@ -137,14 +137,14 @@
   .arrow {
     padding: 0;
   }
-  .arrow svg {
-    width: 24px;
-    height: 24px;
+  .arrow span {
+    font-size: 24px;
+    line-height: 29px;
   }
-  .arrow svg:first-child {
+  .arrow span:first-child {
     display: none;
   }
-  .arrow svg:last-child {
+  .arrow span:last-child {
     display: inline;
   }
   .result > .caption,

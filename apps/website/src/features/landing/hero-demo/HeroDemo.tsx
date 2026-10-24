@@ -1,6 +1,6 @@
 import { Button } from '@moduix/react/button'
 import { Card } from '@moduix/react/card'
-import { ArrowRight, ArrowDown, SquareArrowRight, Pause, Play } from 'lucide-react'
+import { SquareArrowRight, Pause, Play } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Keycap } from '@/components/keycap'
 import { m } from '@/integrations/i18n/paraglide/messages'
@@ -79,8 +79,8 @@ export function HeroDemo() {
           </div>
         </div>
         <div className={styles.arrow} aria-hidden="true">
-          <ArrowRight />
-          <ArrowDown />
+          <span>→</span>
+          <span>↓</span>
         </div>
         <div className={styles.result}>
           <p className={styles.caption}>{m.rebindDoes()}</p>

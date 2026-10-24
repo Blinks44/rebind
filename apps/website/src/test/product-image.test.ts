@@ -11,7 +11,7 @@ describe('product image SSR with moduix and imagetools', () => {
         createElement(ProductImage, { view, alt: `Rebind ${view}` }),
       )
       expect(html).toContain('data-slot="image-root"')
-      expect(html).toMatch(/<source[^>]+srcSet="[^"]+ 540w, [^"]+ 1080w, [^"]+ 2160w"/)
+      expect(html).toMatch(/<source[^>]+srcSet="[^"]+ 520w, [^"]+ 1040w, [^"]+ 2080w"/)
       expect(html).toContain('type="image/webp"')
       expect(html).toContain(`alt="Rebind ${view}"`)
       expect(html).toContain('width="1080" height="720"')
