@@ -71,7 +71,7 @@ Check launch, saved rules, real permission status and a short binding smoke test
 
 ## 6. Publish the site and support links
 
-The website points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). It is implemented from the current Sketch design but still noindex, and its download link falls back to the Releases page. Before publishing, connect the stable release DMG, finish the six-language/installation review and set `site.indexingEnabled` to true.
+The website points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). Since v1.0.0 its Download buttons point to the release DMG and indexing is on. The DMG filename includes the build number, so update `downloadUrl` in `apps/website/src/config/site.ts` for every release before deploying.
 
 From `apps/website`, run:
 

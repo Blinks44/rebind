@@ -1,6 +1,6 @@
 # WEB-001: Public website foundation and design transfer
 
-- Updated: 2026-10-23
+- Updated: 2026-10-24
 - Stage: awaiting_verification (iteration-two implementation ready; final interaction/accessibility/release checks open)
 - Owner: Codex website implementation
 - Ownership checked: main `e3540f3` with the existing uncommitted website transfer preserved. Codex owns scoped website/Sketch parity corrections; no native app changes.
@@ -62,4 +62,4 @@ Browser evidence: desktop menus; Chrome 390×844 Monny Drawer/upward popup and k
 
 ## Next handoff
 
-Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). Confirm a real public DMG, enable indexing only after release/content acceptance, and deploy only when requested; then verify DNS/TLS/redirects. Website-only work does not rebuild the native DMG.
+Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer deploys manually; then verify DNS/TLS/redirects. Website-only work does not rebuild the native DMG.

@@ -1,6 +1,6 @@
 # REL-005: Three-step first run and Sparkle updates
 
-- Updated: 2026-10-21
+- Updated: 2026-10-24
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation released
 - Owned surfaces: `PermissionSetupView`, `UpdateSettingsRow`, `Updates/AppUpdater`, General settings, menu bar menu, `apps/rebind/Info.plist`, Sparkle package reference, `release.sh` appcast step; Sketch screens 64/01/65, 31, 51–53 and Foundations 11
@@ -45,4 +45,4 @@ Runtime checks above need the installed build 9 and a clean or reset configurati
 
 ## Next handoff
 
-Publish v1.0.0 with `appcast.xml` (see [RELEASING](../RELEASING.md)) and verify the update path with the next build. First-run accessibility/locale checks stay with the accessibility pass.
+v1.0.0 (build 15) was published on 2026-10-24 with its `appcast.xml`; the latest-release appcast downloads and lists build 15. Verify the update path by publishing the next build (1.0.1) and updating an installed 1.0.0 ([RELEASING](../RELEASING.md)). First-run accessibility/locale checks stay with the accessibility pass.
