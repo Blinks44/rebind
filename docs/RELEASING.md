@@ -41,6 +41,22 @@ Current Apple Development candidates are for local testing; public customer dist
 
 ## 4. Prepare the GitHub release
 
+With the [GitHub CLI](https://cli.github.com) (`brew install gh`, then `gh auth login` once), push the reviewed commit, tag it and create a draft from the repository root. Replace the build number with the actual one:
+
+```sh
+git push origin main
+git tag -a v1.0.0 -m "Rebind 1.0.0"
+git push origin v1.0.0
+gh release create v1.0.0 --draft --verify-tag --title "Rebind 1.0.0" \
+  --notes-file docs/releases/1.0.0.md \
+  apps/rebind/build/release/Rebind-1.0.0-14.dmg \
+  apps/rebind/build/release/SHA256SUMS.txt \
+  apps/rebind/build/release/appcast.xml
+gh release view v1.0.0 --web
+```
+
+After reviewing the draft, publish it as the latest stable release with `gh release edit v1.0.0 --draft=false --latest`, then confirm that `curl -fsSL https://github.com/Blinks44/rebind/releases/latest/download/appcast.xml` returns the new build. The web route below is equivalent.
+
 On [Blinks44/rebind Releases](https://github.com/Blinks44/rebind/releases), choose **Draft a new release**. Select the matching tag at the reviewed, pushed source commit. Use title **Rebind 1.0.0** and adapt [the prepared notes](releases/1.0.0.md), including the actual tested platforms and limitations. Attach the DMG, `SHA256SUMS.txt` and `appcast.xml` as release assets, then **Save draft**. The app reads `releases/latest/download/appcast.xml`, so every stable release must carry its own appcast; its download URL already points at `releases/download/v<version>/<dmg>`, so keep the tag and DMG filename unchanged. GitHub’s automatic source-code archives do not replace the DMG.
 
 Review version, target commit, filenames and checksums before publishing. For a stable release, leave **This is a pre-release** off and set it as the latest release. Publish only after the candidate gates are resolved or accurately limited. If immutable releases are enabled, attach every asset while still a draft. See [GitHub’s release instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
@@ -55,7 +71,7 @@ Check launch, saved rules, real permission status and a short binding smoke test
 
 ## 6. Publish the site and support links
 
-The rebuilt website foundation points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). The old MVP and its release-discovery code were removed. Before publishing, transfer the final Sketch design, connect an actual stable release DMG, finish six-language/installation review and set `site.indexingEnabled` to true. The initialization shell deliberately remains noindex and has no download button.
+The website points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). It is implemented from the current Sketch design but still noindex, and its download link falls back to the Releases page. Before publishing, connect the stable release DMG, finish the six-language/installation review and set `site.indexingEnabled` to true.
 
 From `apps/website`, run:
 

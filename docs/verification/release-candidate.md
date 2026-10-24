@@ -14,7 +14,7 @@ Tester confirms wheel/card/settings/size, update preservation, keyboard navigati
 
 - Installed build 10: first-run walkthrough and actual Button 5 + down window actions in Finder/Chrome/ChatGPT accepted; [FIX-002](../tasks/FIX-002-window-action-compatibility.md) is done. Signing-key restore/off-device and EdDSA backup tester-confirmed.
 - Installed build 11 (October 22): changed copy, VoiceOver, Increase Contrast, Reduce Motion and languages at minimum width accepted. Exact environment and individual controls/preferences were not supplied. Do not label VoiceOver wholly untested or request the same overall pass again; targeted remaining cases retain their own limits.
-- Current build 14 changes Settings menu imagery after build 13 failed in the installed app. [Native controller/packaging evidence](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny) does not yet close the actual installed-menu visual/VoiceOver check.
+- Current build 14 changes Settings menu imagery after build 13 failed in the installed app. On 2026-10-24 the user confirmed the Settings icon in the installed build-14 menu; environment unspecified. Command-comma and menu VoiceOver were not separately reported. [Native controller/packaging evidence](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny).
 
 ## Preserve existing feature acceptance
 
@@ -32,7 +32,7 @@ Apple Development signing superseded the old self-signed build-1/2 candidate in 
 
 | Area | Open evidence / owner |
 | --- | --- |
-| Current menu | Installed build-14 Settings icon and Command-comma, keyboard/VoiceOver in the actual mixed battery/slider menu. Keep earlier build-11 general accessibility acceptance. [UI-024](../tasks/UI-024-keyboard-navigation.md), [menu change](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). |
+| Current menu | Installed build-14 Settings icon user-confirmed 2026-10-24; Command-comma, keyboard/VoiceOver in the actual mixed battery/slider menu. Keep earlier build-11 general accessibility acceptance. [UI-024](../tasks/UI-024-keyboard-navigation.md), [menu change](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). |
 | Accessibility details | Unreported per-control focus return, import/export/actual transactions, Reduce Transparency, first-run and battery-menu routes, fluent six-language proofreading. Existing broad build-11 pass remains valid within its reported scope. [UI-024](../tasks/UI-024-keyboard-navigation.md), [REL-005](../tasks/REL-005-onboarding-and-updates.md) and affected UI tasks. |
 | Text actions | Russian/emoji insertion in TextEdit, Terminal and browser; clipboard and foreground-app restrictions. Do not execute inserted Terminal content. [INPUT-009](../tasks/INPUT-009-held-output-exclusions-catalog.md). |
 | Interruption safety | Detailed active-held-output pause/quit/sleep/lock/disconnect/grant-loss combinations, unmatched passthrough, scroll-tail ownership, emergency pause and clean recovery. Preserve accepted general sleep/pause/permission-loss subsets. [REVIEW-001](../tasks/REVIEW-001-production-review.md), [REVIEW-002](../tasks/REVIEW-002-idle-energy.md), INPUT-009/014/015. |

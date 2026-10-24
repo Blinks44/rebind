@@ -2,7 +2,7 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
-## 1.0.0: unreleased
+## 1.0.0: 2026-10-24
 
 First public version.
 
@@ -33,7 +33,8 @@ First public version.
 - Supported Logitech settings: SmartShift, sensitivity, DPI, high-resolution wheel and gesture-button diversion. Device names and available battery levels in the menu bar.
 - Automatic backups of the last 10 different configurations loaded at launch.
 - Keyboard navigation, native menus and grouped touch-preset selectors.
-- Manual GitHub update checks; no automatic downloads or installation.
+- A short first-run guide through the Accessibility permission.
+- Automatic updates through Sparkle: a daily check (can be turned off) plus **Check for Updates…**; each update is signature-checked and installed only after you confirm.
 - Menu bar icon with a paused state and the last action error; optional Dock icon; launch at login; emergency pause with ⌃⌥⇧⌘ Escape.
 - A support report with versions, permission status and counts, without any binding content.
 - English, Russian, German, French, Spanish and Simplified Chinese.

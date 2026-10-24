@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-23**, checkout `main` / `e3540f3`. Website iteration-two changes are uncommitted; prior app/menu evidence is preserved. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-24**, checkout `main` / `64aef96` (website v2 committed; three commits not yet pushed). The 2026-10-24 release-readiness review corrected public update/install copy and added the `gh` release route; app source is unchanged since build 14. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -8,7 +8,7 @@ Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `
 
 Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, atomic storage and six languages are implemented. Schema **44** (migrations 1–43). Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**, basic delivery tester-confirmed. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and live Sketch locator.
 
-Source **1.0.0 (14)** at `11cef13`: explicit Settings `gear` and Command-comma. Latest recorded verified package: `apps/rebind/build/release/Rebind-1.0.0-14.dmg`; [checksum and open installed-menu check](history/2026-10.md#2026-10-23-align-settings-symbol-with-monny). No new app packaging for docs-only cleanup.
+Source **1.0.0 (14)** at `11cef13`: explicit Settings `gear` and Command-comma. Latest recorded verified package: `apps/rebind/build/release/Rebind-1.0.0-14.dmg`; [checksum](history/2026-10.md#2026-10-23-align-settings-symbol-with-monny); installed-menu Settings icon user-confirmed 2026-10-24. It is the v1.0.0 publication candidate with a regenerated local `SHA256SUMS.txt`. No new app packaging for docs-only cleanup.
 
 ## Acceptance and remaining release work
 

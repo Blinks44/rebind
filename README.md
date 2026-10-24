@@ -13,14 +13,14 @@ A native macOS utility for mapping keyboard and mouse input to shortcuts and sys
 
 Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
 
-**Status:** preparing the first public release. The current app has passed the maintainer’s overall manual check. Trackpad and Magic Mouse gestures remain experimental; platform, device and accessibility coverage has limits. See the [capability matrix](docs/CAPABILITIES.md) for tested subsets and limits.
+**Status:** version 1.0. Keyboard and mouse remapping is the stable core; trackpad and Magic Mouse gestures are experimental. Testing so far has been on Apple silicon with macOS 27. The [capability matrix](docs/CAPABILITIES.md) lists what has been tried on real hardware.
 
 ## Repository layout
 
 | Path | Contents |
 | --- | --- |
 | `apps/rebind/` | The macOS app: Xcode project, sources, tests, the `scripts/dev.sh` build script and developer tools |
-| `apps/website/` | The public site foundation: TanStack Start/React 19 on Vite, moduix, six-language Paraglide and Cloudflare Workers ([README](apps/website/README.md)) |
+| `apps/website/` | The project website: TanStack Start/React 19 on Vite, moduix, six-language Paraglide and Cloudflare Workers ([README](apps/website/README.md)) |
 | `docs/` | Specification, design notes, roadmap, current state and verification records |
 | `AGENTS.md`, `.agents/` | Instructions and skills for coding and design agents |
 
@@ -61,20 +61,20 @@ Profiles apply to input categories rather than individual physical devices. Not 
 
 - macOS **26 or later**.
 - Full Xcode with a **Swift 6.2+ compiler** and a **macOS 26+ SDK** to build from source.
-- Accessibility and event-sending access for recording/remapping.
+- The Accessibility permission, which Rebind asks for on first launch.
 
-The project has been built and inspected on Apple Silicon with a newer macOS/Xcode toolchain. macOS 26 and Intel execution remain unverified; a universal Release build alone does not establish runtime compatibility.
+Rebind is a universal app, but so far it has been run only on Apple silicon with macOS 27. macOS 26 and Intel Macs have not been tested yet.
 
 ## Install
 
-Rebind is free and open source. Current installation candidates use an **Apple Development certificate** and are **not notarized by Apple**; this is a local testing route, with installation on other Macs still unverified. macOS may block the downloaded app until you explicitly allow that copy. The first public release is still being prepared; a source-code ZIP is not an installer.
+Rebind is signed by the maintainer but **not notarized by Apple**, so macOS blocks the first launch until you allow it. The "Source code" archives on the Releases page are not installers; download the DMG.
 
 1. Download the latest `Rebind-….dmg` from the [Releases](https://github.com/Blinks44/rebind/releases) page and open it.
 2. Drag **Rebind** onto the **Applications** folder, then open it from there. macOS shows a warning that it could not verify the app; close the warning.
 3. Open **System Settings → Privacy & Security**, scroll down to the message about Rebind and click **Open Anyway**, then confirm.
 4. Rebind opens and guides you through the one permission it needs, **Accessibility**.
 
-Updates use the same signing identity, but Accessibility access surviving an update still needs verification between two distinct Release builds. macOS may ask you to approve a downloaded update again. See [Apple’s first-launch instructions](https://support.apple.com/en-us/102445).
+Later versions arrive through the built-in updater. If macOS asks for Accessibility access again after an update, turn Rebind off and on in that list. See also [Apple’s first-launch instructions](https://support.apple.com/en-us/102445).
 
 If you would rather not trust a prebuilt app, build it yourself from this repository (below).
 
@@ -102,13 +102,13 @@ The result is `apps/rebind/build/DerivedData/Build/Products/Release/Rebind.app`.
 ## First launch
 
 1. Open Rebind. New configurations start paused with no bindings.
-2. Use first-run setup or **Settings → Permissions** to open **System Settings → Privacy & Security → Accessibility** and enable the running Rebind copy. Refresh the status and relaunch if macOS requests it.
-3. If Accessibility is granted but event sending remains unavailable, use **Allow Event Sending**, then refresh. Recording/remapping require the actual checks to succeed.
-4. Select an input category, add a binding, choose its trigger and action, save, and resume bindings.
+2. Follow the first-run guide (or **Settings → Permissions**) to open **System Settings → Privacy & Security → Accessibility** and turn on Rebind. Relaunch it if macOS asks.
+3. If Accessibility is on but Rebind still cannot send events, choose **Allow Event Sending** and check the status again.
+4. Pick an input category, add a binding with a trigger and an action, save it and turn bindings on.
 
 For example, map **Control + Mouse Button 4 → Command+A** or assign a long press on an extra mouse button to a shortcut. Unmatched inputs retain normal system behavior.
 
-Pause from the menu bar whenever needed. While capture is active, **⌃⌥⇧⌘ Escape** is the emergency pause shortcut. The current engine does not require a separate Input Monitoring grant; additional action-specific permission needs are explained by the relevant feature.
+Pause from the menu bar whenever needed. While bindings are on, **⌃⌥⇧⌘ Escape** pauses them immediately. Rebind does not need Input Monitoring; the few actions that need another permission explain it where you set them up.
 
 ## How it works
 
@@ -130,12 +130,13 @@ Input processing makes no network requests and sends no analytics. The update ch
 | Tests | Swift Testing with an Xcode-hosted test target |
 | Build and assets | Xcode, SF Symbols, Sketch, Icon Composer |
 
-The app target's only Swift package is the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and carry compatibility limits. The current standalone mouse/click probes add no dependencies; the earlier TrackpadProbe package was removed after integration. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+The app uses two Swift packages: [Sparkle](https://sparkle-project.org) 2.10.0 for updates and the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and may break after macOS updates. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
 
 ## Acknowledgements
 
 Rebind builds on the work of these open-source projects. Each is credited with its license in [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt), which the app also shows under About.
 
+- [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT): signed in-app updates.
 - [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT): the vendored `HIDPP` package for Logitech HID++, the approach of the smooth scrolling glide, and scaling the HID event attached to a scroll event so that reversing works on high-resolution wheels.
 - [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0): its HID++ feature documentation informed the SmartShift and device name payloads. Reference only; no code was copied.
 - [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) (MIT): media key events, the screen lock entry point and window raising were checked against it.

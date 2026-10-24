@@ -4,7 +4,7 @@ Rebind reads keyboard, mouse and trackpad input to match your bindings, and it n
 
 ## What Rebind does and does not do
 
-- Bindings and settings stay in a local file on your Mac. There is no account, cloud configuration service, analytics or telemetry. The explicit Check for Updates command requests public GitHub release metadata without input, settings or device data. It never runs automatically. User-configured actions may open web addresses or run Apple Shortcuts.
+- Bindings and settings stay in a local file on your Mac. There is no account, cloud configuration service, analytics or telemetry. Once a day (unless you turn it off in **Settings → General**) and when you choose **Check for Updates…**, Rebind downloads the public update feed from GitHub Releases; the request contains no input, settings or device data. Updates are verified with Rebind's signing key and installed only after you confirm. User-configured actions may open web addresses or run Apple Shortcuts.
 - Rebind does not log a history of typed input. Text deliberately saved in an Insert Text rule is stored unencrypted in configuration, exports and backups; do not use it for passwords. The diagnostics window shows only mouse buttons and scrolling, keeps them in memory and clears them when it closes.
 - Rebind pauses while macOS Secure Input is active, for example in password fields.
 - Released builds are signed with the maintainer’s Apple Development certificate and are **not notarized by Apple**. If you prefer not to trust a prebuilt app, build it from source.
