@@ -84,4 +84,14 @@ struct ScrollMailboxTests {
         #expect(mailbox.handle(impulse(), secureInput: false) == false)
         #expect(mailbox.state.withLock { $0.pending.count } == 16)
     }
+
+    /// Every wheel click reaches the scroll observer; a closure that grew with each call
+    /// once overflowed the tap thread's stack after a long scrolling session.
+    @Test func scrollObserverStaysCallableAfterManyWheelClicks() {
+        let mailbox = EngineMailbox()
+        let calls = Mutex(0)
+        mailbox.setScrollObserver { calls.withLock { $0 += 1 } }
+        for _ in 0..<1_000_000 { mailbox.noteScroll() }
+        #expect(calls.withLock { $0 } == 1_000_000)
+    }
 }

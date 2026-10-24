@@ -14,7 +14,7 @@ Review the intended source changes and commit them before making a public tag. A
 
 In Xcode, choose the **rebind** app target → **General** → **Identity**. Use **Version 1.0.0** for the first stable release and keep Debug/Release build values consistent. Read the current candidate from [STATE](STATE.md) and the Xcode project. Do not change the bundle identifier or signing identity.
 
-Source is **1.0.0 (14)**; [REL-005](tasks/REL-005-onboarding-and-updates.md) owns first run/Sparkle, and STATE links final packaging evidence. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.0.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
+Source is **1.0.0 (15)**; [REL-005](tasks/REL-005-onboarding-and-updates.md) owns first run/Sparkle, and STATE links final packaging evidence. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.0.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
 
 For an identified permission-preservation check, use two distinct builds with the same certificate, bundle identifier and Applications location, incrementing the build number. Confirm rules/profiles and actual Accessibility access survive. The self-signed build 1/2 → shared Apple Development build 3 change is a signer transition and may require a fresh grant; it does not test same-signer updates. Use two subsequent Apple Development builds to verify permission preservation.
 
@@ -27,11 +27,11 @@ apps/rebind/scripts/release.sh
 
 `release.sh` signs and verifies the app and DMG, verifies image integrity, prints the archive path and SHA-256 and writes `appcast.xml` (the Sparkle feed, EdDSA-signed with the [update signing key](SIGNING.md#update-signing-key)) next to the DMG. It does not install or publish. Install `create-dmg` if needed (`brew install create-dmg`); missing create-dmg now stops packaging, keeping one DMG workflow. Resolve a missing signing identity by restoring its original backup, not generating a replacement.
 
-For version 1.0.0 and build 14, the output is `apps/rebind/build/release/Rebind-1.0.0-14.dmg`. Use the actual filename if your build number differs. Create a checksum file in the same folder:
+For version 1.0.0 and build 15, the output is `apps/rebind/build/release/Rebind-1.0.0-15.dmg`. Use the actual filename if your build number differs. Create a checksum file in the same folder:
 
 ```sh
 cd apps/rebind/build/release
-shasum -a 256 Rebind-1.0.0-14.dmg > SHA256SUMS.txt
+shasum -a 256 Rebind-1.0.0-15.dmg > SHA256SUMS.txt
 shasum -a 256 -c SHA256SUMS.txt
 ```
 
@@ -49,7 +49,7 @@ git tag -a v1.0.0 -m "Rebind 1.0.0"
 git push origin v1.0.0
 gh release create v1.0.0 --draft --verify-tag --title "Rebind 1.0.0" \
   --notes-file docs/releases/1.0.0.md \
-  apps/rebind/build/release/Rebind-1.0.0-14.dmg \
+  apps/rebind/build/release/Rebind-1.0.0-15.dmg \
   apps/rebind/build/release/SHA256SUMS.txt \
   apps/rebind/build/release/appcast.xml
 gh release view v1.0.0 --web

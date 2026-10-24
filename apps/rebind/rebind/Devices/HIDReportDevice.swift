@@ -48,7 +48,9 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     private let inbox = Mutex(Inbox())
     /// Called on the report thread with each unsolicited HID++ report (software ID 0), such as a
     /// diverted button press. It must stay short: it runs between the mouse's reports.
-    private let notifications = Mutex<(@Sendable ([UInt8]) -> Void)?>(nil)
+    /// Held in a struct so `withLock` does not wrap the closure in another thunk on every report.
+    private struct Notifications { var handler: (@Sendable ([UInt8]) -> Void)? }
+    private let notifications = Mutex(Notifications())
     private let closed = Mutex(false)
 
     init?(_ device: IOHIDDevice, receivesHIDPP: Bool = true) {
@@ -72,7 +74,7 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
     func close() {
         guard closed.withLock({ let was = $0; $0 = true; return !was }) else { return }
         _ = inbox.withLock { $0.arrived?.signal() }
-        notifications.withLock { $0 = nil }
+        notifications.withLock { $0.handler = nil }
         let runLoop = HIDReportThread.runLoop
         CFRunLoopPerformBlock(runLoop, CFRunLoopMode.defaultMode.rawValue) { [self] in
             IOHIDDeviceRegisterInputReportCallback(device, buffer, bufferLength, nil, nil)
@@ -102,13 +104,13 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         }
         // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
         if receivesHIDPP, report[3] & 0x0F == 0 || (report[0] == HIDPPConstants.shortReportID && report[2] == 0x41),
-           let notify = notifications.withLock({ $0 }) {
+           let notify = notifications.withLock({ $0.handler }) {
             notify(Array(UnsafeBufferPointer(start: report, count: length)))
         }
     }
 
     func setNotificationHandler(_ handler: (@Sendable ([UInt8]) -> Void)?) {
-        notifications.withLock { $0 = handler }
+        notifications.withLock { $0.handler = handler }
     }
 
     func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,

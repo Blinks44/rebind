@@ -443,9 +443,12 @@ nonisolated final class EngineMailbox: Sendable {
     }
 
     /// Receives each wheel click that may glide, from the tap (the pointer-app tracker).
-    private let scrollObserver = Mutex<(@Sendable () -> Void)?>(nil)
-    func setScrollObserver(_ observer: (@Sendable () -> Void)?) { scrollObserver.withLock { $0 = observer } }
-    func noteScroll() { scrollObserver.withLock { $0 }?() }
+    /// A struct field, not a bare closure: as a `Mutex` value the closure would be wrapped in one
+    /// more reabstraction thunk on every `withLock`, until calling it overflowed the tap's stack.
+    private struct ScrollObserver { var notify: (@Sendable () -> Void)? }
+    private let scrollObserver = Mutex(ScrollObserver())
+    func setScrollObserver(_ observer: (@Sendable () -> Void)?) { scrollObserver.withLock { $0.notify = observer } }
+    func noteScroll() { scrollObserver.withLock { $0.notify }?() }
 
     /// Smooth scrolling for a wheel event from this sender, or nil when it is off here.
     func smoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {

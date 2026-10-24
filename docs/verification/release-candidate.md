@@ -14,7 +14,8 @@ Tester confirms wheel/card/settings/size, update preservation, keyboard navigati
 
 - Installed build 10: first-run walkthrough and actual Button 5 + down window actions in Finder/Chrome/ChatGPT accepted; [FIX-002](../tasks/FIX-002-window-action-compatibility.md) is done. Signing-key restore/off-device and EdDSA backup tester-confirmed.
 - Installed build 11 (October 22): changed copy, VoiceOver, Increase Contrast, Reduce Motion and languages at minimum width accepted. Exact environment and individual controls/preferences were not supplied. Do not label VoiceOver wholly untested or request the same overall pass again; targeted remaining cases retain their own limits.
-- Current build 14 changes Settings menu imagery after build 13 failed in the installed app. On 2026-10-24 the user confirmed the Settings icon in the installed build-14 menu; environment unspecified. Command-comma and menu VoiceOver were not separately reported. [Native controller/packaging evidence](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny).
+- Build 14 changes Settings menu imagery after build 13 failed in the installed app. On 2026-10-24 the user confirmed the Settings icon in the installed build-14 menu; environment unspecified. Command-comma and menu VoiceOver were not separately reported. [Native controller/packaging evidence](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny).
+- Current build 15 fixes the input-tap crash after long wheel use (smooth scrolling on) and the matching HID++ notification path; build 14 menu acceptance carries over. Needs a long scrolling session on the installed build. [Evidence](../history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling).
 
 ## Preserve existing feature acceptance
 
