@@ -21,8 +21,8 @@ KEYCHAIN = os.environ.get("REBIND_SIGN_KEYCHAIN")
 IDENTITY = os.environ.get("REBIND_SIGN_IDENTITY", "69D383553450694A1E9D78650B3FC6E69446BD4F")
 
 
-def run(*args, quiet=False):
-    result = subprocess.run([str(a) for a in args], stdout=subprocess.PIPE if quiet else None,
+def run(*args, quiet=False, cwd=None):
+    result = subprocess.run([str(a) for a in args], cwd=cwd, stdout=subprocess.PIPE if quiet else None,
                             stderr=subprocess.PIPE if quiet else None)
     if result.returncode:
         # Never echo command arguments: keychain commands contain credentials.
@@ -137,10 +137,14 @@ def main():
     run(*sign, dmg, quiet=True)
     run("codesign", "--verify", "--strict", dmg, quiet=True)
     run("hdiutil", "verify", dmg, quiet=True)
-    run("shasum", "-a", "256", dmg)
+    # SHA256SUMS.txt is published with the DMG so downloads can be checked with shasum -c.
+    checksum = run("shasum", "-a", "256", dmg.name, cwd=OUTPUT, quiet=True)
+    (OUTPUT / "SHA256SUMS.txt").write_bytes(checksum)
+    print(checksum.decode().strip())
     appcast = write_appcast(dmg, version)
     print(f"Signing certificate: {fingerprint}")
     print(f"Package: {dmg}")
+    print(f"Checksums: {OUTPUT / 'SHA256SUMS.txt'}")
     print(f"Appcast: {appcast}")
     print("No app installed or permissions changed.")
     print("This artifact is signed but not notarized. Clean-Mac installation remains unverified.")

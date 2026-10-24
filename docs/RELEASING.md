@@ -25,14 +25,12 @@ apps/rebind/scripts/dev.sh test
 apps/rebind/scripts/release.sh
 ```
 
-`release.sh` signs and verifies the app and DMG, verifies image integrity, prints the archive path and SHA-256 and writes `appcast.xml` (the Sparkle feed, EdDSA-signed with the [update signing key](SIGNING.md#update-signing-key)) next to the DMG. It does not install or publish. Install `create-dmg` if needed (`brew install create-dmg`); missing create-dmg now stops packaging, keeping one DMG workflow. Resolve a missing signing identity by restoring its original backup, not generating a replacement.
+`release.sh` signs and verifies the app and DMG, verifies image integrity, prints the archive path and SHA-256, writes `SHA256SUMS.txt` and `appcast.xml` (the Sparkle feed, EdDSA-signed with the [update signing key](SIGNING.md#update-signing-key)) next to the DMG. It does not install or publish. Install `create-dmg` if needed (`brew install create-dmg`); missing create-dmg now stops packaging, keeping one DMG workflow. Resolve a missing signing identity by restoring its original backup, not generating a replacement.
 
-For version 1.0.0 and build 15, the output is `apps/rebind/build/release/Rebind-1.0.0-15.dmg`. Use the actual filename if your build number differs. Create a checksum file in the same folder:
+For version 1.0.0 and build 15, the output is `apps/rebind/build/release/Rebind-1.0.0-15.dmg`. Use the actual filename if your build number differs. Check the checksum file in the same folder:
 
 ```sh
-cd apps/rebind/build/release
-shasum -a 256 Rebind-1.0.0-15.dmg > SHA256SUMS.txt
-shasum -a 256 -c SHA256SUMS.txt
+(cd apps/rebind/build/release && shasum -a 256 -c SHA256SUMS.txt)
 ```
 
 Test the packaged copy, record its hash/version/OS/device and make no source changes after that final build without rebuilding/rechecking affected areas. Historical package hashes do not identify a later rebuild.
