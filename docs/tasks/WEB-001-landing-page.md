@@ -62,6 +62,8 @@ Browser evidence: desktop menus; Chrome 390×844 Monny Drawer/upward popup and k
 
 2026-10-24 visual fixes: the hero and 404 arrows now use the SF Pro text glyphs from Sketch (→/↓ at 40/24 and 26/20 px, system font) instead of lucide stroke icons. Device screenshots are generated at exactly 520/1040/2080 px for the 1040 px panel, so 2x screens show source pixels 1:1 instead of the browser downscaling 2160 → 2080. `pnpm check`, build and seven smoke tests pass; not yet viewed in a browser by the maintainer.
 
+2026-10-24 social preview: Rebind.sketch `05 · Website` → `Social · Open Graph · 1200×630` (hero headline and demo card) is exported as `public/og-image.jpg` (2x, 2400×1260, JPEG quality 0.92, ~290 KB). `og:image`/`twitter:image` use it with `summary_large_image`; the app icon stays the favicon. Checks and seven smoke tests pass. Sketch document not yet saved by the maintainer.
+
 ## Next handoff
 
 Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer deploys manually; then verify DNS/TLS/redirects. Website-only work does not rebuild the native DMG.
