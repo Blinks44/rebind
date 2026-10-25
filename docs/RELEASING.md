@@ -27,7 +27,7 @@ apps/rebind/scripts/release.sh
 
 `release.sh` signs and verifies the app and DMG, verifies image integrity, prints the archive path and SHA-256, writes `SHA256SUMS.txt` and `appcast.xml` (the Sparkle feed, EdDSA-signed with the [update signing key](SIGNING.md#update-signing-key)) next to the DMG. It does not install or publish. Install `create-dmg` if needed (`brew install create-dmg`); missing create-dmg now stops packaging, keeping one DMG workflow. Resolve a missing signing identity by restoring its original backup, not generating a replacement.
 
-For version 1.0.0 and build 15, the output is `apps/rebind/build/release/Rebind-1.0.0-15.dmg`. Use the actual filename if your build number differs. Check the checksum file in the same folder:
+The output is always `apps/rebind/build/release/Rebind.dmg`; the script prints the version and build it contains. Every release after v1.0.0 uses this name, so `https://github.com/Blinks44/rebind/releases/latest/download/Rebind.dmg` always downloads the newest stable release (v1.0.0 also carries a byte-identical `Rebind.dmg` copy). Check the checksum file in the same folder:
 
 ```sh
 (cd apps/rebind/build/release && shasum -a 256 -c SHA256SUMS.txt)
@@ -47,7 +47,7 @@ git tag -a v1.0.0 -m "Rebind 1.0.0"
 git push origin v1.0.0
 gh release create v1.0.0 --draft --verify-tag --title "Rebind 1.0.0" \
   --notes-file docs/releases/1.0.0.md \
-  apps/rebind/build/release/Rebind-1.0.0-15.dmg \
+  apps/rebind/build/release/Rebind.dmg \
   apps/rebind/build/release/SHA256SUMS.txt \
   apps/rebind/build/release/appcast.xml
 gh release view v1.0.0 --web
@@ -69,7 +69,7 @@ Check launch, saved rules, real permission status and a short binding smoke test
 
 ## 6. Publish the site and support links
 
-The website points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). Since v1.0.0 its Download buttons point to the release DMG and indexing is on. The DMG filename includes the build number, so update `downloadUrl` in `apps/website/src/config/site.ts` for every release before deploying.
+The website points to `Blinks44/rebind` and `https://rebind.moduix.dev` ([WEB-001](tasks/WEB-001-landing-page.md)). Its Download buttons point to `releases/latest/download/Rebind.dmg` and indexing is on, so a new release needs no website change or deployment.
 
 From `apps/website`, run:
 

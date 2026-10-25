@@ -19,7 +19,7 @@ Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identi
 
 The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
 
-The script reads Info.plist and automatically names `apps/rebind/build/release/Rebind-1.0.0-15.dmg` for the current source. It never increments versions or publishes. See [RELEASING](RELEASING.md).
+The script reads Info.plist for the appcast and always writes `apps/rebind/build/release/Rebind.dmg`, printing the version and build it contains. It never increments versions or publishes. See [RELEASING](RELEASING.md).
 
 ## Signing key
 

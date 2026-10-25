@@ -52,7 +52,7 @@ English is `/`; the others are `/ru/`, `/de/`, `/fr/`, `/es/`, `/zh-Hans/`. Cano
 
 The document includes localized titles/descriptions, `lang`, canonical, six `hreflang` links plus `x-default`, Open Graph, Twitter summary and SoftwareApplication JSON-LD without invented price, ratings or release URL. `/robots.txt` and `/sitemap.xml` come from the same site/locale configuration. Unknown paths return HTTP 404 with localized copy and `noindex`, without home canonical/structured data.
 
-**Before release:** set `site.downloadUrl` to a verified public DMG and enable `site.indexingEnabled` after release/content acceptance. Until a public DMG is configured, download links lead to GitHub Releases with a visible pending-release message. Until then, HTML meta and response headers use `noindex, follow`. The current square social image/favicon is the shipped app icon; a finished share image can replace it during design transfer. Add the real release download only when a public DMG exists. Preserve the first-launch notice from Sketch until notarization.
+**Release download:** `site.downloadUrl` is `releases/latest/download/Rebind.dmg`, which GitHub redirects to the newest stable release, so releases need no website change. With `downloadUrl` set to `null`, download links lead to GitHub Releases with a visible pending-release message; with indexing off, HTML meta and response headers use `noindex, follow`. The current square social image/favicon is the shipped app icon; a finished share image can replace it during design transfer. Add the real release download only when a public DMG exists. Preserve the first-launch notice from Sketch until notarization.
 
 ## Design transfer and images
 

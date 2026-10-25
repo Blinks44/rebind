@@ -124,8 +124,10 @@ def main():
     version = str(info["CFBundleShortVersionString"])
     build = str(info["CFBundleVersion"])
     if not all(re.fullmatch(r"[A-Za-z0-9._-]+", item) for item in [version, build]):
-        raise RuntimeError("Invalid version/build for package filename")
-    dmg = OUTPUT / f"Rebind-{version}-{build}.dmg"
+        raise RuntimeError("Invalid version/build for the release tag")
+    # One fixed name, so releases/latest/download/Rebind.dmg always serves the newest release;
+    # the version and build are in the release tag and the appcast.
+    dmg = OUTPUT / "Rebind.dmg"
     with tempfile.TemporaryDirectory(prefix="rebind-dmg-") as staging:
         run("ditto", destination, Path(staging) / "Rebind.app")
         run("create-dmg", "--overwrite", "--volname", "Rebind",
@@ -143,7 +145,7 @@ def main():
     print(checksum.decode().strip())
     appcast = write_appcast(dmg, version)
     print(f"Signing certificate: {fingerprint}")
-    print(f"Package: {dmg}")
+    print(f"Package: {dmg} (Rebind {version}, build {build})")
     print(f"Checksums: {OUTPUT / 'SHA256SUMS.txt'}")
     print(f"Appcast: {appcast}")
     print("No app installed or permissions changed.")

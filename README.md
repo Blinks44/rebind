@@ -69,7 +69,7 @@ Rebind is a universal app, but so far it has been run only on Apple silicon with
 
 Rebind is signed by the maintainer but **not notarized by Apple**, so macOS blocks the first launch until you allow it. The "Source code" archives on the Releases page are not installers; download the DMG.
 
-1. Download the latest `Rebind-….dmg` from the [Releases](https://github.com/Blinks44/rebind/releases) page and open it.
+1. Download [Rebind.dmg](https://github.com/Blinks44/rebind/releases/latest/download/Rebind.dmg) from the latest release and open it.
 2. Drag **Rebind** onto the **Applications** folder, then open it from there. macOS shows a warning that it could not verify the app; close the warning.
 3. Open **System Settings → Privacy & Security**, scroll down to the message about Rebind and click **Open Anyway**, then confirm.
 4. Rebind opens and guides you through the one permission it needs, **Accessibility**.
