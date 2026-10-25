@@ -67,3 +67,7 @@ Browser evidence: desktop menus; Chrome 390×844 Monny Drawer/upward popup and k
 ## Next handoff
 
 Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer deploys manually; then verify DNS/TLS/redirects. Website-only work does not rebuild the native DMG.
+
+## Companion website link — 2026-10-25
+
+Changed the Monny footer card destination from GitHub to https://monny.moduix.dev and corrected the website README. Format, lint, TypeScript and `git diff --check` pass. Next: include this change in the next website deployment. No deployment or native app change.

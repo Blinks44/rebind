@@ -40,10 +40,7 @@ export function SiteFooter() {
         <div className={styles.related}>
           <h2>{m.alsoFromUs()}</h2>
           <Card asChild className={styles.companion}>
-            <a
-              href="https://github.com/blinks44/monny"
-              aria-label={`Monny: ${m.monnyDescription()}`}
-            >
+            <a href="https://monny.moduix.dev" aria-label={`Monny: ${m.monnyDescription()}`}>
               <img src={monnyPng} width="52" height="52" alt="" loading="lazy" />
               <div>
                 <strong>Monny</strong>
