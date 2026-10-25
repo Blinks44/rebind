@@ -17,6 +17,10 @@ Outside current scope: Caps Lock, Fn/Globe and left/right modifier distinction; 
 3. **Resolve support claims:** test macOS 26 on an available Mac; keep Intel unverified unless actually tested. Retain task-specific hardware/safety limits and report real-grant normal-profile CPU/latency only when measured. The old isolated paused/no-grant CPU result (~1.5%) is not active-rule performance.
 4. **Publish deliberately:** v1.0.0 (build 15) was published on 2026-10-24; the next published build verifies the first Sparkle update. (EdDSA and signing-key backups are done) review/commit source, match tag/version, rebuild/final-check the signed DMG, upload DMG + checksums + `appcast.xml` in a GitHub draft, then publish a stable release and verify download/update discovery. At the last recorded public check the repository was public with no published release; recheck during authorized publication. [WEB-001](tasks/WEB-001-landing-page.md) owns the implemented website design transfer (2026-10-23); finish device/interaction/accessibility, six-language and real-download acceptance. Website deployment follows the DMG. [RELEASING](RELEASING.md) gives the procedure; no publication is automatic.
 
+## Next release (scope chosen 2026-10-24)
+
+Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts measured background wakeups, [ACTION-001](tasks/ACTION-001-standard-actions.md) adds simple standard actions, [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design ready, hardware write probe first). Suggested order: PERF-001, ACTION-001, LIGHT-001.
+
 ## Release gates
 
 - [ ] SPEC §15 walkthroughs on an identified artifact/environment; outstanding task matrices closed or explicitly limited. Preserve the reported successful general pass.

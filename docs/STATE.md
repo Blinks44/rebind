@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-24**, checkout `main` (build-15 fix committed after `f86b4ab`; not yet pushed). The 2026-10-24 release-readiness review corrected public update/install copy and added the `gh` release route; build 15 then fixed a scrolling crash. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-25**, checkout `main`. Next-release scope (PERF-001, ACTION-001, LIGHT-001) and the Sketch parity cleanup are recorded; no app code changed since build 15. The 2026-10-24 release-readiness review corrected public update/install copy and added the `gh` release route; build 15 then fixed a scrolling crash. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -24,6 +24,9 @@ Finish current-menu/release checks; no new recognizers. Tasks own detailed accep
 
 | Task | Concrete next step |
 | --- | --- |
+| [PERF-001](tasks/PERF-001-background-wakeups.md) | Next release: measure, then cut the companion-app scan, per-frame glide checks and the 1 s audio wake. |
+| [ACTION-001](tasks/ACTION-001-standard-actions.md) | Next release: fixed-shortcut entries, Apps, fast-forward/rewind, microphone mute. |
+| [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | Next release: design ready (Sketch 66–68); first G915 write/persistence probe, then HID++ adapters and the Devices card. |
 | [WEB-001](tasks/WEB-001-landing-page.md) | awaiting_verification: desktop/narrow Drawer/menu and 404 → home title checks passed; finish physical-phone/all-section, keyboard/VoiceOver, reduced motion and translations, then the maintainer's manual deployment and a live DNS/TLS check. |
 | [REL-005](tasks/REL-005-onboarding-and-updates.md) | v1.0.0 published; verify the update path with the next build (1.0.1); first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
