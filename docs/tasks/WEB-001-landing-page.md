@@ -1,6 +1,6 @@
 # WEB-001: Public website foundation and design transfer
 
-- Updated: 2026-10-24
+- Updated: 2026-10-25
 - Stage: awaiting_verification (iteration-two implementation ready; final interaction/accessibility/release checks open)
 - Owner: Codex website implementation
 - Ownership checked: main `e3540f3` with the existing uncommitted website transfer preserved. Codex owns scoped website/Sketch parity corrections; no native app changes.
@@ -26,7 +26,7 @@ Iteration two implements the live `Rebind.sketch → 05 · Website` landing/404,
 - [x] Landing, 404 and responsive states implemented from the live source; bounded desktop/mobile hero and interaction review performed. Full interaction/device acceptance remains below.
 - [ ] Final six-language proofreading, mobile widths, keyboard/VoiceOver and reduced-motion review.
 - [ ] Real public release download and first-launch notice until notarization.
-- [ ] First explicitly requested deployment, DNS/TLS and live indexing verification.
+- [x] Public HTTPS/SEO/crawler-file smoke verification (2026-10-25); deployment provenance and Search Console ingestion are not established.
 
 ## Source and verification
 
@@ -66,8 +66,14 @@ Browser evidence: desktop menus; Chrome 390×844 Monny Drawer/upward popup and k
 
 ## Next handoff
 
-Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer deploys manually; then verify DNS/TLS/redirects. Website-only work does not rebuild the native DMG.
+Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer handles future deployments manually. Public HTTPS/SEO/crawler checks passed on 2026-10-25 (below); deployment provenance, HTTP-to-HTTPS redirects and Search Console ingestion remain outside that evidence. Website-only work does not rebuild the native DMG.
 
 ## Companion website link — 2026-10-25
 
 Changed the Monny footer card destination from GitHub to https://monny.moduix.dev and corrected the website README. Format, lint, TypeScript and `git diff --check` pass. Next: include this change in the next website deployment. No deployment or native app change.
+
+## Live sitemap audit — 2026-10-25
+
+Read-only audit at main `ef6caa8`: the public `/sitemap.xml` returns HTTP 200 and `application/xml; charset=utf-8`, matching the server-entry response and locale configuration. Python ElementTree parsed the downloaded XML: six distinct landing URLs, each with all six reciprocal language alternates plus `x-default`, using the sitemap and XHTML namespaces. `/robots.txt` advertises the same public sitemap. All six destinations respond with HTTP 200; the Russian HTML has the expected canonical and `index, follow`. The compact XML has no presentation stylesheet; no implementation correction is needed. Custom browser rendering was not inspected because no browser surface was available.
+
+`WEBSITE_TEST_ORIGIN=https://rebind.moduix.dev pnpm test:smoke`: all seven tests pass against the public Worker (six locales/404s, metadata, crawler files and immutable assets). This confirms public DNS/HTTPS reachability and HTTP SEO responses, not Search Console ingestion or actual indexing. No source change, build, deployment or native packaging. Next: finish the remaining interaction/accessibility/translation acceptance; optionally submit the sitemap in Search Console through the maintainer.
