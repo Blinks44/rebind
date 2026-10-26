@@ -426,8 +426,9 @@ nonisolated final class EngineMailbox: Sendable {
                 if $0.dispatchIsCurrent(dispatch) { return dispatch }
             }
             guard !$0.pending.isEmpty else { return nil }
-            return ActionDispatch(action: $0.pending.removeFirst(), revision: $0.actionRevision,
-                                  deviceID: $0.audioCapabilities.deviceID)
+            let action = $0.pending.removeFirst()
+            return ActionDispatch(action: action, revision: $0.actionRevision,
+                                  deviceID: $0.audioCapabilities.deviceID(for: action))
         }
     }
 

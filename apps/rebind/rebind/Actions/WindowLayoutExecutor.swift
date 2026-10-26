@@ -11,7 +11,7 @@ nonisolated protocol WindowLayoutAccessibility: WindowAccessibility {
 
 nonisolated enum WindowLayoutExecutor {
     static func perform(_ action: WindowLayoutAction, displays: [WindowDisplay], canPerform: () -> Bool) -> WindowActionResult {
-        perform(action, displays: displays, client: AXWindowAccessibility(), ownPID: getpid(), canPerform: canPerform)
+        return perform(action, displays: displays, client: AXWindowAccessibility(), ownPID: getpid(), canPerform: canPerform)
     }
 
     static func perform<Client: WindowLayoutAccessibility>(_ action: WindowLayoutAction, displays: [WindowDisplay],

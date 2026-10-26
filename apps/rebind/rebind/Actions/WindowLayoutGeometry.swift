@@ -61,6 +61,12 @@ nonisolated enum WindowLayoutGeometry {
         let usable = display.visibleFrame
         switch action {
         case .fill: return usable
+        case .fillWithStageManager:
+            // Keep the stored case name compatible with existing bindings. This layout is now
+            // unconditional: Stage Manager may hide its strip or be switched off entirely.
+            let inset = max(0, display.frame.minX + 220 - usable.minX)
+            guard inset < usable.width / 2 else { return nil }
+            return CGRect(x: usable.minX + inset, y: usable.minY, width: usable.width - inset, height: usable.height)
         case .leftHalf:
             return CGRect(x: usable.minX, y: usable.minY, width: floor(usable.width / 2), height: usable.height)
         case .rightHalf:

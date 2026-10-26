@@ -34,6 +34,7 @@ nonisolated enum WorkspaceAction: Codable, Equatable, Sendable {
     case quitApplication(ApplicationTarget)
     case previousApplication
     case openSystemSettings
+    case openApps
     case openURL(URL)
     case openFile(URL)
 
@@ -48,14 +49,14 @@ nonisolated enum WorkspaceAction: Codable, Equatable, Sendable {
         switch self {
         case .openApplication(let target), .activateApplication(let target), .quitApplication(let target): target.url
         case .openURL(let url), .openFile(let url): url
-        case .openSystemSettings, .previousApplication: nil
+        case .openSystemSettings, .openApps, .previousApplication: nil
         }
     }
 
     var isSupported: Bool {
         switch self {
         case .openApplication(let target), .activateApplication(let target), .quitApplication(let target): target.isSupported
-        case .openSystemSettings, .previousApplication: true
+        case .openSystemSettings, .openApps, .previousApplication: true
         case .openURL(let url): Self.webURL(url.absoluteString) != nil
         case .openFile(let url): Self.isLocalFile(url) && url.pathExtension.lowercased() != "app"
         }

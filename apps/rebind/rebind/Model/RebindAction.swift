@@ -29,7 +29,7 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
     var canBeHeld: Bool {
         switch self {
         case .shortcut, .modifier: true
-        case .system(let action): action != .toggleMute
+        case .system(let action): action == .volumeUp || action == .volumeDown
         case .media(let action): action.isBrightness
         case .mouse(let action): action.scrollLines != nil
         default: false

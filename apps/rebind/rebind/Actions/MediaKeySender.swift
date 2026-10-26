@@ -25,7 +25,8 @@ nonisolated enum MediaKeySender {
     }
 
     static func events(_ action: SystemAction) -> [CGEvent]? {
-        pair(source: { CGEventSource(stateID: .privateState) }, make: { makeEvent(action.keyCode, down: $0) })
+        guard let keyCode = action.keyCode else { return nil }
+        return pair(source: { CGEventSource(stateID: .privateState) }, make: { makeEvent(keyCode, down: $0) })
     }
 
     private static func perform(canPerform: () -> Bool, build: () -> [CGEvent]?,

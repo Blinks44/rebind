@@ -109,7 +109,7 @@ extension EngineMailbox {
                   $0.rules[MatchKey(trigger: gesture.trigger, modifiers: runtime.modifiers,
                                     isMagicTrackpad: runtime.isMagicTrackpad)]?.action == action else { return false }
             let dispatch = ActionDispatch(action: action, revision: runtime.revision,
-                deviceID: $0.audioCapabilities.deviceID, trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
+                deviceID: $0.audioCapabilities.deviceID(for: action), trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
                                                       expiresAt: now + 100_000_000, queuedAt: now,
                                                       modifiers: runtime.modifiers))
             guard $0.dispatchIsCurrent(dispatch) else { return false }

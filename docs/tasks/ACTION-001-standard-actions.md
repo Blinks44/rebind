@@ -1,12 +1,12 @@
 # ACTION-001: More standard actions in the shared catalog
 
-- Updated: 2026-10-24
-- Stage: planned
-- Owner: unassigned
-- Ownership checked: 2026-10-24 on `main` after `f961b3b`
+- Updated: 2026-10-26
+- Stage: awaiting_verification
+- Owner: Codex implementation session
+- Ownership checked: 2026-10-26 on `main` at `59a3aee`; preserves the existing uncommitted Stage Manager scope records
 - Owned surfaces: `Actions/ActionKind.swift`, `Model/MediaAction.swift`, `Actions/CoreAudioOutput.swift`, action editor catalog, `Localizable.xcstrings`; Sketch only if the catalog menu specimen needs new groups
 - Requirements: SPEC §5 (A1/A2), §11
-- Code baseline: `main` at `f961b3b`; no code changed
+- Code baseline: `main` at `59a3aee`, build 17; action/model/worker/audio/layout/catalog/persistence/test surfaces owned by this session
 
 ## Outcome and scope
 
@@ -16,16 +16,68 @@ Add simple, reliable actions the catalog still lacks (review 2026-10-24 against 
 - Apps (the macOS 26 Launchpad replacement): opens `/System/Applications/Apps.app` (present on macOS 27.0.1; Launchpad.app is absent).
 - Fast-forward / Rewind media keys (`NX_KEYTYPE_FAST` / `NX_KEYTYPE_REWIND`).
 - Toggle microphone mute on the default input device via Core Audio, hidden when the device has no settable mute.
+- A separate **Fill with Left Margin** action. Always reserve 220 logical points from the selected display's left edge, regardless of Stage Manager enabled/hidden state or card presence; fill the available top/bottom/right edges, respecting Dock/menu bar. Keep ordinary Fill unchanged. This replaces the earlier Stage Manager-dependent behavior after the tester reported a hidden-strip failure on 2026-10-26. Per-binding action choice, no global setting, system-setting writes, automatic resizing or continuous monitoring. Existing stored `fillWithStageManager` payloads retain their identity and now use this unconditional behavior.
 
-Not in scope (user decision 2026-10-24): audio output cycling, display sleep, move to previous display, window size restore; Notification Center, Control Center, Stage Manager, Focus and Dark Mode (no public API; Run Shortcut already covers them).
+Not in scope (user decision 2026-10-24): audio output cycling, display sleep, move to previous display, window size restore; Notification Center, Control Center, toggling Stage Manager, Focus and Dark Mode (no public API; Run Shortcut already covers them). Fill with Left Margin uses display geometry only; it does not query or toggle Stage Manager.
 
 ## Acceptance
 
 - [ ] Each new entry has a real execution path, availability gating and the existing error reporting (A1); no feedback loop (A2).
 - [ ] Schema/migration handled if stored payloads change; older files keep loading.
 - [ ] Six-language names and editor descriptions; catalog search finds them.
-- [ ] Tests for mapping/encoding and microphone availability; full `dev.sh test`; build bump and `release.sh` package; hardware check of each action on the user's Mac.
+- [ ] Fill with Left Margin: stable 220 pt left strip whether Stage Manager is visible, hidden, off or has no recent cards; top/bottom/right match ordinary Fill; ordinary Fill and saved binding identity preserved. Check repeated invocation, Dock positions/multiple displays, app constraints and full-screen safe failure. No promise that every possible Stage Manager card fits this compact fixed strip.
+- [ ] Tests for mapping/encoding and microphone availability, Stage Manager state/fallback and display geometry; full `dev.sh test`; build bump and `release.sh` package; hardware check of each action on the user's Mac.
+
+## Stage Manager mechanism review — 2026-10-26
+
+Existing Fill returns the selected display's `NSScreen.visibleFrame` via the shared display snapshot/AX executor; it has no Stage Manager-specific inset. Apple's [visibleFrame documentation](https://developer.apple.com/documentation/appkit/nsscreen/visibleframe) documents menu-bar/Dock exclusions but does not promise the native Stage Manager central layout. Apple's [Stage Manager guide](https://support.apple.com/en-gb/guide/mac-help/mchl534ba392/27/mac/27) describes centered windows/recent apps, without an API or exact inset contract. Rectangle's [maintainer documentation](https://github.com/rxhanson/Rectangle/blob/main/TerminalCommands.md) exposes a configurable Stage Manager area; its documented default is a Rectangle policy, not proof of Apple's exact geometry. Inspect the maintained implementation, native API alternatives, licensing and macOS 26/27 behavior before choosing the adapter. Do not promise pixel-identical Apple margins from a fixed constant. No code/dependency adopted or hardware behavior verified by this scope update.
+
+### Native layout inspection (read-only, 2026-10-26)
+
+Inspected the installed Apple WindowManager executable on **macOS 27.0.1 (26A434)**, arm64e slice; executable SHA-256 `08c81e294ec89c34c7f8b77cb8ea864ade46cd52f4d642da0d24c861c4dbc008`. Static symbols/Swift reflection identify `StageCalculatorComponent.InputModel` with screen content frame, strip auto-hide/alignment and application-window grouping inputs. In the layout path near VA `0x100264a38`, the non-auto-hidden branch rounds down a width multiplied by **0.66**, then adds `leftStripEdgeHorizontalInset` and `horizontalInsetFromStrip`. Its caller obtains width from the strip-maximum-frame component path. The auto-hidden branch instead reads `stageFrameMinimumHorizontalInset`. The grouping/alignment branches reserve one or two horizontal insets; vertical padding comes separately from `stageFrameVerticalInset`. This is a partial static reconstruction, not Apple's published contract or a measured full formula: preference defaults, all caller semantics and cross-version behavior remain unverified. The multiplier is not 66% of the display width. Do not copy disassembly or ship calls to private WindowManager internals. Analysis artifacts remain temporary; no system settings, windows or permissions changed.
+
+Read [Rectangle StageUtil](https://github.com/rxhanson/Rectangle/blob/main/Rectangle/Utilities/StageUtil.swift) and [ScreenDetection](https://github.com/rxhanson/Rectangle/blob/main/Rectangle/ScreenDetection.swift): they read WindowManager preferences and strip visibility, then subtract a separately configured absolute/proportional strip reserve on its side. This is a different policy from Apple's symmetric branches. No third-party code copied. The earlier 2.5%-of-usable-width compact-margin formula was a Rebind proposal, not a native finding or a settled requirement. The subsequent user decision selects a left-only card reserve rather than symmetric native padding. Its exact width/default and any per-action adjustment remain to be determined; the earlier percentage formula is not approved.
+
+## Initial implementation and verification — builds 18–19, 2026-10-26
+
+Implemented all 16 entries in the existing shared catalog, with six-language names, hints and failure messages. Named commands reuse tagged shortcut delivery; Apps uses the validated workspace/application path; fast-forward/rewind send the SDK's media keys 19/20. Native default-input mute is separate from output volume/mute: capability caching and all three source-family queues carry the input device ID, and the worker rechecks cancellation/default input before writing. Unsupported mute controls stay hidden (existing selected rules remain editable). No audio stream, microphone capture permission, volume-zero emulation or one-second polling was added. Schema **45** migrates earlier configurations and gates the five new typed payloads; ordinary shortcut payloads are unchanged.
+
+Stage Manager Fill reads `GloballyEnabled`/`AutoHide` in the WindowManager preference domain and public on-screen CG window metadata once on the action thread. Only WindowManager layer-zero card bounds near the selected display's left edge contribute; titles, screenshots and app contents are not read. The reserve ends **8 pt beyond the furthest card edge**. Existing AX gates/write/readback handle the resulting rectangle. Off means ordinary Fill; unknown state, an auto-hidden/missing strip or a right-side strip fails with a specific explanation instead of an invented margin. No system setting writes, background geometry polling or automatic reapplication. Preference keys/card shape are undocumented compatibility assumptions; native metadata can be transient during Stage Manager animations, so a failed invocation may need retrying after the transition.
+
+Read-only macOS **27.0.1 (26A434), Apple silicon** probes found enabled/non-auto-hidden left cards on a 2560 × 1440 display. Observed maximum right edges 209/193 pt imply 217/201 pt reserves; this measures current surfaces, not a universal Apple formula. A separate read-only HAL probe found a settable main-input mute control. Neither probe resized windows, toggled mute, executed remappings nor changed real rules/permissions. Other transient/off-display system surfaces are excluded by geometry checks. The subsequent tester report below confirms the requested Stage Manager behavior generally; macOS 26 and the detailed app/Space/Dock/display matrix remain unverified.
+
+Research: Apple SDK Core Audio input-scope `kAudioDevicePropertyMute` and [SwitchAudioSource](https://github.com/deweller/switchaudio-osx/blob/master/audio_switch.c) informed the native-control choice; the latter is a maintained native reference, not an adopted dependency. Rectangle's MIT implementation was reviewed for Stage Manager detection, as documented above; no upstream code copied. No complete native Stage Manager layout API or suitable ready-made package was established. Swift Package Index discovery did not establish a suitable package; no exhaustive registry audit is claimed. No dependency/license changes.
+
+Live Sketch: reviewed the existing English **15 · Editor · Keyboard · Action picker · Light** frame and its reusable category/search/row structure on 2026-10-26. The implementation reuses that picker; no new visual control or Sketch edits/save. New English catalog strings are implemented in source and remain to be synchronized in a separately authorized Sketch edit.
+
+Checks on **1.0.0 (18)**:
+
+- Targeted action/catalog/media/AX tests: **33 methods, 85 executions passed**, no skips/failures (`Test-rebind-2026.10.26_11-36-19-+0300.xcresult`).
+- Final `apps/rebind/scripts/dev.sh test -quiet -parallel-testing-enabled NO`: **954 methods passed, 2 skipped; 2516 parameterized executions passed**, no failures (`Test-rebind-2026.10.26_11-38-15-+0300.xcresult`). Includes new symbol/localization resolution, fixed mappings, microphone replacement/cancellation, queue targeting, schema round trips and left-only geometry/off/unsupported states. Existing About/held-output fixtures report QoS inversion runtime warnings; no new test failure. These are software/native fixtures, not physical action acceptance.
+- Debug and Release build numbers are both 18; marketing version remains 1.0.0. Final `apps/rebind/scripts/release.sh` passed: Release build, deep/strict app signature, DMG signature and image verification, plus signed appcast/checksum generation. Package: `apps/rebind/build/release/Rebind.dmg`; SHA-256 `9fe5d9f1f007008be7ae175481563387d3eb52faae887c3a2c9692d87677b603`. Same pinned Apple Development identity; signed, non-notarized local artifact. No active async test/build jobs remain.
+
+## Tester follow-up — 2026-10-26
+
+After the build-18 handoff, the tester confirms that Stage Manager-aware Fill works as requested. This establishes the requested happy path on the tester’s setup; exact installed hash, app/window, OS, individual edge/card-click checks and app/Space-switch sequence were not restated. Preserve this acceptance without requesting the same general check again. The separate new actions and detailed on/off/hidden/right-strip/Dock/multiple-display/platform matrix remain open; the overall task stays `awaiting_verification`. No code or package changed for this report.
+
+## Variable-inset regression — 2026-10-26
+
+The tester subsequently reports that closing an application and invoking Fill again changes the left edge. Source inspection confirms the cause: the current reserve is the maximum right edge of the currently rendered cards plus 8 pt, so changing card/group geometry changes the target. Earlier happy-path acceptance remains valid but does not close stable repeated placement. No continuous monitoring is involved; the change happens on invocation. The user authorized the fix. Build 19 replaces card-dependent sizing with a stable 220 logical-point strip measured from the selected display’s left edge. Card metadata now establishes strip presence only. Existing usable-area exclusions are subtracted rather than added twice. This compact Rebind policy is based on the observed 201–217 pt reserves, rounded up; it is not Apple’s formula or a universal maximum-card-size guarantee. No cache, timer or new setting is needed. A fixed logical-point policy naturally follows macOS display scaling without pixel conversion. Apple's earlier partial static inspection refers to a maximum-strip-frame input, not a validated public sizing contract.
+
+## Stable-strip verification — build 19, 2026-10-26
+
+`dev.sh test -quiet -parallel-testing-enabled NO` selecting StageManagerLayoutTests, WindowLayoutExecutorTests and WindowLayoutGeometryTests passed **23 methods / 58 executions**, no failures/skips/runtime warnings (`Test-rebind-2026.10.26_12-21-12-+0300.xcresult`). New regression coverage changes card composition between invocations and verifies identical targets; selected-display origin, existing usable inset and unsafe narrow-area failure are covered. Build 18’s full-suite result above remains historical; this bounded pure-geometry correction reran the affected suites. Debug/Release are both **1.0.0 (19)**; no schema or interface-copy changes. After the build-19 handoff, the tester confirms the requested stable-inset retest passes (2026-10-26). The reported variable-placement defect is accepted as fixed on that setup; exact app/hash/individual sequences were not restated. Final `release.sh` passed Release compilation, app/DMG signing and image verification. Current package: `apps/rebind/build/release/Rebind.dmg`, SHA-256 `31efc708ea3b34fe24928abf4b632fc23561ca77e0f1957de203d1dcee68a265`; appcast/checksum regenerated. No installation or publication. This supersedes the current build-18 package; its earlier evidence is retained above.
+
+## Unconditional left margin — build 20, 2026-10-26
+
+The tester reports an error after accidentally hiding Stage Manager. The user requests always filling with the chosen margin rather than depending on the strip. Build 20 removes the entire WindowManager preference/CG-card adapter and optional snapshot inset. Pure display geometry directly computes `max(0, display.minX + 220 - usable.minX)`, retaining existing AX gates and unsafe-small-area/full-screen checks. Stage Manager visibility, enabled state, strip side and card presence are no longer consulted. The action is named **Fill with Left Margin** and its hint explains the unconditional 220 pt margin in all six languages. Failure uses the existing window-layout message, with no request to show thumbnails. Stored enum cases/schema remain unchanged for existing bindings; no migration/reset is needed. Earlier detection/availability claims above describe superseded builds 18–19 only.
+
+Build-20 affected checks: **35 methods / 75 executions passed**, zero failures/skips/runtime warnings (`Test-rebind-2026.10.26_12-38-06-+0300.xcresult`). Suites: LeftInsetFillTests, StandardActionTests, WindowLayoutExecutorTests, WindowLayoutGeometryTests and CatalogActionTests. Tests cover geometry-only operation without Stage Manager metadata, repeat stability, selected-display/Dock exclusions, full-screen/small-area failure and saved action encoding/catalog resources. Six-language names/hints were checked for completeness; no interface control/layout changes. The build-18 full-suite result remains historical; this bounded change reran affected suites.
+
+Final `release.sh` passed Release build, app/DMG signatures, image verification and appcast/checksum generation. Package **1.0.0 (20)**: `apps/rebind/build/release/Rebind.dmg`, SHA-256 `2e3bd92a8c566088d2a9a76710062834837c2150778e27604d66467e64a83cfc`. This supersedes the earlier current artifact. No installed action execution, real rule/permission changes or Sketch edits by the agent.
+
+After the build-20 handoff the tester confirms the action works (2026-10-26); exact scenario/hash was not restated. Preserve this bounded acceptance.
 
 ## Next handoff
 
-Code: add the fixed-shortcut entries first (lowest risk), then Apps, the two media keys and microphone mute.
+Tester: preserve accepted unconditional left-margin delivery; Retain app/Space/Dock/display/window-constraint checks and verify other new actions (named shortcuts, Apps, media seek, microphone mute/default-input replacement). Broader safety/macOS 26/Intel and targeted keyboard/VoiceOver acceptance remain open.

@@ -248,6 +248,10 @@ struct BindingEditor: View {
         if actionKind == .insertText { return .insertTextHint }
         if actionKind.modifierAction != nil { return .holdModifierHint }
         if actionKind == .navigateBack || actionKind == .navigateForward { return .navigationActionHint }
+        if let shortcut = actionKind.fixedShortcut, [.spotlight, .emojiSymbols].contains(actionKind) { return .systemShortcutSettingsHint(InputLabels.shortcut(shortcut)) }
+        if actionKind == .toggleMicrophoneMute { return .microphoneMuteHint }
+        if actionKind == .openApps { return .openAppsHint }
+        if actionKind == .fillWindowWithStageManager { return .stageManagerFillHint }
         if let shortcut = actionKind.fixedShortcut { return .namedShortcutHint(InputLabels.shortcut(shortcut)) }
         if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }
         if actionKind == .nextDisplay { return .nextDisplayHint }

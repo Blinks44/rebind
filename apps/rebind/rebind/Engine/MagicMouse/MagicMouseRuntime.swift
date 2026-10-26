@@ -35,7 +35,7 @@ extension EngineMailbox {
             let target = TrackpadDispatchTarget(pid: pid, inputActivity: runtime.activity,
                 expiresAt: now + 100_000_000, queuedAt: now, modifiers: runtime.modifiers, isMagicMouse: true)
             let dispatch = ActionDispatch(action: action, revision: runtime.revision,
-                                          deviceID: $0.audioCapabilities.deviceID, trackpadTarget: target)
+                                          deviceID: $0.audioCapabilities.deviceID(for: action), trackpadTarget: target)
             guard $0.dispatchIsCurrent(dispatch) else { return false }
             $0.trackpadDispatch = dispatch
             return true

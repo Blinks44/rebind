@@ -18,6 +18,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case nextTab, previousTab, newTab, reopenTab, zoomIn, zoomOut
     case screenshotScreen, screenshotArea, screenshotTools
     case topHalf, bottomHalf, topLeftQuarter, topRightQuarter, bottomLeftQuarter, bottomRightQuarter, nextDisplay
+    case spotlight, forceQuitWindow, emojiSymbols, toggleDock, hideOthers, lookUp, quitFrontApplication, newWindow, find, reload, save
+    case openApps, fastForward, rewind, toggleMicrophoneMute, fillWindowWithStageManager
     var id: Self { self }
 
     enum Category: CaseIterable, Identifiable {
@@ -28,7 +30,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     var category: Category {
         if self == .doNothing || controlAction != nil { return .rebind }
         if [.copy, .paste, .cut, .undo, .redo, .selectAll, .insertText].contains(self) || modifierAction != nil { return .keyboard }
-        if [.screenshotScreen, .screenshotArea, .screenshotTools].contains(self) { return .system }
+        if [.screenshotScreen, .screenshotArea, .screenshotTools, .spotlight, .forceQuitWindow, .emojiSymbols, .toggleDock, .openApps].contains(self) { return .system }
         if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen
             || mediaAction?.isBrightness == true { return .system }
         if mouseAction != nil { return .mouse }
@@ -50,6 +52,10 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .control(.previousProfile): self = .previousProfile
         case .shortcut(let shortcut):
             self = Self.allCases.first { $0.fixedShortcut == shortcut } ?? .keyboardShortcut
+        case .media(.fastForward): self = .fastForward
+        case .media(.rewind): self = .rewind
+        case .system(.toggleMicrophoneMute): self = .toggleMicrophoneMute
+        case .workspace(.openApps): self = .openApps
         case .media(.playPause): self = .playPause
         case .media(.nextTrack): self = .nextTrack
         case .media(.previousTrack): self = .previousTrack
@@ -102,6 +108,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .volumeUp: .volumeUp
         case .volumeDown: .volumeDown
+        case .toggleMicrophoneMute: .toggleMicrophoneMute
         case .toggleMute: .toggleMute
         default: nil
         }
@@ -136,6 +143,8 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
 
     var mediaAction: MediaAction? {
         switch self {
+        case .fastForward: .fastForward
+        case .rewind: .rewind
         case .playPause: .playPause
         case .nextTrack: .nextTrack
         case .previousTrack: .previousTrack
@@ -157,6 +166,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .leftHalf: .leftHalf
         case .rightHalf: .rightHalf
+        case .fillWindowWithStageManager: .fillWithStageManager
         case .fillWindow: .fill
         case .centerWindow: .center
         case .topHalf: .topHalf
@@ -201,6 +211,17 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     /// Named commands that are the standard macOS shortcut for what they do, such as ⌘[ for Back.
     var fixedShortcut: KeyboardShortcut? {
         switch self {
+        case .spotlight: KeyboardShortcut(keyCode: 49, modifiers: .command)
+        case .forceQuitWindow: KeyboardShortcut(keyCode: 53, modifiers: [.option, .command])
+        case .emojiSymbols: KeyboardShortcut(keyCode: 49, modifiers: [.control, .command])
+        case .toggleDock: KeyboardShortcut(keyCode: 2, modifiers: [.option, .command])
+        case .hideOthers: KeyboardShortcut(keyCode: 4, modifiers: [.option, .command])
+        case .lookUp: KeyboardShortcut(keyCode: 2, modifiers: [.control, .command])
+        case .quitFrontApplication: KeyboardShortcut(keyCode: 12, modifiers: .command)
+        case .newWindow: KeyboardShortcut(keyCode: 45, modifiers: .command)
+        case .find: KeyboardShortcut(keyCode: 3, modifiers: .command)
+        case .reload: KeyboardShortcut(keyCode: 15, modifiers: .command)
+        case .save: KeyboardShortcut(keyCode: 1, modifiers: .command)
         case .navigateBack: KeyboardShortcut(keyCode: 33, modifiers: .command)
         case .navigateForward: KeyboardShortcut(keyCode: 30, modifiers: .command)
         case .copy: KeyboardShortcut(keyCode: 8, modifiers: .command)
@@ -233,6 +254,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         if self == .lockScreen { return .lockScreen }
         if self == .sleepSystem { return .sleepSystem }
         if self == .openSystemSettings { return .workspace(.openSystemSettings) }
+        if self == .openApps { return .workspace(.openApps) }
         if self == .previousApplication { return .workspace(.previousApplication) }
         if let mouseAction { return .mouse(mouseAction) }
         if let mediaAction { return .media(mediaAction) }
@@ -272,6 +294,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     }
 
     func isAvailable(with capabilities: AudioOutputCapabilities) -> Bool {
+        if self == .openApps { return FileManager.default.fileExists(atPath: "/System/Applications/Apps.app") }
         if self == .lockScreen { return capabilities.screenLock }
         if self == .sleepSystem { return SystemSleepExecutor.isAvailable() }
         if let desktopAction { return DockActions.isAvailable(for: desktopAction) }

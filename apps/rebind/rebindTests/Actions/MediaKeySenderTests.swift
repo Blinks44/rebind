@@ -8,7 +8,7 @@ struct MediaKeySenderTests {
     func constructsNativeAuxiliaryPairsWithExactCodesPhasesNoRepeatOrModifiers(_ action: MediaAction) throws {
         let pair = try #require(MediaKeySender.events(action))
         #expect(pair.count == 2)
-        #expect(action.keyCode == [.playPause: 16, .nextTrack: 17, .previousTrack: 18, .brightnessUp: 2, .brightnessDown: 3][action])
+        #expect(action.keyCode == [.playPause: 16, .nextTrack: 17, .previousTrack: 18, .fastForward: 19, .rewind: 20, .brightnessUp: 2, .brightnessDown: 3][action])
         let sources = try pair.map { try #require(CGEventSource(event: $0)) }
         #expect(sources[0].sourceStateID == sources[1].sourceStateID)
         #expect(sources[0].sourceStateID != .hidSystemState && sources[0].sourceStateID != .combinedSessionState)
@@ -77,9 +77,10 @@ struct MediaKeySenderTests {
         #expect((up.data1 >> 8) & 0xff == 11 && up.data1 >> 16 == action.keyCode)
     }
 
-    @Test(arguments: SystemAction.allCases)
+    @Test(arguments: SystemAction.allCases.filter { $0.keyCode != nil })
     func soundActionsPostTheSystemSoundKeyPairAtHIDTap(_ action: SystemAction) throws {
-        #expect(action.keyCode == [.volumeUp: 0, .volumeDown: 1, .toggleMute: 7][action])
+        let keyCode = try #require(action.keyCode)
+        #expect(keyCode == [.volumeUp: 0, .volumeDown: 1, .toggleMute: 7][action])
         var posted: [CGEvent] = []
         let result = MediaKeySender.perform(action, canPerform: { true }, post: { event, location in
             #expect(location == .cghidEventTap)
@@ -87,7 +88,7 @@ struct MediaKeySenderTests {
         })
         #expect(result == .performed)
         let native = try posted.map { try #require(NSEvent(cgEvent: $0)) }
-        #expect(native.map { $0.data1 } == [action.keyCode << 16 | 0xa00, action.keyCode << 16 | 0xb00])
+        #expect(native.map { $0.data1 } == [keyCode << 16 | 0xa00, keyCode << 16 | 0xb00])
         #expect(native.allSatisfy { $0.subtype.rawValue == Int16(NX_SUBTYPE_AUX_CONTROL_BUTTONS) })
         #expect(posted.allSatisfy { $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
         let cancelled = MediaKeySender.perform(action, canPerform: { false }, post: { _, _ in Issue.record("Posted") })

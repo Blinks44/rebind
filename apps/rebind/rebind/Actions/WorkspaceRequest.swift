@@ -31,6 +31,9 @@ nonisolated enum WorkspacePreparation {
             if case .activateApplication = action { activateOnly = true } else { activateOnly = false }
             return .application(prepared, activateOnly: activateOnly)
         case .previousApplication: return .previousApplication
+        case .openApps:
+            return prepare(.openApplication(ApplicationTarget(url: URL(filePath: "/System/Applications/Apps.app"),
+                bundleIdentifier: "com.apple.apps.launcher")))
         case .openSystemSettings:
             // Public Launch Services lookup; no pane URL/private scheme or hardcoded app path.
             guard let url = settingsApplication() else { return nil }

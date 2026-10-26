@@ -16,7 +16,7 @@ struct CatalogActionTests {
 
     @Test func everyNamedShortcutIsDistinctSupportedAndRoundTrips() {
         let named = ActionKind.allCases.filter { $0.fixedShortcut != nil }
-        #expect(named.count == 17)
+        #expect(named.count == 28)
         #expect(Set(named.compactMap(\.fixedShortcut)).count == named.count)
         for kind in named {
             let action = kind.configuredAction(shortcut: nil)

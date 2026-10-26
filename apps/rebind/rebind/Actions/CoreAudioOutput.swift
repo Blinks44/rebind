@@ -9,10 +9,17 @@ import Dispatch
 // many USB/HDMI outputs). Mute checks the public main-element control.
 nonisolated enum CoreAudioOutput {
     static func capabilities() -> AudioOutputCapabilities {
-        guard let device = defaultDevice() else { return AudioOutputCapabilities() }
-        return AudioOutputCapabilities(deviceID: device,
-            volume: settable(device, selector: volumeSelector) && volume(device) != nil,
-            mute: settable(device, selector: kAudioDevicePropertyMute) && muted(device) != nil)
+        var result = AudioOutputCapabilities()
+        if let device = defaultDevice() {
+            result.deviceID = device
+            result.volume = settable(device, selector: volumeSelector) && volume(device) != nil
+            result.mute = settable(device, selector: kAudioDevicePropertyMute) && muted(device) != nil
+        }
+        if let input = CoreAudioInput.defaultDevice() {
+            result.inputDeviceID = input
+            result.microphoneMute = CoreAudioInput.supportsMute(input)
+        }
+        return result
     }
 
     /// Never redirect an already queued action to a newly selected output.
@@ -69,7 +76,7 @@ nonisolated final class CoreAudioOutputMonitor {
 
     init(changed: @escaping @Sendable () -> Void) {
         listener = { _, _ in changed() }
-        for selector in [kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDevices] {
+        for selector in [kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDefaultInputDevice, kAudioHardwarePropertyDevices] {
             var address = Self.address(selector)
             if AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &address,
                                                   nil, listener) == noErr {

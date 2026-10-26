@@ -43,7 +43,7 @@ struct ActionPickerView: View {
     }
 
     private var matchingKinds: [ActionKind] {
-        ActionKind.allCases.filter {
+        ActionKind.allCases.filter { $0 != .toggleMicrophoneMute || isAvailable($0) || selection == $0 }.filter {
             search.isEmpty
                 || AppLocalization.string($0.title).localizedStandardContains(search)
                 || AppLocalization.string($0.category.title).localizedStandardContains(search)

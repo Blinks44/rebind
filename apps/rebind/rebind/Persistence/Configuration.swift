@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 44
+    static let currentSchemaVersion = 45
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -329,10 +329,11 @@ nonisolated private extension Binding {
         }
         switch action {
         case .shortcut: break
-        case .system: introduced(in: 7, true)
+        case .system(let system): introduced(in: system == .toggleMicrophoneMute ? 45 : 7, true)
         case .window: introduced(in: 8, true)
         case .workspace(let workspace):
             switch workspace {
+            case .openApps: introduced(in: 45, true)
             case .quitApplication, .openSystemSettings: introduced(in: 17, true)
             case .previousApplication: introduced(in: 21, true)
             default: introduced(in: 9, true)
@@ -341,8 +342,8 @@ nonisolated private extension Binding {
         case .desktop: introduced(in: 11, true)
         case .dock(let desktop): introduced(in: desktop.isSpaceNavigation ? 13 : 12, true)
         case .mouse(let mouse): introduced(in: mouse.isNewInSchema31 ? 31 : 14, true)
-        case .media(let media): introduced(in: media.isBrightness ? 30 : 15, true)
-        case .windowLayout(let layout): introduced(in: layout.isNewInSchema34 ? 34 : 16, true)
+        case .media(let media): introduced(in: [.fastForward, .rewind].contains(media) ? 45 : (media.isBrightness ? 30 : 15), true)
+        case .windowLayout(let layout): introduced(in: layout == .fillWithStageManager ? 45 : (layout.isNewInSchema34 ? 34 : 16), true)
         case .sleepSystem: introduced(in: 18, true)
         case .lockScreen: introduced(in: 19, true)
         case .windowCycle: introduced(in: 20, true)

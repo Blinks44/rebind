@@ -2,6 +2,8 @@ import Foundation
 
 extension ActionKind {
     var unavailableMessage: LocalizedStringResource {
+        if self == .openApps { return .openAppsUnavailable }
+        if self == .toggleMicrophoneMute { return .microphoneMuteUnavailable }
         if self == .lockScreen { return .lockScreenUnavailable }
         if self == .sleepSystem { return .sleepSystemUnavailable }
         if let desktopAction { return desktopAction.isSpaceNavigation ? .spaceActionUnavailable : .dockActionUnavailable }
@@ -10,6 +12,22 @@ extension ActionKind {
 
     var title: LocalizedStringResource {
         switch self {
+        case .spotlight: .spotlightAction
+        case .forceQuitWindow: .forceQuitWindowAction
+        case .emojiSymbols: .emojiSymbolsAction
+        case .toggleDock: .toggleDockAction
+        case .hideOthers: .hideOthersAction
+        case .lookUp: .lookUpAction
+        case .quitFrontApplication: .quitFrontApplicationAction
+        case .newWindow: .newWindowAction
+        case .find: .findAction
+        case .reload: .reloadAction
+        case .save: .saveAction
+        case .openApps: .openAppsAction
+        case .fastForward: .fastForwardAction
+        case .rewind: .rewindAction
+        case .toggleMicrophoneMute: .toggleMicrophoneMuteAction
+        case .fillWindowWithStageManager: .fillWindowWithStageManagerAction
         case .keyboardShortcut: .outputShortcut
         case .navigateBack: .navigateBackAction
         case .navigateForward: .navigateForwardAction
@@ -116,6 +134,7 @@ extension RebindAction {
         case .dock(let action): action.isSpaceNavigation ? .spaceActionFailed : .dockActionFailed
         case .lockScreen: .lockScreenFailed
         case .sleepSystem: .sleepSystemFailed
+        case .system(.toggleMicrophoneMute): .microphoneMuteFailed
         case .system: .audioActionFailed
         case .windowCycle: .windowCycleFailed
         case .windowLayout: .windowLayoutFailed
@@ -150,6 +169,22 @@ extension ActionKind {
     /// SF Symbol shown on the action tile of a rule.
     var symbol: String {
         switch self {
+        case .spotlight: "magnifyingglass"
+        case .forceQuitWindow: "xmark.octagon"
+        case .emojiSymbols: "face.smiling"
+        case .toggleDock: "dock.rectangle"
+        case .hideOthers: "eye.slash"
+        case .lookUp: "text.magnifyingglass"
+        case .quitFrontApplication: "xmark.app"
+        case .newWindow: "macwindow.badge.plus"
+        case .find: "magnifyingglass"
+        case .reload: "arrow.clockwise"
+        case .save: "square.and.arrow.down"
+        case .openApps: "square.grid.3x3"
+        case .fastForward: "forward"
+        case .rewind: "backward"
+        case .toggleMicrophoneMute: "mic.slash"
+        case .fillWindowWithStageManager: "rectangle.trailinghalf.inset.filled"
         case .keyboardShortcut: "command"
         case .volumeUp: "speaker.wave.3"
         case .volumeDown: "speaker.wave.1"

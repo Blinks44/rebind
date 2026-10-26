@@ -37,7 +37,8 @@ nonisolated final class ActionWorker {
     init(mailbox: EngineMailbox,
          capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
          performAudio: @escaping @Sendable (SystemAction, UInt32, @Sendable () -> Bool) -> WindowActionResult = {
-             CoreAudioOutput.isDefaultOutput($1) ? MediaKeySender.perform($0, canPerform: $2) : .unavailable
+             if $0 == .toggleMicrophoneMute { return CoreAudioInput.toggleMute(device: $1, canPerform: $2) }
+             return CoreAudioOutput.isDefaultOutput($1) ? MediaKeySender.perform($0, canPerform: $2) : .unavailable
          },
          sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
          sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },

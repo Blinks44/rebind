@@ -19,7 +19,7 @@ Outside current scope: Caps Lock, Fn/Globe and left/right modifier distinction; 
 
 ## Next release (scope chosen 2026-10-24)
 
-Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts measured background wakeups, [ACTION-001](tasks/ACTION-001-standard-actions.md) adds simple standard actions, [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design ready, hardware write probe first). PERF-001 implementation is packaged in build 17 with full tests passing; controlled before/after and affected hardware checks remain open. Suggested order: finish PERF-001 verification, ACTION-001, LIGHT-001.
+Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts background wakeups (build 17; general installed smoke tester-confirmed, controlled/hardware checks open). [ACTION-001](tasks/ACTION-001-standard-actions.md) implements 16 standard entries including unconditional Fill with Left Margin (220 pt) in build 20; Stage Manager detection was removed after a hidden-strip failure. Build-19 stable placement is tester-confirmed; build-20 visible/hidden/off and other action acceptance remain open. [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design includes native idle-off timer and menu; G915 write/timeout/wake probe first). Next: connect G915 for LIGHT-001’s first brightness/color/idle-timer write/persistence probe; retain targeted verification of the remaining new actions; retain PERF-001's remaining measurement gates.
 
 ## Release gates
 
