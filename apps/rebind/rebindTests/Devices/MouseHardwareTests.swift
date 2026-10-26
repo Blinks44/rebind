@@ -33,6 +33,7 @@ struct CompanionAppTests {
     @MainActor @Test func theProcessScanSeesBackgroundProcesses() {
         // This test process is not a Launch Services app, yet the scan must not come up empty.
         let monitor = CompanionAppMonitor()
+        monitor.setConnectedVendors([0x046D])
         monitor.refresh()
         #expect(monitor.running.allSatisfy { CompanionApp.known.contains($0) })
     }
@@ -40,6 +41,32 @@ struct CompanionAppTests {
     @Test func theGHubUpdaterAloneIsNotGHub() {
         #expect(running([("com.logi.ghub.updater", "lghub_updater")]).isEmpty)
         #expect(running([("com.logi.ghub.updater", nil), ("com.logi.ghub.agent", nil)]) == ["Logitech G HUB"])
+    }
+
+    @MainActor @Test func scansOnlyForConnectedVendorsAndChecksBeforeHardwareWrites() {
+        var scans = 0
+        var changes = 0
+        let monitor = CompanionAppMonitor(executablePaths: {
+            scans += 1
+            return ["/test/Contents/MacOS/logioptionsplus_agent"]
+        })
+        monitor.changed = { changes += 1 }
+        monitor.refresh()
+        monitor.setConnectedVendors([0x05AC])
+        #expect(scans == 0)
+        monitor.setConnectedVendors([0x046D, 0x05AC])
+        #expect(scans == 1)
+        #expect(monitor.controller(ofVendor: 0x046D)?.name == "Logi Options+")
+        monitor.setConnectedVendors([0x046D])
+        #expect(scans == 1) // Same relevant vendor, another HID interface is not a new scan.
+        monitor.setConnectedVendors([])
+        monitor.refresh()
+        #expect(scans == 1)
+        #expect(monitor.running.isEmpty)
+        #expect(changes == 2)
+        monitor.setConnectedVendors([0x046D])
+        #expect(scans == 2) // Reconnect rechecks the helper before settings can be applied.
+        #expect(monitor.controller(ofVendor: 0x046D, gaming: true) != nil)
     }
 }
 

@@ -100,15 +100,8 @@ nonisolated final class EventTapWorker {
             installTap(capturePointerMotion: control.5)
         }
         let secure = IsSecureEventInputEnabled()
-        mailbox.state.withLock {
-            if secure {
-                // Keep a latched failure visible; it still needs explicit retry
-                // after Secure Input ends, rather than appearing protected forever.
-                $0.resetCapture(status: failureLatched ? $0.status : .secureInput)
-            } else if !failureLatched {
-                $0.status = control.0 && port != nil ? .active : .paused
-            }
-        }
+        mailbox.refreshCaptureStatus(secureInput: secure, active: control.0 && port != nil,
+                                     failureLatched: failureLatched)
         guard port != nil, !secure, !failureLatched else { return }
         mailbox.pollHold(at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled())
     }

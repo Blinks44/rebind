@@ -7,6 +7,30 @@ struct ActionDispatchTests {
     private let audio = AudioOutputCapabilities(deviceID: 17, volume: true, mute: true)
     private let shortcut = KeyboardShortcut(keyCode: 0, modifiers: .command)
 
+    @Test func audioNotificationsRefreshOnceAndQuietOutputsUseASlowFallback() {
+        let mailbox = EngineMailbox()
+        let checks = Mutex(0)
+        let output = Mutex(AudioOutputCapabilities(deviceID: 17, volume: true, mute: true))
+        let worker = ActionWorker(mailbox: mailbox, capabilities: {
+            checks.withLock { $0 += 1 }
+            return output.withLock { $0 }
+        }, secureInput: { false }, postingAllowed: { true })
+        worker.service(at: 0)
+        for second in 1..<60 { worker.service(at: UInt64(second) * 1_000_000_000) }
+        #expect(checks.withLock { $0 } == 1)
+        worker.service(at: 60_000_000_000)
+        #expect(checks.withLock { $0 } == 2)
+        output.withLock { $0 = AudioOutputCapabilities(deviceID: 18) }
+        mailbox.audioOutputChanged()
+        mailbox.audioOutputChanged()
+        worker.service(at: 60_000_000_001)
+        #expect(checks.withLock { $0 } == 3)
+        #expect(mailbox.state.withLock { $0.audioCapabilities.deviceID } == 18)
+        #expect(mailbox.state.withLock { $0.audioCapabilities.volume } == false)
+        worker.service(at: 61_000_000_000)
+        #expect(checks.withLock { $0 } == 3)
+    }
+
     private func mailbox(action: RebindAction = .system(.volumeUp)) -> EngineMailbox {
         let mailbox = EngineMailbox()
         mailbox.updateAudioCapabilities(audio)

@@ -63,6 +63,36 @@ struct IdleWakeTests {
         #expect(DispatchTime.now().uptimeNanoseconds - start < 500_000_000)
     }
 
+    @Test func secureInputWakesAHeldModifierWithoutWaitingForTheAudioFallback() throws {
+        let mailbox = EngineMailbox()
+        mailbox.state.withLock {
+            $0.enabled = true
+            $0.status = .active
+            $0.held = [HeldOutput(trigger: .key(0), action: .modifier(.command), pressedAt: nil)]
+        }
+        let pressed = try #require(mailbox.nextHeldKey(at: 0))
+        #expect(pressed.phase == .press)
+        #expect(mailbox.state.withLock { $0.nextWorkDeadline(at: 1) } == nil)
+        mailbox.refreshCaptureStatus(secureInput: true, active: true, failureLatched: false)
+        let start = DispatchTime.now().uptimeNanoseconds
+        mailbox.waitForWork(idle: 2_000_000_000)
+        #expect(DispatchTime.now().uptimeNanoseconds - start < 500_000_000)
+        #expect(mailbox.nextHeldKey(at: 1) == HeldKeyCommand(target: .modifiers(.command), phase: .release))
+        #expect(mailbox.state.withLock { $0.status } == .secureInput)
+    }
+
+    @Test func audioOutputChangesWakeAndCoalesceUntilConsumed() {
+        let mailbox = EngineMailbox()
+        #expect(mailbox.takeAudioOutputChange())
+        mailbox.audioOutputChanged()
+        mailbox.audioOutputChanged()
+        let start = DispatchTime.now().uptimeNanoseconds
+        mailbox.waitForWork(idle: 2_000_000_000)
+        #expect(DispatchTime.now().uptimeNanoseconds - start < 500_000_000)
+        #expect(mailbox.takeAudioOutputChange())
+        #expect(mailbox.takeAudioOutputChange() == false)
+    }
+
     @Test func thePointerAppRestartsAGlideOnlyWhenItChangesTheDecision() {
         let mailbox = EngineMailbox()
         mailbox.state.withLock {

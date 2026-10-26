@@ -1,6 +1,6 @@
 # Release candidate: remaining acceptance
 
-Updated 2026-10-23. [STATE](../STATE.md) identifies the latest source/package; [PLAN](../PLAN.md#release-gates) owns release gates. This queue preserves reported passes and routes unverified details, rather than requesting another full walkthrough.
+Updated 2026-10-26. [STATE](../STATE.md) identifies the latest source/package; [PLAN](../PLAN.md#release-gates) owns release gates. This queue preserves reported passes and routes unverified details, rather than requesting another full walkthrough.
 
 ## Tester report — 2026-10-20
 
@@ -16,6 +16,14 @@ Tester confirms wheel/card/settings/size, update preservation, keyboard navigati
 - Installed build 11 (October 22): changed copy, VoiceOver, Increase Contrast, Reduce Motion and languages at minimum width accepted. Exact environment and individual controls/preferences were not supplied. Do not label VoiceOver wholly untested or request the same overall pass again; targeted remaining cases retain their own limits.
 - Build 14 changes Settings menu imagery after build 13 failed in the installed app. On 2026-10-24 the user confirmed the Settings icon in the installed build-14 menu; environment unspecified. Command-comma and menu VoiceOver were not separately reported. [Native controller/packaging evidence](../history/2026-10.md#2026-10-23-align-settings-symbol-with-monny).
 - Current build 15 fixes the input-tap crash after long wheel use (smooth scrolling on) and the matching HID++ notification path; build 14 menu acceptance carries over. Needs a long scrolling session on the installed build. [Evidence](../history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling).
+
+## Copy follow-up — 2026-10-26
+
+The user confirms the requested targeted app/website copy review for build 16 ([COPY-001](../tasks/COPY-001-app-and-website-language.md), done). Exact environment and individual locale/width/VoiceOver cases were not supplied. Preserve this acceptance without reopening the overall copy pass; deployment and other release gates remain separate.
+
+## Performance follow-up — 2026-10-26
+
+[PERF-001](../tasks/PERF-001-background-wakeups.md) build 17 passes full tests and signed packaging. Its installed executable matches the package, with Accessibility/event-posting grants and rules enabled. Preliminary uncontrolled background averages: build 16 2.247% CPU, build 17 1.070%. The user subsequently reports successful checking and normal operation so far; preserve this general build-17 smoke pass. Duration and individual scenarios were not specified. Controlled one-minute idle/physical-scroll/typing, companion/helper detection, audio output switching and protected-context/held-release checks remain open; no latency or wakeup reduction is certified by these samples.
 
 ## Preserve existing feature acceptance
 

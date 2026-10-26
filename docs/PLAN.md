@@ -1,6 +1,6 @@
 # Rebind: roadmap
 
-Updated 2026-10-23. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
+Updated 2026-10-26. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
 
 ## Current release scope
 
@@ -19,7 +19,7 @@ Outside current scope: Caps Lock, Fn/Globe and left/right modifier distinction; 
 
 ## Next release (scope chosen 2026-10-24)
 
-Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts measured background wakeups, [ACTION-001](tasks/ACTION-001-standard-actions.md) adds simple standard actions, [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design ready, hardware write probe first). Suggested order: PERF-001, ACTION-001, LIGHT-001.
+Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts measured background wakeups, [ACTION-001](tasks/ACTION-001-standard-actions.md) adds simple standard actions, [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design ready, hardware write probe first). PERF-001 implementation is packaged in build 17 with full tests passing; controlled before/after and affected hardware checks remain open. Suggested order: finish PERF-001 verification, ACTION-001, LIGHT-001.
 
 ## Release gates
 

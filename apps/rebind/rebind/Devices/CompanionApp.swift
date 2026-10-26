@@ -53,16 +53,22 @@ nonisolated struct CompanionApp: Hashable, Sendable {
 /// Follows companion apps as they launch and quit. Their device helpers (G HUB's agent,
 /// the Options+ agent) are started by launchd, not Launch Services, so they never appear in
 /// `NSWorkspace.runningApplications`; the whole process list is read instead. macOS has no public
-/// launch notification for such processes, so a cheap scan repeats every two seconds, and
-/// Launch Services changes trigger one at once.
+/// launch notification for such processes. Scan every ten seconds only while relevant hardware
+/// is connected; Launch Services changes and a newly connected vendor trigger one at once.
 @MainActor @Observable final class CompanionAppMonitor {
     private(set) var running: [CompanionApp] = []
     @ObservationIgnored private var observation: NSKeyValueObservation?
     @ObservationIgnored private var timer: Timer?
+    @ObservationIgnored private var connectedVendors: Set<Int> = []
+    @ObservationIgnored private let executablePaths: () -> [String]
     /// Bundle identifiers by executable path; a process's bundle never changes.
     @ObservationIgnored private var bundleIdentifiers: [String: String?] = [:]
     /// Called after the set of running apps changes.
     @ObservationIgnored var changed: () -> Void = {}
+
+    init(executablePaths: @escaping () -> [String] = { CompanionAppMonitor.executablePaths() }) {
+        self.executablePaths = executablePaths
+    }
 
     func start() {
         guard observation == nil else { return }
@@ -70,10 +76,26 @@ nonisolated struct CompanionApp: Hashable, Sendable {
         observation = NSWorkspace.shared.observe(\.runningApplications) { [weak self] _, _ in
             Task { @MainActor in self?.refresh() }
         }
-        timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+        updateTimer()
+    }
+
+    /// Called from HID discovery before probing/writing a newly connected device.
+    func setConnectedVendors(_ vendors: Set<Int>) {
+        let relevant = vendors.intersection(CompanionApp.known.map(\.vendorID))
+        guard relevant != connectedVendors else { return }
+        connectedVendors = relevant
+        refresh()
+        updateTimer()
+    }
+
+    private func updateTimer() {
+        timer?.invalidate()
+        timer = nil
+        guard observation != nil, !connectedVendors.isEmpty else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.refresh() }
         }
-        timer?.tolerance = 0.5
+        timer?.tolerance = 2
     }
 
     func stop() {
@@ -84,7 +106,11 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     }
 
     func refresh() {
-        let paths = Self.executablePaths()
+        guard !connectedVendors.isEmpty else {
+            if !running.isEmpty { running = []; changed() }
+            return
+        }
+        let paths = executablePaths()
         let processes = paths.map { path in
             let bundleIdentifier = bundleIdentifiers[path] ?? {
                 let identifier = Self.bundleIdentifier(ofExecutable: path)
@@ -93,7 +119,7 @@ nonisolated struct CompanionApp: Hashable, Sendable {
             }()
             return (bundleIdentifier: bundleIdentifier, executableName: Optional((path as NSString).lastPathComponent))
         }
-        let found = CompanionApp.running(in: processes)
+        let found = CompanionApp.running(in: processes, known: CompanionApp.known.filter { connectedVendors.contains($0.vendorID) })
         guard found != running else { return }
         running = found
         changed()

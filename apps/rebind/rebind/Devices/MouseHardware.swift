@@ -83,6 +83,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     /// Whether Rebind may write to mice of a vendor now (no companion app controls them).
     /// Arguments: vendor, and whether it is a gaming mouse with onboard profiles.
     @ObservationIgnored var canWrite: (Int, Bool) -> Bool = { _, _ in true }
+    /// Inventory notification before any newly discovered hardware can receive settings.
+    @ObservationIgnored var connectedVendorsChanged: (Set<Int>) -> Void = { _ in }
     /// Receives presses (true) and releases of a diverted gesture button, on the HID report thread.
     @ObservationIgnored var gestureButtonChanged: @Sendable (Bool) -> Void = { _ in }
     @ObservationIgnored private let gestureButtonInput = GestureButtonInput()
@@ -192,6 +194,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         sessions.values.forEach { $0.io.close() }
         sessions = [:]
         devices = [:]
+        connectedVendorsChanged([])
         mice = []
         logitechAccessories = [:]
         otherInputs = []
@@ -290,6 +293,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     private func rebuild() {
+        connectedVendorsChanged(Set(devices.values.joined().compactMap {
+            Self.property($0, kIOHIDVendorIDKey) as Int?
+        }))
         if discoveryAvailable {
             externalTrackpadConnected = devices.values.joined().contains { Self.inputKind(of: $0) == .trackpad }
         }

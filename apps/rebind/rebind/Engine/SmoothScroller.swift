@@ -10,6 +10,26 @@ nonisolated struct SmoothScrollDispatch: Equatable, Sendable {
     let settings: SmoothScrollingSettings
 }
 
+/// TCC is queried once per glide/generation. Secure Input is cheap and must still stop
+/// posting on the first protected frame; mailbox revision checks handle capture loss.
+nonisolated struct SmoothScrollAuthorization {
+    private var dispatch: SmoothScrollDispatch?
+    private var generation: UInt64?
+    private var postingAllowed = false
+
+    mutating func allows(_ dispatch: SmoothScrollDispatch, generation: UInt64,
+                         secureInput: () -> Bool = { IsSecureEventInputEnabled() },
+                         canPost: () -> Bool = { CGPreflightPostEventAccess() }) -> Bool {
+        guard !secureInput() else { return false }
+        if self.dispatch != dispatch || self.generation != generation {
+            self.dispatch = dispatch
+            self.generation = generation
+            postingAllowed = canPost()
+        }
+        return postingAllowed
+    }
+}
+
 /// Turns mouse wheel clicks into a short glide of continuous scroll events, as LinearMouse's
 /// smoothed scrolling does, with a plain exponential ease-out instead of its velocity model.
 /// The tap swallows the click and adds its distance here under a short lock; a dedicated
@@ -104,6 +124,7 @@ nonisolated final class SmoothScroller: Sendable {
             var carryY = 0.0
             var dispatch: SmoothScrollDispatch?
             var generation: UInt64?
+            var authorization = SmoothScrollAuthorization()
             var previous = DispatchTime.now().uptimeNanoseconds
             while true {
                 Thread.sleep(forTimeInterval: Self.frameInterval)
@@ -121,7 +142,7 @@ nonisolated final class SmoothScroller: Sendable {
                     carryX = 0; carryY = 0; dispatch = frame.dispatch; generation = frame.generation
                 }
                 guard let current = frame.dispatch, mailbox.smoothScrollIsCurrent(current),
-                      !IsSecureEventInputEnabled(), CGPreflightPostEventAccess() else {
+                      authorization.allows(current, generation: frame.generation) else {
                     glide.withLock {
                         if $0.generation == frame.generation { $0 = Glide(generation: $0.generation &+ 1) }
                     }

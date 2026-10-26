@@ -1,8 +1,8 @@
 # COPY-001: Natural, accurate app and website language
 
 - Updated: 2026-10-26
-- Stage: awaiting_verification
-- Owner: Unassigned; implementation and Sketch synchronization ready for targeted verification
+- Stage: done
+- Owner: Unassigned; implementation, Sketch synchronization and targeted tester review complete
 - Ownership: Copy work based on `824b8c3`; release-script/permanent-link commit `5252dc1` preserved on main; scoped Sketch editing complete
 - Owned surfaces: Localizable catalog, six website message catalogs and device labels, app build number and affected project records; Navigation/InfoPlist reviewed without changes
 - Requirements: User-requested full source/localization copy audit; SPEC §§3–11 and localization/permission/privacy contracts
@@ -42,7 +42,10 @@ Sketch synchronized and saved on 2026-10-26. Updated the English app screens in 
 
 Completion preserves `5252dc1`, the other agent's committed permanent `Rebind.dmg` release name and website link. Shell syntax check passes. The signed build-16 package above predates that filename change; it remains the verified installation artifact. No new native source edits or packaging rerun were needed for the final Sketch/documentation work.
 
+## Tester acceptance — 2026-10-26
+
+The user confirms completing the requested targeted review of the corrected app/website text associated with build 16. Exact environment, locale/width/per-control VoiceOver matrix and native-speaker coverage were not supplied; this closes the bounded copy follow-up, not broader platform/accessibility gates. Read-only artifact inspection during PERF-001 also confirms installed Rebind is 1.0.0 (16).
+
 ## Next handoff
 
-- Verification: review the changed installed screens and the six website locales in a browser, including compact widths and VoiceOver. Native-speaker acceptance remains distinct from this editorial review. No whole-app hardware retest is implied by copy edits.
 - Maintainer: publish/deploy only through the existing release workflow when separately authorized; the website uses the permanent latest-release link (currently published build 15).

@@ -148,6 +148,7 @@ import Carbon
         // Once a companion app quits, write the stored settings it may have replaced.
         companionApps.changed = { [weak self] in self?.mouseHardware.refresh() }
         companionApps.start()
+        mouseHardware.connectedVendorsChanged = { [weak self] in self?.companionApps.setConnectedVendors($0) }
         mouseHardware.storedSettings = { [weak self] in self?.configuration.mouseHardware ?? [] }
         mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0, gaming: $1) == nil }
         let mailbox = mailbox

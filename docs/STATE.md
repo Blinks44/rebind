@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-26**, checkout `main`. The six-language app/website copy audit is implemented and locally verified in build 16 ([COPY-001](tasks/COPY-001-app-and-website-language.md)); English Sketch synchronization is saved/reviewed; publication remains separate. Next-release scope (PERF-001, ACTION-001, LIGHT-001) is unchanged. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-26**, checkout `main`. The six-language app/website copy audit is implemented, locally verified and tester-accepted in build 16 ([COPY-001](tasks/COPY-001-app-and-website-language.md)); English Sketch synchronization is saved/reviewed; publication remains separate. Background-check optimizations are packaged/installed in build 17; a preliminary background CPU comparison is lower, with controlled/hardware verification still open. ACTION-001 and LIGHT-001 remain next-release work. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -8,7 +8,7 @@ Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `
 
 Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, atomic storage and six languages are implemented. Schema **44** (migrations 1–43). Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**, basic delivery tester-confirmed. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and live Sketch locator.
 
-Source/local package **1.0.0 (16)**: natural, technically accurate copy in all six languages; app builds, affected tests/layouts and signed packaging pass ([COPY-001](tasks/COPY-001-app-and-website-language.md)). DMG: `apps/rebind/build/release/Rebind-1.0.0-16.dmg`, with regenerated local appcast/checksums; not installed or published. Published **v1.0.0 remains build 15** (2026-10-24, tag `b3251fa`), whose downloaded appcast/DMG/checksum verified. Its [long-scrolling crash fix](history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling) is retained; a long installed scrolling session remains open. Build 14 Settings icon user-confirmed 2026-10-24.
+Source/local package **1.0.0 (17)**: fewer companion scans, per-glide TCC authorization and notification-driven audio refresh ([PERF-001](tasks/PERF-001-background-wakeups.md)). Full tests and signed packaging pass. DMG: `apps/rebind/build/release/Rebind.dmg`; checksum/appcast regenerated. Installed build 17's binary matches the package, with existing grants/rules enabled. Uncontrolled minute averages: 2.247% CPU (16) → 1.070% (17); controlled performance and affected hardware acceptance remain open. Build-16 copy is tester-accepted ([COPY-001](tasks/COPY-001-app-and-website-language.md)). Published **v1.0.0 remains build 15** (2026-10-24, tag `b3251fa`), whose downloaded appcast/DMG/checksum verified. Its [long-scrolling crash fix](history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling) is retained; a long installed scrolling session remains open. Build 14 Settings icon user-confirmed 2026-10-24.
 
 ## Acceptance and remaining release work
 
@@ -24,8 +24,7 @@ Finish current-menu/release checks; no new recognizers. Tasks own detailed accep
 
 | Task | Concrete next step |
 | --- | --- |
-| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Build 16 copy and saved English Sketch ready; review changed installed app/website text at compact widths and with VoiceOver. Website deployment remains manual. |
-| [PERF-001](tasks/PERF-001-background-wakeups.md) | Next release: measure, then cut the companion-app scan, per-frame glide checks and the 1 s audio wake. |
+| [PERF-001](tasks/PERF-001-background-wakeups.md) | Build 17 general installed smoke pass tester-confirmed; remaining evidence: controlled CPU/scrolling/typing and named companion/audio/protected-context checks. |
 | [ACTION-001](tasks/ACTION-001-standard-actions.md) | Next release: fixed-shortcut entries, Apps, fast-forward/rewind, microphone mute. |
 | [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | Next release: design ready (Sketch 66–68); first G915 write/persistence probe, then HID++ adapters and the Devices card. |
 | [WEB-001](tasks/WEB-001-landing-page.md) | awaiting_verification: desktop/narrow Drawer/menu and 404 → home title checks passed; finish physical-phone/all-section, keyboard/VoiceOver, reduced motion and translations, future deployments remain manual; live HTTPS/SEO/crawler smoke passed 2026-10-25. |

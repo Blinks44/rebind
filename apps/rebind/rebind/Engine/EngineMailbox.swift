@@ -29,6 +29,7 @@ nonisolated final class EngineMailbox: Sendable {
         var applicationRules: [String: [MatchKey: CompiledBinding]] = [:]
         var windowDisplays = WindowDisplaySnapshot()
         var audioCapabilities = AudioOutputCapabilities()
+        var audioCapabilitiesNeedRefresh = true
         var actionRevision: UInt64 = 0
         var actionFailed: RebindAction?
         var hasPointerGestureRules = false
@@ -301,8 +302,9 @@ nonisolated final class EngineMailbox: Sendable {
     func signalWork() { work.signal() }
 
     /// The action worker's wait: until signalled, until the next held-key deadline, or at most
-    /// `idle` (it still rechecks audio output, Secure Input and permissions while idle).
-    func waitForWork(idle: UInt64 = 1_000_000_000) {
+    /// `idle` (a slow fallback for audio driver property changes without notifications).
+    /// Capture loss wakes releases explicitly; held-key repeat deadlines remain independent.
+    func waitForWork(idle: UInt64 = 60_000_000_000) {
         let now = DispatchTime.now().uptimeNanoseconds
         let deadline = state.withLock { $0.nextWorkDeadline(at: now) } ?? now &+ idle
         guard deadline > now else { return }
@@ -393,6 +395,23 @@ nonisolated final class EngineMailbox: Sendable {
             $0.cancelQueuedWork()
         }
         signalWork()
+    }
+
+    func audioOutputChanged() {
+        let needsWake = state.withLock {
+            let needsWake = !$0.audioCapabilitiesNeedRefresh
+            $0.audioCapabilitiesNeedRefresh = true
+            return needsWake
+        }
+        if needsWake { signalWork() }
+    }
+
+    func takeAudioOutputChange() -> Bool {
+        state.withLock {
+            let changed = $0.audioCapabilitiesNeedRefresh
+            $0.audioCapabilitiesNeedRefresh = false
+            return changed
+        }
     }
 
     func nextAction() -> ActionDispatch? {
@@ -591,6 +610,21 @@ nonisolated final class EngineMailbox: Sendable {
             if pause { $0.pause() }
         }
         signalWork()
+    }
+
+    /// Tap-thread status refresh. A held modifier has no repeat deadline, so Secure Input
+    /// must explicitly wake its release now that the action thread no longer polls every second.
+    func refreshCaptureStatus(secureInput: Bool, active: Bool, failureLatched: Bool) {
+        let releasesOwed = state.withLock {
+            if secureInput {
+                // Preserve a latched failure: it still needs explicit recovery afterward.
+                $0.resetCapture(status: failureLatched ? $0.status : .secureInput)
+            } else if !failureLatched {
+                $0.status = active ? .active : .paused
+            }
+            return secureInput && !$0.held.isEmpty
+        }
+        if releasesOwed { signalWork() }
     }
 
     func stop() {

@@ -1,5 +1,6 @@
 import AudioToolbox
 import CoreAudio
+import Dispatch
 
 // Read-only capability checks for the default output. The actions themselves are
 // system sound keys (MediaKeySender), so macOS applies them and shows its HUD.
@@ -57,5 +58,36 @@ nonisolated enum CoreAudioOutput {
         guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &value) == noErr,
               size == MemoryLayout<UInt32>.size, value <= 1 else { return nil }
         return value != 0
+    }
+}
+
+/// Owned by the action thread. HAL callbacks only invalidate the cache and wake that thread;
+/// no audio queries or actor hops run on Core Audio's notification thread.
+nonisolated final class CoreAudioOutputMonitor {
+    private let listener: AudioObjectPropertyListenerBlock
+    private var selectors: [AudioObjectPropertySelector] = []
+
+    init(changed: @escaping @Sendable () -> Void) {
+        listener = { _, _ in changed() }
+        for selector in [kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDevices] {
+            var address = Self.address(selector)
+            if AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &address,
+                                                  nil, listener) == noErr {
+                selectors.append(selector)
+            }
+        }
+    }
+
+    func stop() {
+        for selector in selectors {
+            var address = Self.address(selector)
+            AudioObjectRemovePropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &address, nil, listener)
+        }
+        selectors = []
+    }
+
+    private static func address(_ selector: AudioObjectPropertySelector) -> AudioObjectPropertyAddress {
+        AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeGlobal,
+                                   mElement: kAudioObjectPropertyElementMain)
     }
 }

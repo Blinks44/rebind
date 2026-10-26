@@ -101,10 +101,12 @@ nonisolated final class ActionWorker {
 
     static func start(mailbox: EngineMailbox) {
         let thread = Thread {
+            let audioMonitor = CoreAudioOutputMonitor(changed: { mailbox.audioOutputChanged() })
+            defer { audioMonitor.stop() }
             let worker = ActionWorker(mailbox: mailbox)
             while !mailbox.state.withLock({ $0.stopped }) {
                 autoreleasepool { worker.service(at: DispatchTime.now().uptimeNanoseconds) }
-                // Sleeps until the tap or the UI signals work, or a held key's next repeat is due.
+                // HAL, tap and UI notifications wake work; audio drivers get a slow fallback.
                 mailbox.waitForWork()
             }
             // Stopping marks every held key released; post what is still owed.
@@ -118,8 +120,8 @@ nonisolated final class ActionWorker {
     func service(at now: UInt64) {
         windowCycle.invalidate(ifRevisionDiffersFrom: mailbox.state.withLock { $0.actionRevision })
         guard !mailbox.state.withLock({ $0.stopped }) else { return }
-        if lastCapabilitiesCheck == nil || now < (lastCapabilitiesCheck ?? 0)
-            || now - (lastCapabilitiesCheck ?? 0) >= 1_000_000_000 {
+        if mailbox.takeAudioOutputChange() || lastCapabilitiesCheck == nil || now < (lastCapabilitiesCheck ?? 0)
+            || now - (lastCapabilitiesCheck ?? 0) >= 60_000_000_000 {
             lastCapabilitiesCheck = now
             mailbox.updateAudioCapabilities(capabilities())
         }
