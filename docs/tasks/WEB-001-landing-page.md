@@ -1,9 +1,9 @@
 # WEB-001: Public website foundation and design transfer
 
-- Updated: 2026-10-25
+- Updated: 2026-10-26
 - Stage: awaiting_verification (iteration-two implementation ready; final interaction/accessibility/release checks open)
 - Owner: Codex website implementation
-- Ownership checked: main `e3540f3` with the existing uncommitted website transfer preserved. Codex owns scoped website/Sketch parity corrections; no native app changes.
+- Ownership checked: main `bfbec3b`, clean at startup on 2026-10-26. Codex owns the scoped hero-demo icon correction and requested mobile follow-up; no native app changes.
 - Owned surfaces: `apps/website/`, website sections in shared documentation; scoped website/export preparation in Rebind.sketch and Monny.sketch
 - Requirements: [SPEC §17](../SPEC.md#17-public-website), user request 2026-10-22 for the same reviewed foundation as Monny
 - Code baseline: initialized after `2ca3b59`; foundation is tracked in current `main` (`11cef13` at the 2026-10-23 documentation review). Original checks below remain dated 2026-10-22.
@@ -83,3 +83,17 @@ Read-only audit at main `ef6caa8`: the public `/sitemap.xml` returns HTTP 200 an
 ## Permanent download link — 2026-10-25
 
 `site.downloadUrl` is `releases/latest/download/Rebind.dmg`; `release.sh` writes that fixed name and v1.0.0 carries a byte-identical copy, so releases need no website edit ([history](../history/2026-10.md#2026-10-25-permanent-download-link)). Pending manual deployment.
+
+## Hero demo icons and mobile follow-up — 2026-10-26
+
+`HeroDemo.tsx` and its CSS Module, based on `bfbec3b`, associate each example with its own Lucide icon: next desktop `SquareArrowRight`, Mission Control `PanelsTopLeft`, close window `SquareX`, Back `ArrowLeft`. Previously every action rendered the same hard-coded icon.
+
+After the user opened Sketch, the configured local MCP endpoint became reachable. Read-only inspection in Sketch 2026.3.1 covered `Rebind.sketch → 05 · Website`, the current mobile demo screenshot and Implementation notes. The requested mobile adaptation uses the installed moduix 3.0.1 Carousel directly: four complete examples, swipe/arrow/indicator navigation, 56 px raised keycaps, a flat action row below a hairline and larger indicator hit areas. The subsequent user request restores autoplay every four seconds and enables loop. A localized library play/pause trigger controls playback; a live mobile/Reduce Motion media query disables autoplay on desktop and under Reduce Motion. Manual navigation follows the library pause behavior; Play resumes it. Library reduced-motion scrolling is retained, and previous/next accessible names wrap across the first/last boundary. Desktop keeps its existing interactive layout, and key preview is restricted to the visible desktop width. Existing six-language messages supply every label; no dependency or catalog change. References: [moduix Carousel recipe](https://moduix.dev/recipes/autoplay-gallery), plus installed package declarations/styles. Sketch was inspected without edits/saves; its older autoplay/nested-card specimen is not a parity reference for this explicitly requested revision. Source synchronization remains a design follow-up.
+
+Final checks: `pnpm check` (format, lint, TypeScript, 15 tests), final `pnpm format:check`/production `pnpm build`, seven HTTP smoke tests against the rebuilt local Worker on port 4180, and `git diff --check` pass. The user's dev server at port 3000 was used for browser review and retained. Production preview was used only for HTTP checks. Existing upstream theme/sourcemap/chunk advisories remain. No deployment or native packaging.
+
+Agent browser evidence: Chrome responsive 390×844 Russian demo screenshot shows the flat layout and readable first-example title; selecting the Close Window indicator updates the accessible slide to ⌥W/Close Window. Further native input/capture returns intermittent changed-window guards and tiny thumbnails; the 320 px resize attempt did not establish the intended width. Physical swipe, final inactive-dot contrast, 320 px/all-language visual wrapping and full keyboard/VoiceOver remain unverified. Next: review those bounded mobile cases on the running port-3000 site, synchronize the retained design to Sketch, then include this revision in the maintainer's manual deployment.
+
+Autoplay follow-up checks (2026-10-26): final `pnpm check` (15 tests) and production build pass. The earlier seven HTTP smoke cases predate this autoplay-only follow-up. Browser AX inspection exposes the localized Pause control after entering mobile mode, but unstable native snapshots/window guards prevent a reliable timed cycle/pause/loop verification; do not infer those runtime cases from the build. No new timer, dependency, catalog entry, Sketch mutation or deployment.
+
+Mobile alignment follow-up (2026-10-26): the result row centers the icon/text group for every slide, scoped to the existing mobile media query. The title and category align left within that centered group after the final user refinement. The earlier narrow English screenshot confirms group centering; it predates the text-alignment refinement. Format/lint/types passed for the initial centering; final format/production build and `git diff --check` pass for left-aligned text. No new behavioral tests for this CSS-only correction. Existing autoplay/swipe/accessibility limits remain above.

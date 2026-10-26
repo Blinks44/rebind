@@ -92,7 +92,7 @@
   background: var(--moduix-accent);
   color: var(--moduix-primary);
 }
-.mobileControls {
+.mobileCarousel {
   display: none;
 }
 @media (max-width: 1000px) and (min-width: 701px) {
@@ -118,28 +118,54 @@
 }
 @media (max-width: 700px) {
   .demo {
-    padding: 24px;
+    padding: 0;
     margin-top: 32px;
     --moduix-card-radius: 24px;
   }
+  .desktop {
+    display: none;
+  }
+  .mobileCarousel {
+    display: flex;
+    gap: 0;
+    --moduix-carousel-track-radius: 24px;
+    --moduix-carousel-control-size: 40px;
+    --moduix-carousel-autoplay-trigger-min-width: 40px;
+    --moduix-carousel-indicator-gap: 0;
+    --moduix-carousel-control-shadow: none;
+  }
+  .slide {
+    padding: 24px 20px 0;
+  }
   .mapping {
-    grid-template-columns: 1fr;
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 24px 1fr;
     gap: 12px;
   }
   .caption {
     text-align: center;
-    margin: 0 0 20px;
+    margin: 0 0 16px;
     font-size: 11px;
   }
   .keys {
     justify-content: center;
+    align-items: center;
+    gap: 12px;
+    min-height: 72px;
+  }
+  .keys > kbd {
+    --moduix-kbd-height: 56px;
+    --moduix-kbd-min-width: 56px;
+    --moduix-kbd-font-size: 28px;
+    --moduix-kbd-radius: 14px;
   }
   .arrow {
     padding: 0;
   }
   .arrow span {
     font-size: 24px;
-    line-height: 29px;
+    line-height: 24px;
   }
   .arrow span:first-child {
     display: none;
@@ -147,38 +173,60 @@
   .arrow span:last-child {
     display: inline;
   }
-  .result > .caption,
-  .bottom {
+  .result > .caption {
     display: none;
   }
   .action {
-    min-height: 84px;
-    padding: 16px;
-    gap: 16px;
-    border-radius: 16px;
+    height: 100%;
+    min-height: 88px;
+    padding: 16px 0 12px;
+    gap: 12px;
+    justify-content: center;
+    text-align: left;
+    border: 0;
+    border-top: 1px solid var(--rebind-separator);
+    border-radius: 0;
+  }
+  .action strong {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+  .action div > span {
+    font-size: 13px;
+    margin-top: 4px;
   }
   .tile {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
   }
   .mobileControls {
-    display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 4px;
+    padding: 0 12px 12px;
   }
-  .dot {
-    width: 8px;
-    height: 8px;
-    background: #0f172a1a;
-    border: 0;
-    border-radius: 9px;
-    padding: 0;
-    cursor: pointer;
+  .indicator {
+    position: relative;
+    width: 28px;
+    height: 44px;
+    background: transparent;
   }
-  .dot[aria-pressed='true'] {
-    width: 16px;
+  .indicator::after {
+    content: '';
+    position: absolute;
+    inset: 18px 10px;
+    border-radius: 4px;
+    background: var(--rebind-text-tertiary);
+  }
+  .indicator[data-current] {
+    width: 28px;
+    background: transparent;
+  }
+  .indicator[data-current]::after {
+    inset-inline: 6px;
     background: var(--moduix-primary);
+  }
+  .indicator:not(:disabled, [data-disabled], [data-readonly], [data-current]):hover {
+    background: transparent;
   }
 }
