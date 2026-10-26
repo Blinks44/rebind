@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-25**, checkout `main`. Next-release scope (PERF-001, ACTION-001, LIGHT-001) and the Sketch parity cleanup are recorded; no app code changed since build 15. The 2026-10-24 release-readiness review corrected public update/install copy and added the `gh` release route; build 15 then fixed a scrolling crash. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-26**, checkout `main`. The six-language app/website copy audit is implemented and locally verified in build 16 ([COPY-001](tasks/COPY-001-app-and-website-language.md)); English Sketch synchronization is saved/reviewed; publication remains separate. Next-release scope (PERF-001, ACTION-001, LIGHT-001) is unchanged. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -8,7 +8,7 @@ Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `
 
 Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, atomic storage and six languages are implemented. Schema **44** (migrations 1–43). Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**, basic delivery tester-confirmed. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and live Sketch locator.
 
-Source **1.0.0 (15)**: fixes the input-tap crash after long wheel scrolling with smooth scrolling on; [cause and evidence](history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling). Latest verified package: `apps/rebind/build/release/Rebind-1.0.0-15.dmg` with regenerated local `SHA256SUMS.txt`; published 2026-10-24 as the latest GitHub release **v1.0.0** (tag at `b3251fa`); the downloaded latest appcast, DMG and checksum verify. Build 14 Settings icon user-confirmed 2026-10-24; build 15 needs a long installed scrolling session.
+Source/local package **1.0.0 (16)**: natural, technically accurate copy in all six languages; app builds, affected tests/layouts and signed packaging pass ([COPY-001](tasks/COPY-001-app-and-website-language.md)). DMG: `apps/rebind/build/release/Rebind-1.0.0-16.dmg`, with regenerated local appcast/checksums; not installed or published. Published **v1.0.0 remains build 15** (2026-10-24, tag `b3251fa`), whose downloaded appcast/DMG/checksum verified. Its [long-scrolling crash fix](history/2026-10.md#2026-10-24-input-tap-crash-after-long-scrolling) is retained; a long installed scrolling session remains open. Build 14 Settings icon user-confirmed 2026-10-24.
 
 ## Acceptance and remaining release work
 
@@ -16,7 +16,7 @@ Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update sub
 
 [REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle 2.10.0 daily updates; first update between published builds remains open. [SIGNING](SIGNING.md) owns Apple Development/non-notarized testing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and targeted accessibility gates remain in [PLAN](PLAN.md#release-gates) and tasks. Earlier paused/no-grant ~1.5% CPU is not active-rule evidence.
 
-Website iteration two is implemented at `apps/website/` from live Rebind.sketch: landing/404, responsive navigation, keycap demo, five device panels, features, privacy, installation and FAQ. Saved Sketch/source parity corrections align device-window corners, menus/Drawer dimensions, caption contrast and 404 surfaces. Six-language SSR/SEO, moduix/CSS Modules and automatic Vite WebP processing are ready; 15 tests, seven Worker smoke tests and dry-run packaging pass. [WEB-001](tasks/WEB-001-landing-page.md) owns final device/interaction/accessibility/translation/download checks. Indexing is on and Download uses the permanent `releases/latest/download/Rebind.dmg` link (currently v1.0.0 build 15; pending deployment); the maintainer deploys manually. The companion-app footer card now links to monny.moduix.dev (2026-10-25; pending deployment). A read-only live sitemap audit on 2026-10-25 passed XML/alternate validation and all seven public HTTP smoke tests; public DNS/HTTPS and SEO responses are verified, actual search indexing is not. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) provide the public handoff; publication/deployment require authorization.
+Website iteration two at `apps/website/` implements the Sketch landing/404, responsive navigation, keycap demo, five device panels, features, privacy, installation and FAQ. Six-language SSR/SEO, moduix/CSS Modules and responsive WebP are ready. [COPY-001](tasks/COPY-001-app-and-website-language.md) corrects all six locales and Chinese device labels; final build, 15 tests and seven local Worker smoke tests pass. [WEB-001](tasks/WEB-001-landing-page.md) retains device/interaction/accessibility/download gates and earlier dry-run evidence. Indexing is on; Download uses the permanent `releases/latest/download/Rebind.dmg` link (currently v1.0.0 build 15). Copy changes, the Monny footer link and the permanent link await manual deployment. The 2026-10-25 public sitemap audit passed XML/alternates and seven HTTPS/SEO smoke tests; actual indexing is unverified. [USAGE](USAGE.md), [RELEASING](RELEASING.md) and [release notes](releases/1.0.0.md) own the public handoff; publication/deployment need authorization.
 
 ## Open task index
 
@@ -24,6 +24,7 @@ Finish current-menu/release checks; no new recognizers. Tasks own detailed accep
 
 | Task | Concrete next step |
 | --- | --- |
+| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Build 16 copy and saved English Sketch ready; review changed installed app/website text at compact widths and with VoiceOver. Website deployment remains manual. |
 | [PERF-001](tasks/PERF-001-background-wakeups.md) | Next release: measure, then cut the companion-app scan, per-frame glide checks and the 1 s audio wake. |
 | [ACTION-001](tasks/ACTION-001-standard-actions.md) | Next release: fixed-shortcut entries, Apps, fast-forward/rewind, microphone mute. |
 | [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | Next release: design ready (Sketch 66–68); first G915 write/persistence probe, then HID++ adapters and the Devices card. |

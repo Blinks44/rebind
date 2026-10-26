@@ -66,6 +66,8 @@ Browser evidence: desktop menus; Chrome 390×844 Monny Drawer/upward popup and k
 
 ## Next handoff
 
+The current six-language editorial/technical review is [COPY-001](COPY-001-app-and-website-language.md) (2026-10-25): corrected existing messages, added localized Magic-device names, and passed final check/build/15 tests/seven local HTTP smoke cases. These source changes await manual deployment. Browser compact-width/interaction and fluent-reader acceptance remain open; English Sketch synchronization and mobile wrapping corrections were saved/reviewed on 2026-10-26 (COPY-001).
+
 Use the newly saved Sketch Implementation notes for exports and the current local Worker previews (Monny 4177, Rebind 4176) for acceptance. Finish physical-phone/all-section, keyboard/VoiceOver, runtime reduced-motion and fluent translation review, plus client-side 404 → home canonical/robots/JSON-LD restoration (URL/title already passed). The v1.0.0 DMG link and indexing were set on 2026-10-24 (`pnpm check`, build and seven smoke tests pass; preview serves `index, follow`). The maintainer handles future deployments manually. Public HTTPS/SEO/crawler checks passed on 2026-10-25 (below); deployment provenance, HTTP-to-HTTPS redirects and Search Console ingestion remain outside that evidence. Website-only work does not rebuild the native DMG.
 
 ## Companion website link — 2026-10-25

@@ -8,8 +8,8 @@ export function DevicesSection() {
     ['keyboard', m.keyboard()],
     ['mouse', m.mouse()],
     ['trackpad', m.trackpad()],
-    ['magic-trackpad', 'Magic Trackpad'],
-    ['magic-mouse', 'Magic Mouse'],
+    ['magic-trackpad', m.magicTrackpad()],
+    ['magic-mouse', m.magicMouse()],
   ] as const
   return (
     <section id="devices" className={styles.section} aria-labelledby="devices-title">

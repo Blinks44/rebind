@@ -55,13 +55,13 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Можно назначить действия касаниям, нажатию тремя пальцами и прокрутке двумя пальцами. Для касаний одним или двумя пальцами отключите совпадающие жесты Smart Zoom и Mission Control в настройках мыши macOS."
+            "value" : "Назначайте действия касаниям, нажатию тремя пальцами и прокрутке двумя пальцами. Для касаний одним или двумя пальцами отключите совпадающие жесты смарт-масштабирования и Mission Control в настройках мыши macOS."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen, Klicken mit drei Fingern und Scrollen mit zwei Fingern lösen Belegungen aus. Deaktivieren Sie für Ein- oder Zweifingertippen die überlagernden Gesten für Smart Zoom und Mission Control in den macOS-Mauseinstellungen."
+            "value" : "Tippgesten, Klicks mit drei Fingern und Scrollen mit zwei Fingern lösen Belegungen aus. Deaktivieren Sie für Tippgesten mit einem oder zwei Fingern die überlappenden Gesten für intelligentes Zoomen und Mission Control in den macOS-Mauseinstellungen."
           }
         },
         "fr" : {
@@ -96,7 +96,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Жесты Magic Mouse экспериментальные"
+            "value" : "Жесты Magic Mouse работают в экспериментальном режиме"
           }
         },
         "de" : {
@@ -161,7 +161,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重新连接妙控鼠标或重新打开 Rebind，然后重试。规则仍会保存。"
+            "value" : "重新连接妙控鼠标或退出并重新打开 Rebind，然后重试。规则已保留。"
           }
         }
       }
@@ -260,13 +260,13 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Двойное касание одним пальцем включает Smart Zoom. Отключите его в настройках мыши macOS, чтобы не срабатывали оба действия."
+            "value" : "Двойное касание одним пальцем запускает смарт-масштабирование. Отключите его в настройках мыши macOS, чтобы не срабатывали оба действия."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doppeltippen mit einem Finger aktiviert Smart Zoom. Schalten Sie es in den macOS-Mauseinstellungen aus, um doppelte Aktionen zu vermeiden."
+            "value" : "Doppeltippen mit einem Finger aktiviert intelligentes Zoomen. Schalten Sie es in den macOS-Mauseinstellungen aus, damit nicht beide Aktionen ausgelöst werden."
           }
         },
         "fr" : {
@@ -278,7 +278,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El doble toque con un dedo activa el zoom inteligente. Desactívalo en los ajustes de Ratón de macOS para evitar ambas acciones."
+            "value" : "El doble toque con un dedo activa el zoom inteligente. Desactívalo en los ajustes de Ratón de macOS para que no se ejecuten ambas acciones."
           }
         },
         "zh-Hans" : {
@@ -430,7 +430,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doppeltippen mit zwei Fingern öffnet Mission Control. Schalten Sie es in den macOS-Mauseinstellungen aus, um doppelte Aktionen zu vermeiden."
+            "value" : "Doppeltippen mit zwei Fingern öffnet Mission Control. Schalten Sie es in den macOS-Mauseinstellungen aus, damit nicht beide Aktionen ausgelöst werden."
           }
         },
         "fr" : {
@@ -442,7 +442,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El doble toque con dos dedos abre Mission Control. Desactívalo en los ajustes de Ratón de macOS para evitar ambas acciones."
+            "value" : "El doble toque con dos dedos abre Mission Control. Desactívalo en los ajustes de Ratón de macOS para que no se ejecuten ambas acciones."
           }
         },
         "zh-Hans" : {
@@ -530,7 +530,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接鼠标，抬起所有手指后重试。规则仍会保存，你也可以继续编辑。"
+            "value" : "连接鼠标，抬起所有手指后重试。已保存的规则仍可编辑。"
           }
         }
       }
@@ -582,37 +582,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This text is too complex to type safely. Shorten it."
+            "value" : "This text exceeds the input limit. Shorten it and try again."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Этот текст слишком сложен, чтобы надёжно его ввести. Сократите его."
+            "value" : "Этот текст превышает допустимый объём ввода. Сократите его и попробуйте снова."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Text ist zu komplex für eine sichere Eingabe. Kürzen Sie ihn."
+            "value" : "Dieser Text überschreitet die Eingabegrenze. Kürzen Sie ihn und versuchen Sie es erneut."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce texte est trop complexe pour être saisi correctement. Raccourcissez-le."
+            "value" : "Ce texte dépasse la limite de saisie. Raccourcissez-le et réessayez."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este texto es demasiado complejo para introducirlo de forma segura. Acórtalo."
+            "value" : "Este texto supera el límite de entrada. Acórtalo e inténtalo de nuevo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此文本过于复杂，无法安全输入。请缩短文本。"
+            "value" : "此文本超出输入限制。请缩短后重试。"
           }
         }
       }
@@ -629,7 +629,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Доступ к Bluetooth на этом Mac ограничен. Заряд из других поддерживаемых источников по-прежнему виден."
+            "value" : "Доступ к Bluetooth на этом Mac ограничен. Заряд по-прежнему можно получать другими поддерживаемыми способами."
           }
         },
         "de" : {
@@ -664,7 +664,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Allow Bluetooth access to read the battery of connected Bluetooth mice, keyboards and trackpads. Some devices do not expose their battery."
+            "value" : "Allow Bluetooth access to see battery levels for connected Bluetooth mice, keyboards and trackpads. Some devices do not provide this information."
           }
         },
         "ru" : {
@@ -676,19 +676,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erlauben Sie Bluetooth-Zugriff, um den Ladestand verbundener Mäuse, Tastaturen und Trackpads zu lesen. Nicht alle Geräte stellen ihn bereit."
+            "value" : "Erlauben Sie den Bluetooth-Zugriff, um den Ladestand verbundener Bluetooth-Mäuse, -Tastaturen und -Trackpads anzuzeigen. Nicht alle Geräte stellen ihn bereit."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorisez l’accès Bluetooth pour lire la batterie des souris, claviers et trackpads connectés. Certains appareils ne fournissent pas cette information."
+            "value" : "Autorisez l’accès Bluetooth pour afficher le niveau de batterie des souris, claviers et trackpads Bluetooth connectés. Certains appareils ne fournissent pas cette information."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permite el acceso a Bluetooth para leer la batería de ratones, teclados y trackpads conectados. Algunos dispositivos no proporcionan este dato."
+            "value" : "Permite el acceso a Bluetooth para ver el nivel de batería de ratones, teclados y trackpads Bluetooth conectados. Algunos dispositivos no proporcionan este dato."
           }
         },
         "zh-Hans" : {
@@ -793,7 +793,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Используется только в Rebind, в том числе в меню заряда. До 60 символов. Оставьте пустым для заводского имени. У одинаковых моделей имя общее."
+            "value" : "Имя используется только в Rebind, в том числе в меню заряда. До 60 символов. Оставьте поле пустым, чтобы использовать исходное имя. Устройства одной модели используют общее имя."
           }
         },
         "de" : {
@@ -1027,19 +1027,19 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Associez touches, boutons de souris et gestes à des raccourcis et actions macOS."
+            "value" : "Attribuez des raccourcis clavier et des actions macOS aux touches, boutons de souris et gestes."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Назначайте сочетания клавиш и действия macOS клавишам, кнопкам мыши и жестам."
+            "value" : "Назначайте клавишам, кнопкам мыши и жестам сочетания клавиш и действия macOS."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asigna atajos y acciones de macOS a teclas, botones del ratón y gestos."
+            "value" : "Asigna atajos de teclado y acciones de macOS a teclas, botones del ratón y gestos."
           }
         },
         "zh-Hans" : {
@@ -1444,7 +1444,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разрешите Rebind распознавать ваши триггеры и выполнять выбранные действия в других приложениях."
+            "value" : "Разрешите Rebind распознавать нажатия и жесты и выполнять выбранные действия в других приложениях."
           }
         },
         "es" : {
@@ -1555,7 +1555,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bindings are stopped, but they are still saved. Your keyboard and mouse work as usual."
+            "value" : "Bindings have stopped, but your rules are saved. Your keyboard and mouse work as usual."
           }
         },
         "fr" : {
@@ -1567,7 +1567,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правила остановлены, но сохранены. Клавиатура и мышь работают как обычно."
+            "value" : "Выполнение правил остановлено, но сами правила сохранены. Клавиатура и мышь работают как обычно."
           }
         },
         "es" : {
@@ -1579,7 +1579,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "规则已停止，但仍然保存着。键盘和鼠标照常工作。"
+            "value" : "规则已停止，但已保存的规则会保留。键盘和鼠标照常工作。"
           }
         }
       }
@@ -1643,7 +1643,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activer une app ouverte"
+            "value" : "Passer à une app ouverte"
           }
         },
         "ru" : {
@@ -1655,7 +1655,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activar una app en ejecución"
+            "value" : "Cambiar a una app abierta"
           }
         },
         "zh-Hans" : {
@@ -1678,7 +1678,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switches to the app only if it is already running; it is not launched. If you move the app, choose it again."
+            "value" : "Switches to the selected app if it is already running. If you move the app, choose it again."
           }
         },
         "fr" : {
@@ -1690,7 +1690,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Переключает на приложение, только если оно уже запущено; само приложение не запускается. Если вы переместите приложение, выберите его заново."
+            "value" : "Переключает на выбранное приложение, если оно уже запущено. Если вы переместите приложение, выберите его заново."
           }
         },
         "es" : {
@@ -1866,7 +1866,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加一条规则：选择要按下的输入以及要执行的操作。"
+            "value" : "添加一条规则：选择按键、鼠标按钮或手势，再选择要执行的操作。"
           }
         }
       }
@@ -1930,7 +1930,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir une autre copie"
+            "value" : "Choisir une autre sauvegarde"
           }
         },
         "ru" : {
@@ -1971,13 +1971,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exporter une copie"
+            "value" : "Exporter une sauvegarde"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Экспорт копии"
+            "value" : "Экспортировать копию"
           }
         },
         "es" : {
@@ -2000,37 +2000,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exportieren Sie alle Einstellungen, Profile und Belegungen oder importieren Sie ein Backup. Rebind behält auch die letzten 10 unterschiedlichen Konfigurationen vom App-Start und fragt vor dem Ersetzen nach."
+            "value" : "Exportieren Sie alle Einstellungen, Profile und Belegungen oder importieren Sie ein Backup. Rebind behält außerdem bis zu 10 unterschiedliche, beim Start geladene Konfigurationen. Import und Zurücksetzen erfordern eine Bestätigung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Export all settings, profiles and bindings to a file, or import a backup. Rebind also keeps the last 10 different configurations loaded at launch. It asks before replacing anything."
+            "value" : "Export all settings, profiles and bindings, or import a backup. Rebind also keeps up to 10 different configurations loaded at launch. Importing or resetting asks for confirmation."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exportez tous les réglages, profils et règles, ou importez une sauvegarde. Rebind conserve aussi les 10 dernières configurations différentes chargées au lancement et demande confirmation avant tout remplacement."
+            "value" : "Exportez tous les réglages, profils et règles, ou importez une sauvegarde. Rebind conserve aussi jusqu’à 10 configurations différentes chargées au lancement. L’importation et la réinitialisation demandent confirmation."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сохраните все настройки, профили и правила в файл или восстановите их из копии. Rebind также хранит последние 10 разных конфигураций, загруженных при запуске. Перед заменой данных появится запрос."
+            "value" : "Сохраните все настройки, профили и правила в файл или восстановите их из копии. Rebind также хранит до 10 разных конфигураций, загруженных при запуске. Перед импортом или сбросом появится запрос подтверждения."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exporta todos los ajustes, perfiles y reglas, o importa una copia. Rebind también conserva las últimas 10 configuraciones distintas cargadas al iniciar y pide confirmación antes de reemplazar datos."
+            "value" : "Exporta todos los ajustes, perfiles y reglas, o importa una copia de seguridad. Rebind también conserva hasta 10 configuraciones distintas cargadas al iniciar. La importación y el restablecimiento requieren confirmación."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导出所有设置、配置文件和规则，或导入备份。Rebind 还会保留启动时载入的最近 10 份不同配置，替换数据前会先询问。"
+            "value" : "导出所有设置、配置文件和规则，或导入备份。Rebind 还会保留启动时载入的最多 10 份不同配置。导入或还原前会要求确认。"
           }
         }
       }
@@ -2053,13 +2053,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Importer une copie"
+            "value" : "Importer une sauvegarde"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Импорт копии"
+            "value" : "Импортировать копию"
           }
         },
         "es" : {
@@ -2815,7 +2815,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Проверка кнопок и прокрутки. Запись хранится в памяти и длится не более 60 секунд."
+            "value" : "Проверка кнопок мыши и прокрутки. Запись хранится в памяти и длится не более 60 секунд."
           }
         },
         "es" : {
@@ -3002,37 +3002,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Passwortfeld ist aktiv. Die Aufzeichnung ist verfügbar, sobald Sie es verlassen."
+            "value" : "Die sichere Eingabe von macOS ist aktiv. Die Aufzeichnung ist verfügbar, sobald sie endet."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A password field is active. Recording becomes available when you leave it."
+            "value" : "macOS Secure Input is on. Recording is available when it turns off."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un champ de mot de passe est actif. L’enregistrement sera disponible dès que vous le quitterez."
+            "value" : "La saisie sécurisée de macOS est active. L’enregistrement sera disponible lorsqu’elle sera désactivée."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Активно поле ввода пароля. Запись станет доступна, когда вы из него выйдете."
+            "value" : "В macOS включён безопасный ввод. Запись станет доступна, когда он отключится."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hay un campo de contraseña activo. Podrás grabar cuando salgas de él."
+            "value" : "La entrada segura de macOS está activa. Podrás grabar cuando se desactive."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "密码输入框处于活跃状态。离开后即可录制。"
+            "value" : "macOS 安全输入已开启。关闭后即可录制。"
           }
         }
       }
@@ -3348,7 +3348,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ожидание ввода мыши"
+            "value" : "Ожидание нажатия или прокрутки"
           }
         },
         "es" : {
@@ -3424,7 +3424,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’exporter la copie"
+            "value" : "Impossible d’exporter la sauvegarde"
           }
         },
         "ru" : {
@@ -3471,7 +3471,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Экспорт исходного файла"
+            "value" : "Экспортировать исходный файл"
           }
         },
         "es" : {
@@ -3506,7 +3506,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copie exportée"
+            "value" : "Sauvegarde exportée"
           }
         },
         "ru" : {
@@ -3631,7 +3631,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copie : %#@count1@, %#@count2@. L’importation remplace tous les profils, règles et réglages actuels. Exportez d’abord une copie."
+            "value" : "Sauvegarde : %#@count1@, %#@count2@. L’importation remplace tous les profils, règles et réglages actuels. Exportez d’abord une sauvegarde."
           },
           "substitutions" : {
             "count1" : {
@@ -3852,7 +3852,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette copie nécessite une version plus récente de Rebind. Rien n’a changé. Mettez Rebind à jour ou choisissez une autre copie."
+            "value" : "Cette sauvegarde nécessite une version plus récente de Rebind. Rien n’a changé. Mettez Rebind à jour ou choisissez une autre sauvegarde."
           }
         },
         "ru" : {
@@ -3893,7 +3893,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’importer la copie"
+            "value" : "Impossible d’importer la sauvegarde"
           }
         },
         "ru" : {
@@ -4321,13 +4321,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce fichier n’est pas une copie Rebind valide. Rien n’a changé. Choisissez une autre copie."
+            "value" : "Ce fichier n’est pas une sauvegarde Rebind valide. Rien n’a changé. Choisissez une autre sauvegarde."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Этот файл не является корректной копией Rebind. Данные не изменены. Выберите другую копию."
+            "value" : "Этот файл не является резервной копией Rebind или повреждён. Данные не изменены. Выберите другую копию."
           }
         },
         "es" : {
@@ -4608,7 +4608,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprime tous les profils et toutes les règles et rétablit les réglages de l’app. Exportez d’abord une copie."
+            "value" : "Supprime tous les profils et toutes les règles et rétablit les réglages de l’app. Exportez d’abord une sauvegarde."
           }
         },
         "ru" : {
@@ -4936,7 +4936,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La configuration a changé pendant la vérification. Rien n’a été remplacé. Choisissez à nouveau la copie ou relancez la réinitialisation."
+            "value" : "La configuration a changé pendant la vérification. Rien n’a été remplacé. Choisissez à nouveau la sauvegarde ou relancez la réinitialisation."
           }
         },
         "ru" : {
@@ -4977,7 +4977,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérification de la copie… Rien n’a changé. Les actions de configuration seront disponibles après la vérification."
+            "value" : "Vérification de la sauvegarde… Rien n’a changé. Les actions de configuration seront disponibles après la vérification."
           }
         },
         "ru" : {
@@ -5621,7 +5621,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton konnte nicht geändert werden. Prüfen Sie die gewählte Tonausgabe."
+            "value" : "Die Audioeinstellung konnte nicht geändert werden. Prüfen Sie das gewählte Audioausgabegerät."
           }
         },
         "en" : {
@@ -5662,7 +5662,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ändert die Lautstärke der aktuellen Tonausgabe in kleinen Schritten. Stummgeschalteter Ton bleibt stumm. Manche Ausgaben erlauben weder Lautstärkeregelung noch Stummschaltung."
+            "value" : "Ändert die Lautstärke des aktuellen Audioausgabegeräts in kleinen Schritten. Die Stummschaltung bleibt dabei erhalten. Manche Geräte erlauben weder Lautstärkeregelung noch Stummschaltung."
           }
         },
         "en" : {
@@ -5674,7 +5674,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifie le volume de la sortie audio actuelle par petits paliers. Un son coupé le reste. Certaines sorties ne permettent pas de régler le volume ni de couper le son."
+            "value" : "Modifie le volume de la sortie audio actuelle par petits paliers sans désactiver le mode silencieux. Certaines sorties ne permettent pas de régler le volume ni de couper le son."
           }
         },
         "ru" : {
@@ -5744,7 +5744,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für die aktuelle Tonausgabe nicht verfügbar. Die Taste oder Maustaste funktioniert wie gewohnt."
+            "value" : "Für das aktuelle Audioausgabegerät nicht verfügbar. Die Taste oder Maustaste funktioniert wie gewohnt."
           }
         },
         "en" : {
@@ -5867,37 +5867,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn Sie dieses Fenster schließen, bleibt Rebind in der Menüleiste. Öffnen Sie es dort, um Belegungen zu verwalten oder zu pausieren."
+            "value" : "Rebind läuft weiter, wenn Sie dieses Fenster schließen. Öffnen Sie es über „Programme“ oder Spotlight, um Belegungen zu verwalten oder zu pausieren."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When you close this window, Rebind stays in the menu bar. Open it there to manage bindings or pause them."
+            "value" : "Rebind keeps running after you close this window. Reopen it from Applications or Spotlight to manage or pause bindings."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lorsque vous fermez cette fenêtre, Rebind reste dans la barre des menus. Ouvrez-le depuis cette barre pour gérer les règles ou les mettre en pause."
+            "value" : "Rebind continue de fonctionner lorsque vous fermez cette fenêtre. Rouvrez-le depuis Applications ou Spotlight pour gérer les règles ou les mettre en pause."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Когда вы закрываете окно, Rebind остаётся в строке меню. Оттуда можно открыть правила или поставить их на паузу."
+            "value" : "После закрытия окна Rebind продолжает работать. Откройте его из папки «Программы» или через Spotlight, чтобы настроить или приостановить правила."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al cerrar esta ventana, Rebind permanece en la barra de menús. Ábrelo desde allí para gestionar las reglas o ponerlas en pausa."
+            "value" : "Rebind sigue funcionando al cerrar esta ventana. Vuelve a abrirlo desde Aplicaciones o Spotlight para gestionar las reglas o ponerlas en pausa."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭此窗口后，Rebind 会留在菜单栏中。可从那里打开它来管理规则或暂停规则。"
+            "value" : "关闭此窗口后，Rebind 仍会运行。可从“应用程序”或“聚焦”重新打开，以管理或暂停规则。"
           }
         }
       }
@@ -5908,37 +5908,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind arbeitet auch bei geschlossenem Fenster. Über die Menüleiste können Sie die Belegungen jederzeit pausieren."
+            "value" : "Belegungen funktionieren auch bei geschlossenem Fenster. Öffnen Sie Rebind erneut, um sie zu verwalten oder zu pausieren."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind works when its window is closed. Use the menu bar to pause bindings at any time."
+            "value" : "Bindings keep working when the window is closed. Reopen Rebind to manage or pause them."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind fonctionne même lorsque sa fenêtre est fermée. Suspendez les règles à tout moment depuis la barre des menus."
+            "value" : "Les règles fonctionnent même lorsque la fenêtre est fermée. Rouvrez Rebind pour les gérer ou les mettre en pause."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind работает и с закрытым окном. Поставить правила на паузу можно в любой момент из строки меню."
+            "value" : "Правила работают и с закрытым окном. Откройте Rebind заново, чтобы настроить или приостановить их."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind funciona con la ventana cerrada. Usa la barra de menús para poner las reglas en pausa cuando quieras."
+            "value" : "Las reglas siguen funcionando con la ventana cerrada. Vuelve a abrir Rebind para gestionarlas o ponerlas en pausa."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "窗口关闭后 Rebind 仍会工作。可随时通过菜单栏暂停规则。"
+            "value" : "窗口关闭后，规则仍会生效。重新打开 Rebind 即可管理或暂停规则。"
           }
         }
       }
@@ -6049,7 +6049,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Такое правило не поддерживается. Сочетание аварийной паузы переназначить нельзя."
+            "value" : "Такое правило не поддерживается. Сочетание экстренной паузы переназначить нельзя."
           }
         },
         "es" : {
@@ -6377,7 +6377,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправляет системную клавишу яркости. macOS сама выбирает дисплей; дисплеи без управления яркостью её игнорируют."
+            "value" : "Имитирует нажатие клавиши яркости. macOS выбирает, какой дисплей отреагирует. На дисплеях без управления яркостью действие не сработает."
           }
         },
         "es" : {
@@ -6547,7 +6547,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Запишите кнопку и выберите направление колеса. Удерживайте кнопку и крутите колесо: действие срабатывает на каждый шаг. Клик без прокрутки работает как обычно."
+            "value" : "Запишите кнопку и выберите направление прокрутки. Для выполнения действия удерживайте кнопку и крутите колесо: каждый шаг запускает действие. Нажатие без прокрутки работает как обычно."
           }
         },
         "zh-Hans" : {
@@ -7525,7 +7525,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Передано дальше"
+            "value" : "Передано приложению"
           }
         },
         "es" : {
@@ -7548,37 +7548,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktion gestartet"
+            "value" : "Aktion eingereiht"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Action started"
+            "value" : "Action queued"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Action lancée"
+            "value" : "Action en attente"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Действие запущено"
+            "value" : "Действие в очереди"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acción iniciada"
+            "value" : "Acción en cola"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已开始操作"
+            "value" : "操作已加入队列"
           }
         }
       }
@@ -7695,7 +7695,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Liberación"
+            "value" : "Soltar"
           }
         },
         "zh-Hans" : {
@@ -7936,7 +7936,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Двойной левый клик"
+            "value" : "Двойной щелчок левой кнопкой"
           }
         },
         "es" : {
@@ -8018,7 +8018,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите дважды быстро, как при двойном клике. Одиночное нажатие ничего не делает и не передаётся приложениям."
+            "value" : "Быстро нажмите дважды, как при двойном щелчке мышью. Одиночное нажатие ничего не делает и не передаётся приложениям."
           }
         },
         "es" : {
@@ -8305,7 +8305,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Аварийная пауза: ⌃⌥⇧⌘ Escape. Также можно приостановить правила через строку меню."
+            "value" : "Экстренная пауза: ⌃⌥⇧⌘ Escape. Также можно приостановить правила через строку меню."
           }
         },
         "es" : {
@@ -8551,7 +8551,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Универсальный доступ разрешён, но Rebind пока не может отправлять сочетания клавиш и клики. Нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
+            "value" : "Универсальный доступ разрешён, но Rebind пока не может выполнять сочетания клавиш и нажатия мыши. Нажмите «Разрешить отправку событий» в главном окне и перезапустите Rebind, если macOS попросит."
           }
         },
         "es" : {
@@ -8633,7 +8633,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Универсальный доступ включён. Осталось разрешить Rebind отправлять сочетания клавиш и клики в другие приложения."
+            "value" : "Универсальный доступ включён. Осталось разрешить Rebind выполнять сочетания клавиш и нажатия мыши в других приложениях."
           }
         },
         "es" : {
@@ -8809,7 +8809,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当其中某个 App位于前台时，Rebind 会跳过你在此关闭的功能。适用于游戏、虚拟机和远程桌面。"
+            "value" : "当其中某个 App 位于前台时，Rebind 会停用你在此关闭的功能。适用于游戏、虚拟机和远程桌面。"
           }
         }
       }
@@ -9401,7 +9401,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keep pressed for this long to run the action once. Releasing earlier cancels the action."
+            "value" : "Hold the key or button for this long to run the action once. Releasing earlier cancels it."
           }
         },
         "fr" : {
@@ -9413,7 +9413,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Столько нужно удерживать, чтобы действие сработало один раз. Если отпустить раньше, оно не сработает."
+            "value" : "Удерживайте клавишу или кнопку указанное время, чтобы действие сработало один раз. Если отпустить раньше, оно отменится."
           }
         },
         "es" : {
@@ -9477,37 +9477,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird einmal ausgelöst, wenn Sie so lange gedrückt halten. Kürzeres Drücken bewirkt nichts und wird nicht weitergegeben. Loslassen, eine andere Taste oder Scrollen bricht ab."
+            "value" : "Wird nach Ablauf der Haltedauer einmal ausgelöst. Früheres Loslassen, eine andere Taste oder Maustaste oder Scrollen bricht ab. Ein kurzer Druck wird nur mit einem eigenen Tastenkürzel weitergegeben."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Runs once after you hold for the chosen time. A shorter press does nothing and is not passed on. Releasing, pressing something else or scrolling cancels it."
+            "value" : "Runs once when the hold time is reached. Releasing early, pressing another key or button, or scrolling cancels it. A shorter press is not passed on unless you set a short-press shortcut."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S’exécute une fois lorsque vous maintenez l’appui pendant la durée choisie. Un appui plus court ne fait rien et n’est pas transmis. Relâcher, appuyer ailleurs ou faire défiler annule l’action."
+            "value" : "S’exécute une fois la durée de maintien atteinte. Relâcher plus tôt, appuyer sur une autre touche ou un bouton, ou faire défiler annule l’action. Un appui court n’est transmis que si vous lui attribuez un raccourci."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Срабатывает один раз, когда вы удерживаете нажатие выбранное время. Более короткое нажатие ничего не делает и не передаётся приложениям. Если отпустить, нажать что-то ещё или прокрутить, действие отменится."
+            "value" : "Срабатывает один раз по истечении времени удержания. Если раньше отпустить, нажать другую клавишу или кнопку либо прокрутить, действие отменится. Короткое нажатие не передаётся приложениям, если для него не задано сочетание."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ejecuta una vez cuando mantienes pulsado el tiempo elegido. Una pulsación más corta no hace nada y no se transmite. Soltar, pulsar otra cosa o desplazarte la cancela."
+            "value" : "Se ejecuta una vez al alcanzar la duración elegida. Soltar antes, pulsar otra tecla o botón, o desplazarte cancela la acción. Una pulsación corta solo se transmite si le asignas un atajo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按住达到所选时长后执行一次。时间不够的按压不会有任何作用，也不会传给其他 App。松开、按下其他键或滚动都会取消。"
+            "value" : "按住达到所选时长后执行一次。提前松开、按下其他键或按钮、滚动都会取消操作。短按不会传给其他 App，除非为短按设置了快捷键。"
           }
         }
       }
@@ -9518,37 +9518,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wirkt wie diese Sondertaste, solange Sie den Auslöser gedrückt halten: Sie wird anderen Tasten, Klicks und dem Scrollen hinzugefügt. Der Auslöser muss eine Taste oder Maustaste sein, gedrückt oder gehalten. Die eigenen Belegungen von Rebind berücksichtigen diese Sondertaste nicht."
+            "value" : "Fügt diese Sondertaste anderen Tasten, Klicks und dem Scrollen hinzu, solange Sie den Auslöser halten. Verwenden Sie eine Taste oder Maustaste mit „Drücken“ oder „Halten“. Rebinds eigene Belegungen ignorieren diese Sondertaste."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acts as this modifier key for as long as you hold the trigger: other keys, clicks and scrolling get it added. Needs a key or mouse button as the trigger, pressed or held. Rebind’s own bindings do not see this modifier."
+            "value" : "Adds this modifier to other keys, clicks and scrolling while you hold the trigger. Use a key or mouse button with Press or Hold activation. Rebind’s own bindings ignore this modifier."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actúa como esta tecla modificadora mientras mantienes pulsado el activador: se añade a otras teclas, clics y desplazamientos. El activador debe ser una tecla o un botón del ratón, con pulsación o mantenido. Las reglas de Rebind no tienen en cuenta este modificador."
+            "value" : "Añade este modificador a otras teclas, clics y desplazamientos mientras mantienes el activador. Usa una tecla o un botón con «Pulsación» o «Mantener». Las reglas de Rebind ignoran este modificador."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agit comme cette touche de modification tant que vous maintenez le déclencheur : elle s’ajoute aux autres touches, aux clics et au défilement. Le déclencheur doit être une touche ou un bouton de souris, en appui ou en maintien. Les règles de Rebind ne tiennent pas compte de ce modificateur."
+            "value" : "Ajoute ce modificateur aux autres touches, clics et défilements tant que vous maintenez le déclencheur. Utilisez une touche ou un bouton avec « Appui » ou « Maintien ». Les règles de Rebind ignorent ce modificateur."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Пока вы удерживаете триггер, он работает как эта клавиша-модификатор: она добавляется к другим клавишам, кликам и прокрутке. Триггером должна быть клавиша или кнопка мыши с нажатием или удержанием. Собственные правила Rebind этот модификатор не учитывают."
+            "value" : "Добавляет этот модификатор к другим клавишам, нажатиям мыши и прокрутке, пока вы удерживаете триггер. Подходит для клавиши или кнопки мыши со срабатыванием «Нажатие» или «Удержание». Правила Rebind этот модификатор не учитывают."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按住触发器期间，它相当于这个修饰键：会加到其他按键、点按和滚动上。触发器必须是按键或鼠标按钮，激活方式为按下或按住。Rebind 自己的规则不会识别这个修饰键。"
+            "value" : "按住触发器时，将此修饰键添加到其他按键、点按和滚动中。触发器须为按键或鼠标按钮，触发方式为“按下”或“按住”。Rebind 自己的规则会忽略此修饰键。"
           }
         }
       }
@@ -10356,7 +10356,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выберите, что делает каждая клавиша или сочетание."
+            "value" : "Выберите действие для клавиши или сочетания клавиш."
           }
         },
         "es" : {
@@ -10726,7 +10726,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Левый клик"
+            "value" : "Нажать левую кнопку мыши"
           }
         },
         "es" : {
@@ -10790,7 +10790,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warte auf Eingabe… Taste drücken oder mit Escape abbrechen."
+            "value" : "Warte auf Eingabe… Drücken Sie eine Taste oder Maustaste. Escape bricht ab."
           }
         },
         "en" : {
@@ -10814,7 +10814,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escuchando… Pulsa una tecla o un botón, o Escape para cancelar."
+            "value" : "Esperando entrada… Pulsa una tecla o un botón, o Escape para cancelar."
           }
         },
         "zh-Hans" : {
@@ -11508,7 +11508,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Средний клик"
+            "value" : "Нажать среднюю кнопку мыши"
           }
         },
         "es" : {
@@ -11796,7 +11796,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не удалось отправить клик. Отпустите эту кнопку мыши и попробуйте ещё раз."
+            "value" : "Не удалось выполнить нажатие мыши. Отпустите кнопку и попробуйте ещё раз."
           }
         },
         "es" : {
@@ -11832,13 +11832,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clique à l’emplacement du pointeur, sans touche de modification. Le glisser n’est pas pris en charge."
+            "value" : "Clique à l’emplacement du pointeur, sans touche de modification. Le glisser-déposer n’est pas pris en charge."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выполняет клик там, где находится указатель, без клавиш-модификаторов. Перетаскивание не поддерживается."
+            "value" : "Нажимает кнопку мыши в положении указателя, без клавиш-модификаторов. Перетаскивание не поддерживается."
           }
         },
         "es" : {
@@ -12034,7 +12034,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · %@ · Actif"
+            "value" : "%@ · %@ · Activée"
           }
         },
         "ru" : {
@@ -12392,37 +12392,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine andere aktive Belegung verwendet dies bereits. Erfassen Sie etwas anderes oder bearbeiten Sie jene Belegung."
+            "value" : "Eine andere aktive Belegung verwendet diesen Auslöser bereits. Erfassen Sie einen anderen Auslöser oder bearbeiten Sie die vorhandene Belegung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Another enabled binding already uses this. Record something else or edit that binding."
+            "value" : "Another enabled binding uses this trigger. Record a different trigger or edit that binding."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une autre règle activée l’utilise déjà. Enregistrez autre chose ou modifiez cette règle."
+            "value" : "Une autre règle activée utilise déjà ce déclencheur. Enregistrez un autre déclencheur ou modifiez la règle existante."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Это уже используется другим включённым правилом. Запишите что-то другое или измените то правило."
+            "value" : "Этот триггер уже используется другим включённым правилом. Запишите другой триггер или измените существующее правило."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otra regla activada ya lo usa. Graba otra cosa o edita esa regla."
+            "value" : "Otra regla activada ya usa este activador. Graba otro activador o edita la regla existente."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已有另一条启用的规则使用了它。请录制其他输入，或编辑那条规则。"
+            "value" : "已有另一条启用的规则使用了此触发器。请录制其他触发器，或编辑已有规则。"
           }
         }
       }
@@ -12817,7 +12817,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживайте нужные модификаторы. Escape отменяет запись."
+            "value" : "Удерживайте нужные клавиши-модификаторы. Escape отменяет запись."
           }
         },
         "es" : {
@@ -13268,7 +13268,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выберите, что делает каждая кнопка, прокрутка или движение."
+            "value" : "Выберите действие для кнопки мыши, прокрутки или движения."
           }
         },
         "es" : {
@@ -13684,7 +13684,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Скорость колеса"
+            "value" : "Скорость прокрутки"
           }
         },
         "zh-Hans" : {
@@ -13742,37 +13742,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sendet %@, das Standardkürzel von macOS für diesen Befehl. Apps mit einem anderen Kürzel reagieren nicht, ebenso wenig ein in den Systemeinstellungen geändertes Kürzel."
+            "value" : "Sendet %@, das Standardkürzel von macOS für diesen Befehl. Die Aktion funktioniert möglicherweise nicht, wenn die App ein anderes Kürzel verwendet oder Sie es in den Systemeinstellungen geändert haben."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sends %@, the standard macOS shortcut for this command. Apps that use a different shortcut, or a shortcut you changed in System Settings, will not respond."
+            "value" : "Sends %@, the standard macOS shortcut for this command. The action may not work if the app uses another shortcut or you changed it in System Settings."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envía %@, el atajo estándar de macOS para este comando. No funcionará en apps que usen otro atajo ni si lo cambiaste en Ajustes del Sistema."
+            "value" : "Envía %@, el atajo estándar de macOS para este comando. Puede que la acción no funcione si la app usa otro atajo o lo has cambiado en Ajustes del Sistema."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoie %@, le raccourci standard de macOS pour cette commande. Les apps qui utilisent un autre raccourci, ou un raccourci modifié dans Réglages Système, ne réagiront pas."
+            "value" : "Envoie %@, le raccourci standard de macOS pour cette commande. L’action peut ne pas fonctionner si l’app utilise un autre raccourci ou si vous l’avez modifié dans Réglages Système."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправляет %@, стандартное сочетание клавиш macOS для этой команды. Не сработает в приложениях с другим сочетанием и если вы изменили его в Системных настройках."
+            "value" : "Отправляет %@, стандартное сочетание macOS для этой команды. Действие может не сработать, если приложение использует другое сочетание или вы изменили его в Системных настройках."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "发送 %@，即 macOS 中此命令的标准快捷键。使用其他快捷键的 App，或你在“系统设置”中改过的快捷键，将不会响应。"
+            "value" : "发送 %@，即 macOS 中此命令的标准快捷键。如果 App 使用其他快捷键，或你在“系统设置”中更改过该快捷键，此操作可能无效。"
           }
         }
       }
@@ -15196,7 +15196,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind может распознавать триггеры и выполнять выбранные действия в других приложениях."
+            "value" : "Rebind может распознавать нажатия и жесты и выполнять выбранные действия в других приложениях."
           }
         },
         "es" : {
@@ -15237,7 +15237,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Распознавать триггеры и выполнять выбранные действия в других приложениях."
+            "value" : "Распознавать нажатия и жесты и выполнять выбранные действия в других приложениях."
           }
         },
         "es" : {
@@ -15483,7 +15483,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind может отправлять сочетания клавиш и клики в другие приложения."
+            "value" : "Rebind может выполнять сочетания клавиш и нажатия мыши в других приложениях."
           }
         },
         "es" : {
@@ -15524,7 +15524,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разрешите Rebind отправлять сочетания клавиш и клики в другие приложения."
+            "value" : "Разрешите Rebind выполнять сочетания клавиш и нажатия мыши в других приложениях."
           }
         },
         "es" : {
@@ -15565,7 +15565,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправлять сочетания клавиш и клики в другие приложения. Сначала включите «Универсальный доступ»."
+            "value" : "Выполнять сочетания клавиш и нажатия мыши в других приложениях. Сначала включите «Универсальный доступ»."
           }
         },
         "es" : {
@@ -15778,7 +15778,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproducir / Pausa"
+            "value" : "Reproducir / Pausar"
           }
         },
         "zh-Hans" : {
@@ -16593,7 +16593,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’ajouter ce fichier. Ce n’est ni un profil ni une copie Rebind, ou la limite de 20 profils ou de 1 000 règles serait dépassée."
+            "value" : "Impossible d’ajouter ce fichier. Ce n’est ni un profil ni une sauvegarde Rebind, ou la limite de 20 profils ou de 1 000 règles serait dépassée."
           }
         },
         "ru" : {
@@ -16921,7 +16921,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Один профиль действует для всех устройств. Переключайте его здесь или в строке меню."
+            "value" : "Для всех устройств действует один выбранный профиль. Переключайте его здесь или в строке меню."
           }
         },
         "es" : {
@@ -18363,7 +18363,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado: %@. Cierra y vuelve a abrir Rebind para verlo en todas partes. Las reglas no funcionan mientras Rebind esté cerrado."
+            "value" : "Guardado: %@. Sal de Rebind y vuelve a abrirlo para aplicar el idioma en toda la app. Las reglas no funcionan mientras Rebind no esté en ejecución."
           }
         },
         "zh-Hans" : {
@@ -18503,7 +18503,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erlauben Sie Rebind erneut, damit Ihre Belegungen wieder funktionieren."
+            "value" : "Erlauben Sie Rebind den Zugriff erneut, damit Ihre Belegungen wieder funktionieren."
           }
         },
         "en" : {
@@ -18527,7 +18527,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a permitir Rebind para reanudar tus reglas."
+            "value" : "Vuelve a permitir el acceso a Rebind para reanudar tus reglas."
           }
         },
         "zh-Hans" : {
@@ -18809,7 +18809,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правый клик"
+            "value" : "Нажать правую кнопку мыши"
           }
         },
         "es" : {
@@ -19287,37 +19287,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Passwortfeld ist aktiv · Belegungen pausiert"
+            "value" : "Sichere Eingabe von macOS aktiv · Belegungen pausiert"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A password field is active · bindings are paused"
+            "value" : "macOS Secure Input is on · bindings are paused"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un champ de mot de passe est actif · règles en pause"
+            "value" : "Saisie sécurisée de macOS active · règles en pause"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Активно поле ввода пароля · правила на паузе"
+            "value" : "Включён безопасный ввод macOS · правила на паузе"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hay un campo de contraseña activo · reglas en pausa"
+            "value" : "Entrada segura de macOS activa · reglas en pausa"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "密码输入框处于活跃状态 · 规则已暂停"
+            "value" : "macOS 安全输入已开启 · 规则已暂停"
           }
         }
       }
@@ -21340,37 +21340,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drücken Sie das Trackpad, bis es klickt, während so viele Finger darauf liegen."
+            "value" : "Legen Sie die gewählte Anzahl Finger auf das Trackpad und drücken Sie es bis zum Klick."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Press the trackpad until it clicks while this many fingers rest on it."
+            "value" : "Rest the selected number of fingers on the trackpad, then press until it clicks."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuyez sur le trackpad jusqu’au clic avec ce nombre de doigts posés dessus."
+            "value" : "Posez le nombre de doigts indiqué sur le trackpad, puis appuyez jusqu’au clic."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите на трекпад до щелчка, когда на нём лежит столько пальцев."
+            "value" : "Положите на трекпад указанное число пальцев и надавите до щелчка."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa el trackpad hasta que haga clic mientras este número de dedos descansa sobre él."
+            "value" : "Apoya el número de dedos indicado en el trackpad y presiónalo hasta que haga clic."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在触控板上放着这么多手指时，按压触控板直到咔嗒一声。"
+            "value" : "将所选数量的手指放在触控板上，然后按下触控板以点按。"
           }
         }
       }
@@ -21920,37 +21920,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Belegung ersetzt den normalen Klick mit so vielen Fingern. Sie kann auch auslösen, wenn Sie klicken, während weitere Finger auf dem Trackpad ruhen."
+            "value" : "Ersetzt einen Klick mit der gewählten Fingerzahl. Alle aufliegenden Finger zählen, auch wenn nur einer drückt."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This binding replaces the ordinary click made with this many fingers. It can also run when you click while other fingers rest on the trackpad."
+            "value" : "Replaces a click made with the selected number of fingers. All fingers resting on the trackpad count, even if only one presses."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette règle remplace le clic ordinaire effectué avec ce nombre de doigts. Elle peut aussi se déclencher si d’autres doigts reposent sur le trackpad pendant le clic."
+            "value" : "Remplace un clic avec le nombre de doigts choisi. Tous les doigts posés sur le trackpad comptent, même si un seul appuie."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правило заменяет обычное нажатие таким числом пальцев. Оно может сработать и тогда, когда вы нажимаете одним пальцем, а другие просто лежат на трекпаде."
+            "value" : "Заменяет нажатие с указанным числом пальцев. Учитываются все пальцы на трекпаде, даже если надавливает только один."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta regla sustituye al clic normal hecho con este número de dedos. También puede ejecutarse si haces clic con otros dedos apoyados en el trackpad."
+            "value" : "Sustituye un clic con el número de dedos elegido. Cuentan todos los dedos apoyados en el trackpad, aunque solo uno presione."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此规则会取代用这么多手指进行的普通点按。当你点按时有其他手指放在触控板上，它也可能触发。"
+            "value" : "取代使用所选手指数进行的点按。即使只有一根手指按下，放在触控板上的所有手指都会计入。"
           }
         }
       }
@@ -22229,7 +22229,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Касания не отключают жесты macOS, поэтому могут сработать оба. Правила для углов и нажатий заменяют само нажатие. Если есть правило на двойное касание, одиночное срабатывает с небольшой задержкой: Rebind ждёт второго касания."
+            "value" : "Касания не отключают жесты macOS, поэтому могут сработать оба действия. Правила для углов и нажатий заменяют обычное нажатие. Если задано двойное касание, одиночное срабатывает с небольшой задержкой: Rebind ждёт второго касания."
           }
         },
         "es" : {
@@ -23058,7 +23058,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Направление колеса"
+            "value" : "Направление прокрутки"
           }
         },
         "zh-Hans" : {
@@ -23411,7 +23411,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Клик кнопкой мыши 4"
+            "value" : "Нажать кнопку мыши 4"
           }
         },
         "de" : {
@@ -23452,7 +23452,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Клик кнопкой мыши 5"
+            "value" : "Нажать кнопку мыши 5"
           }
         },
         "de" : {
@@ -24026,31 +24026,31 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind скрыт везде"
+            "value" : "Значки Rebind скрыты"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind ist überall ausgeblendet"
+            "value" : "Rebind-Symbole sind ausgeblendet"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind est masqué partout"
+            "value" : "Les icônes de Rebind sont masquées"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind está oculto en todas partes"
+            "value" : "Los iconos de Rebind están ocultos"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind 已在所有位置隐藏"
+            "value" : "Rebind 的图标已隐藏"
           }
         }
       }
@@ -24484,7 +24484,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toujours cranté"
+            "value" : "Toujours crantée"
           }
         },
         "ru" : {
@@ -24677,37 +24677,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sensorauflösung. Die Maus merkt sie sich."
+            "value" : "Legt die DPI-Auflösung des Maussensors fest. Die Maus speichert diese Einstellung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sensor resolution. The mouse remembers it."
+            "value" : "Sets the mouse sensor’s DPI. The mouse remembers this setting."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Résolution du capteur. La souris la mémorise."
+            "value" : "Règle la résolution du capteur en DPI. La souris mémorise ce réglage."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Разрешение сенсора. Мышь запоминает его."
+            "value" : "Задаёт DPI сенсора мыши. Мышь сохраняет эту настройку."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resolución del sensor. El ratón la recuerda."
+            "value" : "Ajusta los DPI del sensor del ratón. El ratón guarda este ajuste."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "传感器分辨率。鼠标会记住它。"
+            "value" : "设置鼠标传感器的 DPI。鼠标会保存此设置。"
           }
         }
       }
@@ -24800,37 +24800,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connect a mouse to adjust its settings, or a supported keyboard to see its battery and rename it."
+            "value" : "Connect a supported mouse, keyboard or trackpad to see available settings and battery information."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подключите мышь для настройки или поддерживаемую клавиатуру, чтобы увидеть заряд и изменить имя."
+            "value" : "Подключите поддерживаемую мышь, клавиатуру или трекпад, чтобы увидеть доступные настройки и сведения о заряде."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verbinden Sie eine Maus, um sie einzustellen, oder eine unterstützte Tastatur, um den Ladestand zu sehen und sie umzubenennen."
+            "value" : "Verbinden Sie eine unterstützte Maus, Tastatur oder ein Trackpad, um verfügbare Einstellungen und Batterieinformationen zu sehen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connectez une souris pour la configurer, ou un clavier compatible pour voir sa batterie et le renommer."
+            "value" : "Connectez une souris, un clavier ou un trackpad compatible pour voir les réglages disponibles et le niveau de batterie."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conecta un ratón para ajustarlo o un teclado compatible para ver su batería y cambiarle el nombre."
+            "value" : "Conecta un ratón, teclado o trackpad compatible para ver los ajustes disponibles y la información de batería."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接鼠标以调整设置，或连接支持的键盘以查看电量并重命名。"
+            "value" : "连接支持的鼠标、键盘或触控板，以查看可用设置和电量信息。"
           }
         }
       }
@@ -25108,7 +25108,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Передано, изменено"
+            "value" : "Передано с изменениями"
           }
         },
         "es" : {
@@ -25232,7 +25232,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Превращает каждый шаг колеса в короткое плавное скольжение, как на трекпаде."
+            "value" : "Делает каждый шаг колеса плавным, как прокрутка на трекпаде."
           }
         },
         "es" : {
@@ -25687,7 +25687,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Плавная прокрутка настраивается для каждой мыши во вкладке «Устройства»."
+            "value" : "Плавная прокрутка настраивается для каждой мыши в разделе «Устройства»."
           }
         },
         "es" : {
@@ -25710,7 +25710,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hochauflösendes Rad"
+            "value" : "Hochauflösendes Scrollen"
           }
         },
         "en" : {
@@ -25722,25 +25722,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Molette haute résolution"
+            "value" : "Défilement haute résolution"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Колесо высокого разрешения"
+            "value" : "Высокая точность прокрутки"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rueda de alta resolución"
+            "value" : "Desplazamiento de alta resolución"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "高分辨率滚轮"
+            "value" : "高分辨率滚动"
           }
         }
       }
@@ -25751,37 +25751,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feines, gleichmäßiges Scrollen. Aus für klare Schritte, etwa für sanftes Scrollen oder Radbelegungen."
+            "value" : "Meldet kleinere Scrollschritte. Für sanftes Scrollen oder Mausradbelegungen deaktivieren, um einzelne Radschritte zu verwenden."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fine, even scrolling. Turn it off for distinct clicks, for example for smooth scrolling or wheel bindings."
+            "value" : "Reports smaller scroll increments. Turn it off to use discrete steps for smooth scrolling or wheel bindings."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Défilement fin et régulier. Désactivez-le pour des crans nets, par exemple pour le défilement fluide ou les règles de molette."
+            "value" : "Transmet des pas de défilement plus fins. Désactivez cette option pour utiliser des crans distincts avec le défilement fluide ou les règles de molette."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Мелкая ровная прокрутка. Выключите, чтобы колесо шло чёткими шагами, например для плавной прокрутки или правил на колесе."
+            "value" : "Передаёт прокрутку мелкими шагами. Отключите для обычных шагов колеса при плавной прокрутке или выполнении правил."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desplazamiento fino y uniforme. Desactívalo para pasos claros, por ejemplo para el desplazamiento suave o las reglas de rueda."
+            "value" : "Envía incrementos de desplazamiento más pequeños. Desactívala para usar pasos definidos con el desplazamiento suave o las reglas de la rueda."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "细腻均匀的滚动。关闭后滚轮按清晰的格滚动，例如用于平滑滚动或滚轮规则。"
+            "value" : "发送更细的滚动增量。使用平滑滚动或滚轮规则时，可关闭此选项以使用逐格滚动。"
           }
         }
       }
@@ -26947,37 +26947,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Give keys, mouse buttons and taps new actions."
+            "value" : "Assign new actions to keys, mouse buttons and gestures."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Назначайте клавишам, кнопкам мыши и касаниям новые действия."
+            "value" : "Назначайте клавишам, кнопкам мыши и жестам новые действия."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geben Sie Tasten, Maustasten und Tippgesten neue Aktionen."
+            "value" : "Weisen Sie Tasten, Maustasten und Gesten neue Aktionen zu."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donnez de nouvelles actions aux touches, aux boutons de souris et aux touchers."
+            "value" : "Attribuez de nouvelles actions aux touches, boutons de souris et gestes."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da nuevas acciones a teclas, botones del ratón y toques."
+            "value" : "Asigna nuevas acciones a teclas, botones del ratón y gestos."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "为按键、鼠标按钮和轻点赋予新的操作。"
+            "value" : "为按键、鼠标按钮和手势分配新的操作。"
           }
         }
       }
@@ -27029,37 +27029,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Turn a key, an extra button or the wheel into a shortcut or action."
+            "value" : "Assign a shortcut or action to a key, an extra mouse button or the wheel."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Превратите клавишу, дополнительную кнопку или колесо в сочетание клавиш или действие."
+            "value" : "Назначьте клавише, дополнительной кнопке мыши или колесу сочетание клавиш или действие."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Machen Sie aus einer Taste, einer Zusatztaste oder dem Mausrad eine Tastenkombination oder Aktion."
+            "value" : "Belegen Sie eine Taste, eine zusätzliche Maustaste oder das Mausrad mit einem Tastenkürzel oder einer Aktion."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transformez une touche, un bouton supplémentaire ou la molette en raccourci ou en action."
+            "value" : "Attribuez un raccourci ou une action à une touche, un bouton supplémentaire ou la molette."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convierte una tecla, un botón adicional o la rueda en un atajo o una acción."
+            "value" : "Asigna un atajo o una acción a una tecla, un botón adicional o la rueda."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将按键、额外按钮或滚轮变成快捷键或操作。"
+            "value" : "为按键、额外的鼠标按钮或滚轮分配快捷键或操作。"
           }
         }
       }
@@ -27111,37 +27111,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose a ready-made tap or click from a short list."
+            "value" : "Choose a tap, click or scroll gesture from the preset list."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Выберите готовое касание или нажатие из короткого списка."
+            "value" : "Выберите касание, нажатие или прокрутку из списка жестов."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wählen Sie ein fertiges Tippen oder Klicken aus einer kurzen Liste."
+            "value" : "Wählen Sie eine Tipp-, Klick- oder Scrollgeste aus der Liste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez un toucher ou un clic prêt à l’emploi dans une courte liste."
+            "value" : "Choisissez un geste de toucher, de clic ou de défilement dans la liste."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige un toque o un clic predefinido de una lista breve."
+            "value" : "Elige un gesto de toque, clic o desplazamiento de la lista."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "从简短列表中选择现成的轻点或点按。"
+            "value" : "从预设列表中选择轻点、点按或滚动手势。"
           }
         }
       }
@@ -27193,37 +27193,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limit a binding to one app, or keep separate profiles."
+            "value" : "Limit a binding to one app, or organize your rules into profiles."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ограничьте правило одним приложением или ведите отдельные профили."
+            "value" : "Ограничьте правило одним приложением или объедините правила в профили."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beschränken Sie eine Belegung auf eine App oder nutzen Sie getrennte Profile."
+            "value" : "Beschränken Sie eine Belegung auf eine App oder ordnen Sie Ihre Belegungen in Profilen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limitez une règle à une app ou gardez des profils séparés."
+            "value" : "Limitez une règle à une app ou regroupez vos règles dans des profils."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limita una regla a una app o usa perfiles separados."
+            "value" : "Limita una regla a una app u organiza tus reglas en perfiles."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将规则限定于某个 App，或使用不同的配置文件。"
+            "value" : "将规则限定于某个 App，或用不同的配置文件整理规则。"
           }
         }
       }
@@ -27399,37 +27399,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bindings need this one permission to work in other apps."
+            "value" : "Allow Accessibility so bindings can work in other apps."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правилам нужно только это разрешение, чтобы работать в других приложениях."
+            "value" : "Разрешите универсальный доступ, чтобы правила работали в других приложениях."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Belegungen brauchen nur diese eine Berechtigung, um in anderen Apps zu funktionieren."
+            "value" : "Erlauben Sie den Zugriff auf Bedienungshilfen, damit Belegungen in anderen Apps funktionieren."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les règles n’ont besoin que de cette autorisation pour fonctionner dans les autres apps."
+            "value" : "Autorisez l’accessibilité pour utiliser les règles dans les autres apps."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las reglas solo necesitan este permiso para funcionar en otras apps."
+            "value" : "Permite el acceso a Accesibilidad para usar las reglas en otras apps."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "规则只需这一项权限即可在其他 App 中使用。"
+            "value" : "请授予“辅助功能”权限，让规则在其他 App 中生效。"
           }
         }
       }
@@ -27569,7 +27569,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Теперь Rebind распознаёт ваши триггеры и выполняет действия."
+            "value" : "Теперь Rebind может распознавать нажатия и жесты и выполнять действия."
           }
         },
         "de" : {
@@ -27733,7 +27733,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rebind раз в день ищет новую версию и спрашивает перед установкой."
+            "value" : "Rebind проверяет наличие новой версии раз в день и запрашивает подтверждение перед установкой."
           }
         },
         "de" : {
