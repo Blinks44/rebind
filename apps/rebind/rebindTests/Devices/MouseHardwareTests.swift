@@ -271,7 +271,7 @@ struct LogitechKeyboardTests {
         #expect(state.isKeyboard && state.name == "G915" && state.batteryPercentage == 45 && !state.hasSettings)
         _ = device.apply(MouseHardwareSettings(deviceKey: "k", dpi: 1600, usesGestureButton: true))
         #expect(device.isGestureButtonDiverted == false)
-        #expect(keyboard.featureQueries == [0x0005, 0x1004, 0x8040])
+        #expect(keyboard.featureQueries == [0x0005, 0x1004, 0x8071])
         #expect(keyboard.writes == 0)
     }
 

@@ -11,7 +11,10 @@ import Carbon
     private(set) var permissions = InputPermissions()
     private(set) var storageLocked = false
     private(set) var configurationReplacementRevision: UInt64 = 0
-    var error: LocalizedStringResource?
+    var error: LocalizedStringResource? {
+        didSet { actionErrorDeadline = nil }
+    }
+    @ObservationIgnored private var actionErrorDeadline: ContinuousClock.Instant?
     var recording: RecordingRequest?
     /// The remembered Settings section and a pending route from menu/command actions.
     var settingsSection: SettingsSection = .general
@@ -142,7 +145,8 @@ import Carbon
         do {
             try persistConfiguration(updated)
             configuration = updated
-            error = nil
+            // Saving a UI preference does not resolve an unrelated action or validation error.
+            if error == .storageWriteFailed { error = nil }
         } catch { self.error = .storageWriteFailed }
     }
 
@@ -265,7 +269,7 @@ import Carbon
             configuration.isEnabled = false
             trySave(paused)
         }
-        if let message = update.failed?.failureMessage { error = message }
+        refreshActionError(update.failed?.failureMessage)
         if update.profileStep != 0 { stepProfile(by: update.profileStep) }
         if workspaceTask == nil, mailbox.hasWorkspaceRequest {
             let mailbox = mailbox
@@ -303,6 +307,15 @@ import Carbon
         workspaceScreenLocked = notification.name == ScreenLockSession.lockedNotification || !sessionAllowsInput()
         applySessionProtection()
         lastPermissionCheck = .distantPast
+    }
+
+    /// Action failures describe one attempt, not a lasting engine fault. Reuse the UI refresh
+    /// timer and a monotonic deadline; saving/dismissing another error cancels this expiry.
+    func refreshActionError(_ message: LocalizedStringResource? = nil, now: ContinuousClock.Instant = .now) {
+        if let deadline = actionErrorDeadline, now >= deadline { error = nil }
+        guard let message, error == nil || actionErrorDeadline != nil else { return }
+        error = message
+        actionErrorDeadline = now.advanced(by: .seconds(30))
     }
 
     private func refreshSessionProtection() {

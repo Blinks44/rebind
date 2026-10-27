@@ -1,0 +1,24 @@
+# RGB lighting reuse audit — 2026-10-27
+
+Scope: native G915 follow-up and experimental RGB input devices for [LIGHT-001](../tasks/LIGHT-001-keyboard-lighting.md). Prefer an existing implementation that fits macOS, Swift 6 and Rebind's MIT distribution. Research precedes new protocol code; this audit does not establish hardware compatibility.
+
+| Candidate | Observed source and fit | Decision |
+| --- | --- | --- |
+| Existing LinearMouse-derived HIDPP package | Already adopted under MIT; local public IOKit endpoint and serial transaction ownership. Rebind's original 0x8040/0x8071 adapters are implemented and measured on G915. | Reuse and extend capability discovery for compatible Logitech keyboards/mice. No new runtime, helper, package or transport. |
+| [openrgb-swift](https://github.com/ptoffy/openrgb-swift) | Repository tree `300a404a0f25fb53160a752b0655f23abf39c622`, last push 2026-04-23; Swift 6.2/macOS 26 library product. Manifest includes SwiftNIO, swift-log and experimental Swift features. GitHub license is null; no license file in the recursive tree. | Not adopted: permission to redistribute has not been established. An SDK client also requires a running OpenRGB server. |
+| [OpenRGB macOS manager](https://github.com/ychen0606/openrgb-macos-manager) | Tree `c9960211d3ced7fa4c5f50de53be9c172fdb5e47`, last push 2026-10-24, MIT metadata. Native application for OpenRGB and audio; no Package.swift in its recursive tree. | Not a drop-in library or a replacement for direct HID++ transport. No source copied. |
+| [RazerKit / OpenRazorRGB](https://github.com/nicmarti/open-razor-rgb-4-mac) | Tree `2a395fd67315c6878baa792521bd62bdcc1b1c04`, last push 2026-06-27. Package exposes RazerKit, macOS 13+, Swift tools 6.0, public IOKit/CoreFoundation, no dependencies. Full license read: BSD-3-Clause. README describes a wired BlackWidow V3 Pro implementation and protocol reimplementation from OpenRGB. | Real reusable target, but limited to a different device/protocol; no matching hardware here. Not installed/copied. Revisit for a scoped Razer slice, including provenance review and named-device testing. |
+| [OpenLogi](https://github.com/AprilNEA/OpenLogi) | Maintained Rust typed HID++ implementation and [wire documentation](https://openlogi.org/hidpp/features/x8071-rgb-effects). This is not a ready Swift package. | Protocol/reference candidate; importing a Rust runtime/FFI is unnecessary for the existing bounded Swift adapter. No source copied. |
+| [OpenRGB](https://openrgb.org/) / [SDK](https://openrgb.org/sdk.html) | macOS and multiple brands; GPL-2.0 engine and separately running network SDK server. Official SDK lists clients in several languages. | A possible optional external backend for broader brands, not universal direct-device commands. No GPL engine linked/copied, server installed/launched or network discovery added. |
+
+Swift Package Index search and GitHub repository search did not establish another suitable maintained, permissively licensed Swift RGB SDK. Direct OpenLogi page retrieval intermittently returned 403; indexed primary documentation and upstream typed source were inspected where available. These limits are not evidence that no other package exists.
+
+## Selected protocol boundary
+
+Experimental support requires an input-device classification, HID++ RGB Effects 0x8071 and a complete bounded inventory advertising static RGB in every zone. Monochrome-only inventories are excluded. Use each zone's advertised effect ordinals; only volatile full-power writes are allowed. Brightness 0x8040 is independent: absent/malformed brightness must not hide a compatible color engine. Advertised step counts select halving levels; exact write/readback remains required. Firmware differences become named-model adjustments rather than silently accepting a wrong value.
+
+Separate illumination is used only when advertised. Without brightness, an off switch requires Disabled in every zone. Blinking requires Breathing in every zone; battery policy also requires readable native power modes, so refresh cannot wake an idle device. G915 keeps its measured range/step admission. Older 0x8070, per-key-only protocols and other brands remain outside this implementation; unsupported devices receive no guessed commands.
+
+## Connected G915 timing observation
+
+On the existing receiver/slot, temporary native dim=5 s/off=15 s reached PowerSave at the 6 s sample and PowerOff at the 20 s sample. With dim=5 s/off=0, PowerOff appeared at the 6 s sample: zero is not Never. Restore/readback confirmed flags 0, dim 120 s, off 300 s, brightness 50 and firmware control/events 0. Sampling uses a temporary diagnostic only, not app input monitoring or a production timer. Physical Shift wake, exact preset mapping across reconnect and genuine Never semantics remain acceptance gates; the timer menu stays withheld.

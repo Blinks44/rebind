@@ -43,13 +43,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        model.refreshActionError()
         let language = model.activeLanguage
         func text(_ resource: LocalizedStringResource) -> String { AppLocalization.string(resource, language: language) }
         let configuration = model.configuration
         menu.removeAllItems()
         menu.addItem(Self.item(text(model.statusText), enabled: false))
-        // The window may be closed when an action fails; the menu is where it can still be seen.
-        if let error = model.error { menu.addItem(Self.item(text(error), enabled: false)) }
         menu.addItem(item(text(.openRebind), #selector(openMainWindow)))
 
         let profiles = NSMenu()
@@ -95,6 +94,27 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let quit = NSMenuItem(title: text(.quitRebind), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quit.target = NSApp
         menu.addItem(quit)
+        // Measure the ordinary menu first: error text must never determine its width.
+        if let error = model.error {
+            menu.insertItem(Self.errorItem(text(error), textWidth: max(0, menu.size.width - 48)), at: 1)
+        }
+    }
+
+    static func errorItem(_ message: String, textWidth: CGFloat) -> NSMenuItem {
+        let font = NSFont.menuFont(ofSize: 0)
+        // Keep a native menu item (including its disabled semantics), abbreviating only its
+        // visible title. Character boundaries preserve composed characters in every language.
+        var title = message.components(separatedBy: .newlines).joined(separator: " ")
+        if (title as NSString).size(withAttributes: [.font: font]).width > textWidth {
+            while !title.isEmpty && ((title + "…") as NSString).size(withAttributes: [.font: font]).width > textWidth {
+                title.removeLast()
+            }
+            title += "…"
+        }
+        let item = Self.item(title, enabled: false)
+        item.toolTip = message
+        item.setAccessibilityLabel(message)
+        return item
     }
 
     /// The device symbol, its name and, at the right edge, the charge and a battery symbol. One

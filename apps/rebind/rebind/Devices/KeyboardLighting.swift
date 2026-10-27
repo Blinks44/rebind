@@ -5,6 +5,10 @@ import Synchronization
 nonisolated struct KeyboardLightingState: Equatable, Sendable {
     var brightness: Int
     var supportsBlinking: Bool
+    var isExperimental = false
+    var brightnessValues = KeyboardLightingSettings.brightnessValues
+    var supportsPower = true
+    var supportsLowBattery = true
     var isEnabled: Bool { brightness > 0 }
 }
 
@@ -78,39 +82,69 @@ nonisolated final class KeyboardLighting {
     static func supportsDevice(named name: String?) -> Bool {
         name?.hasPrefix("G915 TKL LIGHTSPEED ") == true
     }
-    private let brightness: BrightnessControl
-    private let info: BrightnessControl.Info
+    private let brightness: BrightnessControl?
+    private let info: BrightnessControl.Info?
+    private let isExperimental: Bool
     let rgb: RGBEffects
-    let brightnessFeature: UInt8
+    let brightnessFeature: UInt8?
     private let zones: [RGBEffects.Zone]
     private let ownership: KeyboardLightingOwnership
     private let slot: UInt8
     private var lastOutput: KeyboardLightingSettings.Output?
 
-    init?(transport: HIDPPTransport, brightnessIndex: UInt8, rgbIndex: UInt8,
-          ownership: KeyboardLightingOwnership, slot: UInt8) {
-        let brightness = BrightnessControl(transport: transport, featureIndex: brightnessIndex)
+    /// Firmware-advertised halving levels include zero; continuous ranges advertise no steps.
+    private var rawBrightnessValues: [UInt16] {
+        guard let info, (2...16).contains(info.steps) else { return [] }
+        return Set((0..<Int(info.steps - 1)).map { info.maximum >> $0 }
+            .filter { $0 > 0 && $0 >= info.minimum }).sorted()
+    }
+
+    private func percentage(_ raw: UInt16, maximum: UInt16) -> Int {
+        max(1, Int((Double(raw) * 100 / Double(maximum)).rounded()))
+    }
+
+    init?(transport: HIDPPTransport, brightnessIndex: UInt8?, rgbIndex: UInt8,
+          ownership: KeyboardLightingOwnership, slot: UInt8, isExperimental: Bool = false) {
+        let brightness = brightnessIndex.map { BrightnessControl(transport: transport, featureIndex: $0) }
         let rgb = RGBEffects(transport: transport, featureIndex: rgbIndex)
-        guard let info = brightness.info(), info.minimum == 0, info.maximum == 100, info.steps == 5,
-              let zones = rgb.zones(), !zones.isEmpty else { return nil }
-        self.brightness = brightness
-        self.info = info
+        let info = brightness?.info()
+        guard let zones = rgb.zones(), !zones.isEmpty else { return nil }
+        if !isExperimental {
+            guard let info, info.minimum == 0, info.maximum == 100, info.steps == 5 else { return nil }
+        }
+        // A malformed brightness feature must not prevent an independent static-color engine.
+        let usableBrightness = info.map { ($0.minimum == 0 || $0.capabilities & 4 != 0) && $0.steps <= 16 } == true
+        self.brightness = usableBrightness ? brightness : nil
+        self.info = usableBrightness ? info : nil
+        self.isExperimental = isExperimental
         self.rgb = rgb
         self.zones = zones
         self.ownership = ownership
         self.slot = slot
-        brightnessFeature = brightnessIndex
+        brightnessFeature = usableBrightness ? brightnessIndex : nil
     }
 
     func read() -> KeyboardLightingState? {
-        guard let value = brightness.brightness(), value <= info.maximum else { return nil }
-        return KeyboardLightingState(brightness: Int((Double(value) * 100 / Double(info.maximum)).rounded()),
-                                     supportsBlinking: zones.allSatisfy { $0.breathingEffect != nil })
+        let value: Int
+        if let brightness, let info {
+            guard let raw = brightness.brightness(), raw <= info.maximum else { return nil }
+            if info.capabilities & 4 != 0 {
+                guard let enabled = brightness.illumination() else { return nil }
+                value = enabled ? max(1, Int((Double(raw) * 100 / Double(info.maximum)).rounded())) : 0
+            } else { value = Int((Double(raw) * 100 / Double(info.maximum)).rounded()) }
+        } else { value = lastOutput?.brightness ?? 100 }
+        return KeyboardLightingState(brightness: value,
+            supportsBlinking: zones.allSatisfy { $0.breathingEffect != nil }, isExperimental: isExperimental,
+            brightnessValues: brightness == nil ? [] : (rawBrightnessValues.isEmpty ? Array(1...100)
+                : Array(Set(rawBrightnessValues.map { percentage($0, maximum: info?.maximum ?? 100) })).sorted()),
+            supportsPower: brightness != nil || zones.allSatisfy { $0.disabledEffect != nil },
+            supportsLowBattery: !isExperimental || rgb.powerMode() != nil)
     }
 
     func apply(_ settings: KeyboardLightingSettings, percentage: Int?, charging: Bool,
                background: Bool = false, canWrite: () -> Bool) -> Bool {
         guard settings.isValid, canWrite() else { return false }
+        if !isExperimental, !KeyboardLightingSettings.brightnessValues.contains(settings.brightness) { return false }
         let supportsBlinking = zones.allSatisfy { $0.breathingEffect != nil }
         guard settings.lowBattery != .blinkingRed || supportsBlinking else { return false }
         let output = settings.output(percentage: percentage, charging: charging, supportsBlinking: supportsBlinking)
@@ -120,22 +154,29 @@ nonisolated final class KeyboardLighting {
             guard output != lastOutput else { return true }
             guard rgb.powerMode() == 1 else { return true }
         }
-        let previousBrightness = brightness.brightness()
+        let previousBrightness = brightness?.brightness()
+        let previousIllumination = info.map { $0.capabilities & 4 != 0 } == true ? brightness?.illumination() : nil
         var completed = false
         var attemptedBrightness = false
         defer {
             if !completed, canWrite() {
                 _ = ownership.release(slot: slot, canWrite: canWrite)
-                if attemptedBrightness, let previousBrightness, canWrite() { _ = brightness.setBrightness(previousBrightness) }
+                if attemptedBrightness, let previousBrightness, canWrite() { _ = brightness?.setBrightness(previousBrightness) }
+                if attemptedBrightness, let previousIllumination, canWrite() { _ = brightness?.setIllumination(previousIllumination) }
             }
         }
         if !background, output.brightness > 0 {
-            guard let mode = rgb.powerMode() else { return false }
-            if mode != 1 {
+            // Some RGB engines do not implement power modes. They can still set a static color.
+            if let mode = rgb.powerMode(), mode != 1 {
                 guard ownership.wake(rgb, slot: slot, canWrite: canWrite) else { return false }
             }
         }
-        if output.brightness > 0 {
+        if output.brightness == 0, brightness == nil {
+            guard zones.allSatisfy({ $0.disabledEffect != nil }), ownership.claim(rgb, slot: slot, canWrite: canWrite) else { return false }
+            for zone in zones {
+                guard canWrite(), rgb.disable(zone) else { return false }
+            }
+        } else if output.brightness > 0 {
             if let color = output.color {
                 guard ownership.claim(rgb, slot: slot, canWrite: canWrite) else { return false }
                 for zone in zones {
@@ -145,10 +186,22 @@ nonisolated final class KeyboardLighting {
                 guard ownership.release(slot: slot, canWrite: canWrite) else { return false }
             }
         }
-        let raw = UInt16((Double(output.brightness) * Double(info.maximum) / 100).rounded())
-        guard canWrite() else { return false }
-        attemptedBrightness = true
-        guard brightness.setBrightness(raw), brightness.brightness() == raw, canWrite() else { return false }
+        if let brightness, let info {
+            let illumination = info.capabilities & 4 != 0
+            guard canWrite() else { return false }
+            attemptedBrightness = true
+            if illumination {
+                guard brightness.setIllumination(output.brightness > 0), canWrite(),
+                      brightness.illumination() == (output.brightness > 0) else { return false }
+            }
+            if output.brightness > 0 || !illumination {
+                let requested = max(info.minimum, UInt16((Double(output.brightness) * Double(info.maximum) / 100).rounded()))
+                let raw = output.brightness == 0 ? 0 : (rawBrightnessValues.min {
+                    abs(Int($0) - Int(requested)) < abs(Int($1) - Int(requested))
+                } ?? requested)
+                guard canWrite(), brightness.setBrightness(raw), brightness.brightness() == raw, canWrite() else { return false }
+            }
+        }
         lastOutput = output
         completed = true
         return true

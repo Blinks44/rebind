@@ -6,6 +6,10 @@ The app has two Swift package dependencies: the vendored local package `apps/reb
 
 For each new dependency/reference record purpose, URL/revision, license, OS/Swift support, maintenance, limitations, native alternatives and decision. Reuse a relevant prior audit and refresh uncertain/version-sensitive facts before changing the mechanism. No automatic installs.
 
+2026-10-27 app-wide review: [REVIEW-003](../tasks/REVIEW-003-libraries-and-simplification.md#refreshed-ready-made-candidates) records current primary-source manifests/licenses/maintenance for Swift Subprocess 1.0.2, native Core Audio Swift APIs, KeyboardShortcuts, AXSwift, OpenMultitouchSupport, Subsurface, CalmMouseCore, Defaults and archived SimplyCoreAudio. Subprocess is the strongest new candidate; no adoption/build/integration is claimed. A bounded asynchronous action slot is still required to resolve the reproduced held-release scheduling issue. Native default-device lookups typecheck for macOS 26; newer per-control conveniences need availability checks.
+
+2026-10-27 RGB continuation: the [six-candidate reuse audit](rgb-lighting.md) records current revisions/manifests/licenses and selects the existing MIT HIDPP package for experimental 0x8071 input devices. No new package, source adaptation or external server is adopted; broader brands remain a separate backend decision.
+
 2026-10-12: seven-candidate Liquid Glass and skill audit records pinned revisions, licenses/platform/source limits and the native/shared-component decision for editor fidelity. No package, shader, copied source or new skill installed.
 
 | Candidate / source | Purpose, compatibility and maintenance | License / limits / decision |

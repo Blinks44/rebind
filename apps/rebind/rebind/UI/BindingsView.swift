@@ -91,7 +91,9 @@ struct BindingsView: View {
                     .padding(.top, 24)
             }
             if let error = model.error {
-                Text(error).font(Theme.callout).foregroundStyle(Theme.dangerText).padding(.top, 12)
+                Banner(severity: .error, title: error, dismiss: { model.error = nil })
+                    .accessibilityIdentifier("bindings-error")
+                    .padding(.top, 24)
             }
         }
         .detailMargins()

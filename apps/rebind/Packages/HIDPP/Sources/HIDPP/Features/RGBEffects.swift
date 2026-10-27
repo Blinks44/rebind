@@ -11,6 +11,7 @@ public struct RGBEffects: HIDPPFeature {
         public let index: UInt8
         public let staticEffect: UInt8
         public let breathingEffect: UInt8?
+        public let disabledEffect: UInt8?
     }
 
     public struct Control: Equatable, Sendable {
@@ -53,13 +54,15 @@ public struct RGBEffects: HIDPPFeature {
     /// Require a complete, bounded inventory and static support in every zone before claiming it.
     public func zones() -> [Zone]? {
         guard let info = transport.request(featureIndex: featureIndex, function: 0, parameters: [255, 255, 0])?.payload,
-              info.count >= 8, (1...8).contains(info[2]) else { return nil }
+              info.count >= 8, info[0] == 255, info[6] & 8 == 0,
+              (1...8).contains(info[2]) else { return nil }
         var zones: [Zone] = []
         for index in 0..<info[2] {
             guard let bytes = transport.request(featureIndex: featureIndex, function: 0, parameters: [index, 255, 0])?.payload,
                   bytes.count >= 8, bytes[0] == index, (1...32).contains(bytes[4]) else { return nil }
             var fixed: UInt8?
             var breathing: UInt8?
+            var disabled: UInt8?
             for effect in 0..<bytes[4] {
                 guard let detail = transport.request(featureIndex: featureIndex, function: 0,
                                                      parameters: [index, effect, 0])?.payload,
@@ -67,9 +70,10 @@ public struct RGBEffects: HIDPPFeature {
                 let id = UInt16(detail[2]) << 8 | UInt16(detail[3])
                 if id == 1 { fixed = effect }
                 if id == 0x0A { breathing = effect }
+                if id == 0 { disabled = effect }
             }
             guard let fixed else { return nil }
-            zones.append(Zone(index: index, staticEffect: fixed, breathingEffect: breathing))
+            zones.append(Zone(index: index, staticEffect: fixed, breathingEffect: breathing, disabledEffect: disabled))
         }
         return zones
     }
@@ -109,6 +113,13 @@ public struct RGBEffects: HIDPPFeature {
     public func setColor(_ color: UInt32, in zone: Zone, breathing: Bool = false) -> Bool {
         guard let parameters = Self.colorParameters(color, zone: zone, breathing: breathing) else { return false }
         return transport.requestOnce(featureIndex: featureIndex, function: 1, parameters: parameters) != nil
+    }
+
+    /// Switch off a zone only when its own inventory advertises the disabled effect.
+    public func disable(_ zone: Zone) -> Bool {
+        guard let effect = zone.disabledEffect else { return false }
+        return transport.requestOnce(featureIndex: featureIndex, function: 1,
+            parameters: [zone.index, effect] + Array(repeating: 0, count: 10) + [1, 0, 0, 0]) != nil
     }
 
     public static func colorParameters(_ color: UInt32, zone: Zone, breathing: Bool) -> [UInt8]? {

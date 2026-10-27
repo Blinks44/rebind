@@ -1,22 +1,26 @@
-# LIGHT-001: Keyboard lighting in Settings → Devices
+# LIGHT-001: RGB lighting in Settings → Devices
 
 - Updated: 2026-10-27
-- Stage: awaiting_verification (G915 TKL controls implemented; installed-device acceptance and native timer choices remain open)
-- Owner: Codex implementation complete; tester/runtime follow-up remains open
-- Ownership checked: 2026-10-27 on clean `main` at `741af07`; LIGHT-001 surfaces claimed for this implementation
+- Stage: awaiting_verification (build 25 packaged; physical G915/experimental-model acceptance and native timer choices remain open)
+- Owner: Codex implementation/diagnostics complete and ownership released; physical tester follow-up remains open
+- Ownership checked: initial work on clean `main` at `741af07`; continuation based on `8eba440` with pre-existing FIX-003 changes preserved. LIGHT-001 owns only lighting surfaces and its shared-record sections.
 - Owned surfaces: HIDPP lighting adapters/tests, Devices models/UI, configuration/catalog, native verification and affected records. Sketch is read only during implementation; its preceding shared-color save is retained.
 - Requirements: SPEC §3.2 (device settings stay in Settings → Devices, rules stay category-wide), §10, §11; next release scope chosen by the user 2026-10-24
-- Code baseline: implementation based on `main` at `741af07`; source/package 1.0.0 (21), schema 46. Implementation and verification records are committed together; Git history identifies the final revision.
+- Code baseline: initial implementation committed as `8eba440` (1.0.0 (21), schema 46); continuation is uncommitted on that baseline alongside the separate FIX-003 changes. Final source/build and checks are recorded below.
 
 ## Outcome and scope
 
-User simplification, 2026-10-27: use one Color well for the entire keyboard; independent key/logo colors are out of scope. The user subsequently authorizes finishing and packaging the software while the keyboard is disconnected, with physical acceptance deferred. Implementation is limited to the measured G915 TKL LIGHTSPEED family; other keyboards keep their existing cards until their brightness/zone behavior is established.
+Continuation, 2026-10-27: finish the connected G915 checks and add experimental RGB support where a documented compatible protocol permits it. Research reusable libraries before implementation; preserve the concurrent FIX-003 changes. Lighting owns Devices/HIDPP/model/catalog code and the lighting-specific AppModel methods only. Refresh shared documentation and build numbers before final verification. Other models must disclose experimental status and expose only their discovered capabilities; model-specific adjustments remain possible without promising support for every RGB device.
+
+Verification-only ownership extension: the complete regression run exposed FIX-003's native banner fixture mutating global AppLocalization while unrelated Swift Testing suites run concurrently. The lighting continuation owns moving that one fixture to the existing sequential XCTest UI phase, preserving its assertions and FIX-003 production changes. No broader error-feature work is included.
+
+User simplification, 2026-10-27: use one Color well for the entire keyboard; independent key/logo colors are out of scope. The initial G915 implementation was packaged while the keyboard was disconnected. The continuation extends documented capability discovery to other compatible Logitech RGB input devices with explicit experimental status; G915 retains its measured behavior and outstanding physical gates.
 
 For a Logitech keyboard that reports HID++ lighting, Settings → Devices lets the user turn the backlight on/off, set its brightness and pick one shared static color for all supported zones (keys and logo). An optional low-battery mode (Keep color / Red / Blinking red) turns the lighting red below 10 % while not charging and restores the saved color after charging. While G HUB runs, lighting controls are disabled behind the existing companion-app banner pattern.
 
 Idle timeout (user addition 2026-10-26): add **Turn off when idle** using the keyboard’s native inactivity/power-mode configuration. Proposed presets: Device default, 30 seconds, 1/2/5/10 minutes, Never. Initial Device default does not write; returning to it restores the captured native policy. Show only confirmed supported options, preserve a current custom value, and omit the row on unsupported hardware. Never needs confirmed firmware semantics. Idle-off takes precedence over low-battery colors; battery refresh must not wake the lighting. No host keyboard-content collection, global activity monitor or periodic idle polling.
 
-Out of scope (user decision 2026-10-24: drop anything complex or unclear): per-key colors (0x8081), animated effects (wave, ripple, cycle), lighting actions in rules, non-Logitech lighting, OpenRGB/Solaar code (GPL; Rebind is MIT, protocol facts only).
+Out of scope for this implementation: per-key colors (0x8081), animated effects (wave, ripple, cycle), lighting actions in rules and protocols not covered by the existing adapter. The October 27 request authorizes broader RGB research/support where feasible; other brands need a suitable backend. OpenRGB/Solaar GPL engine source is not copied into Rebind.
 
 ## Hardware facts (read-only probe, agent-observed 2026-10-24)
 
@@ -28,7 +32,7 @@ G915 TKL on Lightspeed receiver `046d:c545`, slot 1, macOS 27.0.1. A local read-
 - [ ] Native idle timeout: read/modify/write/readback without changing unrelated flags/dimming; verify timeout, activity wake, Never, restoration, reconnect/power-cycle and G HUB ownership. Default does not change the keyboard. No unsupported choice exposed.
 - [ ] Brightness/color/on-off apply live and persist per keyboard; reapplied after reconnect/wake; nothing is written while G HUB runs.
 - [ ] Low-battery mode switches at < 10 % not charging and restores saved color/brightness after charging or recovery above the threshold; default is Keep color.
-- [ ] Only keyboards reporting 0x8040/0x8071 show the section; one Color row applies the same value to every supported zone, including one-zone devices.
+- [ ] Compatible HID++ 0x8071 keyboards/mice show only their available controls; one Color row applies the same value to every supported zone, including one-zone devices. Brightness is independent; unmeasured models disclose experimental status.
 - [ ] Six-language copy, Light/Dark, keyboard/VoiceOver for the new controls; tests for the HID++ request encoding and low-battery state transitions.
 - [x] Task/evidence, STATE, CAPABILITIES and research updated before handoff.
 
@@ -86,6 +90,33 @@ Checks on Apple silicon macOS 27.0.1 / Xcode 27.1 / Swift 6.4:
 
 ## Next handoff
 
-Tester: manually install build 21, open Settings → Devices, select one color and check both zones, four brightness stops and on/off. Let native idle turn the light off, press Shift, then test keyboard power-cycle, receiver reconnect and app relaunch for color recovery. With G HUB running, lighting controls should be disabled and no Rebind lighting write should occur. Check Tab/Space/arrow access, native Color panel, VoiceOver names/percentage, contrast/motion and localized expansion. Low-battery behavior remains qualified until visible blinking and real charging/recovery are observed; do not drain the battery just for a routine check.
+Tester: manually install the latest package identified in STATE, open Settings → Devices, select one color and check both zones, four brightness stops and on/off. Let native idle turn the light off, press Shift, then test keyboard power-cycle, receiver reconnect and app relaunch for color recovery. With G HUB running, lighting controls should be disabled and no Rebind lighting write should occur. Check Tab/Space/arrow access, native Color panel, VoiceOver names/percentage, contrast/motion and localized expansion. Low-battery behavior remains qualified until visible blinking and real charging/recovery are observed; do not drain the battery just for a routine check. For another compatible Logitech model, report the factory model/connection and which visible control fails; no real rules, typed content or configuration is needed.
 
-Code: preserve the bounded measured-model support and accepted results. Resolve the native timer's timeout origin/default/Never/reconnect semantics before exposing the saved menu; admit other keyboards only after range/zone validation. Keep this task awaiting_verification until the remaining physical/platform/accessibility acceptance is supplied. No remapping execution is needed for these checks.
+Code: preserve measured G915 behavior and protocol-based experimental admission. Resolve native timer mapping/default/Never/activity wake/reconnect semantics before exposing the saved menu; address model-specific reports with scoped adjustments. Other brands/0x8070 need an appropriate backend, following the reuse audit. Keep this task awaiting_verification until the remaining physical/platform/accessibility acceptance is supplied. No remapping execution is needed for these checks.
+
+## Experimental RGB and connected G915 continuation — 2026-10-27
+
+Source **1.0.0 (25), schema 47** reuses the existing MIT HIDPP package after the [library audit](../research/rgb-lighting.md). No dependency or upstream lighting source is added. Known G915 keeps its measured range/step check. Other classified Logitech keyboards/mice with complete static RGB 0x8071 zone inventories receive an experimental notice and the controls their firmware advertises; monochrome/incomplete inventories are excluded. Other brands, 0x8070 and per-key-only devices remain unsupported by this adapter.
+
+Brightness 0x8040 is optional. Advertised ranges/halving levels replace G915's fixed list on experimental models; continuous devices use percentages, with exact readback required. Separate illumination uses only advertised support. Without brightness, off uses each zone's actual Disabled ordinal; missing off support hides the switch. Missing brightness hides the slider while retaining color. Breathing and native power-mode availability gate battery controls. Mouse cards reuse the shared controls, companion lock and model-keyed preferences. Schema 46 choices migrate unchanged; new ranges cannot be smuggled into an old-version payload.
+
+Reconnect/wake/settings refresh now reapplies the saved choice, including native wake when enabled. Previously the reprobe incorrectly used battery-refresh semantics and skipped asleep devices. Actual battery refresh retains the no-wake guard. Queue revisions, ownership cleanup, bounded/coalesced writes and failure persistence remain intact; no host input/idle monitoring or background timer is introduced.
+
+Connected G915, same receiver/slot/macOS: the updated app driver acknowledged/read back **12/25/50/100**, **50 → off → 50**, static shared blue, injected 8% native red breathing at brightness 25 and charging-recovery brightness 50. This tests protocol output and injected status, not genuine charging or visible blinking. Cleanup readback confirms firmware ownership/events 0, brightness 50 and unchanged native policy. G HUB was absent; no onboard/profile/EEPROM or user configuration was changed.
+
+Temporary native timing probe: dim 5 s/off 15 s first sampled PowerSave at 6 s and PowerOff at 20 s. With dim 5 s/off 0, PowerOff appeared at 6 s: **zero is not Never**. Restore/readback confirms flags 0 / dim 120 s / off 300 s, brightness 50 and control/events 0. Physical Shift wake was requested but no tester result has been received for this continuation. The menu remains hidden pending physical wake, supported preset mapping and genuine Never semantics; there is no host-timer fallback.
+
+Native verification extends the fixture to **216 combinations**: nine G915/experimental-mouse/capability/error/companion states × six languages × two appearances × two sizes. English Light full controls and Russian Dark color-only mouse captures were visually reviewed; the same native card/control styles are reused. Sketch 66–69 and Foundations 12 were inspected live, read only. The experimental caption/mouse placement is a native extension, not a new saved Sketch specimen.
+
+Accessibility review: no new P0/P1 issue identified from affected code/layout. P2 improvement adds the chosen sRGB hex value to the labeled native ColorPicker (`.accessibilityValue(settings.color.map { String(format: "#%06X", $0) } ?? "")`). Native switch/slider/segments preserve separate semantics and percentage values; unsupported controls are omitted rather than disabled without explanation. Manual Tab/Space/arrows, Color-panel focus return, VoiceOver name/value order, speech and contrast/motion remain open; no Accessibility Inspector or spoken-session acceptance is claimed. Regression risk is limited to capability-dependent controls and device writes; model-specific firmware differences remain experimental.
+
+Verification on build 25 (Apple silicon/macOS 27.0.1/Xcode 27.1):
+
+- All **951 Swift Testing methods / 148 suites** pass after the fixture-isolation fix. Initial complete run had 57 label mismatches from FIX-003's parallel UI fixture; migrating only that fixture to the sequential XCTest phase resolves the cause. No app-localization behavior changed.
+- **29 native XCTest methods verified across the two runs, two skipped, zero failures**: initial full native phase 28 methods; corrected banner fixture one method in the final run. The 216-case RGB window fixture passes on the final app source. Only the test fixture changed between those runs.
+- HIDPP package: **32 XCTest + seven Swift Testing methods**, zero failures. The affected pre-full run also passed 26 Swift Testing methods / five suites and one native RGB layout method.
+- Updated G915 driver probe, local-link review, all five added/updated RGB string entries in six locales, and `git diff --check` pass. Logs/captures remain local scratch material. No actual keyboard power-cycle/receiver unplug, G HUB coexistence, real battery transition, VoiceOver speech or additional platform acceptance is claimed.
+
+Final test bundles: `Test-rebind-2026.10.27_21-05-00-+0300.xcresult` (full native pass / Swift Testing localization race) and `Test-rebind-2026.10.27_21-14-18-+0300.xcresult` (corrected UI fixture and all Swift Testing pass). Both remain ignored local build artifacts.
+
+`apps/rebind/scripts/release.sh` succeeds for **1.0.0 (25)**: Release build, existing app/DMG signer, strict/deep app verification, strict DMG verification and disk-image verification. Debug/Release build numbers are both 25; bundle ID remains `blinks44.rebind`. Package: `apps/rebind/build/release/Rebind.dmg`, SHA-256 `d1f7039e046d09cc398ae51d479347684104e7c9d3d2a3d68eedd10dc8a8394c` (matches SHA256SUMS.txt). No installation/publication/commit, real configuration/permission change or Sketch save. FIX-003 production changes are retained. Next: manually install this package and complete the physical G915 check above; model-specific RGB reports remain experimental until tested.

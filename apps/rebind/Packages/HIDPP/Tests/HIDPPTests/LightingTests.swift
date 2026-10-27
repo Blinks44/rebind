@@ -78,4 +78,29 @@ struct LightingTests {
         io.responseProvider = { report in self.reply(report, Array(report[4...6])) }
         #expect(rgb.setControl(control))
     }
+
+    @available(macOS 13, *)
+    @Test func disabledEffectUsesItsAdvertisedOrdinalAndVolatileTarget() throws {
+        let io = MockHIDPPDevice()
+        io.responseProvider = { report in self.reply(report, []) }
+        let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
+        let rgb = RGBEffects(transport: transport, featureIndex: 10)
+        #expect(rgb.disable(RGBEffects.Zone(index: 2, staticEffect: 3, breathingEffect: nil, disabledEffect: 5)))
+        let wire = Array(try #require(io.reports.last))
+        #expect(Array(wire[4...19]) == [2, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])
+        let count = io.reports.count
+        #expect(rgb.disable(RGBEffects.Zone(index: 2, staticEffect: 3, breathingEffect: nil, disabledEffect: nil)) == false)
+        #expect(io.reports.count == count)
+    }
+
+    @available(macOS 13, *)
+    @Test func monochromeAndWrongDeviceRepliesDoNotAdvertiseRGB() throws {
+        let io = MockHIDPPDevice()
+        let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
+        let rgb = RGBEffects(transport: transport, featureIndex: 10)
+        for payload: [UInt8] in [[255, 0, 1, 0, 0, 0, 8, 0], [0, 0, 1, 0, 0, 0, 0, 0]] {
+            io.responseProvider = { report in self.reply(report, payload) }
+            #expect(rgb.zones() == nil)
+        }
+    }
 }

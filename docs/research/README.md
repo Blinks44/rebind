@@ -4,6 +4,10 @@ Affected decisions reconciled 2026-10-20 against source and task records; no new
 
 ## Current adoption and boundaries
 
+App-wide audit, 2026-10-27: [REVIEW-003](../tasks/REVIEW-003-libraries-and-simplification.md) refreshes nine library/native candidates, identifies a reproduced long-action/held-release scheduling issue, and recommends evaluating stable Swift Subprocess 1.0.2 plus a small native AudioHardwareSystem cleanup. Existing touch/AX/configuration constraints remain relevant; no package or source is adopted by this review. Candidate revisions, licenses, fit, estimates and verification limits are task-owned.
+
+RGB continuation, 2026-10-27: [reuse audit](rgb-lighting.md) checks Swift OpenRGB clients, the MIT manager app, BSD RazerKit, Rust OpenLogi and the existing MIT HIDPP package. Extend the existing 0x8071 adapter for compatible keyboards/mice; preserve independent brightness/illumination capabilities and experimental status. No new dependency installed or upstream lighting source copied. Native G915 off timing is additive in the measured short policy; zero is not Never.
+
 | Area | Current decision / evidence | Next uncertainty |
 | --- | --- | --- |
 | Capture/matching/output | Public active session Quartz tap on owned CF run loop; bounded matching/mailbox, tagged output, separate action worker. Native-first; Logitech HID++ uses the local MIT HIDPP package, separate from capture. | Real callback/action profiling, broader modifier/safety/hardware gates |

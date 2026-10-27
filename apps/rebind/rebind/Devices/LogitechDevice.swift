@@ -88,10 +88,10 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
             }
         }
         battery = foundBattery
-        if isKeyboard, let brightness = transport.featureIndex(for: .brightnessControl),
-           let rgb = transport.featureIndex(for: .rgbEffects), KeyboardLighting.supportsDevice(named: resolvedName) {
-            lighting = KeyboardLighting(transport: transport, brightnessIndex: brightness, rgbIndex: rgb,
-                                        ownership: lightingOwnership, slot: slot ?? HIDPPConstants.receiverIndex)
+        if let rgb = transport.featureIndex(for: .rgbEffects) {
+            lighting = KeyboardLighting(transport: transport, brightnessIndex: transport.featureIndex(for: .brightnessControl), rgbIndex: rgb,
+                ownership: lightingOwnership, slot: slot ?? HIDPPConstants.receiverIndex,
+                isExperimental: !KeyboardLighting.supportsDevice(named: resolvedName))
         } else { lighting = nil }
         // Keyboard key lists, diversion and onboard profile mode remain untouched.
         let mouseFeature = { (feature: HIDPPFeatureID) in isKeyboard ? nil : transport.featureIndex(for: feature) }
@@ -120,9 +120,9 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
 
     func read() -> LogitechDeviceState {
         var state = LogitechDeviceState(name: name, isKeyboard: isKeyboard)
+        state.lighting = lighting?.read()
         if isKeyboard {
             (state.batteryPercentage, state.batteryCharging) = readBattery()
-            state.lighting = lighting?.read()
             return state
         }
         if let mode = smartShift?.mode() {

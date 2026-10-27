@@ -1,6 +1,6 @@
 import Foundation
 
-/// User choices for one keyboard model. Nil color preserves its onboard colors.
+/// User choices for one RGB input-device model. Nil color preserves its onboard colors.
 nonisolated struct KeyboardLightingSettings: Codable, Hashable, Sendable {
     enum LowBattery: String, Codable, CaseIterable, Sendable { case keepColor, red, blinkingRed }
     /// Confirmed G915 TKL firmware levels. Zero is represented by the separate lighting switch.
@@ -13,7 +13,7 @@ nonisolated struct KeyboardLightingSettings: Codable, Hashable, Sendable {
     var lowBattery: LowBattery = .keepColor
 
     var isValid: Bool {
-        !deviceKey.isEmpty && deviceKey.count <= 200 && Self.brightnessValues.contains(brightness)
+        !deviceKey.isEmpty && deviceKey.count <= 200 && (1...100).contains(brightness)
             && color.map { $0 <= 0xFFFFFF } ?? true
     }
 

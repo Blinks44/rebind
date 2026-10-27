@@ -47,19 +47,29 @@ struct KeyboardLightingTests {
         #expect(throws: ConfigurationError.invalid) { try configuration.validate() }
     }
 
+    @Test func schema46MigratesLightingButRejectsNewBrightnessValues() throws {
+        var legacy = Configuration(schemaVersion: 46)
+        legacy.keyboardLighting = [KeyboardLightingSettings(deviceKey: "keyboard", brightness: 25, color: 0x112233)]
+        let migrated = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(legacy)).migrated()
+        #expect(migrated.schemaVersion == Configuration.currentSchemaVersion)
+        #expect(migrated.keyboardLighting == legacy.keyboardLighting)
+        legacy.keyboardLighting[0].brightness = 13
+        #expect(throws: ConfigurationError.invalid) { try legacy.migrated() }
+    }
+
     @MainActor @Test func colorWellConvertsSRGBWithoutAlpha() throws {
         let value: UInt32 = 0x2080FF
         #expect(KeyboardLightingControls.rgb(KeyboardLightingControls.color(value)) == value)
     }
 
-    @Test func onlyConfirmedModelAndBrightnessLevelsAreAdmitted() {
+    @Test func measuredModelAndPortableBrightnessRangeAreIdentified() {
         #expect(KeyboardLighting.supportsDevice(named: "G915 TKL LIGHTSPEED Wireless RGB Mechanical Gaming Keyboard"))
         #expect(KeyboardLighting.supportsDevice(named: "G915 X LIGHTSPEED") == false)
         #expect(KeyboardLighting.supportsDevice(named: nil) == false)
         for value in KeyboardLightingSettings.brightnessValues {
             #expect(KeyboardLightingSettings(deviceKey: "keyboard", brightness: value).isValid)
         }
-        for value in [0, 1, 13, 37, 75, 101] {
+        for value in [0, 101] {
             #expect(KeyboardLightingSettings(deviceKey: "keyboard", brightness: value).isValid == false)
         }
     }

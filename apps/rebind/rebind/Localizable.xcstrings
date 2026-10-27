@@ -28705,6 +28705,174 @@
         }
       }
     },
+    "lightingExperimental" : {
+      "extractionState" : "manual",
+      "comment" : "Devices: experimental RGB lighting controls for compatible keyboards and mice.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimental RGB support. Behavior may vary by model."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Экспериментальная поддержка RGB. Работа может отличаться в зависимости от модели."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentelle RGB-Unterstützung. Das Verhalten kann je nach Modell variieren."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prise en charge RGB expérimentale. Le comportement peut varier selon le modèle."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatibilidad RGB experimental. El funcionamiento puede variar según el modelo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "实验性 RGB 支持。具体表现可能因型号而异。"
+          }
+        }
+      }
+    },
+    "lightingDeviceDescription" : {
+      "extractionState" : "manual",
+      "comment" : "Devices: experimental RGB lighting controls for compatible keyboards and mice.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backlight for this device."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подсветка этого устройства."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beleuchtung dieses Geräts."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rétroéclairage de cet appareil."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iluminación de este dispositivo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此设备的背光。"
+          }
+        }
+      }
+    },
+    "lightingDeviceColorDescription" : {
+      "extractionState" : "manual",
+      "comment" : "Devices: experimental RGB lighting controls for compatible keyboards and mice.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose one color for all lighting zones."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите общий цвет для всех зон подсветки."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Farbe für alle Beleuchtungszonen wählen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez une couleur pour toutes les zones lumineuses."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un color para todas las zonas de iluminación."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为所有灯光区域选择一种颜色。"
+          }
+        }
+      }
+    },
+    "lightingDeviceBrightnessDescription" : {
+      "extractionState" : "manual",
+      "comment" : "Devices: experimental RGB lighting controls for compatible keyboards and mice.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust the device’s supported brightness levels."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройте яркость подсветки устройства."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die unterstützten Helligkeitsstufen des Geräts einstellen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglez la luminosité selon les niveaux disponibles."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajusta los niveles de brillo disponibles en el dispositivo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调整设备支持的亮度级别。"
+          }
+        }
+      }
+    },
     "lightingTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -29203,37 +29371,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn’t update the lighting. Wake the keyboard and try again."
+            "value" : "Couldn’t update the lighting. Wake the device and try again."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не удалось изменить подсветку. Разбудите клавиатуру и повторите попытку."
+            "value" : "Не удалось изменить подсветку. Разбудите устройство и повторите попытку."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Beleuchtung konnte nicht geändert werden. Aktivieren Sie die Tastatur und versuchen Sie es erneut."
+            "value" : "Die Beleuchtung konnte nicht geändert werden. Aktivieren Sie das Gerät und versuchen Sie es erneut."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de modifier le rétroéclairage. Réveillez le clavier et réessayez."
+            "value" : "Impossible de modifier le rétroéclairage. Réveillez l’appareil et réessayez."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo cambiar la iluminación. Activa el teclado e inténtalo de nuevo."
+            "value" : "No se pudo cambiar la iluminación. Activa el dispositivo e inténtalo de nuevo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法更改背光。请唤醒键盘后重试。"
+            "value" : "无法更改背光。请唤醒设备后重试。"
           }
         }
       }

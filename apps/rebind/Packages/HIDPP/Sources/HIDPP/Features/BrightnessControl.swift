@@ -42,6 +42,16 @@ public struct BrightnessControl: HIDPPFeature {
         return UInt16(bytes[0]) << 8 | UInt16(bytes[1])
     }
 
+    /// Separate illumination exists only when advertised by getInfo capability bit 2.
+    public func illumination() -> Bool? {
+        guard let value = transport.request(featureIndex: featureIndex, function: 3, parameters: [])?.payload.first else { return nil }
+        return value & 1 != 0
+    }
+
+    public func setIllumination(_ enabled: Bool) -> Bool {
+        transport.requestOnce(featureIndex: featureIndex, function: 4, parameters: [enabled ? 1 : 0]) != nil
+    }
+
     /// One acknowledged transaction; the owner must read back before confirming a setting.
     public func setBrightness(_ value: UInt16) -> Bool {
         transport.requestOnce(featureIndex: featureIndex, function: 2,

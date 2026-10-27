@@ -16,23 +16,32 @@ struct KeyboardLightingControls: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Toggle(isOn: SwiftUI.Binding(get: { settings.isEnabled }, set: { value in
-                var updated = settings
-                updated.isEnabled = value
-                save(updated)
-            })) { label(.lightingTitle, .lightingDescription) }
-                .toggleStyle(ThemeSwitchStyle())
-
-            if settings.isEnabled {
-                SettingSlider(title: .lightingBrightness, description: .lightingBrightnessDescription,
-                              value: lowBatteryActive ? settings.brightness : max(1, state.brightness),
-                              values: KeyboardLightingSettings.brightnessValues, valueLabel: { .lightingPercentValue($0) }) { value in
+            if state.isExperimental {
+                Text(.lightingExperimental).font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if state.supportsPower {
+                Toggle(isOn: SwiftUI.Binding(get: { settings.isEnabled }, set: { value in
                     var updated = settings
-                    updated.brightness = value
+                    updated.isEnabled = value
                     save(updated)
+                })) { label(.lightingTitle, state.isExperimental ? .lightingDeviceDescription : .lightingDescription) }
+                    .toggleStyle(ThemeSwitchStyle())
+            }
+
+            if settings.isEnabled || !state.supportsPower {
+                if !state.brightnessValues.isEmpty {
+                    SettingSlider(title: .lightingBrightness,
+                                  description: state.isExperimental ? .lightingDeviceBrightnessDescription : .lightingBrightnessDescription,
+                                  value: lowBatteryActive ? settings.brightness : max(1, state.brightness),
+                                  values: state.brightnessValues, valueLabel: { .lightingPercentValue($0) }) { value in
+                        var updated = settings
+                        updated.brightness = value
+                        save(updated)
+                    }
                 }
                 HStack {
-                    label(.lightingColor, .lightingColorDescription)
+                    label(.lightingColor, state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription)
                     ColorPicker(selection: SwiftUI.Binding(get: { Self.color(settings.color ?? 0x2CC7E7) }, set: { color in
                         guard let rgb = Self.rgb(color) else { return }
                         var updated = settings
@@ -41,21 +50,24 @@ struct KeyboardLightingControls: View {
                     }), supportsOpacity: false) { Text(.lightingColor) }
                         .labelsHidden()
                         .accessibilityLabel(Text(.lightingColor))
-                        .help(Text(.lightingColorDescription))
+                        .accessibilityValue(settings.color.map { String(format: "#%06X", $0) } ?? "")
+                        .help(Text(state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription))
                         .frame(width: 44)
                 }
             }
 
-            Theme.separator.frame(height: 1).padding(.vertical, 1)
-            VStack(alignment: .leading, spacing: 12) {
-                label(.lightingLowBattery, lowBatteryActive ? .lightingLowBatteryActive : .lightingLowBatteryDescription)
-                SegmentedPicker(selection: SwiftUI.Binding(get: { settings.lowBattery }, set: { value in
-                    var updated = settings
-                    updated.lowBattery = value
-                    save(updated)
-                }), title: .lightingLowBattery,
-                options: state.supportsBlinking ? KeyboardLightingSettings.LowBattery.allCases : [.keepColor, .red],
-                label: \.label, fillsWidth: true)
+            if battery != nil, state.supportsLowBattery {
+                Theme.separator.frame(height: 1).padding(.vertical, 1)
+                VStack(alignment: .leading, spacing: 12) {
+                    label(.lightingLowBattery, lowBatteryActive ? .lightingLowBatteryActive : .lightingLowBatteryDescription)
+                    SegmentedPicker(selection: SwiftUI.Binding(get: { settings.lowBattery }, set: { value in
+                        var updated = settings
+                        updated.lowBattery = value
+                        save(updated)
+                    }), title: .lightingLowBattery,
+                    options: state.supportsBlinking ? KeyboardLightingSettings.LowBattery.allCases : [.keepColor, .red],
+                    label: \.label, fillsWidth: true)
+                }
             }
             if failed {
                 Label(.lightingWriteFailed, systemImage: "exclamationmark.triangle")

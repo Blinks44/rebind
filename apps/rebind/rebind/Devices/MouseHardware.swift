@@ -137,8 +137,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
     }
 
     /// An initial inventory also supports previews and native layout checks without starting discovery.
-    init(accessories: [ConnectedAccessory] = [], lighting: [String: KeyboardLightingState] = [:],
+    init(mice: [ConnectedMouse] = [], accessories: [ConnectedAccessory] = [], lighting: [String: KeyboardLightingState] = [:],
          batteries: [DeviceBattery] = [], lightingErrors: Set<String> = []) {
+        self.mice = mice
         otherInputs = accessories
         keyboardLighting = lighting
         self.batteries = batteries
@@ -274,8 +275,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     /// Coalesces color-panel changes; only the latest confirmed transaction reaches persistence.
     func applyLighting(_ settings: KeyboardLightingSettings, completion: @escaping @MainActor (Bool) -> Void) {
+        let inputs = Dictionary((accessories + mice.map {
+            ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID)
+        }).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first }).values
         for (location, session) in sessions where session.probed {
-            for device in accessories where device.deviceKey == settings.deviceKey && device.id.hasPrefix(location + "#") {
+            for device in inputs where device.deviceKey == settings.deviceKey && device.id.hasPrefix(location + "#") {
                 guard let keyboard = session.mice.first(where: { $0.slot == Self.slot(of: device.id) }),
                       keyboard.lighting != nil else { continue }
                 if lightingApplying.contains(device.id) {
@@ -474,23 +478,19 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             var states: [(UInt8?, LogitechDeviceState)] = []
             func settled(_ mouse: LogitechDevice) -> LogitechDeviceState {
                 let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: mouse.name ?? fallbackName)
-                if mouse.isKeyboard {
-                    var state = mouse.read()
-                    if let settings = lightingSettings[key], let lighting = mouse.lighting {
-                        state.lightingWriteFailed = !lighting.apply(settings, percentage: state.batteryPercentage,
-                            charging: state.batteryCharging, background: true,
-                            canWrite: { access.allows(gaming: true, revision: revision) })
-                        state.lighting = lighting.read()
-                    } else {
-                        _ = lightingOwnership.release(slot: mouse.slot ?? HIDPPConstants.receiverIndex,
-                            canWrite: { access.allows(gaming: true, revision: revision) })
-                    }
-                    return state
-                }
                 let gaming = mouse.hasOnboardProfiles
                 // Applying reads the state back, so a stored mouse is not read twice.
-                return stored[key].map { mouse.apply($0, canWrite: { access.allows(gaming: gaming, revision: revision) }) }
+                var state = stored[key].map { mouse.apply($0, canWrite: { access.allows(gaming: gaming, revision: revision) }) }
                     ?? mouse.read()
+                if let settings = lightingSettings[key], let lighting = mouse.lighting {
+                    state.lightingWriteFailed = !lighting.apply(settings, percentage: state.batteryPercentage,
+                        charging: state.batteryCharging, canWrite: { access.allows(gaming: true, revision: revision) })
+                    state.lighting = lighting.read()
+                } else {
+                    _ = lightingOwnership.release(slot: mouse.slot ?? HIDPPConstants.receiverIndex,
+                        canWrite: { access.allows(gaming: true, revision: revision) })
+                }
+                return state
             }
             if let direct = LogitechDevice(io: io, slot: nil, gestureOwnership: gestureOwnership, lightingOwnership: lightingOwnership) {
                 found = [direct]
@@ -529,7 +529,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         session.probed = true
         for (slot, state) in states {
             let id = "\(location)#\(slot.map(String.init) ?? "direct")"
-            keyboardLighting[id] = state.isKeyboard ? state.lighting : nil
+            keyboardLighting[id] = state.lighting
             if state.lightingWriteFailed { lightingErrors.insert(id) } else { lightingErrors.remove(id) }
         }
         listen(to: io, at: location, mice: logitech, states: states)
@@ -746,8 +746,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             return (mouse.slot ?? HIDPPConstants.receiverIndex, feature)
         }
         let lightingFeatures = logitech.compactMap { keyboard -> (index: UInt8, feature: UInt8, id: String)? in
-            guard let lighting = keyboard.lighting else { return nil }
-            return (keyboard.slot ?? HIDPPConstants.receiverIndex, lighting.brightnessFeature,
+            guard let lighting = keyboard.lighting, let feature = lighting.brightnessFeature else { return nil }
+            return (keyboard.slot ?? HIDPPConstants.receiverIndex, feature,
                     "\(location)#\(keyboard.slot.map(String.init) ?? "direct")")
         }
         let changed = gestureButtonChanged
