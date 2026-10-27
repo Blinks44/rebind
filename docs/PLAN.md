@@ -23,6 +23,8 @@ The active lighting continuation ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.
 
 Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts background wakeups (build 17; general installed smoke tester-confirmed, controlled/hardware checks open). [ACTION-001](tasks/ACTION-001-standard-actions.md) implements 16 standard entries including unconditional Fill with Left Margin (220 pt) in build 20; Stage Manager detection was removed after a hidden-strip failure. Build-19 stable placement is tester-confirmed; build-20 visible/hidden/off and other action acceptance remain open. [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) retains the measured G915 TKL subset and extends experimental compatible 0x8071 keyboards/mice in build 25. Existing native idle timing is preserved; the saved timer menu waits for exact presets/Never/activity validation. Next: installed build-25 physical wake/power-cycle/reconnect/G HUB/battery acceptance; retain targeted verification of the remaining new actions; retain PERF-001's remaining measurement gates.
 
+[FIX-004](tasks/FIX-004-shortcuts-held-release.md) addresses the architecture audit’s first safety finding in build 26: async Shortcuts execution leaves held release servicing responsive. Software tests and signed packaging pass; installed long-Shortcut/held-output/pause/quit acceptance remains open. Other REVIEW-003 simplifications remain separate bounded work.
+
 ## Release gates
 
 - [ ] SPEC §15 walkthroughs on an identified artifact/environment; outstanding task matrices closed or explicitly limited. Preserve the reported successful general pass.

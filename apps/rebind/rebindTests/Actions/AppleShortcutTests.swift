@@ -1,4 +1,5 @@
 import Foundation
+import Synchronization
 import Testing
 @testable import rebind
 
@@ -80,17 +81,17 @@ struct AppleShortcutTests {
         #expect(throws: ConfigurationError.invalid) { try JSONDecoder().decode(Configuration.self, from: data).migrated() }
     }
 
-    @Test func runsOnlyUUIDWithoutNameOptionsOrInputsAndReportsNativeErrors() {
+    @Test func runsOnlyUUIDWithoutNameOptionsOrInputsAndReportsNativeErrors() async {
         let target = AppleShortcutTarget(id: id, name: "-i $(ignored) ; example")
-        var calls = 0
-        let result = AppleShortcuts.run(target, canPerform: { true }, execute: { arguments, allowed in
-            calls += 1
+        let calls = Mutex(0)
+        let result = await AppleShortcuts.run(target, canPerform: { true }, execute: { arguments, allowed in
+            calls.withLock { $0 += 1 }
             #expect(arguments == ["run", target.id.uuidString] && allowed())
         })
         #expect(result == .performed)
-        #expect(AppleShortcuts.run(target, canPerform: { false }, execute: { _, _ in calls += 1 }) == .cancelled)
-        #expect(calls == 1)
-        #expect(AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.failed }) == .failed)
-        #expect(AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.cancelled }) == .cancelled)
+        #expect(await AppleShortcuts.run(target, canPerform: { false }, execute: { _, _ in calls.withLock { $0 += 1 } }) == .cancelled)
+        #expect(calls.withLock { $0 } == 1)
+        #expect(await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.failed }) == .failed)
+        #expect(await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.cancelled }) == .cancelled)
     }
 }

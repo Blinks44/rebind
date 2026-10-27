@@ -238,7 +238,7 @@ import Carbon
         let update = mailbox.state.withLock { state in
             let result = (status: state.status, trackpadStatus: state.trackpadStatus, magicMouseStatus: state.magicMouseStatus,
                           audioCapabilities: state.audioCapabilities,
-                          workspaceActionInProgress: state.workspaceRequest != nil,
+                          workspaceActionInProgress: state.workspaceRequest != nil && !state.appleShortcutInProgress,
                           appleShortcutInProgress: state.appleShortcutInProgress,
                           recorded: state.recorded, paused: state.emergencyPause, failed: state.actionFailed,
                           profileStep: state.profileStep)

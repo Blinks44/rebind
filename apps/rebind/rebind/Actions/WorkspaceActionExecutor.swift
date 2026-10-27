@@ -9,6 +9,7 @@ import CoreGraphics
     private let activateApplication: (ApplicationTarget) -> Bool
     private let quitApplication: (ApplicationTarget, () -> Bool) -> WindowActionResult
     private let previousApplication: (@escaping @Sendable () -> Bool) async -> WindowActionResult
+    private let performAppleShortcut: @Sendable (AppleShortcutTarget, @escaping @Sendable () -> Bool) async -> AppleShortcutRunResult
     private let secureInput: @Sendable () -> Bool
     private let postingAllowed: @Sendable () -> Bool
 
@@ -20,6 +21,9 @@ import CoreGraphics
          quitApplication: @escaping (ApplicationTarget, () -> Bool) -> WindowActionResult = {
              ApplicationQuitExecutor.perform($0, canPerform: $1)
          },
+         performAppleShortcut: @escaping @Sendable (AppleShortcutTarget, @escaping @Sendable () -> Bool) async -> AppleShortcutRunResult = {
+             await AppleShortcuts.run($0, canPerform: $1)
+         },
          secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
          postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
         self.mailbox = mailbox
@@ -28,6 +32,7 @@ import CoreGraphics
         self.activateApplication = activateApplication
         self.quitApplication = quitApplication
         self.previousApplication = previousApplication
+        self.performAppleShortcut = performAppleShortcut
         self.secureInput = secureInput
         self.postingAllowed = postingAllowed
     }
@@ -42,6 +47,14 @@ import CoreGraphics
         guard mailbox.dispatchIsCurrent(request.dispatch) else { return }
         do {
             switch request.target {
+            case .appleShortcut(let target):
+                let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+                let result = await performAppleShortcut(target) {
+                    !Task.isCancelled && mailbox.dispatchIsCurrent(request.dispatch)
+                        && postingAllowed() && !secureInput()
+                }
+                guard result != .cancelled else { return }
+                failed = result == .failed
             case .application(let target, activateOnly: true): failed = !activateApplication(target)
             case .application(let target, activateOnly: false): try await openApplication(target.url)
             case .quitApplication(let target):

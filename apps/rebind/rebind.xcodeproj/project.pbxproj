@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A1000000000000000000001B /* HIDPP in Frameworks */ = {isa = PBXBuildFile; productRef = A1000000000000000000001C /* HIDPP */; };
 		A1000000000000000000001E /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A1000000000000000000001F /* Sparkle */; };
+		A10000000000000000000021 /* Subprocess in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000022 /* Subprocess */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 			files = (
 				A1000000000000000000001B /* HIDPP in Frameworks */,
 				A1000000000000000000001E /* Sparkle in Frameworks */,
+				A10000000000000000000021 /* Subprocess in Frameworks */,
 			);
 		};
 		A10000000000000000000004 /* Frameworks */ = {
@@ -93,6 +95,7 @@
 			packageProductDependencies = (
 				A1000000000000000000001C /* HIDPP */,
 				A1000000000000000000001F /* Sparkle */,
+				A10000000000000000000022 /* Subprocess */,
 			);
 			productName = rebind;
 			productReference = 75EDDC66307784AF00EC4D02 /* Rebind.app */;
@@ -155,6 +158,7 @@
 			packageReferences = (
 				A1000000000000000000001D /* XCLocalSwiftPackageReference "Packages/HIDPP" */,
 				A10000000000000000000020 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				A10000000000000000000023 /* XCRemoteSwiftPackageReference "swift-subprocess" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 75EDDC67307784AF00EC4D02 /* Products */;
@@ -335,7 +339,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -372,7 +376,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -488,6 +492,14 @@
 				version = 2.10.0;
 			};
 		};
+		A10000000000000000000023 /* XCRemoteSwiftPackageReference "swift-subprocess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftlang/swift-subprocess.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -499,6 +511,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A10000000000000000000020 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		A10000000000000000000022 /* Subprocess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000000000000000000023 /* XCRemoteSwiftPackageReference "swift-subprocess" */;
+			productName = Subprocess;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

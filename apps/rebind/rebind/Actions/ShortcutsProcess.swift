@@ -1,75 +1,57 @@
-import Darwin
 import Foundation
+import Subprocess
+import System
 
-// Narrow transport for Apple's CLI. Call only outside MainActor/event callbacks.
-// The listing pipe is drained while the child runs; run output is discarded.
+/// Async child transport for Apple's CLI; one bounded action slot owns a running command.
 nonisolated enum ShortcutsProcess {
     enum Failure: Error, Equatable { case failed, cancelled, timedOut, invalidOutput }
 
     static func execute(arguments: [String], collectOutput: Bool, timeout: TimeInterval,
-                        canContinue: () -> Bool,
-                        executable: URL = URL(filePath: "/usr/bin/shortcuts")) throws -> Data {
-        guard canContinue() else { throw Failure.cancelled }
-        let process = Process()
-        process.executableURL = executable
-        process.arguments = arguments
-        process.standardInput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        let pipe = collectOutput ? Pipe() : nil
-        if let pipe { process.standardOutput = pipe }
-        else { process.standardOutput = FileHandle.nullDevice }
-        defer {
-            try? pipe?.fileHandleForReading.close()
-            try? pipe?.fileHandleForWriting.close()
-        }
-        if let pipe {
-            let fd = pipe.fileHandleForReading.fileDescriptor
-            guard fcntl(fd, F_SETFL, O_NONBLOCK) != -1 else { throw Failure.failed }
-        }
-        guard canContinue() else { throw Failure.cancelled }
-        try process.run()
-        try? pipe?.fileHandleForWriting.close()
-        var output = Data()
+                        canContinue: @escaping @Sendable () -> Bool,
+                        executable: URL = URL(filePath: "/usr/bin/shortcuts")) async throws -> Data {
+        guard !Task.isCancelled, canContinue() else { throw Failure.cancelled }
+        guard timeout.isFinite, timeout > 0 else { throw Failure.timedOut }
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: .seconds(timeout))
         do {
-            while true {
-                guard canContinue() else { throw Failure.cancelled }
-                guard clock.now < deadline else { throw Failure.timedOut }
-                if let pipe { try drain(pipe.fileHandleForReading.fileDescriptor, into: &output) }
-                if !process.isRunning {
-                    if let pipe { try drain(pipe.fileHandleForReading.fileDescriptor, into: &output) }
-                    guard process.terminationReason == .exit, process.terminationStatus == 0 else { throw Failure.failed }
+            return try await withThrowingTaskGroup(of: Data.self) { group in
+                group.addTask {
+                    guard !Task.isCancelled, canContinue() else { throw Failure.cancelled }
+                    var options = Subprocess.PlatformOptions()
+                    options.teardownSequence = [.gracefulShutDown(allowedDurationToNextStep: .milliseconds(250))]
+                    let output: Data
+                    let status: TerminationStatus
+                    if collectOutput {
+                        let result = try await Subprocess.run(.path(FilePath(executable.path)), arguments: Arguments(arguments),
+                            platformOptions: options, input: .none, output: .data(limit: 262_144), error: .discarded)
+                        output = result.standardOutput
+                        status = result.terminationStatus
+                    } else {
+                        let result = try await Subprocess.run(.path(FilePath(executable.path)), arguments: Arguments(arguments),
+                            platformOptions: options, input: .none, output: .discarded, error: .discarded)
+                        output = Data()
+                        status = result.terminationStatus
+                    }
+                    guard !Task.isCancelled, canContinue() else { throw Failure.cancelled }
+                    guard status == .exited(0) else { throw Failure.failed }
                     return output
                 }
-                Thread.sleep(forTimeInterval: 0.02)
+                group.addTask {
+                    // Only while a command runs. Lifecycle changes revoke its generation;
+                    // cancelling the group tears down and reaps only this child.
+                    while true {
+                        guard canContinue() else { throw Failure.cancelled }
+                        guard clock.now < deadline else { throw Failure.timedOut }
+                        try await Task.sleep(for: .milliseconds(20))
+                    }
+                }
+                defer { group.cancelAll() }
+                guard let output = try await group.next() else { throw Failure.failed }
+                return output
             }
-        } catch {
-            if process.isRunning {
-                process.terminate()
-                let grace = clock.now.advanced(by: .milliseconds(250))
-                while process.isRunning, clock.now < grace { Thread.sleep(forTimeInterval: 0.01) }
-                if process.isRunning { _ = kill(process.processIdentifier, SIGKILL) }
-                // Reap only our child; no shell or process-group termination.
-                // OS termination cannot roll back an accepted shortcut's effects.
-                process.waitUntilExit()
-            }
-            throw error
-        }
-    }
-
-    private static func drain(_ fd: Int32, into output: inout Data) throws {
-        var buffer = [UInt8](repeating: 0, count: 4096)
-        while true {
-            let count = read(fd, &buffer, buffer.count)
-            if count == 0 { return }
-            if count < 0 {
-                if errno == EINTR { continue }
-                if errno == EAGAIN || errno == EWOULDBLOCK { return }
-                throw Failure.failed
-            }
-            guard output.count + count <= 262_144 else { throw Failure.invalidOutput }
-            output.append(contentsOf: buffer.prefix(count))
-        }
+        } catch is CancellationError { throw Failure.cancelled }
+        catch let error as SubprocessError where error.code == .outputLimitExceeded { throw Failure.invalidOutput }
+        catch let error as Failure { throw error }
+        catch { throw Failure.failed }
     }
 }

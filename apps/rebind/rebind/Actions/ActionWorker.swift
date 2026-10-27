@@ -29,7 +29,6 @@ nonisolated final class ActionWorker {
     private let performWindowLayout: @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult
     private let layoutClock: @Sendable () -> UInt64
     private let prepareWorkspace: @Sendable (WorkspaceAction) -> WorkspaceTarget?
-    private let performAppleShortcut: @Sendable (AppleShortcutTarget, @Sendable () -> Bool) -> AppleShortcutRunResult
     private let secureInput: @Sendable () -> Bool
     private let postingAllowed: @Sendable () -> Bool
     private var lastCapabilitiesCheck: UInt64?
@@ -70,9 +69,6 @@ nonisolated final class ActionWorker {
          },
          layoutClock: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
          prepareWorkspace: @escaping @Sendable (WorkspaceAction) -> WorkspaceTarget? = { WorkspacePreparation.prepare($0) },
-         performAppleShortcut: @escaping @Sendable (AppleShortcutTarget, @Sendable () -> Bool) -> AppleShortcutRunResult = {
-             AppleShortcuts.run($0, canPerform: $1)
-         },
          secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
          postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
         self.mailbox = mailbox
@@ -95,7 +91,6 @@ nonisolated final class ActionWorker {
         self.performWindowLayout = performWindowLayout
         self.layoutClock = layoutClock
         self.prepareWorkspace = prepareWorkspace
-        self.performAppleShortcut = performAppleShortcut
         self.secureInput = secureInput
         self.postingAllowed = postingAllowed
     }
@@ -197,14 +192,10 @@ nonisolated final class ActionWorker {
             mailbox.submitWorkspace(WorkspaceRequest(dispatch: dispatch, target: target))
             return
         case .appleShortcut(let target):
-            mailbox.state.withLock { $0.appleShortcutInProgress = true }
-            let run = performAppleShortcut(target, canPerform)
-            mailbox.state.withLock { $0.appleShortcutInProgress = false }
-            switch run {
-            case .performed: result = .performed
-            case .cancelled: result = .cancelled
-            case .failed: result = .unavailable
-            }
+            // Share the single async handoff with workspace actions. The worker
+            // keeps servicing held releases while ordinary actions wait in order.
+            mailbox.submitWorkspace(WorkspaceRequest(dispatch: dispatch, target: .appleShortcut(target)))
+            return
         }
         guard result == .unavailable else { return }
         mailbox.actionFailed(dispatch)

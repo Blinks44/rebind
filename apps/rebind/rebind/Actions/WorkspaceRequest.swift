@@ -5,6 +5,7 @@ nonisolated enum WorkspaceTarget: Equatable, Sendable {
     case document(URL)
     case quitApplication(ApplicationTarget)
     case previousApplication
+    case appleShortcut(AppleShortcutTarget)
 }
 
 nonisolated struct WorkspaceRequest: Equatable, Sendable {
