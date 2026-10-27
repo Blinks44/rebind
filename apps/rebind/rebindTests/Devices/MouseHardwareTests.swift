@@ -263,7 +263,7 @@ private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
 }
 
 struct LogitechKeyboardTests {
-    @Test func aKeyboardReportsItsBatteryOnly() throws {
+    @Test func aKeyboardWithoutLightingRetainsBatteryOnlyBehavior() throws {
         let keyboard = MockKeyboard()
         let device = try #require(LogitechDevice(io: keyboard, slot: 2))
         #expect(device.isKeyboard)
@@ -271,7 +271,7 @@ struct LogitechKeyboardTests {
         #expect(state.isKeyboard && state.name == "G915" && state.batteryPercentage == 45 && !state.hasSettings)
         _ = device.apply(MouseHardwareSettings(deviceKey: "k", dpi: 1600, usesGestureButton: true))
         #expect(device.isGestureButtonDiverted == false)
-        #expect(keyboard.featureQueries == [0x0005, 0x1004])
+        #expect(keyboard.featureQueries == [0x0005, 0x1004, 0x8040])
         #expect(keyboard.writes == 0)
     }
 

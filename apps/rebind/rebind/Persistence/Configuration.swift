@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 45
+    static let currentSchemaVersion = 46
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -30,6 +30,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     var dismissedCompanionApps: [String] = []
     /// Wheel and pointer settings Rebind writes to supported mice, one entry per model.
     var mouseHardware: [MouseHardwareSettings] = []
+    var keyboardLighting: [KeyboardLightingSettings] = []
     /// Local display names by vendor/model; never sent to the device or used for hardware settings.
     var deviceNames: [String: String] = [:]
     var profiles: [RuleProfile]
@@ -67,6 +68,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         }
         guard mouseHardware.count <= MouseHardwareSettings.maximumDevices, mouseHardware.allSatisfy(\.isValid),
               Set(mouseHardware.map(\.deviceKey)).count == mouseHardware.count else { throw ConfigurationError.invalid }
+        guard keyboardLighting.count <= 50, keyboardLighting.allSatisfy(\.isValid),
+              Set(keyboardLighting.map(\.deviceKey)).count == keyboardLighting.count else { throw ConfigurationError.invalid }
         guard deviceNames.count <= 100, deviceNames.allSatisfy({ key, name in
             !key.isEmpty && key.count <= 200 && Self.isValidDeviceName(name) && !name.isEmpty
         }) else { throw ConfigurationError.invalid }
@@ -103,7 +106,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try validate()
             return self
         }
-        guard schemaVersion >= 41 || deviceNames.isEmpty,
+        guard schemaVersion >= 46 || keyboardLighting.isEmpty,
+              schemaVersion >= 41 || deviceNames.isEmpty,
               schemaVersion >= 40 || showsBatteryInMenu,
               schemaVersion >= 39 || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
                                       && mouseHardware.allSatisfy(\.isSchema38)),
@@ -144,14 +148,15 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         case reversesMouseWheel, mouseWheelSpeed, mouseHardware, dismissedCompanionApps
         case reversesHorizontalScrolling, hidesTrackpadGestureWarning
         case showsBatteryInMenu = "showsBatteryInMenuBar"
-        case deviceNames
+        case deviceNames, keyboardLighting
     }
 
     init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let version = try values.decode(Int.self, forKey: .schemaVersion)
         guard (1...Self.currentSchemaVersion).contains(version) else { throw ConfigurationError.incompatible }
-        guard version >= 41 || !values.contains(.deviceNames) else { throw ConfigurationError.invalid }
+        guard version >= 41 || !values.contains(.deviceNames),
+              version >= 46 || !values.contains(.keyboardLighting) else { throw ConfigurationError.invalid }
         let enabled = try values.decode(Bool.self, forKey: .isEnabled)
         if version < 6 {
             guard !values.contains(.profiles), !values.contains(.selectedProfileID) else { throw ConfigurationError.invalid }
@@ -193,6 +198,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         }
         if version >= 40 { showsBatteryInMenu = try values.decode(Bool.self, forKey: .showsBatteryInMenu) }
         if version >= 41 { deviceNames = try values.decode([String: String].self, forKey: .deviceNames) }
+        if version >= 46 { keyboardLighting = try values.decode([KeyboardLightingSettings].self, forKey: .keyboardLighting) }
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -224,6 +230,7 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         }
         if schemaVersion >= 40 { try values.encode(showsBatteryInMenu, forKey: .showsBatteryInMenu) }
         if schemaVersion >= 41 { try values.encode(deviceNames, forKey: .deviceNames) }
+        if schemaVersion >= 46 { try values.encode(keyboardLighting, forKey: .keyboardLighting) }
         if schemaVersion < 6 {
             guard profiles.count == 1, selectedProfile != nil else { throw ConfigurationError.invalid }
             try values.encode(bindings, forKey: .bindings)

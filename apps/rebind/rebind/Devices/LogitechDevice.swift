@@ -3,10 +3,12 @@ import HIDPP
 import Synchronization
 
 /// What a HID++ mouse or keyboard reports about the settings Rebind can change. A nil part means
-/// the device lacks that feature, so its row is not shown. Keyboards only report their battery.
+/// the device lacks that feature, so its row is not shown. Keyboards may additionally expose supported lighting.
 nonisolated struct LogitechDeviceState: Equatable, Sendable {
     var name: String?
     var isKeyboard = false
+    var lighting: KeyboardLightingState?
+    var lightingWriteFailed = false
     var wheelMode: WheelMode?
     var smartShiftSensitivity = 10
     var dpi: Int?
@@ -39,6 +41,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     private let battery: Battery?
     let controls: ReprogControls?
     private let onboardProfiles: OnboardProfiles?
+    let lighting: KeyboardLighting?
     /// Asks the mouse about every control, one request each, so it waits until the stored
     /// pointer speed has been written.
     private var canDivertGestureButton: Bool {
@@ -53,8 +56,9 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     var isGestureButtonDiverted: Bool { gestureOwnership.contains(slot ?? HIDPPConstants.receiverIndex) }
 
     /// Nil when nothing answers HID++ 2.0 at this address, or when it is neither a pointing device
-    /// nor a keyboard with a battery.
-    init?(io: HIDPPDeviceIO, slot: UInt8?, gestureOwnership: GestureButtonOwnership = GestureButtonOwnership()) {
+    /// nor a keyboard with battery or supported lighting.
+    init?(io: HIDPPDeviceIO, slot: UInt8?, gestureOwnership: GestureButtonOwnership = GestureButtonOwnership(),
+          lightingOwnership: KeyboardLightingOwnership = KeyboardLightingOwnership()) {
         guard let transport = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 1),
               let firstQuestion = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 2.5) else { return nil }
         // One question first. A wireless device behind a receiver may need most of a second to wake
@@ -71,6 +75,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         if let kind, ![.mouse, .trackball, .keyboard].contains(kind) { return nil }
         let isKeyboard = kind == .keyboard
         self.isKeyboard = isKeyboard
+        let resolvedName = name?.name()
         // The first battery feature the device has, from the exact percentage to the voltage.
         let batterySources: [(HIDPPFeatureID, Battery.Source)] = [
             (.unifiedBattery, .unified), (.batteryStatus, .status), (.batteryVoltage, .voltage), (.adcMeasurement, .adcMeasurement)
@@ -83,7 +88,12 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
             }
         }
         battery = foundBattery
-        // A keyboard is only asked for its battery; its key list and lighting are not Rebind's.
+        if isKeyboard, let brightness = transport.featureIndex(for: .brightnessControl),
+           let rgb = transport.featureIndex(for: .rgbEffects), KeyboardLighting.supportsDevice(named: resolvedName) {
+            lighting = KeyboardLighting(transport: transport, brightnessIndex: brightness, rgbIndex: rgb,
+                                        ownership: lightingOwnership, slot: slot ?? HIDPPConstants.receiverIndex)
+        } else { lighting = nil }
+        // Keyboard key lists, diversion and onboard profile mode remain untouched.
         let mouseFeature = { (feature: HIDPPFeatureID) in isKeyboard ? nil : transport.featureIndex(for: feature) }
         if let index = mouseFeature(.smartShiftEnhanced) {
             smartShift = SmartShift(transport: transport, featureIndex: index, isEnhanced: true)
@@ -97,12 +107,12 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         controls = mouseFeature(.reprogControlsV4).map { ReprogControls(transport: transport, featureIndex: $0) }
         onboardProfiles = mouseFeature(.onboardProfiles).map { OnboardProfiles(transport: transport, featureIndex: $0) }
         // A device without DEVICE_NAME is still a mouse when it has one of the settings;
-        // a keyboard is listed only for its battery.
-        guard isKeyboard ? battery != nil : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else { return nil }
+        // a keyboard is listed for its battery or supported lighting.
+        guard isKeyboard ? (battery != nil || lighting != nil) : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else { return nil }
         self.slot = slot
         self.gestureOwnership = gestureOwnership
         self.transport = transport
-        self.name = name?.name()
+        self.name = resolvedName
     }
 
     /// A gaming mouse with onboard profiles, which G HUB manages while it runs.
@@ -112,6 +122,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         var state = LogitechDeviceState(name: name, isKeyboard: isKeyboard)
         if isKeyboard {
             (state.batteryPercentage, state.batteryCharging) = readBattery()
+            state.lighting = lighting?.read()
             return state
         }
         if let mode = smartShift?.mode() {

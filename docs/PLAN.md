@@ -1,6 +1,6 @@
 # Rebind: roadmap
 
-Updated 2026-10-26. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
+Updated 2026-10-27. [STATE](STATE.md) indexes current work; [SPEC](SPEC.md) owns behavior and [CAPABILITIES](CAPABILITIES.md) owns evidence. Builds and general confirmations do not establish every hardware/platform case.
 
 ## Current release scope
 
@@ -19,7 +19,7 @@ Outside current scope: Caps Lock, Fn/Globe and left/right modifier distinction; 
 
 ## Next release (scope chosen 2026-10-24)
 
-Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts background wakeups (build 17; general installed smoke tester-confirmed, controlled/hardware checks open). [ACTION-001](tasks/ACTION-001-standard-actions.md) implements 16 standard entries including unconditional Fill with Left Margin (220 pt) in build 20; Stage Manager detection was removed after a hidden-strip failure. Build-19 stable placement is tester-confirmed; build-20 visible/hidden/off and other action acceptance remain open. [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) adds Logitech keyboard brightness/color and a low-battery mode (design includes native idle-off timer and menu; G915 write/timeout/wake probe first). Next: connect G915 for LIGHT-001’s first brightness/color/idle-timer write/persistence probe; retain targeted verification of the remaining new actions; retain PERF-001's remaining measurement gates.
+Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/PERF-001-background-wakeups.md) cuts background wakeups (build 17; general installed smoke tester-confirmed, controlled/hardware checks open). [ACTION-001](tasks/ACTION-001-standard-actions.md) implements 16 standard entries including unconditional Fill with Left Margin (220 pt) in build 20; Stage Manager detection was removed after a hidden-strip failure. Build-19 stable placement is tester-confirmed; build-20 visible/hidden/off and other action acceptance remain open. [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) implements the measured G915 TKL subset in build 21: on/off, four brightness levels, one shared color and low-battery policy. Existing native idle timing is preserved; the saved timer menu waits for exact presets/Never validation. Next: installed build-21 physical wake/power-cycle/reconnect/G HUB/battery acceptance after the keyboard is reconnected; retain targeted verification of the remaining new actions; retain PERF-001's remaining measurement gates.
 
 ## Release gates
 

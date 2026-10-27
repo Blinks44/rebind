@@ -35,7 +35,7 @@ struct SettingSlider: View {
                 .tint(Theme.accent)
                 .frame(width: 240)
                 .accessibilityLabel(Text(title))
-                .accessibilityValue(Text(verbatim: String(shown)))
+                .accessibilityValue(valueLabel.map { Text($0(shown)) } ?? Text(verbatim: String(shown)))
             }
         }
     }

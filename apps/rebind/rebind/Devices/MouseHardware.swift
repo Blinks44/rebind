@@ -48,6 +48,10 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 @MainActor @Observable final class MouseHardware {
 
     private(set) var mice: [ConnectedMouse] = []
+    private(set) var keyboardLighting: [String: KeyboardLightingState] = [:]
+    private(set) var lightingErrors: Set<String> = []
+    private(set) var lightingApplying: Set<String> = []
+    @ObservationIgnored var storedLighting: () -> [KeyboardLightingSettings] = { [] }
     /// Nil until HID discovery is available; independent of capture admission and finger activity.
     private(set) var externalTrackpadConnected: Bool?
     /// Charges of Logitech devices (mice and keyboards) and of devices macOS reports, by name.
@@ -100,6 +104,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         let queue: DispatchQueue
         let writeAccess = DeviceWriteAccess()
         let gestureOwnership = GestureButtonOwnership()
+        let lightingOwnership = KeyboardLightingOwnership()
+        var pendingLighting: [String: (KeyboardLightingSettings, @MainActor (Bool) -> Void)] = [:]
         var mice: [LogitechDevice] = []
         var probed = false
         var isProbing = false
@@ -128,6 +134,15 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             self.interfaceIDs = interfaceIDs
             queue = DispatchQueue(label: "Rebind battery \(device.id)", qos: .utility)
         }
+    }
+
+    /// An initial inventory also supports previews and native layout checks without starting discovery.
+    init(accessories: [ConnectedAccessory] = [], lighting: [String: KeyboardLightingState] = [:],
+         batteries: [DeviceBattery] = [], lightingErrors: Set<String> = []) {
+        otherInputs = accessories
+        keyboardLighting = lighting
+        self.batteries = batteries
+        self.lightingErrors = lightingErrors
     }
 
     func start() {
@@ -180,6 +195,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         guard let manager else { return }
         batteryTimer?.invalidate()
         batteryTimer = nil
+        releaseKeyboardLighting()
         sessions.values.forEach { $0.writeAccess.update(standard: false, gaming: false) }
         releaseGestureButtons()
         systemBatteryIterators.forEach { IOObjectRelease($0) }
@@ -196,6 +212,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         devices = [:]
         connectedVendorsChanged([])
         mice = []
+        keyboardLighting = [:]
+        lightingErrors = []
+        lightingApplying = []
         logitechAccessories = [:]
         otherInputs = []
         logitechBatteries = [:]
@@ -212,6 +231,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         for (location, session) in sessions {
             session.writeAccess.invalidate()
             session.pendingSettings = [:]
+            session.pendingLighting = [:]
             probe(location)
         }
         refreshBatteries()
@@ -252,6 +272,62 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         }
     }
 
+    /// Coalesces color-panel changes; only the latest confirmed transaction reaches persistence.
+    func applyLighting(_ settings: KeyboardLightingSettings, completion: @escaping @MainActor (Bool) -> Void) {
+        for (location, session) in sessions where session.probed {
+            for device in accessories where device.deviceKey == settings.deviceKey && device.id.hasPrefix(location + "#") {
+                guard let keyboard = session.mice.first(where: { $0.slot == Self.slot(of: device.id) }),
+                      keyboard.lighting != nil else { continue }
+                if lightingApplying.contains(device.id) {
+                    session.pendingLighting[device.id] = (settings, completion)
+                } else { applyLighting(settings, to: device, keyboard: keyboard, at: location, session: session, completion: completion) }
+            }
+        }
+    }
+
+    private func applyLighting(_ settings: KeyboardLightingSettings, to device: ConnectedAccessory, keyboard: LogitechDevice,
+                               at location: String, session: Session, completion: @escaping @MainActor (Bool) -> Void) {
+        guard canWrite(device.vendorID, true) else { completion(false); return }
+        session.writeAccess.update(standard: canWrite(device.vendorID, false), gaming: canWrite(device.vendorID, true))
+        lightingApplying.insert(device.id)
+        let io = session.io, access = session.writeAccess, revision = access.revision
+        let battery = batteries.first { $0.id == device.id }
+        let previous = storedLighting().first { $0.deviceKey == device.deviceKey }
+        session.queue.async { [weak self] in
+            let allowed = { access.allows(gaming: true, revision: revision) }
+            let success = keyboard.lighting?.apply(settings, percentage: battery?.percentage,
+                                                   charging: battery?.isCharging ?? false, canWrite: allowed) == true
+            if !success, let previous, allowed() {
+                _ = keyboard.lighting?.apply(previous, percentage: battery?.percentage,
+                                              charging: battery?.isCharging ?? false, canWrite: allowed)
+            }
+            let state = keyboard.lighting?.read()
+            Task { @MainActor in
+                guard let self, let current = self.sessions[location], current.io === io else { return }
+                self.lightingApplying.remove(device.id)
+                if let pending = current.pendingLighting.removeValue(forKey: device.id) {
+                    self.applyLighting(pending.0, to: device, keyboard: keyboard, at: location, session: current, completion: pending.1)
+                } else if access.revision == revision {
+                    if let state { self.keyboardLighting[device.id] = state }
+                    if success { self.lightingErrors.remove(device.id) } else { self.lightingErrors.insert(device.id) }
+                    completion(success)
+                }
+            }
+        }
+    }
+
+    /// Called before revoking connection writes during orderly shutdown. Never competes with G HUB.
+    private func releaseKeyboardLighting() {
+        let done = DispatchGroup()
+        for session in sessions.values {
+            session.pendingLighting = [:]
+            let allowed = canWrite(0x046D, true)
+            let ownership = session.lightingOwnership
+            session.queue.async(group: done) { ownership.releaseAll(canWrite: { allowed }) }
+        }
+        _ = done.wait(timeout: .now() + 1.5)
+    }
+
     private func added(_ device: IOHIDDevice) {
         let location = Self.location(of: device)
         guard devices[location]?.contains(device) != true else { return }
@@ -268,6 +344,9 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             devices[location] = nil
             logitechBatteries[location] = nil
             logitechAccessories[location] = nil
+            keyboardLighting = keyboardLighting.filter { !$0.key.hasPrefix(location + "#") }
+            lightingErrors = lightingErrors.filter { !$0.hasPrefix(location + "#") }
+            lightingApplying = lightingApplying.filter { !$0.hasPrefix(location + "#") }
             batterySessions[location] = nil
             peripheralBatteries[location] = nil
             bluetoothBattery.refresh()
@@ -382,6 +461,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         session.firstSlot = nil
         let io = session.io
         let gestureOwnership = session.gestureOwnership
+        let lightingOwnership = session.lightingOwnership
+        let lightingSettings = Dictionary(storedLighting().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
         let stored = Dictionary(storedSettings().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
         let base = mice.first { $0.id == location || $0.id.hasPrefix(location + "#") }
         let vendorID = base?.vendorID ?? 0x046D
@@ -393,18 +474,32 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             var states: [(UInt8?, LogitechDeviceState)] = []
             func settled(_ mouse: LogitechDevice) -> LogitechDeviceState {
                 let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: mouse.name ?? fallbackName)
+                if mouse.isKeyboard {
+                    var state = mouse.read()
+                    if let settings = lightingSettings[key], let lighting = mouse.lighting {
+                        state.lightingWriteFailed = !lighting.apply(settings, percentage: state.batteryPercentage,
+                            charging: state.batteryCharging, background: true,
+                            canWrite: { access.allows(gaming: true, revision: revision) })
+                        state.lighting = lighting.read()
+                    } else {
+                        _ = lightingOwnership.release(slot: mouse.slot ?? HIDPPConstants.receiverIndex,
+                            canWrite: { access.allows(gaming: true, revision: revision) })
+                    }
+                    return state
+                }
                 let gaming = mouse.hasOnboardProfiles
                 // Applying reads the state back, so a stored mouse is not read twice.
                 return stored[key].map { mouse.apply($0, canWrite: { access.allows(gaming: gaming, revision: revision) }) }
                     ?? mouse.read()
             }
-            if let direct = LogitechDevice(io: io, slot: nil, gestureOwnership: gestureOwnership) {
+            if let direct = LogitechDevice(io: io, slot: nil, gestureOwnership: gestureOwnership, lightingOwnership: lightingOwnership) {
                 found = [direct]
                 states = [(nil, settled(direct))]
             } else if ReceiverNotifications.enable(on: io) != .silent {
                 // A receiver: it now reports devices that connect again, and its slots are asked.
                 for slot in slots {
-                    guard let mouse = LogitechDevice(io: io, slot: slot, gestureOwnership: gestureOwnership) else { continue }
+                    guard let mouse = LogitechDevice(io: io, slot: slot, gestureOwnership: gestureOwnership,
+                                                     lightingOwnership: lightingOwnership) else { continue }
                     let state = settled(mouse)
                     found.append(mouse)
                     states.append((slot, state))
@@ -432,6 +527,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
         let answered = Set(logitech.map(\.slot))
         session.mice = logitech + session.mice.filter { !answered.contains($0.slot) }
         session.probed = true
+        for (slot, state) in states {
+            let id = "\(location)#\(slot.map(String.init) ?? "direct")"
+            keyboardLighting[id] = state.isKeyboard ? state.lighting : nil
+            if state.lightingWriteFailed { lightingErrors.insert(id) } else { lightingErrors.remove(id) }
+        }
         listen(to: io, at: location, mice: logitech, states: states)
         let batteryOnly = devices[location]?.contains(where: Self.isMouse) != true
         let freshAccessories = states.filter { $0.1.isKeyboard || batteryOnly }.map { slot, state in
@@ -481,8 +581,18 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             session.isReadingBattery = true
             let devices = session.mice
             let io = session.io
+            let settings = Dictionary(storedLighting().map { ($0.deviceKey, $0) }, uniquingKeysWith: { first, _ in first })
+            let access = session.writeAccess, revision = access.revision
             session.queue.async { [weak self] in
-                let charges = devices.map { (slot: $0.slot, battery: $0.readBattery()) }
+                let charges = devices.map { device in
+                    let charge = device.readBattery()
+                    let key = MouseHardwareSettings.deviceKey(vendorID: 0x046D, name: device.name ?? "")
+                    if let preference = settings[key], let lighting = device.lighting {
+                        _ = lighting.apply(preference, percentage: charge.percentage, charging: charge.charging,
+                                           background: true, canWrite: { access.allows(gaming: true, revision: revision) })
+                    }
+                    return (slot: device.slot, battery: charge)
+                }
                 Task { @MainActor in self?.updateBatteries(at: location, io: io, charges: charges) }
             }
         }
@@ -635,6 +745,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                   let feature = mouse.controls?.featureIndex else { return nil }
             return (mouse.slot ?? HIDPPConstants.receiverIndex, feature)
         }
+        let lightingFeatures = logitech.compactMap { keyboard -> (index: UInt8, feature: UInt8, id: String)? in
+            guard let lighting = keyboard.lighting else { return nil }
+            return (keyboard.slot ?? HIDPPConstants.receiverIndex, lighting.brightnessFeature,
+                    "\(location)#\(keyboard.slot.map(String.init) ?? "direct")")
+        }
         let changed = gestureButtonChanged
         guard let session = sessions[location], session.io === io else { return }
         let input = gestureButtonInput, connection = session.id
@@ -651,6 +766,21 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                     input.receive(connection: connection, generation: generation, index: report[1], down: false, changed: changed)
                 }
                 return
+            }
+            for entry in lightingFeatures where report.count >= 6 && report[1] == entry.index
+                && report[2] == entry.feature && report[3] == 0 {
+                Task { @MainActor in
+                    guard let self, let io, let session = self.sessions[location], session.io === io,
+                          !self.lightingApplying.contains(entry.id),
+                          let keyboard = session.mice.first(where: { $0.slot == Self.slot(of: entry.id) }) else { return }
+                    session.queue.async { [weak self] in
+                        let state = keyboard.lighting?.read()
+                        Task { @MainActor in
+                            guard let self, self.sessions[location]?.io === io, let state else { return }
+                            self.keyboardLighting[entry.id] = state
+                        }
+                    }
+                }
             }
             for entry in diverted where report[1] == entry.index {
                 guard let controls = ReprogControls.pressedControls(in: report, featureIndex: entry.feature) else { continue }

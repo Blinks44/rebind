@@ -23,8 +23,8 @@ import Carbon
     private(set) var appleShortcutInProgress = false
     let loginItem: LoginItemModel
     /// Mouse makers' apps running now, and the connected mice with their hardware settings.
-    let companionApps = CompanionAppMonitor()
-    let mouseHardware = MouseHardware()
+    let companionApps: CompanionAppMonitor
+    let mouseHardware: MouseHardware
     let activeLanguage: AppLanguage
     @ObservationIgnored private let systemLanguages: [String]
     @ObservationIgnored private let languagePreferenceSaved: (AppLanguagePreference) -> Void
@@ -54,9 +54,13 @@ import Carbon
          sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() },
          readPermissions: @escaping () -> InputPermissions = { .current() },
          loginItem: LoginItemModel = LoginItemModel(),
+         companionApps: CompanionAppMonitor = CompanionAppMonitor(),
+         mouseHardware: MouseHardware = MouseHardware(),
          preferredLanguages: [String] = AppLanguageDefaults.systemPreferredLanguages,
          languagePreferenceSaved: @escaping (AppLanguagePreference) -> Void = { _ in }) {
         self.loginItem = loginItem
+        self.companionApps = companionApps
+        self.mouseHardware = mouseHardware
         self.sessionAllowsInput = sessionAllowsInput
         self.readPermissions = readPermissions
         self.store = store
@@ -150,6 +154,7 @@ import Carbon
         companionApps.start()
         mouseHardware.connectedVendorsChanged = { [weak self] in self?.companionApps.setConnectedVendors($0) }
         mouseHardware.storedSettings = { [weak self] in self?.configuration.mouseHardware ?? [] }
+        mouseHardware.storedLighting = { [weak self] in self?.configuration.keyboardLighting ?? [] }
         mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0, gaming: $1) == nil }
         let mailbox = mailbox
         mouseHardware.gestureButtonChanged = { down in
@@ -279,7 +284,9 @@ import Carbon
     @objc func handleWorkspaceNotification(_ notification: Notification) {
         switch notification.name {
         case NSWorkspace.willSleepNotification: workspaceSleeping = true
-        case NSWorkspace.didWakeNotification: workspaceSleeping = false
+        case NSWorkspace.didWakeNotification:
+            workspaceSleeping = false
+            mouseHardware.refresh()
         case NSWorkspace.sessionDidResignActiveNotification: workspaceSessionInactive = true
         case NSWorkspace.sessionDidBecomeActiveNotification: workspaceSessionInactive = false
         default: return
@@ -499,6 +506,25 @@ import Carbon
         mouseHardware.publishSmoothScrolling()
         // Turning the gesture button on or off also changes which reports Rebind listens to.
         if previous?.usesGestureButton != settings.usesGestureButton { mouseHardware.refresh() } else { mouseHardware.apply(settings) }
+    }
+
+    /// Hardware confirmation precedes persistence; failed writes leave the last saved choice intact.
+    func setKeyboardLighting(_ settings: KeyboardLightingSettings) {
+        guard !storageLocked, settings.isValid else { return }
+        mouseHardware.applyLighting(settings) { [weak self] success in
+            guard let self, success, !self.storageLocked else { return }
+            var updated = self.configuration
+            if let index = updated.keyboardLighting.firstIndex(where: { $0.deviceKey == settings.deviceKey }) {
+                updated.keyboardLighting[index] = settings
+            } else { updated.keyboardLighting.append(settings) }
+            guard updated != self.configuration else { return }
+            do {
+                try updated.validate()
+                try self.persistConfiguration(updated)
+                self.configuration = updated
+                self.error = nil
+            } catch { self.error = .storageWriteFailed }
+        }
     }
 
     /// Plain-text facts for a bug report. Counts and states only: no triggers, shortcuts,

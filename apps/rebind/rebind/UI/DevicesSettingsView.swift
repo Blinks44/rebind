@@ -31,8 +31,14 @@ struct DevicesSettingsView: View {
                     }
                 }
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
-                let controllers = Set(mice.compactMap { controller(of: $0) })
-                if !controllers.isEmpty { CompanionBanner(apps: CompanionApp.known.filter(controllers.contains)) }
+                let keyboardControllers = model.mouseHardware.accessories.filter {
+                    model.mouseHardware.keyboardLighting[$0.id] != nil
+                }.compactMap { model.companionApps.controller(ofVendor: $0.vendorID, gaming: true) }
+                let controllers = Set(mice.compactMap { controller(of: $0) } + keyboardControllers)
+                if !controllers.isEmpty {
+                    CompanionBanner(apps: CompanionApp.known.filter(controllers.contains),
+                                    message: keyboardControllers.isEmpty ? .companionRunningMessage : .lightingCompanionMessage)
+                }
                 if !mice.isEmpty || !model.mouseHardware.accessories.isEmpty {
                     ForEach(mice) { mouse in
                         MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
@@ -46,10 +52,21 @@ struct DevicesSettingsView: View {
                     }
                     ForEach(model.mouseHardware.accessories) { device in
                         Card {
-                            DeviceIdentityView(name: model.configuration.deviceName(for: device.deviceKey, original: device.name),
+                            VStack(alignment: .leading, spacing: 0) {
+                                DeviceIdentityView(name: model.configuration.deviceName(for: device.deviceKey, original: device.name),
                                                original: device.name, subtitle: "", kind: device.kind,
                                                battery: model.mouseHardware.batteries.first { $0.id == device.id },
                                                rename: { renaming = device })
+                                if let lighting = model.mouseHardware.keyboardLighting[device.id] {
+                                    Theme.separator.frame(height: 1).padding(.vertical, 16)
+                                    KeyboardLightingControls(state: lighting,
+                                        settings: lightingSettings(for: device, state: lighting),
+                                        battery: model.mouseHardware.batteries.first { $0.id == device.id },
+                                        failed: model.mouseHardware.lightingErrors.contains(device.id),
+                                        save: model.setKeyboardLighting)
+                                    .disabled(model.companionApps.controller(ofVendor: device.vendorID, gaming: true) != nil)
+                                }
+                            }
                         }
                         .accessibilityElement(children: .contain)
                         .disabled(model.storageLocked)
@@ -69,6 +86,16 @@ struct DevicesSettingsView: View {
 
     private func controller(of mouse: ConnectedMouse) -> CompanionApp? {
         model.companionApps.controller(ofVendor: mouse.vendorID, gaming: mouse.hardware?.hasOnboardProfiles ?? false)
+    }
+
+    private func lightingSettings(for device: ConnectedAccessory, state: KeyboardLightingState) -> KeyboardLightingSettings {
+        var settings = model.configuration.keyboardLighting.first { $0.deviceKey == device.deviceKey }
+            ?? KeyboardLightingSettings(deviceKey: device.deviceKey)
+        settings.isEnabled = state.isEnabled
+        let battery = model.mouseHardware.batteries.first { $0.id == device.id }
+        let overridden = settings.lowBattery != .keepColor && battery.map { $0.percentage < 10 && !$0.isCharging } == true
+        if state.brightness > 0, !overridden { settings.brightness = state.brightness }
+        return settings
     }
 
     private var emptyState: some View {

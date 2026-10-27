@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// One warning for every mouse maker's app that is running, on the Mouse page and in Devices.
+/// Running device companion apps, on the Mouse page and in Devices.
 struct CompanionBanner: View {
     let apps: [CompanionApp]
     var dismiss: (() -> Void)?
+    var message: LocalizedStringResource = .companionRunningMessage
 
     private var title: LocalizedStringResource {
         let names = apps.map(\.name).formatted(.list(type: .and).locale(AppLocalization.language.locale))
@@ -11,6 +12,6 @@ struct CompanionBanner: View {
     }
 
     var body: some View {
-        Banner(severity: .warning, title: title, message: .companionRunningMessage, dismiss: dismiss)
+        Banner(severity: .warning, title: title, message: message, dismiss: dismiss)
     }
 }

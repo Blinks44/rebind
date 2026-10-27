@@ -100,7 +100,7 @@ struct StandardActionTests {
         var old = Configuration(schemaVersion: 44)
         old.profiles.append(RuleProfile(name: "Inactive", bindings: [binding]))
         #expect(throws: ConfigurationError.invalid) { try old.migrated() }
-        #expect(try Configuration(schemaVersion: 44).migrated().schemaVersion == 45)
+        #expect(try Configuration(schemaVersion: 44).migrated().schemaVersion == Configuration.currentSchemaVersion)
     }
 }
 

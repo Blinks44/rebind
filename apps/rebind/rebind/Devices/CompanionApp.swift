@@ -17,7 +17,7 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     /// Whether it rewrites the wheel and pointer settings of the vendor's everyday mice, which
     /// Rebind then leaves alone. G HUB manages gaming mice only, so it does not lock Devices.
     var controlsHardwareSettings = true
-    /// Whether it manages gaming mice with onboard profiles (their DPI and profile mode).
+    /// Whether it manages gaming mice with onboard profiles and gaming-keyboard lighting.
     var managesGamingMice = false
 
     /// Only identifiers checked against an installed bundle or the vendor's published ones.
@@ -66,8 +66,10 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     /// Called after the set of running apps changes.
     @ObservationIgnored var changed: () -> Void = {}
 
-    init(executablePaths: @escaping () -> [String] = { CompanionAppMonitor.executablePaths() }) {
+    init(executablePaths: @escaping () -> [String] = { CompanionAppMonitor.executablePaths() },
+         initiallyRunning: [CompanionApp] = []) {
         self.executablePaths = executablePaths
+        running = initiallyRunning
     }
 
     func start() {
