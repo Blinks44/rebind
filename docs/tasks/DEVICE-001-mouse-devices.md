@@ -4,7 +4,7 @@
 - Stage: awaiting_verification
 - Owner: Unassigned; released 2026-10-15 by the implementation session
 - Ownership checked: 2026-10-15, uncommitted work on `main` after `f10ed48`; released
-- Owned surfaces: `apps/rebind/rebind/Devices/`, `Packages/HIDPP`, `UI/DevicesSettingsView.swift`, Settings section list, Mouse page banner, `Engine/ScrollEventAdapter.swift`, configuration schema 35
+- Owned surfaces: `apps/rebind/rebind/Devices/`, `Packages/HIDPP`, `UI/DevicesView.swift` (was `DevicesSettingsView`), sidebar Devices row, Mouse page banner, `Engine/ScrollEventAdapter.swift`, configuration schema 35
 - Requirements: SPEC §3.2 (mouse hardware settings, companion apps), §10 Settings; schema 35
 - Code baseline: `main` at `f10ed48`, all changes uncommitted (the user commits)
 

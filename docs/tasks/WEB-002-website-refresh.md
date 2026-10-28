@@ -38,7 +38,7 @@ User approved the desktop direction and saved it on 2026-10-28, then asked to ke
 
 Desktop reuses the existing card, tile, keycap-chip, badge and text layers with Light swatches; screen 51's battery menu is copied in as a specimen. All action, category and gesture names were checked against `Localizable.xcstrings` (93 actions, 8 groups; 500 ms is the default hold time). Order:
 - Header links Devices · Actions · Profiles · Install · FAQ; hero example chips F13 → Mission Control, Button 4 → Back, 3-finger tap → Show Desktop; main example ⌃⌥J → Next Space.
-- Devices tabs compacted (880 px screenshot). The tab images still show old action names and need a re-export from the current build at implementation.
+- Devices tabs compacted (880 px screenshot). Tab images re-exported on 2026-10-28 and again on 2026-10-29 (see the checklist above).
 - Timing, Mouse (Hold Button 4 with Space actions, Logitech card), Trackpad and Magic Mouse (surface, Experimental note, preset chips).
 - Actions: mini desktop with Left/Right Half windows, ⌃⌥← example, layout chips; the 8 groups with one real action each.
 - Profiles and apps: profile chips, three rules with All apps / In Safari scopes, excluded-apps note, F8/F7 Next/Previous Profile.

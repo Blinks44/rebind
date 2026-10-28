@@ -1,11 +1,11 @@
-# LIGHT-001: RGB lighting in Settings → Devices
+# LIGHT-001: RGB lighting in Devices
 
 - Updated: 2026-10-28
 - Stage: awaiting_verification (build 30 implements explicit power transitions from native idle/activity events; automatic off and key-press wake tester-confirmed; remaining acceptance stays open)
 - Owner: Codex build-30 implementation/diagnostics complete; ownership released. Installed physical tester follow-up remains open. Build-29 copy changes are preserved.
 - Ownership checked: initial work on clean `main` at `741af07`; continuation based on `8eba440` with pre-existing FIX-003 changes preserved. LIGHT-001 owns only lighting surfaces and its shared-record sections.
 - Owned surfaces: HIDPP lighting adapters/tests, Devices models/UI, configuration/catalog, native verification and affected records. Sketch is read only during implementation; its preceding shared-color save is retained.
-- Requirements: SPEC §3.2 (device settings stay in Settings → Devices, rules stay category-wide), §10, §11; next release scope chosen by the user 2026-10-24
+- Requirements: SPEC §3.2 (device settings stay in Devices, rules stay category-wide), §10, §11; next release scope chosen by the user 2026-10-24
 - Code baseline: initial implementation committed as `8eba440` (1.0.0 (21), schema 46); continuation is uncommitted on that baseline alongside the separate FIX-003 changes. Final source/build and checks are recorded below.
 
 ## Outcome and scope
@@ -16,7 +16,7 @@ Verification-only ownership extension: the complete regression run exposed FIX-0
 
 User simplification, 2026-10-27: use one Color well for the entire keyboard; independent key/logo colors are out of scope. The initial G915 implementation was packaged while the keyboard was disconnected. The continuation extends documented capability discovery to other compatible Logitech RGB input devices with explicit experimental status; G915 retains its measured behavior and outstanding physical gates.
 
-For a Logitech keyboard that reports HID++ lighting, Settings → Devices lets the user turn the backlight on/off, set its brightness and pick one shared static color for all supported zones (keys and logo). An optional low-battery mode (Keep color / Red / Blinking red) turns the lighting red below 10 % while not charging and restores the saved color after charging. While G HUB runs, lighting controls are disabled behind the existing companion-app banner pattern.
+For a Logitech keyboard that reports HID++ lighting, Devices lets the user turn the backlight on/off, set its brightness and pick one shared static color for all supported zones (keys and logo). An optional low-battery mode (Keep color / Red / Blinking red) turns the lighting red below 10 % while not charging and restores the saved color after charging. While G HUB runs, lighting controls are disabled behind the existing companion-app banner pattern.
 
 Idle timeout (user addition 2026-10-26): add **Turn off when idle** using the keyboard’s native inactivity/power-mode configuration. Proposed presets: Device default, 30 seconds, 1/2/5/10 minutes, Never. Initial Device default does not write; returning to it restores the captured native policy. Show only confirmed supported options, preserve a current custom value, and omit the row on unsupported hardware. Never needs confirmed firmware semantics. Idle-off takes precedence over low-battery colors; battery refresh must not wake the lighting. No host keyboard-content collection, global activity monitor or periodic idle polling.
 
@@ -90,7 +90,7 @@ Checks on Apple silicon macOS 27.0.1 / Xcode 27.1 / Swift 6.4:
 
 ## Next handoff
 
-Tester: manually install the latest package identified in STATE, open Settings → Devices, select one color and check both zones, four brightness stops and on/off. Let native idle turn the light off, press Shift, then test keyboard power-cycle, receiver reconnect and app relaunch for color recovery. With G HUB running, lighting controls should be disabled and no Rebind lighting write should occur. Check Tab/Space/arrow access, native Color panel, VoiceOver names/percentage, contrast/motion and localized expansion. Low-battery behavior remains qualified until visible blinking and real charging/recovery are observed; do not drain the battery just for a routine check. For another compatible Logitech model, report the factory model/connection and which visible control fails; no real rules, typed content or configuration is needed.
+Tester: manually install the latest package identified in STATE, open Devices in the sidebar, select one color and check both zones, four brightness stops and on/off. Let native idle turn the light off, press Shift, then test keyboard power-cycle, receiver reconnect and app relaunch for color recovery. With G HUB running, lighting controls should be disabled and no Rebind lighting write should occur. Check Tab/Space/arrow access, native Color panel, VoiceOver names/percentage, contrast/motion and localized expansion. Low-battery behavior remains qualified until visible blinking and real charging/recovery are observed; do not drain the battery just for a routine check. For another compatible Logitech model, report the factory model/connection and which visible control fails; no real rules, typed content or configuration is needed.
 
 Code: preserve measured G915 behavior and protocol-based experimental admission. Resolve native timer mapping/default/Never/activity wake/reconnect semantics before exposing the saved menu; address model-specific reports with scoped adjustments. Other brands/0x8070 need an appropriate backend, following the reuse audit. Keep this task awaiting_verification until the remaining physical/platform/accessibility acceptance is supplied. No remapping execution is needed for these checks.
 

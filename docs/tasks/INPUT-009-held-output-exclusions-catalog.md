@@ -11,7 +11,7 @@
 User request 2026-10-13, after a feature-gap review: implement the proposed missing standard functionality. One schema step (**34**) carries all of it.
 
 - **Held output.** A press rule on a key or mouse button can "Repeat While Held": a keyboard shortcut is one key-down, repeats at the system key-repeat rate and one key-up on release; volume, brightness and scroll actions repeat through the ordinary queue. Up to four outputs can be held at once; a tap released before the worker runs becomes one ordinary pulse.
-- **Excluded apps.** Settings → Input lists apps in which Rebind leaves all input alone while they are in front (keyboard, mouse and trackpad). Pause state is unchanged; the emergency chord still works.
+- **Excluded apps.** Settings → General (Input until 1.2.0) lists apps in which Rebind leaves all input alone while they are in front (keyboard, mouse and trackpad). Pause state is unchanged; the emergency chord still works.
 - **Catalog.** Do Nothing, Pause Rebind, Next/Previous Profile; Copy, Paste, Cut, Undo, Redo, Select All; Insert Text; Next/Previous/New/Reopen Tab, Zoom In/Out; three screenshot commands; top/bottom halves, four quarters and Move Window to Next Display.
 - **Rules.** Duplicate a rule, copy it to another profile, and give it a note that replaces the category caption and is searchable.
 - **Wheel under a held button.** A new mouse input type, Button + Wheel: hold a middle or extra button and turn the wheel; the rule runs on every wheel step (shared 100 ms limit). Using the wheel means the hold is neither a click nor a gesture; a hold without the wheel is still the button's click, even after movement when the button has no gesture rules.

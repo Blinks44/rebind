@@ -4,7 +4,7 @@
 - Stage: awaiting_verification
 - Owner: Unassigned; released 2026-10-15 by the implementation session
 - Ownership checked: 2026-10-15; first slice committed by the user as `4aff48c` (with [DEVICE-001](DEVICE-001-mouse-devices.md)), follow-up below uncommitted; released
-- Owned surfaces: `Engine/SmoothScroller.swift`, `Engine/PointerApplicationTracker.swift`, `Engine/EventTapWorker.swift` wheel branch, `Model/ExcludedApplication.swift`, `Model/SmoothScrolling.swift`, `UI/InputSettingsView.swift`, `UI/ExcludedApplicationsCard.swift`, `Banner` close button, Menu Bar window opening, configuration schemas 36–38, shared `UI/SettingSlider.swift`
+- Owned surfaces: `Engine/SmoothScroller.swift`, `Engine/PointerApplicationTracker.swift`, `Engine/EventTapWorker.swift` wheel branch, `Model/ExcludedApplication.swift`, `Model/SmoothScrolling.swift`, `UI/AllMiceCard.swift` (was `InputSettingsView`), `UI/ExcludedApplicationsCard.swift`, `Banner` close button, Menu Bar window opening, configuration schemas 36–38, shared `UI/SettingSlider.swift`
 - Requirements: SPEC §3.2 (wheel), §10 Settings; schema 36
 
 ## Outcome and scope
@@ -41,4 +41,4 @@ Rebind.sketch, page "01 · Screens": "42 · Main · Mouse · Options+ running" (
 
 ## Next handoff
 
-Implementation: the user walks the checklist (smooth scrolling feel per glide, bindings on the wheel, modifiers, trackpad, per-app toggles, × on the warning, Light/Dark). Design: update frames 13/31/36 to the cleaned Input tab and decide on the proposed items.
+Implementation: the user walks the checklist (smooth scrolling feel per glide, bindings on the wheel, modifiers, trackpad, per-app toggles, × on the warning, Light/Dark). Design: review smooth scrolling on Devices 36. The Input tab was retired in 1.2.0 ([UI-025](UI-025-devices-in-main-window.md)); wheel direction/speed moved to the All mice card, exclusions to General.

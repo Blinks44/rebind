@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-28**, checkout `main`. Published/source **1.2.0 (33)**, schema **48**; tag `v1.2.0` identifies `87769ca` ([REL-007](tasks/REL-007-release-1.2.0.md): Devices moved into the main window, [UI-025](tasks/UI-025-devices-in-main-window.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-29**, checkout `main`. Published/source **1.2.0 (33)**, schema **48**; tag `v1.2.0` identifies `87769ca` ([REL-007](tasks/REL-007-release-1.2.0.md): Devices moved into the main window, [UI-025](tasks/UI-025-devices-in-main-window.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -8,7 +8,7 @@ Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `
 
 Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, experimental Logitech RGB lighting, atomic storage and six languages are implemented. Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and the live Sketch locator.
 
-Published **[1.1.0 (31)](https://github.com/Blinks44/rebind/releases/tag/v1.1.0)** includes the G915 idle-off fix ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md#installed-idle-off-failure-and-event-driven-fix--2026-10-28)) and build-29 [copy pass](tasks/COPY-001-app-and-website-language.md#follow-up-pass--2026-10-28). Final **966 Swift Testing methods / 148 suites** pass; unchanged native UI retains 29 XCTest methods, two skipped, zero failures. Universal Release/app/DMG signing and image verification pass. DMG `apps/rebind/build/release/Rebind.dmg`, SHA-256 `45dc7f5dc7e6286d91ee70c4cdc0013ccf9a58692290a4f271a227dc8407acb2`. Public latest DMG/checksum/appcast downloads match; EdDSA verification passes ([REL-006](tasks/REL-006-release-1.1.0.md)). G915 automatic off/key-press wake are tester-confirmed in build 30; build 31 changes version/build metadata only. No agent installation or website deployment.
+Published **[1.2.0 (33)](https://github.com/Blinks44/rebind/releases/tag/v1.2.0)** moves Devices from Settings to the main-window sidebar ([UI-025](tasks/UI-025-devices-in-main-window.md)): All mice card first, excluded apps in General, four Settings tabs. The user reported the installed release working on 2026-10-29. Final 966 Swift Testing / 148 suites and 29 XCTest (two skipped) pass; signed DMG, checksums and appcast match the public downloads ([REL-007](tasks/REL-007-release-1.2.0.md)). 1.1.0 (31) added the G915 idle-off fix and the build-29 copy pass ([REL-006](tasks/REL-006-release-1.1.0.md)).
 
 Builds 16–28 added the copy audit, background-check optimization ([PERF-001](tasks/PERF-001-background-wakeups.md)), standard actions ([ACTION-001](tasks/ACTION-001-standard-actions.md)), the error banner ([FIX-003](tasks/FIX-003-menu-error-presentation.md)), G915/RGB lighting and idle timer ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md)), the Shortcuts held-release fix ([FIX-004](tasks/FIX-004-shortcuts-held-release.md)) and [review fixes](history/2026-10.md#2026-10-28-review-of-october-2627-commits). Their installed/hardware acceptance stays in those tasks.
 
@@ -20,22 +20,21 @@ The [architecture/library audit](tasks/REVIEW-003-libraries-and-simplification.m
 
 Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update ([FIX-001](tasks/FIX-001-wheel-and-window-regressions.md)), October 21 first run and window actions ([FIX-002](tasks/FIX-002-window-action-compatibility.md)), October 22 build-11 copy/VoiceOver/contrast/widths, build-16 copy, build-17 smoke. The [release queue](verification/release-candidate.md) owns the narrower outstanding cases; do not request another whole-app pass without affected changes.
 
-[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; v1.1.0 (31) is published with a verified feed; the actual update between published builds remains open. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
+[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; v1.2.0 (33) is published with a verified feed; an observed Sparkle update between published builds remains open. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
 
-Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed); the build-29 copy changes are not deployed yet. Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
+Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed). Committed but not yet deployed (user deploying 2026-10-29): build-29 copy, 1.2.0 device screenshots and the Devices lighting note. Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
 
 ## Open task index
 
 | Task | Concrete next step |
 | --- | --- |
-| [UI-025](tasks/UI-025-devices-in-main-window.md) | awaiting_verification: Devices in the main-window sidebar, published in 1.2.0 (33). Installed ⌘6/VoiceOver/widths/menu route. |
-| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Review build-29 strings and the local site, deploy the website (now also the 1.2.0 lighting-note path), sync changed English strings to Sketch. |
+| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Confirm the deployed site, sync changed build-29 English strings to Sketch. |
 | [FIX-004](tasks/FIX-004-shortcuts-held-release.md) | Check installed long-Shortcut held release/order and pause/quit (build 26 fix). |
 | [FIX-003](tasks/FIX-003-menu-error-presentation.md) | Installed keyboard/VoiceOver/menu hover/unsupported-window recovery (build 24 fix). |
 | [PERF-001](tasks/PERF-001-background-wakeups.md) | Controlled CPU/scrolling/typing and companion/audio/protected-context checks. |
 | [ACTION-001](tasks/ACTION-001-standard-actions.md) | Other new actions and switching/Dock/display cases; Fill with Left Margin confirmed. |
 | [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | awaiting_verification: automatic off and key-press wake tester-confirmed after the build-30 handoff; next Device default/relaunch/reconnect/G HUB. Other physical gates remain. |
-| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Verify the published 1.0.0 → 1.1.0 Sparkle update (offer/install/relaunch, rules/access kept); first-run accessibility/locales. |
+| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Observe a Sparkle update between published builds (offer/install/relaunch, rules/access kept); first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
 | [UI-024](tasks/UI-024-keyboard-navigation.md) | Targeted normal-build focus/preferences and file transactions; preserve build-11 accessibility acceptance. |
@@ -48,7 +47,7 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 | [DEVICE-003](tasks/DEVICE-003-multi-vendor-battery.md) | Named USB models, Bluetooth/BAS, reconnect, Logitech regression. |
 | [DEVICE-002](tasks/DEVICE-002-device-names-discovery.md) | Rename/save/cancel/reset, G915/menu/reconnect, keyboard/VoiceOver. |
 | [INPUT-011](tasks/INPUT-011-apps-mice-gesture-button.md) | Hold/background exclusion passed; directions, multi-mouse, reconnect/quit. |
-| [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | Preserve user-confirmed feel/exclusions; Sketch 42/44/45 review remains. |
+| [INPUT-010](tasks/INPUT-010-smooth-scrolling.md) | Preserve user-confirmed feel/exclusions; Sketch review of smooth scrolling on Devices 36 remains. |
 | [DEVICE-001](tasks/DEVICE-001-mouse-devices.md) | MX Master 2S subset passed; Options+, Bluetooth/Bolt, MX Master 3/3S. |
 | [UI-023](tasks/UI-023-main-window-soft-adoption.md) | Keyboard focus, VoiceOver, all localized widths. |
 | [INPUT-009](tasks/INPUT-009-held-output-exclusions-catalog.md) | Insert Text in three apps; interruption cleanup; remaining catalog/modifiers. |
@@ -64,7 +63,7 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 | [INPUT-001](tasks/INPUT-001-four-finger-tap.md) | Physical timing; preserve confirmed focus/delivery/lifecycle subsets. |
 | [UI-001](tasks/UI-001-permissions-onboarding.md) | Retest direct settings without duplicate alert; first-use listing/grant return, revocation and accessibility. |
 | [UI-003](tasks/UI-003-general-settings.md) | Login/relaunch, VoiceOver/preferences on a named build. |
-| [UI-004](tasks/UI-004-input-settings.md) | Physical hold timing/cancellation, VoiceOver/focus/preferences. |
+| [UI-004](tasks/UI-004-input-settings.md) | Physical hold timing/cancellation, editor VoiceOver/focus/preferences (Input tab retired in 1.2.0). |
 | [UI-005](tasks/UI-005-language-settings.md) | Production reopen, Cocoa projection repair and accessibility. |
 | [UI-007](tasks/UI-007-advanced-settings.md) | Preserve confirmed Advanced subset; remaining §15.12/platform/preferences. |
 | [UI-010](tasks/UI-010-about.md) | VoiceOver/licenses, full keyboard and preferences. |

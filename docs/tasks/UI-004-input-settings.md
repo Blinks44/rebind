@@ -8,6 +8,8 @@
 
 ## Current outcome
 
+The Input tab was retired in 1.2.0 ([UI-025](UI-025-devices-in-main-window.md)): wheel direction/speed and gesture distance live in the All mice card on Devices, excluded apps in General. The per-binding hold editor and its open checks below are unchanged.
+
 Input settings and the per-binding hold-duration editor are implemented using existing engine/storage constraints. Later pointer-distance, wheel/exclusion and per-mouse smooth-scrolling changes belong to [INPUT-009](INPUT-009-held-output-exclusions-catalog.md), [INPUT-010](INPUT-010-smooth-scrolling.md) and [INPUT-011](INPUT-011-apps-mice-gesture-button.md). The current touch pool/actions follow SPEC §3.4; old four-preset shortcut-only guidance is superseded.
 
 No global hold/double-press override was introduced by this task. Current visual source is [DESIGN](../DESIGN.md); the [historical Input handoff](../history/settings-design-through-2026-10-11.md#input) preserves its original design checks, not current geometry.

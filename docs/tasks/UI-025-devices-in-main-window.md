@@ -1,8 +1,8 @@
 # UI-025: Move Devices into the main window
 
-- Updated: 2026-10-28
-- Stage: awaiting_verification
-- Owner: Unassigned; implemented in build 32, released as 1.2.0 (33) ([REL-007](REL-007-release-1.2.0.md)); installed checks open.
+- Updated: 2026-10-29
+- Stage: done
+- Owner: none; released in 1.2.0 (33) ([REL-007](REL-007-release-1.2.0.md))
 - Ownership checked: main 6577b19
 - Owned surfaces: sidebar, Devices page, Settings tabs (General/Input/Devices), affected strings in six languages
 - Requirements: SPEC §10 information architecture and key screens, §3.2 mouse settings; user decision 2026-10-28
@@ -31,10 +31,8 @@ Checks: `dev.sh build` passes. Affected native tests pass (navigation incl. ⌘6
 
 Full suite: 966 Swift Testing tests in 148 suites pass; 29 XCTest methods, 2 physical-Tab skips, 0 failures. `release.sh` signed and verified `apps/rebind/build/release/Rebind.dmg` 1.1.0 (32), SHA-256 `fc3050aa478dd6823d38d0cb16fa9ceb4e6592c5d61bcef39397ac345b6b1d07` (not installed or published).
 
-## Open acceptance
+## Acceptance
 
-Native build in Light/Dark, keyboard focus/⌘6, VoiceOver headers, localized widths at the minimum window size, menu-bar entry to Devices.
+The user installed 1.2.0 (33) and reported on 2026-10-29 that everything checked works. VoiceOver reading was not reported separately and stays under the general accessibility gate in [PLAN](../PLAN.md#release-gates); localized widths are covered by the six-language layout tests above.
 
-## Next step
-
-Install 1.2.0 (33) and check the Open acceptance items above.
+The website device screenshots were re-exported with the new sidebar item ([WEB-002](WEB-002-website-refresh.md)).

@@ -8,6 +8,8 @@
 
 ## Current outcome and decisions
 
+Since 1.2.0, General also holds Excluded Apps, moved from the retired Input tab ([UI-025](UI-025-devices-in-main-window.md)).
+
 General projects actual runtime/global pause and real SMAppService login state through the shared app model. Register/unregister are explicit operations; approval, errors, busy/unavailable and external state changes remain distinct. There is no persisted login boolean or helper. Main and Menu Bar routes reuse the same model. The separate Settings scene is removed by [FIX-001](FIX-001-wheel-and-window-regressions.md); Menu Bar Settings, battery/Devices and Command-comma now route into the main window. Earlier standard-window evidence below remains historical. Current visual source is [DESIGN](../DESIGN.md); [historical handoff](../history/settings-design-through-2026-10-11.md#general) is not a visual implementation contract.
 
 Failed resume stays paused. Explicit pause cancels output immediately and stays paused in memory even when saving fails, exposing the error; it must not restart input to restore an old disk preference. Suppressed releases retain ownership; durable pause after a failed write is not established.

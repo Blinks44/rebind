@@ -9,7 +9,7 @@
 
 - [x] Sketch: pair **53 · Menu bar · Pointer speed** (Light/Dark) saved 2026-10-16. A "Pointer speed" section follows Battery: per mouse, the device symbol, its (local) name and the current value ("3200 DPI") right-aligned, then the shared `Slider` component under the name.
 - [x] `MenuBarController`: one custom-view menu item per connected mouse that reports DPI (`LogitechDeviceState.dpi` with `supportedDPI`); no section when none does. It is independent of the Battery-in-menu setting.
-- [x] The slider steps through the mouse's own list (same values as Settings → Devices), updates the label while dragging and writes/saves once on release through the existing `MouseHardwareSettings.dpi` path; both surfaces show the same value. Disabled while storage is locked or a companion app owns the mouse settings.
+- [x] The slider steps through the mouse's own list (same values as Devices), updates the label while dragging and writes/saves once on release through the existing `MouseHardwareSettings.dpi` path; both surfaces show the same value. Disabled while storage is locked or a companion app owns the mouse settings.
 - [x] Copy reuses `devicesPointerSpeed` and `devicesDPIValue` (all six languages exist); the slider's accessibility label is the device name plus "Pointer speed", its value the localized DPI.
 - [x] Tester checklist 1.4: drag changes DPI, Devices agrees, reopening keeps the blue fill without a thumb focus ring. Mouse model and appearance were not specified.
 - [ ] Named-device Light/Dark review, VoiceOver adjustment and six-language widths. Direct keyboard adjustment inside this custom menu item is not offered; verify the Settings route and record the keyboard-access limitation.
