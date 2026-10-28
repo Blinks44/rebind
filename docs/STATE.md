@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-28**, checkout `main`. Release candidate **1.1.0 (31)**, schema **48**; published v1.0.0 is build 15. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-28**, checkout `main`. Published/source **1.1.0 (31)**, schema **48**; tag `v1.1.0` identifies `29d8fdb`. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -8,7 +8,7 @@ Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `
 
 Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, experimental Logitech RGB lighting, atomic storage and six languages are implemented. Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and the live Sketch locator.
 
-Build **30** fixes G915 idle-off using native inactivity/activity notifications and explicit power commands ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md#installed-idle-off-failure-and-event-driven-fix--2026-10-28)); it retains the build-29 [copy pass](tasks/COPY-001-app-and-website-language.md#follow-up-pass--2026-10-28). Final **966 Swift Testing methods / 148 suites** pass; unchanged native UI: 29 XCTest methods, two skipped, zero failures. App/DMG signing and image verification pass. DMG `apps/rebind/build/release/Rebind.dmg`, SHA-256 `0ce06e4d32c5fff126843996deae0cbef1f05d0bcf83c9fdeb2848602815e4f6`. No agent installation or publication. After the build-30 handoff, the tester confirms automatic lighting-off and key-press wake now work.
+Published **[1.1.0 (31)](https://github.com/Blinks44/rebind/releases/tag/v1.1.0)** includes the G915 idle-off fix ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md#installed-idle-off-failure-and-event-driven-fix--2026-10-28)) and build-29 [copy pass](tasks/COPY-001-app-and-website-language.md#follow-up-pass--2026-10-28). Final **966 Swift Testing methods / 148 suites** pass; unchanged native UI retains 29 XCTest methods, two skipped, zero failures. Universal Release/app/DMG signing and image verification pass. DMG `apps/rebind/build/release/Rebind.dmg`, SHA-256 `45dc7f5dc7e6286d91ee70c4cdc0013ccf9a58692290a4f271a227dc8407acb2`. Public latest DMG/checksum/appcast downloads match; EdDSA verification passes ([REL-006](tasks/REL-006-release-1.1.0.md)). G915 automatic off/key-press wake are tester-confirmed in build 30; build 31 changes version/build metadata only. No agent installation or website deployment.
 
 Builds 16–28 added the copy audit, background-check optimization ([PERF-001](tasks/PERF-001-background-wakeups.md)), standard actions ([ACTION-001](tasks/ACTION-001-standard-actions.md)), the error banner ([FIX-003](tasks/FIX-003-menu-error-presentation.md)), G915/RGB lighting and idle timer ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md)), the Shortcuts held-release fix ([FIX-004](tasks/FIX-004-shortcuts-held-release.md)) and [review fixes](history/2026-10.md#2026-10-28-review-of-october-2627-commits). Their installed/hardware acceptance stays in those tasks.
 
@@ -20,11 +20,9 @@ The [architecture/library audit](tasks/REVIEW-003-libraries-and-simplification.m
 
 Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update ([FIX-001](tasks/FIX-001-wheel-and-window-regressions.md)), October 21 first run and window actions ([FIX-002](tasks/FIX-002-window-action-compatibility.md)), October 22 build-11 copy/VoiceOver/contrast/widths, build-16 copy, build-17 smoke. The [release queue](verification/release-candidate.md) owns the narrower outstanding cases; do not request another whole-app pass without affected changes.
 
-[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; the first update between published builds remains open. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
+[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; v1.1.0 (31) is published with a verified feed; the actual update between published builds remains open. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
 
 Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed); the build-29 copy changes are not deployed yet. Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
-
-Publication of 1.1.0 (31) is authorized and in progress: [REL-006](tasks/REL-006-release-1.1.0.md). Build-30 artifact evidence above remains historical until the new package is verified.
 
 ## Open task index
 
@@ -36,7 +34,7 @@ Publication of 1.1.0 (31) is authorized and in progress: [REL-006](tasks/REL-006
 | [PERF-001](tasks/PERF-001-background-wakeups.md) | Controlled CPU/scrolling/typing and companion/audio/protected-context checks. |
 | [ACTION-001](tasks/ACTION-001-standard-actions.md) | Other new actions and switching/Dock/display cases; Fill with Left Margin confirmed. |
 | [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | awaiting_verification: automatic off and key-press wake tester-confirmed after the build-30 handoff; next Device default/relaunch/reconnect/G HUB. Other physical gates remain. |
-| [REL-005](tasks/REL-005-onboarding-and-updates.md) | v1.0.0 published; verify the update path with the next build (1.0.1); first-run accessibility/locales. |
+| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Verify the published 1.0.0 → 1.1.0 Sparkle update (offer/install/relaunch, rules/access kept); first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
 | [UI-024](tasks/UI-024-keyboard-navigation.md) | Targeted normal-build focus/preferences and file transactions; preserve build-11 accessibility acceptance. |

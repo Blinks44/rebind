@@ -45,4 +45,4 @@ Runtime checks above need the installed build 9 and a clean or reset configurati
 
 ## Next handoff
 
-v1.0.0 (build 15) was published on 2026-10-24 with its `appcast.xml`; the latest-release appcast downloads and lists build 15. Verify the update path by publishing the next build (1.0.1) and updating an installed 1.0.0 ([RELEASING](../RELEASING.md)). First-run accessibility/locale checks stay with the accessibility pass.
+v1.0.0 (build 15) and v1.1.0 (build 31) are published. The latest-release appcast and public DMG/checksum downloads match 1.1.0 (31), including EdDSA verification ([REL-006](REL-006-release-1.1.0.md)). Next: verify the actual offered update, download, install and relaunch from an identified installed 1.0.0 artifact, with rules/profiles and actual Accessibility access preserved. Record the source build: a local build-30 → published build-31 update is distinct from published build-15 → build-31 acceptance. First-run accessibility/locale checks stay with the accessibility pass.
