@@ -29,6 +29,7 @@ Exclusions: no invented numbers, ratings or testimonials; no claims beyond CAPAB
 - [x] Mobile landing and needed states; implementation notes updated (save pending at handoff, 2026-10-28).
 - [x] Website implementation and six-language copy (2026-10-28); automated checks below. Deployment remains the maintainer's.
 - [x] Device images and `og-image.jpg` re-exported 2x from the current Sketch sources (2026-10-28): Export · Web Keyboard/Mouse/Trackpad layers in screens 02/06/10 Dark, screens 11 and 54 Dark, Social · Open Graph. Same 2160×1440 size and transparent corners; Sketch matches build 28 names.
+- [x] 2026-10-29: the five device images re-exported 2x from the same Sketch layers after Devices moved into the sidebar ([UI-025](UI-025-devices-in-main-window.md)); size and transparent corners unchanged. The Keyboard image in the Sketch landing mockups was replaced too (Rebind.sketch saved, SHA-256 `52b3841a9e9fb2fdfee1e6139cbb942912998e82721836ed4f3117c71ade56bd`). `pnpm build`, `pnpm check` and `pnpm test:smoke` pass; not deployed.
 - [x] Manual checks (user, 2026-10-28): deployed site on desktop and phone, keyboard and VoiceOver on the chip groups, Reduce Motion, translations. Follow-up fixes the same day: device-tab indicator height (36 px, equal 4 px inset) and mobile menu anchored under its menu-bar icon.
 
 ## Sketch source
