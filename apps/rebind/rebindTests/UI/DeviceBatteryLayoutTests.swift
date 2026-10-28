@@ -16,7 +16,7 @@ import XCTest
             loginItem: LoginItemModel(service: LoginItemServiceStub(status: .off)))
         for language in ["en", "ru", "de", "fr", "es", "zh-Hans"] {
             for appearance in [ColorScheme.light, .dark] {
-                let controller = NSHostingController(rootView: ContentView(model: model, initialDestination: .settings(.devices))
+                let controller = NSHostingController(rootView: ContentView(model: model, initialDestination: .devices)
                     .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
                 window.styleMask.insert(.fullSizeContentView)

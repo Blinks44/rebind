@@ -4,18 +4,18 @@ import XCTest
 @testable import rebind
 
 @MainActor final class InputLanguageLayoutTests: XCTestCase {
-    func testInputAndLanguageFitStandardSettingsInAllLocales() async throws {
+    func testDevicesAndLanguageFitInAllLocales() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindStandardSettings-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
             readPermissions: { InputPermissions() }, loginItem: LoginItemModel(service: LoginItemServiceStub()))
-        for section in [SettingsSection.input, .language] {
-            for language in AppLanguage.allCases.map(\.rawValue) {
-                for appearance in [ColorScheme.light, .dark] {
-                    try await check(SettingsView(model: model, selection: .constant(section)),
-                        name: "standard-\(section)", language: language, appearance: appearance,
-                        sizes: [NSSize(width: 600, height: 480), NSSize(width: 760, height: 600)])
-                }
+        for language in AppLanguage.allCases.map(\.rawValue) {
+            for appearance in [ColorScheme.light, .dark] {
+                try await check(DevicesView(model: model), name: "devices", language: language, appearance: appearance,
+                    sizes: [NSSize(width: 640, height: 480), NSSize(width: 760, height: 600)])
+                try await check(SettingsView(model: model, selection: .constant(.language)),
+                    name: "standard-language", language: language, appearance: appearance,
+                    sizes: [NSSize(width: 600, height: 480), NSSize(width: 760, height: 600)])
             }
         }
     }

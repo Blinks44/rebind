@@ -34,21 +34,21 @@ import Testing
         defer { try? FileManager.default.removeItem(at: directory) }
         let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
                              loadConfiguration: false, readPermissions: { InputPermissions() })
-        model.requestedSettingsSection = .input
+        model.requestedDestination = .settings(.language)
         let controller = NSHostingController(rootView: ContentView(model: model, persistsWindowSelection: false))
         let window = NSWindow(contentViewController: controller)
         window.isReleasedWhenClosed = false
         defer { window.close() }
         window.setContentSize(NSSize(width: 1080, height: 720))
         try await Task.sleep(for: .milliseconds(150))
-        #expect(model.requestedSettingsSection == nil)
-        #expect(model.settingsSection == .input)
+        #expect(model.requestedDestination == nil)
+        #expect(model.settingsSection == .language)
         // Devices is requested with the window already alive, including repeated menu actions.
         for _ in 0..<2 {
-            model.requestedSettingsSection = .devices
+            model.requestedDestination = .devices
             try await Task.sleep(for: .milliseconds(100))
-            #expect(model.requestedSettingsSection == nil)
-            #expect(model.settingsSection == .devices)
+            #expect(model.requestedDestination == nil)
+            #expect(model.settingsSection == .language)
         }
     }
 

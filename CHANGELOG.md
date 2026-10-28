@@ -2,6 +2,12 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.2.0: 2026-10-28
+
+- Moved Devices from Settings to the sidebar (⌘6).
+- Moved wheel direction, wheel speed and mouse gesture distance to the All mice card in Devices, and excluded apps to Settings → General. The Input tab is gone.
+- Clicking a device in the menu bar battery list opens Devices.
+
 ## 1.1.0: 2026-10-28
 
 - Added G915 TKL lighting controls: brightness, color, idle timeout and low-battery colors. Idle-off and key-press wake are tester-confirmed; compatible Logitech RGB keyboards and mice have experimental support.

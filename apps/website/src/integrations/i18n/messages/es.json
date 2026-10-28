@@ -199,7 +199,7 @@
   "lightColor": "Color",
   "idleOff": "Apagar por inactividad",
   "twoMinutes": "2 min",
-  "lightingNote": "La iluminación está en Ajustes → Dispositivos. Otros teclados y ratones Logitech con iluminación RGB son compatibles de forma experimental.",
+  "lightingNote": "La iluminación está en la sección Dispositivos. Otros teclados y ratones Logitech con iluminación RGB son compatibles de forma experimental.",
   "privacyEyebrow": "Privacidad y seguridad",
   "emergencyPause": "Pausa de emergencia",
   "pausesEverything": "Pausa todas las reglas",

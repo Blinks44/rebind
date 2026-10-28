@@ -32,9 +32,9 @@ Choose **Pause** in the Rebind menu or turn bindings off in the window. While in
 
 If a binding does not work:
 
-1. Check that bindings are on, the correct profile is selected, and the binding is enabled for the app in front. Check **Settings → Input → Excluded Apps**.
+1. Check that bindings are on, the correct profile is selected, and the binding is enabled for the app in front. Check **Settings → General → Excluded Apps**.
 2. Check **Settings → Permissions**. Enable the running Rebind copy and reopen it if macOS requests that. Password fields can enable macOS Secure Input; leave the field before testing again.
-3. For a mouse, check **Settings → Devices** for a competing vendor app. Quit that app and retry if it controls the same buttons. Available settings and battery readings depend on the model and connection.
+3. For a mouse, check **Devices** in the main window for a competing vendor app. Quit that app and retry if it controls the same buttons. Available settings and battery readings depend on the model and connection.
 4. For touch, reconnect the device, lift all fingers, and allow capture to start. Check the native gesture guidance. A disconnected device’s saved rules remain editable.
 5. If needed, use **Settings → Advanced → Copy Report** and [report a bug](https://github.com/Blinks44/rebind/issues/new/choose) with steps, version/build, macOS and device model. Do not post your configuration or backups publicly. [Security problems need a private report](../SECURITY.md#reporting-a-vulnerability).
 

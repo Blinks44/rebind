@@ -77,7 +77,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             menu.addItem(.sectionHeader(title: text(.batteryMenuTitle)))
             let rows = batteries.map { ($0, configuration.deviceName(for: $0.deviceKey, original: $0.name)) }
             for row in Self.batteryItems(rows, language: language) {
-                row.action = #selector(openDevicesSettings)
+                row.action = #selector(openDevices)
                 row.target = self
                 menu.addItem(row)
             }
@@ -221,13 +221,13 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func openSettingsWindow() { showSettings() }
 
-    @objc private func openDevicesSettings() {
-        model.settingsSection = .devices
-        showSettings()
+    @objc private func openDevices() {
+        model.requestedDestination = .devices
+        openMainWindow()
     }
 
     private func showSettings() {
-        model.requestedSettingsSection = model.settingsSection
+        model.requestedDestination = .settings(model.settingsSection)
         openMainWindow()
     }
 }

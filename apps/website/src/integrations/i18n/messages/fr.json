@@ -199,7 +199,7 @@
   "lightColor": "Couleur",
   "idleOff": "Éteindre en cas d’inactivité",
   "twoMinutes": "2 min",
-  "lightingNote": "L’éclairage se règle dans Réglages → Appareils. Les autres claviers et souris Logitech à éclairage RVB sont pris en charge de façon expérimentale.",
+  "lightingNote": "L’éclairage se règle dans la section Appareils. Les autres claviers et souris Logitech à éclairage RVB sont pris en charge de façon expérimentale.",
   "privacyEyebrow": "Confidentialité et sécurité",
   "emergencyPause": "Pause d’urgence",
   "pausesEverything": "Suspend toutes les règles",

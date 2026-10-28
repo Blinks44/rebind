@@ -1,8 +1,9 @@
 import SwiftUI
 import CoreBluetooth
 
-/// Connected mice with settings, plus discovered keyboards and system battery devices.
-struct DevicesSettingsView: View {
+/// Main-window page: settings for all mice, then connected mice with settings, discovered keyboards
+/// and system battery devices.
+struct DevicesView: View {
     let model: AppModel
 
     @State private var renaming: ConnectedAccessory?
@@ -10,13 +11,28 @@ struct DevicesSettingsView: View {
     private var mice: [ConnectedMouse] { model.mouseHardware.mice }
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(.settingsDevices).font(Theme.largeTitle).foregroundStyle(Theme.textPrimary)
+                    .lineLimit(1).frame(height: 36).accessibilityAddTraits(.isHeader)
+                // Compressible like the Settings header, so localized copy cannot grow the window.
+                Text(.devicesDescription).font(Theme.body).foregroundStyle(Theme.textSecondary).lineLimit(2)
+            }
+            .detailMargins().padding(.top, 56).padding(.bottom, 24)
+            content
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .navigationTitle(.settingsDevices)
+        .onAppear { model.mouseHardware.refresh() }
+        .sheet(item: $renaming) { device in
+            DeviceNameEditor(model: model, deviceKey: device.deviceKey, original: device.name)
+        }
+    }
+
+    private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(.settingsDevices).font(Theme.headline).accessibilityAddTraits(.isHeader)
-                    Text(.devicesDescription).foregroundStyle(Theme.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                AllMiceCard(model: model)
                 if model.mouseHardware.bluetoothBattery.authorization != .allowedAlways {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(model.mouseHardware.bluetoothBattery.authorization == .restricted
@@ -79,15 +95,11 @@ struct DevicesSettingsView: View {
                         .disabled(model.storageLocked)
                     }
                 } else {
-                    emptyState.frame(maxWidth: .infinity).padding(.top, 88)
+                    emptyState.frame(maxWidth: .infinity).padding(.vertical, 48)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .detailMargins().padding(.bottom, 32)
-        }
-        .onAppear { model.mouseHardware.refresh() }
-        .sheet(item: $renaming) { device in
-            DeviceNameEditor(model: model, deviceKey: device.deviceKey, original: device.name)
         }
     }
 

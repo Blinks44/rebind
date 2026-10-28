@@ -199,7 +199,7 @@
   "lightColor": "颜色",
   "idleOff": "闲置时关闭",
   "twoMinutes": "2 分钟",
-  "lightingNote": "背光设置位于“设置 → 设备”。其他带 RGB 背光的 Logitech 键盘和鼠标为实验性支持。",
+  "lightingNote": "背光设置位于“设备”部分。其他带 RGB 背光的 Logitech 键盘和鼠标为实验性支持。",
   "privacyEyebrow": "隐私与安全",
   "emergencyPause": "紧急暂停",
   "pausesEverything": "暂停所有规则",

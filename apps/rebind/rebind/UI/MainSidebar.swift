@@ -47,16 +47,23 @@ struct MainSidebar: View {
                     .focused($focusedRow, equals: 4)
                     .accessibilityIdentifier("sidebar-magic-mouse")
                     .keyboardShortcut("5", modifiers: .command)
+                // Connected hardware is app content, not a setting, so it sits with the categories.
+                Theme.separator.frame(height: 1).padding(.horizontal, 8).padding(.top, 12).padding(.bottom, 11).accessibilityHidden(true)
+                MainSidebarButton(title: .settingsDevices, symbol: "cable.connector",
+                    isSelected: selection == .devices, keyboardFocus: focusedRow == 5) { selection = .devices }
+                    .focused($focusedRow, equals: 5)
+                    .accessibilityIdentifier("sidebar-devices")
+                    .keyboardShortcut("6", modifiers: .command)
             }.padding(.top, 18)
 
             Spacer(minLength: 16)
             Theme.separator.frame(height: 1).padding(.horizontal, 8).padding(.bottom, 15).accessibilityHidden(true)
             VStack(spacing: 4) {
-                MainSidebarButton(title: .settingsTitle, symbol: "gearshape", isSelected: isShowingSettings, keyboardFocus: focusedRow == 5) {
+                MainSidebarButton(title: .settingsTitle, symbol: "gearshape", isSelected: isShowingSettings, keyboardFocus: focusedRow == 6) {
                     selection = .settings(.general)
-                }.focused($focusedRow, equals: 5).accessibilityIdentifier("sidebar-settings")
-                MainSidebarButton(title: .aboutTitle, symbol: "info.circle", keyboardFocus: focusedRow == 6, action: showAbout)
-                    .focused($focusedRow, equals: 6)
+                }.focused($focusedRow, equals: 6).accessibilityIdentifier("sidebar-settings")
+                MainSidebarButton(title: .aboutTitle, symbol: "info.circle", keyboardFocus: focusedRow == 7, action: showAbout)
+                    .focused($focusedRow, equals: 7)
                     .accessibilityIdentifier("sidebar-about")
             }.padding(.bottom, 16)
         }
@@ -69,7 +76,7 @@ struct MainSidebar: View {
     }
     private func moveFocus(by offset: Int) -> KeyPress.Result {
         guard let focusedRow else { return .ignored }
-        self.focusedRow = min(max(focusedRow + offset, 0), 6)
+        self.focusedRow = min(max(focusedRow + offset, 0), 7)
         return .handled
     }
 }

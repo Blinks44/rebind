@@ -1,6 +1,6 @@
 # Rebind: design direction and live source index
 
-Updated 2026-10-21 (three-step first run and Sparkle update controls saved/reviewed). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-28 (Devices moved into the main window, UI-025). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under UI-013. Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
@@ -9,6 +9,8 @@ Design the final planned release, including Trackpad and Magic Mouse. User clari
 User decision 2026-10-12: the calm look of the current **Rebind.sketch** replaces the Liquid Glass direction. Surfaces are opaque-first with soft shadows and 1 pt hairlines; controls are 36 pt capsules (28 pt small); lists sit on one raised card with 72 pt rows; raised SF Pro Rounded keycaps are the brand motif; one blue accent, and other color only for state. Only the sidebar and menus may use a system material. Light and Dark share geometry, type and spacing. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density.
 
 ## Current source: Rebind.sketch
+
+Devices move **2026-10-28** ([UI-025](tasks/UI-025-devices-in-main-window.md), user decision): Devices leaves Settings for the main-window sidebar (hairline, ⌘6, new `Icon/cable.connector`); screens 35–42 and 66–69 become `Main · Devices` with an All mice card first; Settings shows four tabs and General gains Excluded Apps; Input screens 33–34 archived; Foundations **14** owns the contract. Screenshot-reviewed and saved; SHA-256 `1dbbeabdce06d9883e21828cfdc78f28344965fb9cc475a4cf4eaa1acab05e08`. Implemented in build 1.1.0 (32); the Devices header stays fixed above the scrolling cards, like the rule pages.
 
 Parity sync **2026-10-28** (build 28): screen 69 Light/Dark idle menu drops Never and Foundations 12 records the implemented G915 timer; website mobile hero shows the four-example moduix Carousel (56 px keycaps, flat action row under a hairline, prev/next, four indicators, play/pause; hero +17 px, later sections shifted) and Implementation notes describe it; About shows 1.0.0 (28). Screen 15 needed no change: its partial picker specimen already matches current category/action names. Changed frames screenshot-reviewed; saved SHA-256 `27eb5e088e2fe218ab660bf2e932a44ce52e98d217bb4f5c44e37ead501b6466`.
 

@@ -41,7 +41,7 @@ struct rebindApp: App {
                 BindingsCommands()
                 CommandGroup(replacing: .appSettings) {
                     Button(.settingsTitle) {
-                        delegate.model.requestedSettingsSection = delegate.model.settingsSection
+                        delegate.model.requestedDestination = .settings(delegate.model.settingsSection)
                         RebindAppDelegate.mainWindow.show()
                     }.keyboardShortcut(",", modifiers: .command)
                 }

@@ -42,6 +42,7 @@ struct ContentView: View {
                         delete: { pendingDeletion = $0 },
                         manageProfiles: { showingProfiles = true },
                         openPermissions: { selection = .settings(.permissions) })
+                case .devices: DevicesView(model: model)
                 case .settings: SettingsView(model: model, selection: settingsSection).padding(.top, 28)
                 }
             }.frame(minWidth: 640, maxWidth: .infinity, maxHeight: .infinity)
@@ -86,10 +87,10 @@ struct ContentView: View {
             showingProfiles = false
         }
         .onAppear {
-            openRequestedSettings()
+            openRequestedDestination()
             setupPresentation.beginIfNeeded(needsSetup: model.needsFirstRunSetup)
         }
-        .onChange(of: model.requestedSettingsSection) { openRequestedSettings() }
+        .onChange(of: model.requestedDestination) { openRequestedDestination() }
         .onChange(of: model.permissions.allowsRemapping) { wasAllowed, isAllowed in
             // Recover once while idle. Active editors and later revocations keep the inline notice.
             setupPresentation.permissionsChanged(wasAllowed: wasAllowed, isAllowed: isAllowed,
@@ -112,11 +113,11 @@ struct ContentView: View {
         editor = EditorSelection(scope: scope, binding: nil)
     }
 
-    private func openRequestedSettings() {
-        guard let section = model.requestedSettingsSection else { return }
-        model.settingsSection = section
-        selection = .settings(section)
-        model.requestedSettingsSection = nil
+    private func openRequestedDestination() {
+        guard let destination = model.requestedDestination else { return }
+        if case .settings(let section) = destination { model.settingsSection = section }
+        selection = destination
+        model.requestedDestination = nil
     }
 
     private var deletionPresented: SwiftUI.Binding<Bool> {

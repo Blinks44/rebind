@@ -80,7 +80,7 @@ import XCTest
         }
     }
 
-    func testFiveSettingsSectionsAndDiagnosticsFitAllLanguages() async throws {
+    func testSettingsSectionsAndDiagnosticsFitAllLanguages() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindAdvancedShell-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),

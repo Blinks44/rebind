@@ -140,14 +140,14 @@ import XCTest
     private enum SettingsFixture: String, CaseIterable {
         case paused, active, missingAccess, engineError, approval, permissionsMissing, permissionsAllowed
         case permissionsPosting, permissionsPaused, permissionsEngineError
-        case input, language, languageReopen, languageLocked
+        case devices, language, languageReopen, languageLocked
         case advanced, advancedLocked
 
         var destination: MainDestination {
             switch self {
             case .permissionsMissing, .permissionsAllowed, .permissionsPosting, .permissionsPaused, .permissionsEngineError:
                 .settings(.permissions)
-            case .input: .settings(.input)
+            case .devices: .devices
             case .language, .languageReopen, .languageLocked: .settings(.language)
             case .advanced, .advancedLocked: .settings(.advanced)
             default: .settings(.general)
@@ -164,8 +164,8 @@ import XCTest
                                          .permissionsPaused, .permissionsEngineError])
     }
 
-    func testInputAndLanguageDoNotExpandNavigationBeyondTheWindow() async throws {
-        try await checkSettingsFixtures([.input, .language, .languageReopen, .languageLocked])
+    func testDevicesAndLanguageDoNotExpandNavigationBeyondTheWindow() async throws {
+        try await checkSettingsFixtures([.devices, .language, .languageReopen, .languageLocked])
     }
 
     func testAdvancedDoesNotExpandNavigationBeyondTheWindow() async throws {

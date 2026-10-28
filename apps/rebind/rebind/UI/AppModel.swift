@@ -16,9 +16,9 @@ import Carbon
     }
     @ObservationIgnored private var actionErrorDeadline: ContinuousClock.Instant?
     var recording: RecordingRequest?
-    /// The remembered Settings section and a pending route from menu/command actions.
+    /// The remembered Settings section and a pending main-window route from menu/command actions.
     var settingsSection: SettingsSection = .general
-    var requestedSettingsSection: SettingsSection?
+    var requestedDestination: MainDestination?
     var lastRecording: RecordedInput?
     private(set) var diagnostics = DiagnosticSnapshot()
     private(set) var audioCapabilities = AudioOutputCapabilities()

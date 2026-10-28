@@ -36,6 +36,7 @@ struct GeneralSettingsView: View {
                 }
                 .toggleStyle(ThemeSwitchStyle()).disabled(model.storageLocked).modifier(CardRow())
                 UpdateSettingsRow(updater: RebindAppDelegate.updater)
+                ExcludedApplicationsCard(model: model)
                 Text(.quitGuidance).font(Theme.callout).foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 if let error = model.error, model.generalRuntime != .storageLocked {

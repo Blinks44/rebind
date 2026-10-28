@@ -28,6 +28,7 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
+| [UI-025](tasks/UI-025-devices-in-main-window.md) | awaiting_verification: Devices moved from Settings to the main-window sidebar in build 32 (Sketch 2026-10-28). Installed ⌘6/VoiceOver/widths/menu route. |
 | [COPY-001](tasks/COPY-001-app-and-website-language.md) | Review build-29 strings and the local site, deploy the website, sync changed English strings to Sketch. |
 | [FIX-004](tasks/FIX-004-shortcuts-held-release.md) | Check installed long-Shortcut held release/order and pause/quit (build 26 fix). |
 | [FIX-003](tasks/FIX-003-menu-error-presentation.md) | Installed keyboard/VoiceOver/menu hover/unsupported-window recovery (build 24 fix). |

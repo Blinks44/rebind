@@ -47,7 +47,8 @@ import XCTest
         window.makeKeyAndOrderFront(nil)
         try await Task.sleep(for: .milliseconds(100))
         for (key, code, destination) in [("2", UInt16(19), MainDestination.input(.allMice)),
-                                          ("5", UInt16(23), MainDestination.input(.magicMouse))] {
+                                          ("5", UInt16(23), MainDestination.input(.magicMouse)),
+                                          ("6", UInt16(22), MainDestination.devices)] {
             let event = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: .command,
                 timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
                 context: nil, characters: key, charactersIgnoringModifiers: key, isARepeat: false, keyCode: code))

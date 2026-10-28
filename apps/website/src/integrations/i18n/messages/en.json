@@ -199,7 +199,7 @@
   "lightColor": "Color",
   "idleOff": "Turn off when idle",
   "twoMinutes": "2 min",
-  "lightingNote": "Lighting lives in Settings → Devices. Other Logitech keyboards and mice with RGB lighting are supported experimentally.",
+  "lightingNote": "Lighting lives in the Devices section. Other Logitech keyboards and mice with RGB lighting are supported experimentally.",
   "privacyEyebrow": "Privacy and safety",
   "emergencyPause": "Emergency pause",
   "pausesEverything": "Pauses every binding",

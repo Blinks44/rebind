@@ -9142,47 +9142,6 @@
         }
       }
     },
-    "gestureDistanceTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestenweg"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gesture distance"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Distancia del gesto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Distance du geste"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Длина жеста"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手势距离"
-          }
-        }
-      }
-    },
     "hideApplicationAction" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9918,47 +9877,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "导入配置文件…"
-          }
-        }
-      }
-    },
-    "inputDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie Rebind Tastendrücke, Bewegungen und Tippen erkennt."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How Rebind recognizes presses, movement and taps."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comment Rebind reconnaît les appuis, les mouvements et les touchers."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Как Rebind распознаёт нажатия, движения и касания."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cómo reconoce Rebind las pulsaciones, los movimientos y los toques."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rebind 如何识别按下、移动和轻点。"
           }
         }
       }
@@ -12670,88 +12588,6 @@
         }
       }
     },
-    "mouseGestures" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mausgesten"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mouse gestures"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestes de souris"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Жесты мыши"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestos del ratón"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标手势"
-          }
-        }
-      }
-    },
-    "mouseGesturesDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halten Sie eine mittlere oder zusätzliche Maustaste und bewegen Sie die Maus in eine Richtung. Wählen Sie, wie weit sich der Zeiger bewegen muss, bevor eine Geste zählt."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hold a middle or extra mouse button and move up, down, left or right. Choose how far the pointer must travel before a gesture counts."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén pulsado el botón central o uno adicional y mueve el ratón arriba, abajo, a la izquierda o a la derecha. Elige cuánto debe moverse el puntero para que el gesto cuente."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maintenez le bouton central ou un bouton supplémentaire et déplacez la souris dans une direction. Choisissez la distance que le pointeur doit parcourir pour qu’un geste soit reconnu."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удерживайте среднюю или дополнительную кнопку и двигайте мышь в нужную сторону. Выберите, как далеко нужно сдвинуть указатель, чтобы жест засчитался."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按住中键或额外按钮，然后向上、下、左或右移动鼠标。可选择指针需要移动多远才算作手势。"
-          }
-        }
-      }
-    },
     "mouseInputKind" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13367,47 +13203,6 @@
         }
       }
     },
-    "mouseWheelDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gilt für Mausräder. Trackpads und Magic Mouse verhalten sich wie im System eingestellt."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Applies to mouse wheels. Trackpads and Magic Mouse keep the system behavior."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se aplica a las ruedas de ratón. Los trackpads y el Magic Mouse mantienen el comportamiento del sistema."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’applique aux molettes de souris. Les trackpads et la Magic Mouse conservent le comportement du système."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Действует на колесо мыши. Трекпады и Magic Mouse работают как задано в системе."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "适用于鼠标滚轮。触控板和妙控鼠标保持系统行为。"
-          }
-        }
-      }
-    },
     "mouseWheelHelp" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13691,47 +13486,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "滚轮速度"
-          }
-        }
-      }
-    },
-    "mouseWheelTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mausrad"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mouse wheel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rueda del ratón"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Molette de la souris"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Колесо мыши"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鼠标滚轮"
           }
         }
       }
@@ -19527,47 +19281,6 @@
         }
       }
     },
-    "settingsInput" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eingabe"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Input"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrée"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ввод"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrada"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "输入"
-          }
-        }
-      }
-    },
     "settingsLanguage" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -24262,7 +23975,7 @@
     },
     "settingsDevices" : {
       "extractionState" : "manual",
-      "comment" : "Settings tab for connected mice and their hardware settings.",
+      "comment" : "Main-window sidebar item and page title for connected mice, keyboards and trackpads.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -25659,47 +25372,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "倾斜滚轮和拇指滚轮反向横向滚动。"
-          }
-        }
-      }
-    },
-    "smoothScrollingInDevices" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sanftes Scrollen wird für jede Maus unter „Geräte“ eingestellt."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Smooth scrolling is set for each mouse in Devices."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le défilement fluide se règle pour chaque souris dans Appareils."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Плавная прокрутка настраивается для каждой мыши в разделе «Устройства»."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El desplazamiento suave se ajusta para cada ratón en Dispositivos."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "平滑滚动在“设备”中为每个鼠标单独设置。"
           }
         }
       }
@@ -29845,6 +29517,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "厂商 App 可能会覆盖背光设置。请先退出这些 App，再在这里调整背光。"
+          }
+        }
+      }
+    },
+    "allMiceDescription" : {
+      "extractionState" : "manual",
+      "comment" : "Description of the All mice card on the Devices page.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt für alle Mäuse. Trackpads und Magic Mouse verhalten sich wie im System eingestellt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applies to every mouse. Trackpads and Magic Mouse keep the system behavior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’applique à toutes les souris. Les trackpads et la Magic Mouse conservent le comportement du système."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Действует на все мыши. Трекпады и Magic Mouse работают как задано в системе."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se aplica a todos los ratones. Los trackpads y el Magic Mouse mantienen el comportamiento del sistema."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "适用于所有鼠标。触控板和妙控鼠标保持系统行为。"
+          }
+        }
+      }
+    },
+    "mouseGestureDistance" : {
+      "extractionState" : "manual",
+      "comment" : "Label above the choice of how far the pointer moves before a mouse gesture counts.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weg für Mausgesten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mouse gesture distance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance des gestes de souris"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Длина жеста мышью"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distancia de los gestos del ratón"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标手势距离"
           }
         }
       }
