@@ -33,10 +33,10 @@ Live at **rebind.moduix.dev** with indexing. The live HTML checked on 2026-10-28
 - [x] Fluent six-language proofreading on the rendered page ([COPY-001](COPY-001-app-and-website-language.md) owns the copy audit).
 - [x] Narrow widths (320 px, all languages), physical swipe, timed carousel cycle/pause/loop, inactive-dot contrast.
 - [x] Full keyboard/VoiceOver and runtime Reduce Motion.
-- [ ] Not separately checked: client-side 404 → home restores canonical/robots/JSON-LD (URL and title already pass); no user-visible effect.
+- [ ] Not separately checked: client-side 404 → home restores canonical/robots/JSON-LD (URL and title confirmed by the user); only the hidden head tags remain unchecked, with no user-visible effect.
 - [ ] Optional: Search Console ingestion of `/sitemap.xml`; actual indexing is unverified.
 
-User acceptance 2026-10-28: after the WEB-002 refresh the user deployed the site and reviewed it on desktop and phone, including keyboard, VoiceOver, Reduce Motion and translations, and reported it good. That review covers the shared shell this task owns.
+User acceptance 2026-10-28: after the WEB-002 refresh the user deployed the site and reviewed it on desktop and phone, including keyboard, VoiceOver, Reduce Motion and translations, and reported it good. That review covers the shared shell this task owns. The user then explicitly checked 320 px widths in all languages, hero carousel swipe and timing on a phone, keyboard and VoiceOver, Reduce Motion, translations and the page title after client navigation from 404 to home, with no bugs found.
 
 ## Evidence summary
 
