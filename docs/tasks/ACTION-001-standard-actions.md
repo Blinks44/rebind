@@ -48,7 +48,7 @@ Read-only macOS **27.0.1 (26A434), Apple silicon** probes found enabled/non-auto
 
 Research: Apple SDK Core Audio input-scope `kAudioDevicePropertyMute` and [SwitchAudioSource](https://github.com/deweller/switchaudio-osx/blob/master/audio_switch.c) informed the native-control choice; the latter is a maintained native reference, not an adopted dependency. Rectangle's MIT implementation was reviewed for Stage Manager detection, as documented above; no upstream code copied. No complete native Stage Manager layout API or suitable ready-made package was established. Swift Package Index discovery did not establish a suitable package; no exhaustive registry audit is claimed. No dependency/license changes.
 
-Live Sketch: reviewed the existing English **15 · Editor · Keyboard · Action picker · Light** frame and its reusable category/search/row structure on 2026-10-26. The implementation reuses that picker; no new visual control or Sketch edits/save. New English catalog strings are implemented in source and remain to be synchronized in a separately authorized Sketch edit.
+Live Sketch: reviewed the existing English **15 · Editor · Keyboard · Action picker · Light** frame and its reusable category/search/row structure on 2026-10-26. The implementation reuses that picker; no new visual control or Sketch edits/save. New English catalog strings are implemented in source. Sketch check 2026-10-28: the screen-15 specimen is intentionally partial and its names/categories still match the catalog, so no edit was needed.
 
 Checks on **1.0.0 (18)**:
 

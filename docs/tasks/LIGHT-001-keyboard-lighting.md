@@ -121,6 +121,8 @@ Verification on build 25 (Apple silicon/macOS 27.0.1/Xcode 27.1):
 
 User request: expose **Turn off when idle**. Source **1.0.0 (28), schema 48** adds it to G915 (non-experimental) cards after live inspection of Sketch 69 and Foundations 12 (read only). Choices: Device default (initial, no write) and 30 s/1/2/5/10 min; Never is omitted because firmware zero is not Never. Choosing a preset first captures the current native policy into the saved preference; Device default writes it back. A preset writes power-save = chosen time and off 0, preserving flags; this matches the 2026-10-27 probe where dim 5/off 0 reached PowerOff at about 6 s. Every write is read back; battery refresh never writes the policy; reconnect/wake reprobe reapplies it. Experimental devices do not show the row. Six-language copy uses catalog plurals.
 
+Sketch synchronized 2026-10-28: screen 69 Light/Dark menu without Never, Foundations 12 updated ([DESIGN](../DESIGN.md#current-source-rebindsketch)).
+
 Checks: 960 Swift Testing methods / 148 suites pass, including driver write/readback/restore, validation, schema-47 rejection and label tests; the 216-combination native lighting layout passes with the row in G915 states; English/Russian captures reviewed against Sketch 69. Build 28 Release/signing/DMG pass. Not observed on hardware: actual idle-off timing, key-press wake, Device default restore and persistence across power-cycle.
 
 Final test bundles: `Test-rebind-2026.10.27_21-05-00-+0300.xcresult` (full native pass / Swift Testing localization race) and `Test-rebind-2026.10.27_21-14-18-+0300.xcresult` (corrected UI fixture and all Swift Testing pass). Both remain ignored local build artifacts.
