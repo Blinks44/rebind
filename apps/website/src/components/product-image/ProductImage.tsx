@@ -19,7 +19,16 @@ const images = {
   'magic-mouse': [magicMousePng, magicMouse],
 } as const
 
-export function ProductImage({ view, alt }: { view: keyof typeof images; alt: string }) {
+/** `preload` fetches the image right away at low priority, for a panel that is not shown yet. */
+export function ProductImage({
+  view,
+  alt,
+  preload = false,
+}: {
+  view: keyof typeof images
+  alt: string
+  preload?: boolean
+}) {
   const [src, srcSet] = images[view]
   return (
     <picture className={styles.picture}>
@@ -28,7 +37,15 @@ export function ProductImage({ view, alt }: { view: keyof typeof images; alt: st
         srcSet={srcSet}
         sizes="(max-width: 1080px) calc(100vw - 40px), 1040px"
       />
-      <Image src={src} width={1080} height={720} alt={alt} loading="lazy" decoding="async" />
+      <Image
+        src={src}
+        width={1080}
+        height={720}
+        alt={alt}
+        loading={preload ? 'eager' : 'lazy'}
+        fetchPriority={preload ? 'low' : undefined}
+        decoding="async"
+      />
     </picture>
   )
 }

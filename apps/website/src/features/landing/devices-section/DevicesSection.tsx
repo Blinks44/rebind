@@ -18,7 +18,8 @@ export function DevicesSection() {
         {m.devicesTitle()}
       </h2>
       <p className={styles.lead}>{m.devicesLead()}</p>
-      <Tabs defaultValue="keyboard" lazyMount className={styles.tabs}>
+      {/* Every panel stays mounted; hidden screenshots preload so switching tabs is instant. */}
+      <Tabs defaultValue="keyboard" className={styles.tabs}>
         <div className={styles.scroll}>
           <TabsList aria-label={m.devices()} className={styles.list}>
             {devices.map(([value, label]) => (
@@ -31,7 +32,11 @@ export function DevicesSection() {
         </div>
         {devices.map(([value, label]) => (
           <TabsContent key={value} value={value} className={styles.panel}>
-            <ProductImage view={value} alt={m.screenshotAlt({ device: label })} />
+            <ProductImage
+              view={value}
+              alt={m.screenshotAlt({ device: label })}
+              preload={value !== 'keyboard'}
+            />
           </TabsContent>
         ))}
       </Tabs>

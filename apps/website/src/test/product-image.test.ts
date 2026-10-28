@@ -19,4 +19,12 @@ describe('product image SSR with moduix and imagetools', () => {
       expect(html).not.toMatch(/(?:layout|priority|unstyled)=/)
     },
   )
+
+  it('preloads a hidden tab screenshot at low priority', () => {
+    const html = renderToStaticMarkup(
+      createElement(ProductImage, { view: 'mouse', alt: 'Rebind mouse', preload: true }),
+    )
+    expect(html).toContain('loading="eager"')
+    expect(html).toContain('fetchPriority="low"')
+  })
 })
