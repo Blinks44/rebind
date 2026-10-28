@@ -73,10 +73,6 @@ nonisolated final class EngineMailbox: Sendable {
         var foregroundPID: Int32?
         var workspaceRequest: WorkspaceRequest?
         var workspaceClaimed = false
-        var appleShortcutInProgress: Bool {
-            if case .appleShortcut = workspaceRequest?.target { return true }
-            return false
-        }
         var emergencyPause = false
         /// Profile steps requested by rules, applied by the UI model: +1 next, -1 previous.
         var profileStep = 0

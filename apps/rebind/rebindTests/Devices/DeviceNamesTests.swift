@@ -84,7 +84,10 @@ struct DeviceClassificationTests {
         let model = AppModel(store: store, readPermissions: { InputPermissions() })
         let shortcut = KeyboardShortcut(keyCode: 0, modifiers: .command)
         model.mailbox.state.withLock { $0.status = .active; $0.pending = [.shortcut(shortcut)] }
+        model.refreshActionError(.windowLayoutFailed)
         #expect(model.renameDevice(key: "046d:G603", original: "G603", name: "Mouse"))
+        // A display-only save does not resolve an unrelated action failure.
+        #expect(model.error == .windowLayoutFailed)
         #expect(model.mailbox.state.withLock { $0.status } == .active)
         #expect(model.mailbox.state.withLock { $0.pending } == [.shortcut(shortcut)])
         #expect(model.configuration.mouseHardware == configuration.mouseHardware)

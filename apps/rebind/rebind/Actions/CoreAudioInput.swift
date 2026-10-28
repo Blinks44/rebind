@@ -3,12 +3,8 @@ import CoreAudio
 /// Changes only the default input's advertised main mute control; never opens an audio stream.
 nonisolated enum CoreAudioInput {
     static func defaultDevice() -> AudioDeviceID? {
-        var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultInputDevice,
-            mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
-        var device: AudioDeviceID = kAudioObjectUnknown
-        var size = UInt32(MemoryLayout<AudioDeviceID>.size)
-        guard AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil, &size, &device) == noErr,
-              size == MemoryLayout<AudioDeviceID>.size, device != kAudioObjectUnknown else { return nil }
+        guard let device = try? AudioHardwareSystem.shared.defaultInputDevice?.id,
+              device != kAudioObjectUnknown else { return nil }
         return device
     }
 

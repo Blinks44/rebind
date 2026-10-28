@@ -22,8 +22,6 @@ import Carbon
     var lastRecording: RecordedInput?
     private(set) var diagnostics = DiagnosticSnapshot()
     private(set) var audioCapabilities = AudioOutputCapabilities()
-    private(set) var workspaceActionInProgress = false
-    private(set) var appleShortcutInProgress = false
     let loginItem: LoginItemModel
     /// Mouse makers' apps running now, and the connected mice with their hardware settings.
     let companionApps: CompanionAppMonitor
@@ -142,12 +140,7 @@ import Carbon
         guard !storageLocked, configuration[keyPath: keyPath] != value else { return }
         var updated = configuration
         updated[keyPath: keyPath] = value
-        do {
-            try persistConfiguration(updated)
-            configuration = updated
-            // Saving a UI preference does not resolve an unrelated action or validation error.
-            if error == .storageWriteFailed { error = nil }
-        } catch { self.error = .storageWriteFailed }
+        saveWithoutEngine(updated)
     }
 
     func start() {
@@ -214,8 +207,6 @@ import Carbon
         pointerApplication.setRunning(false)
         workspaceTask?.cancel()
         workspaceTask = nil
-        workspaceActionInProgress = false
-        appleShortcutInProgress = false
         timer?.invalidate()
         timer = nil
         NotificationCenter.default.removeObserver(self)
@@ -238,8 +229,6 @@ import Carbon
         let update = mailbox.state.withLock { state in
             let result = (status: state.status, trackpadStatus: state.trackpadStatus, magicMouseStatus: state.magicMouseStatus,
                           audioCapabilities: state.audioCapabilities,
-                          workspaceActionInProgress: state.workspaceRequest != nil && !state.appleShortcutInProgress,
-                          appleShortcutInProgress: state.appleShortcutInProgress,
                           recorded: state.recorded, paused: state.emergencyPause, failed: state.actionFailed,
                           profileStep: state.profileStep)
             state.profileStep = 0
@@ -253,8 +242,6 @@ import Carbon
         if trackpadStatus != update.trackpadStatus { trackpadStatus = update.trackpadStatus }
         if magicMouseStatus != update.magicMouseStatus { magicMouseStatus = update.magicMouseStatus }
         if audioCapabilities != update.audioCapabilities { audioCapabilities = update.audioCapabilities }
-        if workspaceActionInProgress != update.workspaceActionInProgress { workspaceActionInProgress = update.workspaceActionInProgress }
-        if appleShortcutInProgress != update.appleShortcutInProgress { appleShortcutInProgress = update.appleShortcutInProgress }
         refreshDiagnostics()
         if let captured = update.recorded, captured.request == recording {
             lastRecording = captured
@@ -492,16 +479,10 @@ import Carbon
     /// A display-only save: never reconfigure the engine or write mouse hardware settings.
     func renameDevice(key: String, original: String, name: String) -> Bool {
         guard !storageLocked else { return false }
-        do {
-            var updated = configuration
-            try updated.renameDevice(key: key, original: original, name: name)
-            if updated != configuration {
-                try persistConfiguration(updated)
-                configuration = updated
-            }
-            error = nil
-            return true
-        } catch { self.error = .storageWriteFailed; return false }
+        var updated = configuration
+        do { try updated.renameDevice(key: key, original: original, name: name) }
+        catch { self.error = .storageWriteFailed; return false }
+        return updated == configuration || saveWithoutEngine(updated)
     }
 
     /// Saves wheel and pointer settings for one mouse model and writes them to it.
@@ -531,12 +512,8 @@ import Carbon
                 updated.keyboardLighting[index] = settings
             } else { updated.keyboardLighting.append(settings) }
             guard updated != self.configuration else { return }
-            do {
-                try updated.validate()
-                try self.persistConfiguration(updated)
-                self.configuration = updated
-                self.error = nil
-            } catch { self.error = .storageWriteFailed }
+            do { try updated.validate() } catch { self.error = .storageWriteFailed; return }
+            self.saveWithoutEngine(updated)
         }
     }
 
@@ -695,6 +672,21 @@ import Carbon
             storageLocked = true
             error = .storageUnreadable
             throw ConfigurationStoreError.protectedOriginal
+        }
+    }
+
+    /// A UI/device-only save: never reconfigures the engine. It resolves only its own
+    /// storage failure, not an unrelated action or validation error.
+    @discardableResult private func saveWithoutEngine(_ updated: Configuration) -> Bool {
+        do {
+            try persistConfiguration(updated)
+            configuration = updated
+            if error == .storageWriteFailed { error = nil }
+            return true
+        } catch {
+            // A protected original has already locked storage with its own message.
+            if !storageLocked { self.error = .storageWriteFailed }
+            return false
         }
     }
 

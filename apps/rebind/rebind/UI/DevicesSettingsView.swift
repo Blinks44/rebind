@@ -31,9 +31,7 @@ struct DevicesSettingsView: View {
                     }
                 }
                 // Only an app that rewrites these settings affects this tab (it also disables the controls).
-                let inputs = model.mouseHardware.accessories + mice.map {
-                    ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID)
-                }
+                let inputs = model.mouseHardware.accessories + mice.map(\.accessory)
                 let keyboardControllers = inputs.filter {
                     model.mouseHardware.keyboardLighting[$0.id] != nil
                 }.compactMap { model.companionApps.controller(ofVendor: $0.vendorID, gaming: true) }
@@ -44,17 +42,16 @@ struct DevicesSettingsView: View {
                 }
                 if !mice.isEmpty || !model.mouseHardware.accessories.isEmpty {
                     ForEach(mice) { mouse in
-                        let device = ConnectedAccessory(id: mouse.id, name: mouse.name, kind: .mouse, vendorID: mouse.vendorID)
                         let lighting = model.mouseHardware.keyboardLighting[mouse.id]
                         MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
                                   hardwareLocked: controller(of: mouse) != nil,
                                   name: model.configuration.deviceName(for: mouse.deviceKey, original: mouse.name),
                                   battery: model.mouseHardware.batteries.first { $0.id == mouse.id },
                                   rename: {
-                                      renaming = ConnectedAccessory(id: mouse.id, name: mouse.name, kind: .mouse, vendorID: mouse.vendorID)
+                                      renaming = mouse.accessory
                                   }, save: model.setMouseHardware,
                                   lighting: lighting,
-                                  lightingSettings: lighting.map { lightingSettings(for: device, state: $0) },
+                                  lightingSettings: lighting.map { lightingSettings(for: mouse.accessory, state: $0) },
                                   lightingLocked: model.companionApps.controller(ofVendor: mouse.vendorID, gaming: true) != nil,
                                   lightingFailed: model.mouseHardware.lightingErrors.contains(mouse.id),
                                   saveLighting: model.setKeyboardLighting)

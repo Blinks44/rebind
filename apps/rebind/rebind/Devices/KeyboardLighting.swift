@@ -130,7 +130,7 @@ nonisolated final class KeyboardLighting {
             guard let raw = brightness.brightness(), raw <= info.maximum else { return nil }
             if info.capabilities & 4 != 0 {
                 guard let enabled = brightness.illumination() else { return nil }
-                value = enabled ? max(1, Int((Double(raw) * 100 / Double(info.maximum)).rounded())) : 0
+                value = enabled ? percentage(raw, maximum: info.maximum) : 0
             } else { value = Int((Double(raw) * 100 / Double(info.maximum)).rounded()) }
         } else { value = lastOutput?.brightness ?? 100 }
         return KeyboardLightingState(brightness: value,

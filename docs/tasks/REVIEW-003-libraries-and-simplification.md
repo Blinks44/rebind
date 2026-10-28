@@ -29,7 +29,7 @@ Inventory: **207 app Swift files / 17,507 lines**, plus the local HIDPP package,
 
 ## Findings
 
-Follow-up: [FIX-004](FIX-004-shortcuts-held-release.md) implements F1 and adopts Swift Subprocess; its software checks pass, with installed long-Shortcut/held-output acceptance still open. Findings below preserve the audit snapshot at `7a6b224`.
+Follow-up: [FIX-004](FIX-004-shortcuts-held-release.md) implements F1 and adopts Swift Subprocess; its software checks pass, with installed long-Shortcut/held-output acceptance still open. Build 27 adopts the native `AudioHardwareSystem` default input/output lookup from the Core Audio row ([2026-10-28 review](../history/2026-10.md#2026-10-28-review-of-october-2627-commits)); mute/volume HAL logic is unchanged. Findings below preserve the audit snapshot at `7a6b224`.
 
 ### F1 · P1 · Long Apple Shortcuts execution blocks held-key release
 

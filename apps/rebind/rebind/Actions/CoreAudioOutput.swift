@@ -26,12 +26,8 @@ nonisolated enum CoreAudioOutput {
     static func isDefaultOutput(_ device: UInt32) -> Bool { defaultDevice() == device }
 
     private static func defaultDevice() -> AudioDeviceID? {
-        var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultOutputDevice,
-            mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
-        var device: AudioDeviceID = kAudioObjectUnknown
-        var size = UInt32(MemoryLayout<AudioDeviceID>.size)
-        guard AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil, &size, &device) == noErr,
-              size == MemoryLayout<AudioDeviceID>.size, device != kAudioObjectUnknown else { return nil }
+        guard let device = try? AudioHardwareSystem.shared.defaultOutputDevice?.id,
+              device != kAudioObjectUnknown else { return nil }
         return device
     }
 

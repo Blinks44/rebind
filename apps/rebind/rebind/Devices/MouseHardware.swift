@@ -17,6 +17,7 @@ nonisolated struct ConnectedMouse: Identifiable, Equatable, Sendable {
     var hardware: LogitechDeviceState?
 
     var deviceKey: String { MouseHardwareSettings.deviceKey(vendorID: vendorID, name: name) }
+    var accessory: ConnectedAccessory { ConnectedAccessory(id: id, name: name, kind: .mouse, vendorID: vendorID) }
 }
 
 /// The charge of a connected mouse, keyboard or trackpad, for the Menu Bar item.
@@ -275,9 +276,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
 
     /// Coalesces color-panel changes; only the latest confirmed transaction reaches persistence.
     func applyLighting(_ settings: KeyboardLightingSettings, completion: @escaping @MainActor (Bool) -> Void) {
-        let inputs = Dictionary((accessories + mice.map {
-            ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID)
-        }).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first }).values
+        let inputs = Dictionary((accessories + mice.map(\.accessory)).map { ($0.id, $0) },
+                                uniquingKeysWith: { first, _ in first }).values
         for (location, session) in sessions where session.probed {
             for device in inputs where device.deviceKey == settings.deviceKey && device.id.hasPrefix(location + "#") {
                 guard let keyboard = session.mice.first(where: { $0.slot == Self.slot(of: device.id) }),
@@ -622,7 +622,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                                  charges: [(slot: UInt8?, battery: (percentage: Int?, charging: Bool))]) {
         guard sessions[location]?.io === io else { return }
         sessions[location]?.isReadingBattery = false
-        let inputs = mice.map { ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID) }
+        let inputs = mice.map(\.accessory)
             + (logitechAccessories[location] ?? [])
         let readings = charges.map { charge in
             (id: "\(location)#\(charge.slot.map(String.init) ?? "direct")",
@@ -652,7 +652,7 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             !(logitechBatteries[location]?.isEmpty == false)
         }.map(\.value)
         let preferred = logitech + peripheral
-        let inputs = mice.map { ConnectedAccessory(id: $0.id, name: $0.name, kind: .mouse, vendorID: $0.vendorID) }
+        let inputs = mice.map(\.accessory)
             + logitechAccessories.sorted { $0.key < $1.key }.flatMap(\.value) + otherInputs
         let bluetooth = Self.bluetoothBatteries(bluetoothBattery.batteries, matching: inputs)
         let preferredIDs = Set(preferred.map(\.id))

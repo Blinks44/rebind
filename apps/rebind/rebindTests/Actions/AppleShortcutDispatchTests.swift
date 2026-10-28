@@ -136,20 +136,18 @@ import Testing
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .up), secureInput: false))
     }
 
-    @Test func modelDisplaysLocalizedFailureAndDistinctProgress() throws {
+    @Test func modelDisplaysLocalizedFailure() {
         let model = AppModel(loadConfiguration: false)
-        let mailbox = mailbox()
-        let dispatch = try #require(mailbox.nextAction())
-        model.mailbox.state.withLock {
-            $0.actionFailed = .appleShortcut(target)
-            $0.workspaceRequest = WorkspaceRequest(dispatch: dispatch, target: .appleShortcut(target))
-        }
+        model.mailbox.state.withLock { $0.actionFailed = .appleShortcut(target) }
         model.refresh()
-        #expect(model.error == .appleShortcutFailed && model.appleShortcutInProgress)
-        #expect(!model.workspaceActionInProgress)
-        model.mailbox.state.withLock { $0.workspaceRequest = nil }
-        model.refresh()
-        #expect(model.appleShortcutInProgress == false)
+        #expect(model.error == .appleShortcutFailed)
+    }
+}
+
+private extension EngineMailbox.State {
+    var appleShortcutInProgress: Bool {
+        if case .appleShortcut = workspaceRequest?.target { return true }
+        return false
     }
 }
 
