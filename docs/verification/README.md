@@ -6,8 +6,8 @@
 | --- | --- |
 | Final release pass | [Remaining acceptance queue](release-candidate.md), [final app preparation and package](../tasks/REL-003-final-app-readiness.md); previously confirmed subsets retained |
 | October 18 manual checklist | [Reported passes, artifact limits and remaining checks](manual-test-2026-10-18.md); DEVICE-004/005, REVIEW-002 and INPUT-009/013/014 |
-| Keyboard/mouse and lifecycle | [Phase 1](phase-1.md), `phase-2-*`; [CAPABILITIES](../CAPABILITIES.md) routes specific input subsets |
-| Actions | `phase-4-*`; per-action contracts, dated checks and manual fault/guard walkthroughs |
+| Keyboard/mouse and lifecycle | [Phase 1](phase-1.md); [CAPABILITIES](../CAPABILITIES.md) routes specific input subsets. Retired Phase 2 reports: see [implementation history](../history/implementation-through-2026-10-10.md) |
+| Actions | [Window evidence](phase-4-windows.md), [ACTION-001](../tasks/ACTION-001-standard-actions.md); remaining per-action checks in the [release queue](release-candidate.md). Retired Phase 4 reports: see [implementation history](../history/implementation-through-2026-10-10.md) |
 | Trackpad | [Original tap](phase-5-four-finger-tap.md), [scheduling](trackpad-scheduling-timing.md), buffer/generation/focus reports and tap/editor records; INPUT-001–008 and UI-014 |
 | Permissions | [Gate correction](permissions.md), [native setup/recovery](permissions-native.md); UI-001 |
 | Settings and native integration | [General](general-settings-native.md), [Input/Language](input-language-native.md), [Advanced](advanced-settings-native.md), [About](about-native.md), [Mouse](mouse-native.md); corresponding UI tasks |

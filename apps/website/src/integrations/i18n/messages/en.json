@@ -185,7 +185,7 @@
   "rulesOf": "Bindings in {profile}",
   "menuEyebrow": "Menu bar and devices",
   "menuTitle": "Battery levels in the menu bar",
-  "menuLead": "See the charge of connected mice and keyboards next to the profile switch and Pause. Logitech keyboards also get one lighting color, brightness and an idle timer.",
+  "menuLead": "See the charge of connected mice and keyboards next to the profile switch and Pause. For Logitech keyboards, you can also set the lighting color, brightness and an idle timer.",
   "menuPreview": "Rebind menu with battery levels",
   "bindingsOn": "Bindings are on",
   "openRebind": "Open Rebind",

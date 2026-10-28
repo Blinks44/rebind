@@ -1,6 +1,6 @@
 # DOC-003: Maintainable project context and repository hygiene
 
-- Updated: 2026-10-23
+- Updated: 2026-10-28
 - Stage: done
 - Owner: Unassigned; documentation cleanup released after review
 - Baseline: `main` / `11cef13`; initial uncommitted DESIGN/STATE/monthly-history menu corrections preserved
@@ -14,6 +14,10 @@
 - Reconciled roadmap, release queue, signing/release guides and research handoffs: old self-signed/build-2/3 candidates and manual updater are historical; Sparkle is current. Preserved build-10 first-run/action and build-11 copy/accessibility reports with their evidence limits. Current installed-menu, published-update, hardware/platform/performance checks remain open.
 - Shortened signing backup records to portable recovery guidance, historical verification and current limits. Removed upstream workstation paths from one vendored SwiftUI reference and recorded the adaptation in the skill manifest; licenses unchanged. Deliberate `/Users/example` test fixtures remain.
 - Added narrow ignores for local environment values (safe `.env.example` retained), Claude private overrides and known Sparkle private-key exports. Shared agent settings/skills, docs/evidence, lockfiles, public keys and shipping artwork remain visible. No files untracked/deleted by ignore changes.
+
+## Follow-up cleanup — 2026-10-28
+
+User-requested cleanup at `19c7b1d`. Retired 20 Phase 2/4 verification reports (`phase-2-*`, `phase-4-*` except `phase-4-windows`) that no task linked; their remaining detailed checks moved to one [release queue](../verification/release-candidate.md) row and the texts stay retrievable with `git show 19c7b1d:docs/verification/<name>.md`. Repaired incoming links in history and verification records and two stale ACTION-001 anchors. STATE condensed from 13.8 to about 10 KiB; it now states schema 48 (was inconsistent) and indexes COPY-001. Pattern scan of tracked files found no credentials or workstation paths beyond `/Users/example` fixtures; ignored output (`build/`, `dist/`, `node_modules/`, `.wrangler/`, `xcuserdata/`, `.DS_Store`, `.idea/`) is not tracked. Local link/anchor check over tracked Markdown passes; `git diff --check` passes.
 
 ## Verification — 2026-10-23
 

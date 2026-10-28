@@ -92,4 +92,4 @@ Next: complete disposable native export/reset/import/explicit resume with restor
    menu operation with the main window closed, EN/DE/FR layout and VoiceOver.
 
 Import/export, automatic activation, per-app rules and system action catalog are
-outside this slice. Phase 4 audio actions are now implemented separately; see [their walkthrough](phase-4-audio.md).
+outside this slice. Phase 4 audio actions are now implemented separately; see their walkthrough.

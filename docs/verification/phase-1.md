@@ -38,10 +38,10 @@ contexts still need the full walkthrough; Phase 1 is not entirely verified.
   index 3. There is no fixed maximum button enum. Only events actually
   delivered by Quartz can be recorded. Primary/secondary buttons are deferred.
 - Repeats and drags belonging to a suppressed press are swallowed until
-  release. Long-press activation is described in the [hold walkthrough](phase-2-hold.md).
+  release. Long-press activation is described in the hold walkthrough.
   Held output, modifier-only keys, Caps Lock, Fn, click counting,
   gestures are deferred. Wheel support is described separately in the
-  [Phase 2 walkthrough](phase-2-wheel.md). Events carrying the secondary-Fn flag
+  Phase 2 walkthrough. Events carrying the secondary-Fn flag
   pass through rather than matching a chord with that flag silently removed.
 - Output uses a private CGEventSource and explicit modifier flags on key
   down/up, without synthesizing modifier key-downs. It therefore owns no

@@ -1,8 +1,8 @@
 # COPY-001: Natural, accurate app and website language
 
-- Updated: 2026-10-26
-- Stage: done
-- Owner: Unassigned; implementation, Sketch synchronization and targeted tester review complete
+- Updated: 2026-10-28
+- Stage: awaiting_verification (2026-10-28 follow-up; the original audit below is done)
+- Owner: Unassigned; follow-up implemented and packaged, user review of the revised strings pending
 - Ownership: Copy work based on `824b8c3`; release-script/permanent-link commit `5252dc1` preserved on main; scoped Sketch editing complete
 - Owned surfaces: Localizable catalog, six website message catalogs and device labels, app build number and affected project records; Navigation/InfoPlist reviewed without changes
 - Requirements: User-requested full source/localization copy audit; SPEC §§3–11 and localization/permission/privacy contracts
@@ -46,6 +46,17 @@ Completion preserves `5252dc1`, the other agent's committed permanent `Rebind.dm
 
 The user confirms completing the requested targeted review of the corrected app/website text associated with build 16. Exact environment, locale/width/per-control VoiceOver matrix and native-speaker coverage were not supplied; this closes the bounded copy follow-up, not broader platform/accessibility gates. Read-only artifact inspection during PERF-001 also confirms installed Rebind is 1.0.0 (16).
 
+## Follow-up pass — 2026-10-28
+
+User-requested second pass over all six languages, including strings added after build 16 (standard actions, lighting, error banner). Revised **81 app values across 48 keys** and **30 website values across 16 keys**; no keys added or removed, placeholders unchanged.
+
+- Accuracy: launch backups are described as copies saved when the configuration changed (last 10), matching `ConfigurationStore.backUpLoadedFile`; the physical-key fallback is now a key code; the Spotlight/Emoji hint says it works only when macOS uses the same shortcut; vendor apps are quit, not closed.
+- Calques and literal phrasing: Russian mouse output actions use "Щелчок … кнопкой" consistently with Double Left Click; Russian "Keep color" no longer reads as "save"; German uses Tastaturkurzbefehle for macOS keyboard shortcuts, fixes "unmute" rendered as "activate" and names the Force Quit window; French fixes the iPhone "silent mode" calque, Zoom In/Out colliding with Minimize, and "Clic central"; Spanish "idle" no longer reads as sleep (reposo); Chinese removes duplicated wording.
+- Website: Russian privacy text no longer repeats "доступ", German download button no longer says "Laden", lighting/menu sentences rewritten in all languages, high-resolution wheel and smooth-scrolling names match the app.
+
+Verification: website `pnpm check` (Paraglide, format, lint, TypeScript, 15 tests) passes. App `dev.sh test -only-testing:rebindTests`: **960 tests / 148 suites** pass. `release.sh` succeeds for **1.0.0 (29)**: app/DMG signatures verified, packaged `ru.lproj` contains the revised values. DMG `apps/rebind/build/release/Rebind.dmg`, SHA-256 `bde86889488f258d82e1c56e407c0aacc708cc92535592ea742ddc7ab9948722`. Not installed, not published; website not deployed. Sketch not updated: affected English source strings (backup description, key code, Magic Mouse scroll help, shortcut hint, lighting messages, website menu text) still need a Sketch sync if those frames show them.
+
 ## Next handoff
 
+- User: review the revised strings in build 29 and on a local website preview; then deploy the website and sync the changed English strings to Sketch when authorized.
 - Maintainer: publish/deploy only through the existing release workflow when separately authorized; the website uses the permanent latest-release link (currently published build 15).

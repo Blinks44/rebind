@@ -7,8 +7,8 @@ This is a technical summary of earlier implementation and verification. It is no
 - Capture uses a public active Quartz tap on an owned run loop, with bounded synchronous matching/mailbox and separately executed actions. Device-specific Quartz attribution was not established; physical-device routing/inventory was withdrawn. See [current decisions](../research/README.md) and [reference/license register](../research/DEPENDENCIES.md).
 - Accessibility and event-posting preflight are separate checks. The current tap does not require an additional Input Monitoring startup grant. Stable signing/TCC persistence and revocation remain runtime gates. See [permissions](../verification/permissions.md).
 - Trackpad acquisition uses an isolated private adapter informed by pinned Subsurface ABI. Contact recognition does not prove native gesture suppression, external-device support or click exclusivity. Probe results and app integration remain separate. See [trackpad contract](../verification/phase-5-four-finger-tap.md).
-- Spaces uses validated standard Control+arrow HID posting. Earlier session-posting and instant Dock-swipe approaches were superseded; the latter failed animation/edge acceptance. Dock notifications and screen locking remain experimental private paths. See [Spaces](../verification/phase-4-spaces.md), [Dock](../verification/phase-4-dock.md) and [lock](../verification/phase-4-lock-screen.md).
-- Previous Application uses public AX activation after cooperative AppKit activation failed background switching. See [application switching](../verification/phase-4-application-switch.md).
+- Spaces uses validated standard Control+arrow HID posting. Earlier session-posting and instant Dock-swipe approaches were superseded; the latter failed animation/edge acceptance. Dock notifications and screen locking remain experimental private paths. See Spaces, Dock and lock.
+- Previous Application uses public AX activation after cooperative AppKit activation failed background switching. See application switching.
 - Detailed dependency pins/licenses and mechanism alternatives remain in the research register and scoped verification records rather than a copied conversation log.
 
 ## Session log
@@ -58,18 +58,18 @@ Six first-launch/permission frames were saved and reviewed in Sketch. Their stat
 
 ### 2026-10-08–09: Keyboard, mouse, profiles and actions
 
-The scoped records retain actual test commands, implementations, reported happy paths and remaining checks:
+The scoped records retain actual test commands, implementations, reported happy paths and remaining checks. The Phase 2 and Phase 4 per-feature reports (unlinked names below) were retired on 2026-10-28; their open checks moved to the [release queue](../verification/release-candidate.md) and the full texts remain in Git: `git show 19c7b1d:docs/verification/<name>.md` (for example `phase-4-sleep`).
 
 | Area | Evidence |
 | --- | --- |
 | First capture/remap and permissions | [Phase 1](../verification/phase-1.md), [permissions](../verification/permissions.md) |
-| Wheel, double and long press | [Wheel](../verification/phase-2-wheel.md), [double](../verification/phase-2-double-press.md), [hold](../verification/phase-2-hold.md) |
-| Pointer gestures, lifecycle and diagnostics | [Pointer](../verification/phase-2-pointer-gesture.md), [lifecycle](../verification/phase-2-lifecycle.md), [diagnostics](../verification/phase-2-diagnostics.md) |
+| Wheel, double and long press | Wheel, double, hold |
+| Pointer gestures, lifecycle and diagnostics | Pointer, lifecycle, diagnostics |
 | Manual profiles | [Profiles](../verification/profiles.md) |
-| Audio, opening and Shortcuts | [Audio](../verification/phase-4-audio.md), [opening](../verification/phase-4-opening.md), [Shortcuts](../verification/phase-4-shortcuts.md) |
-| Windows and application switching | [Windows](../verification/phase-4-windows.md), [layouts](../verification/phase-4-window-layout.md), [cycling](../verification/phase-4-window-cycle.md), [switching](../verification/phase-4-application-switch.md) |
-| Application commands and sleep | [Commands](../verification/phase-4-application-commands.md), [sleep](../verification/phase-4-sleep.md) |
-| Mouse output, media and system actions | [Mouse output](../verification/phase-4-mouse-output.md), [media](../verification/phase-4-media.md), [Spaces](../verification/phase-4-spaces.md), [lock](../verification/phase-4-lock-screen.md) |
+| Audio, opening and Shortcuts | Audio, opening, Shortcuts |
+| Windows and application switching | [Windows](../verification/phase-4-windows.md), layouts, cycling, switching |
+| Application commands and sleep | Commands, sleep |
+| Mouse output, media and system actions | Mouse output, media, Spaces, lock |
 
 Build/signature checks used the recorded Apple Silicon macOS 27.0.1 / Xcode 27 / Swift 6.4 environment with deployment target 26. Universal x86_64/arm64 compilation does not establish Intel or macOS 26 runtime compatibility. Temporary logs and result bundles are local artifacts, not required repository handoff material.
 
