@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-28**, checkout `main`. Published/source **1.1.0 (31)**, schema **48**; tag `v1.1.0` identifies `29d8fdb`. Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-28**, checkout `main`. Published/source **1.2.0 (33)**, schema **48**; tag `v1.2.0` identifies `87769ca` ([REL-007](tasks/REL-007-release-1.2.0.md): Devices moved into the main window, [UI-025](tasks/UI-025-devices-in-main-window.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -28,8 +28,8 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
-| [UI-025](tasks/UI-025-devices-in-main-window.md) | awaiting_verification: Devices moved from Settings to the main-window sidebar in build 32 (Sketch 2026-10-28). Installed ⌘6/VoiceOver/widths/menu route. |
-| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Review build-29 strings and the local site, deploy the website, sync changed English strings to Sketch. |
+| [UI-025](tasks/UI-025-devices-in-main-window.md) | awaiting_verification: Devices in the main-window sidebar, published in 1.2.0 (33). Installed ⌘6/VoiceOver/widths/menu route. |
+| [COPY-001](tasks/COPY-001-app-and-website-language.md) | Review build-29 strings and the local site, deploy the website (now also the 1.2.0 lighting-note path), sync changed English strings to Sketch. |
 | [FIX-004](tasks/FIX-004-shortcuts-held-release.md) | Check installed long-Shortcut held release/order and pause/quit (build 26 fix). |
 | [FIX-003](tasks/FIX-003-menu-error-presentation.md) | Installed keyboard/VoiceOver/menu hover/unsupported-window recovery (build 24 fix). |
 | [PERF-001](tasks/PERF-001-background-wakeups.md) | Controlled CPU/scrolling/typing and companion/audio/protected-context checks. |
