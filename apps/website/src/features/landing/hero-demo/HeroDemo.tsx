@@ -14,11 +14,11 @@ import {
 } from '@moduix/react/carousel'
 import {
   ArrowLeft,
-  PanelsTopLeft,
+  LayoutGrid,
+  Monitor,
   Pause,
   Play,
   SquareArrowRight,
-  SquareX,
   type LucideIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -83,18 +83,18 @@ export function HeroDemo() {
   const examples: DemoExample[] = [
     {
       keys: ['⌃', '⌥', 'J'],
-      title: m.nextDesktop(),
-      category: m.spaces(),
+      title: m.nextSpace(),
+      category: m.catSpaces(),
       icon: SquareArrowRight,
     },
     {
       keys: ['F13'],
       title: m.missionControl(),
-      category: m.windows(),
-      icon: PanelsTopLeft,
+      category: m.catSpaces(),
+      icon: LayoutGrid,
     },
-    { keys: ['⌥', 'W'], title: m.closeWindow(), category: m.windows(), icon: SquareX },
-    { keys: [m.button4()], title: m.goBack(), category: m.navigation(), icon: ArrowLeft },
+    { keys: [m.button4()], title: m.goBack(), category: m.catWindows(), icon: ArrowLeft },
+    { keys: [m.threeTap()], title: m.showDesktop(), category: m.catSpaces(), icon: Monitor },
   ]
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 700px)')
@@ -130,7 +130,7 @@ export function HeroDemo() {
         return
       if (event.key.length !== 1 && !/^F\d{1,2}$/.test(event.key)) return
       setPressed(event.key.toUpperCase())
-      setExample(event.key.toLowerCase() === 'w' ? 2 : event.key === 'F13' ? 1 : 0)
+      setExample(event.key === 'F13' ? 1 : 0)
     }
     window.addEventListener('keydown', showKey)
     return () => window.removeEventListener('keydown', showKey)

@@ -36,6 +36,7 @@
   --moduix-tabs-tab-padding-x: 18px;
   --moduix-tabs-tab-font-size: 14px;
   --moduix-tabs-indicator-radius: 999px;
+  --moduix-tabs-indicator-size: 36px;
   --moduix-tabs-indicator-bg: #fff;
   --moduix-tabs-indicator-shadow: 0 2px 5px #0f172a0f;
 }

@@ -29,15 +29,30 @@ for (const locale of settings.locales) {
       'heroTitle',
       'heroAccent',
       'devicesTitle',
+      'timingTitle',
+      'mouseTitle',
+      'gesturesTitle',
       'actionsTitle',
-      'featuresTitle',
+      'profilesTitle',
+      'menuTitle',
       'privacyTitle',
       'installTitle',
       'questions',
       'ctaTitle',
     ])
       assert.ok(html.includes(messages[key]), `Missing section ${locale}/${key}`)
-    for (const id of ['features', 'devices', 'actions', 'install', 'faq'])
+    for (const id of [
+      'devices',
+      'timing',
+      'mouse',
+      'gestures',
+      'actions',
+      'profiles',
+      'menu-bar',
+      'privacy',
+      'install',
+      'faq',
+    ])
       assert.ok(html.includes(`id="${id}"`))
     assert.ok(html.includes('type="image/webp"'))
     assert.ok(html.includes('data-slot="image-root"'))

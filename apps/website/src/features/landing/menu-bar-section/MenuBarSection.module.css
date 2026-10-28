@@ -1,0 +1,144 @@
+.card {
+  padding: 48px;
+}
+/* A plain desktop with a menu bar; the menu copies app screen 51 (Light). */
+.desktop {
+  position: relative;
+  margin: 0;
+  min-height: 320px;
+  border: 1px solid var(--rebind-separator);
+  border-radius: 14px;
+  background: #f4f5f8;
+}
+.bar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding-left: 40%;
+  border-bottom: 1px solid var(--rebind-separator);
+  color: var(--moduix-foreground);
+}
+.menu {
+  position: absolute;
+  top: 32px;
+  left: calc(40% - 12px);
+  width: 236px;
+  padding: 8px 14px;
+  border: 1px solid #0f172a14;
+  border-radius: 12px;
+  background: #f1ece6f2;
+  box-shadow: 0 12px 30px #0f172a24;
+  font-size: 13px;
+}
+.menu p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  min-height: 22px;
+}
+.menu p > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.menu kbd {
+  color: #3c3c4380;
+  font-family: inherit;
+}
+.menu hr {
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid #0f172a1a;
+}
+.muted {
+  color: #3c3c4380;
+}
+.level {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #3c3c4380;
+}
+.level[data-low='true'] {
+  color: #e5484d;
+}
+.level > svg {
+  color: #3c3c43bf;
+}
+.lighting {
+  padding: 24px 28px;
+}
+.lighting dl {
+  margin: 12px 0 0;
+}
+.lighting dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+}
+.lighting dl > div + div {
+  border-top: 1px solid var(--rebind-separator);
+}
+.lighting dt {
+  font-size: 16px;
+}
+.lighting dd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.slider {
+  width: clamp(48px, 20vw, 110px);
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--moduix-primary) 50%, var(--rebind-separator) 50%);
+  position: relative;
+}
+.slider::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 10px);
+  top: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px #0f172a33;
+}
+.color {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--moduix-primary);
+}
+.note {
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+@media (max-width: 700px) {
+  .card {
+    padding: 24px;
+  }
+  .desktop {
+    min-height: 324px;
+  }
+  .bar {
+    padding-left: 32px;
+  }
+  .menu {
+    left: 20px;
+  }
+  .lighting {
+    padding: 20px 24px;
+  }
+}

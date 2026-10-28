@@ -19,11 +19,11 @@ export function SiteFooter() {
         </div>
         <nav aria-label={m.product()}>
           <h2>{m.product()}</h2>
-          <Link to="/" hash="features">
-            {m.features()}
-          </Link>
           <Link to="/" hash="devices">
             {m.devices()}
+          </Link>
+          <Link to="/" hash="actions">
+            {m.actions()}
           </Link>
           <Link to="/" hash="install">
             {m.install()}

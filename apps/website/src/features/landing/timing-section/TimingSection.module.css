@@ -1,0 +1,134 @@
+.rows {
+  display: grid;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  grid-template-areas:
+    'label label'
+    'input action';
+  align-items: center;
+  column-gap: 40px;
+  row-gap: 12px;
+}
+.row > p {
+  grid-area: label;
+}
+.input {
+  grid-area: input;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.row > div:last-child {
+  grid-area: action;
+}
+.track {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  background: linear-gradient(var(--rebind-separator), var(--rebind-separator)) center / 100% 1px
+    no-repeat;
+}
+.track > span {
+  position: absolute;
+  inset-block: 0;
+  left: 16px;
+  width: 28px;
+  border-radius: 999px;
+  background: var(--moduix-primary);
+  transform-origin: left;
+}
+.track[data-kind='double'] > span {
+  width: 24px;
+}
+.track[data-kind='double'] > span + span {
+  left: 56px;
+}
+.track[data-kind='hold'] > span {
+  width: 76%;
+}
+/* The default 500 ms hold threshold, drawn at the same place as in Sketch. */
+.track > i {
+  position: absolute;
+  left: 59%;
+  top: -9px;
+  height: 28px;
+  border-left: 2px solid var(--moduix-primary);
+  padding: 30px 0 0 6px;
+  color: var(--rebind-text-secondary);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.note {
+  margin: 28px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--rebind-separator);
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+}
+.roles dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 16px;
+  align-items: center;
+  margin: 16px 0 0;
+}
+.roles dl > div {
+  display: contents;
+}
+.roles dt {
+  font-size: 16px;
+}
+.roles dd {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+.roles dd > span {
+  color: var(--rebind-text-secondary);
+  font-weight: 400;
+}
+/* Key presses draw themselves as the card scrolls into view; static where unsupported. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .track > span {
+      animation: press linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 45%;
+    }
+    .track[data-kind='double'] > span + span {
+      animation-range: entry 70% cover 50%;
+    }
+  }
+}
+@keyframes press {
+  from {
+    transform: scaleX(0);
+  }
+}
+@media (max-width: 700px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'label'
+      'input'
+      'action';
+  }
+  .input {
+    gap: 16px;
+  }
+  .row + .row {
+    padding-top: 4px;
+  }
+}

@@ -1,0 +1,135 @@
+.card {
+  display: grid;
+  gap: 24px;
+  padding: 44px 48px 40px;
+}
+.surface {
+  position: relative;
+  aspect-ratio: 604 / 348;
+  border: 1px solid var(--rebind-separator);
+  border-radius: 22px;
+  background: #f4f5f8;
+  overflow: hidden;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+}
+.corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 17%;
+  height: 23%;
+  border-bottom-left-radius: 14px;
+  background: var(--moduix-accent);
+  opacity: 0.45;
+  transition: opacity 0.2s;
+}
+.corner[data-active='true'] {
+  opacity: 1;
+}
+.fingers {
+  display: flex;
+  gap: 0;
+  height: 76px;
+  align-items: center;
+}
+.fingers > span {
+  width: 60px;
+  height: 60px;
+  margin-inline: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--moduix-primary) 0 14px, #2f66f526 15px);
+}
+.fingers > span:nth-child(even) {
+  margin-top: -36px;
+}
+.fingers[data-gesture='corner'] {
+  position: absolute;
+  top: 2%;
+  right: 4%;
+  height: auto;
+}
+.fingers[data-gesture='corner'] > span {
+  margin-top: 0;
+}
+.caption {
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 15px;
+  text-align: center;
+}
+.chips {
+  justify-content: flex-start;
+}
+.badge {
+  justify-self: start;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.badge > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d98a00;
+}
+.note {
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fingers > span {
+    animation: touch 0.6s ease-out both;
+  }
+  .fingers[data-gesture='double2'] > span {
+    animation: touch 0.6s ease-out 2;
+  }
+}
+@keyframes touch {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+@media (max-width: 1000px) {
+  .badge {
+    justify-self: center;
+  }
+  .note {
+    text-align: center;
+  }
+}
+@media (max-width: 700px) {
+  .card {
+    padding: 24px;
+  }
+  .surface {
+    aspect-ratio: 302 / 190;
+    gap: 16px;
+  }
+  .fingers > span {
+    width: 48px;
+    height: 48px;
+    background: radial-gradient(circle, var(--moduix-primary) 0 11px, #2f66f526 12px);
+  }
+  .fingers > span:nth-child(even) {
+    margin-top: -28px;
+  }
+  .caption {
+    font-size: 14px;
+  }
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -24px;
+    padding: 2px 24px 6px;
+    scrollbar-width: none;
+  }
+  .chips > * {
+    flex: none;
+  }
+}

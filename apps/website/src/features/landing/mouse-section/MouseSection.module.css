@@ -1,0 +1,196 @@
+.compass {
+  position: relative;
+  min-height: 520px;
+  display: grid;
+  place-items: center;
+}
+/* Button 4 sits in the middle of a dashed ring; the four directions surround it. */
+.key {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.key::before {
+  content: '';
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border: 1.5px dashed var(--rebind-separator);
+  border-radius: 50%;
+}
+.compass ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px minmax(0, 1fr);
+  grid-template-rows: auto 160px auto;
+  grid-template-areas:
+    'up up up'
+    'left . right'
+    'down down down';
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.compass li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.up {
+  grid-area: up;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+}
+.down {
+  grid-area: down;
+  flex-direction: column;
+}
+.left {
+  grid-area: left;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+.right {
+  grid-area: right;
+}
+.arrow {
+  flex: none;
+  color: var(--moduix-primary);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 8px;
+  border: 1px solid var(--rebind-card-border);
+  border-radius: 14px;
+  background: #fbfcfe;
+  box-shadow: 0 6px 16px #0f172a0f;
+  font-size: 16px;
+  font-weight: 500;
+  min-width: 0;
+}
+.pill > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--moduix-accent);
+  color: var(--moduix-primary);
+}
+.settings {
+  padding: 24px 28px;
+}
+.settings dl {
+  margin: 12px 0 0;
+}
+.settings dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+}
+.settings dl > div + div {
+  border-top: 1px solid var(--rebind-separator);
+}
+.settings dt {
+  font-size: 16px;
+}
+.settings dd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+  text-align: end;
+  white-space: nowrap;
+}
+.slider {
+  width: clamp(48px, 20vw, 110px);
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--moduix-primary) 45%, var(--rebind-separator) 45%);
+  position: relative;
+}
+.slider::after {
+  content: '';
+  position: absolute;
+  left: calc(45% - 10px);
+  top: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px #0f172a33;
+}
+.switch {
+  flex: none;
+  width: 40px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--moduix-primary);
+  position: relative;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.note {
+  margin: 0;
+  color: var(--rebind-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+@media (max-width: 700px) {
+  .compass {
+    min-height: 0;
+    display: block;
+  }
+  .key {
+    position: static;
+    display: block;
+    margin-bottom: 20px;
+  }
+  .key::before {
+    content: none;
+  }
+  .compass ul {
+    display: grid;
+    grid-template: none;
+    gap: 8px;
+  }
+  .compass li {
+    flex-direction: row;
+    grid-area: auto;
+  }
+  .settings {
+    padding: 20px 24px;
+  }
+  .settings dd {
+    gap: 8px;
+  }
+  .slider {
+    width: 56px;
+  }
+}

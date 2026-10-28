@@ -50,9 +50,6 @@
   margin: 10px 0 0;
   color: var(--rebind-text-secondary);
 }
-.section {
-  padding-block: 96px 80px;
-}
 .center {
   text-align: center;
 }
@@ -80,192 +77,6 @@
 .center > .lead {
   max-width: 700px;
   margin-inline: auto;
-}
-.bindingCards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  margin-top: 48px;
-}
-.bindingCard,
-.featureCard,
-.privacyCard {
-  background: var(--moduix-card);
-  border: 1px solid var(--rebind-card-border);
-  box-shadow: var(--rebind-card-shadow);
-  --moduix-card-radius: 24px;
-}
-.bindingCard {
-  padding: 36px;
-  min-height: 520px;
-}
-.bindingCard h3 {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 0 0 10px;
-}
-.bindingCard > p {
-  color: var(--rebind-text-secondary);
-  font-size: 16px;
-  line-height: 22px;
-  margin: 0;
-  min-height: 44px;
-}
-.triggerGroup {
-  margin-top: 28px;
-}
-.triggerGroup h4 {
-  color: var(--rebind-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  font-size: 11px;
-  font-weight: 500;
-  margin: 0 0 14px;
-}
-.triggerGroup > div {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.actionList {
-  list-style: none;
-  padding: 0;
-  margin: 24px 0 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px 16px;
-}
-.actionList li {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  font-size: 15px;
-  line-height: 20px;
-}
-.tile {
-  background: var(--moduix-accent);
-  color: var(--moduix-primary);
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  flex: none;
-}
-.actionList .tile {
-  width: 44px;
-  height: 44px;
-}
-.featureGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin-top: 48px;
-}
-.featureCard {
-  padding: 28px;
-  min-height: 244px;
-}
-.featureCard h3 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 24px 0 10px;
-}
-.featureCard p {
-  font-size: 16px;
-  line-height: 23px;
-  color: var(--rebind-text-secondary);
-  margin: 0;
-}
-.privacy {
-  display: grid;
-  grid-template-columns: minmax(0, 500px) minmax(0, 600px);
-  gap: 100px;
-  align-items: center;
-  padding-block: 96px;
-}
-.privacyHeading {
-  font-size: 44px;
-  line-height: 52px;
-  margin-top: 24px;
-}
-.privacy .lead {
-  font-size: 18px;
-  line-height: 28px;
-}
-.permission {
-  margin-top: 36px;
-  padding: 16px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-direction: row;
-  background: #ffffffd9;
-  border: 1px solid var(--rebind-card-border);
-}
-.permission .tile {
-  width: 40px;
-  height: 40px;
-}
-.permission strong {
-  font-size: 15px;
-  font-weight: 500;
-}
-.permission p {
-  font-size: 12px;
-  margin: 6px 0 0;
-  color: var(--rebind-text-secondary);
-}
-.permission > span:last-child {
-  margin-left: auto;
-  color: #15704a;
-  background: #18a56a1a;
-  font-size: 11px;
-  flex-shrink: 0;
-}
-.privacyCard {
-  padding: 40px;
-}
-.privacyCard h3 {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--rebind-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 24px;
-}
-.privacyCard h3:not(:first-child) {
-  padding-top: 28px;
-  margin-top: 28px;
-  border-top: 1px solid var(--rebind-separator);
-}
-.privacyCard ul {
-  display: grid;
-  gap: 20px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.privacyCard li {
-  display: flex;
-  align-items: start;
-  gap: 14px;
-  font-size: 16px;
-  line-height: 24px;
-}
-.privacyCard li svg {
-  color: #15704a;
-  background: #18a56a15;
-  padding: 3px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  flex: none;
-}
-.privacyCard ul:last-child svg {
-  color: var(--rebind-text-secondary);
-  background: #0f172a08;
 }
 .install {
   padding-block: 96px 48px;
@@ -345,29 +156,10 @@
   color: var(--rebind-text-secondary);
   margin: 0 0 28px;
 }
-@media (max-width: 1000px) {
-  .bindingCards {
-    gap: 20px;
-  }
-  .bindingCard {
-    padding: 24px;
-  }
-  .actionList {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .featureGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .privacy {
-    gap: 40px;
-    grid-template-columns: 1fr 1fr;
-  }
-  .permission {
-    flex-wrap: wrap;
-  }
-}
 @media (max-width: 700px) {
+  .install {
+    padding-block: 48px;
+  }
   .hero {
     padding: 36px 0 48px;
   }
@@ -382,10 +174,6 @@
     line-height: 28px;
     margin-bottom: 24px;
   }
-  .section,
-  .install {
-    padding-block: 48px;
-  }
   .heading {
     font-size: 30px;
     line-height: 36px;
@@ -395,104 +183,6 @@
   .lead {
     font-size: 17px;
     line-height: 26px;
-  }
-  .bindingCards {
-    grid-template-columns: 1fr;
-    margin-top: 28px;
-  }
-  .bindingCard {
-    padding: 24px;
-    min-height: 0;
-  }
-  .bindingCard h3 {
-    font-size: 20px;
-  }
-  .bindingCard > p {
-    font-size: 15px;
-    min-height: 0;
-  }
-  .triggerGroup {
-    margin-top: 24px;
-  }
-  .triggerGroup > div {
-    gap: 8px;
-  }
-  .actionList {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 12px;
-  }
-  .actionList li {
-    flex-direction: column;
-    align-items: start;
-    gap: 8px;
-    font-size: 13px;
-  }
-  .actionList .tile {
-    width: 36px;
-    height: 36px;
-  }
-  .featureGrid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-top: 28px;
-  }
-  .featureCard {
-    position: relative;
-    padding: 20px 20px 20px 76px;
-    min-height: 116px;
-    --moduix-card-radius: 20px;
-  }
-  .featureCard > .tile {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    width: 36px;
-    height: 36px;
-  }
-  .featureCard h3 {
-    font-size: 17px;
-    margin: 0 0 8px;
-  }
-  .featureCard p {
-    font-size: 14px;
-    line-height: 21px;
-  }
-  .privacy {
-    padding-block: 48px;
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-  .privacy .lead {
-    font-size: 17px;
-    line-height: 26px;
-  }
-  .permission {
-    margin-top: 24px;
-    gap: 10px;
-    padding: 12px;
-  }
-  .permission p {
-    font-size: 10px;
-  }
-  .permission > div {
-    flex: 1;
-  }
-  .permission > span:last-child {
-    font-size: 10px;
-  }
-  .privacyCard {
-    padding: 24px;
-  }
-  .privacyCard li {
-    font-size: 14px;
-    line-height: 22px;
-    gap: 10px;
-  }
-  .privacyCard ul {
-    gap: 14px;
-  }
-  .privacyCard h3 {
-    margin-bottom: 18px;
   }
   .steps {
     grid-template-columns: 1fr;

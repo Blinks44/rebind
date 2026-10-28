@@ -1,0 +1,159 @@
+/* Rebind.sketch > 05 · Website > Web · Landing · Desktop/Mobile, WEB-002 sections. */
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 440px) minmax(0, 700px);
+  grid-template-areas:
+    'text visual'
+    'extras visual';
+  grid-template-rows: auto 1fr;
+  column-gap: 60px;
+  row-gap: 32px;
+  justify-content: space-between;
+  align-items: start;
+  padding-block: 80px;
+  scroll-margin-top: 72px;
+}
+.visualFirst {
+  grid-template-columns: minmax(0, 700px) minmax(0, 440px);
+  grid-template-areas:
+    'visual text'
+    'visual extras';
+}
+.text {
+  grid-area: text;
+}
+.visual {
+  grid-area: visual;
+  min-width: 0;
+}
+.extras {
+  grid-area: extras;
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+.eyebrow {
+  color: var(--moduix-primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  margin: 0;
+}
+.title {
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  letter-spacing: -1.6px;
+  margin: 12px 0 16px;
+  text-wrap: balance;
+}
+.lead {
+  color: var(--rebind-text-secondary);
+  font-size: 18px;
+  line-height: 28px;
+  margin: 0;
+}
+.card {
+  --moduix-card-radius: 24px;
+  background: var(--moduix-card);
+  border: 1px solid var(--rebind-card-border);
+  box-shadow: var(--rebind-card-shadow);
+  padding: 36px;
+}
+.groupLabel {
+  color: var(--rebind-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+.action {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.action > span:last-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.action strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.action strong + span {
+  color: var(--rebind-text-secondary);
+  font-size: 14px;
+}
+.tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--moduix-accent);
+  color: var(--moduix-primary);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.chip {
+  border-radius: 999px;
+  border: 1px solid var(--moduix-border);
+  background: #ffffff9e;
+  color: var(--moduix-foreground);
+  font-size: 13px;
+  font-weight: 500;
+  padding-inline: 14px;
+}
+.chip[data-state='on'] {
+  border-color: transparent;
+  background: var(--moduix-accent);
+  color: var(--moduix-primary);
+}
+@media (max-width: 1000px) {
+  .section,
+  .visualFirst {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'text'
+      'visual'
+      'extras';
+    grid-template-rows: auto;
+    max-width: 700px;
+    margin-inline: auto;
+    padding-block: 56px;
+  }
+  .text {
+    text-align: center;
+  }
+}
+@media (max-width: 700px) {
+  .section,
+  .visualFirst {
+    row-gap: 24px;
+    padding-block: 48px;
+  }
+  .title {
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: -0.7px;
+  }
+  .lead {
+    font-size: 17px;
+    line-height: 26px;
+  }
+  .card {
+    padding: 24px;
+  }
+}

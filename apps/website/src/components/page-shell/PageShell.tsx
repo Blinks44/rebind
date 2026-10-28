@@ -19,9 +19,9 @@ import styles from './PageShell.module.css'
 export function PageShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
   const links = [
-    ['features', m.features()],
     ['devices', m.devices()],
     ['actions', m.actions()],
+    ['profiles', m.profiles()],
     ['install', m.install()],
     ['faq', m.faq()],
   ] as const

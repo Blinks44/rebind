@@ -45,8 +45,8 @@ export function NotFoundPage() {
         </div>
         <nav className={styles.links} aria-label={m.product()}>
           {[
-            ['features', m.features()],
             ['devices', m.devices()],
+            ['actions', m.actions()],
             ['install', m.install()],
             ['faq', m.faq()],
           ].map(([hash, label]) => (
