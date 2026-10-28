@@ -34,6 +34,7 @@ nonisolated final class EngineMailbox: Sendable {
         var actionFailed: RebindAction?
         var hasPointerGestureRules = false
         var hasMagicMouseRules = false
+        var hasTrackpadRules = false
         /// Native mouse motion is also needed to reject a tap while the mouse body moves.
         var needsPointerMotion: Bool { isMatching && (hasPointerGestureRules || hasMagicMouseRules) }
         var enabled = false
@@ -109,6 +110,7 @@ nonisolated final class EngineMailbox: Sendable {
             rules = all.filter { capabilities.supports($0.value.action) }
             hasPointerGestureRules = rules.keys.contains { $0.trigger.isPointerGesture }
             hasMagicMouseRules = rules.keys.contains { $0.trigger.isMagicMouse }
+            hasTrackpadRules = rules.keys.contains { $0.trigger.isTrackpad }
         }
 
         /// Whether rules may match at all; ownership and the emergency bypass work regardless.

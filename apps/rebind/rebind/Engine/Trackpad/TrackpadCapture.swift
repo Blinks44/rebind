@@ -19,6 +19,11 @@ import Dispatch
     }
     private var surfaces = [Surface(kind: .builtIn), Surface(kind: .magicTrackpad)]
     private var timer: Timer?
+    private var controlRevision: UInt64?
+    private var controlAllowsCapture: Bool?
+
+    /// The scheduled deadline, including a distant deadline when capture is dormant.
+    var nextPollDate: Date? { timer?.fireDate }
 
     init(mailbox: EngineMailbox) { self.mailbox = mailbox }
 
@@ -41,9 +46,23 @@ import Dispatch
         reportDiagnostics(finishing: true)
     }
 
+    /// Configuration/status changes wake an otherwise dormant observer without idle polling.
+    func configurationChanged() { timer?.fireDate = Date() }
+
+    /// Piggybacks on the model's existing refresh, like Magic Mouse capture; unchanged state never wakes it.
+    func refreshControl() {
+        let control = mailbox.state.withLock { ($0.actionRevision, $0.canDispatch && $0.hasTrackpadRules) }
+        guard controlRevision != control.0 || controlAllowsCapture != control.1 else { return }
+        controlRevision = control.0
+        controlAllowsCapture = control.1
+        configurationChanged()
+    }
+
     @objc private func foregroundChanged() {
         for index in surfaces.indices { surfaces[index].session?.interrupt() }
         mailbox.updateTrackpadForeground(foregroundPID(), activationChanged: true)
+        // The app in front selects its own rules.
+        configurationChanged()
     }
 
     private func foregroundPID() -> Int32? {
@@ -76,6 +95,13 @@ import Dispatch
     /// Services both trackpads with one permission, foreground and held-modifier snapshot.
     func service(allowingInput: Bool, foregroundPID pid: Int32?, modifiers: ModifierSet) {
         let now = DispatchTime.now().uptimeNanoseconds
+        // No trackpad rule can match: sleep until configuration or status changes.
+        guard mailbox.state.withLock({ $0.canDispatch && $0.hasTrackpadRules }) else {
+            mailbox.state.withLock { $0.trackpadDiagnostics = nil }
+            stopCapture()
+            timer?.fireDate = .distantFuture
+            return
+        }
         guard allowingInput else {
             mailbox.state.withLock { $0.trackpadDiagnostics = nil }
             stopCapture()

@@ -9,6 +9,8 @@ nonisolated struct KeyboardLightingState: Equatable, Sendable {
     var brightnessValues = KeyboardLightingSettings.brightnessValues
     var supportsPower = true
     var supportsLowBattery = true
+    /// The native idle policy now on the device; nil hides the idle-timeout menu.
+    var powerPolicy: RGBEffects.PowerPolicy?
     var isEnabled: Bool { brightness > 0 }
 }
 
@@ -138,7 +140,9 @@ nonisolated final class KeyboardLighting {
             brightnessValues: brightness == nil ? [] : (rawBrightnessValues.isEmpty ? Array(1...100)
                 : Array(Set(rawBrightnessValues.map { percentage($0, maximum: info?.maximum ?? 100) })).sorted()),
             supportsPower: brightness != nil || zones.allSatisfy { $0.disabledEffect != nil },
-            supportsLowBattery: !isExperimental || rgb.powerMode() != nil)
+            supportsLowBattery: !isExperimental || rgb.powerMode() != nil,
+            // The zero-off timer mapping is measured on G915 only.
+            powerPolicy: isExperimental ? nil : rgb.powerPolicy())
     }
 
     func apply(_ settings: KeyboardLightingSettings, percentage: Int?, charging: Bool,
@@ -200,6 +204,12 @@ nonisolated final class KeyboardLighting {
                     abs(Int($0) - Int(requested)) < abs(Int($1) - Int(requested))
                 } ?? requested)
                 guard canWrite(), brightness.setBrightness(raw), brightness.brightness() == raw, canWrite() else { return false }
+            }
+        }
+        if !background, !isExperimental, let original = settings.devicePowerPolicy, let current = rgb.powerPolicy() {
+            let target = settings.idleTimeout.map { KeyboardLightingSettings.idlePolicy($0, from: current) } ?? original
+            if current != target {
+                guard canWrite(), rgb.setPowerPolicy(target), rgb.powerPolicy() == target else { return false }
             }
         }
         lastOutput = output

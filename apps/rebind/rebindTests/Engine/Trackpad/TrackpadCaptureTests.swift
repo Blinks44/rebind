@@ -1,8 +1,31 @@
+import Foundation
 import Synchronization
 import Testing
 @testable import rebind
 
 @MainActor struct TrackpadCaptureTests {
+    @Test func captureSleepsWithoutTrackpadRulesAndWakesOnConfiguration() {
+        let mailbox = EngineMailbox()
+        mailbox.configure(Configuration(isEnabled: true, bindings: [
+            rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
+        ]))
+        mailbox.state.withLock { $0.status = .active }
+        let capture = TrackpadCapture(mailbox: mailbox)
+        capture.start()
+        defer { capture.stop() }
+        capture.refreshControl()
+        capture.service(allowingInput: true, foregroundPID: 100, modifiers: [])
+        #expect((capture.nextPollDate ?? .distantPast) > Date().addingTimeInterval(86_400))
+        let deadline = capture.nextPollDate
+        capture.refreshControl()
+        #expect(capture.nextPollDate == deadline) // An unchanged model refresh must not poll.
+        mailbox.configure(Configuration(isEnabled: true, bindings: [
+            rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing)
+        ]))
+        capture.refreshControl()
+        #expect((capture.nextPollDate ?? .distantFuture) < Date().addingTimeInterval(1))
+    }
+
     @Test(arguments: [1, 2], 0...2)
     func trackpadCleanupPreservesMouseOutputUntilWorkerDelivery(_ fingers: Int, _ cleanup: Int) throws {
         let mailbox = EngineMailbox()

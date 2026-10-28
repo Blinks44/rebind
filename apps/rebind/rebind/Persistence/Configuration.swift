@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 47
+    static let currentSchemaVersion = 48
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -106,7 +106,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             try validate()
             return self
         }
-        guard schemaVersion >= 47 || keyboardLighting.allSatisfy({ KeyboardLightingSettings.brightnessValues.contains($0.brightness) }),
+        guard schemaVersion >= 48 || keyboardLighting.allSatisfy({ $0.idleTimeout == nil && $0.devicePowerPolicy == nil }),
+              schemaVersion >= 47 || keyboardLighting.allSatisfy({ KeyboardLightingSettings.brightnessValues.contains($0.brightness) }),
               schemaVersion >= 46 || keyboardLighting.isEmpty,
               schemaVersion >= 41 || deviceNames.isEmpty,
               schemaVersion >= 40 || showsBatteryInMenu,

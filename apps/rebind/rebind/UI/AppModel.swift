@@ -239,6 +239,7 @@ import Carbon
         }
         if status != update.status { status = update.status }
         magicMouseCapture?.refreshControl()
+        trackpadCapture?.refreshControl()
         if trackpadStatus != update.trackpadStatus { trackpadStatus = update.trackpadStatus }
         if magicMouseStatus != update.magicMouseStatus { magicMouseStatus = update.magicMouseStatus }
         if audioCapabilities != update.audioCapabilities { audioCapabilities = update.audioCapabilities }
@@ -708,6 +709,7 @@ import Carbon
 
     private func configureEngine(_ configuration: Configuration) {
         magicMouseCapture?.configurationChanged()
+        trackpadCapture?.configurationChanged()
         // Read AppKit's system preference on MainActor, never in the event callback.
         let interval = NSEvent.doubleClickInterval
         let nanoseconds: UInt64 = interval.isFinite && interval > 0 && interval <= 60

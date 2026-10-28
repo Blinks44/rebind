@@ -1,4 +1,5 @@
 import AppKit
+import HIDPP
 import SwiftUI
 import XCTest
 @testable import rebind
@@ -8,20 +9,22 @@ import XCTest
     func testLightingFitsFullDevicesWindowInAllLanguagesAndStates() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindLightingLayout-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
+        let policy = RGBEffects.PowerPolicy(payload: [0, 0, 0, 0, 120, 1, 44])
         for mode in 0...8 {
             let device = ConnectedAccessory(id: "fixture#1", name: mode < 5 ? "G915 TKL" : "RGB Mouse",
                 kind: mode < 5 ? .keyboard : .mouse, vendorID: 0x046D)
             var configuration = Configuration()
             configuration.hasCompletedSetup = true
             configuration.keyboardLighting = [KeyboardLightingSettings(deviceKey: device.deviceKey, isEnabled: mode != 1,
-                brightness: 50, color: 0x2080FF, lowBattery: mode == 2 ? .blinkingRed : .keepColor)]
+                brightness: 50, color: 0x2080FF, lowBattery: mode == 2 ? .blinkingRed : .keepColor,
+                idleTimeout: mode == 0 ? 300 : nil, devicePowerPolicy: mode == 0 ? policy : nil)]
             let store = ConfigurationStore(url: directory.appending(path: "\(mode)/configuration.json"))
             try store.save(configuration)
             let mouse = ConnectedMouse(id: device.id, name: device.name, transport: .usb, vendorID: device.vendorID)
             let hardware = MouseHardware(mice: mode < 5 ? [] : [mouse], accessories: mode < 5 ? [device] : [],
                 lighting: [device.id: KeyboardLightingState(brightness: mode == 1 ? 0 : 50, supportsBlinking: mode < 7,
                     isExperimental: mode >= 5, brightnessValues: mode >= 6 ? [] : [12, 25, 50, 100],
-                    supportsPower: mode != 7, supportsLowBattery: mode != 8)],
+                    supportsPower: mode != 7, supportsLowBattery: mode != 8, powerPolicy: mode < 5 ? policy : nil)],
                 batteries: mode == 7 ? [] : [DeviceBattery(id: device.id, name: device.name, kind: device.kind,
                                           percentage: mode == 2 ? 8 : 48, isCharging: false, vendorID: device.vendorID)],
                 lightingErrors: mode == 3 ? [device.id] : [])

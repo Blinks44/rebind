@@ -1,7 +1,7 @@
 # LIGHT-001: RGB lighting in Settings → Devices
 
-- Updated: 2026-10-27
-- Stage: awaiting_verification (build 25 packaged; physical G915/experimental-model acceptance and native timer choices remain open)
+- Updated: 2026-10-28
+- Stage: awaiting_verification (build 28 adds the G915 idle timer; physical G915/experimental-model acceptance remains open)
 - Owner: Codex implementation/diagnostics complete and ownership released; physical tester follow-up remains open
 - Ownership checked: initial work on clean `main` at `741af07`; continuation based on `8eba440` with pre-existing FIX-003 changes preserved. LIGHT-001 owns only lighting surfaces and its shared-record sections.
 - Owned surfaces: HIDPP lighting adapters/tests, Devices models/UI, configuration/catalog, native verification and affected records. Sketch is read only during implementation; its preceding shared-color save is retained.
@@ -116,6 +116,12 @@ Verification on build 25 (Apple silicon/macOS 27.0.1/Xcode 27.1):
 - **29 native XCTest methods verified across the two runs, two skipped, zero failures**: initial full native phase 28 methods; corrected banner fixture one method in the final run. The 216-case RGB window fixture passes on the final app source. Only the test fixture changed between those runs.
 - HIDPP package: **32 XCTest + seven Swift Testing methods**, zero failures. The affected pre-full run also passed 26 Swift Testing methods / five suites and one native RGB layout method.
 - Updated G915 driver probe, local-link review, all five added/updated RGB string entries in six locales, and `git diff --check` pass. Logs/captures remain local scratch material. No actual keyboard power-cycle/receiver unplug, G HUB coexistence, real battery transition, VoiceOver speech or additional platform acceptance is claimed.
+
+## Native idle timer — 2026-10-28
+
+User request: expose **Turn off when idle**. Source **1.0.0 (28), schema 48** adds it to G915 (non-experimental) cards after live inspection of Sketch 69 and Foundations 12 (read only). Choices: Device default (initial, no write) and 30 s/1/2/5/10 min; Never is omitted because firmware zero is not Never. Choosing a preset first captures the current native policy into the saved preference; Device default writes it back. A preset writes power-save = chosen time and off 0, preserving flags; this matches the 2026-10-27 probe where dim 5/off 0 reached PowerOff at about 6 s. Every write is read back; battery refresh never writes the policy; reconnect/wake reprobe reapplies it. Experimental devices do not show the row. Six-language copy uses catalog plurals.
+
+Checks: 960 Swift Testing methods / 148 suites pass, including driver write/readback/restore, validation, schema-47 rejection and label tests; the 216-combination native lighting layout passes with the row in G915 states; English/Russian captures reviewed against Sketch 69. Build 28 Release/signing/DMG pass. Not observed on hardware: actual idle-off timing, key-press wake, Device default restore and persistence across power-cycle.
 
 Final test bundles: `Test-rebind-2026.10.27_21-05-00-+0300.xcresult` (full native pass / Swift Testing localization race) and `Test-rebind-2026.10.27_21-14-18-+0300.xcresult` (corrected UI fixture and all Swift Testing pass). Both remain ignored local build artifacts.
 

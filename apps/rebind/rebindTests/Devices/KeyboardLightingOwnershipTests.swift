@@ -15,6 +15,8 @@ private final class LightingKeyboard: HIDPPDeviceIO {
     var illumination = true
     var supportsDisabled = false
     var supportsPowerModes = true
+    /// Native policy bytes: flags, power-save seconds and off seconds, each big-endian.
+    var policy: [UInt8] = [0, 0xA5, 0, 120, 1, 44]
     var writeObserved: (() -> Void)?
     private(set) var writes: [[UInt8]] = []
 
@@ -41,6 +43,9 @@ private final class LightingKeyboard: HIDPPDeviceIO {
         case (10, 5):
             if b[4] == 1 { flags = b[5]; events = b[6] }
             payload = [b[4], flags, events]
+        case (10, 7):
+            if b[4] == 1 { policy = Array(b[5...10]); writes.append(b) }
+            payload = [0] + policy
         case (10, 8):
             guard supportsPowerModes else { return nil }
             if b[4] == 1 {
@@ -61,6 +66,31 @@ private final class LightingKeyboard: HIDPPDeviceIO {
 }
 
 struct KeyboardLightingOwnershipTests {
+    @Test func idleTimeoutUsesNativeTimerAndDeviceDefaultRestoresCapturedPolicy() throws {
+        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let feature = try lighting(io, ownership: ownership)
+        let original = try #require(feature.read()?.powerPolicy)
+        #expect(original.dimSeconds == 120 && original.offSeconds == 300)
+        var settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 60, devicePowerPolicy: original)
+        #expect(settings.isValid)
+        #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+        // Flags stay; the power-save stage carries the whole wait and off follows at once.
+        #expect(io.policy == [0, 0xA5, 0, 60, 0, 0])
+        let writes = io.writes.count
+        #expect(feature.apply(settings, percentage: 50, charging: false, background: true, canWrite: { true }))
+        #expect(io.writes.count == writes)
+        settings.idleTimeout = nil
+        #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+        #expect(io.policy == [0, 0xA5, 0, 120, 1, 44])
+    }
+
+    @Test func idleTimeoutRequiresPresetAndCapturedPolicy() {
+        #expect(!KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 60).isValid)
+        let policy = RGBEffects.PowerPolicy(payload: [0, 0, 0, 0, 120, 1, 44])
+        #expect(!KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 45, devicePowerPolicy: policy).isValid)
+        #expect(KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 600, devicePowerPolicy: policy).isValid)
+    }
+
     private func lighting(_ io: LightingKeyboard, ownership: KeyboardLightingOwnership) throws -> KeyboardLighting {
         let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
         return try #require(KeyboardLighting(transport: transport, brightnessIndex: 20, rgbIndex: 10, ownership: ownership, slot: 1))

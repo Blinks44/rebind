@@ -1,4 +1,5 @@
 import Foundation
+import HIDPP
 import Testing
 @testable import rebind
 
@@ -55,6 +56,22 @@ struct KeyboardLightingTests {
         #expect(migrated.keyboardLighting == legacy.keyboardLighting)
         legacy.keyboardLighting[0].brightness = 13
         #expect(throws: ConfigurationError.invalid) { try legacy.migrated() }
+    }
+
+    @Test func schema47MigratesLightingButRejectsIdleTimeout() throws {
+        var legacy = Configuration(schemaVersion: 47)
+        legacy.keyboardLighting = [KeyboardLightingSettings(deviceKey: "keyboard", brightness: 30)]
+        let migrated = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(legacy)).migrated()
+        #expect(migrated.keyboardLighting == legacy.keyboardLighting)
+        legacy.keyboardLighting[0].idleTimeout = 60
+        legacy.keyboardLighting[0].devicePowerPolicy = RGBEffects.PowerPolicy(payload: [0, 0, 0, 0, 120, 1, 44])
+        #expect(throws: ConfigurationError.invalid) { try legacy.migrated() }
+    }
+
+    @MainActor @Test func idleMenuLabelsMinutesAndDeviceDefault() {
+        #expect(KeyboardLightingControls.idleLabel(nil) == .lightingIdleDeviceDefault)
+        #expect(KeyboardLightingControls.idleLabel(30) == .lightingIdleSeconds(30))
+        #expect(KeyboardLightingControls.idleLabel(300) == .lightingIdleMinutes(5))
     }
 
     @MainActor @Test func colorWellConvertsSRGBWithoutAlpha() throws {

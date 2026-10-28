@@ -54,6 +54,20 @@ struct KeyboardLightingControls: View {
                         .help(Text(state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription))
                         .frame(width: 44)
                 }
+                if let policy = state.powerPolicy {
+                    HStack {
+                        label(.lightingIdleTitle, .lightingIdleDescription)
+                        MenuSelector(selection: SwiftUI.Binding(get: { settings.idleTimeout }, set: { value in
+                            var updated = settings
+                            updated.idleTimeout = value
+                            // Capture the device's own policy once, so Device default can restore it.
+                            if value != nil, updated.devicePowerPolicy == nil { updated.devicePowerPolicy = policy }
+                            save(updated)
+                        }), title: .lightingIdleTitle, choices: [nil] + KeyboardLightingSettings.idleTimeouts,
+                        label: Self.idleLabel)
+                        .fixedSize()
+                    }
+                }
             }
 
             if battery != nil, state.supportsLowBattery {
@@ -84,6 +98,11 @@ struct KeyboardLightingControls: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    static func idleLabel(_ seconds: Int?) -> LocalizedStringResource {
+        guard let seconds else { return .lightingIdleDeviceDefault }
+        return seconds < 60 ? .lightingIdleSeconds(seconds) : .lightingIdleMinutes(seconds / 60)
     }
 
     static func color(_ rgb: UInt32) -> Color {
