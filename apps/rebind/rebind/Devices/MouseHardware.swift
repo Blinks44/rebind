@@ -484,7 +484,8 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                     ?? mouse.read()
                 if let settings = lightingSettings[key], let lighting = mouse.lighting {
                     state.lightingWriteFailed = !lighting.apply(settings, percentage: state.batteryPercentage,
-                        charging: state.batteryCharging, canWrite: { access.allows(gaming: true, revision: revision) })
+                        charging: state.batteryCharging, deferIdleNotifications: true,
+                        canWrite: { access.allows(gaming: true, revision: revision) })
                     state.lighting = lighting.read()
                 } else {
                     _ = lightingOwnership.release(slot: mouse.slot ?? HIDPPConstants.receiverIndex,
@@ -750,6 +751,11 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
             return (keyboard.slot ?? HIDPPConstants.receiverIndex, feature,
                     "\(location)#\(keyboard.slot.map(String.init) ?? "direct")")
         }
+        let rgbFeatures = logitech.compactMap { keyboard -> (index: UInt8, feature: UInt8, id: String)? in
+            guard let lighting = keyboard.lighting else { return nil }
+            return (keyboard.slot ?? HIDPPConstants.receiverIndex, lighting.rgb.featureIndex,
+                    "\(location)#\(keyboard.slot.map(String.init) ?? "direct")")
+        }
         let changed = gestureButtonChanged
         guard let session = sessions[location], session.io === io else { return }
         let input = gestureButtonInput, connection = session.id
@@ -766,6 +772,32 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                     input.receive(connection: connection, generation: generation, index: report[1], down: false, changed: changed)
                 }
                 return
+            }
+            for entry in rgbFeatures where report.count >= HIDPPConstants.shortReportLength && report[1] == entry.index {
+                guard let activity = RGBEffects.activity(in: report, featureIndex: entry.feature) else { continue }
+                Task { @MainActor in
+                    guard let self, let io, let session = self.sessions[location], session.io === io,
+                          let keyboard = session.mice.first(where: { $0.slot == Self.slot(of: entry.id) }) else { return }
+                    let access = session.writeAccess, revision = access.revision
+                    let key = MouseHardwareSettings.deviceKey(vendorID: vendorID, name: keyboard.name ?? "")
+                    let settings = self.storedLighting().first { $0.deviceKey == key }
+                    let battery = self.batteries.first { $0.id == entry.id }
+                    session.queue.async { [weak self] in
+                        guard let lighting = keyboard.lighting, lighting.usesIdleNotifications else { return }
+                        let allowed = { access.allows(gaming: true, revision: revision) }
+                        var success = lighting.handleActivity(activity, canWrite: allowed)
+                        if success, activity == .active, let settings {
+                            success = keyboard.lighting?.apply(settings, percentage: battery?.percentage,
+                                charging: battery?.isCharging ?? false, background: true, canWrite: allowed) == true
+                        }
+                        if !success {
+                            Task { @MainActor in
+                                guard let self, self.sessions[location]?.io === io else { return }
+                                self.lightingErrors.insert(entry.id)
+                            }
+                        }
+                    }
+                }
             }
             for entry in lightingFeatures where report.count >= 6 && report[1] == entry.index
                 && report[2] == entry.feature && report[3] == 0 {
@@ -786,6 +818,20 @@ nonisolated struct ConnectedAccessory: Identifiable, Equatable, Sendable {
                 guard let controls = ReprogControls.pressedControls(in: report, featureIndex: entry.feature) else { continue }
                 let down = controls.contains(ReprogControls.gestureButton)
                 input.receive(connection: connection, generation: generation, index: entry.index, down: down, changed: changed)
+            }
+        }
+        // Applying preferences during discovery precedes this handler. Re-arm now so an
+        // immediate native idle notification cannot disappear during startup/reconnect.
+        let access = session.writeAccess, revision = access.revision
+        session.queue.async { [weak self] in
+            for keyboard in logitech {
+                if keyboard.lighting?.armIdleNotifications(canWrite: { access.allows(gaming: true, revision: revision) }) == false {
+                    let id = "\(location)#\(keyboard.slot.map(String.init) ?? "direct")"
+                    Task { @MainActor in
+                        guard let self, self.sessions[location]?.io === io else { return }
+                        self.lightingErrors.insert(id)
+                    }
+                }
             }
         }
     }

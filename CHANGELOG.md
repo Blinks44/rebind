@@ -2,6 +2,14 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.1.0: 2026-10-28
+
+- Added G915 TKL lighting controls: brightness, color, idle timeout and low-battery colors. Idle-off and key-press wake are tester-confirmed; compatible Logitech RGB keyboards and mice have experimental support.
+- Added standard actions, including Spotlight, Emoji & Symbols, microphone mute, fast-forward, rewind and Fill with Left Margin.
+- Reduced background work while idle.
+- Fixed long Apple Shortcuts delaying held-key and mouse-button releases.
+- Improved action errors in the main window and menu bar, and wording in all six languages.
+
 ## 1.0.0: 2026-10-24
 
 First public version.

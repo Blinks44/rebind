@@ -1,8 +1,8 @@
 # LIGHT-001: RGB lighting in Settings → Devices
 
 - Updated: 2026-10-28
-- Stage: awaiting_verification (build 28 adds the G915 idle timer; physical G915/experimental-model acceptance remains open)
-- Owner: Codex implementation/diagnostics complete and ownership released; physical tester follow-up remains open
+- Stage: awaiting_verification (build 30 implements explicit power transitions from native idle/activity events; automatic off and key-press wake tester-confirmed; remaining acceptance stays open)
+- Owner: Codex build-30 implementation/diagnostics complete; ownership released. Installed physical tester follow-up remains open. Build-29 copy changes are preserved.
 - Ownership checked: initial work on clean `main` at `741af07`; continuation based on `8eba440` with pre-existing FIX-003 changes preserved. LIGHT-001 owns only lighting surfaces and its shared-record sections.
 - Owned surfaces: HIDPP lighting adapters/tests, Devices models/UI, configuration/catalog, native verification and affected records. Sketch is read only during implementation; its preceding shared-color save is retained.
 - Requirements: SPEC §3.2 (device settings stay in Settings → Devices, rules stay category-wide), §10, §11; next release scope chosen by the user 2026-10-24
@@ -128,3 +128,34 @@ Checks: 960 Swift Testing methods / 148 suites pass, including driver write/read
 Final test bundles: `Test-rebind-2026.10.27_21-05-00-+0300.xcresult` (full native pass / Swift Testing localization race) and `Test-rebind-2026.10.27_21-14-18-+0300.xcresult` (corrected UI fixture and all Swift Testing pass). Both remain ignored local build artifacts.
 
 `apps/rebind/scripts/release.sh` succeeds for **1.0.0 (25)**: Release build, existing app/DMG signer, strict/deep app verification, strict DMG verification and disk-image verification. Debug/Release build numbers are both 25; bundle ID remains `blinks44.rebind`. Package: `apps/rebind/build/release/Rebind.dmg`, SHA-256 `d1f7039e046d09cc398ae51d479347684104e7c9d3d2a3d68eedd10dc8a8394c` (matches SHA256SUMS.txt). No installation/publication/commit, real configuration/permission change or Sketch save. FIX-003 production changes are retained. Next: manually install this package and complete the physical G915 check above; model-specific RGB reports remain experimental until tested.
+
+
+## Installed idle-off failure and event-driven fix — 2026-10-28
+
+Baseline: `main` at `19c7b1d`, then copy-only commit `b2d605e` retained. The tester reports that G915 TKL lighting stays white after ten minutes with 30 seconds selected on installed/running **1.0.0 (28)**. Saved preset 30 and original native policy 120/300 seconds were confirmed. G HUB was absent. Read-only HID++ queries (diagnostic software ID 0x0D) on receiver `046d:c545`, slot 1, RGB feature 10 initially returned firmware control/events 0/0 and policy 120/300; the reason for that discrepancy is unknown. After preset reselection, policy 30/0 and software control/events 1/0 were confirmed; a 35-second sample returned mode 3 (PowerOff), yet the tester confirmed white light remained. Native mode/readback alone therefore does not verify visible off.
+
+A repeated bounded explicit-command test began in mode 1, temporarily claimed power (control 1 → 3), set mode 3, then restored mode 1/control 1 after 12 seconds. The tester confirms visible lighting went out for about ten seconds. The preceding test from already-logical mode 3 had no visual observation. No saved preference, native policy, color, brightness, onboard/EEPROM/profile or permission write was performed by these diagnostics.
+
+Protocol research: [OpenLogi 0x8071](https://openlogi.org/hidpp/features/x8071-rgb-effects) documents power ownership, timeout/activity event flags and explicit modes. [Solaar's GPL power manager](https://github.com/pwr-Solaar/Solaar/blob/master/lib/logitech_receiver/rgb_power.py) is a mechanism comparison only; no upstream source copied or dependency added. The existing MIT adapter is sufficient. The native timer detects inactivity; Rebind must explicitly drive the LEDs on the observed software-color path. No global keyboard monitor, typed-content access or host timer/polling is introduced.
+
+A standalone serial-queue event diagnostic confirmed native idle/active notifications and acknowledged explicit power transitions. Alternating subscriptions (timeout bit 4 while lit, activity bit 2 while off) produced native idle → mode-3 acknowledgement after the requested clean idle interval. Visible automatic off/key-wake remains pending tester confirmation. Some queries and one end-of-window cleanup were not acknowledged while the device slept; a later read confirmed original control/events 1/0, mode 1 and policy 30/0, with no temporary diagnostic event bits remaining. This is protocol evidence, not installed build-30 acceptance.
+
+### Implementation: build 30, schema 48
+
+- Own power control only while a G915 idle preset is enabled and lighting is on. Native idle notifications send explicit PowerOff; native activity sends FullRGB. Switch subscriptions with the state and ignore duplicate events. Experimental devices retain the existing behavior.
+- Route metadata-only RGB notifications through the endpoint's existing serial I/O queue. Subscribe after installing the connection handler so an already-idle event cannot be lost during discovery; companion/access revision checks guard every write. Surface subscription/power failures through the existing lighting error state and relinquish owned flags when possible.
+- Restore original power/event bits on Device default, manual off and cleanup, preserving unrelated event bits and color ownership. Battery refresh cannot wake a managed idle-off; on wake apply current battery color/brightness. Returning to the onboard color releases only color ownership, keeping an active timer subscription.
+- Require a native policy read when applying a saved timer; a missing response can no longer silently confirm a setting that was not written. Build-29 copy, storage schema and UI are preserved.
+
+Next: Device default/relaunch/reconnect/G HUB acceptance. Automatic off and key-press wake are tester-confirmed below. Remaining power-cycle, genuine battery, accessibility and platform gates above stay open.
+
+
+Build-30 checks on Apple silicon/macOS 27.0.1/Xcode 27.1:
+
+- Targeted intermediate driver/model run: 22 methods / two suites pass. Final **966 Swift Testing methods / 148 suites** pass, including six new driver regressions for native idle/wake, duplicate events, policy read failure, revocation/command failure, original event restoration, deferred startup subscription and battery color recovery. Final bundle: `Test-rebind-2026.10.28_22-32-21-+0300.xcresult`.
+- Full preceding iteration: 964 Swift Testing methods and **29 native XCTest methods (two skipped), zero failures**; native fixture source/UI are unchanged by the final driver/startup/battery additions. Bundle: `Test-rebind-2026.10.28_22-24-42-+0300.xcresult`. Final run excludes those already-verified native XCTest classes and rebuilds the final driver.
+- HIDPP package: **32 XCTest + eight Swift Testing methods**, zero failures, including malformed/wrong-feature/reply/unknown-activity decoder rejection.
+- `release.sh` succeeds for **1.0.0 (30)**: universal Release, existing app/DMG signer, strict/deep app verification, strict DMG verification and image verification. Debug and Release both 30, marketing version unchanged, schema 48. Package: `apps/rebind/build/release/Rebind.dmg`, SHA-256 `0ce06e4d32c5fff126843996deae0cbef1f05d0bcf83c9fdeb2848602815e4f6` (matches SHA256SUMS.txt).
+- Relevant local links/source facts and `git diff --check` reviewed. Logs/probe stay local; no installation/publication, permission, real remapping, persistent configuration or Sketch change. Runtime diagnostics only used reversible power/event-control commands described above. At packaging time, installed build-30 off/wake/power-cycle/G HUB and additional-platform acceptance were still open; the subsequent off/wake confirmation is recorded below.
+
+Tester follow-up, 2026-10-28, after the build-30 package handoff: automatic lighting-off now works on the same G915 TKL; a subsequent report also confirms lighting turns on again after key press. This accepts the reported 30-second-preset off/wake scenario, without a measured elapsed time or independent installed-hash check. Device default, relaunch/reconnect/power-cycle, G HUB and genuine battery acceptance are not implied. No code/package change or checks rerun for this evidence update.

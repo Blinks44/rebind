@@ -14,7 +14,7 @@ Review the intended source changes and commit them before making a public tag. A
 
 In Xcode, choose the **rebind** app target → **General** → **Identity**. Use **Version 1.0.0** for the first stable release and keep Debug/Release build values consistent. Read the current candidate from [STATE](STATE.md) and the Xcode project. Do not change the bundle identifier or signing identity.
 
-Source is **1.0.0 (15)**; [REL-005](tasks/REL-005-onboarding-and-updates.md) owns first run/Sparkle, and STATE links final packaging evidence. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.0.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
+Current release candidate is **1.1.0 (31)**; [REL-005](tasks/REL-005-onboarding-and-updates.md) owns first run/Sparkle, and STATE links final packaging evidence. After required checks, agents run `apps/rebind/scripts/release.sh` for every completed app change set and report the verified DMG path for manual installation. Packaging does not install or publish. Agents must increment Build for every new app change set before final verification/handoff under AGENTS; rebuilds of the same changes do not increment it again. For later candidates, increment Build again and use the resulting filename below. Use a stable release tag matching the marketing version: **v1.1.0**. Sparkle compares the **build number** (`CFBundleVersion`): every published update needs a build larger than all earlier published builds, and a user-visible release also gets a new marketing version (for example 1.0.1) and tag. Builds before 9 have only the old manual checker and must be replaced by hand once. Drafts and prereleases are ignored by the app and the website.
 
 For an identified permission-preservation check, use two distinct builds with the same certificate, bundle identifier and Applications location, incrementing the build number. Confirm rules/profiles and actual Accessibility access survive. The self-signed build 1/2 → shared Apple Development build 3 change is a signer transition and may require a fresh grant; it does not test same-signer updates. Use two subsequent Apple Development builds to verify permission preservation.
 
@@ -43,19 +43,19 @@ With the [GitHub CLI](https://cli.github.com) (`brew install gh`, then `gh auth 
 
 ```sh
 git push origin main
-git tag -a v1.0.0 -m "Rebind 1.0.0"
-git push origin v1.0.0
-gh release create v1.0.0 --draft --verify-tag --title "Rebind 1.0.0" \
-  --notes-file docs/releases/1.0.0.md \
+git tag -a v1.1.0 -m "Rebind 1.1.0"
+git push origin v1.1.0
+gh release create v1.1.0 --draft --verify-tag --title "Rebind 1.1.0" \
+  --notes-file docs/releases/1.1.0.md \
   apps/rebind/build/release/Rebind.dmg \
   apps/rebind/build/release/SHA256SUMS.txt \
   apps/rebind/build/release/appcast.xml
-gh release view v1.0.0 --web
+gh release view v1.1.0 --web
 ```
 
-After reviewing the draft, publish it as the latest stable release with `gh release edit v1.0.0 --draft=false --latest`, then confirm that `curl -fsSL https://github.com/Blinks44/rebind/releases/latest/download/appcast.xml` returns the new build. The web route below is equivalent.
+After reviewing the draft, publish it as the latest stable release with `gh release edit v1.1.0 --draft=false --latest`, then confirm that `curl -fsSL https://github.com/Blinks44/rebind/releases/latest/download/appcast.xml` returns the new build. The web route below is equivalent.
 
-On [Blinks44/rebind Releases](https://github.com/Blinks44/rebind/releases), choose **Draft a new release**. Select the matching tag at the reviewed, pushed source commit. Use title **Rebind 1.0.0** and adapt [the prepared notes](releases/1.0.0.md), including the actual tested platforms and limitations. Attach the DMG, `SHA256SUMS.txt` and `appcast.xml` as release assets, then **Save draft**. The app reads `releases/latest/download/appcast.xml`, so every stable release must carry its own appcast; its download URL already points at `releases/download/v<version>/<dmg>`, so keep the tag and DMG filename unchanged. GitHub’s automatic source-code archives do not replace the DMG.
+On [Blinks44/rebind Releases](https://github.com/Blinks44/rebind/releases), choose **Draft a new release**. Select the matching tag at the reviewed, pushed source commit. Use title **Rebind 1.1.0** and adapt [the prepared notes](releases/1.1.0.md), including the actual tested platforms and limitations. Attach the DMG, `SHA256SUMS.txt` and `appcast.xml` as release assets, then **Save draft**. The app reads `releases/latest/download/appcast.xml`, so every stable release must carry its own appcast; its download URL already points at `releases/download/v<version>/<dmg>`, so keep the tag and DMG filename unchanged. GitHub’s automatic source-code archives do not replace the DMG.
 
 Review version, target commit, filenames and checksums before publishing. For a stable release, leave **This is a pre-release** off and set it as the latest release. Publish only after the candidate gates are resolved or accurately limited. If immutable releases are enabled, attach every asset while still a draft. See [GitHub’s release instructions](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 

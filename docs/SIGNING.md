@@ -14,8 +14,8 @@ After each completed set of app fixes or improvements and its required checks, t
 
 Open `apps/rebind/rebind.xcodeproj` → target **rebind** → General → Identity:
 
-- **Version** (`MARKETING_VERSION`): currently `1.0.0`; change for a user-visible release.
-- **Build** (`CURRENT_PROJECT_VERSION`): currently `15` in source; inspect the installed copy separately. Sparkle compares this number, so a published update must have a larger build than every earlier published one.
+- **Version** (`MARKETING_VERSION`): currently `1.1.0`; change for a user-visible release.
+- **Build** (`CURRENT_PROJECT_VERSION`): currently `31` in source; inspect the installed copy separately. Sparkle compares this number, so a published update must have a larger build than every earlier published one.
 
 The implementing agent increments Build once for every new set of app changes, before the final verification build/handoff, even if packaging was not requested. Update Debug and Release together; do not increment again for rebuilds/retries of the same changes. Documentation-only, test-only, website-only and Sketch-only work does not require a new app build number. Preserve Version unless the task requires a release-version change.
 

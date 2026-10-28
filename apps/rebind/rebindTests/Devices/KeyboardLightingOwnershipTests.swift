@@ -15,6 +15,7 @@ private final class LightingKeyboard: HIDPPDeviceIO {
     var illumination = true
     var supportsDisabled = false
     var supportsPowerModes = true
+    var rejectsPolicyRead = false
     /// Native policy bytes: flags, power-save seconds and off seconds, each big-endian.
     var policy: [UInt8] = [0, 0xA5, 0, 120, 1, 44]
     var writeObserved: (() -> Void)?
@@ -44,6 +45,7 @@ private final class LightingKeyboard: HIDPPDeviceIO {
             if b[4] == 1 { flags = b[5]; events = b[6] }
             payload = [b[4], flags, events]
         case (10, 7):
+            if b[4] == 0, rejectsPolicyRead { return nil }
             if b[4] == 1 { policy = Array(b[5...10]); writes.append(b) }
             payload = [0] + policy
         case (10, 8):
@@ -89,6 +91,113 @@ struct KeyboardLightingOwnershipTests {
         let policy = RGBEffects.PowerPolicy(payload: [0, 0, 0, 0, 120, 1, 44])
         #expect(!KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 45, devicePowerPolicy: policy).isValid)
         #expect(KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 600, devicePowerPolicy: policy).isValid)
+    }
+
+    @Test func nativeIdleEventsExplicitlySwitchPowerAndWakeWithoutChangingBrightness() throws {
+        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let feature = try lighting(io, ownership: ownership)
+        let policy = try #require(feature.read()?.powerPolicy)
+        let settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0xFFFFFF,
+            lowBattery: .red, idleTimeout: 30, devicePowerPolicy: policy)
+        #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+        #expect(io.flags == 3 && io.events == 0x84)
+        let activeWrites = io.writes.count
+        #expect(feature.handleActivity(.active, canWrite: { true }))
+        #expect(io.writes.count == activeWrites)
+        #expect(feature.handleActivity(.idle, canWrite: { true }))
+        #expect(io.powerMode == 3 && io.events == 0x82 && io.brightness == 50)
+        let offWrites = io.writes.count
+        #expect(feature.handleActivity(.idle, canWrite: { true }))
+        // Even a stale FullRGB reading cannot let battery updates wake a managed idle-off.
+        io.powerMode = 1
+        #expect(feature.apply(settings, percentage: 8, charging: false, background: true, canWrite: { true }))
+        #expect(io.writes.count == offWrites)
+        io.powerMode = 3
+        #expect(feature.handleActivity(.active, canWrite: { true }))
+        #expect(io.powerMode == 1 && io.events == 0x84 && io.brightness == 50)
+        #expect(feature.apply(settings, percentage: 8, charging: false, background: true, canWrite: { true }))
+        #expect(io.brightness == 25 && io.flags == 3 && io.events == 0x84)
+        ownership.releaseAll(canWrite: { true })
+        #expect(io.flags == 0 && io.events == 0x80)
+    }
+
+    @Test func deviceDefaultAndManualOffReleasePowerAndRestoreOriginalEventBits() throws {
+        for manualOff in [false, true] {
+            let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+            io.events = 0x82
+            let feature = try lighting(io, ownership: ownership)
+            let policy = try #require(feature.read()?.powerPolicy)
+            var settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0x123456,
+                idleTimeout: 30, devicePowerPolicy: policy)
+            #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+            #expect(feature.armIdleNotifications(canWrite: { true }))
+            io.events |= 0x40 // An unrelated notification bit changed after our claim.
+            if manualOff { settings.isEnabled = false } else { settings.idleTimeout = nil }
+            #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+            #expect(feature.usesIdleNotifications == false)
+            #expect(io.flags == 1 && io.events == 0xC2)
+            let writes = io.writes.count
+            #expect(feature.handleActivity(.idle, canWrite: { true }))
+            #expect(feature.handleActivity(.active, canWrite: { true }))
+            #expect(io.writes.count == writes)
+            ownership.releaseAll(canWrite: { true })
+            #expect(io.flags == 0 && io.events == 0xC2)
+        }
+    }
+
+    @Test func revokedAccessAndFailedPowerCommandsDoNotLeaveEventOwnershipBehind() throws {
+        for revoked in [false, true] {
+            let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+            let feature = try lighting(io, ownership: ownership)
+            let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+                devicePowerPolicy: try #require(feature.read()?.powerPolicy))
+            #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+            let writes = io.writes.count
+            io.rejectsWake = true
+            #expect(feature.handleActivity(.idle, canWrite: { !revoked }) == false)
+            #expect(feature.usesIdleNotifications == false)
+            if revoked { #expect(io.writes.count == writes) }
+            ownership.releaseAll(canWrite: { true })
+            #expect(io.flags == 0 && io.events == 0x80)
+        }
+    }
+
+    @Test func discoveryDefersIdleEventsUntilTheConnectionHandlerIsReady() throws {
+        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let feature = try lighting(io, ownership: ownership)
+        let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+            devicePowerPolicy: try #require(feature.read()?.powerPolicy))
+        #expect(feature.apply(settings, percentage: 50, charging: false, deferIdleNotifications: true, canWrite: { true }))
+        #expect(io.flags == 2 && io.events == 0x80)
+        #expect(feature.armIdleNotifications(canWrite: { true }))
+        #expect(io.flags == 2 && io.events == 0x84)
+        #expect(feature.handleActivity(.idle, canWrite: { true }))
+        #expect(io.powerMode == 3 && io.events == 0x82)
+    }
+
+    @Test func batteryColorRecoveryKeepsTheIdleSubscriptionWithoutASelectedColor() throws {
+        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let feature = try lighting(io, ownership: ownership)
+        let settings = KeyboardLightingSettings(deviceKey: "keyboard", lowBattery: .red, idleTimeout: 30,
+            devicePowerPolicy: try #require(feature.read()?.powerPolicy))
+        #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
+        #expect(io.flags == 2 && io.events == 0x84)
+        #expect(feature.apply(settings, percentage: 8, charging: false, background: true, canWrite: { true }))
+        #expect(io.flags == 3 && io.events == 0x84)
+        #expect(feature.apply(settings, percentage: 50, charging: true, background: true, canWrite: { true }))
+        #expect(io.flags == 2 && io.events == 0x84)
+        #expect(feature.handleActivity(.idle, canWrite: { true }))
+        #expect(io.powerMode == 3 && io.events == 0x82)
+    }
+
+    @Test func missingPolicyReadbackCannotConfirmASavedTimeout() throws {
+        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let feature = try lighting(io, ownership: ownership)
+        let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+            devicePowerPolicy: try #require(feature.read()?.powerPolicy))
+        io.rejectsPolicyRead = true
+        #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }) == false)
+        #expect(feature.usesIdleNotifications == false && io.flags == 0 && io.events == 0x80)
     }
 
     private func lighting(_ io: LightingKeyboard, ownership: KeyboardLightingOwnership) throws -> KeyboardLighting {

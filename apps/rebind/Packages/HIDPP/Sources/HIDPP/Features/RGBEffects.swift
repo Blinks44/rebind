@@ -7,6 +7,16 @@ import Foundation
 public struct RGBEffects: HIDPPFeature {
     public static let featureID = HIDPPFeatureID.rgbEffects
 
+    public enum Activity: UInt8, Sendable { case idle = 0, active = 1 }
+
+    /// Decode only this feature's unsolicited user-activity notification, not replies or key data.
+    public static func activity(in report: [UInt8], featureIndex: UInt8) -> Activity? {
+        guard report.count >= HIDPPConstants.shortReportLength,
+              report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID,
+              report[2] == featureIndex, report[3] == 0x10 else { return nil }
+        return Activity(rawValue: report[4])
+    }
+
     public struct Zone: Equatable, Sendable {
         public let index: UInt8
         public let staticEffect: UInt8

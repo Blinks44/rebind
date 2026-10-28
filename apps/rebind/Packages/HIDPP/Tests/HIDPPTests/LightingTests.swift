@@ -7,6 +7,16 @@ struct LightingTests {
         Data(Array(report.prefix(4)) + payload + Array(repeating: 0, count: max(0, 16 - payload.count)))
     }
 
+    @Test func activityDecoderRejectsRepliesWrongFeaturesAndUnknownEvents() {
+        #expect(RGBEffects.activity(in: [0x10, 1, 10, 0x10, 0, 0, 0], featureIndex: 10) == .idle)
+        #expect(RGBEffects.activity(in: [0x11, 1, 10, 0x10, 1] + Array(repeating: 0, count: 15), featureIndex: 10) == .active)
+        for report: [UInt8] in [[], [0x10, 1, 10, 0x10, 0], [0x10, 1, 11, 0x10, 0, 0, 0],
+                               [0x10, 1, 10, 0x18, 0, 0, 0], [0x10, 1, 10, 0, 0, 0, 0],
+                               [0x10, 1, 10, 0x10, 2, 0, 0], [0x12, 1, 10, 0x10, 0, 0, 0]] {
+            #expect(RGBEffects.activity(in: report, featureIndex: 10) == nil)
+        }
+    }
+
     @available(macOS 13, *)
     @Test func brightnessUsesAdvertisedRangeAndBigEndianValues() throws {
         let io = MockHIDPPDevice()
