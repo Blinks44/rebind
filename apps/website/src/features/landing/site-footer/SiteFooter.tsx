@@ -36,6 +36,9 @@ export function SiteFooter() {
           <a href={site.releases}>{m.releases()}</a>
           <a href={`${site.repository}/issues`}>{m.reportIssue()}</a>
           <a href={`${site.repository}/blob/main/LICENSE`}>{m.license()}</a>
+          <a href={site.author.x} rel="me">
+            {m.followOnX()}
+          </a>
         </nav>
         <div className={styles.related}>
           <h2>{m.alsoFromUs()}</h2>

@@ -24,7 +24,7 @@ Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update ([F
 
 [REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; 1.3.0 (36) is published; the tester observed the 1.2.0 → 1.3.0 update with notes, rules and Accessibility kept, on 2026-10-29. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
 
-Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed). Committed but not yet deployed (user deploying 2026-10-29): build-29 copy, 1.2.0 device screenshots and the Devices lighting note. Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
+Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed). Committed but not yet deployed (user deploying 2026-10-29): build-29 copy, 1.2.0 device screenshots and the Devices lighting note. Not yet deployed: the footer "Follow on X" link and author metadata ([history](history/2026-10.md#2026-10-29-author-link-on-x)). Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
 
 ## Open task index
 

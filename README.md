@@ -154,6 +154,10 @@ Rebind builds on the work of these open-source projects. Each is credited with i
 - [Documentation index](docs/README.md): design, architecture conventions, verification and contributor/agent workflow.
 - [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md) and [changelog](CHANGELOG.md).
 
+## Author
+
+Rebind is made by Sergey V. Follow [@TheBlinks182 on X](https://x.com/TheBlinks182) for updates and new releases.
+
 ## License
 
 Rebind is released under the [MIT License](LICENSE): you may use, change and redistribute it, including in forks, as long as the copyright notice and the license text stay with every copy. Bundled third-party notices are in [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt).

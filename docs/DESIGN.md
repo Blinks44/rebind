@@ -10,6 +10,8 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
+Author link **2026-10-29** (user request): `05 · Website` desktop and mobile footers add "Follow on X" as the last Project link (duplicated from MIT License; lower footer content and both landing frames grow by 28 px). Screenshot-reviewed and saved; SHA-256 `f03289607b47b0e31d850cbfb93d5c12bcf7c4983be298800b86b850ded5b6dd`.
+
 1.3.0 parity **2026-10-29**: screen 58 Light/Dark menus show eight Magic Mouse presets (Tap · Left side and Tap · Right side after Tap · 1 finger, reusing the menu item component); Foundations 07, 08 and 10 say eight presets and describe side-tap precedence; Foundations 11 notes the granted Access state without Check Again and the update window's CHANGELOG notes. Screenshot-reviewed and saved; SHA-256 `1b127c2c9d9f5c733347ce98d1329f1cd1381cc90f17396a5dc4d5300dc625b7`.
 
 Slider parity **2026-10-29** (user request): `Light/Slider` and `Dark/Slider` now match the native macOS regular slider measured with `NSSliderCell`: 20 × 16 capsule knob (was a 20 pt circle) and 6 pt bar (was 4 pt). The change reaches every instance (menu 53, Devices 36–37 and 66–69). Screenshot-reviewed and saved; SHA-256 `52b3841a9e9fb2fdfee1e6139cbb942912998e82721836ed4f3117c71ade56bd`. Code unchanged: the app already uses the system slider.
