@@ -14,7 +14,7 @@ First-run setup/defer, one-time permission recovery, main notice, Settings → P
 
 Actual Accessibility/event-posting preflights gate capture/output; Input Monitoring is not required by the current tap. Grant state is distinct from engine failure, Secure Input, deliberate pause and storage lock. Setup-later keeps manual editing/profile access; requests and return/focus checks never imply a successful grant. Revocation cancels capture/recording/output while retaining saved rules and intent; avoid repeated modal interruption.
 
-2026-10-29, build 35 (tester report): the setup sheet's green Ready banner no longer offers Check Again. Access is already granted there, and losing it switches the sheet back to the access step on its own. The Settings → Permissions and access-step buttons are unchanged. Sketch Foundations 11 may still show the button; reconcile in the next design pass.
+2026-10-29, build 35 (tester report): the setup sheet's green Ready banner no longer offers Check Again. Access is already granted there, and losing it switches the sheet back to the access step on its own. The Settings → Permissions and access-step buttons are unchanged. Sketch never drew the granted Access state; Foundations 11 now records it (saved 2026-10-29).
 
 ## Evidence and remaining acceptance
 

@@ -1,7 +1,7 @@
 # REL-008: Release Rebind 1.3.0
 
 - Updated: 2026-10-29
-- Stage: awaiting_verification (published; update observation open)
+- Stage: done
 - Owner: unassigned (release chat released)
 - Requirements: [RELEASING](../RELEASING.md)
 - Code baseline: release commit `eb964bf`, tag `v1.3.0`
@@ -19,6 +19,8 @@ Publishes [PLAT-001](PLAT-001-macos-15-support.md) (macOS 15), [INPUT-016](INPUT
 
 Published 2026-10-29 as the latest stable release. Public `releases/latest/download` appcast is byte-identical to the local one (build 36, minimum 15.0) and the public DMG matches the local SHA-256.
 
+Tester, 2026-10-29: the installed 1.2.0 offered 1.3.0 through Sparkle, showed the update notes and updated successfully.
+
 ## Open checks
 
-First Sparkle update with notes from 1.2.0 → 1.3.0 on an installed copy; hardware gates stay in PLAT-001 and INPUT-016.
+Hardware gates stay in PLAT-001 and INPUT-016.

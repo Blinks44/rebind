@@ -1,14 +1,16 @@
 # Rebind: design direction and live source index
 
-Updated 2026-10-28 (Devices moved into the main window, UI-025). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
+Updated 2026-10-29 (Magic Mouse side taps, 1.3.0). [SPEC](SPEC.md) owns required behavior. **Sketch owns the visual design, components, states, product copy and interaction annotations.** This file is a short locator and readiness index; implementation agents inspect the live source directly through MCP.
 
 Design the final planned release, including Trackpad and Magic Mouse. User clarification on 2026-10-11: temporary implementation gaps (such as four-finger-only or not-yet-implemented placeholders) are not target product states. Remove or replace those specimens under UI-013. Keep genuine device compatibility, permissions, conflicts and recovery states. Target design does not claim current implementation or hardware verification; those facts remain in CAPABILITIES and verification.
 
-## Direction: soft, opaque-first macOS 26+ (2026-10-12)
+## Direction: soft, opaque-first (2026-10-12)
 
 User decision 2026-10-12: the calm look of the current **Rebind.sketch** replaces the Liquid Glass direction. Surfaces are opaque-first with soft shadows and 1 pt hairlines; controls are 36 pt capsules (28 pt small); lists sit on one raised card with 72 pt rows; raised SF Pro Rounded keycaps are the brand motif; one blue accent, and other color only for state. Only the sidebar and menus may use a system material. Light and Dark share geometry, type and spacing. Preserve native SwiftUI/AppKit semantics, SF Pro/SF Symbols, system menus/focus and desktop density.
 
 ## Current source: Rebind.sketch
+
+1.3.0 parity **2026-10-29**: screen 58 Light/Dark menus show eight Magic Mouse presets (Tap · Left side and Tap · Right side after Tap · 1 finger, reusing the menu item component); Foundations 07, 08 and 10 say eight presets and describe side-tap precedence; Foundations 11 notes the granted Access state without Check Again and the update window's CHANGELOG notes. Screenshot-reviewed and saved; SHA-256 `1b127c2c9d9f5c733347ce98d1329f1cd1381cc90f17396a5dc4d5300dc625b7`.
 
 Slider parity **2026-10-29** (user request): `Light/Slider` and `Dark/Slider` now match the native macOS regular slider measured with `NSSliderCell`: 20 × 16 capsule knob (was a 20 pt circle) and 6 pt bar (was 4 pt). The change reaches every instance (menu 53, Devices 36–37 and 66–69). Screenshot-reviewed and saved; SHA-256 `52b3841a9e9fb2fdfee1e6139cbb942912998e82721836ed4f3117c71ade56bd`. Code unchanged: the app already uses the system slider.
 

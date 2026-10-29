@@ -32,7 +32,7 @@ Three bounded outcomes; complex or unclear items were dropped. [PERF-001](tasks/
 - [ ] Accessibility: normal-build keyboard/focus, VoiceOver, Increase Contrast, Reduce Motion/Transparency; all six languages at minimum width. Automated layouts/editor routes pass; speech/preferences/fluent proofreading remain separate.
 - [ ] Search active/inactive appearance and Dock/Menu Bar/tint acceptance of the current artwork, including battery-menu keyboard/VoiceOver ([UI-024](tasks/UI-024-keyboard-navigation.md), [BRAND-001](tasks/BRAND-001-icon-runtime.md)).
 - [ ] Platforms: macOS 15 and 26 execution; Intel only if claimed.
-- [ ] Distribution: distinct stable-signer update preserves rules/access; final source/tag/version/artifact aligned; signed, non-notarized DMG and SHA-256 published and downloaded successfully; first Sparkle update between two published builds (offer, verify, install, relaunch, rules/access kept); six-locale website visual/download review and deployment. Keep license/notices and private security-report route usable.
+- [ ] Distribution: distinct stable-signer update preserves rules/access; final source/tag/version/artifact aligned; signed, non-notarized DMG and SHA-256 published and downloaded successfully; first Sparkle update between two published builds observed 1.2.0 → 1.3.0 (rules/access retention not itemized); six-locale website visual/download review and deployment. Keep license/notices and private security-report route usable.
 
 Evidence: [release queue](verification/release-candidate.md), [tasks](tasks/README.md), [research](research/README.md) and [history](history/README.md). No new feature is required merely because another remapper offers it.
 

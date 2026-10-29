@@ -22,7 +22,7 @@ The [architecture/library audit](tasks/REVIEW-003-libraries-and-simplification.m
 
 Preserve tester acceptance: October 20 wheel/window/keyboard/recovery/update ([FIX-001](tasks/FIX-001-wheel-and-window-regressions.md)), October 21 first run and window actions ([FIX-002](tasks/FIX-002-window-action-compatibility.md)), October 22 build-11 copy/VoiceOver/contrast/widths, build-16 copy, build-17 smoke. The [release queue](verification/release-candidate.md) owns the narrower outstanding cases; do not request another whole-app pass without affected changes.
 
-[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; v1.2.0 (33) is published with a verified feed; an observed Sparkle update between published builds remains open. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
+[REL-005](tasks/REL-005-onboarding-and-updates.md) implements first run and Sparkle daily updates; 1.3.0 (36) is published; the tester observed the 1.2.0 → 1.3.0 update with notes on 2026-10-29. [SIGNING](SIGNING.md) owns non-notarized signing and recovery. Another-Mac, macOS 26, granted-profile CPU/latency, safety and accessibility gates are in [PLAN](PLAN.md#release-gates).
 
 Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-website-refresh.md), closed). Committed but not yet deployed (user deploying 2026-10-29): build-29 copy, 1.2.0 device screenshots and the Devices lighting note. Shared shell with Monny: [SPEC §17](SPEC.md#17-public-website). Publication/deployment need authorization ([RELEASING](RELEASING.md)).
 
@@ -30,16 +30,15 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
-| [REL-008](tasks/REL-008-release-1.3.0.md) | Confirm public 1.3.0 assets; observe the 1.2.0 → 1.3.0 Sparkle update with notes. |
 | [PLAT-001](tasks/PLAT-001-macos-15-support.md) | Touch input on a real Mac with macOS 15. |
-| [INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md) | Real Magic Mouse: side orientation, resting finger, Smart Zoom; Sketch selector with eight presets. |
+| [INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md) | Real Magic Mouse: side orientation, resting finger, Smart Zoom. |
 | [COPY-001](tasks/COPY-001-app-and-website-language.md) | Confirm the deployed site, sync changed build-29 English strings to Sketch. |
 | [FIX-004](tasks/FIX-004-shortcuts-held-release.md) | Check installed long-Shortcut held release/order and pause/quit (build 26 fix). |
 | [FIX-003](tasks/FIX-003-menu-error-presentation.md) | Installed keyboard/VoiceOver/menu hover/unsupported-window recovery (build 24 fix). |
 | [PERF-001](tasks/PERF-001-background-wakeups.md) | Controlled CPU/scrolling/typing and companion/audio/protected-context checks. |
 | [ACTION-001](tasks/ACTION-001-standard-actions.md) | Other new actions and switching/Dock/display cases; Fill with Left Margin confirmed. |
 | [LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md) | awaiting_verification: automatic off and key-press wake tester-confirmed after the build-30 handoff; next Device default/relaunch/reconnect/G HUB. Other physical gates remain. |
-| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Observe a Sparkle update between published builds (offer/install/relaunch, rules/access kept); first-run accessibility/locales. |
+| [REL-005](tasks/REL-005-onboarding-and-updates.md) | Update 1.2.0 → 1.3.0 observed; confirm rules/Accessibility kept if not already; first-run accessibility/locales. |
 | [REL-001](tasks/REL-001-signing-workflow.md) | Preserve the signer; key restore/off-device copy user-reported done; another-Mac/current-signature installation. |
 | [INPUT-015](tasks/INPUT-015-touch-release-scope.md) | Preserve six-gesture delivery; remaining settings/safety matrix. Source reconciled. |
 | [UI-024](tasks/UI-024-keyboard-navigation.md) | Targeted normal-build focus/preferences and file transactions; preserve build-11 accessibility acceptance. |

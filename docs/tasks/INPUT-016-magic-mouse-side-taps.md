@@ -27,7 +27,7 @@ Rejected again with the reasons from [INPUT-015](INPUT-015-touch-release-scope.m
 - [ ] Real Magic Mouse: left/right are not mirrored (native X orientation is assumed from trackpads and other projects, not measured on the mouse).
 - [ ] Real Magic Mouse: a tap with another finger resting on the mouse. The recognizer counts all contacts, so a resting finger turns the tap into a two-finger contact; decide whether that is acceptable.
 - [ ] Smart Zoom overlap and false positives during ordinary clicking/scrolling, as for the existing one-finger tap.
-- [ ] Sketch: Magic Mouse selector (screen 58 Light/Dark) shows eight presets.
+- [x] Sketch: Magic Mouse selector (screen 58 Light/Dark) shows eight presets; Foundations 07/08/10 updated (saved 2026-10-29, see DESIGN).
 
 ## Implementation and verification
 
@@ -39,4 +39,4 @@ Build 34 on macOS 27.2, Apple silicon: full suite 996 passed, 2 skipped; the onl
 
 ## Next handoff
 
-Tester with a Magic Mouse: add a rule to "Tap · Left side" and another to "Tap · Right side", tap each half with one finger and the mouse still, then tap the middle; report mirrored sides, missed taps, taps while another finger rests, and any Smart Zoom double effect. Design: add the two presets to the Magic Mouse selector in Sketch.
+Tester with a Magic Mouse: add a rule to "Tap · Left side" and another to "Tap · Right side", tap each half with one finger and the mouse still, then tap the middle; report mirrored sides, missed taps, taps while another finger rests, and any Smart Zoom double effect. Design: done.
