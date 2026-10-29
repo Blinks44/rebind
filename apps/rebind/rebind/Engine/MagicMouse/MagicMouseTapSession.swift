@@ -8,7 +8,7 @@ nonisolated struct MagicMouseTapSession: Sendable {
     private(set) var foreground: Int32?
     private var recognizer = ShortContactRecognizer(surface: .magicMouse)
     private var gate: TrackpadTapGate
-    private var pending: Int?
+    private var pending: InputTrigger?
     private var neutral = false
     private var contactStartedAt: UInt64?
 
@@ -61,10 +61,11 @@ nonisolated struct MagicMouseTapSession: Sendable {
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0); return }
         if let candidate, let start = contactStartedAt, frame.receipt >= start,
            (20_000_000...300_000_000).contains(frame.receipt - start),
-           (1...3).contains(candidate.fingers), runtime.actions[candidate.fingers] != nil,
+           (1...3).contains(candidate.fingers),
+           let trigger = runtime.trigger(fingers: candidate.fingers, x: recognizer.origin?.x),
            foreground != nil,
            gate.candidate(fingers: candidate.fingers, at: frame.receipt, buttons: frame.activity, observerReady: true) {
-            pending = candidate.fingers
+            pending = trigger
             contactStartedAt = nil
         } else if recognizer.rejection != nil || frame.count == 0 && candidate != nil {
             interrupt(isNeutral: frame.count == 0)
@@ -80,7 +81,7 @@ nonisolated struct MagicMouseTapSession: Sendable {
         if buffer.takeOverflow() { interrupt() }
     }
 
-    mutating func takeReady(from buffer: NativeTrackpadBuffer, at now: UInt64) -> Int? {
+    mutating func takeReady(from buffer: NativeTrackpadBuffer, at now: UInt64) -> InputTrigger? {
         buffer.state.withLock {
             if $0.overflow { $0.clear(); interrupt(); return nil }
             guard $0.accepting else { interrupt(); return nil }

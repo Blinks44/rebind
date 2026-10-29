@@ -1,10 +1,10 @@
-// InlineArray is a standard-library fixed-size container. The callback writes a
-// single slot; only UI snapshots allocate an Array. No shared COW event storage.
+// A fixed ring allocated once. The callback writes a single slot of the uniquely owned buffer;
+// snapshots copy entries into a new Array, so the ring is never shared and never copied on write.
 nonisolated struct InputDiagnostics: Sendable {
     static let capacity = 128
     static let eventsPerWindow = 20
     static let sessionDuration: UInt64 = 60_000_000_000
-    private var storage = InlineArray<128, InputDiagnostic?>(repeating: nil)
+    private var storage = [InputDiagnostic?](repeating: nil, count: capacity)
     private var next = 0
     private var count = 0
     private var sequence: UInt64 = 0
@@ -75,7 +75,7 @@ nonisolated struct InputDiagnostics: Sendable {
         case .mouseButton(let number): kind = .button(number)
         case .scroll(let direction): kind = .wheel(direction)
         case .key, .mouseGesture, .buttonScroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .trackpadClick, .magicMouseTap, .magicMouseClick, .magicMouseScroll: return
+             .twoFingerDoubleTap, .cornerTap, .trackpadClick, .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: return
         }
         let phase: InputDiagnostic.Phase
         switch event.phase {

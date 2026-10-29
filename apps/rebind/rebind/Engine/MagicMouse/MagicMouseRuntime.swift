@@ -7,30 +7,42 @@ nonisolated struct MagicMouseRuntime: Equatable, Sendable {
     var activity: UInt64
     var modifiers: ModifierSet = []
     var buttonsDown = false
-    var actions: [Int: RebindAction] = [:]
+    /// Keyed by `magicMouseTap` and `magicMouseSideTap` triggers.
+    var actions: [InputTrigger: RebindAction] = [:]
+
+    /// A side rule wins on its half; elsewhere, or without one, the ordinary tap applies.
+    func trigger(fingers: Int, x: Float?) -> InputTrigger? {
+        if fingers == 1, let side = x.flatMap(MagicMouseSide.containing),
+           actions[.magicMouseSideTap(side)] != nil { return .magicMouseSideTap(side) }
+        let tap = InputTrigger.magicMouseTap(fingers: fingers)
+        return actions[tap] == nil ? nil : tap
+    }
+
+    static let tapTriggers: [InputTrigger] = (1...3).map { .magicMouseTap(fingers: $0) }
+        + MagicMouseSide.allCases.map { .magicMouseSideTap($0) }
 }
 
 extension EngineMailbox {
     nonisolated func magicMouseRuntime(modifiers: ModifierSet = [], buttonsDown: Bool = false) -> MagicMouseRuntime? {
         state.withLock {
             guard $0.canDispatch, $0.hasMagicMouseRules else { return nil }
-            var actions: [Int: RebindAction] = [:]
-            for fingers in 1...3 {
-                actions[fingers] = $0.rules[MatchKey(trigger: .magicMouseTap(fingers: fingers), modifiers: modifiers)]?.action
+            var actions: [InputTrigger: RebindAction] = [:]
+            for trigger in MagicMouseRuntime.tapTriggers {
+                actions[trigger] = $0.rules[MatchKey(trigger: trigger, modifiers: modifiers)]?.action
             }
             return MagicMouseRuntime(revision: $0.actionRevision, activity: $0.magicMouseActivity,
                                      modifiers: modifiers, buttonsDown: buttonsDown, actions: actions)
         }
     }
 
-    @discardableResult nonisolated func submitMagicMouse(_ runtime: MagicMouseRuntime, fingers: Int,
+    @discardableResult nonisolated func submitMagicMouse(_ runtime: MagicMouseRuntime, trigger: InputTrigger,
                                                         pid: Int32, at now: UInt64) -> Bool {
         let queued = state.withLock {
-            guard !runtime.buttonsDown, (1...3).contains(fingers), now <= UInt64.max - 100_000_000,
+            guard !runtime.buttonsDown, MagicMouseRuntime.tapTriggers.contains(trigger), now <= UInt64.max - 100_000_000,
                   $0.pending.isEmpty, $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
                   $0.actionRevision == runtime.revision, $0.magicMouseActivity == runtime.activity,
-                  $0.foregroundPID == pid, let action = runtime.actions[fingers],
-                  $0.rules[MatchKey(trigger: .magicMouseTap(fingers: fingers), modifiers: runtime.modifiers)]?.action == action
+                  $0.foregroundPID == pid, let action = runtime.actions[trigger],
+                  $0.rules[MatchKey(trigger: trigger, modifiers: runtime.modifiers)]?.action == action
             else { return false }
             let target = TrackpadDispatchTarget(pid: pid, inputActivity: runtime.activity,
                 expiresAt: now + 100_000_000, queuedAt: now, modifiers: runtime.modifiers, isMagicMouse: true)

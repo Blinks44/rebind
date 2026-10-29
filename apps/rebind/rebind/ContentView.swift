@@ -55,7 +55,14 @@ struct ContentView: View {
         .ignoresSafeArea(.container, edges: .top)
         // An empty unified toolbar gives the window the tall titlebar of a sidebar app, so macOS
         // itself places the window buttons inside the sidebar panel. Content starts below that strip.
-        .toolbar { ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1) }.sharedBackgroundVisibility(.hidden) }
+        // Before macOS 26 toolbar items have no shared glass background to hide.
+        .toolbar {
+            if #available(macOS 26, *) {
+                ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1) }.sharedBackgroundVisibility(.hidden)
+            } else {
+                ToolbarItem(placement: .navigation) { Color.clear.frame(width: 1, height: 1) }
+            }
+        }
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .sheet(item: $setupPresentation.context, onDismiss: {

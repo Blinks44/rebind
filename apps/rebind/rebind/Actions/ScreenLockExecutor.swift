@@ -7,7 +7,7 @@ nonisolated enum ScreenLockExecutor {
     typealias LockFunction = @convention(c) () -> Void
     private static let lock: LockFunction? = resolve()
 
-    static func supportsSystemVersion(_ major: Int) -> Bool { (26...27).contains(major) }
+    static func supportsSystemVersion(_ major: Int) -> Bool { (15...27).contains(major) }
     static var isAvailable: Bool { lock != nil }
 
     static func perform(canPerform: () -> Bool,

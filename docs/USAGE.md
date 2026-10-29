@@ -22,7 +22,7 @@ A binding works in all apps unless you select one in the editor. An app-specific
 
 ## Taps, clicks and macOS gestures
 
-A **tap** is a light touch followed by lifting your fingers. A **click** physically presses the surface. Trackpads have 12 presets per category. Magic Mouse has six: one/two/three-finger taps, three-finger click and two-finger scroll up/down. There are no swipe, pinch or rotation presets.
+A **tap** is a light touch followed by lifting your fingers. A **click** physically presses the surface. Trackpads have 12 presets per category. Magic Mouse has eight: one/two/three-finger taps, one-finger taps on the left or right half, three-finger click and two-finger scroll up/down. A left or right tap rule wins on its half; a tap in the middle, or on a half without such a rule, counts as an ordinary one-finger tap. There are no swipe, pinch or rotation presets.
 
 Touch capture uses a private macOS interface and may change after system updates. Overlapping macOS gestures can also respond. Rebind explains the relevant setting; change it yourself or choose another gesture. It never changes system gestures automatically. Magic Mouse scroll directions follow your fingers, independently of Natural Scrolling. A recognized stroke performs one action instead of scrolling; unclear starts retain native scrolling.
 

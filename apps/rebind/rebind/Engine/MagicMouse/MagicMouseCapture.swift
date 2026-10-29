@@ -141,8 +141,8 @@ import Dispatch
         session?.update(runtime: runtime, foreground: pid)
         session?.consumeBufferedFrames(from: device.buffer, clock: clock)
         let decisionTime = clock()
-        if let fingers = session?.takeReady(from: device.buffer, at: decisionTime), let pid {
-            _ = mailbox.submitMagicMouse(runtime, fingers: fingers, pid: pid, at: decisionTime)
+        if let trigger = session?.takeReady(from: device.buffer, at: decisionTime), let pid {
+            _ = mailbox.submitMagicMouse(runtime, trigger: trigger, pid: pid, at: decisionTime)
         }
         mailbox.state.withLock { $0.magicMouseStatus = .active }
         // No idle 100 Hz polling. The first new frame wakes this timer immediately;

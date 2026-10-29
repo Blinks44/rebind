@@ -20,6 +20,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
 
     /// Experimental stationary single taps on the Magic Mouse surface.
     case magicMouseTap(fingers: Int)
+    /// A one-finger stationary tap on the left or right half; it takes precedence over `magicMouseTap(fingers: 1)`.
+    case magicMouseSideTap(MagicMouseSide)
 
     /// A physical press with three contacts, distinct from a light tap.
     case magicMouseClick(fingers: Int)
@@ -29,7 +31,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     var isTouchGesture: Bool { isTrackpad || isMagicMouse }
     var isMagicMouse: Bool {
         switch self {
-        case .magicMouseTap, .magicMouseClick, .magicMouseScroll: true
+        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: true
         default: false
         }
     }
@@ -83,7 +85,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
              .twoFingerDoubleTap, .cornerTap, .trackpadClick: .builtInTrackpad
-        case .magicMouseTap, .magicMouseClick, .magicMouseScroll: .magicMouse
+        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: .magicMouse
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
         }
@@ -95,7 +97,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .mouseButton(let number): number >= 2
         case .mouseGesture(let number, _), .buttonScroll(let number, _): number >= 2
         case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap: true
+             .twoFingerDoubleTap, .cornerTap, .magicMouseSideTap: true
         case .trackpadClick(let fingers): (2...4).contains(fingers)
         case .magicMouseTap(let fingers): (1...3).contains(fingers)
         case .magicMouseClick(let fingers): fingers == 3

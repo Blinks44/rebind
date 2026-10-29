@@ -36,7 +36,7 @@ import Testing
         ]))
         mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
         let runtime = try #require(mailbox.magicMouseRuntime())
-        try #require(mailbox.submitMagicMouse(runtime, fingers: fingers, pid: 100, at: 0))
+        try #require(mailbox.submitMagicMouse(runtime, trigger: .magicMouseTap(fingers: fingers), pid: 100, at: 0))
         let capture = TrackpadCapture(mailbox: mailbox)
         cleanUp(capture, mode: cleanup)
         #expect(mailbox.state.withLock { $0.trackpadStatus } == .idle)
@@ -84,7 +84,7 @@ import Testing
         ]))
         mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
         let runtime = try #require(mailbox.magicMouseRuntime())
-        try #require(mailbox.submitMagicMouse(runtime, fingers: 1, pid: 100, at: 0))
+        try #require(mailbox.submitMagicMouse(runtime, trigger: .magicMouseTap(fingers: 1), pid: 100, at: 0))
         TrackpadCapture(mailbox: mailbox).service(allowingInput: false, foregroundPID: nil, modifiers: [])
         try #require(mailbox.state.withLock { $0.trackpadDispatch != nil })
         let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },

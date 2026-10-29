@@ -6,14 +6,14 @@
 
 <p align="center">
   Remap keys, mouse buttons and trackpad gestures to shortcuts and macOS actions.<br>
-  Free, open source, native on macOS 26+.
+  Free, open source, native on macOS 15+.
 </p>
 
 A native macOS utility for mapping keyboard and mouse input to shortcuts and system actions. Create a binding, choose its trigger and action, and keep it running from the menu bar while you work in other apps.
 
-Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
+Rebind runs on **macOS 15 and later**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
 
-**Status:** version 1.0. Keyboard and mouse remapping is the stable core; trackpad and Magic Mouse gestures are experimental. Testing so far has been on Apple silicon with macOS 27. The [capability matrix](docs/CAPABILITIES.md) lists what has been tried on real hardware.
+**Status:** version 1.3. Keyboard and mouse remapping is the stable core; trackpad and Magic Mouse gestures are experimental. Testing so far has been on Apple silicon with macOS 27, plus a macOS 15 virtual machine. The [capability matrix](docs/CAPABILITIES.md) lists what has been tried on real hardware.
 
 ## Repository layout
 
@@ -32,7 +32,7 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Press, double press and hold. A hold binding can also send a shortcut on a short press.
 - Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
 - Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
-- Experimental Magic Mouse taps with one, two or three fingers, a physical three-finger click and two-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
+- Experimental Magic Mouse taps with one, two or three fingers, one-finger taps on the left or right half, a physical three-finger click and two-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
 
 **Actions**
 
@@ -52,18 +52,18 @@ Rebind targets **macOS 26+**, with SwiftUI/AppKit and a calm, soft native design
 - Logitech mice: SmartShift wheel mode and sensitivity, pointer resolution (DPI), high-resolution wheel, battery charge, and the gesture button as a trigger; kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
 - Automatic backups of the last 10 different configurations loaded at launch, plus full export/import and individual profile files.
 - Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
-- Updates through [Sparkle](https://sparkle-project.org): Rebind checks once a day (or on **Check for Updates**) and asks before installing a signed update.
+- Updates through [Sparkle](https://sparkle-project.org): Rebind checks once a day (or on **Check for Updates**), shows what changed and asks before installing a signed update.
 - English, Russian, German, French, Spanish and Simplified Chinese.
 
 Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad and Magic Mouse touch capture rely on a private macOS interface and are experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
 
 ## Requirements
 
-- macOS **26 or later**.
+- macOS **15 or later**.
 - Full Xcode with a **Swift 6.2+ compiler** and a **macOS 26+ SDK** to build from source.
 - The Accessibility permission, which Rebind asks for on first launch.
 
-Rebind is a universal app, but so far it has been run only on Apple silicon with macOS 27. macOS 26 and Intel Macs have not been tested yet.
+Rebind is a universal app. It has been run on Apple silicon with macOS 27 and in a macOS 15 virtual machine, where the app and keyboard and mouse bindings work. Trackpad and Magic Mouse gestures on macOS 15, macOS 26 and Intel Macs have not been tested yet.
 
 ## Install
 

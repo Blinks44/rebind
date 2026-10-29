@@ -71,10 +71,23 @@ def write_appcast(dmg, version):
     release = f"https://github.com/Blinks44/rebind/releases/download/v{version}/"
     with tempfile.TemporaryDirectory(prefix="rebind-appcast-") as staging:
         shutil.copy2(dmg, staging)
-        run(tool, "--download-url-prefix", release,
+        # generate_appcast embeds a Markdown file named like the DMG; Sparkle's update window shows it.
+        notes = changelog_entry(version)
+        if notes:
+            (Path(staging) / f"{dmg.stem}.md").write_text(notes)
+        else:
+            print(f"CHANGELOG.md has no {version} section; the appcast has no update notes.")
+        run(tool, "--download-url-prefix", release, "--embed-release-notes",
             "--full-release-notes-url", f"https://github.com/Blinks44/rebind/releases/tag/v{version}",
             "--link", "https://github.com/Blinks44/rebind", "-o", appcast, staging, quiet=True)
     return appcast
+
+
+def changelog_entry(version):
+    # The changelog's user-facing section ("## 1.2.0: date") doubles as the update notes.
+    text = (APP_ROOT.parent.parent / "CHANGELOG.md").read_text()
+    match = re.search(rf"^## {re.escape(version)}\b.*?\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    return match.group(1).strip() + "\n" if match else None
 
 
 def main():

@@ -330,6 +330,129 @@
         }
       }
     },
+    "magicMouseLeftSideTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap · Left side"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Касание · слева"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen · links"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher · à gauche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque · izquierda"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点 · 左侧"
+          }
+        }
+      }
+    },
+    "magicMouseRightSideTap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap · Right side"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Касание · справа"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen · rechts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toucher · à droite"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque · derecha"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻点 · 右侧"
+          }
+        }
+      }
+    },
+    "magicMouseSideTapHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap lightly with one finger on that half of the mouse, then lift it. A tap near the middle counts as a one-finger tap."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Слегка коснитесь одним пальцем этой половины мыши и уберите палец. Касание посередине считается касанием одним пальцем."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit einem Finger leicht auf diese Hälfte der Maus tippen und den Finger anheben. Ein Tippen in der Mitte zählt als Tippen mit einem Finger."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez légèrement cette moitié de la souris avec un doigt, puis levez-le. Un toucher au milieu compte comme un toucher à un doigt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca suavemente con un dedo esa mitad del ratón y levántalo. Un toque en el centro cuenta como un toque con un dedo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用单指轻触鼠标的这一半后抬起。在中间轻触按单指轻点处理。"
+          }
+        }
+      }
+    },
     "magicMouseSubtitle" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -15,10 +15,14 @@ struct MagicMouseTests {
         var session: MagicMouseTapSession
         var nextID: Int32 = 0
 
-        init(fingers: [Int] = [1, 2, 3], modifiers: ModifierSet = [], buttonsDown: Bool = false) throws {
+        init(fingers: [Int] = [1, 2, 3], sides: [MagicMouseSide] = [], modifiers: ModifierSet = [],
+             buttonsDown: Bool = false) throws {
             let bindings = fingers.map {
                 rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: $0), modifiers: modifiers,
                                action: .shortcut(.init(keyCode: UInt16(12 + $0), modifiers: .command)))
+            } + sides.map {
+                rebind.Binding(scope: .magicMouse, trigger: .magicMouseSideTap($0), modifiers: modifiers,
+                               action: .shortcut(.init(keyCode: $0 == .left ? 20 : 21, modifiers: .command)))
             }
             mailbox.configure(Configuration(isEnabled: true, bindings: bindings))
             mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
@@ -39,15 +43,15 @@ struct MagicMouseTests {
             session.consume(frame, at: time)
         }
 
-        mutating func tap(_ fingers: Int, endingAt end: UInt64) {
+        mutating func tap(_ fingers: Int, endingAt end: UInt64, shift: Float = 0) {
             contact(0, at: end - 80_000_000)
-            contact(fingers, at: end - 60_000_000)
-            contact(fingers, at: end - 40_000_000)
-            contact(fingers, at: end - 20_000_000)
+            contact(fingers, at: end - 60_000_000, shift: shift)
+            contact(fingers, at: end - 40_000_000, shift: shift)
+            contact(fingers, at: end - 20_000_000, shift: shift)
             contact(0, at: end)
         }
 
-        mutating func ready(at time: UInt64) -> Int? { session.takeReady(from: buffer, at: time) }
+        mutating func ready(at time: UInt64) -> InputTrigger? { session.takeReady(from: buffer, at: time) }
     }
 
     @Test(arguments: [1, 2, 3])
@@ -57,9 +61,9 @@ struct MagicMouseTests {
         #expect(h.ready(at: lift + 59_999_999) == nil)
         let recognized = h.ready(at: lift + 60_000_000)
         let ready = try #require(recognized)
-        #expect(ready == fingers)
+        #expect(ready == .magicMouseTap(fingers: fingers))
         #expect(h.ready(at: lift + 70_000_000) == nil)
-        #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: ready, pid: 100, at: lift + 60_000_000))
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: ready, pid: 100, at: lift + 60_000_000))
         let outputs = Mutex<[KeyboardShortcut]>([])
         let worker = ActionWorker(mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
@@ -93,7 +97,43 @@ struct MagicMouseTests {
         #expect(h.ready(at: lift + 500_000_000) == nil)
         h.buffer.setAccepting(true)
         h.tap(fingers, endingAt: lift + 1_000_000_000)
-        #expect(h.ready(at: lift + 1_060_000_000) == fingers)
+        #expect(h.ready(at: lift + 1_060_000_000) == .magicMouseTap(fingers: fingers))
+    }
+
+    @Test func sideBoundariesLeaveTheMiddleToTheOrdinaryTap() {
+        #expect(MagicMouseSide.containing(x: 0) == .left && MagicMouseSide.containing(x: 0.4) == .left)
+        #expect(MagicMouseSide.containing(x: 0.41) == nil && MagicMouseSide.containing(x: 0.59) == nil)
+        #expect(MagicMouseSide.containing(x: 0.6) == .right && MagicMouseSide.containing(x: 1) == .right)
+        #expect(MagicMouseSide.containing(x: -0.1) == nil && MagicMouseSide.containing(x: .nan) == nil)
+    }
+
+    // The harness places one finger at x = 0.4 + shift.
+    @Test(arguments: [
+        (Float(-0.2), [MagicMouseSide.left, .right], InputTrigger.magicMouseSideTap(.left)),
+        (0.4, [.left, .right], .magicMouseSideTap(.right)),
+        (0.1, [.left, .right], .magicMouseTap(fingers: 1)),
+        (0.4, [.left], .magicMouseTap(fingers: 1)),
+    ])
+    func sideRuleWinsOnItsHalfOtherwiseOneFingerTapApplies(_ shift: Float, _ sides: [MagicMouseSide],
+                                                          _ expected: InputTrigger) throws {
+        var h = try Harness(sides: sides)
+        h.tap(1, endingAt: lift, shift: shift)
+        let recognized = h.ready(at: lift + 60_000_000)
+        let ready = try #require(recognized)
+        #expect(ready == expected)
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: ready, pid: 100, at: lift + 60_000_000))
+        let dispatch = try #require(h.mailbox.nextAction())
+        #expect(dispatch.action == h.runtime.actions[expected])
+    }
+
+    @Test func sideRulesAloneIgnoreMiddleAndMultiFingerTaps() throws {
+        var h = try Harness(fingers: [], sides: [.left, .right])
+        h.tap(1, endingAt: lift, shift: 0.1)
+        #expect(h.ready(at: lift + 60_000_000) == nil)
+        h.tap(2, endingAt: lift + 1_000_000_000, shift: -0.2)
+        #expect(h.ready(at: lift + 1_060_000_000) == nil)
+        h.tap(1, endingAt: lift + 2_000_000_000, shift: -0.2)
+        #expect(h.ready(at: lift + 2_060_000_000) == .magicMouseSideTap(.left))
     }
 
     @Test(arguments: 0...6)
@@ -113,7 +153,7 @@ struct MagicMouseTests {
     @Test func idleFrameGapsPreserveFreshTapsButQueuedContactsBlockOldOutput() throws {
         var h = try Harness()
         h.tap(1, endingAt: lift)
-        #expect(h.ready(at: lift + 60_000_000) == 1)
+        #expect(h.ready(at: lift + 60_000_000) == .magicMouseTap(fingers: 1))
         h.nextID += 500
         h.tap(2, endingAt: lift + 1_000_000_000)
         h.buffer.state.withLock {
@@ -149,11 +189,11 @@ struct MagicMouseTests {
     @Test func exactModifiersAndProfileRevisionAreRecheckedAtDispatch() throws {
         let h = try Harness(modifiers: .shift)
         #expect(h.mailbox.magicMouseRuntime()?.actions.isEmpty == true)
-        #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: 1, pid: 101, at: lift) == false)
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: .magicMouseTap(fingers: 1), pid: 101, at: lift) == false)
         var forged = h.runtime
-        forged.actions[1] = .lockScreen
-        #expect(h.mailbox.submitMagicMouse(forged, fingers: 1, pid: 100, at: lift) == false)
-        #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: 1, pid: 100, at: lift))
+        forged.actions[.magicMouseTap(fingers: 1)] = .lockScreen
+        #expect(h.mailbox.submitMagicMouse(forged, trigger: .magicMouseTap(fingers: 1), pid: 100, at: lift) == false)
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: .magicMouseTap(fingers: 1), pid: 100, at: lift))
         let dispatch = try #require(h.mailbox.nextAction())
         h.mailbox.updateTrackpadForeground(nil)
         h.mailbox.updateTrackpadForeground(100)
@@ -163,7 +203,7 @@ struct MagicMouseTests {
     @Test(arguments: 0...6)
     func pausedOrInvalidatedContextsRejectAlreadyQualifiedOutput(_ cause: Int) throws {
         let h = try Harness()
-        #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: 1, pid: 100, at: lift))
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: .magicMouseTap(fingers: 1), pid: 100, at: lift))
         switch cause {
         case 0: h.mailbox.setEditing(true)
         case 1: h.mailbox.record(.init(target: .output))
@@ -174,7 +214,7 @@ struct MagicMouseTests {
         default: h.mailbox.configure(Configuration(isEnabled: true))
         }
         #expect(h.mailbox.nextAction() == nil)
-        #expect(h.mailbox.submitMagicMouse(h.runtime, fingers: 1, pid: 100, at: lift + 1) == false)
+        #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: .magicMouseTap(fingers: 1), pid: 100, at: lift + 1) == false)
     }
 
     @Test(arguments: [1, 2, 3]) func sustainedContactsAndCompressedNativeTimeCannotBecomeQuickTaps(_ fingers: Int) throws {
@@ -202,7 +242,7 @@ struct MagicMouseTests {
         #expect(h.ready(at: lift + 160_000_001) == nil)
         #expect(h.ready(at: lift + 170_000_000) == nil)
         h.tap(2, endingAt: lift + 1_000_000_000)
-        #expect(h.ready(at: lift + 1_060_000_000) == 2)
+        #expect(h.ready(at: lift + 1_060_000_000) == .magicMouseTap(fingers: 2))
     }
 
     @Test func mouseTapRulesEnableRealPointerEventsWithoutAButtonGesture() throws {

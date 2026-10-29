@@ -155,7 +155,7 @@ import Testing
         let h = Harness()
         h.service()
         let runtime = try #require(h.mailbox.magicMouseRuntime())
-        try #require(h.mailbox.submitMagicMouse(runtime, fingers: 1, pid: 100, at: 0))
+        try #require(h.mailbox.submitMagicMouse(runtime, trigger: .magicMouseTap(fingers: 1), pid: 100, at: 0))
         if stop { h.capture.stop() } else { h.service(allowingInput: false) }
         #expect(h.mailbox.nextAction() == nil)
         let trackpad = try #require(h.mailbox.trackpadRuntime())

@@ -2,13 +2,15 @@ import Foundation
 
 /// Hardware-observed candidate pool, kept separate from trackpad presets.
 nonisolated enum MagicMousePreset: Int, CaseIterable, Hashable, Sendable {
-    case oneFingerTap = 1, twoFingerTap = 2, threeFingerTap = 3
+    case oneFingerTap = 1, leftSideTap = 7, rightSideTap = 8, twoFingerTap = 2, threeFingerTap = 3
 
     case threeFingerClick = 4, twoFingerScrollUp = 5, twoFingerScrollDown = 6
 
     var trigger: InputTrigger {
         switch self {
         case .oneFingerTap, .twoFingerTap, .threeFingerTap: .magicMouseTap(fingers: rawValue)
+        case .leftSideTap: .magicMouseSideTap(.left)
+        case .rightSideTap: .magicMouseSideTap(.right)
         case .threeFingerClick: .magicMouseClick(fingers: 3)
         case .twoFingerScrollUp: .magicMouseScroll(.up)
         case .twoFingerScrollDown: .magicMouseScroll(.down)
@@ -18,12 +20,15 @@ nonisolated enum MagicMousePreset: Int, CaseIterable, Hashable, Sendable {
         switch self {
         case .threeFingerClick: .magicMouseClickHelp
         case .twoFingerScrollUp, .twoFingerScrollDown: .magicMouseScrollHelp
+        case .leftSideTap, .rightSideTap: .magicMouseSideTapHelp
         default: .magicMouseTapHelp
         }
     }
     var title: LocalizedStringResource {
         switch self {
         case .oneFingerTap: .magicMouseOneFingerTap
+        case .leftSideTap: .magicMouseLeftSideTap
+        case .rightSideTap: .magicMouseRightSideTap
         case .twoFingerTap: .magicMouseTwoFingerTap
         case .threeFingerTap: .magicMouseThreeFingerTap
         case .threeFingerClick: .magicMouseThreeFingerClick
@@ -33,7 +38,7 @@ nonisolated enum MagicMousePreset: Int, CaseIterable, Hashable, Sendable {
     }
     var systemGestureHelp: LocalizedStringResource? {
         switch self {
-        case .oneFingerTap: .magicMouseOneFingerConflict
+        case .oneFingerTap, .leftSideTap, .rightSideTap: .magicMouseOneFingerConflict
         case .twoFingerTap: .magicMouseTwoFingerConflict
         case .threeFingerTap, .threeFingerClick, .twoFingerScrollUp, .twoFingerScrollDown: nil
         }

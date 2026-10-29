@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 48
+    static let currentSchemaVersion = 49
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -331,6 +331,7 @@ nonisolated private extension Binding {
         introduced(in: 43, trigger == .magicMouseTap(fingers: 3))
         switch trigger {
         case .magicMouseClick, .magicMouseScroll: introduced(in: 44, true)
+        case .magicMouseSideTap: introduced(in: 49, true)
         case .cornerTap: introduced(in: 28, true)
         case .trackpadClick: introduced(in: 29, true)
         case .buttonScroll: introduced(in: 34, true)

@@ -45,6 +45,20 @@ struct MagicMousePersistenceTests {
         #expect(throws: ConfigurationError.invalid) { try old.migrated() }
     }
 
+    @Test(arguments: MagicMouseSide.allCases)
+    func sideTapsRequireSchema49(_ side: MagicMouseSide) throws {
+        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseSideTap(side), modifiers: .option, action: .doNothing)
+        let configuration = Configuration(isEnabled: true, bindings: [rule])
+        try configuration.validate()
+        let data = try JSONEncoder().encode(configuration)
+        #expect(try JSONDecoder().decode(Configuration.self, from: data) == configuration)
+        var old = configuration; old.schemaVersion = 48
+        #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+        var invalid = rule
+        invalid.scope = .builtInTrackpad
+        #expect(invalid.isValid == false)
+    }
+
     @Test(arguments: [InputTrigger.magicMouseClick(fingers: 2), .magicMouseClick(fingers: 4), .magicMouseScroll(.left), .magicMouseScroll(.right)])
     func unsupportedNativeGesturesAreRejected(_ trigger: InputTrigger) {
         #expect(trigger.isSupported == false)

@@ -113,9 +113,7 @@ struct PermissionSetupView: View {
                     .font(Theme.callout).foregroundStyle(Theme.textSecondary)
             } else {
                 Banner(severity: .success, title: .ready,
-                    message: context == .recovery ? .permissionsRespectsPause : .readyPurpose) {
-                    Button(.checkAgain) { model.refreshPermissions() }.secondaryButton()
-                }
+                    message: context == .recovery ? .permissionsRespectsPause : .readyPurpose)
                 Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
         }

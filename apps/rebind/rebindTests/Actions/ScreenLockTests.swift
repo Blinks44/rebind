@@ -22,8 +22,9 @@ struct ScreenLockTests {
         #expect(invoked == 1)
     }
 
-    @Test(arguments: [25, 26, 27, 28]) func privateAdapterLimitsReviewedSystemVersions(_ major: Int) {
-        #expect(ScreenLockExecutor.supportsSystemVersion(major) == (major == 26 || major == 27))
+    // macOS went from 15 to 26; the range has no other real majors.
+    @Test(arguments: [14, 15, 26, 27, 28]) func privateAdapterLimitsReviewedSystemVersions(_ major: Int) {
+        #expect(ScreenLockExecutor.supportsSystemVersion(major) == [15, 26, 27].contains(major))
     }
 
     @Test @MainActor func catalogAndPayloadNeedNoShortcutOrAudioDevice() throws {

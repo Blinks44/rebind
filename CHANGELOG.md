@@ -2,6 +2,13 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.3.0: 2026-10-29
+
+- Rebind now runs on macOS 15 Sequoia and later.
+- Magic Mouse: tap the left or right half with one finger to run a separate action. Experimental, like the other Magic Mouse gestures.
+- The update window now shows what changed.
+- The setup window no longer shows Check Again once access is granted.
+
 ## 1.2.0: 2026-10-28
 
 - Moved Devices from Settings to the sidebar (⌘6).

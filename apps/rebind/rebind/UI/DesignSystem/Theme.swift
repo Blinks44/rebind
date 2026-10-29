@@ -88,7 +88,9 @@ enum Theme {
 
 extension Color {
     /// An appearance-adaptive color from `0xRRGGBB` values.
-    init(light: UInt32, _ lightOpacity: Double = 1, dark: UInt32, _ darkOpacity: Double = 1) {
+    // Nonisolated: SwiftUI on macOS 15 resolves the provider on its display-link thread, and a
+    // main-actor closure there traps in the Swift 6 runtime isolation check.
+    nonisolated init(light: UInt32, _ lightOpacity: Double = 1, dark: UInt32, _ darkOpacity: Double = 1) {
         self.init(nsColor: NSColor(name: nil) { appearance in
             let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
             let hex = isDark ? dark : light

@@ -1,18 +1,20 @@
 # Rebind: current state
 
-Updated **2026-10-29**, checkout `main`. Published/source **1.2.0 (33)**, schema **48**; tag `v1.2.0` identifies `87769ca` ([REL-007](tasks/REL-007-release-1.2.0.md): Devices moved into the main window, [UI-025](tasks/UI-025-devices-in-main-window.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-29**, checkout `main`. Source **1.3.0 (36)**, schema **49**, tag `v1.3.0` ([REL-008](tasks/REL-008-release-1.3.0.md)); previous release 1.2.0 (33), tag `v1.2.0` ([REL-007](tasks/REL-007-release-1.2.0.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
-Native macOS **26+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `blinks44.rebind`. Recorded environment: Apple silicon macOS 27.0.1, Xcode 27.1 / Swift 6.4 / SDK 27; macOS 26/Intel execution unverified.
+Native macOS **15+** (from build 34; was 26+), Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `blinks44.rebind`. Recorded environment: Apple silicon macOS 27.0.1, Xcode 27.1 / Swift 6.4 / SDK 27; macOS 15/26/Intel execution unverified.
 
-Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, experimental Logitech RGB lighting, atomic storage and six languages are implemented. Both trackpad categories have **12 presets**; Magic Mouse has **six Experimental presets**. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and the live Sketch locator.
+Rules/profiles/actions, per-app restrictions/exclusions, held outputs, mouse settings/batteries, experimental Logitech RGB lighting, atomic storage and six languages are implemented. Both trackpad categories have **12 presets**; Magic Mouse has **eight Experimental presets**. Rules remain category-wide; profiles manual. [SPEC](SPEC.md), [CAPABILITIES](CAPABILITIES.md) and [DESIGN](DESIGN.md) own contracts, evidence and the live Sketch locator.
 
 Published **[1.2.0 (33)](https://github.com/Blinks44/rebind/releases/tag/v1.2.0)** moves Devices from Settings to the main-window sidebar ([UI-025](tasks/UI-025-devices-in-main-window.md)): All mice card first, excluded apps in General, four Settings tabs. The user reported the installed release working on 2026-10-29. Final 966 Swift Testing / 148 suites and 29 XCTest (two skipped) pass; signed DMG, checksums and appcast match the public downloads ([REL-007](tasks/REL-007-release-1.2.0.md)). 1.1.0 (31) added the G915 idle-off fix and the build-29 copy pass ([REL-006](tasks/REL-006-release-1.1.0.md)).
 
 Builds 16–28 added the copy audit, background-check optimization ([PERF-001](tasks/PERF-001-background-wakeups.md)), standard actions ([ACTION-001](tasks/ACTION-001-standard-actions.md)), the error banner ([FIX-003](tasks/FIX-003-menu-error-presentation.md)), G915/RGB lighting and idle timer ([LIGHT-001](tasks/LIGHT-001-keyboard-lighting.md)), the Shortcuts held-release fix ([FIX-004](tasks/FIX-004-shortcuts-held-release.md)) and [review fixes](history/2026-10.md#2026-10-28-review-of-october-2627-commits). Their installed/hardware acceptance stays in those tasks.
 
 Build-24 error fixes remain in build 25: independent guidance/error dismissal, shared red banner, bounded menu errors and 30-second action-failure expiry ([FIX-003](tasks/FIX-003-menu-error-presentation.md)). Installed keyboard/hover/VoiceOver/recovery checks remain open. RGB support covers HID++ 0x8071 input devices; other brands/0x8070 need another backend. G915 protocol levels/on-off/injected battery recovery pass, while power-cycle/reconnect, actual G HUB/battery recovery and accessibility acceptance remain open. Build 30 explicitly controls lighting power from the G915's native idle/activity notifications; no host keyboard monitor or polling is used. Native PowerOff alone left white lighting on in build 28; the tester confirms explicit off extinguishes it. Device default restores the captured policy and owned power/event bits; Never remains hidden. Automatic off and key-press wake are tester-confirmed; default/reconnect acceptance stays in LIGHT-001.
+
+**1.3.0 (36)**, schema **49** ([REL-008](tasks/REL-008-release-1.3.0.md)): macOS 15+ ([PLAT-001](tasks/PLAT-001-macos-15-support.md); toggle crash on 15 fixed in build 35, UI and rules tester-confirmed in a macOS 15.6.1 VM), Magic Mouse left/right taps ([INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md)), Sparkle update notes from CHANGELOG ([REL-005](tasks/REL-005-onboarding-and-updates.md)), no Check Again on the setup Ready banner ([UI-001](tasks/UI-001-permissions-onboarding.md)). 998 Swift Testing pass; README, USAGE and website say macOS 15+.
 
 ## Acceptance and remaining release work
 
@@ -28,6 +30,9 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
+| [REL-008](tasks/REL-008-release-1.3.0.md) | Confirm public 1.3.0 assets; observe the 1.2.0 → 1.3.0 Sparkle update with notes. |
+| [PLAT-001](tasks/PLAT-001-macos-15-support.md) | Touch input on a real Mac with macOS 15. |
+| [INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md) | Real Magic Mouse: side orientation, resting finger, Smart Zoom; Sketch selector with eight presets. |
 | [COPY-001](tasks/COPY-001-app-and-website-language.md) | Confirm the deployed site, sync changed build-29 English strings to Sketch. |
 | [FIX-004](tasks/FIX-004-shortcuts-held-release.md) | Check installed long-Shortcut held release/order and pause/quit (build 26 fix). |
 | [FIX-003](tasks/FIX-003-menu-error-presentation.md) | Installed keyboard/VoiceOver/menu hover/unsupported-window recovery (build 24 fix). |

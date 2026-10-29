@@ -40,8 +40,8 @@ import IOKit
 
         init?() {
             // New major OS releases require another private-ABI audit. This is a
-            // compatibility gate, not a hardware-verification claim for macOS 26.
-            guard (26...27).contains(ProcessInfo.processInfo.operatingSystemVersion.majorVersion),
+            // compatibility gate, not a hardware-verification claim for macOS 15 or 26.
+            guard (15...27).contains(ProcessInfo.processInfo.operatingSystemVersion.majorVersion),
                   let handle = dlopen("/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
                                       RTLD_LOCAL | RTLD_LAZY) else { return nil }
             func symbol<T>(_ name: String) -> T? { dlsym(handle, name).map { unsafeBitCast($0, to: T.self) } }

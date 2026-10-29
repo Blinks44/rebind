@@ -1,6 +1,6 @@
 # REL-005: Three-step first run and Sparkle updates
 
-- Updated: 2026-10-24
+- Updated: 2026-10-29
 - Stage: awaiting_verification
 - Owner: Unassigned; implementation released
 - Owned surfaces: `PermissionSetupView`, `UpdateSettingsRow`, `Updates/AppUpdater`, General settings, menu bar menu, `apps/rebind/Info.plist`, Sparkle package reference, `release.sh` appcast step; Sketch screens 64/01/65, 31, 51–53 and Foundations 11
@@ -38,6 +38,8 @@ Changed: `rebind/UI/PermissionSetupView.swift`, `rebind/UI/UpdateSettingsRow.swi
 Verification 2026-10-21 (Apple silicon, macOS 27.0.1, Xcode 27.1): Debug build without warnings; full `dev.sh test`: 935 tests passed (2469 cases with arguments), 2 skipped, 0 failed. `release.sh`: signed `apps/rebind/build/release/Rebind-1.0.0-9.dmg`, SHA-256 `1d39e666583e03553ba383e82927522f01bb02f1062ae0577cfd78b7b9604487`; Sparkle.framework and app signed with the pinned Apple Development identity (team GJ35NZKDRS, hardened runtime), `codesign --verify --strict --deep` passes; `appcast.xml` (build 9, minimum macOS 26.0) EdDSA signature verified with `sign_update --verify`. Not installed, no runtime walkthrough, nothing published.
 
 Review 2026-10-21, **1.0.0 (10)**: appcast regenerated from scratch per release (the previous step appended earlier local builds), packaging follows `REBIND_DERIVED_DATA`, Set Up Later without Escape per Foundations 11, redundant `SUScheduledCheckInterval` removed. Full tests pass; signed `apps/rebind/build/release/Rebind-1.0.0-10.dmg`; appcast lists only build 10. See [history](../history/2026-10.md).
+
+Update notes, 2026-10-29 (user request): `release.sh` writes the `## <version>` section of `CHANGELOG.md` as `Rebind.md` next to the DMG and passes `--embed-release-notes`, so Sparkle 2.10's `generate_appcast` embeds it as a Markdown `<description>` and the standard update window shows it. A version without a section gets no notes and a printed message. English only for now; the "Version history" link to the GitHub release stays. Packaging evidence: see STATE's build-34 entry. Showing the notes in a real update needs the next published release.
 
 ## Open checks / dependency
 

@@ -5,9 +5,9 @@ Build commands, signing, permission troubleshooting and local diagnostics for co
 ## Build and test
 
 
-Use full Xcode with Swift 6.2+ and a macOS 26+ SDK. The app runs on macOS 26+.
+Use full Xcode with Swift 6.2+ and a macOS 26+ SDK. The app runs on macOS 15+ (since build 34).
 The last recorded development environment (2026-10-20) used Xcode 27.1 (27A9275), Swift 6.4, macOS SDK 27,
-and macOS 27.0.1 (26A434) on Apple Silicon. macOS 26 runtime compatibility
+and macOS 27.0.1 (26A434) on Apple Silicon. macOS 15/26 runtime compatibility
 and Intel runtime behavior still need testing.
 
 Open `apps/rebind/rebind.xcodeproj`, select the shared **rebind** scheme, and Run (⌘R).
