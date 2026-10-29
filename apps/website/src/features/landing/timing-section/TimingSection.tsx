@@ -5,10 +5,11 @@ import { ActionRow, FeatureCard, FeatureSection, GroupLabel } from '../feature-s
 import styles from './TimingSection.module.css'
 
 export function TimingSection() {
+  // One binding per key: press, double press and hold on the same key conflict.
   const rows = [
-    ['press', m.press(), m.playPause(), m.catSound(), Play],
-    ['double', m.doublePress(), m.nextTrack(), m.catSound(), SkipForward],
-    ['hold', m.hold(), m.missionControl(), m.catSpaces(), LayoutGrid],
+    ['press', 'F5', m.press(), m.playPause(), m.catSound(), Play],
+    ['double', 'F6', m.doublePress(), m.nextTrack(), m.catSound(), SkipForward],
+    ['hold', 'F7', m.hold(), m.missionControl(), m.catSpaces(), LayoutGrid],
   ] as const
   return (
     <FeatureSection
@@ -39,11 +40,11 @@ export function TimingSection() {
     >
       <FeatureCard>
         <ul className={styles.rows}>
-          {rows.map(([kind, label, title, caption, icon]) => (
+          {rows.map(([kind, key, label, title, caption, icon]) => (
             <li key={kind} className={styles.row}>
               <GroupLabel>{label}</GroupLabel>
               <div className={styles.input}>
-                <Keycap>F5</Keycap>
+                <Keycap>{key}</Keycap>
                 <span className={styles.track} data-kind={kind} aria-hidden="true">
                   <span />
                   {kind === 'double' && <span />}
