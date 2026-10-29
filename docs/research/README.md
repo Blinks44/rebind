@@ -31,7 +31,7 @@ RGB continuation, 2026-10-27: [reuse audit](rgb-lighting.md) checks Swift OpenRG
 - **R-01 trackpad:** raw contacts do not establish tap/click exclusivity, source attribution or suppression. Integrated output exists but responsiveness/recovery acceptance remains open.
 - **R-02 rule routing:** physical-device rules remain outside scope; Settings inventory/mouse attribution is separate. Historical Unknown sender is not proof of platform impossibility.
 - **R-03 mouse drivers:** numeric button model exists and G603 subsets work; buttons beyond 5, driver changes and detailed passthrough need hardware evidence.
-- **R-04 Magic Mouse:** six Experimental tap/click/vertical-scroll presets in [INPUT-015](../tasks/INPUT-015-touch-release-scope.md); basic delivery is user-confirmed. Detailed settings/cancellation/platform matrices remain qualified. No new recognizer is needed by the REL-004 release gap review.
+- **R-04 Magic Mouse:** eight Experimental tap/click/vertical-scroll presets in [INPUT-015](../tasks/INPUT-015-touch-release-scope.md) and [INPUT-016](../tasks/INPUT-016-magic-mouse-side-taps.md) (left/right taps reuse the existing recognizer); basic delivery is user-confirmed. Detailed settings/cancellation/platform matrices remain qualified. No new recognizer is needed by the REL-004 release gap review.
 - **R-05 actions:** many paths implemented with subset user confirmation; operation acceptance/posting does not prove visual completion and every platform combination.
 - **R-06 signing/permissions:** local ad-hoc builds previously verified; the stable identity and encrypted restore/signing test now exist (REL-001). Revoked-grant and distinct same-signer update evidence remain open. No root/security shortcuts.
 
