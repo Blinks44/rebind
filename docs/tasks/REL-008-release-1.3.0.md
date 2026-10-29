@@ -19,7 +19,7 @@ Publishes [PLAT-001](PLAT-001-macos-15-support.md) (macOS 15), [INPUT-016](INPUT
 
 Published 2026-10-29 as the latest stable release. Public `releases/latest/download` appcast is byte-identical to the local one (build 36, minimum 15.0) and the public DMG matches the local SHA-256.
 
-Tester, 2026-10-29: the installed 1.2.0 offered 1.3.0 through Sparkle, showed the update notes and updated successfully.
+Tester, 2026-10-29: the installed 1.2.0 offered 1.3.0 through Sparkle, showed the update notes and updated successfully; rules and Accessibility access were kept.
 
 ## Open checks
 
