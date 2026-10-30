@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-10-29**, checkout `main`. Source **1.3.0 (36)**, schema **49**, tag `v1.3.0` ([REL-008](tasks/REL-008-release-1.3.0.md)); previous release 1.2.0 (33), tag `v1.2.0` ([REL-007](tasks/REL-007-release-1.2.0.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-10-30**, checkout `main`. Source **1.3.1 (38)**, schema **49**, tag `v1.3.1` ([REL-009](tasks/REL-009-release-1.3.1.md), built-in trackpad after sleep [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md)); previous release 1.3.0 (36), tag `v1.3.0` ([REL-008](tasks/REL-008-release-1.3.0.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 ## Product and current artifact
 
@@ -30,6 +30,7 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
+| [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md) | Installed 1.3.1: built-in gestures after a two-hour lid-closed sleep without relaunch; Sparkle update from 1.3.0 (37) ([REL-009](tasks/REL-009-release-1.3.1.md)). |
 | [PLAT-001](tasks/PLAT-001-macos-15-support.md) | Touch input on a real Mac with macOS 15. |
 | [INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md) | Real Magic Mouse: side orientation, resting finger, Smart Zoom. |
 | [COPY-001](tasks/COPY-001-app-and-website-language.md) | Confirm the deployed site, sync changed build-29 English strings to Sketch. |

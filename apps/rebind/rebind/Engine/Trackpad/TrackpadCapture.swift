@@ -154,10 +154,11 @@ import Dispatch
             stop(&surface)
             return .idle
         }
-        // A Magic Trackpad connects and disconnects; look for it at a slow cadence.
-        if isMagic, surface.scannedAt.map({ now < $0 || now - $0 >= 2_000_000_000 }) ?? true {
+        // A Magic Trackpad connects and disconnects, and the system can replace the built-in
+        // trackpad's driver (after a long sleep); look for either at a slow cadence.
+        if surface.scannedAt.map({ now < $0 || now - $0 >= 2_000_000_000 }) ?? true {
             surface.scannedAt = now
-            let found = NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicTrackpad)
+            let found = NativeTrackpadDevice.acquire(mailbox: mailbox, kind: surface.kind)
             if found !== surface.device {
                 stop(&surface)
                 surface.device = found
@@ -166,10 +167,6 @@ import Dispatch
         }
         if surface.revision != runtime.revision {
             stop(&surface)
-            if !isMagic, surface.device == nil {
-                surface.device = NativeTrackpadDevice.acquire(mailbox: mailbox)
-                surface.device?.buffer.setWake(Self.wakeHandler(for: self))
-            }
             mailbox.state.withLock {
                 if isMagic { $0.magicTrackpadClicks.beginCapture(at: now) }
                 else { $0.trackpadClicks.beginCapture(at: now) }
@@ -177,8 +174,8 @@ import Dispatch
             guard let device = surface.device, device.start() else {
                 mailbox.recordTrackpadDiagnostic(surface.device?.failed == true ? .captureFailed : .captureUnavailable)
                 // Latch this revision; a failing start is not retried every 10 ms.
-                // An absent Magic Trackpad is picked up by the next scan instead.
-                if surface.device != nil || !isMagic { surface.revision = runtime.revision }
+                // An absent surface is picked up by the next scan instead.
+                if surface.device != nil { surface.revision = runtime.revision }
                 return surface.device?.failed == true ? .failed : .unavailable
             }
             surface.revision = runtime.revision

@@ -2,6 +2,10 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.3.1: 2026-10-30
+
+- Fixed built-in trackpad gestures stopping after the Mac slept for a long time with the lid closed.
+
 ## 1.3.0: 2026-10-29
 
 - Rebind now runs on macOS 15 Sequoia and later.
