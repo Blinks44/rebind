@@ -6,7 +6,7 @@
 - Ownership checked: clean `main` at `7425ee5`; scoped ownership active.
 - Owned surfaces: MenuBatteryView, MenuBarController battery rows, MenuBarBatteryTests, build version and related records.
 - Requirements: SPEC §3 device battery menu and native semantics/accessibility; existing six-language copy preserved.
-- Baseline: `main` / `7425ee5`; changes uncommitted.
+- Baseline: `main` / `7425ee5`; released in `57018b8`, tag `v1.3.2`.
 
 ## Outcome
 
