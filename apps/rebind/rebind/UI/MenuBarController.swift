@@ -117,31 +117,22 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         return item
     }
 
-    /// The device symbol, its name and, at the right edge, the charge and a battery symbol. One
-    /// right-aligned tab stop after the longest name keeps the charges of all rows in a column.
+    /// A full-width row lets the battery reach the same trailing inset as the DPI value.
     static func batteryItems(_ batteries: [(battery: DeviceBattery, name: String)], language: AppLanguage) -> [NSMenuItem] {
-        let font = NSFont.menuFont(ofSize: 0)
-        let rows = batteries.map { (battery: $0.battery, name: $0.name, charge: charge($0.battery, font: font, language: language)) }
-        let nameWidth = rows.map { ($0.name as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0
-        let chargeWidth = rows.map { $0.charge.size().width }.max() ?? 0
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.tabStops = [NSTextTab(textAlignment: .right, location: (nameWidth + 24 + chargeWidth).rounded(.up))]
-
-        return rows.map { row in
-            let title = NSMutableAttributedString(string: row.name + "\t", attributes: [.font: font])
-            title.append(row.charge)
-            title.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: title.length))
+        batteries.map { row in
             let item = NSMenuItem(title: row.name, action: nil, keyEquivalent: "")
-            item.attributedTitle = title
-            // The small scale keeps wide symbols (keyboard, trackpad) within the 16 pt menu image
-            // slot, so the menu draws them at their own size instead of resampling them blurry.
-            item.image = NSImage(systemSymbolName: row.battery.kind.symbol, accessibilityDescription: nil)?
-                .withSymbolConfiguration(.init(scale: .small))
-            if #available(macOS 27, *) { item.preferredImageVisibility = .visible }
             let state = AppLocalization.string(row.battery.isCharging ? .devicesBatteryCharging(row.battery.percentage)
                                                    : .devicesBattery(row.battery.percentage), language: language)
-            item.setAccessibilityLabel("\(row.name), \(state)")
+            let label = "\(row.name), \(state)"
+            item.setAccessibilityLabel(label)
+            item.view = MenuBatteryView(battery: row.battery, name: row.name, language: language, accessibilityLabel: label)
             return item
+        }
+    }
+
+    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
+        for row in menu.items {
+            (row.view as? MenuBatteryView)?.isHighlighted = row === item
         }
     }
 
@@ -169,25 +160,6 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             item.view = view
             return item
         }
-    }
-
-    /// "80%" and the matching battery symbol, the percentage red when the battery is low.
-    private static func charge(_ battery: DeviceBattery, font: NSFont, language: AppLanguage) -> NSAttributedString {
-        let low = battery.percentage <= 15 && !battery.isCharging
-        let charge = NSMutableAttributedString(
-            string: AppLocalization.string(.batteryMenuLevel(battery.percentage), language: language) + " ",
-            attributes: [.font: font, .foregroundColor: low ? NSColor.systemRed : NSColor.secondaryLabelColor])
-        let attachment = NSTextAttachment()
-        let image = NSImage(systemSymbolName: battery.symbol, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(pointSize: font.pointSize, weight: .regular))
-        attachment.image = image
-        // Whole-point bounds centred on the cap height keep the symbol on the pixel grid.
-        if let size = image?.size {
-            attachment.bounds = CGRect(x: 0, y: ((font.capHeight - size.height) / 2).rounded(), width: size.width, height: size.height)
-        }
-        charge.append(NSAttributedString(attachment: attachment))
-        charge.addAttribute(.font, value: font, range: NSRange(location: 0, length: charge.length))
-        return charge
     }
 
     private func item(_ title: String, _ action: Selector, enabled: Bool = true) -> NSMenuItem {

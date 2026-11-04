@@ -2,6 +2,11 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.3.2: 2026-11-04
+
+- Aligned battery indicators to the right edge of the menu and increased the icon size.
+- Added the finger count to Magic Mouse left and right tap names.
+
 ## 1.3.1: 2026-10-30
 
 - Fixed built-in trackpad gestures stopping after the Mac slept for a long time with the lid closed.

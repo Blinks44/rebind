@@ -10,6 +10,10 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
+Side-tap copy **2026-11-04** ([INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md)): screen 58 Light/Dark and Foundations 10 now explicitly say “Tap · 1 finger, left side” and “Tap · 1 finger, right side”. Existing menu geometry retained; screenshots reviewed and Sketch saved, SHA-256 `de67f92dc7562a9a08cb2025d101b9148cee0156a3019be8812e651b1b653bcc`. Build 40 adopts the same clarification in all six app languages.
+
+Native menu alignment **2026-11-04** ([UI-026](tasks/UI-026-menu-battery-alignment.md)): live screen 53 Light inspected; build 39 adopts larger secondary battery symbols, 8 pt percent/icon spacing and the DPI block’s trailing inset using full-width AppKit rows. Light/Dark native specimens reviewed; Sketch unchanged. Appearance tester-accepted on 2026-11-04; VoiceOver and macOS 15/26 remain open.
+
 Author link **2026-10-29** (user request): `05 · Website` desktop and mobile footers add "Follow on X" as the last Project link (duplicated from MIT License; lower footer content and both landing frames grow by 28 px). Screenshot-reviewed and saved; SHA-256 `f03289607b47b0e31d850cbfb93d5c12bcf7c4983be298800b86b850ded5b6dd`.
 
 1.3.0 parity **2026-10-29**: screen 58 Light/Dark menus show eight Magic Mouse presets (Tap · Left side and Tap · Right side after Tap · 1 finger, reusing the menu item component); Foundations 07, 08 and 10 say eight presets and describe side-tap precedence; Foundations 11 notes the granted Access state without Check Again and the update window's CHANGELOG notes. Screenshot-reviewed and saved; SHA-256 `1b127c2c9d9f5c733347ce98d1329f1cd1381cc90f17396a5dc4d5300dc625b7`.

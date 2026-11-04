@@ -10,25 +10,43 @@ import Testing
     ]
 
     @Test(arguments: AppLanguage.allCases)
-    func rowsShareOneRightAlignedColumnAfterTheLongestName(language: AppLanguage) throws {
+    func chargeFollowsTheMenuTrailingEdgeWhenWidened(language: AppLanguage) throws {
         let items = MenuBarController.batteryItems(rows, language: language)
-        let font = NSFont.menuFont(ofSize: 0)
-        let longest = rows.map { ($0.name as NSString).size(withAttributes: [.font: font]).width }.max() ?? 0
-        var locations = Set<CGFloat>()
         for (item, row) in zip(items, rows) {
-            let title = try #require(item.attributedTitle)
-            #expect(title.string.hasPrefix(row.name + "\t"))
-            #expect(title.string.contains(AppLocalization.string(.batteryMenuLevel(row.battery.percentage), language: language)))
-            #expect(title.attribute(.attachment, at: title.length - 1, effectiveRange: nil) is NSTextAttachment)
-            let paragraph = try #require(title.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle)
-            let stop = try #require(paragraph.tabStops.only)
-            #expect(stop.alignment == .right)
-            #expect(stop.location > longest)
-            locations.insert(stop.location)
-            #expect(item.image != nil)
-            if #available(macOS 27, *) { #expect(item.preferredImageVisibility == .visible) }
+            let view = try #require(item.view as? MenuBatteryView)
+            let window = NSWindow(contentRect: view.frame, styleMask: [], backing: .buffered, defer: false)
+            window.isReleasedWhenClosed = false
+            window.contentView = view
+            defer { window.close() }
+            let width = view.frame.width
+            for extra: CGFloat in [0, 120] {
+                window.setContentSize(NSSize(width: width + extra, height: 24))
+                view.layoutSubtreeIfNeeded()
+                #expect(abs(view.batteryImage.frame.maxX - (view.bounds.maxX - 14)) < 0.5)
+                #expect(view.levelLabel.alignmentRect(forFrame: view.levelLabel.frame).minX >= view.nameLabel.alignmentRect(forFrame: view.nameLabel.frame).maxX + 23.5)
+                #expect(view.nameLabel.stringValue == row.name)
+                #expect(view.levelLabel.stringValue == AppLocalization.string(.batteryMenuLevel(row.battery.percentage), language: language))
+                #expect(view.batteryImage.image != nil)
+            }
+            #expect(view.accessibilityRole() == .menuItem)
+            #expect(view.accessibilityLabel() == item.accessibilityLabel())
         }
-        #expect(locations.count == 1)
+    }
+
+    @Test func accessiblePressPerformsTheEnclosingMenuAction() throws {
+        let item = try #require(MenuBarController.batteryItems(rows, language: .en).first)
+        let view = try #require(item.view as? MenuBatteryView)
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        let target = BatteryMenuActionTarget()
+        item.target = target
+        item.action = #selector(BatteryMenuActionTarget.openDevices)
+        menu.addItem(item)
+        #expect(view.accessibilityPerformPress())
+        #expect(target.calls == 1)
+        item.isEnabled = false
+        #expect(view.accessibilityPerformPress() == false)
+        #expect(target.calls == 1)
     }
 
     @Test(arguments: AppLanguage.allCases)
@@ -41,6 +59,7 @@ import Testing
     }
 }
 
-private extension Array {
-    var only: Element? { count == 1 ? first : nil }
+@MainActor private final class BatteryMenuActionTarget: NSObject {
+    var calls = 0
+    @objc func openDevices() { calls += 1 }
 }

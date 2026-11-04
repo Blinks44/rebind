@@ -336,37 +336,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap · Left side"
+            "value" : "Tap · 1 finger, left side"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Касание · слева"
+            "value" : "Касание · 1 палец, слева"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen · links"
+            "value" : "Tippen · 1 Finger, links"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toucher · à gauche"
+            "value" : "Toucher · 1 doigt, à gauche"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque · izquierda"
+            "value" : "Toque · 1 dedo, izquierda"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轻点 · 左侧"
+            "value" : "轻点 · 单指，左侧"
           }
         }
       }
@@ -377,37 +377,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap · Right side"
+            "value" : "Tap · 1 finger, right side"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Касание · справа"
+            "value" : "Касание · 1 палец, справа"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen · rechts"
+            "value" : "Tippen · 1 Finger, rechts"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toucher · à droite"
+            "value" : "Toucher · 1 doigt, à droite"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque · derecha"
+            "value" : "Toque · 1 dedo, derecha"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轻点 · 右侧"
+            "value" : "轻点 · 单指，右侧"
           }
         }
       }
