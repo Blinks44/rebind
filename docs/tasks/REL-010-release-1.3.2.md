@@ -3,7 +3,7 @@
 - Updated: 2026-11-04
 - Stage: done
 - Owner: Codex release chat
-- Original source: `57018b8` (build 41); build-42 replacement is being committed and retagged under explicit maintainer authorization.
+- Source: `aac69f6` (build 42), tag `v1.3.2`; replaces original `57018b8` (build 41) under explicit maintainer authorization.
 - Scope: [battery-menu alignment](UI-026-menu-battery-alignment.md) and [explicit side-tap labels](INPUT-016-magic-mouse-side-taps.md).
 
 ## Verification
@@ -20,6 +20,6 @@ Published through `gh` as the latest stable release on 2026-11-04. Public latest
 
 ## Build 42 replacement
 
-The maintainer explicitly requested replacing v1.3.2 assets instead of issuing a new version. Build 42 fixes initial battery-row selection (UI-026). Final build, five targeted test functions and signed DMG verification pass. SHA-256: `170b3a3f2ddd7aaaaeff03fbc32675995e8d9658439cbec33ebc21b745999e85`. Keep the existing marketing version and release notes; update the release tag to the corrected source and replace DMG/checksum before the build-42 appcast. Public replacement verification pending.
+The maintainer explicitly requested replacing v1.3.2 assets instead of issuing a new version. Build 42 fixes initial battery-row selection (UI-026). Final build, five targeted test functions and signed DMG verification pass. SHA-256: `170b3a3f2ddd7aaaaeff03fbc32675995e8d9658439cbec33ebc21b745999e85`. Keep the existing marketing version and release notes; update the release tag to the corrected source and replace DMG/checksum before the build-42 appcast. DMG/checksum and then appcast replaced through `gh release upload --clobber`; public latest downloads match local files byte for byte; build 42, checksum and Sparkle EdDSA verification pass.
 
 Next: check the Sparkle update from 1.3.1 with rules and Accessibility access preserved. No installation or website deployment performed.
