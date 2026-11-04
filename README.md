@@ -97,7 +97,7 @@ To build a Release app:
 apps/rebind/scripts/dev.sh release
 ```
 
-The result is `apps/rebind/build/DerivedData/Build/Products/Release/Rebind.app`. To package a release for other people, use `apps/rebind/scripts/release.sh` (see the development guide). See the [development guide](docs/DEVELOPMENT.md) for toolchain overrides, tests and signing details.
+The result is `~/Library/Caches/Rebind/DerivedData/Build/Products/Release/Rebind.app`. To package a release for other people, use `apps/rebind/scripts/release.sh` (see the development guide). See the [development guide](docs/DEVELOPMENT.md) for toolchain overrides, tests and signing details.
 
 ## First launch
 

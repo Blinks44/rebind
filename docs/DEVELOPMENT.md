@@ -34,22 +34,20 @@ the system selection. For another Xcode installation:
 DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer apps/rebind/scripts/dev.sh build
 ```
 
-Build output is under ignored `apps/rebind/build/DerivedData/`. Set `REBIND_DERIVED_DATA`
-to an absolute alternate directory for an isolated build/test/run, preserving a different
-app artifact currently being tested on hardware. Do not pass a second `-derivedDataPath`.
-Do not run concurrent Xcode build commands against the same DerivedData directory. Extra arguments
-are forwarded to `xcodebuild`, for example:
+Build/run/build-for-testing products use `~/Library/Caches/Rebind/DerivedData/`, outside protected Desktop/Documents checkouts. Keep Xcode's standard Derived Data location rather than a project-relative Desktop path. Packaged releases remain in ignored `apps/rebind/build/release/`.
+
+`dev.sh test` uses a fresh `~/Library/Caches/Rebind/TestRuns/run.*` directory and removes it on completion, failure or a handled interrupt. Only `~/Library/Caches/Rebind/LastTestSummary.json` is retained, replacing the previous small summary. Compiler/test output remains in the calling terminal or its chosen log file. An explicit `-resultBundlePath` is retained where requested.
+
+`release.sh` similarly owns a temporary `ReleaseRuns/run.*` directory, passes it to dev.sh, and removes intermediate products after packaging or failure. It keeps the final signed app, DMG, checksum and appcast in the repository's release directory.
+
+Set `REBIND_DERIVED_DATA` to an absolute, unprotected path when products/full results must survive for investigation or a hardware check. An explicit override belongs to the caller and is never automatically removed. Remove an isolated verification checkout/cache once its evidence has been recorded and no process uses it; do not leave redundant multi-hundred-megabyte copies between sessions.
+
+`apps/rebind/scripts/dev.sh clean` removes only the default persistent DerivedData cache. It refuses an explicit override or files held by a running cached app/build. Use it when build/run/build-for-testing products are no longer needed. Force-killed processes cannot run cleanup traps; inspect any interrupted run directory before removing it manually.
+
+Do not run concurrent builds against the same explicit/persistent DerivedData directory. Default test/packaging runs have separate directories. Extra arguments are forwarded to xcodebuild; a second `-derivedDataPath` should not be passed. For example, to keep a full diagnostic result:
 
 ```sh
-apps/rebind/scripts/dev.sh test -resultBundlePath build/Tests.xcresult
-```
-
-Use a fresh result-bundle path for each run. The equivalent direct build is:
-
-```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build \
-  -project apps/rebind/rebind.xcodeproj -scheme rebind -configuration Debug \
-  -destination 'platform=macOS' -derivedDataPath apps/rebind/build/DerivedData
+apps/rebind/scripts/dev.sh test -resultBundlePath /tmp/rebind-tests-unique.xcresult
 ```
 
 The Swift Testing target covers matching, exact modifiers, press/release
@@ -65,7 +63,7 @@ Debug UI walkthroughs can use the production window/editor/Settings hierarchy wi
 loading real rules or starting the input engine:
 
 ```sh
-open -n apps/rebind/build/DerivedData/Build/Products/Debug/Rebind.app --args --application-fixture
+open -n "$HOME/Library/Caches/Rebind/DerivedData/Build/Products/Debug/Rebind.app" --args --application-fixture
 ```
 
 `--application-fixture` seeds do-nothing rules in disposable temporary storage and disables

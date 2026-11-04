@@ -4,10 +4,12 @@ set -euo pipefail
 exec python3 - "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)" <<'PYTHON'
 #!/usr/bin/env python3
 """Build with an existing signing identity; never create keys or install a service."""
+import contextlib
 import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -15,7 +17,8 @@ import tempfile
 APP_ROOT = Path(sys.argv[1])
 OUTPUT = APP_ROOT / "build" / "release"
 # dev.sh honours the same override, so the packaged app is the one just built.
-DERIVED_DATA = Path(os.environ.get("REBIND_DERIVED_DATA", APP_ROOT / "build" / "DerivedData"))
+CACHE_ROOT = Path.home() / "Library/Caches/Rebind"
+DERIVED_DATA = Path(os.environ.get("REBIND_DERIVED_DATA", CACHE_ROOT / "DerivedData"))
 KEYCHAIN = os.environ.get("REBIND_SIGN_KEYCHAIN")
 # Pin the existing shared development certificate; never silently change signer.
 IDENTITY = os.environ.get("REBIND_SIGN_IDENTITY", "69D383553450694A1E9D78650B3FC6E69446BD4F")
@@ -165,9 +168,22 @@ def main():
     print("This artifact is signed but not notarized. Clean-Mac installation remains unverified.")
 
 
+def interrupted(signum, _frame):
+    raise SystemExit(128 + signum)
+
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGTERM, interrupted)
     try:
-        main()
+        with contextlib.ExitStack() as cleanup:
+            # Explicit overrides belong to the caller; default packaging builds are temporary.
+            if not os.environ.get("REBIND_DERIVED_DATA"):
+                runs = CACHE_ROOT / "ReleaseRuns"
+                runs.mkdir(parents=True, exist_ok=True)
+                directory = cleanup.enter_context(tempfile.TemporaryDirectory(prefix="run.", dir=runs))
+                DERIVED_DATA = Path(directory)
+                os.environ["REBIND_DERIVED_DATA"] = directory
+            main()
     except (RuntimeError, OSError) as error:
         print(f"Preparation stopped: {error}", file=sys.stderr)
         sys.exit(1)

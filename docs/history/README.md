@@ -2,6 +2,7 @@
 
 History records dated outcomes and reasons. It is not startup instructions or a list of currently supported capabilities. Read [STATE](../STATE.md), [PLAN](../PLAN.md), the affected task and current source first.
 
+- [2026-11](2026-11.md): build-directory privacy and temporary-artifact cleanup.
 - [2026-10](2026-10.md): condensed technical outcomes and links to owning evidence.
 - [Settings design through 2026-10-11](settings-design-through-2026-10-11.md): condensed evidence from the superseded design source; current visuals remain in live Sketch.
 - [Implementation through 2026-10-10](implementation-through-2026-10-10.md): concise technical outcomes, earlier research decisions and scoped software/manual evidence. Earlier failed/removed approaches remain identified as superseded; new decisions belong in current tasks/research.

@@ -1,6 +1,8 @@
 # Rebind: current state
 
-Updated **2026-10-30**, checkout `main`. Source **1.3.1 (38)**, schema **49**, tag `v1.3.1` ([REL-009](tasks/REL-009-release-1.3.1.md), built-in trackpad after sleep [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md)); previous release 1.3.0 (36), tag `v1.3.0` ([REL-008](tasks/REL-008-release-1.3.0.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-11-04**, checkout `main`. Source **1.3.1 (38)**, schema **49**, tag `v1.3.1` ([REL-009](tasks/REL-009-release-1.3.1.md), built-in trackpad after sleep [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md)); previous release 1.3.0 (36), tag `v1.3.0` ([REL-008](tasks/REL-008-release-1.3.0.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+
+Build tooling (2026-11-04): default products are outside Desktop; test/packaging intermediates are temporary and automatically cleaned. A small last test summary is retained; build/run products can be cleared with `dev.sh clean`. [Lifecycle and verification](tasks/DEV-001-build-cache-lifecycle.md). Full-suite navigation timing check remains open: 997 pass/one fail/two skipped; the four-test focused navigation run passes.
 
 ## Product and current artifact
 
