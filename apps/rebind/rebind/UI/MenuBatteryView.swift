@@ -9,7 +9,11 @@ final class MenuBatteryView: NSView {
     private let deviceImage: NSImageView
     private let low: Bool
     var isHighlighted = false {
-        didSet { updateColors(); needsDisplay = true }
+        didSet {
+            updateColors()
+            needsDisplay = true
+            if isHighlighted { window?.makeFirstResponder(self) }
+        }
     }
 
     init(battery: DeviceBattery, name: String, language: AppLanguage, accessibilityLabel: String) {
@@ -73,7 +77,9 @@ final class MenuBatteryView: NSView {
         if bounds.contains(convert(event.locationInWindow, from: nil)) { _ = accessibilityPerformPress() }
     }
 
-    override var acceptsFirstResponder: Bool { true }
+    // Only accept keyboard focus after menu navigation selects this row. Otherwise AppKit
+    // selects the first focusable custom row as soon as the menu opens.
+    override var acceptsFirstResponder: Bool { isHighlighted }
 
     override func keyDown(with event: NSEvent) {
         switch event.keyCode {

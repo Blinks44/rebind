@@ -3,7 +3,7 @@
 - Updated: 2026-11-04
 - Stage: done
 - Owner: Codex release chat
-- Source: `57018b8`, tag `v1.3.2`; pushed to `origin/main`.
+- Original source: `57018b8` (build 41); build-42 replacement is being committed and retagged under explicit maintainer authorization.
 - Scope: [battery-menu alignment](UI-026-menu-battery-alignment.md) and [explicit side-tap labels](INPUT-016-magic-mouse-side-taps.md).
 
 ## Verification
@@ -17,5 +17,9 @@ Final `dev.sh build` passes. `release.sh` passes: app/DMG strict signatures, ima
 - Appcast: build 41, macOS 15+, CHANGELOG notes, v1.3.2 download URL.
 
 Published through `gh` as the latest stable release on 2026-11-04. Public latest DMG, checksum and appcast match the local files byte for byte; checksum, appcast build/version and Sparkle EdDSA verification pass. Existing hardware/platform/VoiceOver gates remain task-owned.
+
+## Build 42 replacement
+
+The maintainer explicitly requested replacing v1.3.2 assets instead of issuing a new version. Build 42 fixes initial battery-row selection (UI-026). Final build, five targeted test functions and signed DMG verification pass. SHA-256: `170b3a3f2ddd7aaaaeff03fbc32675995e8d9658439cbec33ebc21b745999e85`. Keep the existing marketing version and release notes; update the release tag to the corrected source and replace DMG/checksum before the build-42 appcast. Public replacement verification pending.
 
 Next: check the Sparkle update from 1.3.1 with rules and Accessibility access preserved. No installation or website deployment performed.

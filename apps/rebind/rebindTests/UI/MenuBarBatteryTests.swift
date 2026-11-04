@@ -33,6 +33,17 @@ import Testing
         }
     }
 
+    @Test func keyboardFocusRequiresASelectedRow() throws {
+        let item = try #require(MenuBarController.batteryItems(rows, language: .en).first)
+        let view = try #require(item.view as? MenuBatteryView)
+        #expect(view.isHighlighted == false)
+        #expect(view.acceptsFirstResponder == false)
+        view.isHighlighted = true
+        #expect(view.acceptsFirstResponder)
+        view.isHighlighted = false
+        #expect(view.acceptsFirstResponder == false)
+    }
+
     @Test func accessiblePressPerformsTheEnclosingMenuAction() throws {
         let item = try #require(MenuBarController.batteryItems(rows, language: .en).first)
         let view = try #require(item.view as? MenuBatteryView)

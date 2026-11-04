@@ -1,6 +1,6 @@
 # Rebind: current state
 
-Updated **2026-11-04**, checkout `main`. Published **[1.3.2 (41)](https://github.com/Blinks44/rebind/releases/tag/v1.3.2)**, schema **49**, tag `v1.3.2` ([REL-010](tasks/REL-010-release-1.3.2.md)): battery-menu alignment and explicit one-finger side-tap labels. Tester accepted both changes; detailed keyboard/VoiceOver gates remain open. Previous release: **1.3.1 (38)** ([REL-009](tasks/REL-009-release-1.3.1.md), built-in trackpad recovery [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-11-04**, checkout `main`. Local source **1.3.2 (42)** fixes battery-row selection on menu opening ([UI-026](tasks/UI-026-menu-battery-alignment.md)); installed verification pending. Published **[1.3.2 (41)](https://github.com/Blinks44/rebind/releases/tag/v1.3.2)**, schema **49**, tag `v1.3.2` ([REL-010](tasks/REL-010-release-1.3.2.md)): battery-menu alignment and explicit one-finger side-tap labels. Tester accepted both changes; detailed keyboard/VoiceOver gates remain open. Previous release: **1.3.1 (38)** ([REL-009](tasks/REL-009-release-1.3.1.md), built-in trackpad recovery [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md)). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 Build tooling (2026-11-04): default products are outside Desktop; test/packaging intermediates are temporary and automatically cleaned. A small last test summary is retained; build/run products can be cleared with `dev.sh clean`. [Lifecycle and verification](tasks/DEV-001-build-cache-lifecycle.md). Full-suite navigation timing check remains open: 997 pass/one fail/two skipped; the four-test focused navigation run passes.
 
@@ -32,7 +32,7 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
-| [UI-026](tasks/UI-026-menu-battery-alignment.md) | Appearance tester-accepted; verify keyboard selection and VoiceOver in the status menu. |
+| [UI-026](tasks/UI-026-menu-battery-alignment.md) | Build 42 fixes automatic keyboard-row selection on opening; verify installed opening state, keyboard and VoiceOver. |
 | [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md) | Installed 1.3.1: built-in gestures after a two-hour lid-closed sleep without relaunch; Sparkle update from 1.3.0 (37) ([REL-009](tasks/REL-009-release-1.3.1.md)). |
 | [PLAT-001](tasks/PLAT-001-macos-15-support.md) | Touch input on a real Mac with macOS 15. |
 | [INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md) | Real Magic Mouse: side orientation, resting finger, Smart Zoom. |
