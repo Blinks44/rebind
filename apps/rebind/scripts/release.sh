@@ -181,6 +181,8 @@ if __name__ == "__main__":
                 runs = CACHE_ROOT / "ReleaseRuns"
                 runs.mkdir(parents=True, exist_ok=True)
                 directory = cleanup.enter_context(tempfile.TemporaryDirectory(prefix="run.", dir=runs))
+                # dev.sh clean keeps a run while this PID is alive.
+                (Path(directory) / "owner.pid").write_text(f"{os.getpid()}\n")
                 DERIVED_DATA = Path(directory)
                 os.environ["REBIND_DERIVED_DATA"] = directory
             main()

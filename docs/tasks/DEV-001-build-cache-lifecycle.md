@@ -27,3 +27,7 @@ M1 Max/macOS 27.2: the full default suite completes with 997 passed, one failed 
 A green full Rebind suite is not claimed. The remaining check is to repeat/review this navigation test under full-suite load, separately from the verified build-directory and cleanup behavior. Tests did not start capture, execute real remappings, change permissions or install an app.
 
 Rebind 1.3.1/build 38 was repackaged for tooling verification, with unchanged application source/version and no installation/publication. SHA-256: `8fd618117aa9bbb8e01b48e2d843df54220a37cce9b0997c1bd15cd0b87c9ec6`. The generated app/DMG signatures, image integrity and appcast checks passed; ReleaseRuns is empty afterwards. The persistent default build cache is cleared.
+
+## Interrupted runs and cold builds (2026-11-04 follow-up)
+
+Default test/packaging runs write their owner PID to `owner.pid`; `dev.sh clean` now also removes `TestRuns`/`ReleaseRuns` directories whose owner is gone (force-killed scripts cannot run their traps), keeping a run whose owner is alive. Stub check with a temporary HOME: a dead-owner run and a run without a PID file were removed, a live-owner run was kept, and the persistent cache was cleared. Accepted trade-off: every default test/release run is a cold build that re-resolves Swift packages over the network; this is documented in DEVELOPMENT.
