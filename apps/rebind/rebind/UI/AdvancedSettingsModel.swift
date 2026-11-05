@@ -14,7 +14,8 @@ import Observation
     }
 
     enum Feedback: Equatable {
-        case imported(Int, Int), reset, exported, invalidBackup, incompatibleBackup
+        case imported(Int, Int)
+        case reset, exported, invalidBackup, incompatibleBackup
         case writeFailed, exportFailed, staleReview
     }
 
@@ -40,19 +41,20 @@ import Observation
                 feedback = .staleReview
                 return
             }
-            review = Review(replacement: backup.configuration, expected: expected,
-                            revision: revision, isReset: false)
+            review = Review(
+                replacement: backup.configuration, expected: expected,
+                revision: revision, isReset: false)
         } catch is CancellationError {
             // Closing the page cancels validation without an error or a replacement.
-        } catch ConfigurationError.incompatible { feedback = .incompatibleBackup }
-        catch { feedback = .invalidBackup }
+        } catch ConfigurationError.incompatible { feedback = .incompatibleBackup } catch { feedback = .invalidBackup }
     }
 
     func reviewReset() {
         guard !app.storageLocked, !isValidating else { return }
         feedback = nil
-        review = Review(replacement: Configuration(), expected: app.configuration,
-                        revision: app.configurationReplacementRevision, isReset: true)
+        review = Review(
+            replacement: Configuration(), expected: app.configuration,
+            revision: app.configurationReplacementRevision, isReset: true)
     }
 
     func cancelReview() { review = nil }
@@ -62,8 +64,9 @@ import Observation
     func confirmReplacement() {
         guard let review, !app.storageLocked, !isValidating else { return }
         do {
-            try app.replaceConfiguration(with: review.replacement, expected: review.expected,
-                                         revision: review.revision)
+            try app.replaceConfiguration(
+                with: review.replacement, expected: review.expected,
+                revision: review.revision)
             feedback = review.isReset ? .reset : .imported(review.profileCount, review.bindingCount)
             self.review = nil
         } catch ConfigurationReplacementError.staleReview {
@@ -82,7 +85,6 @@ import Observation
                 try await ConfigurationFileOperations.export(backup, to: url, protecting: app.configurationFileURL)
             }
             feedback = .exported
-        } catch is CancellationError { }
-        catch { feedback = .exportFailed }
+        } catch is CancellationError {} catch { feedback = .exportFailed }
     }
 }

@@ -1,16 +1,23 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 @MainActor struct AppModelStorageProtectionTests {
-    @Test(arguments: 0...4, [Data("{broken".utf8), Data("{\"schemaVersion\":999}".utf8),
-                            Data(repeating: 0x20, count: ConfigurationStore.maximumBytes + 1)])
+    @Test(
+        arguments: 0...4,
+        [
+            Data("{broken".utf8), Data("{\"schemaVersion\":999}".utf8),
+            Data(repeating: 0x20, count: ConfigurationStore.maximumBytes + 1),
+        ])
     func ordinarySavesLockChangedOriginalWithoutMutatingRulesOrOutput(_ operation: Int, _ bytes: Data) throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindModelProtection-\(UUID())/configuration.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindModelProtection-\(UUID())/configuration.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         var original = Configuration(isEnabled: operation != 4, bindings: [binding])
         try original.createProfile(name: "Second", copying: original.selectedProfileID)
@@ -18,7 +25,8 @@ import Testing
         try original.selectProfile(RuleProfile.defaultID)
         try store.save(original)
         var projections: [AppLanguagePreference] = []
-        let app = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+        let app = AppModel(
+            store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
             loginItem: LoginItemModel(service: LoginItemServiceStub()), preferredLanguages: ["en"],
             languagePreferenceSaved: { projections.append($0) })
         app.mailbox.configure(original)

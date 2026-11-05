@@ -1,4 +1,5 @@
 import Testing
+
 @testable import rebind
 
 struct DiagnosticMailboxTests {
@@ -37,8 +38,9 @@ struct DiagnosticMailboxTests {
 
     @Test func holdDiagnosticUsesSourceModifiersAndDoesNotLogKeyboardHoldCodes() {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-                                     action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 500)
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+            action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 500)
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         mailbox.startDiagnostics(at: 0)
         #expect(mailbox.handle(button(time: 0), secureInput: false))
@@ -52,7 +54,8 @@ struct DiagnosticMailboxTests {
         keyboard.trigger = .key(0)
         mailbox.configure(Configuration(isEnabled: true, bindings: [keyboard]))
         mailbox.clearDiagnostics()
-        #expect(mailbox.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down, receivedAt: 600_000_000), secureInput: false))
+        #expect(
+            mailbox.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down, receivedAt: 600_000_000), secureInput: false))
         mailbox.pollHold(at: 1_100_000_000, secureInput: false)
         #expect(snapshot(mailbox).entries.isEmpty)
         #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
@@ -81,7 +84,9 @@ struct DiagnosticMailboxTests {
         case 0: _ = mailbox.handle(button(time: 2), secureInput: true)
         case 1: mailbox.handleUnsupportedScroll(modifiers: [], at: 2, secureInput: true)
         case 2: mailbox.captureLost(status: .permissionRequired)
-        case 3: mailbox.suspend(true); mailbox.suspend(false)
+        case 3:
+            mailbox.suspend(true)
+            mailbox.suspend(false)
         default: mailbox.stop()
         }
         #expect(snapshot(mailbox).isRunning == false)
@@ -90,8 +95,9 @@ struct DiagnosticMailboxTests {
 
     @Test func unsupportedScrollPassesThroughAndCancelsHoldWithoutLoggingDetails() {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-                                     action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 500)
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+            action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 500)
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         mailbox.startDiagnostics(at: 0)
         #expect(mailbox.handle(button(time: 0), secureInput: false))

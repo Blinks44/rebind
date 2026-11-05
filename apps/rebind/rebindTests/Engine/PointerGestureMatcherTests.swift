@@ -1,16 +1,21 @@
 import Testing
+
 @testable import rebind
 
 struct PointerGestureMatcherTests {
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
     private func binding(_ direction: PointerDirection = .left, button: UInt32 = 3) -> rebind.Binding {
-        rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: button, direction: direction),
-                       modifiers: .control, action: .shortcut(output))
+        rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: button, direction: direction),
+            modifiers: .control, action: .shortcut(output))
     }
-    private func event(_ phase: InputEvent.Phase, x: Int64 = 0, y: Int64 = 0,
-                       at time: UInt64 = 1, button: UInt32 = 3, modifiers: ModifierSet = .control) -> InputEvent {
-        InputEvent(trigger: .mouseButton(button), modifiers: modifiers, phase: phase,
-                   receivedAt: time, motion: phase == .drag ? PointerMotion(deltaX: x, deltaY: y) : nil)
+    private func event(
+        _ phase: InputEvent.Phase, x: Int64 = 0, y: Int64 = 0,
+        at time: UInt64 = 1, button: UInt32 = 3, modifiers: ModifierSet = .control
+    ) -> InputEvent {
+        InputEvent(
+            trigger: .mouseButton(button), modifiers: modifiers, phase: phase,
+            receivedAt: time, motion: phase == .drag ? PointerMotion(deltaX: x, deltaY: y) : nil)
     }
     private func delta(_ direction: PointerDirection, distance: Int64) -> (Int64, Int64) {
         switch direction {
@@ -135,7 +140,9 @@ struct PointerGestureMatcherTests {
         let rules = InputMatcher.compile([binding()])
         _ = matcher.handle(event(.down, at: 0), rules: rules, enabled: true)
         matcher.expirePointerGesture(at: InputMatcher.pointerTimeoutNanoseconds)
-        #expect(matcher.handle(event(.drag, x: -50, at: InputMatcher.pointerTimeoutNanoseconds), rules: rules, enabled: true).shortcut == output)
+        #expect(
+            matcher.handle(event(.drag, x: -50, at: InputMatcher.pointerTimeoutNanoseconds), rules: rules, enabled: true).shortcut == output
+        )
         matcher.expirePointerGesture(at: InputMatcher.pointerTimeoutNanoseconds + 1)
         #expect(matcher.pointerGestureSource == nil)
     }

@@ -1,5 +1,5 @@
-import Foundation
 import Darwin
+import Foundation
 
 nonisolated struct QuitApplicationIdentity: Sendable {
     var processID: pid_t

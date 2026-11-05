@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import rebind
 
 @MainActor struct MenuPointerSpeedTests {
@@ -32,16 +33,18 @@ import Testing
     }
 
     @Test func aCompanionAppNoteExplainsTheDisabledSlider() {
-        let view = MenuPointerSpeedView(name: "PRO", dpi: 800, values: values, enabled: false, note: "Logitech G HUB is running",
-                                        accessibilityLabel: "PRO, Pointer speed", valueText: { "\($0) DPI" }, commit: { _ in })
+        let view = MenuPointerSpeedView(
+            name: "PRO", dpi: 800, values: values, enabled: false, note: "Logitech G HUB is running",
+            accessibilityLabel: "PRO, Pointer speed", valueText: { "\($0) DPI" }, commit: { _ in })
         #expect(!view.slider.isEnabled)
         #expect(view.slider.accessibilityHelp() == "Logitech G HUB is running")
         #expect(view.slider.accessibilityValueDescription() == "800 DPI")
     }
 
     private func makeView(dpi: Int, enabled: Bool = true, commit: @escaping (Int) -> Void) -> MenuPointerSpeedView {
-        MenuPointerSpeedView(name: "MX Master 3S", dpi: dpi, values: values, enabled: enabled,
-                             accessibilityLabel: "MX Master 3S, Pointer speed",
-                             valueText: { "\($0) DPI" }, commit: commit)
+        MenuPointerSpeedView(
+            name: "MX Master 3S", dpi: dpi, values: values, enabled: enabled,
+            accessibilityLabel: "MX Master 3S, Pointer speed",
+            valueText: { "\($0) DPI" }, commit: commit)
     }
 }

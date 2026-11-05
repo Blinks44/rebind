@@ -1,8 +1,8 @@
-import ApplicationServices
 import AppKit
+import ApplicationServices
 import Carbon
-import Foundation
 import Dispatch
+import Foundation
 import Synchronization
 
 // This object, its port, and its callback context belong exclusively to the
@@ -65,8 +65,11 @@ nonisolated final class EventTapWorker {
         let control = mailbox.state.withLock {
             $0.diagnostics.expire(at: now)
             $0.magicMouseNative.expireScroll(at: now)
-            return ($0.enabled, $0.recording != nil, $0.suspended, $0.retryID, $0.matcher.hasSuppressedInput || $0.magicMouseNative.hasOwnedInput,
-                    $0.needsPointerMotion, $0.diagnostics.isRunning)
+            return (
+                $0.enabled, $0.recording != nil, $0.suspended, $0.retryID,
+                $0.matcher.hasSuppressedInput || $0.magicMouseNative.hasOwnedInput,
+                $0.needsPointerMotion, $0.diagnostics.isRunning
+            )
         }
         if failureLatched { removeTap() }
         if !hasPermissions || control.2 {
@@ -96,20 +99,23 @@ nonisolated final class EventTapWorker {
                 removeTap()
             }
         }
-        if port == nil, (control.0 || control.1 || control.4 || control.6), !failureLatched {
+        if port == nil, control.0 || control.1 || control.4 || control.6, !failureLatched {
             installTap(capturePointerMotion: control.5)
         }
         let secure = IsSecureEventInputEnabled()
-        mailbox.refreshCaptureStatus(secureInput: secure, active: control.0 && port != nil,
-                                     failureLatched: failureLatched)
+        mailbox.refreshCaptureStatus(
+            secureInput: secure, active: control.0 && port != nil,
+            failureLatched: failureLatched)
         guard port != nil, !secure, !failureLatched else { return }
         mailbox.pollHold(at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled())
     }
 
     /// At most three automatic recoveries a minute; beyond that something keeps the tap
     /// from working and the user resumes deliberately.
-    static func mayRecover(at now: UInt64, recent: inout [UInt64], limit: Int = 3,
-                           window: UInt64 = 60_000_000_000) -> Bool {
+    static func mayRecover(
+        at now: UInt64, recent: inout [UInt64], limit: Int = 3,
+        window: UInt64 = 60_000_000_000
+    ) -> Bool {
         recent.removeAll { now &- $0 >= window }
         guard recent.count < limit else { return false }
         recent.append(now)
@@ -117,10 +123,12 @@ nonisolated final class EventTapWorker {
     }
 
     static func eventMask(capturePointerMotion: Bool) -> CGEventMask {
-        var types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged, .leftMouseDown, .rightMouseDown,
-                                   .leftMouseUp, .rightMouseUp,
-                                   .otherMouseDown, .otherMouseUp, .otherMouseDragged,
-                                   .leftMouseDragged, .rightMouseDragged, .scrollWheel]
+        var types: [CGEventType] = [
+            .keyDown, .keyUp, .flagsChanged, .leftMouseDown, .rightMouseDown,
+            .leftMouseUp, .rightMouseUp,
+            .otherMouseDown, .otherMouseUp, .otherMouseDragged,
+            .leftMouseDragged, .rightMouseDragged, .scrollWheel,
+        ]
         // Do not intercept the high-frequency idle motion stream unless enabled
         // pointer rules or Magic Mouse tap safety need it. Some drivers deliver motion instead of dragging.
         if capturePointerMotion { types.append(.mouseMoved) }
@@ -131,13 +139,16 @@ nonisolated final class EventTapWorker {
         AttachedHIDScroll.prepare()
         let mask = Self.eventMask(capturePointerMotion: capturePointerMotion)
         let context = Unmanaged.passUnretained(self).toOpaque()
-        guard let port = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
-                                          options: .defaultTap, eventsOfInterest: mask,
-                                          callback: { _, type, event, context in
-            guard let context else { return Unmanaged.passUnretained(event) }
-            let worker = Unmanaged<EventTapWorker>.fromOpaque(context).takeUnretainedValue()
-            return worker.receive(type: type, event: event)
-        }, userInfo: context), let source = CFMachPortCreateRunLoopSource(nil, port, 0) else {
+        guard
+            let port = CGEvent.tapCreate(
+                tap: .cgSessionEventTap, place: .headInsertEventTap,
+                options: .defaultTap, eventsOfInterest: mask,
+                callback: { _, type, event, context in
+                    guard let context else { return Unmanaged.passUnretained(event) }
+                    let worker = Unmanaged<EventTapWorker>.fromOpaque(context).takeUnretainedValue()
+                    return worker.receive(type: type, event: event)
+                }, userInfo: context), let source = CFMachPortCreateRunLoopSource(nil, port, 0)
+        else {
             failureLatched = true
             mailbox.captureLost(status: .tapFailed)
             return
@@ -168,23 +179,29 @@ nonisolated final class EventTapWorker {
             return Unmanaged.passUnretained(event)
         }
         if type == .mouseMoved {
-            return mailbox.handlePointerMotion(PointerMotion.from(event), modifiers: ModifierSet(flags: event.flags),
-                                               receivedAt: DispatchTime.now().uptimeNanoseconds,
-                                               secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
+            return mailbox.handlePointerMotion(
+                PointerMotion.from(event), modifiers: ModifierSet(flags: event.flags),
+                receivedAt: DispatchTime.now().uptimeNanoseconds,
+                secureInput: IsSecureEventInputEnabled()) ? nil : pass(event)
         }
         if type == .scrollWheel {
             let phase = event.getIntegerValueField(.scrollWheelEventScrollPhase)
             let momentum = event.getIntegerValueField(.scrollWheelEventMomentumPhase)
-            if (phase != 0 || momentum != 0), mailbox.tracksMagicMouseSource,
-               mailbox.handleMagicMouseScroll(sender: AttachedHIDScroll.senderID(of: event), phase: phase, momentum: momentum,
+            if phase != 0 || momentum != 0, mailbox.tracksMagicMouseSource,
+                mailbox.handleMagicMouseScroll(
+                    sender: AttachedHIDScroll.senderID(of: event), phase: phase, momentum: momentum,
                     direction: phase & 1 != 0 ? Self.fingerScrollDirection(of: event) : nil, modifiers: ModifierSet(flags: event.flags),
-                    at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled()) { return nil }
+                    at: DispatchTime.now().uptimeNanoseconds, secureInput: IsSecureEventInputEnabled())
+            {
+                return nil
+            }
             guard var input = ScrollEventAdapter.input(from: event, adjustment: mailbox.wheelAdjustment) else {
                 // Smooth/momentum/diagonal input still cancels a pending hold,
                 // while passing through unchanged and never creating a wheel action.
-                mailbox.handleUnsupportedScroll(modifiers: ModifierSet(flags: event.flags),
-                                                at: DispatchTime.now().uptimeNanoseconds,
-                                                secureInput: IsSecureEventInputEnabled())
+                mailbox.handleUnsupportedScroll(
+                    modifiers: ModifierSet(flags: event.flags),
+                    at: DispatchTime.now().uptimeNanoseconds,
+                    secureInput: IsSecureEventInputEnabled())
                 if let adjustment = mailbox.wheelAdjustment { ScrollEventAdapter.adjust(event, by: adjustment) }
                 return pass(event)
             }
@@ -212,7 +229,7 @@ nonisolated final class EventTapWorker {
             trigger = .key(value)
             phase = type == .flagsChanged ? .modifiersChanged : (type == .keyDown ? .down : .up)
         case .leftMouseDown, .rightMouseDown, .otherMouseDown, .leftMouseUp, .rightMouseUp, .otherMouseUp,
-             .otherMouseDragged, .leftMouseDragged, .rightMouseDragged:
+            .otherMouseDragged, .leftMouseDragged, .rightMouseDragged:
             let number = event.getIntegerValueField(.mouseEventButtonNumber)
             guard let value = UInt32(exactly: number) else { return pass(event) }
             trigger = .mouseButton(value)
@@ -223,23 +240,27 @@ nonisolated final class EventTapWorker {
             }
         default: return pass(event)
         }
-        let input = InputEvent(trigger: trigger, modifiers: ModifierSet(flags: event.flags), phase: phase,
-                               isRepeat: type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) != 0,
-                               timestamp: event.timestamp, receivedAt: DispatchTime.now().uptimeNanoseconds,
-                               motion: phase == .drag ? PointerMotion.from(event) : nil,
-                               isTouchClick: event.getIntegerValueField(.mouseEventSubtype) == Int64(NSEvent.EventSubtype.touch.rawValue))
+        let input = InputEvent(
+            trigger: trigger, modifiers: ModifierSet(flags: event.flags), phase: phase,
+            isRepeat: type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) != 0,
+            timestamp: event.timestamp, receivedAt: DispatchTime.now().uptimeNanoseconds,
+            motion: phase == .drag ? PointerMotion.from(event) : nil,
+            isTouchClick: event.getIntegerValueField(.mouseEventSubtype) == Int64(NSEvent.EventSubtype.touch.rawValue))
         let sender: UInt64?
         if case .mouseButton(let button) = trigger, button <= 1, mailbox.tracksMagicMouseSource {
             sender = AttachedHIDScroll.senderID(of: event)
-        } else { sender = nil }
+        } else {
+            sender = nil
+        }
         return mailbox.handle(input, secureInput: IsSecureEventInputEnabled(), sender: sender) ? nil : pass(event)
     }
 
     /// AppKit exposes the device inversion flag; this local wrapper reads metadata only.
     static func fingerScrollDirection(of event: CGEvent) -> ScrollDirection? {
         guard let native = NSEvent(cgEvent: event) else { return nil }
-        return fingerScrollDirection(vertical: native.scrollingDeltaY, horizontal: native.scrollingDeltaX,
-                                     inverted: native.isDirectionInvertedFromDevice)
+        return fingerScrollDirection(
+            vertical: native.scrollingDeltaY, horizontal: native.scrollingDeltaX,
+            inverted: native.isDirectionInvertedFromDevice)
     }
 
     static func fingerScrollDirection(vertical: Double, horizontal: Double, inverted: Bool) -> ScrollDirection? {

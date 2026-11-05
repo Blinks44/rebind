@@ -4,7 +4,8 @@ import CoreAudio
 nonisolated enum CoreAudioInput {
     static func defaultDevice() -> AudioDeviceID? {
         guard let device = try? AudioHardwareSystem.shared.defaultInputDevice?.id,
-              device != kAudioObjectUnknown else { return nil }
+            device != kAudioObjectUnknown
+        else { return nil }
         return device
     }
 
@@ -16,10 +17,12 @@ nonisolated enum CoreAudioInput {
             && writable.boolValue && muted(device) != nil
     }
 
-    static func toggleMute(device: AudioDeviceID, canPerform: () -> Bool,
-                           defaultDevice: () -> AudioDeviceID? = { Self.defaultDevice() },
-                           read: (AudioDeviceID) -> Bool? = { muted($0) },
-                           write: (AudioDeviceID, Bool) -> Bool = { setMuted($1, device: $0) }) -> WindowActionResult {
+    static func toggleMute(
+        device: AudioDeviceID, canPerform: () -> Bool,
+        defaultDevice: () -> AudioDeviceID? = { Self.defaultDevice() },
+        read: (AudioDeviceID) -> Bool? = { muted($0) },
+        write: (AudioDeviceID, Bool) -> Bool = { setMuted($1, device: $0) }
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard defaultDevice() == device, let current = read(device) else { return .unavailable }
         guard canPerform() else { return .cancelled }
@@ -30,8 +33,9 @@ nonisolated enum CoreAudioInput {
     }
 
     private static var muteAddress: AudioObjectPropertyAddress {
-        AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyMute, mScope: kAudioObjectPropertyScopeInput,
-                                   mElement: kAudioObjectPropertyElementMain)
+        AudioObjectPropertyAddress(
+            mSelector: kAudioDevicePropertyMute, mScope: kAudioObjectPropertyScopeInput,
+            mElement: kAudioObjectPropertyElementMain)
     }
 
     private static func muted(_ device: AudioDeviceID) -> Bool? {
@@ -39,7 +43,8 @@ nonisolated enum CoreAudioInput {
         var value: UInt32 = 0
         var size = UInt32(MemoryLayout<UInt32>.size)
         guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &value) == noErr,
-              size == MemoryLayout<UInt32>.size, value <= 1 else { return nil }
+            size == MemoryLayout<UInt32>.size, value <= 1
+        else { return nil }
         return value != 0
     }
 

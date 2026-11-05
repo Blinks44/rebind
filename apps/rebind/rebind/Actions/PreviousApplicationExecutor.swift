@@ -3,8 +3,10 @@
     var frontmostApplication: Application? { get }
     func isOwnApplication(_ application: Application) -> Bool
     func isEligible(_ application: Application) -> Bool
-    func activate(_ application: Application, from source: Application,
-                  canPerform: @escaping @Sendable () -> Bool) async -> WindowActionResult
+    func activate(
+        _ application: Application, from source: Application,
+        canPerform: @escaping @Sendable () -> Bool
+    ) async -> WindowActionResult
 }
 
 @MainActor enum PreviousApplicationExecutor {
@@ -24,7 +26,8 @@
             target = history.previous
         }
         guard let target, target != frontmost, client.isEligible(target),
-              client.frontmostApplication == frontmost, client.isEligible(target) else { return .unavailable }
+            client.frontmostApplication == frontmost, client.isEligible(target)
+        else { return .unavailable }
         guard canPerform() else { return .cancelled }
         return await client.activate(target, from: frontmost, canPerform: canPerform)
     }

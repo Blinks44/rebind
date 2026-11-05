@@ -27,13 +27,15 @@ nonisolated enum CoreAudioOutput {
 
     private static func defaultDevice() -> AudioDeviceID? {
         guard let device = try? AudioHardwareSystem.shared.defaultOutputDevice?.id,
-              device != kAudioObjectUnknown else { return nil }
+            device != kAudioObjectUnknown
+        else { return nil }
         return device
     }
 
     private static func outputAddress(_ selector: AudioObjectPropertySelector) -> AudioObjectPropertyAddress {
-        AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeOutput,
-                                   mElement: kAudioObjectPropertyElementMain)
+        AudioObjectPropertyAddress(
+            mSelector: selector, mScope: kAudioObjectPropertyScopeOutput,
+            mElement: kAudioObjectPropertyElementMain)
     }
 
     private static func settable(_ device: AudioDeviceID, selector: AudioObjectPropertySelector) -> Bool {
@@ -50,7 +52,8 @@ nonisolated enum CoreAudioOutput {
         var value: Float32 = 0
         var size = UInt32(MemoryLayout<Float32>.size)
         guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &value) == noErr,
-              size == MemoryLayout<Float32>.size, value.isFinite, (0...1).contains(value) else { return nil }
+            size == MemoryLayout<Float32>.size, value.isFinite, (0...1).contains(value)
+        else { return nil }
         return value
     }
 
@@ -59,7 +62,8 @@ nonisolated enum CoreAudioOutput {
         var value: UInt32 = 0
         var size = UInt32(MemoryLayout<UInt32>.size)
         guard AudioObjectGetPropertyData(device, &address, 0, nil, &size, &value) == noErr,
-              size == MemoryLayout<UInt32>.size, value <= 1 else { return nil }
+            size == MemoryLayout<UInt32>.size, value <= 1
+        else { return nil }
         return value != 0
     }
 }
@@ -72,10 +76,14 @@ nonisolated final class CoreAudioOutputMonitor {
 
     init(changed: @escaping @Sendable () -> Void) {
         listener = { _, _ in changed() }
-        for selector in [kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDefaultInputDevice, kAudioHardwarePropertyDevices] {
+        for selector in [
+            kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDefaultInputDevice, kAudioHardwarePropertyDevices,
+        ] {
             var address = Self.address(selector)
-            if AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &address,
-                                                  nil, listener) == noErr {
+            if AudioObjectAddPropertyListenerBlock(
+                AudioObjectID(kAudioObjectSystemObject), &address,
+                nil, listener) == noErr
+            {
                 selectors.append(selector)
             }
         }
@@ -90,7 +98,8 @@ nonisolated final class CoreAudioOutputMonitor {
     }
 
     private static func address(_ selector: AudioObjectPropertySelector) -> AudioObjectPropertyAddress {
-        AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeGlobal,
-                                   mElement: kAudioObjectPropertyElementMain)
+        AudioObjectPropertyAddress(
+            mSelector: selector, mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
     }
 }

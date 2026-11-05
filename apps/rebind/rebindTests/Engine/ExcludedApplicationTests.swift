@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct ExcludedApplicationTests {
@@ -8,8 +9,11 @@ import Testing
     private let game = ApplicationTarget(url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game")
 
     private func configuration() -> Configuration {
-        var configuration = Configuration(isEnabled: true, bindings: [
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .shortcut(output))])
+        var configuration = Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .shortcut(output))
+            ])
         configuration.excludedApplications = [ExcludedApplication(target: game)]
         return configuration
     }
@@ -54,8 +58,11 @@ import Testing
         var invalid = configuration
         invalid.excludedApplications.append(ExcludedApplication(target: game))
         #expect(throws: ConfigurationError.invalid) { try invalid.validate() }
-        invalid.excludedApplications = [ExcludedApplication(target: ApplicationTarget(
-            url: URL(filePath: "/Applications/Rebind.app"), bundleIdentifier: "blinks44.rebind"))]
+        invalid.excludedApplications = [
+            ExcludedApplication(
+                target: ApplicationTarget(
+                    url: URL(filePath: "/Applications/Rebind.app"), bundleIdentifier: "blinks44.rebind"))
+        ]
         #expect(throws: ConfigurationError.invalid) { try invalid.validate() }
         var old = configuration
         old.schemaVersion = 33
@@ -63,8 +70,9 @@ import Testing
     }
 
     @Test func theModelAddsAndRemovesAppsThroughStorage() throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindExcluded-\(UUID())").appending(path: "config.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindExcluded-\(UUID())").appending(path: "config.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         let model = AppModel(store: store, loadConfiguration: false)
         #expect(model.excludeApplication(game))
@@ -79,14 +87,20 @@ import Testing
 @MainActor struct ExclusionTogglesAndSmoothScrollingTests {
     private let game = ApplicationTarget(url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game")
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
-    private let mouse: UInt64 = 0x1000017f2
+    private let mouse: UInt64 = 0x1_0000_17f2
     private let glide = SmoothScrollingSettings(glide: .standard)
 
     private func mailbox(allowsBindings: Bool, allowsSmoothScrolling: Bool) -> EngineMailbox {
-        var configuration = Configuration(isEnabled: true, bindings: [
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .shortcut(output))])
-        configuration.excludedApplications = [ExcludedApplication(target: game, allowsBindings: allowsBindings,
-                                                                  allowsSmoothScrolling: allowsSmoothScrolling)]
+        var configuration = Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .shortcut(output))
+            ])
+        configuration.excludedApplications = [
+            ExcludedApplication(
+                target: game, allowsBindings: allowsBindings,
+                allowsSmoothScrolling: allowsSmoothScrolling)
+        ]
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
         mailbox.setSmoothScrolling(bySender: [mouse: glide])
@@ -172,7 +186,8 @@ import Testing
     @Test func aClickGlidesItsAcceleratedLinesTimesTheDistance() throws {
         let line = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: -2, wheel2: 0, wheel3: 0))
         for points in [20.0, 60, 400] {
-            #expect(SmoothScroller.distance(of: line, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: points)).y
+            #expect(
+                SmoothScroller.distance(of: line, settings: SmoothScrollingSettings(glide: .standard, pointsPerLine: points)).y
                     == -2 * points)
         }
         let pixel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: 6, wheel2: 0, wheel3: 0))
@@ -184,8 +199,10 @@ import Testing
 
     @Test(arguments: [false, true])
     func glidesOnlyUnmodifiedPhaseLessWheels(_ continuous: Bool) throws {
-        let event = try #require(CGEvent(scrollWheelEvent2Source: nil, units: continuous ? .pixel : .line, wheelCount: 1,
-                                         wheel1: 3, wheel2: 0, wheel3: 0))
+        let event = try #require(
+            CGEvent(
+                scrollWheelEvent2Source: nil, units: continuous ? .pixel : .line, wheelCount: 1,
+                wheel1: 3, wheel2: 0, wheel3: 0))
         #expect(SmoothScroller.applies(to: event))
         event.flags = .maskCommand
         #expect(SmoothScroller.applies(to: event) == false)
@@ -198,8 +215,9 @@ import Testing
     }
 
     @Test func hidingTheWarningIsRememberedPerApp() throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindCompanion-\(UUID())").appending(path: "config.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindCompanion-\(UUID())").appending(path: "config.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         let model = AppModel(store: store, loadConfiguration: false)
         let hub = try #require(CompanionApp.known.first { $0.name == "Logitech G HUB" })

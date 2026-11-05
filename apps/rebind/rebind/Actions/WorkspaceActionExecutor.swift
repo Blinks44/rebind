@@ -13,19 +13,21 @@ import CoreGraphics
     private let secureInput: @Sendable () -> Bool
     private let postingAllowed: @Sendable () -> Bool
 
-    init(mailbox: EngineMailbox,
-         previousApplication: @escaping (@escaping @Sendable () -> Bool) async -> WindowActionResult,
-         openApplication: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openApplication($0) },
-         openDocument: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openDocument($0) },
-         activateApplication: @escaping (ApplicationTarget) -> Bool = { NativeWorkspace.activateApplication($0) },
-         quitApplication: @escaping (ApplicationTarget, () -> Bool) -> WindowActionResult = {
-             ApplicationQuitExecutor.perform($0, canPerform: $1)
-         },
-         performAppleShortcut: @escaping @Sendable (AppleShortcutTarget, @escaping @Sendable () -> Bool) async -> AppleShortcutRunResult = {
-             await AppleShortcuts.run($0, canPerform: $1)
-         },
-         secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
-         postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
+    init(
+        mailbox: EngineMailbox,
+        previousApplication: @escaping (@escaping @Sendable () -> Bool) async -> WindowActionResult,
+        openApplication: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openApplication($0) },
+        openDocument: @escaping (URL) async throws -> Void = { try await NativeWorkspace.openDocument($0) },
+        activateApplication: @escaping (ApplicationTarget) -> Bool = { NativeWorkspace.activateApplication($0) },
+        quitApplication: @escaping (ApplicationTarget, () -> Bool) -> WindowActionResult = {
+            ApplicationQuitExecutor.perform($0, canPerform: $1)
+        },
+        performAppleShortcut: @escaping @Sendable (AppleShortcutTarget, @escaping @Sendable () -> Bool) async -> AppleShortcutRunResult = {
+            await AppleShortcuts.run($0, canPerform: $1)
+        },
+        secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
+        postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }
+    ) {
         self.mailbox = mailbox
         self.openApplication = openApplication
         self.openDocument = openDocument
@@ -42,13 +44,21 @@ import CoreGraphics
         var failed = false
         defer { mailbox.finishWorkspace(request, failed: failed) }
         guard !Task.isCancelled, mailbox.dispatchIsCurrent(request.dispatch) else { return }
-        guard !secureInput() else { mailbox.captureLost(status: .secureInput); return }
-        guard postingAllowed() else { mailbox.captureLost(status: .permissionRequired); return }
+        guard !secureInput() else {
+            mailbox.captureLost(status: .secureInput)
+            return
+        }
+        guard postingAllowed() else {
+            mailbox.captureLost(status: .permissionRequired)
+            return
+        }
         guard mailbox.dispatchIsCurrent(request.dispatch) else { return }
         do {
             switch request.target {
             case .appleShortcut(let target):
-                let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+                let mailbox = mailbox
+                let postingAllowed = postingAllowed
+                let secureInput = secureInput
                 let result = await performAppleShortcut(target) {
                     !Task.isCancelled && mailbox.dispatchIsCurrent(request.dispatch)
                         && postingAllowed() && !secureInput()
@@ -65,7 +75,9 @@ import CoreGraphics
                 guard result != .cancelled else { return }
                 failed = result == .unavailable
             case .previousApplication:
-                let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+                let mailbox = mailbox
+                let postingAllowed = postingAllowed
+                let secureInput = secureInput
                 let result = await previousApplication {
                     !Task.isCancelled && mailbox.dispatchIsCurrent(request.dispatch)
                         && postingAllowed() && !secureInput()
@@ -93,9 +105,11 @@ import CoreGraphics
     }
 
     static func activateApplication(_ target: ApplicationTarget) -> Bool {
-        guard let app = NSWorkspace.shared.runningApplications.first(where: {
-            !$0.isTerminated && target.matchesRunningApplication(bundleIdentifier: $0.bundleIdentifier, url: $0.bundleURL)
-        }) else { return false }
+        guard
+            let app = NSWorkspace.shared.runningApplications.first(where: {
+                !$0.isTerminated && target.matchesRunningApplication(bundleIdentifier: $0.bundleIdentifier, url: $0.bundleURL)
+            })
+        else { return false }
         // No deprecated ignoringOtherApps option and no cold launch fallback.
         return app.activate(options: [])
     }

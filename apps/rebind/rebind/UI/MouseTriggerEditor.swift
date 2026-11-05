@@ -12,14 +12,17 @@ struct MouseTriggerEditor: View {
             HStack(spacing: 12) {
                 Text(.mouseInputKind).font(Theme.caption).foregroundStyle(Theme.textPrimary)
                 Spacer(minLength: 8)
-                MenuSelector(selection: $draft.mouseTarget, title: .mouseInputKind,
-                    choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger, .buttonScrollTrigger], label: inputKindTitle)
-                    .frame(maxWidth: 224)
-                    .accessibilityIdentifier("mouse-input-selector")
-                    .disabled(model.recording != nil)
+                MenuSelector(
+                    selection: $draft.mouseTarget, title: .mouseInputKind,
+                    choices: [.mouseTrigger, .scrollTrigger, .gestureTrigger, .buttonScrollTrigger], label: inputKindTitle
+                )
+                .frame(maxWidth: 224)
+                .accessibilityIdentifier("mouse-input-selector")
+                .disabled(model.recording != nil)
             }
 
-            BindingCaptureField(value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
+            BindingCaptureField(
+                value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
                 target: draft.mouseTarget, recording: model.recording, canRecord: model.canRecord,
                 record: record, cancel: model.cancelRecording, clear: { draft.trigger = nil })
 
@@ -39,16 +42,20 @@ struct MouseTriggerEditor: View {
                 }
             } else if draft.mouseTarget == .gestureTrigger {
                 Text(.pointerDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                SegmentedPicker(selection: $draft.pointerDirection, title: .pointerDirectionTitle,
-                                options: PointerDirection.allCases, label: { $0.label }, fillsWidth: true)
-                    .accessibilityIdentifier("mouse-direction-selector")
-                    .disabled(model.recording != nil)
+                SegmentedPicker(
+                    selection: $draft.pointerDirection, title: .pointerDirectionTitle,
+                    options: PointerDirection.allCases, label: { $0.label }, fillsWidth: true
+                )
+                .accessibilityIdentifier("mouse-direction-selector")
+                .disabled(model.recording != nil)
             } else if draft.mouseTarget == .buttonScrollTrigger {
                 Text(.wheelDirectionTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                SegmentedPicker(selection: $draft.scrollDirection, title: .wheelDirectionTitle,
-                                options: ScrollDirection.allCases, label: { $0.directionLabel }, fillsWidth: true)
-                    .accessibilityIdentifier("mouse-wheel-direction-selector")
-                    .disabled(model.recording != nil)
+                SegmentedPicker(
+                    selection: $draft.scrollDirection, title: .wheelDirectionTitle,
+                    options: ScrollDirection.allCases, label: { $0.directionLabel }, fillsWidth: true
+                )
+                .accessibilityIdentifier("mouse-wheel-direction-selector")
+                .disabled(model.recording != nil)
             }
             Text(help).font(Theme.caption).foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

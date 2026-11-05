@@ -91,12 +91,14 @@ extension Color {
     // Nonisolated: SwiftUI on macOS 15 resolves the provider on its display-link thread, and a
     // main-actor closure there traps in the Swift 6 runtime isolation check.
     nonisolated init(light: UInt32, _ lightOpacity: Double = 1, dark: UInt32, _ darkOpacity: Double = 1) {
-        self.init(nsColor: NSColor(name: nil) { appearance in
-            let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            let hex = isDark ? dark : light
-            return NSColor(srgbRed: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
-                           blue: CGFloat(hex & 0xFF) / 255, alpha: isDark ? darkOpacity : lightOpacity)
-        })
+        self.init(
+            nsColor: NSColor(name: nil) { appearance in
+                let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+                let hex = isDark ? dark : light
+                return NSColor(
+                    srgbRed: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
+                    blue: CGFloat(hex & 0xFF) / 255, alpha: isDark ? darkOpacity : lightOpacity)
+            })
     }
 }
 
@@ -105,9 +107,11 @@ struct ThemeCanvas: View {
     var body: some View {
         LinearGradient(colors: [Theme.canvasTop, Theme.canvasBottom], startPoint: .top, endPoint: .bottom)
             .overlay(alignment: .topLeading) {
-                RadialGradient(colors: [Theme.canvasGlow, Theme.canvasGlow.opacity(0)],
-                               center: .center, startRadius: 0, endRadius: 520)
-                    .frame(width: 1040, height: 1040).offset(x: -340, y: -520)
+                RadialGradient(
+                    colors: [Theme.canvasGlow, Theme.canvasGlow.opacity(0)],
+                    center: .center, startRadius: 0, endRadius: 520
+                )
+                .frame(width: 1040, height: 1040).offset(x: -340, y: -520)
             }
             .clipped()
     }
@@ -125,8 +129,10 @@ struct ControlSurface: ViewModifier {
         // outline (a missing top or bottom edge), most visibly on the focused search field.
         content.background {
             Capsule(style: .circular).fill(Theme.controlSurface)
-                .strokeBorder(isFocused ? Theme.accent : contrast == .increased ? Theme.borderStrong : Theme.borderControl,
-                              lineWidth: isFocused ? Theme.accentBorderWidth(displayScale: displayScale) : 1)
+                .strokeBorder(
+                    isFocused ? Theme.accent : contrast == .increased ? Theme.borderStrong : Theme.borderControl,
+                    lineWidth: isFocused ? Theme.accentBorderWidth(displayScale: displayScale) : 1
+                )
                 .shadow(color: Theme.shadowSoft, radius: 7, y: 4)
         }
     }

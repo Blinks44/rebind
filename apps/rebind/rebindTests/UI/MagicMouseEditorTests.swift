@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct MagicMouseEditorTests {
@@ -14,24 +15,29 @@ import Testing
         #expect(rule.isValid && rule.scope == .magicMouse && rule.trigger == preset.trigger)
         #expect(rule.modifiers == .shift && rule.activation == .press && rule.holdsOutput == false)
         #expect(draft.output == .init(keyCode: 13, modifiers: .command))
-        draft.accept(.init(request: .init(target: .mouseTrigger), input: .init(trigger: .mouseButton(3), modifiers: [])),
-                     for: nil, scope: .magicMouse)
+        draft.accept(
+            .init(request: .init(target: .mouseTrigger), input: .init(trigger: .mouseButton(3), modifiers: [])),
+            for: nil, scope: .magicMouse)
         #expect(draft.magicMousePreset == preset)
     }
 
     @Test(arguments: AppLanguage.allCases)
     func presetNamesAndGuidanceAreTranslated(_ language: AppLanguage) {
-        let strings: [LocalizedStringResource] = [.magicMouseOneFingerTap, .magicMouseTwoFingerTap, .magicMouseThreeFingerTap, .magicMouseSubtitle,
+        let strings: [LocalizedStringResource] = [
+            .magicMouseOneFingerTap, .magicMouseTwoFingerTap, .magicMouseThreeFingerTap, .magicMouseSubtitle,
             .magicMouseThreeFingerClick, .magicMouseTwoFingerScrollUp, .magicMouseTwoFingerScrollDown,
-            .magicMouseClickHelp, .magicMouseScrollHelp, .magicMouseTapHelp, .magicMouseOneFingerConflict, .magicMouseTwoFingerConflict, .magicMouseExperimentalTitle,
+            .magicMouseClickHelp, .magicMouseScrollHelp, .magicMouseTapHelp, .magicMouseOneFingerConflict, .magicMouseTwoFingerConflict,
+            .magicMouseExperimentalTitle,
             .magicMouseExperimentalHelp, .magicMouseUnavailableTitle, .magicMouseUnavailableHelp,
-            .magicMouseFailedTitle, .magicMouseFailedHelp]
+            .magicMouseFailedTitle, .magicMouseFailedHelp,
+        ]
         for resource in strings {
             let text = AppLocalization.string(resource, language: language)
             #expect(text.isEmpty == false)
             if language != .en { #expect(text != AppLocalization.string(resource, language: .en)) }
         }
-        #expect(AppLocalization.string(.magicMouseOneFingerTap, language: language)
+        #expect(
+            AppLocalization.string(.magicMouseOneFingerTap, language: language)
                 != AppLocalization.string(.magicMouseTwoFingerTap, language: language))
     }
 }

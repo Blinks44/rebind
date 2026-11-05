@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct AppleShortcutTests {
@@ -16,7 +17,9 @@ struct AppleShortcutTests {
         #expect(try AppleShortcutTarget.parseList(Data()).isEmpty)
     }
 
-    @Test(arguments: ["missing identifier", "Name (not-a-uuid)", " (11111111-1111-1111-1111-111111111111)", "A\tB (11111111-1111-1111-1111-111111111111)"])
+    @Test(arguments: [
+        "missing identifier", "Name (not-a-uuid)", " (11111111-1111-1111-1111-111111111111)", "A\tB (11111111-1111-1111-1111-111111111111)",
+    ])
     func rejectsAmbiguousOrMalformedListing(_ line: String) {
         #expect(throws: AppleShortcutTarget.ListError.self) { try AppleShortcutTarget.parseList(Data(line.utf8)) }
     }
@@ -46,8 +49,9 @@ struct AppleShortcutTests {
         let action = RebindAction.appleShortcut(.init(id: id, name: "Selected"))
         let binding = rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control, action: action)
         var matcher = InputMatcher()
-        let result = matcher.handle(InputEvent(trigger: trigger, modifiers: .control, phase: trigger.isScroll ? .scroll : .down),
-                                    rules: InputMatcher.compile([binding]), enabled: true)
+        let result = matcher.handle(
+            InputEvent(trigger: trigger, modifiers: .control, phase: trigger.isScroll ? .scroll : .down),
+            rules: InputMatcher.compile([binding]), enabled: true)
         #expect(result.suppress && result.action == action && result.shortcut == nil)
     }
 
@@ -57,8 +61,13 @@ struct AppleShortcutTests {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "config.json"))
         let url = try #require(URL(string: "https://example.com"))
-        var old = Configuration(isEnabled: true, bindings: [rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-            action: .workspace(.openURL(url)))])
+        var old = Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(
+                    scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+                    action: .workspace(.openURL(url)))
+            ])
         try old.createProfile(name: "Second", copying: old.selectedProfileID)
         old.schemaVersion = 9
         let bytes = try JSONEncoder().encode(old)
@@ -67,15 +76,18 @@ struct AppleShortcutTests {
         #expect(loaded.schemaVersion == Configuration.currentSchemaVersion)
         #expect(loaded.profiles == old.profiles && loaded.selectedProfileID == old.selectedProfileID && loaded.isEnabled)
         #expect(try Data(contentsOf: store.url) == bytes)
-        loaded.bindings.append(rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [],
-                                              action: .appleShortcut(.init(id: id, name: "Selected"))))
+        loaded.bindings.append(
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseButton(4), modifiers: [],
+                action: .appleShortcut(.init(id: id, name: "Selected"))))
         try store.save(loaded)
         #expect(try store.load() == loaded)
     }
 
     @Test(arguments: 1...9)
     func newActionCannotMasqueradeInOlderSchemas(_ version: Int) throws {
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .appleShortcut(.init(id: id, name: "Selected")))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .appleShortcut(.init(id: id, name: "Selected")))
         let config = Configuration(schemaVersion: version, bindings: [binding])
         let data = try JSONEncoder().encode(config)
         #expect(throws: ConfigurationError.invalid) { try JSONDecoder().decode(Configuration.self, from: data).migrated() }
@@ -84,14 +96,19 @@ struct AppleShortcutTests {
     @Test func runsOnlyUUIDWithoutNameOptionsOrInputsAndReportsNativeErrors() async {
         let target = AppleShortcutTarget(id: id, name: "-i $(ignored) ; example")
         let calls = Mutex(0)
-        let result = await AppleShortcuts.run(target, canPerform: { true }, execute: { arguments, allowed in
-            calls.withLock { $0 += 1 }
-            #expect(arguments == ["run", target.id.uuidString] && allowed())
-        })
+        let result = await AppleShortcuts.run(
+            target, canPerform: { true },
+            execute: { arguments, allowed in
+                calls.withLock { $0 += 1 }
+                #expect(arguments == ["run", target.id.uuidString] && allowed())
+            })
         #expect(result == .performed)
         #expect(await AppleShortcuts.run(target, canPerform: { false }, execute: { _, _ in calls.withLock { $0 += 1 } }) == .cancelled)
         #expect(calls.withLock { $0 } == 1)
-        #expect(await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.failed }) == .failed)
-        #expect(await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.cancelled }) == .cancelled)
+        #expect(
+            await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.failed }) == .failed)
+        #expect(
+            await AppleShortcuts.run(target, canPerform: { true }, execute: { _, _ in throw ShortcutsProcess.Failure.cancelled })
+                == .cancelled)
     }
 }

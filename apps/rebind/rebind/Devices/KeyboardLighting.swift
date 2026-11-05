@@ -51,37 +51,45 @@ nonisolated final class KeyboardLightingOwnership: Sendable {
         let previous = claims.withLock { $0[slot] }
         if let previous {
             guard current.flags & ~previous.ownedFlags == previous.original.flags & ~previous.ownedFlags else { return false }
-        } else if current.flags != 0 { return false }
+        } else if current.flags != 0 {
+            return false
+        }
         var power = current
         power.flags |= 2
         claims.withLock {
-            $0[slot] = Claim(rgb: rgb, original: previous?.original ?? current,
-                            ownedFlags: (previous?.ownedFlags ?? 0) | 2, ownedEvents: previous?.ownedEvents ?? 0)
+            $0[slot] = Claim(
+                rgb: rgb, original: previous?.original ?? current,
+                ownedFlags: (previous?.ownedFlags ?? 0) | 2, ownedEvents: previous?.ownedEvents ?? 0)
         }
         guard canWrite(), rgb.setControl(power), canWrite(), rgb.setPowerMode(1),
-              canWrite(), rgb.setControl(current), rgb.powerMode() == 1 else { return false }
+            canWrite(), rgb.setControl(current), rgb.powerMode() == 1
+        else { return false }
         claims.withLock { $0[slot] = previous }
         return true
     }
 
     /// The keyboard times inactivity; software must explicitly switch LEDs when it reports it.
     /// Request only timeout events while lit and only activity events while off.
-    func configureIdle(_ rgb: RGBEffects, slot: UInt8, enabled: Bool, active: Bool = true, notifications: Bool = true,
-                       canWrite: () -> Bool) -> Bool {
+    func configureIdle(
+        _ rgb: RGBEffects, slot: UInt8, enabled: Bool, active: Bool = true, notifications: Bool = true,
+        canWrite: () -> Bool
+    ) -> Bool {
         let previous = claims.withLock { $0[slot] }
         if !enabled, (previous?.ownedFlags ?? 0) & 2 == 0 { return true }
         guard canWrite(), var current = rgb.control() else { return false }
         let original = previous?.original ?? current
         let ownedFlags = previous?.ownedFlags ?? 0
         guard current.flags & ~ownedFlags == original.flags & ~ownedFlags,
-              previous != nil || current.flags == 0 else { return false }
+            previous != nil || current.flags == 0
+        else { return false }
         current.flags = enabled ? current.flags | 2 : (current.flags & ~2) | (original.flags & 2)
         let requestedEvents: UInt8 = notifications ? (active ? 4 : 2) : 0
         current.events = (current.events & ~6) | (enabled ? requestedEvents : original.events & 6)
         // Retain both masks until acknowledgement, including ambiguous write failures.
         claims.withLock {
-            $0[slot] = Claim(rgb: rgb, original: original, ownedFlags: ownedFlags | 2,
-                            ownedEvents: (previous?.ownedEvents ?? 0) | 6)
+            $0[slot] = Claim(
+                rgb: rgb, original: original, ownedFlags: ownedFlags | 2,
+                ownedEvents: (previous?.ownedEvents ?? 0) | 6)
         }
         guard canWrite(), rgb.setControl(current) else { return false }
         claims.withLock {
@@ -99,9 +107,10 @@ nonisolated final class KeyboardLightingOwnership: Sendable {
     /// Send a power transition only while this connection owns power control.
     func setPowerMode(_ mode: UInt8, slot: UInt8, canWrite: () -> Bool) -> Bool {
         guard let claim = claims.withLock({ $0[slot] }), claim.ownedFlags & 2 != 0,
-              canWrite(), let current = claim.rgb.control(), current.flags & 2 != 0,
-              current.flags & ~claim.ownedFlags == claim.original.flags & ~claim.ownedFlags,
-              canWrite(), claim.rgb.setPowerMode(mode) else { return false }
+            canWrite(), let current = claim.rgb.control(), current.flags & 2 != 0,
+            current.flags & ~claim.ownedFlags == claim.original.flags & ~claim.ownedFlags,
+            canWrite(), claim.rgb.setPowerMode(mode)
+        else { return false }
         return true
     }
 
@@ -151,16 +160,20 @@ nonisolated final class KeyboardLighting {
     /// Firmware-advertised halving levels include zero; continuous ranges advertise no steps.
     private var rawBrightnessValues: [UInt16] {
         guard let info, (2...16).contains(info.steps) else { return [] }
-        return Set((0..<Int(info.steps - 1)).map { info.maximum >> $0 }
-            .filter { $0 > 0 && $0 >= info.minimum }).sorted()
+        return Set(
+            (0..<Int(info.steps - 1)).map { info.maximum >> $0 }
+                .filter { $0 > 0 && $0 >= info.minimum }
+        ).sorted()
     }
 
     private func percentage(_ raw: UInt16, maximum: UInt16) -> Int {
         max(1, Int((Double(raw) * 100 / Double(maximum)).rounded()))
     }
 
-    init?(transport: HIDPPTransport, brightnessIndex: UInt8?, rgbIndex: UInt8,
-          ownership: KeyboardLightingOwnership, slot: UInt8, isExperimental: Bool = false) {
+    init?(
+        transport: HIDPPTransport, brightnessIndex: UInt8?, rgbIndex: UInt8,
+        ownership: KeyboardLightingOwnership, slot: UInt8, isExperimental: Bool = false
+    ) {
         let brightness = brightnessIndex.map { BrightnessControl(transport: transport, featureIndex: $0) }
         let rgb = RGBEffects(transport: transport, featureIndex: rgbIndex)
         let info = brightness?.info()
@@ -187,20 +200,30 @@ nonisolated final class KeyboardLighting {
             if info.capabilities & 4 != 0 {
                 guard let enabled = brightness.illumination() else { return nil }
                 value = enabled ? percentage(raw, maximum: info.maximum) : 0
-            } else { value = Int((Double(raw) * 100 / Double(info.maximum)).rounded()) }
-        } else { value = lastOutput?.brightness ?? 100 }
-        return KeyboardLightingState(brightness: value,
+            } else {
+                value = Int((Double(raw) * 100 / Double(info.maximum)).rounded())
+            }
+        } else {
+            value = lastOutput?.brightness ?? 100
+        }
+        return KeyboardLightingState(
+            brightness: value,
             supportsBlinking: zones.allSatisfy { $0.breathingEffect != nil }, isExperimental: isExperimental,
-            brightnessValues: brightness == nil ? [] : (rawBrightnessValues.isEmpty ? Array(1...100)
-                : Array(Set(rawBrightnessValues.map { percentage($0, maximum: info?.maximum ?? 100) })).sorted()),
+            brightnessValues: brightness == nil
+                ? []
+                : (rawBrightnessValues.isEmpty
+                    ? Array(1...100)
+                    : Array(Set(rawBrightnessValues.map { percentage($0, maximum: info?.maximum ?? 100) })).sorted()),
             supportsPower: brightness != nil || zones.allSatisfy { $0.disabledEffect != nil },
             supportsLowBattery: !isExperimental || rgb.powerMode() != nil,
             // The zero-off timer mapping is measured on G915 only.
             powerPolicy: isExperimental ? nil : rgb.powerPolicy())
     }
 
-    func apply(_ settings: KeyboardLightingSettings, percentage: Int?, charging: Bool,
-               background: Bool = false, deferIdleNotifications: Bool = false, canWrite: () -> Bool) -> Bool {
+    func apply(
+        _ settings: KeyboardLightingSettings, percentage: Int?, charging: Bool,
+        background: Bool = false, deferIdleNotifications: Bool = false, canWrite: () -> Bool
+    ) -> Bool {
         guard settings.isValid, canWrite() else { return false }
         if !isExperimental, !KeyboardLightingSettings.brightnessValues.contains(settings.brightness) { return false }
         let supportsBlinking = zones.allSatisfy { $0.breathingEffect != nil }
@@ -254,13 +277,17 @@ nonisolated final class KeyboardLighting {
             attemptedBrightness = true
             if illumination {
                 guard brightness.setIllumination(output.brightness > 0), canWrite(),
-                      brightness.illumination() == (output.brightness > 0) else { return false }
+                    brightness.illumination() == (output.brightness > 0)
+                else { return false }
             }
             if output.brightness > 0 || !illumination {
                 let requested = max(info.minimum, UInt16((Double(output.brightness) * Double(info.maximum) / 100).rounded()))
-                let raw = output.brightness == 0 ? 0 : (rawBrightnessValues.min {
-                    abs(Int($0) - Int(requested)) < abs(Int($1) - Int(requested))
-                } ?? requested)
+                let raw =
+                    output.brightness == 0
+                    ? 0
+                    : (rawBrightnessValues.min {
+                        abs(Int($0) - Int(requested)) < abs(Int($1) - Int(requested))
+                    } ?? requested)
                 guard canWrite(), brightness.setBrightness(raw), brightness.brightness() == raw, canWrite() else { return false }
             }
         }
@@ -273,8 +300,11 @@ nonisolated final class KeyboardLighting {
         }
         if !background, !isExperimental {
             let enabled = settings.idleTimeout != nil && output.brightness > 0
-            guard ownership.configureIdle(rgb, slot: slot, enabled: enabled, notifications: !deferIdleNotifications,
-                                          canWrite: canWrite) else { return false }
+            guard
+                ownership.configureIdle(
+                    rgb, slot: slot, enabled: enabled, notifications: !deferIdleNotifications,
+                    canWrite: canWrite)
+            else { return false }
             managesIdlePower = enabled
             isIdleOff = false
         }
@@ -300,7 +330,8 @@ nonisolated final class KeyboardLighting {
         let active = activity == .active
         guard active == isIdleOff else { return true }
         guard ownership.configureIdle(rgb, slot: slot, enabled: true, active: active, canWrite: canWrite),
-              ownership.setPowerMode(active ? 1 : 3, slot: slot, canWrite: canWrite) else {
+            ownership.setPowerMode(active ? 1 : 3, slot: slot, canWrite: canWrite)
+        else {
             managesIdlePower = false
             _ = ownership.release(slot: slot, canWrite: canWrite)
             return false

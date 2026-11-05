@@ -1,12 +1,14 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct SetupPersistenceTests {
     @Test(arguments: 1...22)
     func existingSchemasAreAcknowledgedWithoutChangingRulesOrIntent(_ version: Int) throws {
-        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: .option,
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: .option,
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         let legacy = Configuration(schemaVersion: version, isEnabled: true, bindings: [binding])
         let data = try JSONEncoder().encode(legacy)
         let decoded = try JSONDecoder().decode(Configuration.self, from: data)
@@ -42,8 +44,9 @@ struct SetupPersistenceTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: directory.appending(path: "config.json"))
-        let binding = rebind.Binding(scope: .builtInTrackpad, trigger: .fourFingerTap, modifiers: [],
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .fourFingerTap, modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         let legacy = Configuration(schemaVersion: 22, isEnabled: true, bindings: [binding])
         let bytes = try JSONEncoder().encode(legacy)
         try bytes.write(to: store.url)

@@ -1,18 +1,22 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct HoldPersistenceTests {
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindHold-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindHold-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
     }
 
     @Test func schema3DoublePressMigratesWithoutRewritingAndDefaultsThreshold() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let bytes = Data(#"{"schemaVersion":3,"isEnabled":true,"bindings":[{"id":"00000000-0000-0000-0000-000000000004","scope":"allMice","trigger":{"mouseButton":{"_0":3}},"modifiers":2,"action":{"shortcut":{"_0":{"keyCode":0,"modifiers":1}}},"isEnabled":true,"activation":"doublePress"}]}"#.utf8)
+        let bytes = Data(
+            #"{"schemaVersion":3,"isEnabled":true,"bindings":[{"id":"00000000-0000-0000-0000-000000000004","scope":"allMice","trigger":{"mouseButton":{"_0":3}},"modifiers":2,"action":{"shortcut":{"_0":{"keyCode":0,"modifiers":1}}},"isEnabled":true,"activation":"doublePress"}]}"#
+                .utf8)
         try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try bytes.write(to: store.url)
         let migrated = try store.load()
@@ -30,8 +34,9 @@ struct HoldPersistenceTests {
     func holdRulesRoundTripWithThresholdAndIdentity(_ trigger: InputTrigger) throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control,
-                                     action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 700)
+        let binding = rebind.Binding(
+            scope: trigger.scope, trigger: trigger, modifiers: .control,
+            action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 700)
         let configuration = Configuration(isEnabled: true, bindings: [binding])
         try store.save(configuration)
         #expect(try store.load() == configuration)
@@ -42,8 +47,9 @@ struct HoldPersistenceTests {
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try store.save(Configuration())
         let bytes = try Data(contentsOf: store.url)
-        let hold = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                  action: .shortcut(output), activation: .hold)
+        let hold = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .shortcut(output), activation: .hold)
         for duration in [UInt32(0), 99, 5001, .max] {
             var invalid = hold
             invalid.holdDurationMilliseconds = duration
@@ -60,8 +66,9 @@ struct HoldPersistenceTests {
 
     @Test(arguments: [PressActivation.press, .doublePress])
     func sameChordDifferentActivationIsAnExplicitConflict(_ activation: PressActivation) {
-        let hold = rebind.Binding(scope: .allKeyboards, trigger: .key(1), modifiers: .control,
-                                  action: .shortcut(output), activation: .hold)
+        let hold = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(1), modifiers: .control,
+            action: .shortcut(output), activation: .hold)
         var other = hold
         other.id = UUID()
         other.activation = activation

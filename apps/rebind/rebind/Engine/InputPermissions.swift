@@ -17,7 +17,8 @@ nonisolated struct InputPermissions: Equatable, Sendable {
     }
 
     static func current() -> Self {
-        Self(accessibility: AXIsProcessTrusted(), listening: CGPreflightListenEventAccess(),
-             posting: CGPreflightPostEventAccess())
+        Self(
+            accessibility: AXIsProcessTrusted(), listening: CGPreflightListenEventAccess(),
+            posting: CGPreflightPostEventAccess())
     }
 }

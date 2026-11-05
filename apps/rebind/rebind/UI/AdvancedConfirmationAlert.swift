@@ -4,14 +4,18 @@ import AppKit
     static func make(for review: AdvancedSettingsModel.Review, language: AppLanguage) -> NSAlert {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = AppLocalization.string(review.isReset ? .advancedResetConfirmTitle : .advancedImportTitle,
-                                                    language: language)
-        let description: LocalizedStringResource = review.isReset ? .advancedResetConfirmBody
+        alert.messageText = AppLocalization.string(
+            review.isReset ? .advancedResetConfirmTitle : .advancedImportTitle,
+            language: language)
+        let description: LocalizedStringResource =
+            review.isReset
+            ? .advancedResetConfirmBody
             : .advancedImportBody(count1: review.profileCount, count2: review.bindingCount)
         alert.informativeText = AppLocalization.string(description, language: language)
         let cancel = alert.addButton(withTitle: AppLocalization.string(.cancel, language: language))
-        let replace = alert.addButton(withTitle: AppLocalization.string(
-            review.isReset ? .advancedResetAction : .advancedReplaceAction, language: language))
+        let replace = alert.addButton(
+            withTitle: AppLocalization.string(
+                review.isReset ? .advancedResetAction : .advancedReplaceAction, language: language))
         replace.hasDestructiveAction = true
         replace.keyEquivalent = ""
         alert.layout()

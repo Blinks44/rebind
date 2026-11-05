@@ -7,8 +7,10 @@ private final class BatteryReply: HIDPPDeviceIO {
     var payload: [UInt8] = []
     var answersWrite = false
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         let bytes = Array(report)
         if bytes[2] == 0x80, !answersWrite { return nil }
         let reply = Data(Array(bytes.prefix(4)) + payload + Array(repeating: UInt8(0), count: max(0, 16 - payload.count)))

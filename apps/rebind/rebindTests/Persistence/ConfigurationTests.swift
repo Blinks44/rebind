@@ -1,17 +1,21 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ConfigurationTests {
     private func temporaryStore() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory.appending(path: "RebindTests-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory.appending(path: "RebindTests-\(UUID())", directoryHint: .isDirectory).appending(
+                path: "configuration.json"))
     }
 
     @Test func roundTripPreservesPhysicalIdentityAndEnabledState() throws {
         let store = temporaryStore()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [.control, .option],
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: [.command, .shift])))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [.control, .option],
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: [.command, .shift])))
         let original = Configuration(isEnabled: true, bindings: [binding])
         try store.save(original)
         #expect(try store.load() == original)
@@ -34,8 +38,9 @@ struct ConfigurationTests {
         let model = AppModel(store: store)
         #expect(model.storageLocked)
         #expect(model.configuration.isEnabled == false)
-        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [],
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         #expect(model.saveBinding(binding) == false)
         #expect(try Data(contentsOf: store.url) == bytes)
     }
@@ -54,8 +59,9 @@ struct ConfigurationTests {
     @Test func conflictingSaveDoesNotReplaceValidConfiguration() throws {
         let store = temporaryStore()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [],
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         let original = Configuration(bindings: [binding])
         try store.save(original)
         var duplicate = binding
@@ -66,8 +72,9 @@ struct ConfigurationTests {
 
     @Test(arguments: [UInt16(54), 55, 57, 63, 128, .max])
     func unsupportedKeysCannotBeStored(_ key: UInt16) {
-        let invalid = rebind.Binding(scope: .allKeyboards, trigger: .key(key), modifiers: [],
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let invalid = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(key), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         #expect(throws: ConfigurationError.invalid) { try Configuration(bindings: [invalid]).validate() }
     }
 }

@@ -5,15 +5,17 @@ nonisolated enum TextSender {
     /// Quartz carries at most 20 UTF-16 units per key event.
     static let unitsPerEvent = 20
 
-    static func perform(_ text: String, canPerform: () -> Bool,
-                        post: (CGEvent) -> Void = { $0.post(tap: .cgSessionEventTap) }) -> WindowActionResult {
+    static func perform(
+        _ text: String, canPerform: () -> Bool,
+        post: (CGEvent) -> Void = { $0.post(tap: .cgSessionEventTap) }
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard TextSnippet.isValid(text), let source = CGEventSource(stateID: .privateState) else { return .unavailable }
         var batch: [CGEvent] = []
         for chunk in chunks(of: text) {
             for keyDown in [true, false] {
                 guard let event = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: keyDown) else { return .unavailable }
-                event.flags = [] // Plain text; do not inherit trigger or physical modifiers.
+                event.flags = []  // Plain text; do not inherit trigger or physical modifiers.
                 event.keyboardSetUnicodeString(stringLength: chunk.count, unicodeString: chunk)
                 event.setIntegerValueField(.eventSourceUserData, value: ShortcutSender.eventTag)
                 batch.append(event)
@@ -36,7 +38,10 @@ nonisolated enum TextSender {
         for character in text {
             let units = Array(String(character).utf16)
             if units.count > unitsPerEvent {
-                if !current.isEmpty { result.append(current); current = [] }
+                if !current.isEmpty {
+                    result.append(current)
+                    current = []
+                }
                 for scalar in String(character).unicodeScalars {
                     let scalarUnits = Array(String(scalar).utf16)
                     if current.count + scalarUnits.count > unitsPerEvent {

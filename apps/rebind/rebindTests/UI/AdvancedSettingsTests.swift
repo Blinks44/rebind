@@ -1,25 +1,31 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct AdvancedSettingsTests {
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindAdvanced-\(UUID())/configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindAdvanced-\(UUID())/configuration.json"))
     }
 
-    private func fixture(_ store: ConfigurationStore,
-                         projection: @escaping (AppLanguagePreference) -> Void = { _ in }) -> AppModel {
-        AppModel(store: store, sessionAllowsInput: { true },
-                 readPermissions: { InputPermissions(accessibility: true, posting: true) },
-                 loginItem: LoginItemModel(service: LoginItemServiceStub()), preferredLanguages: ["en"],
-                 languagePreferenceSaved: projection)
+    private func fixture(
+        _ store: ConfigurationStore,
+        projection: @escaping (AppLanguagePreference) -> Void = { _ in }
+    ) -> AppModel {
+        AppModel(
+            store: store, sessionAllowsInput: { true },
+            readPermissions: { InputPermissions(accessibility: true, posting: true) },
+            loginItem: LoginItemModel(service: LoginItemServiceStub()), preferredLanguages: ["en"],
+            languagePreferenceSaved: projection)
     }
 
     @Test func importIsReviewedThenCommittedPausedWithLanguageAndReleaseOwnership() async throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         var original = Configuration(isEnabled: true, bindings: [binding])
         original.hasCompletedSetup = true
@@ -53,9 +59,10 @@ import Testing
         #expect(app.recording == nil && app.lastRecording == nil && page.review == nil)
         #expect(app.configurationReplacementRevision == 1 && app.activeLanguage == .en && app.requiresLanguageReopen)
         #expect(projected == [.fr])
-        #expect(app.mailbox.state.withLock {
-            !$0.enabled && $0.actionRevision > revision && $0.pending.isEmpty && $0.recording == nil
-        })
+        #expect(
+            app.mailbox.state.withLock {
+                !$0.enabled && $0.actionRevision > revision && $0.pending.isEmpty && $0.recording == nil
+            })
         #expect(!app.diagnostics.isRunning)
         #expect(app.mailbox.handle(InputEvent(trigger: .mouseButton(99), phase: .up), secureInput: false))
         #expect(try Data(contentsOf: url) == backupBytes)
@@ -91,7 +98,8 @@ import Testing
         try store.save(original)
         let service = LoginItemServiceStub(status: .enabled)
         var projected: [AppLanguagePreference] = []
-        let app = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+        let app = AppModel(
+            store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
             loginItem: LoginItemModel(service: service), preferredLanguages: ["en"],
             languagePreferenceSaved: { projected.append($0) })
         let page = AdvancedSettingsModel(app: app)
@@ -122,12 +130,13 @@ import Testing
         #expect(app.configuration == original && app.configurationReplacementRevision == 0)
         #expect(app.mailbox.state.withLock { $0.actionRevision == revision && $0.enabled })
         #expect(page.review != nil)
-        if case .writeFailed = page.feedback { } else { Issue.record("Expected a save failure") }
+        if case .writeFailed = page.feedback {} else { Issue.record("Expected a save failure") }
         try FileManager.default.removeItem(at: store.url)
         try store.save(original)
         page.confirmReplacement()
-        #expect(!app.configuration.isEnabled && app.configurationReplacementRevision == 1,
-                "Review: \(String(describing: page.review)), feedback: \(String(describing: page.feedback))")
+        #expect(
+            !app.configuration.isEnabled && app.configurationReplacementRevision == 1,
+            "Review: \(String(describing: page.review)), feedback: \(String(describing: page.feedback))")
     }
 
     @Test(arguments: [false, true])
@@ -143,7 +152,7 @@ import Testing
         page.confirmReplacement()
         #expect(app.configuration.languagePreference == .ru && page.review == nil)
         #expect(try Data(contentsOf: store.url) == bytes)
-        if case .staleReview = page.feedback { } else { Issue.record("Expected stale review rejection") }
+        if case .staleReview = page.feedback {} else { Issue.record("Expected stale review rejection") }
         page.reviewReset()
         let expected = app.configuration
         let revision = app.configurationReplacementRevision
@@ -188,7 +197,7 @@ import Testing
         try Data("invalid".utf8).write(to: invalid)
         await page.validateImport(at: invalid)
         #expect(page.review == nil)
-        if case .invalidBackup = page.feedback { } else { Issue.record("Expected invalid backup") }
+        if case .invalidBackup = page.feedback {} else { Issue.record("Expected invalid backup") }
         #expect(try Data(contentsOf: store.url) == bytes)
     }
 
@@ -224,8 +233,9 @@ import Testing
 
     @Test(arguments: AppLanguage.allCases, [false, true])
     func nativeConfirmationHasSafeDefaultAndLocalizedCounts(language: AppLanguage, isReset: Bool) throws {
-        let review = AdvancedSettingsModel.Review(replacement: Configuration(), expected: Configuration(),
-                                                  revision: 0, isReset: isReset)
+        let review = AdvancedSettingsModel.Review(
+            replacement: Configuration(), expected: Configuration(),
+            revision: 0, isReset: isReset)
         let alert = AdvancedConfirmationAlert.make(for: review, language: language)
         let cancel = try #require(alert.buttons.first)
         #expect(cancel.title == AppLocalization.string(.cancel, language: language))
@@ -235,8 +245,10 @@ import Testing
         #expect(!alert.messageText.isEmpty && !alert.informativeText.contains("%"))
     }
 
-    @Test(arguments: [(EngineStatus.paused, true), (.active, true), (.outputFailed, true),
-                      (.secureInput, false), (.tapFailed, false), (.interrupted, false), (.permissionRequired, false)])
+    @Test(arguments: [
+        (EngineStatus.paused, true), (.active, true), (.outputFailed, true),
+        (.secureInput, false), (.tapFailed, false), (.interrupted, false), (.permissionRequired, false),
+    ])
     func diagnosticStartRequiresAnAvailableCapture(_ sample: (EngineStatus, Bool)) {
         let app = fixture(store())
         app.mailbox.state.withLock { $0.status = sample.0 }

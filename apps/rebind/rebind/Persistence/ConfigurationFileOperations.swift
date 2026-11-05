@@ -15,8 +15,10 @@ nonisolated enum ConfigurationFileOperations {
         return backup
     }
 
-    @concurrent static func export(_ backup: ConfigurationBackup, to destination: URL,
-                                   protecting original: URL) async throws {
+    @concurrent static func export(
+        _ backup: ConfigurationBackup, to destination: URL,
+        protecting original: URL
+    ) async throws {
         let access = destination.startAccessingSecurityScopedResource()
         defer { if access { destination.stopAccessingSecurityScopedResource() } }
         try validateDestination(destination, protecting: original)
@@ -35,8 +37,9 @@ nonisolated enum ConfigurationFileOperations {
         // Copy raw bytes through a replacement directory on the destination volume.
         // FileManager bounds memory even for a corrupt file beyond the JSON size limit.
         let manager = FileManager.default
-        let staging = try manager.url(for: .itemReplacementDirectory, in: .userDomainMask,
-                                      appropriateFor: destination, create: true)
+        let staging = try manager.url(
+            for: .itemReplacementDirectory, in: .userDomainMask,
+            appropriateFor: destination, create: true)
         defer { try? manager.removeItem(at: staging) }
         let copy = staging.appending(path: "original.json")
         try Task.checkCancellation()
@@ -52,8 +55,9 @@ nonisolated enum ConfigurationFileOperations {
 
     private static func validateDestination(_ destination: URL, protecting original: URL) throws {
         guard destination.isFileURL,
-              destination.standardizedFileURL.resolvingSymlinksInPath()
-                != original.standardizedFileURL.resolvingSymlinksInPath() else {
+            destination.standardizedFileURL.resolvingSymlinksInPath()
+                != original.standardizedFileURL.resolvingSymlinksInPath()
+        else {
             throw ConfigurationReplacementError.protectedDestination
         }
         if FileManager.default.fileExists(atPath: destination.path) {
@@ -62,7 +66,8 @@ nonisolated enum ConfigurationFileOperations {
             guard target.isRegularFile == true else { throw ConfigurationError.invalid }
             let source = try? URL(fileURLWithPath: original.path).resourceValues(forKeys: keys)
             if let targetID = target.fileResourceIdentifier as? NSObject,
-               let sourceID = source?.fileResourceIdentifier as? NSObject, targetID == sourceID {
+                let sourceID = source?.fileResourceIdentifier as? NSObject, targetID == sourceID
+            {
                 throw ConfigurationReplacementError.protectedDestination
             }
         }

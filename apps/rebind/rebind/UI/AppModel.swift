@@ -1,9 +1,9 @@
 import AppKit
 import ApplicationServices
+import Carbon
+import Dispatch
 import Observation
 import Synchronization
-import Dispatch
-import Carbon
 
 @MainActor @Observable final class AppModel: NSObject {
     private(set) var configuration = Configuration()
@@ -51,14 +51,16 @@ import Carbon
     @ObservationIgnored private let sessionAllowsInput: () -> Bool
     @ObservationIgnored private let readPermissions: () -> InputPermissions
 
-    init(store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true,
-         sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() },
-         readPermissions: @escaping () -> InputPermissions = { .current() },
-         loginItem: LoginItemModel = LoginItemModel(),
-         companionApps: CompanionAppMonitor = CompanionAppMonitor(),
-         mouseHardware: MouseHardware = MouseHardware(),
-         preferredLanguages: [String] = AppLanguageDefaults.systemPreferredLanguages,
-         languagePreferenceSaved: @escaping (AppLanguagePreference) -> Void = { _ in }) {
+    init(
+        store: ConfigurationStore = .applicationStore, loadConfiguration: Bool = true,
+        sessionAllowsInput: @escaping () -> Bool = { ScreenLockSession.allowsInput() },
+        readPermissions: @escaping () -> InputPermissions = { .current() },
+        loginItem: LoginItemModel = LoginItemModel(),
+        companionApps: CompanionAppMonitor = CompanionAppMonitor(),
+        mouseHardware: MouseHardware = MouseHardware(),
+        preferredLanguages: [String] = AppLanguageDefaults.systemPreferredLanguages,
+        languagePreferenceSaved: @escaping (AppLanguagePreference) -> Void = { _ in }
+    ) {
         self.loginItem = loginItem
         self.companionApps = companionApps
         self.mouseHardware = mouseHardware
@@ -79,7 +81,10 @@ import Carbon
         super.init()
         permissions = readPermissions()
         configuration = loaded
-        if loadFailed { storageLocked = true; self.error = .storageUnreadable }
+        if loadFailed {
+            storageLocked = true
+            self.error = .storageUnreadable
+        }
     }
 
     var requiresLanguageReopen: Bool {
@@ -96,8 +101,10 @@ import Carbon
     var configurationBackupDirectory: URL { store.backupDirectory }
 
     /// A confirmed whole-document transaction. Persist before changing any runtime state.
-    func replaceConfiguration(with replacement: Configuration, expected: Configuration,
-                              revision: UInt64) throws {
+    func replaceConfiguration(
+        with replacement: Configuration, expected: Configuration,
+        revision: UInt64
+    ) throws {
         guard !storageLocked else { throw ConfigurationReplacementError.protectedOriginal }
         guard configuration == expected, configurationReplacementRevision == revision else {
             throw ConfigurationReplacementError.staleReview
@@ -155,9 +162,10 @@ import Carbon
         mouseHardware.canWrite = { [weak self] in self?.companionApps.controller(ofVendor: $0, gaming: $1) == nil }
         let mailbox = mailbox
         mouseHardware.gestureButtonChanged = { down in
-            mailbox.handleOffTapButton(InputTrigger.gestureButton, down: down,
-                                       modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
-                                       secureInput: IsSecureEventInputEnabled())
+            mailbox.handleOffTapButton(
+                InputTrigger.gestureButton, down: down,
+                modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
+                secureInput: IsSecureEventInputEnabled())
         }
         mouseHardware.smoothScrollingChanged = { mailbox.setSmoothScrolling(bySender: $0) }
         mouseHardware.start()
@@ -175,20 +183,29 @@ import Carbon
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(refresh), userInfo: nil, repeats: true)
         timer?.tolerance = 0.05
         updatePointerTracking(configuration)
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshPermissions), name: NSApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(refreshWindowDisplays), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(cancelRecording), name: NSApplication.didResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(refreshPermissions), name: NSApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(closeDiagnostics), name: NSWindow.willCloseNotification, object: nil)
         for name in [ScreenLockSession.lockedNotification, ScreenLockSession.unlockedNotification] {
-            DistributedNotificationCenter.default().addObserver(self, selector: #selector(handleScreenLockNotification(_:)),
-                                                               name: name, object: nil, suspensionBehavior: .deliverImmediately)
+            DistributedNotificationCenter.default().addObserver(
+                self, selector: #selector(handleScreenLockNotification(_:)),
+                name: name, object: nil, suspensionBehavior: .deliverImmediately)
         }
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(refreshForegroundApplication),
-                                                          name: NSWorkspace.didActivateApplicationNotification, object: nil)
-        for name in [NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
-                     NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification] {
-            NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(handleWorkspaceNotification(_:)),
-                                                            name: name, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(refreshForegroundApplication),
+            name: NSWorkspace.didActivateApplicationNotification, object: nil)
+        for name in [
+            NSWorkspace.willSleepNotification, NSWorkspace.sessionDidResignActiveNotification,
+            NSWorkspace.didWakeNotification, NSWorkspace.sessionDidBecomeActiveNotification,
+        ] {
+            NSWorkspace.shared.notificationCenter.addObserver(
+                self, selector: #selector(handleWorkspaceNotification(_:)),
+                name: name, object: nil)
         }
     }
 
@@ -196,7 +213,7 @@ import Carbon
         cancelRecording()
         mailbox.stop()
         // Serialize with the action worker before any device shutdown can wait for I/O.
-        while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) { }
+        while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) {}
         previousApplication.stop()
         companionApps.stop()
         mouseHardware.stop()
@@ -227,10 +244,12 @@ import Carbon
         }
         // Copy the engine's state and clear its one-shot results in one short lock.
         let update = mailbox.state.withLock { state in
-            let result = (status: state.status, trackpadStatus: state.trackpadStatus, magicMouseStatus: state.magicMouseStatus,
-                          audioCapabilities: state.audioCapabilities,
-                          recorded: state.recorded, paused: state.emergencyPause, failed: state.actionFailed,
-                          profileStep: state.profileStep)
+            let result = (
+                status: state.status, trackpadStatus: state.trackpadStatus, magicMouseStatus: state.magicMouseStatus,
+                audioCapabilities: state.audioCapabilities,
+                recorded: state.recorded, paused: state.emergencyPause, failed: state.actionFailed,
+                profileStep: state.profileStep
+            )
             state.profileStep = 0
             state.actionFailed = nil
             state.recorded = nil
@@ -266,9 +285,12 @@ import Carbon
             // At most one task/slot exists; the event tap never creates tasks.
             workspaceTask = Task { [weak self] in
                 defer { self?.workspaceTask = nil }
-                await WorkspaceActionExecutor(mailbox: mailbox, previousApplication: {
-                    await previousApplication.perform(canPerform: $0)
-                }).service()
+                await WorkspaceActionExecutor(
+                    mailbox: mailbox,
+                    previousApplication: {
+                        await previousApplication.perform(canPerform: $0)
+                    }
+                ).service()
             }
         }
     }
@@ -288,8 +310,10 @@ import Carbon
     }
 
     @objc func handleScreenLockNotification(_ notification: Notification) {
-        guard notification.name == ScreenLockSession.lockedNotification
-            || notification.name == ScreenLockSession.unlockedNotification else { return }
+        guard
+            notification.name == ScreenLockSession.lockedNotification
+                || notification.name == ScreenLockSession.unlockedNotification
+        else { return }
         // A lock hint suspends immediately. An unlock hint alone never grants input:
         // reread native session state, then retain sleep/inactive-session guards.
         workspaceScreenLocked = notification.name == ScreenLockSession.lockedNotification || !sessionAllowsInput()
@@ -321,7 +345,10 @@ import Carbon
     func setEnabled(_ enabled: Bool) {
         var updated = configuration
         updated.isEnabled = enabled
-        if !enabled { configureEngine(updated); configuration.isEnabled = false }
+        if !enabled {
+            configureEngine(updated)
+            configuration.isEnabled = false
+        }
         trySave(updated)
     }
 
@@ -329,7 +356,8 @@ import Carbon
     var rulesAreRunning: Bool { generalRuntime == .active }
 
     var generalRuntime: GeneralRuntimePresentation {
-        GeneralRuntimePresentation(isEnabled: configuration.isEnabled, permissions: permissions,
+        GeneralRuntimePresentation(
+            isEnabled: configuration.isEnabled, permissions: permissions,
             status: status, isSuspended: mailbox.state.withLock { $0.suspended }, storageLocked: storageLocked)
     }
 
@@ -342,7 +370,10 @@ import Carbon
     func beginEditing() {
         mailbox.setEditing(true)
     }
-    func endEditing() { cancelRecording(); mailbox.setEditing(false) }
+    func endEditing() {
+        cancelRecording()
+        mailbox.setEditing(false)
+    }
 
     func beginRecording(_ target: RecordingTarget) {
         guard canRecord, NSApp.isActive else { return }
@@ -359,9 +390,10 @@ import Carbon
         mailbox.record(nil)
     }
     var canRecord: Bool {
-        permissions.allowsRemapping && mailbox.state.withLock {
-            !$0.suspended && !$0.stopped && $0.status != .secureInput
-        }
+        permissions.allowsRemapping
+            && mailbox.state.withLock {
+                !$0.suspended && !$0.stopped && $0.status != .secureInput
+            }
     }
 
     var recordingUnavailableHint: LocalizedStringResource {
@@ -388,9 +420,18 @@ import Carbon
         refreshDiagnostics()
     }
 
-    func stopDiagnostics() { mailbox.stopDiagnostics(); refreshDiagnostics() }
-    func clearDiagnostics() { mailbox.clearDiagnostics(); refreshDiagnostics() }
-    @objc func closeDiagnostics() { mailbox.stopDiagnostics(clear: true); refreshDiagnostics() }
+    func stopDiagnostics() {
+        mailbox.stopDiagnostics()
+        refreshDiagnostics()
+    }
+    func clearDiagnostics() {
+        mailbox.clearDiagnostics()
+        refreshDiagnostics()
+    }
+    @objc func closeDiagnostics() {
+        mailbox.stopDiagnostics(clear: true)
+        refreshDiagnostics()
+    }
 
     private func refreshDiagnostics() {
         if let snapshot = mailbox.diagnosticSnapshot(since: diagnostics.revision, at: DispatchTime.now().uptimeNanoseconds) {
@@ -423,7 +464,9 @@ import Carbon
         var updated = configuration
         if let index = updated.bindings.firstIndex(where: { $0.id == binding.id }) {
             updated.bindings[index] = binding
-        } else { updated.bindings.append(binding) }
+        } else {
+            updated.bindings.append(binding)
+        }
         return trySave(updated)
     }
 
@@ -431,7 +474,10 @@ import Carbon
     @discardableResult func excludeApplication(_ target: ApplicationTarget) -> Bool {
         var updated = configuration
         updated.excludedApplications.append(ExcludedApplication(target: target))
-        do { try updated.validate() } catch { self.error = .excludedAppRejected; return false }
+        do { try updated.validate() } catch {
+            self.error = .excludedAppRejected
+            return false
+        }
         return trySave(updated)
     }
 
@@ -481,8 +527,10 @@ import Carbon
     func renameDevice(key: String, original: String, name: String) -> Bool {
         guard !storageLocked else { return false }
         var updated = configuration
-        do { try updated.renameDevice(key: key, original: original, name: name) }
-        catch { self.error = .storageWriteFailed; return false }
+        do { try updated.renameDevice(key: key, original: original, name: name) } catch {
+            self.error = .storageWriteFailed
+            return false
+        }
         return updated == configuration || saveWithoutEngine(updated)
     }
 
@@ -495,7 +543,10 @@ import Carbon
             updated.mouseHardware.append(settings)
         }
         guard updated != configuration else { return }
-        do { try updated.validate() } catch { self.error = .storageWriteFailed; return }
+        do { try updated.validate() } catch {
+            self.error = .storageWriteFailed
+            return
+        }
         let previous = configuration.mouseHardware.first { $0.deviceKey == settings.deviceKey }
         guard trySave(updated) else { return }
         mouseHardware.publishSmoothScrolling()
@@ -511,9 +562,14 @@ import Carbon
             var updated = self.configuration
             if let index = updated.keyboardLighting.firstIndex(where: { $0.deviceKey == settings.deviceKey }) {
                 updated.keyboardLighting[index] = settings
-            } else { updated.keyboardLighting.append(settings) }
+            } else {
+                updated.keyboardLighting.append(settings)
+            }
             guard updated != self.configuration else { return }
-            do { try updated.validate() } catch { self.error = .storageWriteFailed; return }
+            do { try updated.validate() } catch {
+                self.error = .storageWriteFailed
+                return
+            }
             self.saveWithoutEngine(updated)
         }
     }
@@ -521,10 +577,14 @@ import Carbon
     /// Plain-text facts for a bug report. Counts and states only: no triggers, shortcuts,
     /// typed text, user-chosen app names or paths ever appear in it. Mouse models and
     /// running companion apps (a fixed list of vendor apps) help explain device issues.
-    func supportReport(information: AboutInformation = AboutInformation(),
-                       system: String = ProcessInfo.processInfo.operatingSystemVersionString) -> String {
-        let scopes: [(String, DeviceScope)] = [("keyboard", .allKeyboards), ("mouse", .allMice),
-                                               ("trackpad", .builtInTrackpad), ("magic trackpad", .magicTrackpad), ("magic mouse", .magicMouse)]
+    func supportReport(
+        information: AboutInformation = AboutInformation(),
+        system: String = ProcessInfo.processInfo.operatingSystemVersionString
+    ) -> String {
+        let scopes: [(String, DeviceScope)] = [
+            ("keyboard", .allKeyboards), ("mouse", .allMice),
+            ("trackpad", .builtInTrackpad), ("magic trackpad", .magicTrackpad), ("magic mouse", .magicMouse),
+        ]
         let rules = configuration.bindings
         var lines = [
             "Rebind \(information.version ?? "?") (\(information.build ?? "?"))",
@@ -534,17 +594,24 @@ import Carbon
             "Accessibility: \(permissions.accessibility); event sending: \(permissions.posting); input monitoring: \(permissions.listening)",
             "Configuration: schema \(configuration.schemaVersion), locked: \(storageLocked)",
             "Profiles: \(configuration.profiles.count); bindings in all profiles: \(configuration.profiles.reduce(0) { $0 + $1.bindings.count })",
-            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), horizontal reversed \(configuration.reversesHorizontalScrolling), speed \(configuration.mouseWheelSpeed.rawValue); smooth scrolling on \(configuration.mouseHardware.filter { $0.smoothScrolling == true }.count) mice; app-specific bindings: \(configuration.bindings.filter { $0.application != nil }.count)"
+            "Excluded apps: \(configuration.excludedApplications.count); gesture distance: \(configuration.pointerGestureDistance.rawValue); wheel: reversed \(configuration.reversesMouseWheel), horizontal reversed \(configuration.reversesHorizontalScrolling), speed \(configuration.mouseWheelSpeed.rawValue); smooth scrolling on \(configuration.mouseHardware.filter { $0.smoothScrolling == true }.count) mice; app-specific bindings: \(configuration.bindings.filter { $0.application != nil }.count)",
         ]
         for (name, scope) in scopes {
             let scoped = rules.filter { $0.scope == scope }
             lines.append("Selected profile, \(name): \(scoped.count) bindings, \(scoped.filter(\.isEnabled).count) enabled")
         }
-        lines.append("Companion apps running: " + (companionApps.running.isEmpty ? "none"
-            : companionApps.running.map(\.name).joined(separator: ", ")))
-        lines.append("Mice: " + (mouseHardware.mice.isEmpty ? "none" : mouseHardware.mice.map {
-            "\($0.name) (\(String(format: "%04x", $0.vendorID)), \($0.transport), \($0.hardware == nil ? "no extra settings" : "HID++")"
-        }.joined(separator: "; ")) + "; stored mouse settings: \(configuration.mouseHardware.count)")
+        lines.append(
+            "Companion apps running: "
+                + (companionApps.running.isEmpty
+                    ? "none"
+                    : companionApps.running.map(\.name).joined(separator: ", ")))
+        lines.append(
+            "Mice: "
+                + (mouseHardware.mice.isEmpty
+                    ? "none"
+                    : mouseHardware.mice.map {
+                        "\($0.name) (\(String(format: "%04x", $0.vendorID)), \($0.transport), \($0.hardware == nil ? "no extra settings" : "HID++")"
+                    }.joined(separator: "; ")) + "; stored mouse settings: \(configuration.mouseHardware.count)")
         let kinds = Dictionary(grouping: rules, by: { ActionKind(action: $0.action).rawValue }).mapValues(\.count)
         lines.append("Actions: " + kinds.sorted { $0.key < $1.key }.map { "\($0.key) ×\($0.value)" }.joined(separator: ", "))
         return lines.joined(separator: "\n")
@@ -568,7 +635,10 @@ import Carbon
         updated.profiles[index].bindings.append(binding.duplicated())
         do { try updated.validate() } catch ConfigurationError.conflict {
             updated.profiles[index].bindings[updated.profiles[index].bindings.count - 1].isEnabled = false
-        } catch { showConfigurationError(error); return false }
+        } catch {
+            showConfigurationError(error)
+            return false
+        }
         return trySave(updated)
     }
 
@@ -593,18 +663,25 @@ import Carbon
     private func stepProfile(by step: Int) {
         let profiles = configuration.profiles
         guard profiles.count > 1, !storageLocked,
-              let index = profiles.firstIndex(where: { $0.id == configuration.selectedProfileID }) else { return }
+            let index = profiles.firstIndex(where: { $0.id == configuration.selectedProfileID })
+        else { return }
         let count = profiles.count
         selectProfile(profiles[((index + step) % count + count) % count].id)
     }
 
     @discardableResult func createProfile(name: String, copying sourceID: UUID? = nil) -> Bool {
-        guard profileNameIsAvailable(name) else { error = .profileInvalid; return false }
+        guard profileNameIsAvailable(name) else {
+            error = .profileInvalid
+            return false
+        }
         return updateProfiles { try $0.createProfile(name: name, copying: sourceID) }
     }
 
     @discardableResult func renameProfile(_ id: UUID, name: String) -> Bool {
-        guard profileNameIsAvailable(name, excluding: id) else { error = .profileInvalid; return false }
+        guard profileNameIsAvailable(name, excluding: id) else {
+            error = .profileInvalid
+            return false
+        }
         return updateProfiles { try $0.renameProfile(id, name: name) }
     }
 
@@ -634,8 +711,9 @@ import Carbon
     }
 
     private static func sameName(_ lhs: String, _ rhs: String) -> Bool {
-        lhs.compare(rhs, options: [.caseInsensitive, .diacriticInsensitive],
-                    locale: Locale(identifier: "en_US_POSIX")) == .orderedSame
+        lhs.compare(
+            rhs, options: [.caseInsensitive, .diacriticInsensitive],
+            locale: Locale(identifier: "en_US_POSIX")) == .orderedSame
     }
 
     private func profileNameIsAvailable(_ name: String, excluding id: UUID? = nil) -> Bool {
@@ -650,8 +728,13 @@ import Carbon
 
     private func updateProfiles(_ mutation: (inout Configuration) throws -> Void) -> Bool {
         var updated = configuration
-        do { try mutation(&updated); return trySave(updated) }
-        catch { showConfigurationError(error); return false }
+        do {
+            try mutation(&updated)
+            return trySave(updated)
+        } catch {
+            showConfigurationError(error)
+            return false
+        }
     }
 
     private func showConfigurationError(_ error: any Error) {
@@ -668,8 +751,7 @@ import Carbon
 
     /// Locks editing when an existing file becomes unreadable after launch.
     private func persistConfiguration(_ updated: Configuration) throws {
-        do { try store.save(updated) }
-        catch ConfigurationStoreError.protectedOriginal {
+        do { try store.save(updated) } catch ConfigurationStoreError.protectedOriginal {
             storageLocked = true
             error = .storageUnreadable
             throw ConfigurationStoreError.protectedOriginal
@@ -692,7 +774,10 @@ import Carbon
     }
 
     @discardableResult private func trySave(_ updated: Configuration) -> Bool {
-        guard !storageLocked else { error = .storageUnreadable; return false }
+        guard !storageLocked else {
+            error = .storageUnreadable
+            return false
+        }
         do {
             try persistConfiguration(updated)
             error = nil
@@ -712,17 +797,20 @@ import Carbon
         trackpadCapture?.configurationChanged()
         // Read AppKit's system preference on MainActor, never in the event callback.
         let interval = NSEvent.doubleClickInterval
-        let nanoseconds: UInt64 = interval.isFinite && interval > 0 && interval <= 60
+        let nanoseconds: UInt64 =
+            interval.isFinite && interval > 0 && interval <= 60
             ? UInt64(interval * 1_000_000_000) : 500_000_000
-        mailbox.configure(configuration, doublePressIntervalNanoseconds: nanoseconds,
-                          keyRepeat: Self.keyRepeat(delay: NSEvent.keyRepeatDelay, interval: NSEvent.keyRepeatInterval))
+        mailbox.configure(
+            configuration, doublePressIntervalNanoseconds: nanoseconds,
+            keyRepeat: Self.keyRepeat(delay: NSEvent.keyRepeatDelay, interval: NSEvent.keyRepeatInterval))
         if timer != nil { updatePointerTracking(configuration) }
     }
 
     /// Only a per-app smooth scrolling exclusion needs to know which app is under the pointer.
     private func updatePointerTracking(_ configuration: Configuration) {
-        pointerApplication.setRunning(configuration.mouseHardware.contains { $0.smoothScrolling == true }
-            && configuration.excludedApplications.contains { !$0.allowsSmoothScrolling })
+        pointerApplication.setRunning(
+            configuration.mouseHardware.contains { $0.smoothScrolling == true }
+                && configuration.excludedApplications.contains { !$0.allowsSmoothScrolling })
     }
 
     /// The system key-repeat preference, bounded so a broken value cannot storm or stall.
@@ -730,8 +818,9 @@ import Carbon
         func nanoseconds(_ seconds: TimeInterval, in range: ClosedRange<TimeInterval>, default value: TimeInterval) -> UInt64 {
             UInt64((seconds.isFinite ? min(max(seconds, range.lowerBound), range.upperBound) : value) * 1_000_000_000)
         }
-        return KeyRepeatTiming(delayNanoseconds: nanoseconds(delay, in: 0.2...2, default: 0.5),
-                               intervalNanoseconds: nanoseconds(interval, in: 0.03...2, default: 0.08))
+        return KeyRepeatTiming(
+            delayNanoseconds: nanoseconds(delay, in: 0.2...2, default: 0.5),
+            intervalNanoseconds: nanoseconds(interval, in: 0.03...2, default: 0.08))
     }
 
     func requestAccessibility() {
@@ -744,12 +833,18 @@ import Carbon
     func requestEventPosting() {
         // AX trust and Quartz synthesis can disagree. Request the specific
         // capability only after an explicit user action, never from polling.
-        guard AXIsProcessTrusted() else { refreshPermissions(); return }
+        guard AXIsProcessTrusted() else {
+            refreshPermissions()
+            return
+        }
         _ = CGRequestPostEventAccess()
         refreshPermissions()
         if !permissions.posting { openPrivacyPane("Privacy_Accessibility") }
     }
-    @objc func refreshPermissions() { lastPermissionCheck = .distantPast; refresh() }
+    @objc func refreshPermissions() {
+        lastPermissionCheck = .distantPast
+        refresh()
+    }
 
     /// First-run guidance is shown once, until it is finished or deferred.
     var needsFirstRunSetup: Bool {
@@ -758,7 +853,10 @@ import Carbon
 
     /// Atomically acknowledges setup without enabling, reconfiguring or replacing rules.
     @discardableResult func completePermissionSetup() -> Bool {
-        guard !storageLocked else { error = .storageUnreadable; return false }
+        guard !storageLocked else {
+            error = .storageUnreadable
+            return false
+        }
         var updated = configuration
         updated.hasCompletedSetup = true
         do {
@@ -766,7 +864,10 @@ import Carbon
             configuration = updated
             error = nil
             return true
-        } catch { showConfigurationError(error); return false }
+        } catch {
+            showConfigurationError(error)
+            return false
+        }
     }
 
     func showApplicationInFinder() {

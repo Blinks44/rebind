@@ -1,19 +1,23 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct PressActivationPersistenceTests {
     private let output = KeyboardShortcut(keyCode: 13, modifiers: .command)
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindActivation-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindActivation-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
     }
 
     @Test func literalVersion2WheelMigratesWithoutRewriting() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         // Literal shipped schema: enum payloads and raw modifier integers, no activation field.
-        let bytes = Data(#"{"schemaVersion":2,"isEnabled":true,"bindings":[{"id":"00000000-0000-0000-0000-000000000003","scope":"allMice","trigger":{"scroll":{"_0":"left"}},"modifiers":2,"action":{"shortcut":{"_0":{"keyCode":13,"modifiers":1}}},"isEnabled":false}]}"#.utf8)
+        let bytes = Data(
+            #"{"schemaVersion":2,"isEnabled":true,"bindings":[{"id":"00000000-0000-0000-0000-000000000003","scope":"allMice","trigger":{"scroll":{"_0":"left"}},"modifiers":2,"action":{"shortcut":{"_0":{"keyCode":13,"modifiers":1}}},"isEnabled":false}]}"#
+                .utf8)
         try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try bytes.write(to: store.url)
         let loaded = try store.load()
@@ -31,8 +35,9 @@ struct PressActivationPersistenceTests {
     func doubleRulesRoundTripAndKeepStableIdentity(_ trigger: InputTrigger) throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control,
-                                     action: .shortcut(output), activation: .doublePress)
+        let binding = rebind.Binding(
+            scope: trigger.scope, trigger: trigger, modifiers: .control,
+            action: .shortcut(output), activation: .doublePress)
         let original = Configuration(isEnabled: true, bindings: [binding])
         try store.save(original)
         #expect(try store.load() == original)
@@ -58,11 +63,13 @@ struct PressActivationPersistenceTests {
     }
 
     @Test func wheelDoublePressAndDisguisedLegacyModesAreInvalid() {
-        let wheel = rebind.Binding(scope: .allMice, trigger: .scroll(.up), modifiers: [],
-                                   action: .shortcut(output), activation: .doublePress)
+        let wheel = rebind.Binding(
+            scope: .allMice, trigger: .scroll(.up), modifiers: [],
+            action: .shortcut(output), activation: .doublePress)
         #expect(throws: ConfigurationError.invalid) { try Configuration(bindings: [wheel]).validate() }
-        let double = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [],
-                                    action: .shortcut(output), activation: .doublePress)
+        let double = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: [],
+            action: .shortcut(output), activation: .doublePress)
         for version in [1, 2] {
             #expect(throws: ConfigurationError.invalid) { try Configuration(schemaVersion: version, bindings: [double]).migrated() }
         }

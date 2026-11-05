@@ -7,8 +7,10 @@ import AppKit
     private let notificationCenter: NotificationCenter
     private let applicationFromNotification: (Notification) -> Client.Application?
 
-    init(client: Client, notificationCenter: NotificationCenter,
-         applicationFromNotification: @escaping (Notification) -> Client.Application?) {
+    init(
+        client: Client, notificationCenter: NotificationCenter,
+        applicationFromNotification: @escaping (Notification) -> Client.Application?
+    ) {
         self.client = client
         self.notificationCenter = notificationCenter
         self.applicationFromNotification = applicationFromNotification
@@ -18,7 +20,8 @@ import AppKit
     func start() {
         guard !observing else { return }
         observing = true
-        notificationCenter.addObserver(self, selector: #selector(activated(_:)),
+        notificationCenter.addObserver(
+            self, selector: #selector(activated(_:)),
             name: NSWorkspace.didActivateApplicationNotification, object: nil)
         sampleFrontmostApplication()
     }
@@ -33,7 +36,8 @@ import AppKit
         // AppKit can post before frontmostApplication reflects this activation.
         // Use the affected app from the notification, preserving event order.
         guard observing, let application = applicationFromNotification(notification),
-              client.isEligible(application) else { return }
+            client.isEligible(application)
+        else { return }
         history.observe(application)
     }
 

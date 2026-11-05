@@ -1,11 +1,13 @@
 import CoreGraphics
 
 nonisolated enum MouseClickSender {
-    static func perform(_ action: MouseAction, canPerform: () -> Bool,
-                        position: () -> CGPoint? = { CGEvent(source: nil)?.location },
-                        isButtonDown: (CGMouseButton) -> Bool = buttonIsDown,
-                        build: (MouseAction, CGPoint) -> [CGEvent]? = { events($0, at: $1) },
-                        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }) -> WindowActionResult {
+    static func perform(
+        _ action: MouseAction, canPerform: () -> Bool,
+        position: () -> CGPoint? = { CGEvent(source: nil)?.location },
+        isButtonDown: (CGMouseButton) -> Bool = buttonIsDown,
+        build: (MouseAction, CGPoint) -> [CGEvent]? = { events($0, at: $1) },
+        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         if let lines = action.scrollLines {
             guard let event = scrollEvent(lines) else { return .unavailable }
@@ -19,29 +21,33 @@ nonisolated enum MouseClickSender {
         // suppressed, so applications never saw it held); the output click is safe there.
         let guardsHeldButton = action.button.rawValue <= 2
         guard !(guardsHeldButton && isButtonDown(action.button)), let point = position(),
-              let batch = build(action, point), batch.count == action.clickCount * 2 else { return .unavailable }
+            let batch = build(action, point), batch.count == action.clickCount * 2
+        else { return .unavailable }
         guard !(guardsHeldButton && isButtonDown(action.button)) else { return .unavailable }
         guard canPerform() else { return .cancelled }
         // Construction and final checks precede any output. Finish every started
         // down/up pair; no delay, suspension or synthetic held-button state escapes.
         for event in batch { post(event, .cgSessionEventTap) }
-        return .performed // Quartz posting cannot acknowledge the application's response.
+        return .performed  // Quartz posting cannot acknowledge the application's response.
     }
 
-    static func events(_ action: MouseAction, at point: CGPoint,
-                       source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) },
-                       make: (CGEventSource, CGEventType, CGPoint, CGMouseButton) -> CGEvent? = {
-                           CGEvent(mouseEventSource: $0, mouseType: $1, mouseCursorPosition: $2, mouseButton: $3)
-                       }) -> [CGEvent]? {
+    static func events(
+        _ action: MouseAction, at point: CGPoint,
+        source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) },
+        make: (CGEventSource, CGEventType, CGPoint, CGMouseButton) -> CGEvent? = {
+            CGEvent(mouseEventSource: $0, mouseType: $1, mouseCursorPosition: $2, mouseButton: $3)
+        }
+    ) -> [CGEvent]? {
         guard point.x.isFinite, point.y.isFinite, let source = source() else { return nil }
         source.localEventsSuppressionInterval = 0
         var result: [CGEvent] = []
         for click in 1...action.clickCount {
             guard let down = make(source, action.downType, point, action.button),
-                  let up = make(source, action.upType, point, action.button) else { return nil }
+                let up = make(source, action.upType, point, action.button)
+            else { return nil }
             up.setIntegerValueField(.mouseEventNumber, value: down.getIntegerValueField(.mouseEventNumber))
             for event in [down, up] {
-                event.flags = [] // Plain click; do not inherit trigger/physical modifiers.
+                event.flags = []  // Plain click; do not inherit trigger/physical modifiers.
                 event.setIntegerValueField(.mouseEventButtonNumber, value: Int64(action.button.rawValue))
                 event.setIntegerValueField(.mouseEventClickState, value: Int64(click))
                 event.setIntegerValueField(.mouseEventDeltaX, value: 0)
@@ -55,11 +61,15 @@ nonisolated enum MouseClickSender {
     }
 
     /// One discrete line-based wheel event at the pointer, tagged so Rebind's own scroll rules ignore it.
-    static func scrollEvent(_ lines: (vertical: Int32, horizontal: Int32),
-                            source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) }) -> CGEvent? {
+    static func scrollEvent(
+        _ lines: (vertical: Int32, horizontal: Int32),
+        source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) }
+    ) -> CGEvent? {
         guard let source = source(),
-              let event = CGEvent(scrollWheelEvent2Source: source, units: .line, wheelCount: 2,
-                                  wheel1: lines.vertical, wheel2: lines.horizontal, wheel3: 0) else { return nil }
+            let event = CGEvent(
+                scrollWheelEvent2Source: source, units: .line, wheelCount: 2,
+                wheel1: lines.vertical, wheel2: lines.horizontal, wheel3: 0)
+        else { return nil }
         event.flags = []
         event.setIntegerValueField(.eventSourceUserData, value: ShortcutSender.eventTag)
         return event

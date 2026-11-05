@@ -56,7 +56,8 @@ struct LoginItemSettingsRow: View {
 
     private var loginEnabled: SwiftUI.Binding<Bool> {
         // The model owns operations beyond view disappearance and rejects overlap.
-        SwiftUI.Binding(get: { model.status == .enabled },
-                        set: { enabled in Task { await model.setEnabled(enabled) } })
+        SwiftUI.Binding(
+            get: { model.status == .enabled },
+            set: { enabled in Task { await model.setEnabled(enabled) } })
     }
 }

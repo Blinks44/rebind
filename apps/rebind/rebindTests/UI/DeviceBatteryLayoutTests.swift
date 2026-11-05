@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Full-window fixture. Does not start discovery, CoreBluetooth, input capture or real settings.
@@ -12,12 +13,14 @@ import XCTest
         var configuration = Configuration()
         configuration.hasCompletedSetup = true
         try store.save(configuration)
-        let model = AppModel(store: store, readPermissions: { InputPermissions() },
+        let model = AppModel(
+            store: store, readPermissions: { InputPermissions() },
             loginItem: LoginItemModel(service: LoginItemServiceStub(status: .off)))
         for language in ["en", "ru", "de", "fr", "es", "zh-Hans"] {
             for appearance in [ColorScheme.light, .dark] {
-                let controller = NSHostingController(rootView: ContentView(model: model, initialDestination: .devices)
-                    .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
+                let controller = NSHostingController(
+                    rootView: ContentView(model: model, initialDestination: .devices)
+                        .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
                 window.styleMask.insert(.fullSizeContentView)
                 window.titleVisibility = .hidden

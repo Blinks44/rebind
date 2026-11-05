@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 import Synchronization
 import XCTest
+
 @testable import rebind
 
 /// Isolated fixtures never start capture, execute actions or read the real configuration.
@@ -11,14 +12,16 @@ import XCTest
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         for preset in MagicMousePreset.allCases {
-            let rule = rebind.Binding(scope: .magicMouse, trigger: preset.trigger, modifiers: .option,
-                                      action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+            let rule = rebind.Binding(
+                scope: .magicMouse, trigger: preset.trigger, modifiers: .option,
+                action: .shortcut(.init(keyCode: 13, modifiers: .command)))
             try store.save(Configuration(bindings: [rule]))
             let model = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) })
             for language in AppLanguage.allCases {
                 for scheme in [ColorScheme.light, .dark] {
-                    let controller = NSHostingController(rootView: BindingEditor(model: model, scope: .magicMouse, existing: rule)
-                        .environment(\.locale, Locale(identifier: language.rawValue)).preferredColorScheme(scheme))
+                    let controller = NSHostingController(
+                        rootView: BindingEditor(model: model, scope: .magicMouse, existing: rule)
+                            .environment(\.locale, Locale(identifier: language.rawValue)).preferredColorScheme(scheme))
                     let window = NSWindow(contentViewController: controller)
                     window.isReleasedWhenClosed = false
                     defer { window.close() }
@@ -57,19 +60,25 @@ import XCTest
         let directory = FileManager.default.temporaryDirectory.appending(path: "MagicMouseMain-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
-        var configuration = Configuration(isEnabled: true, bindings: [
-            rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
-        ])
+        var configuration = Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
+            ])
         configuration.hasCompletedSetup = true
         try store.save(configuration)
         let model = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) })
         model.mailbox.configure(configuration)
         for status in [TrackpadCaptureStatus.active, .unavailable, .failed] {
-            model.mailbox.state.withLock { $0.status = .active; $0.magicMouseStatus = status }
+            model.mailbox.state.withLock {
+                $0.status = .active
+                $0.magicMouseStatus = status
+            }
             model.refresh()
             for language in AppLanguage.allCases {
-                let controller = NSHostingController(rootView: ContentView(model: model, initialDestination: .input(.magicMouse))
-                    .environment(\.locale, Locale(identifier: language.rawValue)))
+                let controller = NSHostingController(
+                    rootView: ContentView(model: model, initialDestination: .input(.magicMouse))
+                        .environment(\.locale, Locale(identifier: language.rawValue)))
                 let window = NSWindow(contentViewController: controller)
                 window.styleMask.insert(.fullSizeContentView)
                 window.titleVisibility = .hidden

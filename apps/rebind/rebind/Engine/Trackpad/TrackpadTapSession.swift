@@ -22,12 +22,13 @@ nonisolated struct TrackpadTapSession: Sendable {
     }
 
     private static func makeSequence(_ runtime: TrackpadRuntime) -> TrackpadTapSequence? {
-        TrackpadTapSequence(enabled: runtime.enabledGestures,
-                            doubleTapIntervalNanoseconds: runtime.doubleTapIntervalNanoseconds,
-                            // Native classification still requires <= 400 ms.
-                            // Receipt duration allows the bounded 100 ms dequeue
-                            // skew without weakening native contact thresholds.
-                            maximumContactDurationNanoseconds: 500_000_000)
+        TrackpadTapSequence(
+            enabled: runtime.enabledGestures,
+            doubleTapIntervalNanoseconds: runtime.doubleTapIntervalNanoseconds,
+            // Native classification still requires <= 400 ms.
+            // Receipt duration allows the bounded 100 ms dequeue
+            // skew without weakening native contact thresholds.
+            maximumContactDurationNanoseconds: 500_000_000)
     }
 
     mutating func interrupt(isNeutral: Bool = false) {
@@ -41,7 +42,9 @@ nonisolated struct TrackpadTapSession: Sendable {
     }
 
     @discardableResult mutating func update(runtime: TrackpadRuntime, foreground: Int32?) -> TrackpadDiagnosticEvent? {
-        let event: TrackpadDiagnosticEvent? = self.foreground != foreground ? .targetChanged
+        let event: TrackpadDiagnosticEvent? =
+            self.foreground != foreground
+            ? .targetChanged
             : self.runtime.inputActivity != runtime.inputActivity ? .activityChanged : nil
         if self.runtime != runtime || self.foreground != foreground {
             // A button-up after an observed contact release cancels output, but
@@ -60,10 +63,22 @@ nonisolated struct TrackpadTapSession: Sendable {
     }
 
     @discardableResult mutating func consume(_ frame: NativeTrackpadFrame, at now: UInt64) -> TrackpadDiagnosticEvent? {
-        guard frame.valid else { interrupt(); return .invalidFrame }
-        guard frame.revision == runtime.revision else { interrupt(); return .obsoleteFrame }
-        guard frame.receipt <= now else { interrupt(); return .futureReceipt }
-        guard now - frame.receipt <= 100_000_000 else { interrupt(); return .staleFrame }
+        guard frame.valid else {
+            interrupt()
+            return .invalidFrame
+        }
+        guard frame.revision == runtime.revision else {
+            interrupt()
+            return .obsoleteFrame
+        }
+        guard frame.receipt <= now else {
+            interrupt()
+            return .futureReceipt
+        }
+        guard now - frame.receipt <= 100_000_000 else {
+            interrupt()
+            return .staleFrame
+        }
         guard frame.activity == runtime.inputActivity else {
             // Mouse-up can advance activity after a release was buffered but
             // before it is consumed. That release cannot qualify output, yet
@@ -80,9 +95,15 @@ nonisolated struct TrackpadTapSession: Sendable {
         }
         knownNeutral = frame.count == 0
         gate.contacts(frame.count, at: frame.receipt, buttons: frame.activity, observerReady: true)
-        if frame.count > 0 { qualifiedGesture = nil; settled = false }
+        if frame.count > 0 {
+            qualifiedGesture = nil
+            settled = false
+        }
         guard let nativeFrame = frame.frame, let nativeTime = frame.time else {
-            guard frame.count == 0 else { interrupt(); return .invalidFrame }
+            guard frame.count == 0 else {
+                interrupt()
+                return .invalidFrame
+            }
             if contactInProgress { interrupt(isNeutral: frame.count == 0) }
             recognizer.interrupt(isNeutral: true)
             gate.emptyFrame(at: frame.receipt, buttons: frame.activity, observerReady: true)
@@ -95,14 +116,21 @@ nonisolated struct TrackpadTapSession: Sendable {
         let candidate = recognizer.consume(frame: nativeFrame, time: nativeTime, contacts: frame.contacts)
         if continuity != recognizer.continuity { interrupt(isNeutral: frame.count == 0) }
         if let candidate, let origin = recognizer.origin,
-           let admissible = runtime.admissibleGesture(fingers: candidate.fingers, x: origin.x, y: origin.y),
-           gate.candidate(fingers: candidate.fingers, at: frame.receipt,
-                           buttons: frame.activity, observerReady: true) {
-            guard foreground != nil else { interrupt(isNeutral: true); return .targetChanged }
+            let admissible = runtime.admissibleGesture(fingers: candidate.fingers, x: origin.x, y: origin.y),
+            gate.candidate(
+                fingers: candidate.fingers, at: frame.receipt,
+                buttons: frame.activity, observerReady: true)
+        {
+            guard foreground != nil else {
+                interrupt(isNeutral: true)
+                return .targetChanged
+            }
             // Retain a preliminary pair, but never dispatch before the final
             // release's independent 60 ms click settling. Activity cancels both.
-            let results = sequence?.finishContact(.init(fingers: candidate.fingers, x: origin.x, y: origin.y),
-                                                  at: frame.receipt, buttonActivityUnchanged: true) ?? []
+            let results =
+                sequence?.finishContact(
+                    .init(fingers: candidate.fingers, x: origin.x, y: origin.y),
+                    at: frame.receipt, buttonActivityUnchanged: true) ?? []
             contactInProgress = false
             settled = false
             // The native mailbox owns one bounded slot. Drop an older fallback
@@ -110,7 +138,10 @@ nonisolated struct TrackpadTapSession: Sendable {
             qualifiedGesture = results.compactMap(TrackpadTapGesture.init).last == admissible ? admissible : nil
             return .candidate
         }
-        if let reason = recognizer.rejection { interrupt(isNeutral: frame.count == 0); return .recognition(reason) }
+        if let reason = recognizer.rejection {
+            interrupt(isNeutral: frame.count == 0)
+            return .recognition(reason)
+        }
         if frame.count == 0, contactInProgress || candidate != nil {
             let reason = gate.rejection
             interrupt(isNeutral: true)
@@ -119,13 +150,19 @@ nonisolated struct TrackpadTapSession: Sendable {
         return gate.takeCancellation().map { .gate($0) }
     }
 
-    mutating func consumeBufferedFrames(from buffer: NativeTrackpadBuffer, clock: () -> UInt64,
-                                       diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }) {
+    mutating func consumeBufferedFrames(
+        from buffer: NativeTrackpadBuffer, clock: () -> UInt64,
+        diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }
+    ) {
         // The producer remains active while the consumer drains. Sample after
         // each dequeue instead of comparing fresh receipts with poll-entry time.
         // Bound a turn even when the producer keeps adding frames.
         for _ in 0..<64 {
-            if buffer.takeOverflow() { interrupt(); diagnose(.overflow); return }
+            if buffer.takeOverflow() {
+                interrupt()
+                diagnose(.overflow)
+                return
+            }
             guard let frame = buffer.pop() else { break }
             diagnose(.frame)
             let now = clock()
@@ -133,24 +170,38 @@ nonisolated struct TrackpadTapSession: Sendable {
             if let event = consume(frame, at: now) { diagnose(event) }
         }
         // Loss can occur after the last dequeue, including at the turn limit.
-        if buffer.takeOverflow() { interrupt(); diagnose(.overflow) }
+        if buffer.takeOverflow() {
+            interrupt()
+            diagnose(.overflow)
+        }
     }
 
     /// Returns the exact qualified preset only after the atomic buffer readiness check.
-    mutating func takeReadyTap(from buffer: NativeTrackpadBuffer, at now: UInt64,
-                              diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }) -> TrackpadSingleTap? {
+    mutating func takeReadyTap(
+        from buffer: NativeTrackpadBuffer, at now: UInt64,
+        diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }
+    ) -> TrackpadSingleTap? {
         guard case .single(let tap) = takeReadyGesture(from: buffer, at: now, diagnose: diagnose) else { return nil }
         return tap
     }
 
-    mutating func takeReadyGesture(from buffer: NativeTrackpadBuffer, at now: UInt64,
-                                  diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }) -> TrackpadTapGesture? {
+    mutating func takeReadyGesture(
+        from buffer: NativeTrackpadBuffer, at now: UInt64,
+        diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }
+    ) -> TrackpadTapGesture? {
         // Commit readiness against the producer in one bounded critical section;
         // clocks, diagnostics and mailbox operations remain outside this lock.
         var result: TrackpadTapGesture?
         let decision = buffer.state.withLock { state -> Bool in
-            if state.overflow { state.clear(); interrupt(); return true }
-            guard state.accepting else { interrupt(); return false }
+            if state.overflow {
+                state.clear()
+                interrupt()
+                return true
+            }
+            guard state.accepting else {
+                interrupt()
+                return false
+            }
             guard state.count == 0 else { return false }
             result = takeReadyGesture(at: now)
             return false
@@ -160,8 +211,10 @@ nonisolated struct TrackpadTapSession: Sendable {
     }
 
     /// Consumes a ready tap only while the accepting buffer is empty and has no unacknowledged loss.
-    mutating func takeReady(from buffer: NativeTrackpadBuffer, at now: UInt64,
-                            diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }) -> Bool {
+    mutating func takeReady(
+        from buffer: NativeTrackpadBuffer, at now: UInt64,
+        diagnose: (TrackpadDiagnosticEvent) -> Void = { _ in }
+    ) -> Bool {
         takeReadyGesture(from: buffer, at: now, diagnose: diagnose) != nil
     }
 

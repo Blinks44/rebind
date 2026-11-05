@@ -1,6 +1,7 @@
 import CoreGraphics
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadSchedulingTests {
@@ -25,21 +26,28 @@ struct TrackpadSchedulingTests {
 
         init(_ tap: TrackpadSingleTap) throws {
             mailbox = EngineMailbox()
-            let binding = rebind.Binding(scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
+            let binding = rebind.Binding(
+                scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
                 action: .shortcut(.init(keyCode: 13, modifiers: .command)))
             mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
-            mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+            mailbox.state.withLock {
+                $0.status = .active
+                $0.foregroundPID = 100
+            }
             runtime = try #require(mailbox.trackpadRuntime())
             buffer = NativeTrackpadBuffer(mailbox: mailbox)
             buffer.setAccepting(true)
             session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
             let output = output
-            worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            worker = ActionWorker(
+                mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
                 sendTrackpadShortcut: { shortcut, target, canPerform in
                     var activeChecks = 0
-                    return ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
+                    return ShortcutSender.send(
+                        shortcut, to: target, canPerform: canPerform,
                         diagnose: { event in output.diagnostics.withLock { $0.append(event.key) } },
-                        allowsInput: { true }, blockedInput: { _ in nil }, targetIsActive: { pid in
+                        allowsInput: { true }, blockedInput: { _ in nil },
+                        targetIsActive: { pid in
                             activeChecks += 1
                             if activeChecks == 2 {
                                 let delay = output.preparationDelay.withLock { $0 }
@@ -47,19 +55,25 @@ struct TrackpadSchedulingTests {
                             }
                             return pid == 100
                         },
-                        clock: { output.clock.withLock { $0 } }, post: { event, pid in
+                        clock: { output.clock.withLock { $0 } },
+                        post: { event, pid in
                             #expect(pid == 100)
                             #expect(event.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag)
                             output.posts.withLock { $0.append(event.type) }
                         })
-                }, sendShortcut: { _ in Issue.record("Touch used global sender"); return false },
+                },
+                sendShortcut: { _ in
+                    Issue.record("Touch used global sender")
+                    return false
+                },
                 secureInput: { false }, postingAllowed: { true })
         }
 
         mutating func enqueueTap(_ tap: TrackpadSingleTap, endingAt lift: UInt64) {
             for (offset, count) in [0, tap.rawValue, tap.rawValue, 0].enumerated() {
                 let receipt = lift - UInt64(3 - offset) * 20_000_000
-                var frame = NativeTrackpadFrame(receipt: receipt, revision: runtime.revision,
+                var frame = NativeTrackpadFrame(
+                    receipt: receipt, revision: runtime.revision,
                     activity: runtime.inputActivity, frame: nextID, time: Double(receipt) / 1_000_000_000, count: count)
                 nextID += 1
                 if count > 0 { frame.first = .init(id: 0, x: 0.2, y: 0.5, pressure: 45) }
@@ -135,8 +149,13 @@ struct TrackpadSchedulingTests {
         h.service(at: queuedAt + delay + 10_000_000)
         let accepted = delay <= 100_000_000
         #expect(h.output.posts.withLock { $0.count } == (accepted ? 2 : 0))
-        #expect(h.output.diagnostics.withLock { $0 } == (accepted ? [delay == 20_000_000
-            ? "posted-queue-age-le-20ms" : "posted-queue-age-le-100ms"] : []))
+        #expect(
+            h.output.diagnostics.withLock { $0 }
+                == (accepted
+                    ? [
+                        delay == 20_000_000
+                            ? "posted-queue-age-le-20ms" : "posted-queue-age-le-100ms"
+                    ] : []))
         #expect(h.mailbox.state.withLock { $0.enabled && !$0.emergencyPause && $0.actionFailed == nil })
         h.enqueueTap(tap, endingAt: lift + 1_000_000_000)
         h.drain(at: lift + 1_000_000_000)

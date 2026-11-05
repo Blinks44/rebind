@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct MagicTrackpadTests {
@@ -9,14 +10,19 @@ struct MagicTrackpadTests {
     }
 
     @Test func sameGestureOnBothSurfacesKeepsSeparateRules() throws {
-        let configuration = Configuration(isEnabled: true, bindings: [
-            binding(.builtInTrackpad, .threeFingerTap, key: 1), binding(.magicTrackpad, .threeFingerTap, key: 2),
-            binding(.magicTrackpad, .trackpadClick(fingers: 3), key: 3),
-        ])
+        let configuration = Configuration(
+            isEnabled: true,
+            bindings: [
+                binding(.builtInTrackpad, .threeFingerTap, key: 1), binding(.magicTrackpad, .threeFingerTap, key: 2),
+                binding(.magicTrackpad, .trackpadClick(fingers: 3), key: 3),
+            ])
         try configuration.validate()
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
-        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         let builtIn = try #require(mailbox.trackpadRuntime())
         let magic = try #require(mailbox.trackpadRuntime(magicTrackpad: true))
         #expect(builtIn.actions[.single(.threeFinger)]?.shortcut?.keyCode == 1 && !builtIn.hasClickRules)
@@ -30,10 +36,17 @@ struct MagicTrackpadTests {
 
     @Test func clickIsResolvedByTheSurfaceThatHoldsTheFingers() {
         let mailbox = EngineMailbox()
-        mailbox.configure(Configuration(isEnabled: true, bindings: [
-            binding(.builtInTrackpad, .trackpadClick(fingers: 3), key: 1), binding(.magicTrackpad, .trackpadClick(fingers: 3), key: 2),
-        ]))
-        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        mailbox.configure(
+            Configuration(
+                isEnabled: true,
+                bindings: [
+                    binding(.builtInTrackpad, .trackpadClick(fingers: 3), key: 1),
+                    binding(.magicTrackpad, .trackpadClick(fingers: 3), key: 2),
+                ]))
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         var frame = NativeTrackpadFrame(receipt: 4_000_000_000, revision: 0, activity: 0, frame: 1, time: 4, count: 3)
         frame.first = .init(id: 0, x: 0.3, y: 0.5, pressure: 100)
         frame.second = .init(id: 1, x: 0.4, y: 0.5, pressure: 100)

@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Native fixtures use stub login state and never start the input engine.
@@ -18,10 +19,15 @@ import XCTest
             let service = LoginItemServiceStub(status: fixture == .removalFailed || fixture == .busy ? .enabled : .off)
             let login = LoginItemModel(service: service)
             switch fixture {
-            case .approval: service.status = .requiresApproval; login.refresh()
-            case .unavailable: service.status = .unavailable; login.refresh()
+            case .approval:
+                service.status = .requiresApproval
+                login.refresh()
+            case .unavailable:
+                service.status = .unavailable
+                login.refresh()
             case .enableFailed:
-                service.registrationResult = .off; service.rejectsRegistration = true
+                service.registrationResult = .off
+                service.rejectsRegistration = true
                 await login.setEnabled(true)
             case .removalFailed, .approvalRemovalFailed:
                 service.status = .enabled
@@ -44,8 +50,7 @@ import XCTest
             if fixture == .saveFailed { model.error = .storageWriteFailed }
             if fixture == .busy {
                 service.onRemoval = {
-                    do { try await self.verifyLayout(model, fixture: fixture) }
-                    catch { XCTFail("Busy fixture failed: \(error)") }
+                    do { try await self.verifyLayout(model, fixture: fixture) } catch { XCTFail("Busy fixture failed: \(error)") }
                 }
                 await login.setEnabled(false)
             } else {
@@ -58,9 +63,10 @@ import XCTest
         let sizes = [NSSize(width: 600, height: 480), NSSize(width: 648, height: 600), NSSize(width: 808, height: 640)]
         for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
-                let controller = NSHostingController(rootView: SettingsView(model: model, selection: .constant(.general))
-                    .environment(\.locale, Locale(identifier: language))
-                    .preferredColorScheme(appearance))
+                let controller = NSHostingController(
+                    rootView: SettingsView(model: model, selection: .constant(.general))
+                        .environment(\.locale, Locale(identifier: language))
+                        .preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
                 window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
                 window.isReleasedWhenClosed = false

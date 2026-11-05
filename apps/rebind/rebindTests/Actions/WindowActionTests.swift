@@ -2,34 +2,41 @@ import ApplicationServices
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct WindowActionTests {
     @Test func frontmostApplicationIsResolvedDirectlyFromItsProcess() {
         var created: [pid_t] = []
-        let app = AXWindowAccessibility.focusedApplication(processID: { 42 }, makeApplication: {
-            created.append($0)
-            return "app-\($0)"
-        }, isFrontmost: { $0 == "app-42" })
+        let app = AXWindowAccessibility.focusedApplication(
+            processID: { 42 },
+            makeApplication: {
+                created.append($0)
+                return "app-\($0)"
+            }, isFrontmost: { $0 == "app-42" })
         #expect(app == "app-42")
         #expect(created == [42])
     }
 
     @Test(arguments: [nil, 0, -1] as [pid_t?])
     func missingOrInvalidFrontmostProcessIsRejected(_ pid: pid_t?) {
-        let app: String? = AXWindowAccessibility.focusedApplication(processID: { pid }, makeApplication: { _ in
-            Issue.record("Invalid process reached AX application creation")
-            return "app"
-        }, isFrontmost: { _ in
-            Issue.record("Invalid process reached AX focus lookup")
-            return true
-        })
+        let app: String? = AXWindowAccessibility.focusedApplication(
+            processID: { pid },
+            makeApplication: { _ in
+                Issue.record("Invalid process reached AX application creation")
+                return "app"
+            },
+            isFrontmost: { _ in
+                Issue.record("Invalid process reached AX focus lookup")
+                return true
+            })
         #expect(app == nil)
     }
 
     @Test func staleWorkspaceFocusIsRejectedByDirectAXRead() {
-        let app = AXWindowAccessibility.focusedApplication(processID: { 42 }, makeApplication: { $0 },
-                                                          isFrontmost: { _ in false })
+        let app = AXWindowAccessibility.focusedApplication(
+            processID: { 42 }, makeApplication: { $0 },
+            isFrontmost: { _ in false })
         #expect(app == nil)
     }
 
@@ -37,13 +44,16 @@ struct WindowActionTests {
     func appSwitchDuringAXReadDoesNotRetarget(_ nextPID: pid_t?) {
         var pid: pid_t? = 42
         var created: [pid_t] = []
-        let app = AXWindowAccessibility.focusedApplication(processID: { pid }, makeApplication: {
-            created.append($0)
-            return $0
-        }, isFrontmost: { _ in
-            pid = nextPID
-            return true
-        })
+        let app = AXWindowAccessibility.focusedApplication(
+            processID: { pid },
+            makeApplication: {
+                created.append($0)
+                return $0
+            },
+            isFrontmost: { _ in
+                pid = nextPID
+                return true
+            })
         #expect(app == nil)
         #expect(created == [42])
     }
@@ -92,8 +102,7 @@ struct WindowActionTests {
     func focusChangesDuringReadsNeverRetargetTheAction(_ appChanged: Bool) {
         let client = FakeWindowAccessibility()
         client.beforeFinalFocus = {
-            if appChanged { client.application = "otherApp" }
-            else { client.window = "otherWindow" }
+            if appChanged { client.application = "otherApp" } else { client.window = "otherWindow" }
         }
         #expect(WindowActionExecutor.perform(.close, client: client, ownPID: 99, canPerform: { true }) == .unavailable)
         #expect(client.mutations.isEmpty)
@@ -153,9 +162,16 @@ struct WindowActionTests {
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         mailbox.state.withLock { $0.status = .active }
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performAudio: { _, _, _ in Issue.record("Window action reached audio backend"); return .unavailable },
-            sendShortcut: { _ in Issue.record("Window action reached keyboard backend"); return false },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            performAudio: { _, _, _ in
+                Issue.record("Window action reached audio backend")
+                return .unavailable
+            },
+            sendShortcut: { _ in
+                Issue.record("Window action reached keyboard backend")
+                return false
+            },
             performWindow: { action, canPerform in
                 #expect(action == .close && canPerform())
                 calls.withLock { $0 += 1 }
@@ -172,8 +188,12 @@ struct WindowActionTests {
     @Test func workerCancellationDuringWindowReadsReachesFinalGate() {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true))
-        mailbox.state.withLock { $0.status = .active; $0.pending = [.window(.minimize)] }
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.window(.minimize)]
+        }
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             performWindow: { _, canPerform in
                 #expect(canPerform())
                 mailbox.setEditing(true)
@@ -238,9 +258,18 @@ nonisolated private final class FakeWindowAccessibility: WindowAccessibility {
 
     func processID(of element: String) -> pid_t? { element == "app" ? pid : childPID }
     func element(_ attribute: String, of element: String) -> String? {
-        if attribute == kAXFocusedWindowAttribute { windowReads += 1; return window }
-        if attribute == kAXFullScreenButtonAttribute { beforeFinalFocus?(); return button == nil ? nil : "fullscreen" }
-        if attribute == kAXCloseButtonAttribute { beforeFinalFocus?(); return button }
+        if attribute == kAXFocusedWindowAttribute {
+            windowReads += 1
+            return window
+        }
+        if attribute == kAXFullScreenButtonAttribute {
+            beforeFinalFocus?()
+            return button == nil ? nil : "fullscreen"
+        }
+        if attribute == kAXCloseButtonAttribute {
+            beforeFinalFocus?()
+            return button
+        }
         return nil
     }
     func isWindow(_ element: String) -> Bool { windowRole }
@@ -250,5 +279,8 @@ nonisolated private final class FakeWindowAccessibility: WindowAccessibility {
         mutations.append("set \(attribute) \(element)")
         return success
     }
-    func press(_ element: String) -> Bool { mutations.append("press \(element)"); return success }
+    func press(_ element: String) -> Bool {
+        mutations.append("press \(element)")
+        return success
+    }
 }

@@ -35,6 +35,6 @@ nonisolated struct ModifierSet: OptionSet, Codable, Hashable, Sendable {
 
     private static let flagPairs: [(Self, CGEventFlags)] = [
         (.command, .maskCommand), (.control, .maskControl),
-        (.option, .maskAlternate), (.shift, .maskShift), (.function, .maskSecondaryFn)
+        (.option, .maskAlternate), (.shift, .maskShift), (.function, .maskSecondaryFn),
     ]
 }

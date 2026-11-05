@@ -14,23 +14,27 @@ nonisolated enum WindowLayoutExecutor {
         return perform(action, displays: displays, client: AXWindowAccessibility(), ownPID: getpid(), canPerform: canPerform)
     }
 
-    static func perform<Client: WindowLayoutAccessibility>(_ action: WindowLayoutAction, displays: [WindowDisplay],
-                                                          client: Client, ownPID: pid_t,
-                                                          canPerform: () -> Bool) -> WindowActionResult {
+    static func perform<Client: WindowLayoutAccessibility>(
+        _ action: WindowLayoutAction, displays: [WindowDisplay],
+        client: Client, ownPID: pid_t,
+        canPerform: () -> Bool
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard client.trusted, let app = client.application, let pid = client.processID(of: app), pid > 0, pid != ownPID,
-              let window = client.element(kAXFocusedWindowAttribute, of: app), client.processID(of: window) == pid,
-              client.isWindow(window), client.isStandardWindow(window), client.isMinimized(window) == false,
-              let current = client.frame(of: window),
-              let target = WindowLayoutGeometry.target(action, window: current, displays: displays),
-              WindowLayoutGeometry.valid(target), client.isSettable(kAXPositionAttribute, of: window),
-              action.keepsSize || client.isSettable(kAXSizeAttribute, of: window) else { return .unavailable }
+            let window = client.element(kAXFocusedWindowAttribute, of: app), client.processID(of: window) == pid,
+            client.isWindow(window), client.isStandardWindow(window), client.isMinimized(window) == false,
+            let current = client.frame(of: window),
+            let target = WindowLayoutGeometry.target(action, window: current, displays: displays),
+            WindowLayoutGeometry.valid(target), client.isSettable(kAXPositionAttribute, of: window),
+            action.keepsSize || client.isSettable(kAXSizeAttribute, of: window)
+        else { return .unavailable }
 
         func gate() -> WindowActionResult? {
             guard canPerform() else { return .cancelled }
             guard client.trusted, client.application == app,
-                  client.element(kAXFocusedWindowAttribute, of: app) == window,
-                  client.isMinimized(window) == false else { return .unavailable }
+                client.element(kAXFocusedWindowAttribute, of: app) == window,
+                client.isMinimized(window) == false
+            else { return .unavailable }
             // AX reads can block; check cancellation again immediately before mutation.
             guard client.trusted else { return .unavailable }
             return canPerform() ? nil : .cancelled

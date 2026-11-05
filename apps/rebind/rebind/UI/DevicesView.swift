@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreBluetooth
+import SwiftUI
 
 /// Main-window page: settings for all mice, then connected mice with settings, discovered keyboards
 /// and system battery devices.
@@ -35,12 +35,16 @@ struct DevicesView: View {
                 AllMiceCard(model: model)
                 if model.mouseHardware.bluetoothBattery.authorization != .allowedAlways {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(model.mouseHardware.bluetoothBattery.authorization == .restricted
-                             ? LocalizedStringResource.bluetoothBatteryRestricted : .bluetoothBatteryDescription)
-                            .font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Button(model.mouseHardware.bluetoothBattery.authorization == .denied
-                               ? LocalizedStringResource.bluetoothBatterySettings : .bluetoothBatteryAllow) {
+                        Text(
+                            model.mouseHardware.bluetoothBattery.authorization == .restricted
+                                ? LocalizedStringResource.bluetoothBatteryRestricted : .bluetoothBatteryDescription
+                        )
+                        .font(Theme.caption).foregroundStyle(Theme.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        Button(
+                            model.mouseHardware.bluetoothBattery.authorization == .denied
+                                ? LocalizedStringResource.bluetoothBatterySettings : .bluetoothBatteryAllow
+                        ) {
                             model.mouseHardware.bluetoothBattery.requestAccess()
                         }.secondaryButton()
                             .disabled(model.mouseHardware.bluetoothBattery.authorization == .restricted)
@@ -53,40 +57,46 @@ struct DevicesView: View {
                 }.compactMap { model.companionApps.controller(ofVendor: $0.vendorID, gaming: true) }
                 let controllers = Set(mice.compactMap { controller(of: $0) } + keyboardControllers)
                 if !controllers.isEmpty {
-                    CompanionBanner(apps: CompanionApp.known.filter(controllers.contains),
-                                    message: keyboardControllers.isEmpty ? .companionRunningMessage : .lightingCompanionMessage)
+                    CompanionBanner(
+                        apps: CompanionApp.known.filter(controllers.contains),
+                        message: keyboardControllers.isEmpty ? .companionRunningMessage : .lightingCompanionMessage)
                 }
                 if !mice.isEmpty || !model.mouseHardware.accessories.isEmpty {
                     ForEach(mice) { mouse in
                         let lighting = model.mouseHardware.keyboardLighting[mouse.id]
-                        MouseCard(mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
-                                  hardwareLocked: controller(of: mouse) != nil,
-                                  name: model.configuration.deviceName(for: mouse.deviceKey, original: mouse.name),
-                                  battery: model.mouseHardware.batteries.first { $0.id == mouse.id },
-                                  rename: {
-                                      renaming = mouse.accessory
-                                  }, save: model.setMouseHardware,
-                                  lighting: lighting,
-                                  lightingSettings: lighting.map { lightingSettings(for: mouse.accessory, state: $0) },
-                                  lightingLocked: model.companionApps.controller(ofVendor: mouse.vendorID, gaming: true) != nil,
-                                  lightingFailed: model.mouseHardware.lightingErrors.contains(mouse.id),
-                                  saveLighting: model.setKeyboardLighting)
-                            .disabled(model.storageLocked)
+                        MouseCard(
+                            mouse: mouse, stored: model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey },
+                            hardwareLocked: controller(of: mouse) != nil,
+                            name: model.configuration.deviceName(for: mouse.deviceKey, original: mouse.name),
+                            battery: model.mouseHardware.batteries.first { $0.id == mouse.id },
+                            rename: {
+                                renaming = mouse.accessory
+                            }, save: model.setMouseHardware,
+                            lighting: lighting,
+                            lightingSettings: lighting.map { lightingSettings(for: mouse.accessory, state: $0) },
+                            lightingLocked: model.companionApps.controller(ofVendor: mouse.vendorID, gaming: true) != nil,
+                            lightingFailed: model.mouseHardware.lightingErrors.contains(mouse.id),
+                            saveLighting: model.setKeyboardLighting
+                        )
+                        .disabled(model.storageLocked)
                     }
                     ForEach(model.mouseHardware.accessories) { device in
                         Card {
                             VStack(alignment: .leading, spacing: 0) {
-                                DeviceIdentityView(name: model.configuration.deviceName(for: device.deviceKey, original: device.name),
-                                               original: device.name, subtitle: "", kind: device.kind,
-                                               battery: model.mouseHardware.batteries.first { $0.id == device.id },
-                                               rename: { renaming = device })
+                                DeviceIdentityView(
+                                    name: model.configuration.deviceName(for: device.deviceKey, original: device.name),
+                                    original: device.name, subtitle: "", kind: device.kind,
+                                    battery: model.mouseHardware.batteries.first { $0.id == device.id },
+                                    rename: { renaming = device })
                                 if let lighting = model.mouseHardware.keyboardLighting[device.id] {
                                     Theme.separator.frame(height: 1).padding(.vertical, 16)
-                                    KeyboardLightingControls(state: lighting,
+                                    KeyboardLightingControls(
+                                        state: lighting,
                                         settings: lightingSettings(for: device, state: lighting),
                                         battery: model.mouseHardware.batteries.first { $0.id == device.id },
                                         failed: model.mouseHardware.lightingErrors.contains(device.id),
-                                        save: model.setKeyboardLighting)
+                                        save: model.setKeyboardLighting
+                                    )
                                     .disabled(model.companionApps.controller(ofVendor: device.vendorID, gaming: true) != nil)
                                 }
                             }
@@ -108,7 +118,8 @@ struct DevicesView: View {
     }
 
     private func lightingSettings(for device: ConnectedAccessory, state: KeyboardLightingState) -> KeyboardLightingSettings {
-        var settings = model.configuration.keyboardLighting.first { $0.deviceKey == device.deviceKey }
+        var settings =
+            model.configuration.keyboardLighting.first { $0.deviceKey == device.deviceKey }
             ?? KeyboardLightingSettings(deviceKey: device.deviceKey)
         settings.isEnabled = state.isEnabled
         let battery = model.mouseHardware.batteries.first { $0.id == device.id }
@@ -173,8 +184,10 @@ private struct MouseCard: View {
                         }
                         if hardware.hasGestureButton {
                             separator
-                            toggle(.devicesGestureButton, .devicesGestureButtonDescription,
-                                   isOn: settings.usesGestureButton == true) {
+                            toggle(
+                                .devicesGestureButton, .devicesGestureButtonDescription,
+                                isOn: settings.usesGestureButton == true
+                            ) {
                                 var updated = settings
                                 updated.usesGestureButton = $0
                                 save(updated)
@@ -187,9 +200,11 @@ private struct MouseCard: View {
                 smoothScrolling
                 if let lighting, let lightingSettings {
                     separator
-                    KeyboardLightingControls(state: lighting, settings: lightingSettings,
-                        battery: battery, failed: lightingFailed, save: saveLighting)
-                        .disabled(lightingLocked)
+                    KeyboardLightingControls(
+                        state: lighting, settings: lightingSettings,
+                        battery: battery, failed: lightingFailed, save: saveLighting
+                    )
+                    .disabled(lightingLocked)
                 }
             }
         }
@@ -199,17 +214,19 @@ private struct MouseCard: View {
     private var separator: some View { Theme.separator.frame(height: 1).padding(.vertical, 16) }
 
     private var identity: some View {
-        DeviceIdentityView(name: name, original: mouse.name, subtitle: subtitle, kind: .mouse,
-                           battery: battery, rename: rename)
+        DeviceIdentityView(
+            name: name, original: mouse.name, subtitle: subtitle, kind: .mouse,
+            battery: battery, rename: rename)
     }
 
     private var subtitle: String {
-        let transport: LocalizedStringResource? = switch mouse.transport {
-        case .bluetooth: .devicesTransportBluetooth
-        case .usb: .devicesTransportUSB
-        case .receiver: .devicesTransportReceiver
-        case .other: nil
-        }
+        let transport: LocalizedStringResource? =
+            switch mouse.transport {
+            case .bluetooth: .devicesTransportBluetooth
+            case .usb: .devicesTransportUSB
+            case .receiver: .devicesTransportReceiver
+            case .other: nil
+            }
         return [mouse.manufacturer, transport.map { AppLocalization.string($0) }].compactMap { $0 }.joined(separator: " · ")
     }
 
@@ -220,13 +237,17 @@ private struct MouseCard: View {
             save(updated)
         }
         if settings.smoothScrolling == true {
-            SettingSlider(title: .smoothScrollingDistance,
-                          description: .smoothScrollingDistanceDescription(SmoothScrollingDistance.standard),
-                          value: settings.smoothScrollingDistance ?? SmoothScrollingDistance.standard,
-                          values: Array(stride(from: SmoothScrollingDistance.range.lowerBound,
-                                               through: SmoothScrollingDistance.range.upperBound,
-                                               by: SmoothScrollingDistance.step)),
-                          valueLabel: { .smoothScrollingDistanceValue($0) }) { value in
+            SettingSlider(
+                title: .smoothScrollingDistance,
+                description: .smoothScrollingDistanceDescription(SmoothScrollingDistance.standard),
+                value: settings.smoothScrollingDistance ?? SmoothScrollingDistance.standard,
+                values: Array(
+                    stride(
+                        from: SmoothScrollingDistance.range.lowerBound,
+                        through: SmoothScrollingDistance.range.upperBound,
+                        by: SmoothScrollingDistance.step)),
+                valueLabel: { .smoothScrollingDistanceValue($0) }
+            ) { value in
                 var updated = settings
                 updated.smoothScrollingDistance = value
                 save(updated)
@@ -234,13 +255,16 @@ private struct MouseCard: View {
             .padding(.top, 16)
             VStack(alignment: .leading, spacing: 8) {
                 Text(.smoothScrollingGlide).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-                SegmentedPicker(selection: SwiftUI.Binding(get: { settings.smoothScrollingGlide ?? .standard }, set: {
-                                    var updated = settings
-                                    updated.smoothScrollingGlide = $0
-                                    save(updated)
-                                }),
-                                title: .smoothScrollingGlide, options: SmoothScrollingGlide.allCases, label: \.label,
-                                fillsWidth: true)
+                SegmentedPicker(
+                    selection: SwiftUI.Binding(
+                        get: { settings.smoothScrollingGlide ?? .standard },
+                        set: {
+                            var updated = settings
+                            updated.smoothScrollingGlide = $0
+                            save(updated)
+                        }),
+                    title: .smoothScrollingGlide, options: SmoothScrollingGlide.allCases, label: \.label,
+                    fillsWidth: true)
             }
             .padding(.top, 16)
         }
@@ -249,17 +273,22 @@ private struct MouseCard: View {
     @ViewBuilder private func wheel(mode: WheelMode, sensitivity: Int) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             label(.devicesScrollWheel, .devicesScrollWheelDescription)
-            SegmentedPicker(selection: SwiftUI.Binding(get: { mode }, set: { mode in
-                                var updated = settings
-                                updated.wheelMode = mode
-                                updated.smartShiftSensitivity = updated.smartShiftSensitivity ?? sensitivity
-                                save(updated)
-                            }),
-                            title: .devicesScrollWheel, options: WheelMode.allCases, label: \.label, fillsWidth: true)
+            SegmentedPicker(
+                selection: SwiftUI.Binding(
+                    get: { mode },
+                    set: { mode in
+                        var updated = settings
+                        updated.wheelMode = mode
+                        updated.smartShiftSensitivity = updated.smartShiftSensitivity ?? sensitivity
+                        save(updated)
+                    }),
+                title: .devicesScrollWheel, options: WheelMode.allCases, label: \.label, fillsWidth: true)
         }
         if mode == .smartShift {
-            SettingSlider(title: .devicesSmartShiftSensitivity, description: .devicesSmartShiftSensitivityDescription,
-                          value: sensitivity, values: Array(MouseHardwareSettings.sensitivityRange)) { value in
+            SettingSlider(
+                title: .devicesSmartShiftSensitivity, description: .devicesSmartShiftSensitivityDescription,
+                value: sensitivity, values: Array(MouseHardwareSettings.sensitivityRange)
+            ) { value in
                 var updated = settings
                 updated.wheelMode = .smartShift
                 updated.smartShiftSensitivity = value
@@ -270,16 +299,20 @@ private struct MouseCard: View {
     }
 
     private func pointerSpeed(dpi: Int, supported: [Int]) -> some View {
-        SettingSlider(title: .devicesPointerSpeed, description: .devicesPointerSpeedDescription, value: dpi,
-                      values: supported, valueLabel: { .devicesDPIValue($0) }) { value in
-            var updated = settings
-            updated.dpi = value
-            save(updated)
-        }
+        SettingSlider(
+            title: .devicesPointerSpeed, description: .devicesPointerSpeedDescription, value: dpi,
+            values: supported, valueLabel: { .devicesDPIValue($0) },
+            commit: { value in
+                var updated = settings
+                updated.dpi = value
+                save(updated)
+            })
     }
 
-    private func toggle(_ title: LocalizedStringResource, _ description: LocalizedStringResource, isOn: Bool,
-                        set: @escaping @MainActor @Sendable (Bool) -> Void) -> some View {
+    private func toggle(
+        _ title: LocalizedStringResource, _ description: LocalizedStringResource, isOn: Bool,
+        set: @escaping @MainActor @Sendable (Bool) -> Void
+    ) -> some View {
         Toggle(isOn: SwiftUI.Binding(get: { isOn }, set: set)) { label(title, description) }
             .toggleStyle(ThemeSwitchStyle())
     }

@@ -3,7 +3,8 @@ import SwiftUI
 
 /// First-run steps. Recovery shows only the access content.
 nonisolated enum FirstRunStep: Int, CaseIterable, Sendable {
-    case welcome = 1, access, ready
+    case welcome = 1
+    case access, ready
 }
 
 /// First-run and recovery guidance never changes the user's remapping preference.
@@ -40,12 +41,13 @@ struct PermissionSetupView: View {
     }
 
     private var introduction: some View {
-        let (title, purpose): (LocalizedStringResource, LocalizedStringResource) = switch (context, step) {
-        case (.recovery, _): (.restoreTitle, .restorePurpose)
-        case (_, .welcome): (.welcomeTitle, .welcomePurpose)
-        case (_, .access): (.accessStepTitle, .accessStepPurpose)
-        case (_, .ready): (.readyTitle, .readyStepPurpose)
-        }
+        let (title, purpose): (LocalizedStringResource, LocalizedStringResource) =
+            switch (context, step) {
+            case (.recovery, _): (.restoreTitle, .restorePurpose)
+            case (_, .welcome): (.welcomeTitle, .welcomePurpose)
+            case (_, .access): (.accessStepTitle, .accessStepPurpose)
+            case (_, .ready): (.readyTitle, .readyStepPurpose)
+            }
         return HStack(alignment: .top, spacing: 16) {
             Image(nsImage: NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath))
                 .resizable().frame(width: 48, height: 48).accessibilityHidden(true)
@@ -79,7 +81,8 @@ struct PermissionSetupView: View {
             Card(insets: EdgeInsets()) {
                 VStack(spacing: 0) {
                     if model.permissions.requirement == .accessibility {
-                        row(.eventSendingTitle, status: .permissionsWaitingAccessibility, isWarning: true,
+                        row(
+                            .eventSendingTitle, status: .permissionsWaitingAccessibility, isWarning: true,
                             description: .permissionsSendingWaiting)
                         divider
                     }
@@ -103,16 +106,22 @@ struct PermissionSetupView: View {
     @ViewBuilder private var requiredAccess: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let requirement = model.permissions.requirement {
-                Banner(severity: .warning,
+                Banner(
+                    severity: .warning,
                     title: requirement == .accessibility ? .accessibilityTitle : .eventSendingTitle,
-                    message: context == .recovery ? .accessLostPurpose
+                    message: context == .recovery
+                        ? .accessLostPurpose
                         : requirement == .accessibility ? .accessibilityPurpose : .eventSendingPurpose)
                 PermissionAccessControls(model: model, requirement: requirement)
-                Text(requirement == .eventPosting ? LocalizedStringResource.eventSendingSteps
-                     : context == .recovery ? .restoreSteps : .accessibilitySteps)
-                    .font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                Text(
+                    requirement == .eventPosting
+                        ? LocalizedStringResource.eventSendingSteps
+                        : context == .recovery ? .restoreSteps : .accessibilitySteps
+                )
+                .font(Theme.callout).foregroundStyle(Theme.textSecondary)
             } else {
-                Banner(severity: .success, title: .ready,
+                Banner(
+                    severity: .success, title: .ready,
                     message: context == .recovery ? .permissionsRespectsPause : .readyPurpose)
                 Text(.backgroundHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
             }
@@ -160,8 +169,10 @@ struct PermissionSetupView: View {
 
     private var divider: some View { Theme.separator.frame(height: 1).padding(.horizontal, 20) }
 
-    private func feature(_ symbol: String, _ title: LocalizedStringResource,
-                         _ description: LocalizedStringResource) -> some View {
+    private func feature(
+        _ symbol: String, _ title: LocalizedStringResource,
+        _ description: LocalizedStringResource
+    ) -> some View {
         HStack(spacing: 12) {
             ActionTile(symbol: symbol)
             VStack(alignment: .leading, spacing: 2) {
@@ -175,8 +186,10 @@ struct PermissionSetupView: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func row(_ title: LocalizedStringResource, status: LocalizedStringResource, isWarning: Bool = false,
-                     description: LocalizedStringResource) -> some View {
+    private func row(
+        _ title: LocalizedStringResource, status: LocalizedStringResource, isWarning: Bool = false,
+        description: LocalizedStringResource
+    ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             StatusLabel(title: title, status: status, isWarning: isWarning)
             Text(description).font(Theme.caption).foregroundStyle(Theme.textSecondary)

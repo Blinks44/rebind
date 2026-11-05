@@ -63,16 +63,24 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         bufferLength = max(input, HIDPPConstants.longReportLength)
         buffer = .allocate(capacity: bufferLength)
         let context = Unmanaged.passRetained(self).toOpaque()
-        IOHIDDeviceRegisterInputReportCallback(device, buffer, bufferLength, { context, _, _, _, _, report, length in
-            guard let context else { return }
-            Unmanaged<HIDReportDevice>.fromOpaque(context).takeUnretainedValue().receive(report, length: length)
-        }, context)
+        IOHIDDeviceRegisterInputReportCallback(
+            device, buffer, bufferLength,
+            { context, _, _, _, _, report, length in
+                guard let context else { return }
+                Unmanaged<HIDReportDevice>.fromOpaque(context).takeUnretainedValue().receive(report, length: length)
+            }, context)
         IOHIDDeviceScheduleWithRunLoop(device, HIDReportThread.runLoop, CFRunLoopMode.defaultMode.rawValue)
     }
 
     /// Ends report delivery on the report thread, then releases the device and this object.
     func close() {
-        guard closed.withLock({ let was = $0; $0 = true; return !was }) else { return }
+        guard
+            closed.withLock({
+                let was = $0
+                $0 = true
+                return !was
+            })
+        else { return }
         _ = inbox.withLock { $0.arrived?.signal() }
         notifications.withLock { $0.handler = nil }
         let runLoop = HIDReportThread.runLoop
@@ -92,7 +100,8 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         guard length > 0, length <= bufferLength else { return }
         if receivesHIDPP {
             guard length >= HIDPPConstants.shortReportLength,
-                  report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID else { return }
+                report[0] == HIDPPConstants.shortReportID || report[0] == HIDPPConstants.longReportID
+            else { return }
         }
         // A waiting request picks its own reply among everything that arrives; a receiver's
         // register reply looks like an event (software ID 0), so nothing is held back from it.
@@ -104,7 +113,8 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         }
         // Software ID 0 marks a HID++ 2.0 event; sub-ID 0x41 a receiver's device connection.
         if receivesHIDPP, report[3] & 0x0F == 0 || (report[0] == HIDPPConstants.shortReportID && report[2] == 0x41),
-           let notify = notifications.withLock({ $0.handler }) {
+            let notify = notifications.withLock({ $0.handler })
+        {
             notify(Array(UnsafeBufferPointer(start: report, count: length)))
         }
     }
@@ -113,15 +123,19 @@ nonisolated final class HIDReportDevice: HIDPPDeviceIO, @unchecked Sendable {
         notifications.withLock { $0.handler = handler }
     }
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         guard let id = report.first else { return nil }
         return performSynchronousOutputReportRequest(report, reportID: id, timeout: timeout, matching: matching)
     }
 
     /// Non-HID++ control interfaces use report ID 0 separately from their command payload.
-    func performSynchronousOutputReportRequest(_ report: Data, reportID: UInt8, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, reportID: UInt8, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         guard !report.isEmpty, !closed.withLock({ $0 }) else { return nil }
         let arrived = DispatchSemaphore(value: 0)
         inbox.withLock { $0 = Inbox(arrived: arrived) }

@@ -27,25 +27,33 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     /// Other vendors (Razer Synapse, SteelSeries GG, the old Logitech Options) are not listed
     /// until their identifiers are verified the same way.
     static let known = [
-        CompanionApp(name: "Logi Options+", vendorID: 0x046D,
-                     bundlePrefixes: ["com.logi.optionsplus"], executableNames: ["logioptionsplus_agent"]),
-        CompanionApp(name: "Logitech G HUB", vendorID: 0x046D,
-                     bundlePrefixes: ["com.logi.ghub"], executableNames: [],
-                     ignoredBundleIdentifiers: ["com.logi.ghub.updater"], controlsHardwareSettings: false,
-                     managesGamingMice: true)
+        CompanionApp(
+            name: "Logi Options+", vendorID: 0x046D,
+            bundlePrefixes: ["com.logi.optionsplus"], executableNames: ["logioptionsplus_agent"]),
+        CompanionApp(
+            name: "Logitech G HUB", vendorID: 0x046D,
+            bundlePrefixes: ["com.logi.ghub"], executableNames: [],
+            ignoredBundleIdentifiers: ["com.logi.ghub.updater"], controlsHardwareSettings: false,
+            managesGamingMice: true),
     ]
 
     func matches(bundleIdentifier: String?, executableName: String?) -> Bool {
         if let bundleIdentifier, ignoredBundleIdentifiers.contains(bundleIdentifier) { return false }
-        if let bundleIdentifier, bundlePrefixes.contains(where: {
-            bundleIdentifier == $0 || bundleIdentifier.hasPrefix($0 + ".")
-        }) { return true }
+        if let bundleIdentifier,
+            bundlePrefixes.contains(where: {
+                bundleIdentifier == $0 || bundleIdentifier.hasPrefix($0 + ".")
+            })
+        {
+            return true
+        }
         return executableName.map(executableNames.contains) ?? false
     }
 
     /// The known apps among running processes, each listed once, in `known` order.
-    static func running(in processes: [(bundleIdentifier: String?, executableName: String?)],
-                        known: [CompanionApp] = known) -> [CompanionApp] {
+    static func running(
+        in processes: [(bundleIdentifier: String?, executableName: String?)],
+        known: [CompanionApp] = known
+    ) -> [CompanionApp] {
         known.filter { app in processes.contains { app.matches(bundleIdentifier: $0.bundleIdentifier, executableName: $0.executableName) } }
     }
 }
@@ -66,8 +74,10 @@ nonisolated struct CompanionApp: Hashable, Sendable {
     /// Called after the set of running apps changes.
     @ObservationIgnored var changed: () -> Void = {}
 
-    init(executablePaths: @escaping () -> [String] = { CompanionAppMonitor.executablePaths() },
-         initiallyRunning: [CompanionApp] = []) {
+    init(
+        executablePaths: @escaping () -> [String] = { CompanionAppMonitor.executablePaths() },
+        initiallyRunning: [CompanionApp] = []
+    ) {
         self.executablePaths = executablePaths
         running = initiallyRunning
     }
@@ -109,16 +119,21 @@ nonisolated struct CompanionApp: Hashable, Sendable {
 
     func refresh() {
         guard !connectedVendors.isEmpty else {
-            if !running.isEmpty { running = []; changed() }
+            if !running.isEmpty {
+                running = []
+                changed()
+            }
             return
         }
         let paths = executablePaths()
         let processes = paths.map { path in
-            let bundleIdentifier = bundleIdentifiers[path] ?? {
-                let identifier = Self.bundleIdentifier(ofExecutable: path)
-                bundleIdentifiers[path] = identifier
-                return identifier
-            }()
+            let bundleIdentifier =
+                bundleIdentifiers[path]
+                ?? {
+                    let identifier = Self.bundleIdentifier(ofExecutable: path)
+                    bundleIdentifiers[path] = identifier
+                    return identifier
+                }()
             return (bundleIdentifier: bundleIdentifier, executableName: Optional((path as NSString).lastPathComponent))
         }
         let found = CompanionApp.running(in: processes, known: CompanionApp.known.filter { connectedVendors.contains($0.vendorID) })

@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Native presentation fixtures use temporary storage and never start input capture.
@@ -15,7 +16,8 @@ import XCTest
                 for scenario in 0..<10 {
                     let scope: DeviceScope = scenario >= 5 ? .magicTrackpad : .builtInTrackpad
                     let preset = TrackpadPreset.allCases[scenario % TrackpadPreset.allCases.count]
-                    var existing: rebind.Binding? = rebind.Binding(scope: scope,
+                    var existing: rebind.Binding? = rebind.Binding(
+                        scope: scope,
                         trigger: preset.trigger, modifiers: [], action: shortcut)
                     if scenario == 4 { existing = nil }
                     if scenario == 9 { existing?.isEnabled = false }
@@ -25,11 +27,15 @@ import XCTest
                     var configuration = Configuration(bindings: stored)
                     configuration.hasCompletedSetup = true
                     try store.save(configuration)
-                    let model = AppModel(store: store,
+                    let model = AppModel(
+                        store: store,
                         readPermissions: { InputPermissions(accessibility: scenario != 6, posting: scenario != 6) })
                     if scenario == 7 { model.recording = RecordingRequest(target: .output) }
-                    let controller = NSHostingController(rootView: BindingEditor(model: model,
-                        scope: scope, existing: existing)
+                    let controller = NSHostingController(
+                        rootView: BindingEditor(
+                            model: model,
+                            scope: scope, existing: existing
+                        )
                         .environment(\.locale, Locale(identifier: language))
                         .preferredColorScheme(appearance))
                     let window = NSWindow(contentViewController: controller)
@@ -53,8 +59,9 @@ import XCTest
                         XCTAssertGreaterThan(scrollFrame.height, 0, context)
                         XCTAssertGreaterThanOrEqual(scrollFrame.minY, viewport.minY - 1, context)
                         XCTAssertLessThanOrEqual(scrollFrame.maxY, viewport.maxY + 1, context)
-                        XCTAssertLessThanOrEqual(scroll.documentView?.frame.width ?? 0,
-                                                scroll.contentView.bounds.width + 1, context)
+                        XCTAssertLessThanOrEqual(
+                            scroll.documentView?.frame.width ?? 0,
+                            scroll.contentView.bounds.width + 1, context)
                         if height == 640 && (scenario == 0 || scenario == 2 || scenario >= 5) {
                             try attach(controller.view, name: "trackpad-\(language)-\(appearance)-\(scenario)")
                         }

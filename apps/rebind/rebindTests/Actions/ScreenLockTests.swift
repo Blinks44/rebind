@@ -1,17 +1,22 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct ScreenLockTests {
     @Test(arguments: 0...2) func unavailableAndCancelledRequestsNeverInvokeLock(_ scenario: Int) {
-        var allowed = scenario != 0, resolved = 0, invoked = 0
-        let result = ScreenLockExecutor.perform(canPerform: { allowed }, resolveRequest: {
-            resolved += 1
-            if scenario == 1 { return nil }
-            allowed = false
-            return { invoked += 1 }
-        })
+        var allowed = scenario != 0
+        var resolved = 0
+        var invoked = 0
+        let result = ScreenLockExecutor.perform(
+            canPerform: { allowed },
+            resolveRequest: {
+                resolved += 1
+                if scenario == 1 { return nil }
+                allowed = false
+                return { invoked += 1 }
+            })
         #expect(result == (scenario == 1 ? .unavailable : .cancelled))
         #expect(resolved == (scenario == 0 ? 0 : 1) && invoked == 0)
     }
@@ -28,7 +33,8 @@ struct ScreenLockTests {
     }
 
     @Test @MainActor func catalogAndPayloadNeedNoShortcutOrAudioDevice() throws {
-        let action = RebindAction.lockScreen, kind = ActionKind(action: action)
+        let action = RebindAction.lockScreen
+        let kind = ActionKind(action: action)
         #expect(kind.category == .system && kind.configuredAction(shortcut: nil) == action)
         #expect(action.isSupported && action.shortcut == nil && !kind.needsWorkspaceParameters)
         #expect(kind.isAvailable(with: .init(screenLock: true)))
@@ -42,16 +48,21 @@ struct ScreenLockTests {
     func allSourceFamiliesKeepExactModifierAndSyntheticRules(_ trigger: InputTrigger) {
         var matcher = InputMatcher()
         let rules = InputMatcher.compile([rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control, action: .lockScreen)])
-        let source = trigger.pressSource, phase: InputEvent.Phase = trigger.isScroll ? .scroll : .down
+        let source = trigger.pressSource
+        let phase: InputEvent.Phase = trigger.isScroll ? .scroll : .down
         #expect(!matcher.handle(InputEvent(trigger: source, phase: phase), rules: rules, enabled: true).suppress)
         var result = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase), rules: rules, enabled: true)
         if trigger.isPointerGesture {
-            result = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: .drag,
-                motion: .init(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
+            result = matcher.handle(
+                InputEvent(
+                    trigger: source, modifiers: .control, phase: .drag,
+                    motion: .init(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
         }
         #expect(result.suppress && result.action == .lockScreen)
         if !trigger.isScroll { #expect(matcher.handle(InputEvent(trigger: source, phase: .up), rules: rules, enabled: true).suppress) }
-        #expect(!matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase, isSynthetic: true), rules: rules, enabled: true).suppress)
+        #expect(
+            !matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase, isSynthetic: true), rules: rules, enabled: true)
+                .suppress)
     }
 
     @Test func unavailableLockRulePassesThroughAndDoesNotConsumeSource() {
@@ -64,11 +75,23 @@ struct ScreenLockTests {
 
     @Test(arguments: [WindowActionResult.performed, .cancelled, .unavailable])
     func workerRoutesLockSeparatelyAndDropsQueueAndDiagnosticsOnlyAfterCall(_ result: WindowActionResult) {
-        let mailbox = ready(), calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { .init(screenLock: true) },
-            sendShortcut: { _ in Issue.record("Lock posted keys"); return false }, requestLock: { canPerform in
-                #expect(canPerform()); calls.withLock { $0 += 1 }; return result
-            }, requestSleep: { _ in Issue.record("Lock requested sleep"); return .unavailable },
+        let mailbox = ready()
+        let calls = Mutex(0)
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { .init(screenLock: true) },
+            sendShortcut: { _ in
+                Issue.record("Lock posted keys")
+                return false
+            },
+            requestLock: { canPerform in
+                #expect(canPerform())
+                calls.withLock { $0 += 1 }
+                return result
+            },
+            requestSleep: { _ in
+                Issue.record("Lock requested sleep")
+                return .unavailable
+            },
             secureInput: { false }, postingAllowed: { true })
         #expect(mailbox.startDiagnostics(at: 0))
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down, receivedAt: 1), secureInput: false))
@@ -89,21 +112,26 @@ struct ScreenLockTests {
     }
 
     @Test(arguments: 0...7) func finalGateCancelsLifecycleAndProtectedChanges(_ change: Int) {
-        let mailbox = ready(), secure = Mutex(false), allowed = Mutex(true)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { .init(screenLock: true) }, requestLock: { canPerform in
-            #expect(canPerform())
-            switch change {
-            case 0: mailbox.configure(Configuration(isEnabled: false))
-            case 1: mailbox.configure(Configuration(isEnabled: true))
-            case 2: mailbox.setEditing(true)
-            case 3: mailbox.record(.init(target: .mouseTrigger))
-            case 4: mailbox.suspend(true)
-            case 5: mailbox.stop()
-            case 6: secure.withLock { $0 = true }
-            default: allowed.withLock { $0 = false }
-            }
-            #expect(!canPerform()); return .cancelled
-        }, secureInput: { secure.withLock { $0 } }, postingAllowed: { allowed.withLock { $0 } })
+        let mailbox = ready()
+        let secure = Mutex(false)
+        let allowed = Mutex(true)
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { .init(screenLock: true) },
+            requestLock: { canPerform in
+                #expect(canPerform())
+                switch change {
+                case 0: mailbox.configure(Configuration(isEnabled: false))
+                case 1: mailbox.configure(Configuration(isEnabled: true))
+                case 2: mailbox.setEditing(true)
+                case 3: mailbox.record(.init(target: .mouseTrigger))
+                case 4: mailbox.suspend(true)
+                case 5: mailbox.stop()
+                case 6: secure.withLock { $0 = true }
+                default: allowed.withLock { $0 = false }
+                }
+                #expect(!canPerform())
+                return .cancelled
+            }, secureInput: { secure.withLock { $0 } }, postingAllowed: { allowed.withLock { $0 } })
         mailbox.state.withLock { $0.pending = [.lockScreen] }
         worker.service(at: 0)
         #expect(mailbox.state.withLock { $0.actionFailed == nil })
@@ -134,8 +162,13 @@ struct ScreenLockTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: directory.appending(path: "config.json"))
-        var old = Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-            action: .sleepSystem, activation: .hold, holdDurationMilliseconds: 1000)])
+        var old = Configuration(
+            isEnabled: true,
+            bindings: [
+                .init(
+                    scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+                    action: .sleepSystem, activation: .hold, holdDurationMilliseconds: 1000)
+            ])
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = 18
         let bytes = try JSONEncoder().encode(old)
@@ -158,7 +191,9 @@ struct ScreenLockTests {
     private func ready() -> EngineMailbox {
         let mailbox = EngineMailbox()
         mailbox.updateAudioCapabilities(.init(screenLock: true))
-        mailbox.configure(Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .lockScreen)]))
+        mailbox.configure(
+            Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .lockScreen)])
+        )
         mailbox.state.withLock { $0.status = .active }
         return mailbox
     }

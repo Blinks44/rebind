@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 /// The engine threads sleep while idle and wake on work, not on a fixed poll.
@@ -53,10 +54,11 @@ struct IdleWakeTests {
 
     @Test func aMatchedPressWakesTheWorker() {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: .control,
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: .control,
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
-        mailbox.waitForWork(idle: 1) // Consume the configuration's signal.
+        mailbox.waitForWork(idle: 1)  // Consume the configuration's signal.
         #expect(mailbox.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down), secureInput: false))
         let start = DispatchTime.now().uptimeNanoseconds
         mailbox.waitForWork(idle: 2_000_000_000)

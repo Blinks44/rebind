@@ -5,22 +5,28 @@ import IOKit.hidsystem
 // sound keys target the default output.
 // Quartz posting has no acknowledgement of playback or an eligible recipient.
 nonisolated enum MediaKeySender {
-    static func perform(_ action: MediaAction, canPerform: () -> Bool,
-                        build: (MediaAction) -> [CGEvent]? = { events($0) },
-                        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }) -> WindowActionResult {
+    static func perform(
+        _ action: MediaAction, canPerform: () -> Bool,
+        build: (MediaAction) -> [CGEvent]? = { events($0) },
+        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }
+    ) -> WindowActionResult {
         perform(canPerform: canPerform, build: { build(action) }, post: post)
     }
 
     /// Sound keys let macOS change the output volume/mute exactly like its own keys,
     /// including unmuting on a volume step and showing the system volume HUD.
-    static func perform(_ action: SystemAction, canPerform: () -> Bool,
-                        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }) -> WindowActionResult {
+    static func perform(
+        _ action: SystemAction, canPerform: () -> Bool,
+        post: (CGEvent, CGEventTapLocation) -> Void = { $0.post(tap: $1) }
+    ) -> WindowActionResult {
         perform(canPerform: canPerform, build: { events(action) }, post: post)
     }
 
-    static func events(_ action: MediaAction,
-                       source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) },
-                       make: (MediaAction, Bool) -> CGEvent? = { makeEvent($0.keyCode, down: $1) }) -> [CGEvent]? {
+    static func events(
+        _ action: MediaAction,
+        source: () -> CGEventSource? = { CGEventSource(stateID: .privateState) },
+        make: (MediaAction, Bool) -> CGEvent? = { makeEvent($0.keyCode, down: $1) }
+    ) -> [CGEvent]? {
         pair(source: source, make: { make(action, $0) })
     }
 
@@ -29,8 +35,10 @@ nonisolated enum MediaKeySender {
         return pair(source: { CGEventSource(stateID: .privateState) }, make: { makeEvent(keyCode, down: $0) })
     }
 
-    private static func perform(canPerform: () -> Bool, build: () -> [CGEvent]?,
-                                post: (CGEvent, CGEventTapLocation) -> Void) -> WindowActionResult {
+    private static func perform(
+        canPerform: () -> Bool, build: () -> [CGEvent]?,
+        post: (CGEvent, CGEventTapLocation) -> Void
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard let pair = build() else { return .unavailable }
         guard canPerform() else { return .cancelled }
@@ -56,7 +64,8 @@ nonisolated enum MediaKeySender {
         let state = Int(down ? NX_KEYDOWN : NX_KEYUP) << 8
         // IOKit's auxiliary-control subtype uses key type in the high word,
         // down/up in the next byte, and repeat in the low byte (zero here).
-        return NSEvent.otherEvent(with: .systemDefined, location: .zero,
+        return NSEvent.otherEvent(
+            with: .systemDefined, location: .zero,
             modifierFlags: NSEvent.ModifierFlags(rawValue: UInt(state)), timestamp: 0,
             windowNumber: 0, context: nil, subtype: Int16(NX_SUBTYPE_AUX_CONTROL_BUTTONS),
             data1: keyCode << 16 | state, data2: -1)?.cgEvent

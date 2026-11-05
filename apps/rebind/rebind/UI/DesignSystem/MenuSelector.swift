@@ -17,9 +17,10 @@ struct MenuSelector<Selection: Hashable>: View {
 
     var body: some View {
         AnchoredMenu(select: select, makeMenu: makeMenu) {
-            SelectorLabel(title: label(selection),
-                          height: compact ? Theme.compactControlHeight : Theme.controlHeight,
-                          horizontalInset: compact ? 12 : 16, singleLine: singleLine)
+            SelectorLabel(
+                title: label(selection),
+                height: compact ? Theme.compactControlHeight : Theme.controlHeight,
+                horizontalInset: compact ? 12 : 16, singleLine: singleLine)
         }
         .accessibilityLabel(Text(title)).accessibilityValue(Text(label(selection)))
     }
@@ -39,8 +40,9 @@ struct MenuSelector<Selection: Hashable>: View {
             if index > 0, startsGroup(choice) { menu.addItem(.separator()) }
             var resource = label(choice)
             resource.locale = locale
-            let item = NSMenuItem(title: String(localized: resource),
-                                  action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+            let item = NSMenuItem(
+                title: String(localized: resource),
+                action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
             item.target = target
             item.tag = index
             item.state = choice == selection ? .on : .off
@@ -49,8 +51,9 @@ struct MenuSelector<Selection: Hashable>: View {
         if var title = menuActionTitle, menuAction != nil {
             title.locale = locale
             menu.addItem(.separator())
-            let item = NSMenuItem(title: String(localized: title),
-                                  action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+            let item = NSMenuItem(
+                title: String(localized: title),
+                action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
             item.target = target
             item.tag = choices.count
             menu.addItem(item)

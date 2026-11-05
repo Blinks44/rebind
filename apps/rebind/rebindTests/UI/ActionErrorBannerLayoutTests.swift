@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Run in the sequential native UI phase: this fixture changes launch-time localization.
@@ -13,20 +14,23 @@ import XCTest
         defer { AppLocalization.configureAtLaunch(previousLanguage) }
         for language in AppLanguage.allCases {
             AppLocalization.configureAtLaunch(language)
-            var configuration = Configuration(bindings: (3..<15).map {
-                rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .windowLayout(.fill))
-            })
+            var configuration = Configuration(
+                bindings: (3..<15).map {
+                    rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .windowLayout(.fill))
+                })
             configuration.hasCompletedSetup = true
             let store = ConfigurationStore(url: directory.appending(path: "\(language.rawValue)/configuration.json"))
             try store.save(configuration)
-            let model = AppModel(store: store,
+            let model = AppModel(
+                store: store,
                 readPermissions: { InputPermissions(accessibility: true, posting: true) },
                 companionApps: CompanionAppMonitor(executablePaths: { [] }, initiallyRunning: []))
             model.mailbox.state.withLock { $0.status = .active }
             model.refresh()
             for appearance in [ColorScheme.light, .dark] {
-                let controller = NSHostingController(rootView: ContentView(model: model, initialDestination: .input(.allMice))
-                    .environment(\.locale, language.locale).preferredColorScheme(appearance))
+                let controller = NSHostingController(
+                    rootView: ContentView(model: model, initialDestination: .input(.allMice))
+                        .environment(\.locale, language.locale).preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
                 window.styleMask.insert(.fullSizeContentView)
                 window.titleVisibility = .hidden

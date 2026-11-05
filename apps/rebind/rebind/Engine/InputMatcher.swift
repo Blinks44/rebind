@@ -78,12 +78,16 @@ nonisolated struct InputMatcher: Sendable {
         for binding in bindings where binding.isEnabled && binding.isValid {
             // A plain press rule may share its button with gestures: it runs on a
             // click without movement. Hold, double press and held output would be ambiguous.
-            if binding.trigger.holdsButton { gestureSources.insert(binding.matchKey.pressSource) }
-            else if binding.activation != .press || binding.holdsOutput { ordinarySources.insert(binding.matchKey.pressSource) }
+            if binding.trigger.holdsButton {
+                gestureSources.insert(binding.matchKey.pressSource)
+            } else if binding.activation != .press || binding.holdsOutput {
+                ordinarySources.insert(binding.matchKey.pressSource)
+            }
             if rules[binding.matchKey] != nil { conflicts.insert(binding.matchKey) }
-            rules[binding.matchKey] = CompiledBinding(action: binding.action, activation: binding.activation,
-                                                      holdDurationNanoseconds: UInt64(binding.holdDurationMilliseconds) * 1_000_000,
-                                                      holdsOutput: binding.holdsOutput, tapShortcut: binding.tapShortcut)
+            rules[binding.matchKey] = CompiledBinding(
+                action: binding.action, activation: binding.activation,
+                holdDurationNanoseconds: UInt64(binding.holdDurationMilliseconds) * 1_000_000,
+                holdsOutput: binding.holdsOutput, tapShortcut: binding.tapShortcut)
         }
         let ambiguousSources = gestureSources.intersection(ordinarySources)
         for key in rules.keys where ambiguousSources.contains(key.pressSource) { conflicts.insert(key) }
@@ -91,11 +95,16 @@ nonisolated struct InputMatcher: Sendable {
         return rules
     }
 
-    mutating func handle(_ event: InputEvent, rules: [MatchKey: CompiledBinding],
-                         enabled: Bool, canDispatch: Bool = true) -> MatchDecision {
+    mutating func handle(
+        _ event: InputEvent, rules: [MatchKey: CompiledBinding],
+        enabled: Bool, canDispatch: Bool = true
+    ) -> MatchDecision {
         guard !event.isSynthetic else { return MatchDecision() }
         // Cancel recognition without losing ownership of already swallowed presses.
-        if !enabled || !canDispatch { doublePress = nil; cancelHold() }
+        if !enabled || !canDispatch {
+            doublePress = nil
+            cancelHold()
+        }
         if event.phase == .modifiersChanged {
             if doublePress?.key.modifiers != event.modifiers { doublePress = nil }
             if hold?.key.modifiers != event.modifiers { hold = nil }
@@ -119,7 +128,8 @@ nonisolated struct InputMatcher: Sendable {
                 // Released before any stroke was recognized or cancelled: this was a
                 // click. Run the button's press rule, or give the click back to the system.
                 if candidate.recognizing, enabled, canDispatch, candidate.key.modifiers == event.modifiers,
-                   suppressed.contains(event.trigger) {
+                    suppressed.contains(event.trigger)
+                {
                     click = rules[candidate.key]?.action ?? Self.passthroughClick(for: event.trigger)
                 }
                 pointerGesture = nil
@@ -127,19 +137,26 @@ nonisolated struct InputMatcher: Sendable {
             if let candidate = hold, candidate.key.trigger == event.trigger {
                 // Released before the hold time: a hold rule may send its short-press shortcut.
                 if enabled, canDispatch, candidate.key.modifiers == event.modifiers, suppressed.contains(event.trigger),
-                   let tap = rules[candidate.key]?.tapShortcut {
+                    let tap = rules[candidate.key]?.tapShortcut
+                {
                     click = .shortcut(tap)
                 }
                 hold = nil
             }
             let owned = suppressed.remove(event.trigger) != nil
-            if click != nil { doublePress = nil; return MatchDecision(suppress: owned, action: click) }
+            if click != nil {
+                doublePress = nil
+                return MatchDecision(suppress: owned, action: click)
+            }
             if let candidate = doublePress, candidate.key.trigger == event.trigger {
                 if owned, candidate.key.modifiers == event.modifiers,
-                   event.timestamp >= candidate.startedAt,
-                   event.timestamp - candidate.startedAt <= doublePressIntervalNanoseconds {
+                    event.timestamp >= candidate.startedAt,
+                    event.timestamp - candidate.startedAt <= doublePressIntervalNanoseconds
+                {
                     doublePress?.released = true
-                } else { doublePress = nil }
+                } else {
+                    doublePress = nil
+                }
             }
             return MatchDecision(suppress: owned)
         }
@@ -159,10 +176,17 @@ nonisolated struct InputMatcher: Sendable {
                 let continuesHold: Bool
                 if case .mouseButton = event.trigger, event.phase == .drag {
                     continuesHold = true
-                } else { continuesHold = event.phase == .down && event.isRepeat }
+                } else {
+                    continuesHold = event.phase == .down && event.isRepeat
+                }
                 if !continuesHold || candidate.key.modifiers != event.modifiers
-                    || (event.receivedAt ?? event.timestamp) < candidate.startedAt { hold = nil }
-            } else if event.phase == .down || event.phase == .drag { hold = nil }
+                    || (event.receivedAt ?? event.timestamp) < candidate.startedAt
+                {
+                    hold = nil
+                }
+            } else if event.phase == .down || event.phase == .drag {
+                hold = nil
+            }
             return MatchDecision(suppress: true)
         }
         if event.phase == .drag { cancelHold() }
@@ -189,8 +213,9 @@ nonisolated struct InputMatcher: Sendable {
             if hasGestures || hasWheel {
                 doublePress = nil
                 let now = event.receivedAt ?? event.timestamp
-                pointerGesture = PointerGesture(key: key, startedAt: now, lastReceivedAt: now,
-                                                capturesMovement: hasGestures, hasGestures: hasGestures)
+                pointerGesture = PointerGesture(
+                    key: key, startedAt: now, lastReceivedAt: now,
+                    capturesMovement: hasGestures, hasGestures: hasGestures)
                 suppressed.insert(event.trigger)
                 return MatchDecision(suppress: true)
             }
@@ -212,7 +237,8 @@ nonisolated struct InputMatcher: Sendable {
                     return MatchDecision()
                 }
                 if candidate.key == key, candidate.released,
-                   event.timestamp - candidate.startedAt <= doublePressIntervalNanoseconds {
+                    event.timestamp - candidate.startedAt <= doublePressIntervalNanoseconds
+                {
                     doublePress = nil
                     suppressed.insert(event.trigger)
                     return MatchDecision(suppress: true, action: rule.action)
@@ -250,7 +276,10 @@ nonisolated struct InputMatcher: Sendable {
     mutating func resetScrollThrottle() { lastScrollDispatch = nil }
 
     // Unsupported wheel input cancels both duration and motion recognition.
-    mutating func cancelHold() { hold = nil; cancelPointerGesture() }
+    mutating func cancelHold() {
+        hold = nil
+        cancelPointerGesture()
+    }
 
     private mutating func cancelPointerGesture() {
         pointerGesture?.recognizing = false
@@ -276,14 +305,17 @@ nonisolated struct InputMatcher: Sendable {
         cancelPendingActivation()
     }
 
-    private mutating func handlePointerGesture(_ event: InputEvent,
-                                               rules: [MatchKey: CompiledBinding]) -> RebindAction? {
+    private mutating func handlePointerGesture(
+        _ event: InputEvent,
+        rules: [MatchKey: CompiledBinding]
+    ) -> RebindAction? {
         guard var candidate = pointerGesture, candidate.recognizing, candidate.hasGestures else { return nil }
         let now = event.receivedAt ?? event.timestamp
         guard event.phase == .drag, event.modifiers == candidate.key.modifiers,
-              now >= candidate.lastReceivedAt, now - candidate.startedAt <= Self.pointerTimeoutNanoseconds,
-              let motion = event.motion,
-              motion.deltaX.magnitude <= 4096, motion.deltaY.magnitude <= 4096 else {
+            now >= candidate.lastReceivedAt, now - candidate.startedAt <= Self.pointerTimeoutNanoseconds,
+            let motion = event.motion,
+            motion.deltaX.magnitude <= 4096, motion.deltaY.magnitude <= 4096
+        else {
             cancelPointerGesture()
             return nil
         }
@@ -292,17 +324,31 @@ nonisolated struct InputMatcher: Sendable {
         candidate.y += motion.deltaY
         let x = candidate.x.magnitude
         let y = candidate.y.magnitude
-        guard x <= 4096, y <= 4096 else { cancelPointerGesture(); return nil }
-        guard max(x, y) >= UInt64(pointerThreshold) else { pointerGesture = candidate; return nil }
+        guard x <= 4096, y <= 4096 else {
+            cancelPointerGesture()
+            return nil
+        }
+        guard max(x, y) >= UInt64(pointerThreshold) else {
+            pointerGesture = candidate
+            return nil
+        }
         // Commit the first substantial stroke. Ambiguous diagonals and an
         // unconfigured direction end recognition, without trying another outcome.
         let direction: PointerDirection
-        if x >= 2 * y { direction = candidate.x < 0 ? .left : .right }
-        else if y >= 2 * x { direction = candidate.y < 0 ? .up : .down }
-        else { cancelPointerGesture(); return nil }
+        if x >= 2 * y {
+            direction = candidate.x < 0 ? .left : .right
+        } else if y >= 2 * x {
+            direction = candidate.y < 0 ? .up : .down
+        } else {
+            cancelPointerGesture()
+            return nil
+        }
         guard case .mouseButton(let button) = candidate.key.trigger,
-              let rule = rules[MatchKey(trigger: .mouseGesture(button: button, direction: direction),
-                                       modifiers: candidate.key.modifiers)] else {
+            let rule = rules[
+                MatchKey(
+                    trigger: .mouseGesture(button: button, direction: direction),
+                    modifiers: candidate.key.modifiers)]
+        else {
             cancelPointerGesture()
             return nil
         }
@@ -311,12 +357,18 @@ nonisolated struct InputMatcher: Sendable {
         return rule.action
     }
 
-    mutating func pollHold(at now: UInt64, rules: [MatchKey: CompiledBinding],
-                           enabled: Bool, canDispatch: Bool = true) -> RebindAction? {
+    mutating func pollHold(
+        at now: UInt64, rules: [MatchKey: CompiledBinding],
+        enabled: Bool, canDispatch: Bool = true
+    ) -> RebindAction? {
         guard let candidate = hold else { return nil }
         guard enabled, canDispatch, suppressed.contains(candidate.key.trigger),
-              let rule = rules[candidate.key], rule.activation == .hold,
-              now >= candidate.startedAt else { hold = nil; return nil }
+            let rule = rules[candidate.key], rule.activation == .hold,
+            now >= candidate.startedAt
+        else {
+            hold = nil
+            return nil
+        }
         let elapsed = now - candidate.startedAt
         guard elapsed >= rule.holdDurationNanoseconds else { return nil }
         hold = nil
@@ -326,13 +378,18 @@ nonisolated struct InputMatcher: Sendable {
 
     /// A wheel step while a button with wheel rules is held. Using the wheel means the
     /// hold was not a click or a gesture. Nil when this is an ordinary wheel event.
-    private mutating func handleButtonScroll(_ event: InputEvent, rules: [MatchKey: CompiledBinding],
-                                             enabled: Bool, canDispatch: Bool) -> MatchDecision? {
+    private mutating func handleButtonScroll(
+        _ event: InputEvent, rules: [MatchKey: CompiledBinding],
+        enabled: Bool, canDispatch: Bool
+    ) -> MatchDecision? {
         guard enabled, canDispatch, let candidate = pointerGesture, suppressed.contains(candidate.key.trigger),
-              candidate.key.modifiers == event.modifiers,
-              case .mouseButton(let button) = candidate.key.trigger, case .scroll(let direction) = event.trigger,
-              let rule = rules[MatchKey(trigger: .buttonScroll(button: button, direction: direction),
-                                       modifiers: event.modifiers)] else { return nil }
+            candidate.key.modifiers == event.modifiers,
+            case .mouseButton(let button) = candidate.key.trigger, case .scroll(let direction) = event.trigger,
+            let rule = rules[
+                MatchKey(
+                    trigger: .buttonScroll(button: button, direction: direction),
+                    modifiers: event.modifiers)]
+        else { return nil }
         cancelPointerGesture()
         if let previous = lastScrollDispatch {
             guard event.timestamp >= previous else { return MatchDecision(suppress: true) }
@@ -342,10 +399,13 @@ nonisolated struct InputMatcher: Sendable {
         return MatchDecision(suppress: true, action: rule.action)
     }
 
-    private mutating func handleScroll(_ event: InputEvent, rules: [MatchKey: CompiledBinding],
-                                      enabled: Bool, canDispatch: Bool) -> MatchDecision {
+    private mutating func handleScroll(
+        _ event: InputEvent, rules: [MatchKey: CompiledBinding],
+        enabled: Bool, canDispatch: Bool
+    ) -> MatchDecision {
         guard case .scroll = event.trigger, enabled, canDispatch,
-              let rule = rules[MatchKey(trigger: event.trigger, modifiers: event.modifiers)], rule.activation == .press else {
+            let rule = rules[MatchKey(trigger: event.trigger, modifiers: event.modifiers)], rule.activation == .press
+        else {
             return MatchDecision()
         }
         if let previous = lastScrollDispatch {

@@ -1,17 +1,19 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct AppModelPermissionSetupTests {
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindSetup-\(UUID())").appending(path: "configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindSetup-\(UUID())").appending(path: "configuration.json"))
     }
 
     @Test(arguments: [
         InputPermissions(),
         InputPermissions(accessibility: true),
-        InputPermissions(accessibility: true, posting: true)
+        InputPermissions(accessibility: true, posting: true),
     ])
     func newInstallationShowsFirstRunGuidanceWithAnyGrants(_ grants: InputPermissions) {
         let model = AppModel(loadConfiguration: false, readPermissions: { grants })
@@ -23,8 +25,9 @@ import Testing
     func deferralSurvivesRelaunchWithoutChangingRulesOrPause(enabled: Bool) throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: .control,
-                                     action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: .control,
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         var original = Configuration(isEnabled: enabled, bindings: [binding])
         try original.createProfile(name: "Desk", copying: RuleProfile.defaultID)
         try store.save(original)

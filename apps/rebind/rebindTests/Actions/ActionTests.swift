@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ActionTests {
@@ -35,8 +36,9 @@ struct ActionTests {
 
     @Test func audioHoldDoublePressAndPointerGestureDeliverTypedActions() {
         let output = RebindAction.system(.toggleMute)
-        var binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: output,
-                                     activation: .hold, holdDurationMilliseconds: 1000)
+        var binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: output,
+            activation: .hold, holdDurationMilliseconds: 1000)
         var matcher = InputMatcher()
         var rules = InputMatcher.compile([binding])
         let down = InputEvent(trigger: .mouseButton(3), phase: .down, timestamp: 0)
@@ -48,7 +50,8 @@ struct ActionTests {
         rules = InputMatcher.compile([binding])
         #expect(matcher.handle(down, rules: rules, enabled: true).action == nil)
         _ = matcher.handle(InputEvent(trigger: .mouseButton(3), phase: .up, timestamp: 1), rules: rules, enabled: true)
-        #expect(matcher.handle(InputEvent(trigger: .mouseButton(3), phase: .down, timestamp: 2), rules: rules, enabled: true).action == output)
+        #expect(
+            matcher.handle(InputEvent(trigger: .mouseButton(3), phase: .down, timestamp: 2), rules: rules, enabled: true).action == output)
         matcher.resetAfterCaptureLoss()
         binding.activation = .press
         binding.trigger = .mouseGesture(button: 3, direction: .left)
@@ -64,7 +67,8 @@ struct ActionTests {
         defer { try? FileManager.default.removeItem(at: folder) }
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "configuration.json"))
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: .control,
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(4), modifiers: .control,
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)), activation: .hold, holdDurationMilliseconds: 1000)
         var original = Configuration(isEnabled: true, bindings: [binding])
         try original.createProfile(name: "Work", copying: RuleProfile.defaultID)
@@ -95,6 +99,8 @@ struct ActionTests {
         #expect(try JSONDecoder().decode(Configuration.self, from: bytes).migrated() == configuration)
         let unknown = Data(String(decoding: bytes, as: UTF8.self).replacingOccurrences(of: "toggleMute", with: "launchUntrustedCode").utf8)
         #expect(throws: (any Error).self) { try JSONDecoder().decode(Configuration.self, from: unknown) }
-        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated() }
+        #expect(throws: ConfigurationError.incompatible) {
+            try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated()
+        }
     }
 }

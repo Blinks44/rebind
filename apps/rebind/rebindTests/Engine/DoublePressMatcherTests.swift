@@ -1,4 +1,5 @@
 import Testing
+
 @testable import rebind
 
 struct DoublePressMatcherTests {
@@ -6,12 +7,15 @@ struct DoublePressMatcherTests {
     private let interval: UInt64 = 500_000_000
 
     private func binding(_ trigger: InputTrigger = .key(0), activation: PressActivation = .doublePress) -> rebind.Binding {
-        rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control,
-                       action: .shortcut(output), activation: activation)
+        rebind.Binding(
+            scope: trigger.scope, trigger: trigger, modifiers: .control,
+            action: .shortcut(output), activation: activation)
     }
 
-    private func event(_ phase: InputEvent.Phase, at time: UInt64, trigger: InputTrigger = .key(0),
-                       modifiers: ModifierSet = .control, repeat isRepeat: Bool = false) -> InputEvent {
+    private func event(
+        _ phase: InputEvent.Phase, at time: UInt64, trigger: InputTrigger = .key(0),
+        modifiers: ModifierSet = .control, repeat isRepeat: Bool = false
+    ) -> InputEvent {
         InputEvent(trigger: trigger, modifiers: modifiers, phase: phase, isRepeat: isRepeat, timestamp: time)
     }
 

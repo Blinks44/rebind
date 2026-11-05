@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 /// Exercises the production controller without native discovery, permissions or input posting.
@@ -15,7 +16,10 @@ import Testing
             buffer.setAccepting(canStart)
             return canStart
         }
-        func stop() { stops += 1; buffer.setAccepting(false) }
+        func stop() {
+            stops += 1
+            buffer.setAccepting(false)
+        }
     }
 
     @MainActor private final class Harness {
@@ -25,19 +29,24 @@ import Testing
         var now: UInt64 = 0
         var frameID: Int32 = 0
         var discoveries = 0
-        lazy var capture = MagicMouseCapture(mailbox: mailbox, acquireDevice: { [unowned self] in
-            discoveries += 1
-            return connected
-        }, clock: { [unowned self] in now })
+        lazy var capture = MagicMouseCapture(
+            mailbox: mailbox,
+            acquireDevice: { [unowned self] in
+                discoveries += 1
+                return connected
+            }, clock: { [unowned self] in now })
 
         init() {
             surface = Surface(mailbox: mailbox)
             connected = surface
-            mailbox.configure(Configuration(isEnabled: true, bindings: [
-                rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing),
-                rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 2), modifiers: .option, action: .doNothing),
-                rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing)
-            ]))
+            mailbox.configure(
+                Configuration(
+                    isEnabled: true,
+                    bindings: [
+                        rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing),
+                        rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 2), modifiers: .option, action: .doNothing),
+                        rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing),
+                    ]))
             mailbox.state.withLock { $0.status = .active }
         }
 
@@ -50,7 +59,8 @@ import Testing
             let control = mailbox.state.withLock { ($0.actionRevision, $0.magicMouseActivity) }
             for (index, count) in [0, fingers, fingers, 0].enumerated() {
                 let receipt = end - UInt64(3 - index) * 20_000_000
-                var frame = NativeTrackpadFrame(receipt: receipt, revision: control.0, activity: control.1,
+                var frame = NativeTrackpadFrame(
+                    receipt: receipt, revision: control.0, activity: control.1,
                     frame: frameID, time: Double(receipt) / 1_000_000_000, count: count)
                 frameID += 1
                 if count > 0 { frame.first = .init(id: 1, x: 0.4, y: 0.5, pressure: 0) }
@@ -105,7 +115,7 @@ import Testing
         try h.tap(endingAt: 9_000_000_000)
         h.now += 60_000_000
         h.service()
-        #expect(h.mailbox.nextAction() == nil) // Replacement is still inside the three-second gate.
+        #expect(h.mailbox.nextAction() == nil)  // Replacement is still inside the three-second gate.
         try h.tap(endingAt: 12_000_000_000)
         h.now += 60_000_000
         h.service()
@@ -123,7 +133,8 @@ import Testing
         switch cause {
         case 0: h.mailbox.setEditing(true)
         case 1: h.mailbox.record(.init(target: .output))
-        case 2: h.mailbox.state.withLock { $0.excludedApplications = ["com.example.excluded"] }
+        case 2:
+            h.mailbox.state.withLock { $0.excludedApplications = ["com.example.excluded"] }
             h.mailbox.setForegroundApplication("com.example.excluded")
         case 3: h.mailbox.configure(Configuration(isEnabled: false))
         default: h.mailbox.suspend(true)
@@ -135,10 +146,15 @@ import Testing
         case 0: h.mailbox.setEditing(false)
         case 1: h.mailbox.record(nil)
         case 2: h.mailbox.setForegroundApplication("com.example.allowed")
-        case 3: h.mailbox.configure(Configuration(isEnabled: true, bindings: [
-            rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
-        ]))
-        default: h.mailbox.suspend(false)
+        case 3:
+            h.mailbox.configure(
+                Configuration(
+                    isEnabled: true,
+                    bindings: [
+                        rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
+                    ]))
+        default:
+            h.mailbox.suspend(false)
             h.mailbox.state.withLock { $0.status = .active }
         }
         h.capture.refreshControl()
@@ -147,7 +163,7 @@ import Testing
         #expect(h.mailbox.state.withLock { $0.magicMouseStatus } == .active)
         let deadline = h.capture.nextPollDate
         h.capture.refreshControl()
-        #expect(h.capture.nextPollDate == deadline) // Unchanged model refresh must not poll the surface.
+        #expect(h.capture.nextPollDate == deadline)  // Unchanged model refresh must not poll the surface.
     }
 
     @Test(arguments: [false, true])
@@ -172,7 +188,7 @@ import Testing
         #expect(h.mailbox.state.withLock { $0.magicMouseStatus } == .failed)
         h.now = 2_100_000_000
         h.service()
-        #expect(h.surface.starts == 1) // A failed connection is not restarted every poll.
+        #expect(h.surface.starts == 1)  // A failed connection is not restarted every poll.
         let replacement = Surface(mailbox: h.mailbox)
         h.connected = replacement
         h.now = 4_200_000_000

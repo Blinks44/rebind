@@ -27,7 +27,9 @@ struct DeviceIdentityView: View {
             if let battery {
                 Label {
                     Text(battery.isCharging ? .devicesBatteryCharging(battery.percentage) : .devicesBattery(battery.percentage))
-                } icon: { Image(systemName: battery.symbol) }
+                } icon: {
+                    Image(systemName: battery.symbol)
+                }
                 .font(Theme.callout)
                 .foregroundStyle(battery.percentage <= 15 && !battery.isCharging ? Theme.warningText : Theme.textSecondary)
                 .fixedSize()

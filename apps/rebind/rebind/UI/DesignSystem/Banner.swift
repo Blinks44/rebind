@@ -43,8 +43,10 @@ struct Banner<Actions: View>: View {
 }
 
 extension Banner where Actions == EmptyView {
-    init(severity: BannerSeverity, title: LocalizedStringResource,
-         message: LocalizedStringResource? = nil, dismiss: (() -> Void)? = nil) {
+    init(
+        severity: BannerSeverity, title: LocalizedStringResource,
+        message: LocalizedStringResource? = nil, dismiss: (() -> Void)? = nil
+    ) {
         self.severity = severity
         self.title = title
         self.message = message

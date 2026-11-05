@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ProfileSwitchTests {
@@ -7,8 +8,9 @@ struct ProfileSwitchTests {
     private let newOutput = KeyboardShortcut(keyCode: 13, modifiers: .command)
 
     private func configuration(_ activation: PressActivation = .press) throws -> Configuration {
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                    action: .shortcut(oldOutput), activation: activation, holdDurationMilliseconds: 500)
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .shortcut(oldOutput), activation: activation, holdDurationMilliseconds: 500)
         var configuration = Configuration(isEnabled: true, bindings: [binding])
         try configuration.createProfile(name: "Second", copying: RuleProfile.defaultID)
         configuration.bindings[0].action = .shortcut(newOutput)

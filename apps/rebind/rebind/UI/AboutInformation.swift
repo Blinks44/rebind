@@ -10,8 +10,9 @@ struct AboutInformation {
         version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
         if let url = bundle.url(forResource: "ThirdPartyNotices", withExtension: "txt"),
-           let text = try? String(contentsOf: url, encoding: .utf8),
-           !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let text = try? String(contentsOf: url, encoding: .utf8),
+            !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        {
             notices = text
         } else {
             notices = nil

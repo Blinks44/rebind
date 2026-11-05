@@ -1,10 +1,12 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ConfigurationBackupTests {
     @Test func roundtripPreservesAllProfilesRulesAndPreferences() throws {
-        var rule = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [.control, .option],
+        var rule = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [.control, .option],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: [.command, .shift])))
         rule.activation = .hold
         rule.holdDurationMilliseconds = 575
@@ -51,7 +53,8 @@ struct ConfigurationBackupTests {
     }
 
     @Test func conflictingRulesCannotBeStagedOrExported() throws {
-        let rule = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: [],
+        let rule = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 1, modifiers: .command)))
         var duplicate = rule
         duplicate.id = UUID()
@@ -70,7 +73,8 @@ struct ConfigurationBackupTests {
     }
 
     @Test func duplicateRuleIdentitiesAreRejectedAcrossProfiles() throws {
-        let rule = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let rule = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         var configuration = Configuration(bindings: [rule])
         try configuration.createProfile(name: "Other")
@@ -86,8 +90,10 @@ struct ConfigurationBackupTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         let url = directory.appending(path: "backup.json")
         var data = try JSONEncoder().encode(Configuration())
-        data.append(Data(repeating: 0x20,
-            count: ConfigurationStore.maximumBytes + (oversized ? 1 : 0) - data.count))
+        data.append(
+            Data(
+                repeating: 0x20,
+                count: ConfigurationStore.maximumBytes + (oversized ? 1 : 0) - data.count))
         try data.write(to: url)
         if oversized {
             #expect(throws: ConfigurationError.invalid) { try ConfigurationBackup(contentsOf: url) }

@@ -1,4 +1,5 @@
 import Testing
+
 @testable import rebind
 
 struct HoldMatcherTests {
@@ -6,12 +7,15 @@ struct HoldMatcherTests {
     private let threshold: UInt64 = 500_000_000
 
     private func binding(_ trigger: InputTrigger = .key(1), duration: UInt32 = 500) -> rebind.Binding {
-        rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control,
-                       action: .shortcut(output), activation: .hold, holdDurationMilliseconds: duration)
+        rebind.Binding(
+            scope: trigger.scope, trigger: trigger, modifiers: .control,
+            action: .shortcut(output), activation: .hold, holdDurationMilliseconds: duration)
     }
 
-    private func event(_ phase: InputEvent.Phase, at time: UInt64, trigger: InputTrigger = .key(1),
-                       modifiers: ModifierSet = .control, repeat isRepeat: Bool = false) -> InputEvent {
+    private func event(
+        _ phase: InputEvent.Phase, at time: UInt64, trigger: InputTrigger = .key(1),
+        modifiers: ModifierSet = .control, repeat isRepeat: Bool = false
+    ) -> InputEvent {
         InputEvent(trigger: trigger, modifiers: modifiers, phase: phase, isRepeat: isRepeat, timestamp: time)
     }
 
@@ -132,8 +136,10 @@ struct HoldMatcherTests {
             var matcher = InputMatcher()
             let rules = InputMatcher.compile([binding()])
             _ = matcher.handle(event(.down, at: 0), rules: rules, enabled: true)
-            #expect(matcher.pollHold(at: threshold, rules: mode == 2 ? [:] : rules,
-                                     enabled: mode != 0, canDispatch: mode != 1) == nil)
+            #expect(
+                matcher.pollHold(
+                    at: threshold, rules: mode == 2 ? [:] : rules,
+                    enabled: mode != 0, canDispatch: mode != 1) == nil)
             #expect(matcher.pollHold(at: threshold + 1, rules: rules, enabled: true) == nil)
             #expect(matcher.handle(event(.up, at: threshold + 2), rules: rules, enabled: false).suppress)
         }

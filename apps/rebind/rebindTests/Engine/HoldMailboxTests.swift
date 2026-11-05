@@ -1,12 +1,18 @@
 import Testing
+
 @testable import rebind
 
 struct HoldMailboxTests {
     private let threshold: UInt64 = 500_000_000
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
     private var configuration: Configuration {
-        Configuration(isEnabled: true, bindings: [rebind.Binding(scope: .allMice, trigger: .mouseButton(3),
-            modifiers: .control, action: .shortcut(output), activation: .hold)])
+        Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(
+                    scope: .allMice, trigger: .mouseButton(3),
+                    modifiers: .control, action: .shortcut(output), activation: .hold)
+            ])
     }
     private func start(_ mailbox: EngineMailbox) {
         mailbox.configure(configuration)
@@ -26,10 +32,12 @@ struct HoldMailboxTests {
 
     @Test func g603ButtonFiveWithoutModifiersSurvivesMotion() {
         let mailbox = EngineMailbox()
-        let ordinary = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-                                      action: .shortcut(output))
-        let held = rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [],
-                                  action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 1000)
+        let ordinary = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+            action: .shortcut(output))
+        let held = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(4), modifiers: [],
+            action: .shortcut(output), activation: .hold, holdDurationMilliseconds: 1000)
         mailbox.configure(Configuration(isEnabled: true, bindings: [ordinary, held]))
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(4), phase: .down, receivedAt: 10), secureInput: false))
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(4), phase: .drag, receivedAt: 900_000_000), secureInput: false))
@@ -50,10 +58,16 @@ struct HoldMailboxTests {
             let mailbox = EngineMailbox()
             start(mailbox)
             switch mode {
-            case 0: mailbox.setEditing(true); mailbox.setEditing(false)
-            case 1: mailbox.record(RecordingRequest(target: .mouseTrigger)); mailbox.record(nil)
+            case 0:
+                mailbox.setEditing(true)
+                mailbox.setEditing(false)
+            case 1:
+                mailbox.record(RecordingRequest(target: .mouseTrigger))
+                mailbox.record(nil)
             case 2: mailbox.configure(configuration)
-            default: mailbox.configure(Configuration()); mailbox.configure(configuration)
+            default:
+                mailbox.configure(Configuration())
+                mailbox.configure(configuration)
             }
             mailbox.pollHold(at: threshold, secureInput: false)
             #expect(mailbox.state.withLock { $0.pending.isEmpty })
@@ -67,7 +81,9 @@ struct HoldMailboxTests {
             start(mailbox)
             switch mode {
             case 0: mailbox.pollHold(at: 1, secureInput: true)
-            case 1: mailbox.suspend(true); mailbox.suspend(false)
+            case 1:
+                mailbox.suspend(true)
+                mailbox.suspend(false)
             default: mailbox.state.withLock { $0.matcher.resetAfterCaptureLoss() }
             }
             mailbox.pollHold(at: threshold, secureInput: false)
@@ -99,7 +115,9 @@ struct HoldMailboxTests {
     @Test func emergencyCancelsHoldAndOwnsEscapeRelease() {
         let mailbox = EngineMailbox()
         start(mailbox)
-        #expect(mailbox.handle(InputEvent(trigger: .key(53), modifiers: [.control, .option, .shift, .command], phase: .down), secureInput: false))
+        #expect(
+            mailbox.handle(
+                InputEvent(trigger: .key(53), modifiers: [.control, .option, .shift, .command], phase: .down), secureInput: false))
         mailbox.pollHold(at: threshold, secureInput: false)
         #expect(mailbox.state.withLock { $0.emergencyPause && !$0.enabled && $0.pending.isEmpty })
         #expect(mailbox.handle(InputEvent(trigger: .key(53), phase: .up), secureInput: false))

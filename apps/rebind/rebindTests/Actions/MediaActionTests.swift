@@ -1,12 +1,14 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct MediaActionTests {
     @Test(arguments: MediaAction.allCases) @MainActor
     func sharedCatalogDoesNotRequireAudioDeviceOrRecordedShortcut(_ media: MediaAction) throws {
-        let action = RebindAction.media(media), kind = ActionKind(action: action)
+        let action = RebindAction.media(media)
+        let kind = ActionKind(action: action)
         #expect(kind.category == (media.isBrightness ? .system : .audio) && kind.mediaAction == media && kind.systemAction == nil)
         #expect(kind.configuredAction(shortcut: nil) == action && action.shortcut == nil && action.isSupported)
         #expect(kind.isAvailable(with: AudioOutputCapabilities()) && AudioOutputCapabilities().supports(action))
@@ -14,7 +16,9 @@ struct MediaActionTests {
         #expect(try JSONDecoder().decode(RebindAction.self, from: JSONEncoder().encode(action)) == action)
     }
 
-    @Test(arguments: MediaAction.allCases, [InputTrigger.key(0), .mouseButton(99), .scroll(.right), .mouseGesture(button: 99, direction: .left)])
+    @Test(
+        arguments: MediaAction.allCases,
+        [InputTrigger.key(0), .mouseButton(99), .scroll(.right), .mouseGesture(button: 99, direction: .left)])
     func matchesExactModifiersAcrossExistingInputFamiliesAndIgnoresSyntheticFeedback(_ media: MediaAction, _ trigger: InputTrigger) {
         let binding = rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control, action: .media(media))
         let rules = InputMatcher.compile([binding])
@@ -24,16 +28,21 @@ struct MediaActionTests {
         #expect(matcher.handle(InputEvent(trigger: source, phase: phase), rules: rules, enabled: true).suppress == false)
         var decision = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase), rules: rules, enabled: true)
         if trigger.isPointerGesture {
-            decision = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: .drag,
-                motion: PointerMotion(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
+            decision = matcher.handle(
+                InputEvent(
+                    trigger: source, modifiers: .control, phase: .drag,
+                    motion: PointerMotion(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
         }
         #expect(decision.suppress && decision.action == .media(media) && decision.shortcut == nil)
         if !trigger.isScroll {
             #expect(matcher.handle(InputEvent(trigger: source, phase: .up), rules: rules, enabled: false).suppress)
             #expect(matcher.hasSuppressedInput == false)
         }
-        #expect(matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase, isSynthetic: true),
-            rules: rules, enabled: true).suppress == false)
+        #expect(
+            matcher.handle(
+                InputEvent(trigger: source, modifiers: .control, phase: phase, isSynthetic: true),
+                rules: rules, enabled: true
+            ).suppress == false)
     }
 
     @Test func schema14MigratesEveryProfileAndActionWithoutRewritingUntilSave() throws {
@@ -41,14 +50,19 @@ struct MediaActionTests {
         defer { try? FileManager.default.removeItem(at: folder) }
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "configuration.json"))
-        let earlier: [RebindAction] = [.shortcut(.init(keyCode: 0, modifiers: .command)), .system(.toggleMute),
+        let earlier: [RebindAction] = [
+            .shortcut(.init(keyCode: 0, modifiers: .command)), .system(.toggleMute),
             .mouse(.doubleLeftClick), .window(.minimize),
             .workspace(.openURL(try #require(URL(string: "https://example.com")))),
-            .appleShortcut(.init(id: UUID(), name: "Test")), .dock(.missionControl), .dock(.previousSpace), .dock(.nextSpace)]
-        var old = Configuration(isEnabled: true, bindings: earlier.enumerated().map { index, action in
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32(index + 3)), modifiers: .control, action: action,
-                activation: .hold, holdDurationMilliseconds: 1000)
-        })
+            .appleShortcut(.init(id: UUID(), name: "Test")), .dock(.missionControl), .dock(.previousSpace), .dock(.nextSpace),
+        ]
+        var old = Configuration(
+            isEnabled: true,
+            bindings: earlier.enumerated().map { index, action in
+                rebind.Binding(
+                    scope: .allMice, trigger: .mouseButton(UInt32(index + 3)), modifiers: .control, action: action,
+                    activation: .hold, holdDurationMilliseconds: 1000)
+            })
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = 14
         let bytes = try JSONEncoder().encode(old)
@@ -80,16 +94,25 @@ struct MediaActionTests {
     @Test func serialWorkerRoutesMediaIndependentlyOfOutputDeviceAndReportsNonPausingFailures() {
         let mailbox = readyMailbox()
         let calls = Mutex<[RebindAction]>([])
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            sendShortcut: { value in calls.withLock { $0.append(.shortcut(value)) }; return true },
-            performMouse: { action, _ in calls.withLock { $0.append(.mouse(action)) }; return .performed },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            sendShortcut: { value in
+                calls.withLock { $0.append(.shortcut(value)) }
+                return true
+            },
+            performMouse: { action, _ in
+                calls.withLock { $0.append(.mouse(action)) }
+                return .performed
+            },
             performMedia: { action, canPerform in
                 #expect(canPerform())
                 calls.withLock { $0.append(.media(action)) }
                 return action == .nextTrack ? .unavailable : .performed
             }, secureInput: { false }, postingAllowed: { true })
-        let sequence: [RebindAction] = [.media(.playPause), .mouse(.leftClick), .media(.nextTrack),
-            .shortcut(.init(keyCode: 0, modifiers: .command)), .media(.previousTrack)]
+        let sequence: [RebindAction] = [
+            .media(.playPause), .mouse(.leftClick), .media(.nextTrack),
+            .shortcut(.init(keyCode: 0, modifiers: .command)), .media(.previousTrack),
+        ]
         mailbox.state.withLock { $0.pending = sequence }
         for time in UInt64(0)...4 { worker.service(at: time) }
         #expect(calls.withLock { $0 } == sequence)
@@ -99,7 +122,8 @@ struct MediaActionTests {
     @Test(arguments: 0...5) func lifecycleChangesAtFinalGateCancelWithoutStaleError(_ change: Int) {
         let mailbox = readyMailbox()
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             performMedia: { _, canPerform in
                 switch change {
                 case 0: mailbox.configure(Configuration(isEnabled: false))
@@ -109,7 +133,10 @@ struct MediaActionTests {
                 case 4: mailbox.stop()
                 default: mailbox.configure(Configuration(isEnabled: true))
                 }
-                if canPerform() { calls.withLock { $0 += 1 }; return .performed }
+                if canPerform() {
+                    calls.withLock { $0 += 1 }
+                    return .performed
+                }
                 return .cancelled
             }, secureInput: { false }, postingAllowed: { true })
         mailbox.state.withLock { $0.pending = [.media(.playPause)] }
@@ -121,8 +148,12 @@ struct MediaActionTests {
     @Test(arguments: [true, false]) func protectedContextsClearMediaQueueWithoutCallingBackend(_ secure: Bool) {
         let mailbox = readyMailbox()
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performMedia: { _, _ in calls.withLock { $0 += 1 }; return .performed },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            performMedia: { _, _ in
+                calls.withLock { $0 += 1 }
+                return .performed
+            },
             secureInput: { secure }, postingAllowed: { secure })
         mailbox.state.withLock { $0.pending = [.media(.playPause)] }
         worker.service(at: 0)

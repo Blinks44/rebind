@@ -1,13 +1,15 @@
 import Foundation
 import HIDPP
 import Testing
+
 @testable import rebind
 
 struct KeyboardLightingTests {
     @Test(arguments: [nil, 0, 9, 10, 100] as [Int?], [true, false])
     func batteryTransitionsRestoreSavedColorAndBrightness(percentage: Int?, charging: Bool) {
-        let settings = KeyboardLightingSettings(deviceKey: "046d:Test keyboard", brightness: 100,
-                                                color: 0x123456, lowBattery: .blinkingRed)
+        let settings = KeyboardLightingSettings(
+            deviceKey: "046d:Test keyboard", brightness: 100,
+            color: 0x123456, lowBattery: .blinkingRed)
         let output = settings.output(percentage: percentage, charging: charging, supportsBlinking: true)
         let low = percentage.map { $0 < 10 } == true && !charging
         #expect(output.color == (low ? 0xFF0000 : 0x123456))
@@ -16,8 +18,9 @@ struct KeyboardLightingTests {
     }
 
     @Test func offAndKeepColorNeverActivateBatteryOverride() {
-        var settings = KeyboardLightingSettings(deviceKey: "046d:Test keyboard", isEnabled: false,
-                                                brightness: 100, color: 0x010203, lowBattery: .red)
+        var settings = KeyboardLightingSettings(
+            deviceKey: "046d:Test keyboard", isEnabled: false,
+            brightness: 100, color: 0x010203, lowBattery: .red)
         #expect(settings.output(percentage: 1, charging: false, supportsBlinking: true).brightness == 0)
         #expect(settings.output(percentage: 1, charging: false, supportsBlinking: true).color == 0x010203)
         settings.isEnabled = true

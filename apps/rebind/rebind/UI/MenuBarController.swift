@@ -63,8 +63,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         profile.submenu = profiles
         menu.addItem(profile)
 
-        menu.addItem(item(text(configuration.isEnabled ? .pauseBindings : .resumeBindings), #selector(toggleBindings),
-                          enabled: !(model.storageLocked && !configuration.isEnabled)))
+        menu.addItem(
+            item(
+                text(configuration.isEnabled ? .pauseBindings : .resumeBindings), #selector(toggleBindings),
+                enabled: !(model.storageLocked && !configuration.isEnabled)))
         let settings = item(text(.settingsTitle), #selector(openSettingsWindow))
         settings.keyEquivalent = ","
         settings.image = NSImage(systemSymbolName: "gear", accessibilityDescription: nil)
@@ -89,8 +91,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             speeds.forEach(menu.addItem)
         }
         menu.addItem(.separator())
-        menu.addItem(item(text(.checkForUpdates), #selector(checkForUpdates),
-                          enabled: RebindAppDelegate.updater.canCheckForUpdates))
+        menu.addItem(
+            item(
+                text(.checkForUpdates), #selector(checkForUpdates),
+                enabled: RebindAppDelegate.updater.canCheckForUpdates))
         let quit = NSMenuItem(title: text(.quitRebind), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quit.target = NSApp
         menu.addItem(quit)
@@ -121,8 +125,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     static func batteryItems(_ batteries: [(battery: DeviceBattery, name: String)], language: AppLanguage) -> [NSMenuItem] {
         batteries.map { row in
             let item = NSMenuItem(title: row.name, action: nil, keyEquivalent: "")
-            let state = AppLocalization.string(row.battery.isCharging ? .devicesBatteryCharging(row.battery.percentage)
-                                                   : .devicesBattery(row.battery.percentage), language: language)
+            let state = AppLocalization.string(
+                row.battery.isCharging
+                    ? .devicesBatteryCharging(row.battery.percentage)
+                    : .devicesBattery(row.battery.percentage), language: language)
             let label = "\(row.name), \(state)"
             item.setAccessibilityLabel(label)
             item.view = MenuBatteryView(battery: row.battery, name: row.name, language: language, accessibilityLabel: label)
@@ -151,7 +157,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
                 accessibilityLabel: "\(name), \(title)",
                 valueText: { AppLocalization.string(.devicesDPIValue($0), language: language) },
                 commit: { [model] value in
-                    var settings = model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey }
+                    var settings =
+                        model.configuration.mouseHardware.first { $0.deviceKey == mouse.deviceKey }
                         ?? MouseHardwareSettings(deviceKey: mouse.deviceKey)
                     settings.dpi = value
                     model.setMouseHardware(settings)

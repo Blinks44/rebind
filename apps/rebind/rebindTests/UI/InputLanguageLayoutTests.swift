@@ -1,19 +1,23 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 @MainActor final class InputLanguageLayoutTests: XCTestCase {
     func testDevicesAndLanguageFitInAllLocales() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindStandardSettings-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
+        let model = AppModel(
+            store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
             readPermissions: { InputPermissions() }, loginItem: LoginItemModel(service: LoginItemServiceStub()))
         for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
-                try await check(DevicesView(model: model), name: "devices", language: language, appearance: appearance,
+                try await check(
+                    DevicesView(model: model), name: "devices", language: language, appearance: appearance,
                     sizes: [NSSize(width: 640, height: 480), NSSize(width: 760, height: 600)])
-                try await check(SettingsView(model: model, selection: .constant(.language)),
+                try await check(
+                    SettingsView(model: model, selection: .constant(.language)),
                     name: "standard-language", language: language, appearance: appearance,
                     sizes: [NSSize(width: 600, height: 480), NSSize(width: 760, height: 600)])
             }
@@ -25,7 +29,8 @@ import XCTest
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         defer { try? FileManager.default.removeItem(at: directory) }
         try store.save(Configuration())
-        let model = AppModel(store: store, readPermissions: { InputPermissions() },
+        let model = AppModel(
+            store: store, readPermissions: { InputPermissions() },
             loginItem: LoginItemModel(service: LoginItemServiceStub()), preferredLanguages: ["en"])
         let editing = LanguageSettingsModel(app: model)
         editing.draft = .ru
@@ -36,13 +41,19 @@ import XCTest
 
         for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
-                try await check(LanguageSettingsView(model: model, editing: editing), name: "language-failure",
-                    language: language, appearance: appearance, sizes: [NSSize(width: 600, height: 300),
-                        NSSize(width: 760, height: 460)])
+                try await check(
+                    LanguageSettingsView(model: model, editing: editing), name: "language-failure",
+                    language: language, appearance: appearance,
+                    sizes: [
+                        NSSize(width: 600, height: 300),
+                        NSSize(width: 760, height: 460),
+                    ])
                 for duration in [UInt32(100), 575, 5000] {
-                    let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+                    let binding = rebind.Binding(
+                        scope: .allMice, trigger: .mouseButton(99), modifiers: [],
                         action: .workspace(.openSystemSettings), activation: .hold, holdDurationMilliseconds: duration)
-                    try await check(BindingEditor(model: model, scope: .allMice, existing: binding),
+                    try await check(
+                        BindingEditor(model: model, scope: .allMice, existing: binding),
                         name: "hold-\(duration)", language: language, appearance: appearance,
                         sizes: [NSSize(width: 520, height: 600), NSSize(width: 520, height: 760)])
                 }
@@ -50,10 +61,13 @@ import XCTest
         }
     }
 
-    private func check<Content: View>(_ content: Content, name: String, language: String,
-                                     appearance: ColorScheme, sizes: [NSSize]) async throws {
-        let controller = NSHostingController(rootView: content.environment(\.locale, Locale(identifier: language))
-            .preferredColorScheme(appearance))
+    private func check<Content: View>(
+        _ content: Content, name: String, language: String,
+        appearance: ColorScheme, sizes: [NSSize]
+    ) async throws {
+        let controller = NSHostingController(
+            rootView: content.environment(\.locale, Locale(identifier: language))
+                .preferredColorScheme(appearance))
         let window = NSWindow(contentViewController: controller)
         window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
         window.isReleasedWhenClosed = false

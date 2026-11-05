@@ -50,7 +50,7 @@ struct BindingsView: View {
         VStack(spacing: 0) {
             summary.padding(.bottom, 24)
             if visible.isEmpty {
-                ScrollView { }
+                ScrollView {}
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay { emptyState }
             } else {
@@ -73,22 +73,30 @@ struct BindingsView: View {
                     Button(.resumeBindings) { model.setEnabled(true) }.disabled(model.storageLocked).secondaryButton()
                 }.padding(.top, 24)
             } else if scope == .magicMouse {
-                Banner(severity: model.magicMouseStatus == .failed || model.magicMouseStatus == .unavailable ? .warning : .information,
-                    title: model.magicMouseStatus == .failed ? .magicMouseFailedTitle
+                Banner(
+                    severity: model.magicMouseStatus == .failed || model.magicMouseStatus == .unavailable ? .warning : .information,
+                    title: model.magicMouseStatus == .failed
+                        ? .magicMouseFailedTitle
                         : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableTitle : .magicMouseExperimentalTitle,
-                    message: model.magicMouseStatus == .failed ? .magicMouseFailedHelp
-                        : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableHelp : .magicMouseExperimentalHelp)
-                    .padding(.top, 24)
+                    message: model.magicMouseStatus == .failed
+                        ? .magicMouseFailedHelp
+                        : model.magicMouseStatus == .unavailable ? .magicMouseUnavailableHelp : .magicMouseExperimentalHelp
+                )
+                .padding(.top, 24)
             } else if scope == .magicTrackpad, model.mouseHardware.externalTrackpadConnected == false {
-                Banner(severity: .warning, title: .externalTrackpadDisconnectedTitle,
-                       message: .externalTrackpadDisconnectedHelp).padding(.top, 24)
+                Banner(
+                    severity: .warning, title: .externalTrackpadDisconnectedTitle,
+                    message: .externalTrackpadDisconnectedHelp
+                ).padding(.top, 24)
             } else if scope == .allMice, !model.visibleMouseCompanionApps.isEmpty {
                 let apps = model.visibleMouseCompanionApps
                 CompanionBanner(apps: apps) { model.dismissCompanionWarning(for: apps) }.padding(.top, 24)
             } else if scope.isTrackpad && !bindings.isEmpty && !model.configuration.hidesTrackpadGestureWarning {
-                Banner(severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint,
-                       dismiss: { model.setPresencePreference(\.hidesTrackpadGestureWarning, to: true) })
-                    .padding(.top, 24)
+                Banner(
+                    severity: .information, title: .trackpadSystemGestureWarning, message: .trackpadTapHint,
+                    dismiss: { model.setPresencePreference(\.hidesTrackpadGestureWarning, to: true) }
+                )
+                .padding(.top, 24)
             }
             if let error = model.error {
                 Banner(severity: .error, title: error, dismiss: { model.error = nil })
@@ -129,17 +137,22 @@ struct BindingsView: View {
         HStack(spacing: 16) {
             ProfilePicker(model: model, manageProfiles: manageProfiles)
 
-            Text(verbatim: "\(AppLocalization.string(.mouseBindingCount(bindings.count))), \(AppLocalization.string(.mouseEnabledCount(bindings.filter(\.isEnabled).count)))")
-                .font(Theme.callout).foregroundStyle(Theme.textSecondary).lineLimit(1)
+            Text(
+                verbatim:
+                    "\(AppLocalization.string(.mouseBindingCount(bindings.count))), \(AppLocalization.string(.mouseEnabledCount(bindings.filter(\.isEnabled).count)))"
+            )
+            .font(Theme.callout).foregroundStyle(Theme.textSecondary).lineLimit(1)
             Spacer(minLength: 0)
             Button {
                 if model.permissions.allowsRemapping { model.setEnabled(!model.configuration.isEnabled) } else { openPermissions() }
-            } label: { StatusPill(kind: statusKind) }
-                .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
-                .keyboardFocusRing()
-                .disabled(model.storageLocked && !model.configuration.isEnabled)
-                .help(Text("\(Text(model.statusText))\n\(Text(.emergencyHint))"))
-                .accessibilityValue(Text(model.statusText))
+            } label: {
+                StatusPill(kind: statusKind)
+            }
+            .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
+            .keyboardFocusRing()
+            .disabled(model.storageLocked && !model.configuration.isEnabled)
+            .help(Text("\(Text(model.statusText))\n\(Text(.emergencyHint))"))
+            .accessibilityValue(Text(model.statusText))
         }
     }
 
@@ -147,13 +160,15 @@ struct BindingsView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ForEach(visible) { binding in
-                    BindingRow(binding: binding, model: model, edit: { edit(binding) },
-                               duplicate: { duplicate(binding) }, delete: { delete(binding) })
-                        .overlay(alignment: .top) {
-                            if binding.id != visible.first?.id {
-                                Theme.separator.frame(height: 1).padding(.horizontal, 20)
-                            }
+                    BindingRow(
+                        binding: binding, model: model, edit: { edit(binding) },
+                        duplicate: { duplicate(binding) }, delete: { delete(binding) }
+                    )
+                    .overlay(alignment: .top) {
+                        if binding.id != visible.first?.id {
+                            Theme.separator.frame(height: 1).padding(.horizontal, 20)
                         }
+                    }
                 }
             }
         }

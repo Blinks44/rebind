@@ -26,7 +26,8 @@ nonisolated final class PeripheralBatteryReader: @unchecked Sendable {
         case .steelSeries, .rival:
             // Selected only for a known mouse's control interface, never a keyboard interface.
             guard let request = VendorBatteryProtocol.steelSeriesRequest(for: profile.family),
-                  let io = HIDReportDevice(vendorDevice, receivesHIDPP: false) else { return nil }
+                let io = HIDReportDevice(vendorDevice, receivesHIDPP: false)
+            else { return nil }
             defer { io.close() }
             let length = io.maxOutputReportSize ?? 0
             guard length >= request.count, length <= 512 else { return nil }
@@ -48,29 +49,39 @@ nonisolated final class PeripheralBatteryReader: @unchecked Sendable {
         let service = IOHIDDeviceGetService(device)
         // Driver-provided percentages, including third-party Bluetooth HID drivers. Search only
         // this known input device's subtree, never the computer's power sources or a headset.
-        guard let value = IORegistryEntrySearchCFProperty(service, kIOServicePlane, "BatteryPercent" as CFString,
-                                                          kCFAllocatorDefault, IOOptionBits(kIORegistryIterateRecursively)),
-              CFGetTypeID(value) == CFNumberGetTypeID(),
-              let percentage = value as? Int, (0...100).contains(percentage) else { return nil }
+        guard
+            let value = IORegistryEntrySearchCFProperty(
+                service, kIOServicePlane, "BatteryPercent" as CFString,
+                kCFAllocatorDefault, IOOptionBits(kIORegistryIterateRecursively)),
+            CFGetTypeID(value) == CFNumberGetTypeID(),
+            let percentage = value as? Int, (0...100).contains(percentage)
+        else { return nil }
         return PeripheralBatteryReading(percentage: percentage)
     }
 
     private static func standardHIDReading(_ device: IOHIDDevice) -> PeripheralBatteryReading? {
-        let matching: [String: Int] = [kIOHIDElementUsagePageKey: kHIDPage_GenericDeviceControls,
-                                      kIOHIDElementUsageKey: kHIDUsage_GenDevControls_BatteryStrength]
+        let matching: [String: Int] = [
+            kIOHIDElementUsagePageKey: kHIDPage_GenericDeviceControls,
+            kIOHIDElementUsageKey: kHIDUsage_GenDevControls_BatteryStrength,
+        ]
         guard let elements = IOHIDDeviceCopyMatchingElements(device, matching as CFDictionary, 0) as? [IOHIDElement],
-              !elements.isEmpty, IOHIDDeviceOpen(device, 0) == kIOReturnSuccess else { return nil }
+            !elements.isEmpty, IOHIDDeviceOpen(device, 0) == kIOReturnSuccess
+        else { return nil }
         defer { IOHIDDeviceClose(device, 0) }
-        for element in elements where IOHIDElementGetType(element) == kIOHIDElementTypeFeature
-            || IOHIDElementGetType(element) == kIOHIDElementTypeInput_Misc {
+        for element in elements
+        where IOHIDElementGetType(element) == kIOHIDElementTypeFeature
+            || IOHIDElementGetType(element) == kIOHIDElementTypeInput_Misc
+        {
             let storage = UnsafeMutablePointer<Unmanaged<IOHIDValue>>.allocate(capacity: 1)
             defer { storage.deallocate() }
             guard IOHIDDeviceGetValue(device, element, storage) == kIOReturnSuccess else { continue }
             let value = storage.pointee.takeUnretainedValue()
             // Input elements can contain an uninitialized cached zero before the first report.
             if IOHIDElementGetType(element) != kIOHIDElementTypeFeature, IOHIDValueGetTimeStamp(value) == 0 { continue }
-            if let reading = PeripheralBatteryReading.normalized(IOHIDValueGetIntegerValue(value),
-                    minimum: IOHIDElementGetLogicalMin(element), maximum: IOHIDElementGetLogicalMax(element)) {
+            if let reading = PeripheralBatteryReading.normalized(
+                IOHIDValueGetIntegerValue(value),
+                minimum: IOHIDElementGetLogicalMin(element), maximum: IOHIDElementGetLogicalMax(element))
+            {
                 return reading
             }
         }
@@ -105,7 +116,8 @@ nonisolated final class PeripheralBatteryReader: @unchecked Sendable {
 
     /// The USB interface number lives on the USB ancestor, rather than a stable IOHID key.
     static func interfaceNumber(_ device: IOHIDDevice) -> Int? {
-        IORegistryEntrySearchCFProperty(IOHIDDeviceGetService(device), kIOServicePlane, "bInterfaceNumber" as CFString,
+        IORegistryEntrySearchCFProperty(
+            IOHIDDeviceGetService(device), kIOServicePlane, "bInterfaceNumber" as CFString,
             kCFAllocatorDefault, IOOptionBits(kIORegistryIterateRecursively | kIORegistryIterateParents))
             as? Int
     }

@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct PreviousApplicationPersistenceTests {
@@ -17,8 +18,13 @@ struct PreviousApplicationPersistenceTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: directory.appending(path: "config.json"))
-        var old = Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-            action: .windowCycle(.next), activation: .hold, holdDurationMilliseconds: 1000)])
+        var old = Configuration(
+            isEnabled: true,
+            bindings: [
+                .init(
+                    scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+                    action: .windowCycle(.next), activation: .hold, holdDurationMilliseconds: 1000)
+            ])
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.bindings[0].action = .lockScreen
         old.schemaVersion = 20

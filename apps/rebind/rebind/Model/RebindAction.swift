@@ -46,7 +46,8 @@ nonisolated enum RebindAction: Codable, Equatable, Sendable {
         switch self {
         case .shortcut(let value): value.isSupported
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle,
-             .doNothing, .control: true
+            .doNothing, .control:
+            true
         case .text(let text): TextSnippet.isValid(text)
         case .modifier(let modifiers): !modifiers.isEmpty && modifiers.subtracting(.supported).isEmpty
         case .workspace(let action): action.isSupported

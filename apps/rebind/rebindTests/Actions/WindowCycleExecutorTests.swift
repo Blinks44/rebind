@@ -1,5 +1,6 @@
 import ApplicationServices
 import Testing
+
 @testable import rebind
 
 struct WindowCycleExecutorTests {
@@ -72,9 +73,7 @@ struct WindowCycleExecutorTests {
         let client = FakeCycleAccessibility()
         var allowed = true
         client.beforeCapabilities = {
-            if change == 0 { client.application = "other" }
-            else if change == 1 { client.focused = "C" }
-            else { allowed = false }
+            if change == 0 { client.application = "other" } else if change == 1 { client.focused = "C" } else { allowed = false }
         }
         var state = WindowCycleState<String>()
         #expect(run(.next, state: &state, client: client, allowed: { allowed }) == (change == 2 ? .cancelled : .unavailable))
@@ -120,8 +119,10 @@ struct WindowCycleExecutorTests {
         #expect(client.focused == "C")
     }
 
-    private func run(_ action: WindowCycleAction, state: inout WindowCycleState<String>,
-                     client: FakeCycleAccessibility, allowed: () -> Bool = { true }) -> WindowActionResult {
+    private func run(
+        _ action: WindowCycleAction, state: inout WindowCycleState<String>,
+        client: FakeCycleAccessibility, allowed: () -> Bool = { true }
+    ) -> WindowActionResult {
         WindowCycleExecutor.perform(action, revision: 4, state: &state, client: client, ownPID: 99, canPerform: allowed)
     }
 }
@@ -147,10 +148,16 @@ nonisolated private final class FakeCycleAccessibility: WindowCyclingAccessibili
     func isStandardWindow(_ element: String) -> Bool { !nonstandard.contains(element) }
     func isMinimized(_ element: String) -> Bool? { unknown.contains(element) ? nil : minimized.contains(element) }
     func isModal(_ element: String) -> Bool? { unknown.contains(element) ? nil : modal.contains(element) }
-    func isSettable(_ attribute: String, of element: String) -> Bool { beforeCapabilities?(); return settable }
+    func isSettable(_ attribute: String, of element: String) -> Bool {
+        beforeCapabilities?()
+        return settable
+    }
     func isEnabled(_ element: String) -> Bool { true }
     func canRaise(_ element: String) -> Bool { raiseSupported }
-    func press(_ element: String) -> Bool { Issue.record("Cycle pressed a button"); return false }
+    func press(_ element: String) -> Bool {
+        Issue.record("Cycle pressed a button")
+        return false
+    }
     func setTrue(_ attribute: String, of element: String) -> Bool {
         #expect(attribute == kAXMainAttribute)
         mutations.append("main \(element)")

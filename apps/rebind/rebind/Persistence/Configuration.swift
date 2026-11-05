@@ -57,25 +57,32 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     func validate() throws {
         guard schemaVersion == Self.currentSchemaVersion else { throw ConfigurationError.incompatible }
         guard !profiles.isEmpty, profiles.count <= Self.maximumProfiles,
-              Set(profiles.map(\.id)).count == profiles.count, selectedProfile != nil,
-              profiles.allSatisfy(\.hasValidName) else { throw ConfigurationError.profileInvalid }
+            Set(profiles.map(\.id)).count == profiles.count, selectedProfile != nil,
+            profiles.allSatisfy(\.hasValidName)
+        else { throw ConfigurationError.profileInvalid }
         let names = profiles.compactMap(\.nameKey)
         guard Set(names).count == names.count else { throw ConfigurationError.profileInvalid }
         guard excludedApplications.count <= Self.maximumExcludedApplications,
-              excludedApplications.allSatisfy(\.target.isSupported), dismissedCompanionApps.count <= 20,
-              Set(excludedApplications.map(\.bundleIdentifier)).count == excludedApplications.count else {
+            excludedApplications.allSatisfy(\.target.isSupported), dismissedCompanionApps.count <= 20,
+            Set(excludedApplications.map(\.bundleIdentifier)).count == excludedApplications.count
+        else {
             throw ConfigurationError.invalid
         }
         guard mouseHardware.count <= MouseHardwareSettings.maximumDevices, mouseHardware.allSatisfy(\.isValid),
-              Set(mouseHardware.map(\.deviceKey)).count == mouseHardware.count else { throw ConfigurationError.invalid }
+            Set(mouseHardware.map(\.deviceKey)).count == mouseHardware.count
+        else { throw ConfigurationError.invalid }
         guard keyboardLighting.count <= 50, keyboardLighting.allSatisfy(\.isValid),
-              Set(keyboardLighting.map(\.deviceKey)).count == keyboardLighting.count else { throw ConfigurationError.invalid }
-        guard deviceNames.count <= 100, deviceNames.allSatisfy({ key, name in
-            !key.isEmpty && key.count <= 200 && Self.isValidDeviceName(name) && !name.isEmpty
-        }) else { throw ConfigurationError.invalid }
+            Set(keyboardLighting.map(\.deviceKey)).count == keyboardLighting.count
+        else { throw ConfigurationError.invalid }
+        guard deviceNames.count <= 100,
+            deviceNames.allSatisfy({ key, name in
+                !key.isEmpty && key.count <= 200 && Self.isValidDeviceName(name) && !name.isEmpty
+            })
+        else { throw ConfigurationError.invalid }
         let allBindings = profiles.flatMap(\.bindings)
         guard allBindings.count <= 1000, Set(allBindings.map(\.id)).count == allBindings.count,
-              allBindings.allSatisfy(\.isValid) else { throw ConfigurationError.invalid }
+            allBindings.allSatisfy(\.isValid)
+        else { throw ConfigurationError.invalid }
         for profile in profiles {
             let enabled = profile.bindings.filter(\.isEnabled)
             // A rule for one app overrides a rule for all apps with the same trigger, so each
@@ -89,10 +96,12 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
                 let gestures = Set(effective.filter { $0.trigger.holdsButton }.map(\.matchKey.pressSource))
                 // A plain press rule may share a button with its gestures (it runs on a click
                 // without movement); hold and double press on that button stay ambiguous.
-                guard !effective.contains(where: {
-                    !$0.trigger.holdsButton && ($0.activation != .press || $0.holdsOutput)
-                        && gestures.contains($0.matchKey.pressSource)
-                }) else {
+                guard
+                    !effective.contains(where: {
+                        !$0.trigger.holdsButton && ($0.activation != .press || $0.holdsOutput)
+                            && gestures.contains($0.matchKey.pressSource)
+                    })
+                else {
                     throw ConfigurationError.conflict
                 }
             }
@@ -107,20 +116,24 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             return self
         }
         guard schemaVersion >= 48 || keyboardLighting.allSatisfy({ $0.idleTimeout == nil && $0.devicePowerPolicy == nil }),
-              schemaVersion >= 47 || keyboardLighting.allSatisfy({ KeyboardLightingSettings.brightnessValues.contains($0.brightness) }),
-              schemaVersion >= 46 || keyboardLighting.isEmpty,
-              schemaVersion >= 41 || deviceNames.isEmpty,
-              schemaVersion >= 40 || showsBatteryInMenu,
-              schemaVersion >= 39 || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
-                                      && mouseHardware.allSatisfy(\.isSchema38)),
-              schemaVersion >= 36 || (dismissedCompanionApps.isEmpty
-                                      && excludedApplications.allSatisfy { !$0.allowsBindings && $0.allowsSmoothScrolling }),
-              schemaVersion >= 35 || mouseHardware.isEmpty,
-              schemaVersion >= 34 || (excludedApplications.isEmpty && pointerGestureDistance == .standard
-                                      && !reversesMouseWheel && mouseWheelSpeed == .standard),
-              schemaVersion >= 33 || (languagePreference != .es && languagePreference != .zhHans),
-              schemaVersion >= 6 || profiles.count == 1,
-              profiles.flatMap(\.bindings).allSatisfy({ $0.minimumSchemaVersion <= schemaVersion }) else {
+            schemaVersion >= 47 || keyboardLighting.allSatisfy({ KeyboardLightingSettings.brightnessValues.contains($0.brightness) }),
+            schemaVersion >= 46 || keyboardLighting.isEmpty,
+            schemaVersion >= 41 || deviceNames.isEmpty,
+            schemaVersion >= 40 || showsBatteryInMenu,
+            schemaVersion >= 39
+                || (!hidesTrackpadGestureWarning && reversesHorizontalScrolling == reversesMouseWheel
+                    && mouseHardware.allSatisfy(\.isSchema38)),
+            schemaVersion >= 36
+                || (dismissedCompanionApps.isEmpty
+                    && excludedApplications.allSatisfy { !$0.allowsBindings && $0.allowsSmoothScrolling }),
+            schemaVersion >= 35 || mouseHardware.isEmpty,
+            schemaVersion >= 34
+                || (excludedApplications.isEmpty && pointerGestureDistance == .standard
+                    && !reversesMouseWheel && mouseWheelSpeed == .standard),
+            schemaVersion >= 33 || (languagePreference != .es && languagePreference != .zhHans),
+            schemaVersion >= 6 || profiles.count == 1,
+            profiles.flatMap(\.bindings).allSatisfy({ $0.minimumSchemaVersion <= schemaVersion })
+        else {
             throw ConfigurationError.invalid
         }
         var result = self
@@ -158,12 +171,14 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         let version = try values.decode(Int.self, forKey: .schemaVersion)
         guard (1...Self.currentSchemaVersion).contains(version) else { throw ConfigurationError.incompatible }
         guard version >= 41 || !values.contains(.deviceNames),
-              version >= 46 || !values.contains(.keyboardLighting) else { throw ConfigurationError.invalid }
+            version >= 46 || !values.contains(.keyboardLighting)
+        else { throw ConfigurationError.invalid }
         let enabled = try values.decode(Bool.self, forKey: .isEnabled)
         if version < 6 {
             guard !values.contains(.profiles), !values.contains(.selectedProfileID) else { throw ConfigurationError.invalid }
-            self.init(schemaVersion: version, isEnabled: enabled,
-                      bindings: try values.decode([Binding].self, forKey: .bindings))
+            self.init(
+                schemaVersion: version, isEnabled: enabled,
+                bindings: try values.decode([Binding].self, forKey: .bindings))
         } else {
             guard !values.contains(.bindings) else { throw ConfigurationError.invalid }
             self.init(schemaVersion: version, isEnabled: enabled)
@@ -171,7 +186,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
             selectedProfileID = try values.decode(UUID.self, forKey: .selectedProfileID)
         }
         hasCompletedSetup = version >= 23 ? try values.decode(Bool.self, forKey: .hasCompletedSetup) : true
-        languagePreference = version >= 24
+        languagePreference =
+            version >= 24
             ? try values.decode(AppLanguagePreference.self, forKey: .languagePreference) : .system
         if version >= 33 {
             showsDockIcon = try values.decode(Bool.self, forKey: .showsDockIcon)
@@ -180,7 +196,8 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
         }
         if version >= 34 {
             // Before schema 36 an excluded app skipped bindings only; smooth scrolling did not exist.
-            excludedApplications = version >= 36
+            excludedApplications =
+                version >= 36
                 ? try values.decode([ExcludedApplication].self, forKey: .excludedApplications)
                 : try values.decode([ApplicationTarget].self, forKey: .excludedApplications)
                     .map { ExcludedApplication(target: $0, allowsBindings: false, allowsSmoothScrolling: true) }
@@ -309,9 +326,9 @@ nonisolated struct Configuration: Codable, Equatable, Sendable {
     }
 }
 
-nonisolated private extension Binding {
+nonisolated extension Binding {
     /// The first schema whose files may contain this rule.
-    var minimumSchemaVersion: Int {
+    fileprivate var minimumSchemaVersion: Int {
         var version = 1
         func introduced(in schema: Int, _ applies: Bool) { if applies { version = max(version, schema) } }
 

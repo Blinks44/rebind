@@ -57,15 +57,19 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
 
     /// Nil when nothing answers HID++ 2.0 at this address, or when it is neither a pointing device
     /// nor a keyboard with battery or supported lighting.
-    init?(io: HIDPPDeviceIO, slot: UInt8?, gestureOwnership: GestureButtonOwnership = GestureButtonOwnership(),
-          lightingOwnership: KeyboardLightingOwnership = KeyboardLightingOwnership()) {
+    init?(
+        io: HIDPPDeviceIO, slot: UInt8?, gestureOwnership: GestureButtonOwnership = GestureButtonOwnership(),
+        lightingOwnership: KeyboardLightingOwnership = KeyboardLightingOwnership()
+    ) {
         guard let transport = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 1),
-              let firstQuestion = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 2.5) else { return nil }
+            let firstQuestion = HIDPPTransport(device: io, deviceIndex: slot, requestTimeout: 2.5)
+        else { return nil }
         // One question first. A wireless device behind a receiver may need most of a second to wake
         // (the G915 TKL took 0.9 s), so it gets longer; an empty slot gets an error reply at once.
         // Without any answer the device is skipped instead of asking it every feature.
         guard let root = firstQuestion.request(featureIndex: 0x00, function: 0x00, parameters: HIDPPFeatureID.deviceName.bytes),
-              let nameFeature = root.payload.first else { return nil }
+            let nameFeature = root.payload.first
+        else { return nil }
         let nameIndex = nameFeature == 0 ? nil : nameFeature
         let name = nameIndex.map { DeviceName(transport: transport, featureIndex: $0) }
         let kind = name?.kind()
@@ -78,7 +82,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         let resolvedName = name?.name()
         // The first battery feature the device has, from the exact percentage to the voltage.
         let batterySources: [(HIDPPFeatureID, Battery.Source)] = [
-            (.unifiedBattery, .unified), (.batteryStatus, .status), (.batteryVoltage, .voltage), (.adcMeasurement, .adcMeasurement)
+            (.unifiedBattery, .unified), (.batteryStatus, .status), (.batteryVoltage, .voltage), (.adcMeasurement, .adcMeasurement),
         ]
         var foundBattery: Battery?
         for (feature, source) in batterySources {
@@ -89,10 +93,13 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         }
         battery = foundBattery
         if let rgb = transport.featureIndex(for: .rgbEffects) {
-            lighting = KeyboardLighting(transport: transport, brightnessIndex: transport.featureIndex(for: .brightnessControl), rgbIndex: rgb,
+            lighting = KeyboardLighting(
+                transport: transport, brightnessIndex: transport.featureIndex(for: .brightnessControl), rgbIndex: rgb,
                 ownership: lightingOwnership, slot: slot ?? HIDPPConstants.receiverIndex,
                 isExperimental: !KeyboardLighting.supportsDevice(named: resolvedName))
-        } else { lighting = nil }
+        } else {
+            lighting = nil
+        }
         // Keyboard key lists, diversion and onboard profile mode remain untouched.
         let mouseFeature = { (feature: HIDPPFeatureID) in isKeyboard ? nil : transport.featureIndex(for: feature) }
         if let index = mouseFeature(.smartShiftEnhanced) {
@@ -108,7 +115,9 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         onboardProfiles = mouseFeature(.onboardProfiles).map { OnboardProfiles(transport: transport, featureIndex: $0) }
         // A device without DEVICE_NAME is still a mouse when it has one of the settings;
         // a keyboard is listed for its battery or supported lighting.
-        guard isKeyboard ? (battery != nil || lighting != nil) : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else { return nil }
+        guard isKeyboard ? (battery != nil || lighting != nil) : (nameIndex != nil || smartShift != nil || adjustableDPI != nil) else {
+            return nil
+        }
         self.slot = slot
         self.gestureOwnership = gestureOwnership
         self.transport = transport
@@ -163,7 +172,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
             // woke) may keep its profile's DPI. Host mode makes the written value stay; after the
             // mouse reconnects, the receiver's notice brings it here again.
             let target = adjustableDPI.supportedDPI(nearestTo: dpi)
-            for _ in 0 ..< 2 {
+            for _ in 0..<2 {
                 guard canWrite() else { return read() }
                 if let onboardProfiles, onboardProfiles.isHostMode() == false, canWrite() { onboardProfiles.setHostMode() }
                 guard canWrite() else { return read() }
@@ -184,8 +193,9 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
         switch settings.wheelMode {
         case .smartShift?:
             let sensitivity = settings.smartShiftSensitivity ?? 10
-            let clamped = min(max(sensitivity, MouseHardwareSettings.sensitivityRange.lowerBound),
-                              MouseHardwareSettings.sensitivityRange.upperBound)
+            let clamped = min(
+                max(sensitivity, MouseHardwareSettings.sensitivityRange.lowerBound),
+                MouseHardwareSettings.sensitivityRange.upperBound)
             return .smartShift(threshold: UInt8(clamped))
         case .alwaysClick?: return .alwaysRatchet
         case .alwaysFreeSpin?: return .freeSpin
@@ -197,7 +207,7 @@ nonisolated final class LogitechDevice: @unchecked Sendable {
     /// sensitivity, so switching back to SmartShift restores it.
     static func settings(for mode: SmartShift.Mode, sensitivity: Int) -> (WheelMode, Int) {
         switch mode {
-        case let .smartShift(threshold):
+        case .smartShift(let threshold):
             return (.smartShift, min(Int(threshold), MouseHardwareSettings.sensitivityRange.upperBound))
         case .alwaysRatchet: return (.alwaysClick, sensitivity)
         case .freeSpin: return (.alwaysFreeSpin, sensitivity)

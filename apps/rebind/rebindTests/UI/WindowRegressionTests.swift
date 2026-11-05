@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Testing
+
 @testable import rebind
 
 /// Disposable native windows: no capture, hardware discovery or production configuration.
@@ -9,8 +10,9 @@ import Testing
         let name = "RebindWindowTest-\(UUID())"
         defer { NSWindow.removeFrame(usingName: name) }
         func makeWindow() -> NSWindow {
-            let controller = NSHostingController(rootView: Color.clear.frame(minWidth: 880, minHeight: 600)
-                .background { MainWindowRegistration(presenter: MainWindowPresenter(activate: {}), frameName: name) })
+            let controller = NSHostingController(
+                rootView: Color.clear.frame(minWidth: 880, minHeight: 600)
+                    .background { MainWindowRegistration(presenter: MainWindowPresenter(activate: {}), frameName: name) })
             let window = NSWindow(contentViewController: controller)
             window.isReleasedWhenClosed = false
             window.setFrame(NSRect(x: 100, y: 100, width: 1080, height: 720), display: false)
@@ -32,8 +34,9 @@ import Testing
     @Test func settingsRequestIsConsumedInTheMainWindowBeforeAndAfterAttachment() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindRouteTest-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
-                             loadConfiguration: false, readPermissions: { InputPermissions() })
+        let model = AppModel(
+            store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
+            loadConfiguration: false, readPermissions: { InputPermissions() })
         model.requestedDestination = .settings(.language)
         let controller = NSHostingController(rootView: ContentView(model: model, persistsWindowSelection: false))
         let window = NSWindow(contentViewController: controller)
@@ -56,17 +59,22 @@ import Testing
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindScrollTest-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
-        var configuration = Configuration(isEnabled: true, bindings: (3..<23).map {
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .doNothing)
-        })
+        var configuration = Configuration(
+            isEnabled: true,
+            bindings: (3..<23).map {
+                rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .doNothing)
+            })
         configuration.hasCompletedSetup = true
         try store.save(configuration)
         let model = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) })
         model.mailbox.configure(configuration)
         model.mailbox.state.withLock { $0.status = .active }
         model.refresh()
-        let controller = NSHostingController(rootView: BindingsView(model: model, scope: .allMice,
-            add: {}, edit: { _ in }, duplicate: { _ in }, delete: { _ in }, manageProfiles: {}, openPermissions: {})
+        let controller = NSHostingController(
+            rootView: BindingsView(
+                model: model, scope: .allMice,
+                add: {}, edit: { _ in }, duplicate: { _ in }, delete: { _ in }, manageProfiles: {}, openPermissions: {}
+            )
             .environment(\.locale, Locale(identifier: "en")))
         let window = NSWindow(contentViewController: controller)
         window.isReleasedWhenClosed = false
@@ -100,9 +108,11 @@ import Testing
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = ConfigurationStore(url: directory.appending(path: "configuration.json"))
         for count in [2, 20] {
-            var configuration = Configuration(isEnabled: true, bindings: (3..<(3 + count)).map {
-                rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .doNothing)
-            })
+            var configuration = Configuration(
+                isEnabled: true,
+                bindings: (3..<(3 + count)).map {
+                    rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32($0)), modifiers: [], action: .doNothing)
+                })
             configuration.hasCompletedSetup = true
             try store.save(configuration)
             let model = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) })
@@ -110,8 +120,11 @@ import Testing
             model.mailbox.state.withLock { $0.status = .active }
             model.refresh()
             for (language, appearance) in [("en", ColorScheme.light), ("ru", .dark)] {
-                let controller = NSHostingController(rootView: ContentView(model: model,
-                    initialDestination: .input(.allMice), persistsWindowSelection: false)
+                let controller = NSHostingController(
+                    rootView: ContentView(
+                        model: model,
+                        initialDestination: .input(.allMice), persistsWindowSelection: false
+                    )
                     .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                 let window = NSWindow(contentViewController: controller)
                 window.styleMask.insert(.fullSizeContentView)

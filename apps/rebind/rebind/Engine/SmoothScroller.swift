@@ -1,8 +1,8 @@
+import Carbon
 import CoreGraphics
 import Dispatch
 import Foundation
 import Synchronization
-import Carbon
 
 nonisolated struct SmoothScrollDispatch: Equatable, Sendable {
     let sender: UInt64
@@ -17,9 +17,11 @@ nonisolated struct SmoothScrollAuthorization {
     private var generation: UInt64?
     private var postingAllowed = false
 
-    mutating func allows(_ dispatch: SmoothScrollDispatch, generation: UInt64,
-                         secureInput: () -> Bool = { IsSecureEventInputEnabled() },
-                         canPost: () -> Bool = { CGPreflightPostEventAccess() }) -> Bool {
+    mutating func allows(
+        _ dispatch: SmoothScrollDispatch, generation: UInt64,
+        secureInput: () -> Bool = { IsSecureEventInputEnabled() },
+        canPost: () -> Bool = { CGPreflightPostEventAccess() }
+    ) -> Bool {
         guard !secureInput() else { return false }
         if self.dispatch != dispatch || self.generation != generation {
             self.dispatch = dispatch
@@ -94,11 +96,15 @@ nonisolated final class SmoothScroller: Sendable {
     static func distance(of event: CGEvent, settings: SmoothScrollingSettings) -> (x: Double, y: Double) {
         if event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0 {
             let scale = settings.pointsPerLine / Double(SmoothScrollingDistance.standard)
-            return (event.getDoubleValueField(.scrollWheelEventPointDeltaAxis2) * scale,
-                    event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1) * scale)
+            return (
+                event.getDoubleValueField(.scrollWheelEventPointDeltaAxis2) * scale,
+                event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1) * scale
+            )
         }
-        return (event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) * settings.pointsPerLine,
-                event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) * settings.pointsPerLine)
+        return (
+            event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) * settings.pointsPerLine,
+            event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) * settings.pointsPerLine
+        )
     }
 
     /// Stops a glide at once, for example when the tap is removed.
@@ -131,7 +137,8 @@ nonisolated final class SmoothScroller: Sendable {
                 let now = DispatchTime.now().uptimeNanoseconds
                 let interval = Double(now - previous) / 1_000_000_000
                 previous = now
-                let frame = glide.withLock { glide -> (x: Double, y: Double, flags: CGEventFlags, dispatch: SmoothScrollDispatch?, generation: UInt64, done: Bool) in
+                let frame = glide.withLock {
+                    glide -> (x: Double, y: Double, flags: CGEventFlags, dispatch: SmoothScrollDispatch?, generation: UInt64, done: Bool) in
                     let x = Self.step(remaining: glide.remainingX, interval: interval, timeConstant: glide.timeConstant)
                     let y = Self.step(remaining: glide.remainingY, interval: interval, timeConstant: glide.timeConstant)
                     glide.remainingX -= x
@@ -139,14 +146,19 @@ nonisolated final class SmoothScroller: Sendable {
                     return (x, y, glide.flags, glide.dispatch, glide.generation, glide.isIdle)
                 }
                 if dispatch != frame.dispatch || generation != frame.generation {
-                    carryX = 0; carryY = 0; dispatch = frame.dispatch; generation = frame.generation
+                    carryX = 0
+                    carryY = 0
+                    dispatch = frame.dispatch
+                    generation = frame.generation
                 }
                 guard let current = frame.dispatch, mailbox.smoothScrollIsCurrent(current),
-                      authorization.allows(current, generation: frame.generation) else {
+                    authorization.allows(current, generation: frame.generation)
+                else {
                     glide.withLock {
                         if $0.generation == frame.generation { $0 = Glide(generation: $0.generation &+ 1) }
                     }
-                    carryX = 0; carryY = 0
+                    carryX = 0
+                    carryY = 0
                     if glide.withLock({ $0.isIdle }) { break }
                     continue
                 }
@@ -164,8 +176,11 @@ nonisolated final class SmoothScroller: Sendable {
     }
 
     private static func post(x: Double, y: Double, flags: CGEventFlags) {
-        guard let event = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2,
-                                  wheel1: Int32(clamping: Int(y)), wheel2: Int32(clamping: Int(x)), wheel3: 0) else { return }
+        guard
+            let event = CGEvent(
+                scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2,
+                wheel1: Int32(clamping: Int(y)), wheel2: Int32(clamping: Int(x)), wheel3: 0)
+        else { return }
         event.setIntegerValueField(.eventSourceUserData, value: ShortcutSender.eventTag)
         event.flags = flags
         event.post(tap: .cgSessionEventTap)

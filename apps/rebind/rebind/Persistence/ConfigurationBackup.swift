@@ -20,7 +20,8 @@ nonisolated struct ConfigurationBackup: Sendable {
     init(contentsOf url: URL) throws {
         // A fresh URL avoids stale resource metadata after a failed save/retry.
         guard url.isFileURL,
-              try URL(fileURLWithPath: url.path).resourceValues(forKeys: [.isRegularFileKey]).isRegularFile == true else {
+            try URL(fileURLWithPath: url.path).resourceValues(forKeys: [.isRegularFileKey]).isRegularFile == true
+        else {
             throw ConfigurationError.invalid
         }
         let file = try FileHandle(forReadingFrom: url)

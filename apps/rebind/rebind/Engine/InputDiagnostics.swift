@@ -26,7 +26,10 @@ nonisolated struct InputDiagnostics: Sendable {
     }
 
     mutating func stop(clear: Bool = false) {
-        if startedAt != nil { startedAt = nil; revision &+= 1 }
+        if startedAt != nil {
+            startedAt = nil
+            revision &+= 1
+        }
         if clear { self.clear() }
     }
 
@@ -41,12 +44,13 @@ nonisolated struct InputDiagnostics: Sendable {
 
     mutating func expire(at now: UInt64) {
         guard let startedAt else { return }
-        if now < lastReceivedAt { stop(clear: true) }
-        else if now - startedAt >= Self.sessionDuration { stop() }
+        if now < lastReceivedAt { stop(clear: true) } else if now - startedAt >= Self.sessionDuration { stop() }
     }
 
-    mutating func append(kind: InputDiagnostic.Kind, phase: InputDiagnostic.Phase,
-                         modifiers: ModifierSet, outcome: InputDiagnostic.Outcome, at now: UInt64) {
+    mutating func append(
+        kind: InputDiagnostic.Kind, phase: InputDiagnostic.Phase,
+        modifiers: ModifierSet, outcome: InputDiagnostic.Outcome, at now: UInt64
+    ) {
         expire(at: now)
         guard let startedAt else { return }
         lastReceivedAt = now
@@ -61,8 +65,9 @@ nonisolated struct InputDiagnostics: Sendable {
         }
         acceptedInWindow += 1
         sequence &+= 1
-        storage[next] = InputDiagnostic(id: sequence, elapsedMilliseconds: (now - startedAt) / 1_000_000,
-                                        kind: kind, phase: phase, modifiers: modifiers, outcome: outcome)
+        storage[next] = InputDiagnostic(
+            id: sequence, elapsedMilliseconds: (now - startedAt) / 1_000_000,
+            kind: kind, phase: phase, modifiers: modifiers, outcome: outcome)
         next = (next + 1) % Self.capacity
         if count < Self.capacity { count += 1 } else { omitted &+= 1 }
         revision &+= 1
@@ -75,7 +80,8 @@ nonisolated struct InputDiagnostics: Sendable {
         case .mouseButton(let number): kind = .button(number)
         case .scroll(let direction): kind = .wheel(direction)
         case .key, .mouseGesture, .buttonScroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .trackpadClick, .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: return
+            .twoFingerDoubleTap, .cornerTap, .trackpadClick, .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll:
+            return
         }
         let phase: InputDiagnostic.Phase
         switch event.phase {
@@ -85,8 +91,9 @@ nonisolated struct InputDiagnostics: Sendable {
         case .scroll: phase = .scroll
         case .modifiersChanged: return
         }
-        append(kind: kind, phase: phase, modifiers: event.modifiers,
-               outcome: queued ? .queued : (suppressed ? .suppressed : (adjusted ? .adjusted : .passedThrough)), at: now)
+        append(
+            kind: kind, phase: phase, modifiers: event.modifiers,
+            outcome: queued ? .queued : (suppressed ? .suppressed : (adjusted ? .adjusted : .passedThrough)), at: now)
     }
 
     func snapshot() -> DiagnosticSnapshot {

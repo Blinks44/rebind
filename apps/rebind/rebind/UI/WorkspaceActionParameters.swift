@@ -53,18 +53,26 @@ struct WorkspaceActionParameters: View {
             Text(hint)
                 .font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
         }
-        .fileImporter(isPresented: $showingPicker,
-                      allowedContentTypes: pickingApplication ? [.applicationBundle] : [.item, .folder]) { result in
+        .fileImporter(
+            isPresented: $showingPicker,
+            allowedContentTypes: pickingApplication ? [.applicationBundle] : [.item, .folder]
+        ) { result in
             switch result {
             case .success(let url):
                 let accessed = url.startAccessingSecurityScopedResource()
                 defer { if accessed { url.stopAccessingSecurityScopedResource() } }
                 if pickingApplication {
-                    guard let target = ApplicationTarget(bundleURL: url) else { selectionFailed = true; return }
+                    guard let target = ApplicationTarget(bundleURL: url) else {
+                        selectionFailed = true
+                        return
+                    }
                     application = target
                 } else {
                     let action = WorkspaceAction.openFile(url.standardizedFileURL)
-                    guard action.isSupported else { selectionFailed = true; return }
+                    guard action.isSupported else {
+                        selectionFailed = true
+                        return
+                    }
                     file = action.url
                 }
             case .failure:

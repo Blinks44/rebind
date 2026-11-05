@@ -46,8 +46,9 @@ nonisolated struct MouseHardwareSettings: Codable, Hashable, Sendable {
     /// The glide for this mouse's wheel, or nil when smooth scrolling is off for it.
     var smoothScrollingSettings: SmoothScrollingSettings? {
         guard smoothScrolling == true else { return nil }
-        return SmoothScrollingSettings(glide: smoothScrollingGlide ?? .standard,
-                                       pointsPerLine: Double(smoothScrollingDistance ?? SmoothScrollingDistance.standard))
+        return SmoothScrollingSettings(
+            glide: smoothScrollingGlide ?? .standard,
+            pointsPerLine: Double(smoothScrollingDistance ?? SmoothScrollingDistance.standard))
     }
 
     static func deviceKey(vendorID: Int, name: String) -> String {

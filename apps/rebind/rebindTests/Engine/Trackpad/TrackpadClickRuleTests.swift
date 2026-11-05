@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadClickRuleTests {
@@ -12,17 +13,22 @@ struct TrackpadClickRuleTests {
 
         init(fingers: [Int] = [2, 3, 4]) {
             let rules = fingers.map {
-                rebind.Binding(scope: .builtInTrackpad, trigger: .trackpadClick(fingers: $0), modifiers: [],
-                               action: .shortcut(.init(keyCode: UInt16(10 + $0), modifiers: .command)))
+                rebind.Binding(
+                    scope: .builtInTrackpad, trigger: .trackpadClick(fingers: $0), modifiers: [],
+                    action: .shortcut(.init(keyCode: UInt16(10 + $0), modifiers: .command)))
             }
             mailbox.configure(Configuration(isEnabled: true, bindings: rules))
-            mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+            mailbox.state.withLock {
+                $0.status = .active
+                $0.foregroundPID = 100
+            }
         }
 
         /// Defaults to a Force Touch surface pressed hard enough to click.
         mutating func rest(fingers: Int, at time: UInt64, force: Float = 120, reportsForce: Bool = true, shift: Float = 0) {
-            var frame = NativeTrackpadFrame(receipt: time, revision: 0, activity: 0, frame: nextID,
-                                            time: Double(time) / 1_000_000_000, count: fingers)
+            var frame = NativeTrackpadFrame(
+                receipt: time, revision: 0, activity: 0, frame: nextID,
+                time: Double(time) / 1_000_000_000, count: fingers)
             nextID += 1
             let contacts = (0..<fingers).map {
                 ShortContactRecognizer.Contact(id: Int32($0), x: 0.3 + Float($0) * 0.1 + shift, y: 0.5, pressure: force)
@@ -130,7 +136,10 @@ struct TrackpadClickRuleTests {
         var h = Harness()
         h.rest(fingers: 3, at: now)
         #expect(h.mailbox.handle(InputEvent(trigger: .mouseButton(0), phase: .down, receivedAt: now + 1), secureInput: true) == false)
-        h.mailbox.state.withLock { $0.status = .active; $0.editing = true }
+        h.mailbox.state.withLock {
+            $0.status = .active
+            $0.editing = true
+        }
         h.rest(fingers: 3, at: now + 10_000_000)
         #expect(h.button(0, .down, at: now + 15_000_000) == false)
         #expect(h.queued.isEmpty)
@@ -144,8 +153,9 @@ struct TrackpadClickRuleTests {
 
     @Test(arguments: 2...4)
     func clickRuleRoundTripsAndOlderSchemasCannotCarryIt(_ fingers: Int) throws {
-        let binding = rebind.Binding(scope: .builtInTrackpad, trigger: .trackpadClick(fingers: fingers), modifiers: [],
-                                     action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .trackpadClick(fingers: fingers), modifiers: [],
+            action: .shortcut(.init(keyCode: 13, modifiers: .command)))
         let configuration = Configuration(isEnabled: true, bindings: [binding])
         try configuration.validate()
         let decoded = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(configuration))
@@ -171,8 +181,9 @@ struct TrackpadClickRuleTests {
 struct TrackpadActionCatalogTests {
     @Test func tapAndClickRulesAcceptAnyCatalogActionButOlderFilesCannotCarryThem() throws {
         let tap = rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .lockScreen)
-        let click = rebind.Binding(scope: .builtInTrackpad, trigger: .trackpadClick(fingers: 3), modifiers: [],
-                                   action: .media(.playPause))
+        let click = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .trackpadClick(fingers: 3), modifiers: [],
+            action: .media(.playPause))
         let configuration = Configuration(isEnabled: true, bindings: [tap, click])
         try configuration.validate()
         var old = configuration
@@ -181,7 +192,10 @@ struct TrackpadActionCatalogTests {
 
         let mailbox = EngineMailbox()
         mailbox.configure(configuration)
-        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         let runtime = try #require(mailbox.trackpadRuntime())
         #expect(runtime.actions == [.single(.threeFinger): .lockScreen] && runtime.hasClickRules)
         #expect(mailbox.submitTrackpad(runtime, gesture: .single(.threeFinger), pid: 100, at: 1_000))

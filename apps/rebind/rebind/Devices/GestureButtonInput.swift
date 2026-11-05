@@ -31,10 +31,10 @@ nonisolated final class GestureButtonInput: Sendable {
     func receive(connection: UUID, generation: UInt64, index: UInt8, down: Bool, changed: (Bool) -> Void) {
         state.withLock {
             guard let route = $0.routes[connection], route.generation == generation,
-                  route.indices.contains(index) else { return }
+                route.indices.contains(index)
+            else { return }
             let wasDown = $0.isDown
-            if down { $0.pressed[connection, default: []].insert(index) }
-            else { $0.pressed[connection]?.remove(index) }
+            if down { $0.pressed[connection, default: []].insert(index) } else { $0.pressed[connection]?.remove(index) }
             if wasDown != $0.isDown { changed($0.isDown) }
         }
     }

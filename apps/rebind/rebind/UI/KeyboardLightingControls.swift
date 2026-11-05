@@ -21,20 +21,26 @@ struct KeyboardLightingControls: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             if state.supportsPower {
-                Toggle(isOn: SwiftUI.Binding(get: { settings.isEnabled }, set: { value in
-                    var updated = settings
-                    updated.isEnabled = value
-                    save(updated)
-                })) { label(.lightingTitle, state.isExperimental ? .lightingDeviceDescription : .lightingDescription) }
-                    .toggleStyle(ThemeSwitchStyle())
+                Toggle(
+                    isOn: SwiftUI.Binding(
+                        get: { settings.isEnabled },
+                        set: { value in
+                            var updated = settings
+                            updated.isEnabled = value
+                            save(updated)
+                        })
+                ) { label(.lightingTitle, state.isExperimental ? .lightingDeviceDescription : .lightingDescription) }
+                .toggleStyle(ThemeSwitchStyle())
             }
 
             if settings.isEnabled || !state.supportsPower {
                 if !state.brightnessValues.isEmpty {
-                    SettingSlider(title: .lightingBrightness,
-                                  description: state.isExperimental ? .lightingDeviceBrightnessDescription : .lightingBrightnessDescription,
-                                  value: lowBatteryActive ? settings.brightness : max(1, state.brightness),
-                                  values: state.brightnessValues, valueLabel: { .lightingPercentValue($0) }) { value in
+                    SettingSlider(
+                        title: .lightingBrightness,
+                        description: state.isExperimental ? .lightingDeviceBrightnessDescription : .lightingBrightnessDescription,
+                        value: lowBatteryActive ? settings.brightness : max(1, state.brightness),
+                        values: state.brightnessValues, valueLabel: { .lightingPercentValue($0) }
+                    ) { value in
                         var updated = settings
                         updated.brightness = value
                         save(updated)
@@ -42,29 +48,37 @@ struct KeyboardLightingControls: View {
                 }
                 HStack {
                     label(.lightingColor, state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription)
-                    ColorPicker(selection: SwiftUI.Binding(get: { Self.color(settings.color ?? 0x2CC7E7) }, set: { color in
-                        guard let rgb = Self.rgb(color) else { return }
-                        var updated = settings
-                        updated.color = rgb
-                        save(updated)
-                    }), supportsOpacity: false) { Text(.lightingColor) }
-                        .labelsHidden()
-                        .accessibilityLabel(Text(.lightingColor))
-                        .accessibilityValue(settings.color.map { String(format: "#%06X", $0) } ?? "")
-                        .help(Text(state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription))
-                        .frame(width: 44)
+                    ColorPicker(
+                        selection: SwiftUI.Binding(
+                            get: { Self.color(settings.color ?? 0x2CC7E7) },
+                            set: { color in
+                                guard let rgb = Self.rgb(color) else { return }
+                                var updated = settings
+                                updated.color = rgb
+                                save(updated)
+                            }), supportsOpacity: false
+                    ) { Text(.lightingColor) }
+                    .labelsHidden()
+                    .accessibilityLabel(Text(.lightingColor))
+                    .accessibilityValue(settings.color.map { String(format: "#%06X", $0) } ?? "")
+                    .help(Text(state.isExperimental ? .lightingDeviceColorDescription : .lightingColorDescription))
+                    .frame(width: 44)
                 }
                 if let policy = state.powerPolicy {
                     HStack {
                         label(.lightingIdleTitle, .lightingIdleDescription)
-                        MenuSelector(selection: SwiftUI.Binding(get: { settings.idleTimeout }, set: { value in
-                            var updated = settings
-                            updated.idleTimeout = value
-                            // Capture the device's own policy once, so Device default can restore it.
-                            if value != nil, updated.devicePowerPolicy == nil { updated.devicePowerPolicy = policy }
-                            save(updated)
-                        }), title: .lightingIdleTitle, choices: [nil] + KeyboardLightingSettings.idleTimeouts,
-                        label: Self.idleLabel)
+                        MenuSelector(
+                            selection: SwiftUI.Binding(
+                                get: { settings.idleTimeout },
+                                set: { value in
+                                    var updated = settings
+                                    updated.idleTimeout = value
+                                    // Capture the device's own policy once, so Device default can restore it.
+                                    if value != nil, updated.devicePowerPolicy == nil { updated.devicePowerPolicy = policy }
+                                    save(updated)
+                                }), title: .lightingIdleTitle, choices: [nil] + KeyboardLightingSettings.idleTimeouts,
+                            label: Self.idleLabel
+                        )
                         .fixedSize()
                     }
                 }
@@ -74,13 +88,16 @@ struct KeyboardLightingControls: View {
                 Theme.separator.frame(height: 1).padding(.vertical, 1)
                 VStack(alignment: .leading, spacing: 12) {
                     label(.lightingLowBattery, lowBatteryActive ? .lightingLowBatteryActive : .lightingLowBatteryDescription)
-                    SegmentedPicker(selection: SwiftUI.Binding(get: { settings.lowBattery }, set: { value in
-                        var updated = settings
-                        updated.lowBattery = value
-                        save(updated)
-                    }), title: .lightingLowBattery,
-                    options: state.supportsBlinking ? KeyboardLightingSettings.LowBattery.allCases : [.keepColor, .red],
-                    label: \.label, fillsWidth: true)
+                    SegmentedPicker(
+                        selection: SwiftUI.Binding(
+                            get: { settings.lowBattery },
+                            set: { value in
+                                var updated = settings
+                                updated.lowBattery = value
+                                save(updated)
+                            }), title: .lightingLowBattery,
+                        options: state.supportsBlinking ? KeyboardLightingSettings.LowBattery.allCases : [.keepColor, .red],
+                        label: \.label, fillsWidth: true)
                 }
             }
             if failed {
@@ -106,8 +123,9 @@ struct KeyboardLightingControls: View {
     }
 
     static func color(_ rgb: UInt32) -> Color {
-        Color(.sRGB, red: Double((rgb >> 16) & 255) / 255,
-              green: Double((rgb >> 8) & 255) / 255, blue: Double(rgb & 255) / 255, opacity: 1)
+        Color(
+            .sRGB, red: Double((rgb >> 16) & 255) / 255,
+            green: Double((rgb >> 8) & 255) / 255, blue: Double(rgb & 255) / 255, opacity: 1)
     }
 
     static func rgb(_ color: Color) -> UInt32? {

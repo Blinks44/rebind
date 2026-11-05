@@ -8,9 +8,11 @@ nonisolated struct WindowCycleState<Element: Equatable> {
 
     func order(application: Element, revision: UInt64, observed: [Element]) -> [Element]? {
         guard !observed.isEmpty, observed.count <= Self.maximumWindows,
-              observed.indices.allSatisfy({ !observed[..<$0].contains(observed[$0]) }) else { return nil }
+            observed.indices.allSatisfy({ !observed[..<$0].contains(observed[$0]) })
+        else { return nil }
         guard self.application == application, self.revision == revision,
-              windows.count == observed.count, windows.allSatisfy(observed.contains) else { return observed }
+            windows.count == observed.count, windows.allSatisfy(observed.contains)
+        else { return observed }
         // Use freshly enumerated handles, retaining only the previous ordering.
         return windows.compactMap { cached in observed.first { $0 == cached } }
     }

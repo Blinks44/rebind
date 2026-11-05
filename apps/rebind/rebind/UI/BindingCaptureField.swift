@@ -36,13 +36,26 @@ struct BindingCaptureField: View {
             } else {
                 if wrapsControls {
                     ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 12) { captureValue; recordButton.fixedSize(); clearButton }
+                        HStack(spacing: 12) {
+                            captureValue
+                            recordButton.fixedSize()
+                            clearButton
+                        }
                         VStack(alignment: .leading, spacing: 12) {
-                            HStack { captureValue; clearButton }
+                            HStack {
+                                captureValue
+                                clearButton
+                            }
                             recordButton.fixedSize(horizontal: false, vertical: true)
                         }
                     }
-                } else { HStack(spacing: 12) { captureValue; recordButton; clearButton } }
+                } else {
+                    HStack(spacing: 12) {
+                        captureValue
+                        recordButton
+                        clearButton
+                    }
+                }
             }
         }
         .padding(.leading, 14).padding(.trailing, 10).padding(.vertical, 12)
@@ -50,20 +63,25 @@ struct BindingCaptureField: View {
         .background(isListening ? Theme.accentTint : Theme.insetSurface, in: .rect(cornerRadius: 16, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(isListening ? Theme.accent : Theme.borderSubtle, lineWidth: isListening ? Theme.accentBorderWidth(displayScale: displayScale) : 1)
+                .strokeBorder(
+                    isListening ? Theme.accent : Theme.borderSubtle,
+                    lineWidth: isListening ? Theme.accentBorderWidth(displayScale: displayScale) : 1)
         }
         .onChange(of: isListening) { wasListening, listening in
             if listening {
                 cancelFocused = true
                 AccessibilityNotification.Announcement(AppLocalization.string(prompt)).post()
-            } else if wasListening { recordFocused = true }
+            } else if wasListening {
+                recordFocused = true
+            }
         }
     }
 
     private var captureValue: some View {
         Group {
-            if let shortcut { ShortcutKeycaps(shortcut: shortcut) }
-            else {
+            if let shortcut {
+                ShortcutKeycaps(shortcut: shortcut)
+            } else {
                 HStack(spacing: 12) {
                     if let value {
                         TriggerChip(label: value, symbol: target == .keyboardTrigger ? "keyboard" : "computermouse")
@@ -90,10 +108,10 @@ struct BindingCaptureField: View {
             Image(systemName: "xmark.circle.fill").font(.system(size: 15)).foregroundStyle(Theme.iconTertiary)
                 .frame(width: 28, height: 28).contentShape(.rect)
         }
-            .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
-            .keyboardFocusRing(Circle())
-            .accessibilityLabel(Text(isOutput ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
-            .disabled(value == nil || recording != nil)
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
+        .keyboardFocusRing(Circle())
+        .accessibilityLabel(Text(isOutput ? LocalizedStringResource.mouseClearOutput : .mouseClearTrigger))
+        .disabled(value == nil || recording != nil)
     }
 
     private var prompt: LocalizedStringResource {

@@ -3,13 +3,20 @@ import Foundation
 
 enum InputLabels {
     static func key(_ code: UInt16) -> String {
-        let special: [UInt16: String] = [36: "↩", 48: "⇥", 49: "␣", 51: "⌫", 53: "⎋", 76: "⌤", 117: "⌦", 123: "←", 124: "→", 125: "↓", 126: "↑", 115: "↖", 119: "↘", 116: "⇞", 121: "⇟"]
+        let special: [UInt16: String] = [
+            36: "↩", 48: "⇥", 49: "␣", 51: "⌫", 53: "⎋", 76: "⌤", 117: "⌦", 123: "←", 124: "→", 125: "↓", 126: "↑", 115: "↖", 119: "↘",
+            116: "⇞", 121: "⇟",
+        ]
         if let label = special[code] { return label }
-        let functionKeys: [UInt16: Int] = [122: 1, 120: 2, 99: 3, 118: 4, 96: 5, 97: 6, 98: 7, 100: 8, 101: 9, 109: 10, 103: 11, 111: 12, 105: 13, 107: 14, 113: 15, 106: 16, 64: 17, 79: 18, 80: 19, 90: 20]
+        let functionKeys: [UInt16: Int] = [
+            122: 1, 120: 2, 99: 3, 118: 4, 96: 5, 97: 6, 98: 7, 100: 8, 101: 9, 109: 10, 103: 11, 111: 12, 105: 13, 107: 14, 113: 15,
+            106: 16, 64: 17, 79: 18, 80: 19, 90: 20,
+        ]
         if let number = functionKeys[code] { return "F\(number)" }
         // Translate an explicitly configured physical key, never received typed text.
         guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
-              let raw = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else {
+            let raw = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData)
+        else {
             return AppLocalization.string(.physicalKey(Int(code)))
         }
         let data = Unmanaged<CFData>.fromOpaque(raw).takeUnretainedValue()
@@ -18,7 +25,9 @@ enum InputLabels {
         var deadKey: UInt32 = 0
         var length = 0
         var characters = [UniChar](repeating: 0, count: 8)
-        let result = UCKeyTranslate(layout, code, UInt16(kUCKeyActionDisplay), 0, UInt32(LMGetKbdType()), OptionBits(kUCKeyTranslateNoDeadKeysBit), &deadKey, characters.count, &length, &characters)
+        let result = UCKeyTranslate(
+            layout, code, UInt16(kUCKeyActionDisplay), 0, UInt32(LMGetKbdType()), OptionBits(kUCKeyTranslateNoDeadKeysBit), &deadKey,
+            characters.count, &length, &characters)
         guard result == noErr, length > 0 else { return AppLocalization.string(.physicalKey(Int(code))) }
         return String(utf16CodeUnits: characters, count: length).uppercased()
     }
@@ -54,12 +63,14 @@ enum InputLabels {
 
     /// "Button 4", or the name of a button Quartz does not number, such as the gesture button.
     static func buttonName(_ number: UInt32) -> String {
-        number == InputTrigger.gestureButton ? AppLocalization.string(.gestureButton)
+        number == InputTrigger.gestureButton
+            ? AppLocalization.string(.gestureButton)
             : AppLocalization.string(.mouseButton(Int(number) + 1))
     }
 
     private static func buttonGesture(_ button: UInt32, direction: String) -> String {
-        button == InputTrigger.gestureButton ? AppLocalization.string(.gestureButtonGesture(direction.lowercased()))
+        button == InputTrigger.gestureButton
+            ? AppLocalization.string(.gestureButtonGesture(direction.lowercased()))
             : AppLocalization.string(.mouseGesture(Int(button) + 1, direction.lowercased()))
     }
 

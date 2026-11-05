@@ -3,6 +3,7 @@ import Dispatch
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct MagicMouseTests {
@@ -15,17 +16,26 @@ struct MagicMouseTests {
         var session: MagicMouseTapSession
         var nextID: Int32 = 0
 
-        init(fingers: [Int] = [1, 2, 3], sides: [MagicMouseSide] = [], modifiers: ModifierSet = [],
-             buttonsDown: Bool = false) throws {
-            let bindings = fingers.map {
-                rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: $0), modifiers: modifiers,
-                               action: .shortcut(.init(keyCode: UInt16(12 + $0), modifiers: .command)))
-            } + sides.map {
-                rebind.Binding(scope: .magicMouse, trigger: .magicMouseSideTap($0), modifiers: modifiers,
-                               action: .shortcut(.init(keyCode: $0 == .left ? 20 : 21, modifiers: .command)))
-            }
+        init(
+            fingers: [Int] = [1, 2, 3], sides: [MagicMouseSide] = [], modifiers: ModifierSet = [],
+            buttonsDown: Bool = false
+        ) throws {
+            let bindings =
+                fingers.map {
+                    rebind.Binding(
+                        scope: .magicMouse, trigger: .magicMouseTap(fingers: $0), modifiers: modifiers,
+                        action: .shortcut(.init(keyCode: UInt16(12 + $0), modifiers: .command)))
+                }
+                + sides.map {
+                    rebind.Binding(
+                        scope: .magicMouse, trigger: .magicMouseSideTap($0), modifiers: modifiers,
+                        action: .shortcut(.init(keyCode: $0 == .left ? 20 : 21, modifiers: .command)))
+                }
             mailbox.configure(Configuration(isEnabled: true, bindings: bindings))
-            mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+            mailbox.state.withLock {
+                $0.status = .active
+                $0.foregroundPID = 100
+            }
             runtime = try #require(mailbox.magicMouseRuntime(modifiers: modifiers, buttonsDown: buttonsDown))
             buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicMouse: true)
             buffer.setAccepting(true)
@@ -33,7 +43,8 @@ struct MagicMouseTests {
         }
 
         mutating func contact(_ count: Int, at time: UInt64, shift: Float = 0) {
-            var frame = NativeTrackpadFrame(receipt: time, revision: runtime.revision, activity: runtime.activity,
+            var frame = NativeTrackpadFrame(
+                receipt: time, revision: runtime.revision, activity: runtime.activity,
                 frame: nextID, time: Double(time) / 1_000_000_000, count: count)
             nextID += 1
             if count > 0 { frame.first = .init(id: 0, x: 0.4 + shift, y: 0.5, pressure: 0) }
@@ -65,12 +76,17 @@ struct MagicMouseTests {
         #expect(h.ready(at: lift + 70_000_000) == nil)
         #expect(h.mailbox.submitMagicMouse(h.runtime, trigger: ready, pid: 100, at: lift + 60_000_000))
         let outputs = Mutex<[KeyboardShortcut]>([])
-        let worker = ActionWorker(mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 #expect(target.isMagicMouse && target.pid == 100 && canPerform())
                 outputs.withLock { $0.append(shortcut) }
                 return .performed
-            }, sendShortcut: { _ in Issue.record("Mouse touch used global shortcut sender"); return false },
+            },
+            sendShortcut: { _ in
+                Issue.record("Mouse touch used global shortcut sender")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         worker.service(at: lift + 70_000_000)
         worker.service(at: lift + 80_000_000)
@@ -87,7 +103,9 @@ struct MagicMouseTests {
         case 2: _ = h.mailbox.handle(.init(trigger: .key(0), phase: .down), secureInput: false)
         case 3: h.mailbox.handleUnsupportedScroll(modifiers: [], at: lift + 1, secureInput: false)
         case 4: _ = h.mailbox.handlePointerMotion(.init(deltaX: 1, deltaY: 0), modifiers: [], receivedAt: lift + 1, secureInput: false)
-        case 5: h.mailbox.updateTrackpadForeground(101); h.mailbox.updateTrackpadForeground(100)
+        case 5:
+            h.mailbox.updateTrackpadForeground(101)
+            h.mailbox.updateTrackpadForeground(100)
         case 6: h.buffer.state.withLock { $0.overflow = true }
         default: h.buffer.setAccepting(false)
         }
@@ -114,8 +132,10 @@ struct MagicMouseTests {
         (0.1, [.left, .right], .magicMouseTap(fingers: 1)),
         (0.4, [.left], .magicMouseTap(fingers: 1)),
     ])
-    func sideRuleWinsOnItsHalfOtherwiseOneFingerTapApplies(_ shift: Float, _ sides: [MagicMouseSide],
-                                                          _ expected: InputTrigger) throws {
+    func sideRuleWinsOnItsHalfOtherwiseOneFingerTapApplies(
+        _ shift: Float, _ sides: [MagicMouseSide],
+        _ expected: InputTrigger
+    ) throws {
         var h = try Harness(sides: sides)
         h.tap(1, endingAt: lift, shift: shift)
         let recognized = h.ready(at: lift + 60_000_000)
@@ -157,8 +177,10 @@ struct MagicMouseTests {
         h.nextID += 500
         h.tap(2, endingAt: lift + 1_000_000_000)
         h.buffer.state.withLock {
-            $0.append(.init(receipt: lift + 1_010_000_000, revision: h.runtime.revision,
-                           activity: h.runtime.activity, frame: h.nextID, time: 5.01, count: 1), generation: $0.generation)
+            $0.append(
+                .init(
+                    receipt: lift + 1_010_000_000, revision: h.runtime.revision,
+                    activity: h.runtime.activity, frame: h.nextID, time: 5.01, count: 1), generation: $0.generation)
         }
         #expect(h.ready(at: lift + 1_060_000_000) == nil)
         h.session.consumeBufferedFrames(from: h.buffer, clock: { lift + 1_060_000_000 })
@@ -167,7 +189,12 @@ struct MagicMouseTests {
 
     @Test func nativeMouseBufferUsesItsOwnActivityAndNeverFeedsTrackpadClickFilters() throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true; $0.inputActivity = 4; $0.magicMouseActivity = 9 }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+            $0.inputActivity = 4
+            $0.magicMouseActivity = 9
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicMouse: true)
         buffer.setAccepting(true)
         let raw = UnsafeMutableRawPointer.allocate(byteCount: 96, alignment: 8)
@@ -227,7 +254,8 @@ struct MagicMouseTests {
         var skewed = try Harness()
         for index in 0...5 {
             let receipt = lift + UInt64(index) * 80_000_000
-            var frame = NativeTrackpadFrame(receipt: receipt, revision: skewed.runtime.revision,
+            var frame = NativeTrackpadFrame(
+                receipt: receipt, revision: skewed.runtime.revision,
                 activity: skewed.runtime.activity, frame: Int32(index), time: 4 + Double(index) * 0.02,
                 count: index == 0 || index == 5 ? 0 : 1)
             if frame.count == 1 { frame.first = .init(id: 0, x: 0.5, y: 0.5, pressure: 0) }
@@ -252,9 +280,12 @@ struct MagicMouseTests {
         #expect(needsMotion)
         let mask = EventTapWorker.eventMask(capturePointerMotion: needsMotion)
         #expect(mask & (CGEventMask(1) << CGEventType.mouseMoved.rawValue) != 0)
-        h.mailbox.configure(Configuration(isEnabled: false, bindings: [
-            rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
-        ]))
+        h.mailbox.configure(
+            Configuration(
+                isEnabled: false,
+                bindings: [
+                    rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: 1), modifiers: [], action: .doNothing)
+                ]))
         #expect(h.mailbox.state.withLock { $0.needsPointerMotion } == false)
         h.mailbox.configure(Configuration(isEnabled: true))
         #expect(h.mailbox.state.withLock { $0.hasMagicMouseRules || $0.needsPointerMotion } == false)

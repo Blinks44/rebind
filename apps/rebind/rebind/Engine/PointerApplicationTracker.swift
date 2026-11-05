@@ -62,12 +62,17 @@ nonisolated final class PointerApplicationTracker: @unchecked Sendable {
     }
     /// The owner of the frontmost ordinary window containing the point (global, top-left origin).
     static func bundleIdentifier(at point: CGPoint) -> String? {
-        guard let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements],
-                                                       kCGNullWindowID) as? [[String: Any]] else { return nil }
+        guard
+            let windows = CGWindowListCopyWindowInfo(
+                [.optionOnScreenOnly, .excludeDesktopElements],
+                kCGNullWindowID) as? [[String: Any]]
+        else { return nil }
         for window in windows where window[kCGWindowLayer as String] as? Int == 0 {
-            guard let bounds = (window[kCGWindowBounds as String] as? NSDictionary)
+            guard
+                let bounds = (window[kCGWindowBounds as String] as? NSDictionary)
                     .flatMap({ CGRect(dictionaryRepresentation: $0 as CFDictionary) }),
-                  bounds.contains(point), let pid = window[kCGWindowOwnerPID as String] as? pid_t else { continue }
+                bounds.contains(point), let pid = window[kCGWindowOwnerPID as String] as? pid_t
+            else { continue }
             return NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
         }
         return nil

@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Permission fixtures never request grants or start input capture.
@@ -12,18 +13,24 @@ import XCTest
         var configuration = Configuration()
         configuration.hasCompletedSetup = true
         try store.save(configuration)
-        let grants = [InputPermissions(), InputPermissions(accessibility: true),
-                      InputPermissions(accessibility: true, posting: true)]
-        let sizes = [NSSize(width: 600, height: 480), NSSize(width: 648, height: 600),
-                     NSSize(width: 808, height: 640)]
+        let grants = [
+            InputPermissions(), InputPermissions(accessibility: true),
+            InputPermissions(accessibility: true, posting: true),
+        ]
+        let sizes = [
+            NSSize(width: 600, height: 480), NSSize(width: 648, height: 600),
+            NSSize(width: 808, height: 640),
+        ]
         for (state, permissions) in grants.enumerated() {
-            let model = AppModel(store: store, readPermissions: { permissions },
+            let model = AppModel(
+                store: store, readPermissions: { permissions },
                 loginItem: LoginItemModel(service: LoginItemServiceStub()),
                 preferredLanguages: ["en"], languagePreferenceSaved: { _ in })
             for language in AppLanguage.allCases.map(\.rawValue) {
                 for appearance in [ColorScheme.light, .dark] {
-                    let controller = NSHostingController(rootView: SettingsView(model: model, selection: .constant(.permissions))
-                        .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
+                    let controller = NSHostingController(
+                        rootView: SettingsView(model: model, selection: .constant(.permissions))
+                            .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                     let window = NSWindow(contentViewController: controller)
                     window.isReleasedWhenClosed = false
                     window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
@@ -44,13 +51,18 @@ import XCTest
                         XCTAssertLessThanOrEqual(bounds.maxY, size.height + 1, context)
                         XCTAssertLessThanOrEqual(document.frame.width, scroll.contentView.bounds.width + 1, context)
                         // All guidance remains reachable when the content exceeds the viewport.
-                        document.scrollToVisible(NSRect(x: 0,
-                            y: document.isFlipped ? document.bounds.maxY - 1 : document.bounds.minY,
-                            width: 1, height: 1))
-                        XCTAssertGreaterThanOrEqual(document.visibleRect.maxY,
+                        document.scrollToVisible(
+                            NSRect(
+                                x: 0,
+                                y: document.isFlipped ? document.bounds.maxY - 1 : document.bounds.minY,
+                                width: 1, height: 1))
+                        XCTAssertGreaterThanOrEqual(
+                            document.visibleRect.maxY,
                             document.isFlipped ? document.bounds.maxY - 1 : 0, context)
-                        document.scrollToVisible(NSRect(x: 0, y: document.isFlipped ? 0 : document.bounds.maxY - 1,
-                                                        width: 1, height: 1))
+                        document.scrollToVisible(
+                            NSRect(
+                                x: 0, y: document.isFlipped ? 0 : document.bounds.maxY - 1,
+                                width: 1, height: 1))
                         if size.width == 808 && language == "de" || size.width == 600 && language == "ru" {
                             let bitmap = try XCTUnwrap(controller.view.bitmapImageRepForCachingDisplay(in: controller.view.bounds))
                             controller.view.cacheDisplay(in: controller.view.bounds, to: bitmap)

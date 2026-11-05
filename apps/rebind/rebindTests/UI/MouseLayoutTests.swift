@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Isolated native fixtures never start the input worker or load user configuration.
@@ -14,12 +15,16 @@ import XCTest
             configuration.hasCompletedSetup = true
             try store.save(configuration)
             for hasAccess in [false, true] {
-                let model = AppModel(store: store,
+                let model = AppModel(
+                    store: store,
                     readPermissions: { InputPermissions(accessibility: hasAccess, posting: hasAccess) })
                 for language in AppLanguage.allCases.map(\.rawValue) {
                     for appearance in [ColorScheme.light, .dark] {
-                        let controller = NSHostingController(rootView: ContentView(model: model,
-                            initialDestination: .input(.allMice))
+                        let controller = NSHostingController(
+                            rootView: ContentView(
+                                model: model,
+                                initialDestination: .input(.allMice)
+                            )
                             .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                         let window = NSWindow(contentViewController: controller)
                         window.styleMask.insert(.fullSizeContentView)
@@ -57,11 +62,15 @@ import XCTest
                     var configuration = Configuration(bindings: existing.map { [$0] } ?? [])
                     configuration.hasCompletedSetup = true
                     try store.save(configuration)
-                    let model = AppModel(store: store,
+                    let model = AppModel(
+                        store: store,
                         readPermissions: { InputPermissions(accessibility: true, posting: true) })
-                    let controller = NSHostingController(rootView: BindingEditor(model: model, scope: .allMice,
-                        existing: existing).environment(\.locale, Locale(identifier: language))
-                        .preferredColorScheme(appearance))
+                    let controller = NSHostingController(
+                        rootView: BindingEditor(
+                            model: model, scope: .allMice,
+                            existing: existing
+                        ).environment(\.locale, Locale(identifier: language))
+                            .preferredColorScheme(appearance))
                     let window = NSWindow(contentViewController: controller)
                     window.isReleasedWhenClosed = false
                     window.appearance = NSAppearance(named: appearance == .light ? .aqua : .darkAqua)
@@ -86,11 +95,13 @@ import XCTest
         let action = RebindAction.shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command))
         return [
             rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control, action: action),
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(8), modifiers: [], action: .media(.playPause),
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseButton(8), modifiers: [], action: .media(.playPause),
                 activation: .hold, holdDurationMilliseconds: 1500),
             rebind.Binding(scope: .allMice, trigger: .scroll(.up), modifiers: .control, action: .system(.volumeUp)),
-            rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 99, direction: .right), modifiers: [],
-                action: action, isEnabled: false)
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseGesture(button: 99, direction: .right), modifiers: [],
+                action: action, isEnabled: false),
         ]
     }
 

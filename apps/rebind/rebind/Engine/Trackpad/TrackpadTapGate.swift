@@ -2,14 +2,23 @@
 // A button-free interval is a conservative test condition, not source proof.
 nonisolated struct TrackpadTapGate: Sendable {
     enum Reason: String, Encodable, Sendable {
-        case buttonEvent = "button-event", newContact = "new-contact"
-        case observerUnavailable = "observer-unavailable", invalidContacts = "invalid-contacts"
-        case receiptTime = "invalid-receipt-time", nativeTime = "invalid-native-time"
-        case frameGap = "frame-gap", invalidMetadata = "invalid-metadata"
-        case foregroundChanged = "foreground-changed", targetUnavailable = "target-unavailable"
-        case noCompleteStroke = "no-complete-stroke", otherFingerCount = "other-finger-count"
-        case armingDelay = "arming-delay", deadlineOverflow = "deadline-overflow"
-        case latePoll = "late-poll", consumed = "already-consumed", sessionEnded = "session-ended"
+        case buttonEvent = "button-event"
+        case newContact = "new-contact"
+        case observerUnavailable = "observer-unavailable"
+        case invalidContacts = "invalid-contacts"
+        case receiptTime = "invalid-receipt-time"
+        case nativeTime = "invalid-native-time"
+        case frameGap = "frame-gap"
+        case invalidMetadata = "invalid-metadata"
+        case foregroundChanged = "foreground-changed"
+        case targetUnavailable = "target-unavailable"
+        case noCompleteStroke = "no-complete-stroke"
+        case otherFingerCount = "other-finger-count"
+        case armingDelay = "arming-delay"
+        case deadlineOverflow = "deadline-overflow"
+        case latePoll = "late-poll"
+        case consumed = "already-consumed"
+        case sessionEnded = "session-ended"
     }
     static let armingDelay: UInt64 = 3_000_000_000
     // The hardware probe saw a native button-down 12 ms after lift (up at
@@ -35,8 +44,14 @@ nonisolated struct TrackpadTapGate: Sendable {
 
     mutating func contacts(_ count: Int?, at time: UInt64, buttons: UInt64, observerReady: Bool) {
         guard validTime(time) else { return }
-        guard observerReady else { cancel(reason: .observerUnavailable); return }
-        guard let count, (0...16).contains(count) else { cancel(reason: .invalidContacts); return }
+        guard observerReady else {
+            cancel(reason: .observerUnavailable)
+            return
+        }
+        guard let count, (0...16).contains(count) else {
+            cancel(reason: .invalidContacts)
+            return
+        }
         if count == 0 {
             if inContact {
                 completedButtons = strokeButtons == buttons ? buttons : nil
@@ -67,14 +82,30 @@ nonisolated struct TrackpadTapGate: Sendable {
     mutating func candidate(fingers: Int, at time: UInt64, buttons: UInt64, observerReady: Bool) -> Bool {
         defer { completedButtons = nil }
         rejection = nil
-        guard validTime(time) else { rejection = .receiptTime; return false }
-        guard observerReady else { rejection = .observerUnavailable; return false }
-        guard neutral, !inContact, buttons == completedButtons else { rejection = .noCompleteStroke; return false }
-        guard TrackpadTapSequence.candidateFingerCounts.contains(fingers) else {
-            rejection = .otherFingerCount; return false
+        guard validTime(time) else {
+            rejection = .receiptTime
+            return false
         }
-        guard time - startedAt >= Self.armingDelay else { rejection = .armingDelay; return false }
-        guard time <= UInt64.max - Self.settlingDelay else { rejection = .deadlineOverflow; return false }
+        guard observerReady else {
+            rejection = .observerUnavailable
+            return false
+        }
+        guard neutral, !inContact, buttons == completedButtons else {
+            rejection = .noCompleteStroke
+            return false
+        }
+        guard TrackpadTapSequence.candidateFingerCounts.contains(fingers) else {
+            rejection = .otherFingerCount
+            return false
+        }
+        guard time - startedAt >= Self.armingDelay else {
+            rejection = .armingDelay
+            return false
+        }
+        guard time <= UInt64.max - Self.settlingDelay else {
+            rejection = .deadlineOverflow
+            return false
+        }
         pendingAt = time
         pendingButtons = buttons
         return true
@@ -85,18 +116,31 @@ nonisolated struct TrackpadTapGate: Sendable {
         // callback queued just before this check may be consumed next poll.
         // Advancing the receipt clock here would reject that fresh callback.
         guard time >= startedAt, lastTime.map({ time >= $0 }) ?? true,
-              lastPollTime.map({ time >= $0 }) ?? true else {
+            lastPollTime.map({ time >= $0 }) ?? true
+        else {
             cancel(reason: .receiptTime)
             return false
         }
         lastPollTime = time
-        guard observerReady else { cancel(reason: .observerUnavailable); return false }
+        guard observerReady else {
+            cancel(reason: .observerUnavailable)
+            return false
+        }
         guard let pendingAt else { return false }
-        guard neutral, !inContact else { cancel(reason: .newContact); return false }
-        guard buttons == pendingButtons else { cancel(reason: .buttonEvent); return false }
+        guard neutral, !inContact else {
+            cancel(reason: .newContact)
+            return false
+        }
+        guard buttons == pendingButtons else {
+            cancel(reason: .buttonEvent)
+            return false
+        }
         guard time - pendingAt >= Self.settlingDelay else { return false }
         let late = time - pendingAt - Self.settlingDelay
-        guard late <= Self.maximumLateness else { cancel(reason: .latePoll); return false }
+        guard late <= Self.maximumLateness else {
+            cancel(reason: .latePoll)
+            return false
+        }
         self.pendingAt = nil
         pendingButtons = nil
         return true
@@ -118,7 +162,10 @@ nonisolated struct TrackpadTapGate: Sendable {
     }
 
     private mutating func validTime(_ time: UInt64) -> Bool {
-        guard time >= startedAt, lastTime.map({ time >= $0 }) ?? true else { cancel(reason: .receiptTime); return false }
+        guard time >= startedAt, lastTime.map({ time >= $0 }) ?? true else {
+            cancel(reason: .receiptTime)
+            return false
+        }
         lastTime = time
         return true
     }

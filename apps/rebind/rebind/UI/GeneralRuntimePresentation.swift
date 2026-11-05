@@ -4,13 +4,19 @@ import Foundation
 nonisolated enum GeneralRuntimePresentation: Equatable {
     case active, paused, starting, missingAccess, engineError, secureInput, suspended, storageLocked
 
-    init(isEnabled: Bool, permissions: InputPermissions, status: EngineStatus,
-         isSuspended: Bool, storageLocked: Bool) {
-        if storageLocked { self = .storageLocked }
-        else if !isEnabled { self = .paused }
-        else if !permissions.allowsRemapping { self = .missingAccess }
-        else if isSuspended { self = .suspended }
-        else {
+    init(
+        isEnabled: Bool, permissions: InputPermissions, status: EngineStatus,
+        isSuspended: Bool, storageLocked: Bool
+    ) {
+        if storageLocked {
+            self = .storageLocked
+        } else if !isEnabled {
+            self = .paused
+        } else if !permissions.allowsRemapping {
+            self = .missingAccess
+        } else if isSuspended {
+            self = .suspended
+        } else {
             switch status {
             case .active: self = .active
             case .paused: self = .starting

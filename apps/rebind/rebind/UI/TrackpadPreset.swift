@@ -6,8 +6,11 @@ nonisolated enum TrackpadPreset: Hashable, CaseIterable, Identifiable, Sendable 
     case click(fingers: Int)
     case cornerTap(TrackpadCorner)
 
-    static let allCases: [Self] = [.threeFingerTap, .fourFingerTap, .twoFingerDoubleTap, .threeFingerDoubleTap,
-                                   .fourFingerDoubleTap] + (2...4).map(Self.click)
+    static let allCases: [Self] =
+        [
+            .threeFingerTap, .fourFingerTap, .twoFingerDoubleTap, .threeFingerDoubleTap,
+            .fourFingerDoubleTap,
+        ] + (2...4).map(Self.click)
         + TrackpadCorner.allCases.map(Self.cornerTap)
 
     var id: Self { self }

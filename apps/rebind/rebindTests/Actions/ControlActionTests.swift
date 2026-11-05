@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct ControlActionTests {
@@ -15,16 +16,21 @@ import Testing
     }
 
     private func worker(_ mailbox: EngineMailbox) -> ActionWorker {
-        ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-                     sendShortcut: { _ in Issue.record("Nothing may be posted"); return false },
-                     secureInput: { false }, postingAllowed: { true })
+        ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            sendShortcut: { _ in
+                Issue.record("Nothing may be posted")
+                return false
+            },
+            secureInput: { false }, postingAllowed: { true })
     }
 
     private func event(_ phase: InputEvent.Phase) -> InputEvent { InputEvent(trigger: .mouseButton(3), phase: phase) }
 
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindControl-\(UUID())").appending(path: "config.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindControl-\(UUID())").appending(path: "config.json"))
     }
 
     @Test func everyControlKindRoundTripsThroughTheCatalog() {

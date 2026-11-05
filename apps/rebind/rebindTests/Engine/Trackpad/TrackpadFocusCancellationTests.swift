@@ -1,6 +1,7 @@
 import CoreGraphics
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadFocusCancellationTests {
@@ -8,10 +9,14 @@ struct TrackpadFocusCancellationTests {
 
     private func mailbox(for tap: TrackpadSingleTap = .fourFinger) -> EngineMailbox {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .builtInTrackpad, trigger: tap.trigger,
-                                     modifiers: [], action: .shortcut(shortcut))
+        let binding = rebind.Binding(
+            scope: .builtInTrackpad, trigger: tap.trigger,
+            modifiers: [], action: .shortcut(shortcut))
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
-        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         return mailbox
     }
 
@@ -47,24 +52,32 @@ struct TrackpadFocusCancellationTests {
         let posts = Mutex<[CGEventType]>([])
         let reasons = Mutex<[String]>([])
         let shouldSwitch = Mutex(true)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 var activeChecks = 0
-                return ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
+                return ShortcutSender.send(
+                    shortcut, to: target, canPerform: canPerform,
                     diagnose: { event in reasons.withLock { $0.append(event.key) } },
-                    allowsInput: { true }, blockedInput: { _ in nil }, targetIsActive: { pid in
+                    allowsInput: { true }, blockedInput: { _ in nil },
+                    targetIsActive: { pid in
                         activeChecks += 1
                         if activeChecks == 2 && shouldSwitch.withLock({ $0 }) {
                             mailbox.updateTrackpadForeground(101)
                             mailbox.updateTrackpadForeground(100)
                         }
                         return pid == 100
-                    }, clock: { 1 }, post: { event, pid in
+                    }, clock: { 1 },
+                    post: { event, pid in
                         #expect(pid == 100)
                         #expect(event.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag)
                         posts.withLock { $0.append(event.type) }
                     })
-            }, sendShortcut: { _ in Issue.record("Touch used global sender"); return false },
+            },
+            sendShortcut: { _ in
+                Issue.record("Touch used global sender")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         worker.service(at: 1)
         #expect(posts.withLock { $0.isEmpty })
@@ -87,7 +100,8 @@ struct TrackpadFocusCancellationTests {
         func enqueue(_ runtime: TrackpadRuntime, endingAt lift: UInt64, startingID: Int32) {
             for (offset, count) in [0, tap.rawValue, tap.rawValue, 0].enumerated() {
                 let receipt = lift - UInt64(3 - offset) * 20_000_000
-                var frame = NativeTrackpadFrame(receipt: receipt, revision: runtime.revision,
+                var frame = NativeTrackpadFrame(
+                    receipt: receipt, revision: runtime.revision,
                     activity: runtime.inputActivity, frame: startingID + Int32(offset),
                     time: Double(receipt) / 1_000_000_000, count: count)
                 if count > 0 { frame.first = .init(id: 0, x: 0.2, y: 0.5, pressure: 45) }
@@ -138,8 +152,9 @@ struct TrackpadFocusCancellationTests {
 
     @Test func focusCancellationPreservesKeyboardDispatchAndSuppressedReleaseOwnership() throws {
         let mailbox = mailbox()
-        let keyboard = rebind.Binding(scope: .allKeyboards, trigger: .key(0),
-                                      modifiers: [], action: .shortcut(shortcut))
+        let keyboard = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0),
+            modifiers: [], action: .shortcut(shortcut))
         mailbox.configure(Configuration(isEnabled: true, bindings: [keyboard]))
         let down = InputEvent(trigger: .key(0), phase: .down)
         try #require(mailbox.handle(down, secureInput: false) == true)

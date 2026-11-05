@@ -25,9 +25,10 @@ nonisolated struct WindowDisplaySnapshot: Equatable, Sendable {
     @MainActor static func current() -> Self {
         let screens = NSScreen.screens
         guard let primary = screens.first else { return Self() }
-        return Self(displays: screens.map {
-            WindowDisplay.fromCocoa(frame: $0.frame, visibleFrame: $0.visibleFrame, primaryTop: primary.frame.maxY)
-        }, capturedAt: DispatchTime.now().uptimeNanoseconds)
+        return Self(
+            displays: screens.map {
+                WindowDisplay.fromCocoa(frame: $0.frame, visibleFrame: $0.visibleFrame, primaryTop: primary.frame.maxY)
+            }, capturedAt: DispatchTime.now().uptimeNanoseconds)
     }
 }
 
@@ -50,7 +51,10 @@ nonisolated enum WindowLayoutGeometry {
             guard valid(display.frame), valid(display.visibleFrame), display.frame.contains(display.visibleFrame) else { return nil }
             let intersection = display.frame.intersection(window)
             let area = intersection.isNull ? 0 : intersection.width * intersection.height
-            if area > largestArea { largestArea = area; selected = index }
+            if area > largestArea {
+                largestArea = area
+                selected = index
+            }
         }
         guard let selected else { return nil }
         let display = displays[selected]
@@ -74,31 +78,36 @@ nonisolated enum WindowLayoutGeometry {
             return CGRect(x: usable.minX + leftWidth, y: usable.minY, width: usable.width - leftWidth, height: usable.height)
         case .center:
             guard window.width <= usable.width, window.height <= usable.height else { return nil }
-            return CGRect(x: usable.midX - window.width / 2, y: usable.midY - window.height / 2,
-                          width: window.width, height: window.height)
+            return CGRect(
+                x: usable.midX - window.width / 2, y: usable.midY - window.height / 2,
+                width: window.width, height: window.height)
         case .topHalf, .bottomHalf, .topLeft, .topRight, .bottomLeft, .bottomRight:
             let leftWidth = floor(usable.width / 2)
             let topHeight = floor(usable.height / 2)
             let isTop = [.topHalf, .topLeft, .topRight].contains(action)
             let isFullWidth = action == .topHalf || action == .bottomHalf
             let isLeft = action == .topLeft || action == .bottomLeft
-            return CGRect(x: isFullWidth || isLeft ? usable.minX : usable.minX + leftWidth,
-                          y: isTop ? usable.minY : usable.minY + topHeight,
-                          width: isFullWidth ? usable.width : (isLeft ? leftWidth : usable.width - leftWidth),
-                          height: isTop ? topHeight : usable.height - topHeight)
+            return CGRect(
+                x: isFullWidth || isLeft ? usable.minX : usable.minX + leftWidth,
+                y: isTop ? usable.minY : usable.minY + topHeight,
+                width: isFullWidth ? usable.width : (isLeft ? leftWidth : usable.width - leftWidth),
+                height: isTop ? topHeight : usable.height - topHeight)
         case .nextDisplay:
             guard displays.count > 1 else { return nil }
             let next = displays[(selected + 1) % displays.count].visibleFrame
             let size = CGSize(width: min(window.width, next.width), height: min(window.height, next.height))
             // Keep the window's relative place: a window on the left edge stays on the left edge.
-            func place(_ origin: CGFloat, _ length: CGFloat, from: (CGFloat, CGFloat), to: (CGFloat, CGFloat), _ newLength: CGFloat) -> CGFloat {
+            func place(_ origin: CGFloat, _ length: CGFloat, from: (CGFloat, CGFloat), to: (CGFloat, CGFloat), _ newLength: CGFloat)
+                -> CGFloat
+            {
                 let room = from.1 - length
                 let fraction = room > 0 ? min(max((origin - from.0) / room, 0), 1) : 0
                 return to.0 + fraction * (to.1 - newLength)
             }
-            return CGRect(x: place(window.minX, window.width, from: (usable.minX, usable.width), to: (next.minX, next.width), size.width),
-                          y: place(window.minY, window.height, from: (usable.minY, usable.height), to: (next.minY, next.height), size.height),
-                          width: size.width, height: size.height)
+            return CGRect(
+                x: place(window.minX, window.width, from: (usable.minX, usable.width), to: (next.minX, next.width), size.width),
+                y: place(window.minY, window.height, from: (usable.minY, usable.height), to: (next.minY, next.height), size.height),
+                width: size.width, height: size.height)
         }
     }
 }

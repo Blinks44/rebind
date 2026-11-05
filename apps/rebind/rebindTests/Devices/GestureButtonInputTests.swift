@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct GestureButtonInputTests {
@@ -25,7 +26,8 @@ struct GestureButtonInputTests {
 
     @Test func receiverSlotsAndSeparateConnectionsHoldOneTriggerUntilTheLastRelease() {
         let input = GestureButtonInput()
-        let receiver = UUID(), direct = UUID()
+        let receiver = UUID()
+        let direct = UUID()
         var changes: [Bool] = []
         let changed = { changes.append($0) }
         let first = input.configure(connection: receiver, indices: [1, 2], changed: changed)
@@ -41,7 +43,8 @@ struct GestureButtonInputTests {
     }
 
     @Test func refreshPreservesAnActivePressButRejectsEventsFromTheReplacedHandler() {
-        let input = GestureButtonInput(), connection = UUID()
+        let input = GestureButtonInput()
+        let connection = UUID()
         var changes: [Bool] = []
         let changed = { changes.append($0) }
         let old = input.configure(connection: connection, indices: [1], changed: changed)
@@ -58,7 +61,8 @@ struct GestureButtonInputTests {
 
     @Test func reconfigurationDisconnectAndStopReleaseOnlyWhatTheyOwnAndRejectLateReports() {
         let input = GestureButtonInput()
-        let first = UUID(), second = UUID()
+        let first = UUID()
+        let second = UUID()
         var changes: [Bool] = []
         let changed = { changes.append($0) }
         let a = input.configure(connection: first, indices: [1], changed: changed)

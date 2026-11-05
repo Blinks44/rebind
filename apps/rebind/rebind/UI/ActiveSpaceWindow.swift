@@ -12,5 +12,5 @@ struct ActiveSpaceWindow: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> Probe { Probe() }
-    func updateNSView(_ view: Probe, context: Context) { }
+    func updateNSView(_ view: Probe, context: Context) {}
 }

@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct ApplicationRulesTests {
@@ -16,7 +17,10 @@ import Testing
     private func press(_ mailbox: EngineMailbox, button: UInt32 = 3) -> [RebindAction] {
         _ = mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: .down), secureInput: false)
         _ = mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: .up), secureInput: false)
-        return mailbox.state.withLock { state in defer { state.pending.removeAll() }; return state.pending }
+        return mailbox.state.withLock { state in
+            defer { state.pending.removeAll() }
+            return state.pending
+        }
     }
 
     @Test func anAppRuleReplacesTheGeneralRuleOnlyInThatApp() throws {
@@ -50,8 +54,9 @@ import Testing
         // A hold rule for one app and gestures on the same button for all apps are ambiguous there.
         var hold = rule(back, in: chrome)
         hold.activation = .hold
-        let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
-                                     action: .shortcut(closeTab))
+        let gesture = rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
+            action: .shortcut(closeTab))
         #expect(throws: ConfigurationError.conflict) { try Configuration(isEnabled: true, bindings: [hold, gesture]).validate() }
     }
 
@@ -68,15 +73,17 @@ struct GestureButtonTriggerTests {
     private let output = KeyboardShortcut(keyCode: 123, modifiers: .control)
 
     @Test func theGestureButtonWorksLikeAMouseButtonWithoutAClickToGiveBack() {
-        let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: InputTrigger.gestureButton, direction: .left),
-                                     modifiers: [], action: .shortcut(output))
+        let gesture = rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: InputTrigger.gestureButton, direction: .left),
+            modifiers: [], action: .shortcut(output))
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true, bindings: [gesture]))
         mailbox.state.withLock { $0.status = .active }
         mailbox.handleOffTapButton(InputTrigger.gestureButton, down: true, modifiers: [], secureInput: false)
         #expect(mailbox.state.withLock { $0.hasPointerGestureRules && $0.matcher.pointerGestureSource != nil })
-        _ = mailbox.handlePointerMotion(PointerMotion(deltaX: -120, deltaY: 0), modifiers: [],
-                                        receivedAt: DispatchTime.now().uptimeNanoseconds, secureInput: false)
+        _ = mailbox.handlePointerMotion(
+            PointerMotion(deltaX: -120, deltaY: 0), modifiers: [],
+            receivedAt: DispatchTime.now().uptimeNanoseconds, secureInput: false)
         mailbox.handleOffTapButton(InputTrigger.gestureButton, down: false, modifiers: [], secureInput: false)
         #expect(mailbox.state.withLock { $0.pending } == [.shortcut(output)])
         // Released without movement there is no ordinary click to post for it.

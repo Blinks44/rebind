@@ -1,7 +1,9 @@
 import Foundation
 
 enum ProfileEditOperation: Identifiable {
-    case create, duplicate(UUID), rename(UUID)
+    case create
+    case duplicate(UUID)
+    case rename(UUID)
 
     var id: String {
         switch self {

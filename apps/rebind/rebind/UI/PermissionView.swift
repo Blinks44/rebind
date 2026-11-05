@@ -70,12 +70,16 @@ struct PermissionView: View {
     private var accessibilityCard: some View {
         Card(severity: model.permissions.accessibility ? nil : .warning) {
             VStack(alignment: .leading, spacing: 12) {
-                StatusLabel(title: .accessibilityTitle,
-                                      status: model.permissions.accessibility ? .permissionEnabled : .notEnabled,
-                                      isWarning: !model.permissions.accessibility, isPrimary: !model.permissions.accessibility,
-                                      isVerified: model.permissions.accessibility)
-                Text(model.permissions.accessibility ? LocalizedStringResource.permissionsAccessibilityEnabled : .permissionsAccessibilityPurpose)
-                    .foregroundStyle(Theme.textSecondary)
+                StatusLabel(
+                    title: .accessibilityTitle,
+                    status: model.permissions.accessibility ? .permissionEnabled : .notEnabled,
+                    isWarning: !model.permissions.accessibility, isPrimary: !model.permissions.accessibility,
+                    isVerified: model.permissions.accessibility)
+                Text(
+                    model.permissions.accessibility
+                        ? LocalizedStringResource.permissionsAccessibilityEnabled : .permissionsAccessibilityPurpose
+                )
+                .foregroundStyle(Theme.textSecondary)
                 if !model.permissions.accessibility {
                     PermissionAccessControls(model: model, requirement: .accessibility, usesCompactStyle: true)
                     Text(.accessibilitySteps).font(Theme.callout).foregroundStyle(Theme.textSecondary)
@@ -87,10 +91,11 @@ struct PermissionView: View {
     private var eventSendingCard: some View {
         Card(severity: model.permissions.requirement == .eventPosting ? .warning : nil) {
             VStack(alignment: .leading, spacing: 12) {
-                StatusLabel(title: .eventSendingTitle, status: postingStatus,
-                                      isWarning: !model.permissions.posting,
-                                      isPrimary: model.permissions.requirement == .eventPosting,
-                                      isVerified: model.permissions.posting)
+                StatusLabel(
+                    title: .eventSendingTitle, status: postingStatus,
+                    isWarning: !model.permissions.posting,
+                    isPrimary: model.permissions.requirement == .eventPosting,
+                    isVerified: model.permissions.posting)
                 Text(postingExplanation).foregroundStyle(Theme.textSecondary)
                 if model.permissions.requirement == .eventPosting {
                     PermissionAccessControls(model: model, requirement: .eventPosting, usesCompactStyle: true)

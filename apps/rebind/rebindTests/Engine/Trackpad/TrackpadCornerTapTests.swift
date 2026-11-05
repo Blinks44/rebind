@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadCornerTapTests {
@@ -17,11 +18,15 @@ struct TrackpadCornerTapTests {
             mailbox = EngineMailbox()
             let triggers = corners.map(InputTrigger.cornerTap) + (threeFingerTap ? [.threeFingerTap] : [])
             let rules = triggers.enumerated().map { index, trigger in
-                rebind.Binding(scope: .builtInTrackpad, trigger: trigger, modifiers: [],
-                               action: .shortcut(.init(keyCode: UInt16(13 + index), modifiers: .command)))
+                rebind.Binding(
+                    scope: .builtInTrackpad, trigger: trigger, modifiers: [],
+                    action: .shortcut(.init(keyCode: UInt16(13 + index), modifiers: .command)))
             }
             mailbox.configure(Configuration(isEnabled: true, bindings: rules))
-            mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+            mailbox.state.withLock {
+                $0.status = .active
+                $0.foregroundPID = 100
+            }
             runtime = try #require(mailbox.trackpadRuntime())
             buffer = NativeTrackpadBuffer(mailbox: mailbox)
             buffer.setAccepting(true)
@@ -30,7 +35,8 @@ struct TrackpadCornerTapTests {
         }
 
         mutating func consume(_ points: [(x: Float, y: Float)], at time: UInt64) {
-            var value = NativeTrackpadFrame(receipt: time, revision: runtime.revision,
+            var value = NativeTrackpadFrame(
+                receipt: time, revision: runtime.revision,
                 activity: runtime.inputActivity, frame: nextID, time: Double(time) / 1_000_000_000, count: points.count)
             nextID += 1
             let contacts = points.enumerated().map {
@@ -128,8 +134,9 @@ struct TrackpadCornerTapTests {
 
     @Test(arguments: TrackpadCorner.allCases)
     func cornerRuleRoundTripsAndOlderSchemasCannotCarryIt(_ corner: TrackpadCorner) throws {
-        let binding = rebind.Binding(scope: .builtInTrackpad, trigger: .cornerTap(corner), modifiers: [],
-                                     action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .cornerTap(corner), modifiers: [],
+            action: .shortcut(.init(keyCode: 13, modifiers: .command)))
         let configuration = Configuration(isEnabled: true, bindings: [binding])
         try configuration.validate()
         let decoded = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(configuration))
@@ -201,7 +208,8 @@ struct TrackpadCornerTapTests {
         h.consume([], at: lift)
         let activity = h.mailbox.state.withLock { $0.inputActivity }
         func press(_ phase: InputEvent.Phase, _ time: UInt64) -> Bool {
-            h.mailbox.handle(InputEvent(trigger: .mouseButton(button), phase: phase, receivedAt: time, isTouchClick: true), secureInput: false)
+            h.mailbox.handle(
+                InputEvent(trigger: .mouseButton(button), phase: phase, receivedAt: time, isTouchClick: true), secureInput: false)
         }
         #expect(press(.down, lift + 12_000_000) == false)
         #expect(press(.up, lift + 28_000_000) == false)
@@ -220,8 +228,11 @@ struct TrackpadCornerTapTests {
         h.consume([], at: lift)
         var touch = NativeTrackpadFrame(receipt: lift + 5_000_000, revision: 0, activity: 0, frame: 1, time: 4.005, count: 1)
         touch.first = .init(id: 9, x: 0.5, y: 0.5, pressure: 45)
-        if onMagicTrackpad { h.mailbox.state.withLock { $0.magicTrackpadClicks.observe(touch) } }
-        else { h.consume([(0.5, 0.5)], at: lift + 5_000_000) }
+        if onMagicTrackpad {
+            h.mailbox.state.withLock { $0.magicTrackpadClicks.observe(touch) }
+        } else {
+            h.consume([(0.5, 0.5)], at: lift + 5_000_000)
+        }
         let activity = h.mailbox.state.withLock { $0.inputActivity }
         #expect(h.click(.down, at: lift + 12_000_000) == false)
         #expect(h.mailbox.state.withLock { $0.inputActivity } != activity)

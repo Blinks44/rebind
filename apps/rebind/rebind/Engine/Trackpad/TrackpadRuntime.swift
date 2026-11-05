@@ -1,5 +1,5 @@
-import Synchronization
 import Foundation
+import Synchronization
 
 nonisolated enum TrackpadCaptureStatus: Sendable {
     case idle, active, unavailable, failed
@@ -66,10 +66,11 @@ extension EngineMailbox {
                 return false
             }
             guard !actions.isEmpty || clicks else { return nil }
-            return TrackpadRuntime(revision: $0.actionRevision, inputActivity: $0.inputActivity,
-                                   isMagicTrackpad: magicTrackpad, modifiers: modifiers,
-                                   actions: actions, hasClickRules: clicks,
-                                   doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
+            return TrackpadRuntime(
+                revision: $0.actionRevision, inputActivity: $0.inputActivity,
+                isMagicTrackpad: magicTrackpad, modifiers: modifiers,
+                actions: actions, hasClickRules: clicks,
+                doubleTapIntervalNanoseconds: supportsDouble ? interval : 500_000_000)
         }
     }
 
@@ -90,28 +91,39 @@ extension EngineMailbox {
     // One extra bounded slot, never a delayed backlog of touch actions. Existing
     // keyboard/mouse dispatch remains unchanged. Focus/activity gates are rechecked
     // by the serial action worker before posting directly to the captured PID.
-    @discardableResult nonisolated func submitTrackpad(_ runtime: TrackpadRuntime, tap: TrackpadSingleTap = .fourFinger,
-                                                     pid: Int32, at now: UInt64) -> Bool {
+    @discardableResult nonisolated func submitTrackpad(
+        _ runtime: TrackpadRuntime, tap: TrackpadSingleTap = .fourFinger,
+        pid: Int32, at now: UInt64
+    ) -> Bool {
         submitTrackpad(runtime, gesture: .single(tap), pid: pid, at: now)
     }
 
-    @discardableResult nonisolated func submitTrackpad(_ runtime: TrackpadRuntime, gesture: TrackpadTapGesture,
-                                                     pid: Int32, at now: UInt64) -> Bool {
+    @discardableResult nonisolated func submitTrackpad(
+        _ runtime: TrackpadRuntime, gesture: TrackpadTapGesture,
+        pid: Int32, at now: UInt64
+    ) -> Bool {
         let queued = state.withLock {
             if gesture.isDoubleTap {
                 guard (1...2_000_000_000).contains($0.matcher.doublePressIntervalNanoseconds),
-                      runtime.doubleTapIntervalNanoseconds == $0.matcher.doublePressIntervalNanoseconds else { return false }
+                    runtime.doubleTapIntervalNanoseconds == $0.matcher.doublePressIntervalNanoseconds
+                else { return false }
             }
             guard now <= UInt64.max - 100_000_000, $0.pending.isEmpty,
-                  $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
-                  $0.actionRevision == runtime.revision, $0.inputActivity == runtime.inputActivity,
-                  $0.foregroundPID == pid, let action = runtime.actions[gesture],
-                  $0.rules[MatchKey(trigger: gesture.trigger, modifiers: runtime.modifiers,
-                                    isMagicTrackpad: runtime.isMagicTrackpad)]?.action == action else { return false }
-            let dispatch = ActionDispatch(action: action, revision: runtime.revision,
-                deviceID: $0.audioCapabilities.deviceID(for: action), trackpadTarget: TrackpadDispatchTarget(pid: pid, inputActivity: runtime.inputActivity,
-                                                      expiresAt: now + 100_000_000, queuedAt: now,
-                                                      modifiers: runtime.modifiers))
+                $0.workspaceRequest == nil, $0.trackpadDispatch == nil,
+                $0.actionRevision == runtime.revision, $0.inputActivity == runtime.inputActivity,
+                $0.foregroundPID == pid, let action = runtime.actions[gesture],
+                $0.rules[
+                    MatchKey(
+                        trigger: gesture.trigger, modifiers: runtime.modifiers,
+                        isMagicTrackpad: runtime.isMagicTrackpad)]?.action == action
+            else { return false }
+            let dispatch = ActionDispatch(
+                action: action, revision: runtime.revision,
+                deviceID: $0.audioCapabilities.deviceID(for: action),
+                trackpadTarget: TrackpadDispatchTarget(
+                    pid: pid, inputActivity: runtime.inputActivity,
+                    expiresAt: now + 100_000_000, queuedAt: now,
+                    modifiers: runtime.modifiers))
             guard $0.dispatchIsCurrent(dispatch) else { return false }
             $0.trackpadDispatch = dispatch
             return true

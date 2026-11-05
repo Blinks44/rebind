@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ModifierHoldTests {
@@ -8,8 +9,9 @@ struct ModifierHoldTests {
     private let timing = KeyRepeatTiming(delayNanoseconds: 500, intervalNanoseconds: 100)
 
     private func modifierRule(_ activation: PressActivation = .press, tap: KeyboardShortcut? = nil) -> rebind.Binding {
-        var binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .modifier(.command),
-                                     activation: activation, holdDurationMilliseconds: 200)
+        var binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .modifier(.command),
+            activation: activation, holdDurationMilliseconds: 200)
         binding.holdsOutput = true
         binding.tapShortcut = tap
         return binding
@@ -59,15 +61,20 @@ struct ModifierHoldTests {
     }
 
     @Test func modifierEventsAreTaggedFlagChangesThatSetAndClearTheFlag() {
-        let down = ShortcutSender.heldKeyEvents(HeldKeyCommand(target: .modifiers([.command, .shift]), phase: .press), physicalModifiers: [])
+        let down = ShortcutSender.heldKeyEvents(
+            HeldKeyCommand(target: .modifiers([.command, .shift]), phase: .press), physicalModifiers: [])
         #expect(down.map(\.type) == [.flagsChanged, .flagsChanged])
         #expect(down.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [55, 56])
-        #expect(down.allSatisfy { $0.flags.contains([.maskCommand, .maskShift])
-            && $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
+        #expect(
+            down.allSatisfy {
+                $0.flags.contains([.maskCommand, .maskShift])
+                    && $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag
+            })
         let up = ShortcutSender.heldKeyEvents(modifiers(.release), physicalModifiers: [])
         #expect(up.count == 1 && up[0].type == .flagsChanged && !up[0].flags.contains(.maskCommand))
-        #expect(ShortcutSender.heldKeyEvents(HeldKeyCommand(shortcut: escape, phase: .repeatPress)).first?
-            .getIntegerValueField(.keyboardEventAutorepeat) == 1)
+        #expect(
+            ShortcutSender.heldKeyEvents(HeldKeyCommand(shortcut: escape, phase: .repeatPress)).first?
+                .getIntegerValueField(.keyboardEventAutorepeat) == 1)
     }
 
     @Test func aHoldRuleSendsItsShortPressShortcutOnlyWhenReleasedEarly() {

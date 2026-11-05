@@ -33,44 +33,46 @@ nonisolated final class ActionWorker {
     private let postingAllowed: @Sendable () -> Bool
     private var lastCapabilitiesCheck: UInt64?
 
-    init(mailbox: EngineMailbox,
-         capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
-         performAudio: @escaping @Sendable (SystemAction, UInt32, @Sendable () -> Bool) -> WindowActionResult = {
-             if $0 == .toggleMicrophoneMute { return CoreAudioInput.toggleMute(device: $1, canPerform: $2) }
-             return CoreAudioOutput.isDefaultOutput($1) ? MediaKeySender.perform($0, canPerform: $2) : .unavailable
-         },
-         sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
-         sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
-         sendHeldKey: @escaping @Sendable (HeldKeyCommand) -> Void = { ShortcutSender.postHeldKey($0) },
-         requestLock: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = { canPerform in
-             ScreenLockExecutor.perform(canPerform: { canPerform() && ScreenLockSession.allowsInput() })
-         },
-         requestSleep: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = {
-             SystemSleepExecutor.perform(canPerform: $0)
-         },
-         performMouse: @escaping @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult = {
-             MouseClickSender.perform($0, canPerform: $1)
-         },
-         performText: @escaping @Sendable (String, @Sendable () -> Bool) -> WindowActionResult = {
-             TextSender.perform($0, canPerform: $1)
-         },
-         performMedia: @escaping @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult = {
-             MediaKeySender.perform($0, canPerform: $1)
-         },
-         performDock: @escaping @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult = {
-             DockActions.perform($0, canPerform: $1)
-         },
-         performWindow: @escaping @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult = {
-             WindowActionExecutor.perform($0, canPerform: $1)
-         },
-         performWindowCycle: (@Sendable (WindowCycleAction, @Sendable () -> Bool) -> WindowActionResult)? = nil,
-         performWindowLayout: @escaping @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult = {
-             WindowLayoutExecutor.perform($0, displays: $1, canPerform: $2)
-         },
-         layoutClock: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
-         prepareWorkspace: @escaping @Sendable (WorkspaceAction) -> WorkspaceTarget? = { WorkspacePreparation.prepare($0) },
-         secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
-         postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }) {
+    init(
+        mailbox: EngineMailbox,
+        capabilities: @escaping @Sendable () -> AudioOutputCapabilities = { CoreAudioOutput.capabilities() },
+        performAudio: @escaping @Sendable (SystemAction, UInt32, @Sendable () -> Bool) -> WindowActionResult = {
+            if $0 == .toggleMicrophoneMute { return CoreAudioInput.toggleMute(device: $1, canPerform: $2) }
+            return CoreAudioOutput.isDefaultOutput($1) ? MediaKeySender.perform($0, canPerform: $2) : .unavailable
+        },
+        sendTrackpadShortcut: (@Sendable (KeyboardShortcut, TrackpadDispatchTarget, @Sendable () -> Bool) -> WindowActionResult)? = nil,
+        sendShortcut: @escaping @Sendable (KeyboardShortcut) -> Bool = { ShortcutSender.send($0) },
+        sendHeldKey: @escaping @Sendable (HeldKeyCommand) -> Void = { ShortcutSender.postHeldKey($0) },
+        requestLock: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = { canPerform in
+            ScreenLockExecutor.perform(canPerform: { canPerform() && ScreenLockSession.allowsInput() })
+        },
+        requestSleep: @escaping @Sendable (@Sendable () -> Bool) -> WindowActionResult = {
+            SystemSleepExecutor.perform(canPerform: $0)
+        },
+        performMouse: @escaping @Sendable (MouseAction, @Sendable () -> Bool) -> WindowActionResult = {
+            MouseClickSender.perform($0, canPerform: $1)
+        },
+        performText: @escaping @Sendable (String, @Sendable () -> Bool) -> WindowActionResult = {
+            TextSender.perform($0, canPerform: $1)
+        },
+        performMedia: @escaping @Sendable (MediaAction, @Sendable () -> Bool) -> WindowActionResult = {
+            MediaKeySender.perform($0, canPerform: $1)
+        },
+        performDock: @escaping @Sendable (DesktopAction, @Sendable () -> Bool) -> WindowActionResult = {
+            DockActions.perform($0, canPerform: $1)
+        },
+        performWindow: @escaping @Sendable (WindowAction, @Sendable () -> Bool) -> WindowActionResult = {
+            WindowActionExecutor.perform($0, canPerform: $1)
+        },
+        performWindowCycle: (@Sendable (WindowCycleAction, @Sendable () -> Bool) -> WindowActionResult)? = nil,
+        performWindowLayout: @escaping @Sendable (WindowLayoutAction, [WindowDisplay], @Sendable () -> Bool) -> WindowActionResult = {
+            WindowLayoutExecutor.perform($0, displays: $1, canPerform: $2)
+        },
+        layoutClock: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+        prepareWorkspace: @escaping @Sendable (WorkspaceAction) -> WorkspaceTarget? = { WorkspacePreparation.prepare($0) },
+        secureInput: @escaping @Sendable () -> Bool = { IsSecureEventInputEnabled() },
+        postingAllowed: @escaping @Sendable () -> Bool = { CGPreflightPostEventAccess() }
+    ) {
         self.mailbox = mailbox
         self.capabilities = capabilities
         self.performAudio = performAudio
@@ -78,10 +80,12 @@ nonisolated final class ActionWorker {
         self.requestSleep = requestSleep
         self.sendShortcut = sendShortcut
         self.sendHeldKey = sendHeldKey
-        self.sendTrackpadShortcut = sendTrackpadShortcut ?? { shortcut, target, canPerform in
-            ShortcutSender.send(shortcut, to: target, canPerform: canPerform,
-                                diagnose: { if !target.isMagicMouse { mailbox.recordTrackpadDiagnostic($0) } })
-        }
+        self.sendTrackpadShortcut =
+            sendTrackpadShortcut ?? { shortcut, target, canPerform in
+                ShortcutSender.send(
+                    shortcut, to: target, canPerform: canPerform,
+                    diagnose: { if !target.isMagicMouse { mailbox.recordTrackpadDiagnostic($0) } })
+            }
         self.performMouse = performMouse
         self.performMedia = performMedia
         self.performText = performText
@@ -106,7 +110,7 @@ nonisolated final class ActionWorker {
                 mailbox.waitForWork()
             }
             // Stopping marks every held key released; post what is still owed.
-            while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) { }
+            while mailbox.deliverNextHeldKey(at: DispatchTime.now().uptimeNanoseconds, send: ShortcutSender.postHeldKey) {}
         }
         thread.name = "Rebind actions"
         thread.qualityOfService = .userInitiated
@@ -117,29 +121,37 @@ nonisolated final class ActionWorker {
         windowCycle.invalidate(ifRevisionDiffersFrom: mailbox.state.withLock { $0.actionRevision })
         guard !mailbox.state.withLock({ $0.stopped }) else { return }
         if mailbox.takeAudioOutputChange() || lastCapabilitiesCheck == nil || now < (lastCapabilitiesCheck ?? 0)
-            || now - (lastCapabilitiesCheck ?? 0) >= 60_000_000_000 {
+            || now - (lastCapabilitiesCheck ?? 0) >= 60_000_000_000
+        {
             lastCapabilitiesCheck = now
             mailbox.updateAudioCapabilities(capabilities())
         }
         let secure = secureInput()
         let allowed = postingAllowed()
-        if secure { mailbox.captureLost(status: .secureInput) }
-        else if !allowed { mailbox.captureLost(status: .permissionRequired) }
+        if secure { mailbox.captureLost(status: .secureInput) } else if !allowed { mailbox.captureLost(status: .permissionRequired) }
         // After the checks above, so a key held when capture is lost is released at once.
         mailbox.deliverNextHeldKey(at: now, send: sendHeldKey)
         guard !secure, allowed else { return }
         guard let dispatch = mailbox.nextAction() else { return }
         // Recheck after dequeue: configuration/edit/pause/capture-loss changes
         // invalidate waiting work. A call already accepted here cannot be recalled.
-        guard postingAllowed() else { mailbox.captureLost(status: .permissionRequired); return }
-        guard !secureInput() else { mailbox.captureLost(status: .secureInput); return }
+        guard postingAllowed() else {
+            mailbox.captureLost(status: .permissionRequired)
+            return
+        }
+        guard !secureInput() else {
+            mailbox.captureLost(status: .secureInput)
+            return
+        }
         guard mailbox.dispatchIsCurrent(dispatch) else { return }
         // A delayed touch action is dropped rather than executed late, whatever it does.
         if let target = dispatch.trackpadTarget, now > target.expiresAt {
             if !target.isMagicMouse { mailbox.recordTrackpadDiagnostic(.outputExpired) }
             return
         }
-        let mailbox = mailbox, postingAllowed = postingAllowed, secureInput = secureInput
+        let mailbox = mailbox
+        let postingAllowed = postingAllowed
+        let secureInput = secureInput
         let canPerform: @Sendable () -> Bool = {
             mailbox.dispatchIsCurrent(dispatch) && postingAllowed() && !secureInput()
         }
@@ -155,11 +167,16 @@ nonisolated final class ActionWorker {
                     case .unavailable: mailbox.recordTrackpadDiagnostic(.outputUnavailable)
                     }
                 }
-            } else { result = sendShortcut(shortcut) ? .performed : .unavailable }
+            } else {
+                result = sendShortcut(shortcut) ? .performed : .unavailable
+            }
         case .lockScreen, .sleepSystem:
             let transition = dispatch.action == .lockScreen ? requestLock(canPerform) : requestSleep(canPerform)
-            if transition == .performed { mailbox.systemTransitionRequested(dispatch) }
-            else if transition == .unavailable { mailbox.actionFailed(dispatch) }
+            if transition == .performed {
+                mailbox.systemTransitionRequested(dispatch)
+            } else if transition == .unavailable {
+                mailbox.actionFailed(dispatch)
+            }
             return
         case .media(let action): result = performMedia(action, canPerform)
         case .mouse(let action): result = performMouse(action, canPerform)
@@ -167,26 +184,38 @@ nonisolated final class ActionWorker {
         case .dock(let action): result = performDock(action, canPerform)
         case .window(let action): result = performWindow(action, canPerform)
         case .doNothing, .modifier: result = .performed
-        case .desktop: result = .unavailable // Legacy decoding only; cannot enter compiled rules.
+        case .desktop: result = .unavailable  // Legacy decoding only; cannot enter compiled rules.
         case .control(let action):
             mailbox.requestControl(action, for: dispatch)
             return
         case .system(let action):
-            guard let device = dispatch.deviceID else { mailbox.actionFailed(dispatch); return }
+            guard let device = dispatch.deviceID else {
+                mailbox.actionFailed(dispatch)
+                return
+            }
             result = performAudio(action, device, canPerform)
         case .windowCycle(let action):
-            if let performWindowCycle { result = performWindowCycle(action, canPerform) }
-            else { result = WindowCycleExecutor.perform(action, revision: dispatch.revision, state: &windowCycle, canPerform: canPerform) }
+            if let performWindowCycle {
+                result = performWindowCycle(action, canPerform)
+            } else {
+                result = WindowCycleExecutor.perform(action, revision: dispatch.revision, state: &windowCycle, canPerform: canPerform)
+            }
         case .windowLayout(let action):
             let clock = layoutClock
             let snapshot = mailbox.state.withLock { $0.windowDisplays }
-            guard snapshot.isFresh(at: clock()) else { mailbox.actionFailed(dispatch); return }
+            guard snapshot.isFresh(at: clock()) else {
+                mailbox.actionFailed(dispatch)
+                return
+            }
             result = performWindowLayout(action, snapshot.displays) {
                 let current = mailbox.state.withLock { $0.windowDisplays }
                 return current.displays == snapshot.displays && current.isFresh(at: clock()) && canPerform()
             }
         case .workspace(let action):
-            guard let target = prepareWorkspace(action) else { mailbox.actionFailed(dispatch); return }
+            guard let target = prepareWorkspace(action) else {
+                mailbox.actionFailed(dispatch)
+                return
+            }
             // Preparation can wait on filesystem metadata. The MainActor
             // consumer also rechecks immediately before the native request.
             mailbox.submitWorkspace(WorkspaceRequest(dispatch: dispatch, target: target))

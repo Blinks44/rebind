@@ -2,9 +2,15 @@ import Foundation
 
 /// Hardware-observed candidate pool, kept separate from trackpad presets.
 nonisolated enum MagicMousePreset: Int, CaseIterable, Hashable, Sendable {
-    case oneFingerTap = 1, leftSideTap = 7, rightSideTap = 8, twoFingerTap = 2, threeFingerTap = 3
+    case oneFingerTap = 1
+    case leftSideTap = 7
+    case rightSideTap = 8
+    case twoFingerTap = 2
+    case threeFingerTap = 3
 
-    case threeFingerClick = 4, twoFingerScrollUp = 5, twoFingerScrollDown = 6
+    case threeFingerClick = 4
+    case twoFingerScrollUp = 5
+    case twoFingerScrollDown = 6
 
     var trigger: InputTrigger {
         switch self {

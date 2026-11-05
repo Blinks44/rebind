@@ -1,6 +1,7 @@
-import Synchronization
 import Foundation
+import Synchronization
 import Testing
+
 @testable import rebind
 
 struct MagicMouseNativeTests {
@@ -21,9 +22,15 @@ struct MagicMouseNativeTests {
     func physicalClickOwnsOnlyItsSourceAndPairedRelease(_ button: UInt32) {
         var f = filter()
         var actions = 0
-        let firstDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) { actions += 1; return true }
+        let firstDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) {
+            actions += 1
+            return true
+        }
         #expect(firstDownConsumed)
-        let repeatedDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) { actions += 1; return true }
+        let repeatedDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) {
+            actions += 1
+            return true
+        }
         #expect(repeatedDownConsumed)
         #expect(actions == 1)
         f.invalidateContacts()
@@ -68,7 +75,8 @@ struct MagicMouseNativeTests {
         f.observe(frame(3, at: now))
         let armingPassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: now, admit: { true }) == false
         #expect(armingPassed)
-        var bad = frame(3, at: now + 4_000_000_000); bad.valid = false
+        var bad = frame(3, at: now + 4_000_000_000)
+        bad.valid = false
         f.observe(bad)
         let invalidFramePassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: bad.receipt, admit: { true }) == false
         #expect(invalidFramePassed)
@@ -79,18 +87,25 @@ struct MagicMouseNativeTests {
         var f = filter(count: 2)
         var actions = 0
         let beginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now) { value in
-            #expect(value == direction); actions += 1; return true
+            #expect(value == direction)
+            actions += 1
+            return true
         }
         #expect(beginConsumed)
-        let repeatBeginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 1) { _ in actions += 1; return true }
+        let repeatBeginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 1) { _ in
+            actions += 1
+            return true
+        }
         #expect(repeatBeginConsumed)
         #expect(actions == 1)
-        let otherDevicePassed = f.scroll(sender: 99, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 2, admit: { _ in true }) == false
+        let otherDevicePassed =
+            f.scroll(sender: 99, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 2, admit: { _ in true }) == false
         #expect(otherDevicePassed)
         f.invalidateContacts()
         for (phase, momentum) in [(Int64(2), Int64(0)), (4, 0), (0, 1), (0, 2), (0, 3)] {
-            let tailConsumed = f.scroll(sender: 42, phase: phase, momentum: momentum, direction: nil, revision: 99,
-                             at: now + 3, admit: { _ in false })
+            let tailConsumed = f.scroll(
+                sender: 42, phase: phase, momentum: momentum, direction: nil, revision: 99,
+                at: now + 3, admit: { _ in false })
             #expect(tailConsumed)
         }
         #expect(f.hasOwnedInput == false)
@@ -103,27 +118,33 @@ struct MagicMouseNativeTests {
         #expect(beginPassed)
         f.observe(frame(2, at: now + 1))
         for phase: Int64 in [2, 4] {
-            let tailPassed = f.scroll(sender: 42, phase: phase, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+            let tailPassed =
+                f.scroll(sender: 42, phase: phase, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
             #expect(tailPassed)
         }
-        let momentumPassed = f.scroll(sender: 42, phase: 0, momentum: 1, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+        let momentumPassed =
+            f.scroll(sender: 42, phase: 0, momentum: 1, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
         #expect(momentumPassed)
     }
 
     @Test func ambiguousBeganCannotBeReclassifiedWithinTheSameContactStroke() {
         var f = filter(count: 1)
-        let ambiguousBeginPassed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
+        let ambiguousBeginPassed =
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
         #expect(ambiguousBeginPassed)
         f.observe(frame(2, at: now + 1))
-        let laterBeginPassed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+        let laterBeginPassed =
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
         #expect(laterBeginPassed)
     }
 
     @Test func unassignedDirectionsAndHorizontalStartsRemainNative() {
         var f = filter(count: 2)
-        let horizontalPassed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: nil, revision: 0, at: now, admit: { _ in true }) == false
+        let horizontalPassed =
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: nil, revision: 0, at: now, admit: { _ in true }) == false
         #expect(horizontalPassed)
-        let unassignedPassed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now, admit: { $0 == .up }) == false
+        let unassignedPassed =
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now, admit: { $0 == .up }) == false
         #expect(unassignedPassed)
         let changedPassed = f.scroll(sender: 42, phase: 2, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
         #expect(changedPassed)
@@ -136,11 +157,17 @@ struct MagicMouseNativeTests {
         f.expireScroll(at: now + 1_000_000_001)
         #expect(f.hasOwnedInput == false)
         f.observe(frame(2, at: now + 2_000_000_000))
-        let sameStrokeConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2_000_000_000, admit: { _ in Issue.record("Same contact stroke fired twice"); return false })
+        let sameStrokeConsumed = f.scroll(
+            sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2_000_000_000,
+            admit: { _ in
+                Issue.record("Same contact stroke fired twice")
+                return false
+            })
         #expect(sameStrokeConsumed)
         f.observe(frame(0, at: now + 2_000_000_001))
         f.observe(frame(2, at: now + 2_000_000_002))
-        let nextStrokeConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now + 2_000_000_002, admit: { _ in true })
+        let nextStrokeConsumed = f.scroll(
+            sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now + 2_000_000_002, admit: { _ in true })
         #expect(nextStrokeConsumed)
     }
 
@@ -158,7 +185,8 @@ struct MagicMouseNativeTests {
         let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: 3), modifiers: .option, action: .doNothing)
         mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
         mailbox.state.withLock {
-            $0.status = .active; $0.foregroundPID = 100
+            $0.status = .active
+            $0.foregroundPID = 100
             $0.magicMouseNative.begin(sources: [42], at: 0)
             $0.magicMouseNative.observe(frame(3, at: now, revision: $0.actionRevision))
         }
@@ -177,15 +205,21 @@ struct MagicMouseNativeTests {
         let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseScroll(.up), modifiers: [], action: .doNothing)
         mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
         mailbox.state.withLock {
-            $0.status = .active; $0.foregroundPID = 100
+            $0.status = .active
+            $0.foregroundPID = 100
             $0.magicMouseNative.begin(sources: [42], at: 0)
             $0.magicMouseNative.observe(frame(2, at: now, revision: $0.actionRevision))
         }
-        #expect(mailbox.handleMagicMouseScroll(sender: 42, phase: 1, momentum: 0, direction: .up, modifiers: [], at: now, secureInput: false))
+        #expect(
+            mailbox.handleMagicMouseScroll(sender: 42, phase: 1, momentum: 0, direction: .up, modifiers: [], at: now, secureInput: false))
         #expect(mailbox.nextAction()?.action == .doNothing)
         mailbox.setEditing(true)
-        #expect(mailbox.handleMagicMouseScroll(sender: 42, phase: 2, momentum: 0, direction: .up, modifiers: [], at: now + 1, secureInput: false))
-        #expect(mailbox.handleMagicMouseScroll(sender: 42, phase: 0, momentum: 3, direction: nil, modifiers: [], at: now + 2, secureInput: true))
+        #expect(
+            mailbox.handleMagicMouseScroll(
+                sender: 42, phase: 2, momentum: 0, direction: .up, modifiers: [], at: now + 1, secureInput: false))
+        #expect(
+            mailbox.handleMagicMouseScroll(sender: 42, phase: 0, momentum: 3, direction: nil, modifiers: [], at: now + 2, secureInput: true)
+        )
         #expect(mailbox.nextAction() == nil)
     }
 }

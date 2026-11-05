@@ -1,17 +1,22 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ProfileConfigurationTests {
     private func rule() -> rebind.Binding {
-        rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: .control,
-                       action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: .control,
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
     }
 
     @Test(arguments: 1...5)
     func legacyRulesMigrateIntoStableDefaultProfileWithoutDataLoss(_ version: Int) throws {
         var binding = rule()
-        if version == 4 { binding.activation = .hold; binding.holdDurationMilliseconds = 1000 }
+        if version == 4 {
+            binding.activation = .hold
+            binding.holdDurationMilliseconds = 1000
+        }
         if version == 5 { binding.trigger = .mouseGesture(button: 99, direction: .left) }
         let legacy = Configuration(schemaVersion: version, isEnabled: true, bindings: [binding])
         let bytes = try JSONEncoder().encode(legacy)
@@ -146,10 +151,14 @@ struct ProfileConfigurationTests {
         #expect(try Data(contentsOf: store.url) == bytes)
         var json = try #require(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
         json["bindings"] = []
-        #expect(throws: ConfigurationError.invalid) { try JSONDecoder().decode(Configuration.self, from: JSONSerialization.data(withJSONObject: json)) }
+        #expect(throws: ConfigurationError.invalid) {
+            try JSONDecoder().decode(Configuration.self, from: JSONSerialization.data(withJSONObject: json))
+        }
         json.removeValue(forKey: "bindings")
         json["schemaVersion"] = 5
         json["bindings"] = []
-        #expect(throws: ConfigurationError.invalid) { try JSONDecoder().decode(Configuration.self, from: JSONSerialization.data(withJSONObject: json)) }
+        #expect(throws: ConfigurationError.invalid) {
+            try JSONDecoder().decode(Configuration.self, from: JSONSerialization.data(withJSONObject: json))
+        }
     }
 }

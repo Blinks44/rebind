@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct AppModelProfileTests {
@@ -14,15 +15,17 @@ import Testing
     }
 
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindProfileModel-\(UUID())").appending(path: "config.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindProfileModel-\(UUID())").appending(path: "config.json"))
     }
 
     @Test func createCopySwitchRenameDeletePersistWithoutChangingPause() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                    action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         let original = Configuration(bindings: [binding])
         try store.save(original)
         let model = AppModel(store: store)
@@ -72,8 +75,9 @@ import Testing
         #expect(model.recording == nil && model.lastRecording == nil)
         #expect(model.mailbox.state.withLock { $0.recording == nil && $0.recorded == nil })
         let bytes = try Data(contentsOf: store.url)
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                    action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         #expect(model.saveBinding(binding, profileID: RuleProfile.defaultID) == false)
         #expect(model.configuration.bindings.isEmpty)
         #expect(try Data(contentsOf: store.url) == bytes)

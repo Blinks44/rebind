@@ -1,16 +1,20 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct LanguageSettingsTests {
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindLanguage-\(UUID())/configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindLanguage-\(UUID())/configuration.json"))
     }
 
-    @Test(arguments: [(["it-IT", "de-CH", "ru"], AppLanguage.de),
-                      (["ru-RU", "en"], .ru), (["fr_CA", "de"], .fr),
-                      (["ja", "ko"], .en), ([], .en)])
+    @Test(arguments: [
+        (["it-IT", "de-CH", "ru"], AppLanguage.de),
+        (["ru-RU", "en"], .ru), (["fr_CA", "de"], .fr),
+        (["ja", "ko"], .en), ([], .en),
+    ])
     func orderedSystemResolution(_ sample: ([String], AppLanguage)) {
         #expect(AppLanguage.resolve(preferredLanguages: sample.0) == sample.1)
         #expect(AppLanguagePreference.system.resolved(preferredLanguages: sample.0) == sample.1)
@@ -34,7 +38,8 @@ import Testing
     @Test func languageSavePreservesPendingInputProfilesAndRecorder() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)), activation: .hold)
         var configuration = Configuration(isEnabled: true, bindings: [binding])
         configuration.hasCompletedSetup = true
@@ -61,7 +66,8 @@ import Testing
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try store.save(Configuration())
         var projected: [AppLanguagePreference] = []
-        let model = AppModel(store: store, preferredLanguages: ["en"],
+        let model = AppModel(
+            store: store, preferredLanguages: ["en"],
             languagePreferenceSaved: { projected.append($0) })
         let page = LanguageSettingsModel(app: model)
         let original = try Data(contentsOf: store.url)
@@ -140,8 +146,10 @@ import Testing
         }
     }
 
-    @Test(arguments: [(AppLanguage.en, "Settings"), (.ru, "Настройки"),
-                      (.de, "Einstellungen"), (.fr, "Réglages")])
+    @Test(arguments: [
+        (AppLanguage.en, "Settings"), (.ru, "Настройки"),
+        (.de, "Einstellungen"), (.fr, "Réglages"),
+    ])
     func resolvedFoundationStringsUseExplicitLanguage(_ sample: (AppLanguage, String)) {
         #expect(AppLocalization.string(.settingsTitle, language: sample.0) == sample.1)
     }

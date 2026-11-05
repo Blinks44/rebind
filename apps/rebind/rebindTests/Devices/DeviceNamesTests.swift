@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct DeviceNamesTests {
@@ -12,8 +13,9 @@ struct DeviceNamesTests {
         let hardware = configuration.mouseHardware
         try configuration.renameDevice(key: key, original: original, name: "  G915  ")
         let restored = try ConfigurationBackup(data: ConfigurationBackup(configuration: configuration).encoded()).configuration
-        let reconnected = DeviceBattery(id: "different-port#1", name: original, kind: .keyboard,
-                                        percentage: 48, isCharging: false, vendorID: 0x046D)
+        let reconnected = DeviceBattery(
+            id: "different-port#1", name: original, kind: .keyboard,
+            percentage: 48, isCharging: false, vendorID: 0x046D)
         #expect(restored.deviceName(for: reconnected.deviceKey, original: reconnected.name) == "G915")
         #expect(restored.mouseHardware == hardware && restored.isEnabled)
         #expect(try restored.exportingProfile(restored.selectedProfileID).deviceNames.isEmpty)
@@ -83,7 +85,10 @@ struct DeviceClassificationTests {
         try store.save(configuration)
         let model = AppModel(store: store, readPermissions: { InputPermissions() })
         let shortcut = KeyboardShortcut(keyCode: 0, modifiers: .command)
-        model.mailbox.state.withLock { $0.status = .active; $0.pending = [.shortcut(shortcut)] }
+        model.mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.shortcut(shortcut)]
+        }
         model.refreshActionError(.windowLayoutFailed)
         #expect(model.renameDevice(key: "046d:G603", original: "G603", name: "Mouse"))
         // A display-only save does not resolve an unrelated action failure.

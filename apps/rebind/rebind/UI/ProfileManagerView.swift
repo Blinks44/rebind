@@ -54,8 +54,11 @@ struct ProfileManagerView: View {
             HStack(spacing: 10) {
                 Button(.newProfile, systemImage: "plus") { editing = .create }
                     .secondaryButton().disabled(model.storageLocked || atLimit || importURL != nil)
-                Button(.importProfile) { notice = nil; importing = true }
-                    .secondaryButton().disabled(model.storageLocked || atLimit || importURL != nil)
+                Button(.importProfile) {
+                    notice = nil
+                    importing = true
+                }
+                .secondaryButton().disabled(model.storageLocked || atLimit || importURL != nil)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction)
                     .primaryButton()
@@ -81,8 +84,7 @@ struct ProfileManagerView: View {
                     return
                 }
                 notice = Notice(text: .profilesImported(count), isError: false)
-            } catch is CancellationError { }
-            catch { notice = Notice(text: .profileImportFailed, isError: true) }
+            } catch is CancellationError {} catch { notice = Notice(text: .profileImportFailed, isError: true) }
         }
         .alert(.deleteProfile, isPresented: deletionPresented) {
             Button(.cancel, role: .cancel) { pendingDeletion = nil }
@@ -90,7 +92,9 @@ struct ProfileManagerView: View {
                 if let profile = pendingDeletion { model.deleteProfile(profile.id) }
                 pendingDeletion = nil
             }
-        } message: { Text(.deleteProfileConfirmation(pendingDeletion?.title ?? "")) }
+        } message: {
+            Text(.deleteProfileConfirmation(pendingDeletion?.title ?? ""))
+        }
     }
 
     private func row(_ profile: RuleProfile) -> some View {
@@ -129,7 +133,8 @@ struct ProfileManagerView: View {
             save.canCreateDirectories = true
             guard await save.begin() == .OK, let url = save.url else { return }
             guard let backup = model.profileBackup(profile.id),
-                  (try? await ConfigurationFileOperations.export(backup, to: url, protecting: model.configurationFileURL)) != nil else {
+                (try? await ConfigurationFileOperations.export(backup, to: url, protecting: model.configurationFileURL)) != nil
+            else {
                 notice = Notice(text: .profileExportFailed, isError: true)
                 return
             }

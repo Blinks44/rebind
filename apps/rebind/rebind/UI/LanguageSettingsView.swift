@@ -23,9 +23,11 @@ struct LanguageSettingsView: View {
                         HStack(spacing: 16) {
                             Text(.appLanguage).accessibilityHidden(true)
                             Spacer(minLength: 12)
-                            MenuSelector(selection: $editing.draft, title: .appLanguage,
+                            MenuSelector(
+                                selection: $editing.draft, title: .appLanguage,
                                 choices: AppLanguagePreference.allCases, label: languageTitle,
-                                compact: true)
+                                compact: true
+                            )
                             .accessibilityIdentifier("settings-language-selector")
                             .frame(width: 208, alignment: .trailing)
                             .disabled(model.storageLocked || editing.isSaving)
@@ -48,8 +50,10 @@ struct LanguageSettingsView: View {
                     Banner(severity: .error, title: .languageSaveFailed, message: .languageSaveFailedDescription)
                 }
                 if model.requiresLanguageReopen {
-                    Banner(severity: .information, title: .reopenTitle,
-                                   message: .reopenDescription(model.savedLanguageName)) {
+                    Banner(
+                        severity: .information, title: .reopenTitle,
+                        message: .reopenDescription(model.savedLanguageName)
+                    ) {
                         Button(.quitRebind) { NSApp.terminate(nil) }.secondaryButton()
                     }
                 }

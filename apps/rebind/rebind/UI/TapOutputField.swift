@@ -9,7 +9,8 @@ struct TapOutputField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(.tapOutputTitle).font(Theme.caption).foregroundStyle(Theme.textSecondary)
-            BindingCaptureField(value: draft.tapOutput.map(InputLabels.shortcut), target: .tapOutput,
+            BindingCaptureField(
+                value: draft.tapOutput.map(InputLabels.shortcut), target: .tapOutput,
                 recording: model.recording, canRecord: model.canRecord,
                 record: record, cancel: model.cancelRecording,
                 clear: { draft.tapOutput = nil }, wrapsControls: true, shortcut: draft.tapOutput)

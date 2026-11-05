@@ -155,7 +155,8 @@ extension RebindAction {
         switch self {
         case .shortcut(let shortcut): return kind == .keyboardShortcut ? InputLabels.shortcut(shortcut) : title
         case .mouse, .media, .system, .sleepSystem, .lockScreen, .window, .windowLayout, .windowCycle, .dock,
-             .doNothing, .control, .modifier: return title
+            .doNothing, .control, .modifier:
+            return title
         case .text(let text): return "\(title): \(text.count > 24 ? String(text.prefix(24)) + "…" : text)"
         case .appleShortcut(let target): return "\(title): \(target.name)"
         case .desktop(_, let shortcut): return "\(title): \(InputLabels.shortcut(shortcut))"

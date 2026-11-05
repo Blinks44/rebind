@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct RuleManagementTests {
@@ -10,8 +11,9 @@ import Testing
     }
 
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindRules-\(UUID())").appending(path: "config.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindRules-\(UUID())").appending(path: "config.json"))
     }
 
     @Test func aNoteIsTrimmedBoundedSearchableAndPersists() throws {
@@ -53,16 +55,19 @@ import Testing
     }
 
     @Test func gestureDistanceChangesTheRecognitionThresholdAndPersists() throws {
-        let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .right), modifiers: [],
-                                     action: .shortcut(output))
+        let gesture = rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: 3, direction: .right), modifiers: [],
+            action: .shortcut(output))
         var configuration = Configuration(isEnabled: true, bindings: [gesture])
         func fires(after distance: Int64) -> Bool {
             let mailbox = EngineMailbox()
             mailbox.configure(configuration)
             mailbox.state.withLock { $0.status = .active }
             _ = mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down, receivedAt: 0), secureInput: false)
-            _ = mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .drag, receivedAt: 1,
-                                          motion: PointerMotion(deltaX: distance, deltaY: 0)), secureInput: false)
+            _ = mailbox.handle(
+                InputEvent(
+                    trigger: .mouseButton(3), phase: .drag, receivedAt: 1,
+                    motion: PointerMotion(deltaX: distance, deltaY: 0)), secureInput: false)
             return mailbox.state.withLock { $0.pending } == [.shortcut(output)]
         }
         #expect(fires(after: 49) == false && fires(after: 50))

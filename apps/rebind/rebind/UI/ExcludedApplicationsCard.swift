@@ -21,8 +21,11 @@ struct ExcludedApplicationsCard: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    Button(.addExcludedApp) { selectionFailed = false; showingPicker = true }
-                        .secondaryButton().fixedSize().disabled(atLimit)
+                    Button(.addExcludedApp) {
+                        selectionFailed = false
+                        showingPicker = true
+                    }
+                    .secondaryButton().fixedSize().disabled(atLimit)
                 }
                 if !applications.isEmpty {
                     HStack(spacing: 0) {
@@ -78,15 +81,17 @@ struct ExcludedApplicationsCard: View {
             }
             .padding(.trailing, -12)
             CircleIconButton(symbol: "minus") { model.includeApplication(application.bundleIdentifier) }
-            .accessibilityLabel(Text(.removeExcludedApp(name))).help(Text(.removeExcludedApp(name)))
+                .accessibilityLabel(Text(.removeExcludedApp(name))).help(Text(.removeExcludedApp(name)))
         }
         .padding(.leading, 12).padding(.trailing, 10).frame(minHeight: 48)
         .insetSurface()
     }
 
     /// On: this feature keeps working while the app is in front.
-    private func allowance(_ title: LocalizedStringResource, app: String, isOn: Bool,
-                           set: @escaping @MainActor @Sendable (Bool) -> Void) -> some View {
+    private func allowance(
+        _ title: LocalizedStringResource, app: String, isOn: Bool,
+        set: @escaping @MainActor @Sendable (Bool) -> Void
+    ) -> some View {
         Toggle(isOn: SwiftUI.Binding(get: { isOn }, set: set)) { Text(title) }
             .toggleStyle(ThemeSwitchStyle()).labelsHidden()
             .frame(width: Self.columnWidth)

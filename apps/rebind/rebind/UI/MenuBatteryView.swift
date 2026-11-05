@@ -20,10 +20,12 @@ final class MenuBatteryView: NSView {
         let font = NSFont.menuFont(ofSize: 0)
         nameLabel = NSTextField(labelWithString: name)
         levelLabel = NSTextField(labelWithString: AppLocalization.string(.batteryMenuLevel(battery.percentage), language: language))
-        batteryImage = NSImageView(image: NSImage(systemSymbolName: battery.symbol, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(pointSize: 16, weight: .regular)) ?? NSImage())
-        deviceImage = NSImageView(image: NSImage(systemSymbolName: battery.kind.symbol, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(scale: .small)) ?? NSImage())
+        batteryImage = NSImageView(
+            image: NSImage(systemSymbolName: battery.symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(.init(pointSize: 16, weight: .regular)) ?? NSImage())
+        deviceImage = NSImageView(
+            image: NSImage(systemSymbolName: battery.kind.symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(.init(scale: .small)) ?? NSImage())
         low = battery.percentage <= 15 && !battery.isCharging
         nameLabel.font = font
         levelLabel.font = font
@@ -90,7 +92,8 @@ final class MenuBatteryView: NSView {
 
     override func accessibilityPerformPress() -> Bool {
         guard let item = enclosingMenuItem, item.isEnabled, let menu = item.menu,
-              let index = menu.items.firstIndex(of: item), item.action != nil else { return false }
+            let index = menu.items.firstIndex(of: item), item.action != nil
+        else { return false }
         menu.cancelTracking()
         menu.performActionForItem(at: index)
         return true

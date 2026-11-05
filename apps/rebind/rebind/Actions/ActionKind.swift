@@ -30,9 +30,16 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     var category: Category {
         if self == .doNothing || controlAction != nil { return .rebind }
         if [.copy, .paste, .cut, .undo, .redo, .selectAll, .insertText].contains(self) || modifierAction != nil { return .keyboard }
-        if [.screenshotScreen, .screenshotArea, .screenshotTools, .spotlight, .forceQuitWindow, .emojiSymbols, .toggleDock, .openApps].contains(self) { return .system }
+        if [.screenshotScreen, .screenshotArea, .screenshotTools, .spotlight, .forceQuitWindow, .emojiSymbols, .toggleDock, .openApps]
+            .contains(self)
+        {
+            return .system
+        }
         if self == .openSystemSettings || self == .sleepSystem || self == .lockScreen
-            || mediaAction?.isBrightness == true { return .system }
+            || mediaAction?.isBrightness == true
+        {
+            return .system
+        }
         if mouseAction != nil { return .mouse }
         if desktopAction != nil { return .desktop }
         if self == .runAppleShortcut { return .automation }
@@ -100,8 +107,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
 
     /// Keep the repeat control editable when a held shortcut also has a catalog command name.
     init(binding: Binding) {
-        if binding.holdsOutput, binding.action.shortcut != nil { self = .keyboardShortcut }
-        else { self.init(action: binding.action) }
+        if binding.holdsOutput, binding.action.shortcut != nil { self = .keyboardShortcut } else { self.init(action: binding.action) }
     }
 
     var systemAction: SystemAction? {
@@ -243,9 +249,11 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    func configuredAction(shortcut: KeyboardShortcut?, application: ApplicationTarget? = nil,
-                          webAddress: String = "", file: URL? = nil,
-                          appleShortcut: AppleShortcutTarget? = nil, text: String = "") -> RebindAction? {
+    func configuredAction(
+        shortcut: KeyboardShortcut?, application: ApplicationTarget? = nil,
+        webAddress: String = "", file: URL? = nil,
+        appleShortcut: AppleShortcutTarget? = nil, text: String = ""
+    ) -> RebindAction? {
         if let fixedShortcut { return .shortcut(fixedShortcut) }
         if self == .insertText { return TextSnippet.isValid(text) ? .text(text) : nil }
         if let modifierAction { return .modifier(modifierAction) }

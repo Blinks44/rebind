@@ -11,12 +11,19 @@ struct RuleApplicationField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.bindingAppTitle)
-            AnchoredMenu(select: { _ in }, makeMenu: { _ in
-                NSHostingMenu(rootView: Group {
-                    Button(.bindingAllApps) { application = nil }
-                    Button(.bindingChooseApp) { rejected = false; choosing = true }
-                }.environment(\.locale, locale))
-            }) {
+            AnchoredMenu(
+                select: { _ in },
+                makeMenu: { _ in
+                    NSHostingMenu(
+                        rootView: Group {
+                            Button(.bindingAllApps) { application = nil }
+                            Button(.bindingChooseApp) {
+                                rejected = false
+                                choosing = true
+                            }
+                        }.environment(\.locale, locale))
+                }
+            ) {
                 HStack(spacing: 10) {
                     if let application {
                         Image(nsImage: NSWorkspace.shared.icon(forFile: application.url.path)).resizable()

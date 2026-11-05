@@ -1,6 +1,7 @@
 import ApplicationServices
 import Synchronization
 import Testing
+
 @testable import rebind
 
 @MainActor struct ApplicationActivationTests {
@@ -36,21 +37,29 @@ import Testing
         let client = ActivationClient()
         let allowed = Mutex(true)
         client.onFocusRead = { if $0 == 2 { allowed.withLock { $0 = false } } }
-        #expect(await ApplicationActivationExecutor.perform(target: 2, source: 1, client: client, ownPID: 99,
-            authorize: { .performed }, canPerform: { allowed.withLock { $0 } }) == .cancelled)
+        #expect(
+            await ApplicationActivationExecutor.perform(
+                target: 2, source: 1, client: client, ownPID: 99,
+                authorize: { .performed }, canPerform: { allowed.withLock { $0 } }) == .cancelled)
         #expect(client.writes.isEmpty)
     }
 
     @Test func focusChangeAcrossActorHopPreventsStaleActivation() async {
         let client = ActivationClient()
-        #expect(await perform(client, authorize: { client.focused = 3; return .performed }) == .unavailable)
+        #expect(
+            await perform(
+                client,
+                authorize: {
+                    client.focused = 3
+                    return .performed
+                }) == .unavailable)
         #expect(client.writes.isEmpty)
     }
 
     @Test(arguments: [true, false]) func rejectedOrAcceptedWithoutFocusIsFailureWithoutRetry(_ accepts: Bool) async {
         let client = ActivationClient()
         client.accepts = accepts
-        client.focusDelay = nil // Even an accepted write never changes actual focus.
+        client.focusDelay = nil  // Even an accepted write never changes actual focus.
         #expect(await perform(client) == .unavailable)
         #expect(client.writes == [2])
     }
@@ -66,14 +75,19 @@ import Testing
         let client = ActivationClient()
         let allowed = Mutex(true)
         client.onWrite = { allowed.withLock { $0 = false } }
-        #expect(await ApplicationActivationExecutor.perform(target: 2, source: 1, client: client, ownPID: 99,
-            authorize: { .performed }, canPerform: { allowed.withLock { $0 } }) == .cancelled)
+        #expect(
+            await ApplicationActivationExecutor.perform(
+                target: 2, source: 1, client: client, ownPID: 99,
+                authorize: { .performed }, canPerform: { allowed.withLock { $0 } }) == .cancelled)
         #expect(client.writes == [2])
     }
 
-    private func perform(_ client: ActivationClient, source: Int = 1,
-                         authorize: @MainActor () -> WindowActionResult = { .performed }) async -> WindowActionResult {
-        await ApplicationActivationExecutor.perform(target: 2, source: source, client: client,
+    private func perform(
+        _ client: ActivationClient, source: Int = 1,
+        authorize: @MainActor () -> WindowActionResult = { .performed }
+    ) async -> WindowActionResult {
+        await ApplicationActivationExecutor.perform(
+            target: 2, source: source, client: client,
             ownPID: 99, authorize: authorize, canPerform: { true })
     }
 }
@@ -110,9 +124,19 @@ private final class ActivationClient: WindowAccessibility {
         return accepts
     }
     func element(_ attribute: String, of element: Int) -> Int? {
-        Issue.record("Application switch read a window or document attribute"); return nil
+        Issue.record("Application switch read a window or document attribute")
+        return nil
     }
-    func isWindow(_ element: Int) -> Bool { Issue.record("Application switch inspected windows"); return false }
-    func isEnabled(_ element: Int) -> Bool { Issue.record("Application switch inspected a button"); return false }
-    func press(_ element: Int) -> Bool { Issue.record("Application switch pressed a button"); return false }
+    func isWindow(_ element: Int) -> Bool {
+        Issue.record("Application switch inspected windows")
+        return false
+    }
+    func isEnabled(_ element: Int) -> Bool {
+        Issue.record("Application switch inspected a button")
+        return false
+    }
+    func press(_ element: Int) -> Bool {
+        Issue.record("Application switch pressed a button")
+        return false
+    }
 }

@@ -1,5 +1,5 @@
-import Foundation
 import Dispatch
+import Foundation
 import Synchronization
 
 // Developer-only opt-in aggregate report. No contacts, coordinates, IDs,
@@ -24,7 +24,8 @@ nonisolated struct TrackpadDiagnostics: Sendable {
 
 nonisolated enum TrackpadDiagnosticEvent: Sendable {
     // Fixed histogram buckets only; precise timestamps/durations are discarded.
-    case frameAge(nanoseconds: UInt64), postedQueueAge(nanoseconds: UInt64)
+    case frameAge(nanoseconds: UInt64)
+    case postedQueueAge(nanoseconds: UInt64)
     case frame, candidate, queued, queueUnavailable, outputPosted, outputCancelled, outputUnavailable, outputExpired
     case captureInactive, captureRestarted, captureUnavailable, captureFailed, runtimeChanged
     case heldModifier, heldButton, heldKey, protectedContext, targetChanged, activityChanged, outputTargetInactive
@@ -86,7 +87,8 @@ extension EngineMailbox {
     nonisolated func takeTrackpadDiagnosticReport(at now: UInt64, finishing: Bool = false) -> String? {
         let diagnostics: TrackpadDiagnostics? = state.withLock {
             guard let diagnostics = $0.trackpadDiagnostics,
-                  finishing || now < diagnostics.startedAt || now - diagnostics.startedAt >= TrackpadDiagnostics.duration else { return nil }
+                finishing || now < diagnostics.startedAt || now - diagnostics.startedAt >= TrackpadDiagnostics.duration
+            else { return nil }
             $0.trackpadDiagnostics = nil
             return diagnostics
         }

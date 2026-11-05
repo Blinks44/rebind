@@ -1,5 +1,5 @@
-import Synchronization
 import Foundation
+import Synchronization
 
 /// Synchronous ownership of source-attributed mouse presses and phased scrolling.
 /// Contact observation and resolution are serialized by EngineMailbox's lock.
@@ -30,10 +30,17 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
         armedAt = now.addingReportingOverflow(TrackpadTapGate.armingDelay).overflow ? nil : now + TrackpadTapGate.armingDelay
     }
 
-    mutating func invalidateContacts() { contact = nil; touching = false; armedAt = nil }
+    mutating func invalidateContacts() {
+        contact = nil
+        touching = false
+        armedAt = nil
+    }
 
     mutating func observe(_ frame: NativeTrackpadFrame) {
-        guard frame.valid else { contact = nil; return }
+        guard frame.valid else {
+            contact = nil
+            return
+        }
         if frame.count > 0, !touching { stroke &+= 1 }
         touching = frame.count > 0
         contact = (frame.count, frame.receipt, frame.revision)
@@ -41,13 +48,16 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
 
     private func count(sender: UInt64, revision: UInt64, at now: UInt64) -> Int? {
         guard sources.contains(sender), let armedAt, now >= armedAt, let contact,
-              contact.revision == revision, now >= contact.receipt, now - contact.receipt <= 100_000_000 else { return nil }
+            contact.revision == revision, now >= contact.receipt, now - contact.receipt <= 100_000_000
+        else { return nil }
         return contact.count
     }
 
     /// Only a matched down acquires ownership; its release/drag survives rule/context changes.
-    mutating func click(sender: UInt64?, button: UInt32, phase: InputEvent.Phase,
-                        revision: UInt64, at now: UInt64, admit: () -> Bool) -> Bool {
+    mutating func click(
+        sender: UInt64?, button: UInt32, phase: InputEvent.Phase,
+        revision: UInt64, at now: UInt64, admit: () -> Bool
+    ) -> Bool {
         guard let sender, button <= 1 else { return false }
         let owner = button == 0 ? leftOwner : rightOwner
         if owner == sender {
@@ -57,7 +67,8 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
             return true
         }
         guard phase == .down, owner == nil, count(sender: sender, revision: revision, at: now) == 3,
-              admit() else { return false }
+            admit()
+        else { return false }
         if button == 0 { leftOwner = sender } else { rightOwner = sender }
         return true
     }
@@ -72,9 +83,11 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
 
     /// A stream that began ambiguously is passed in full. Never take over at a changed event.
     /// Momentum remains owned after fingers lift; another device never shares that ownership.
-    mutating func scroll(sender: UInt64?, phase: Int64, momentum: Int64,
-                         direction: ScrollDirection?, revision: UInt64, at now: UInt64,
-                         admit: (ScrollDirection) -> Bool) -> Bool {
+    mutating func scroll(
+        sender: UInt64?, phase: Int64, momentum: Int64,
+        direction: ScrollDirection?, revision: UInt64, at now: UInt64,
+        admit: (ScrollDirection) -> Bool
+    ) -> Bool {
         guard let sender, sources.contains(sender) || scrollOwner == sender else { return false }
         expireScroll(at: now)
         if phase & 1 != 0 {
@@ -85,7 +98,8 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
             }
             scrollOwner = nil
             guard let direction, count(sender: sender, revision: revision, at: now) == 2,
-                  firedStroke != stroke, passedStroke != stroke, admit(direction) else {
+                firedStroke != stroke, passedStroke != stroke, admit(direction)
+            else {
                 passedStroke = stroke
                 return false
             }
@@ -105,19 +119,25 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
 
 extension EngineMailbox {
     /// Runs before the conventional wheel adapter; no UI, registry access or event posting.
-    nonisolated func handleMagicMouseScroll(sender: UInt64?, phase: Int64, momentum: Int64,
-                                             direction: ScrollDirection?, modifiers: ModifierSet,
-                                             at now: UInt64, secureInput: Bool) -> Bool {
+    nonisolated func handleMagicMouseScroll(
+        sender: UInt64?, phase: Int64, momentum: Int64,
+        direction: ScrollDirection?, modifiers: ModifierSet,
+        at now: UInt64, secureInput: Bool
+    ) -> Bool {
         let consumed = state.withLock { state in
             let actionRules = state.rules
             let active = !secureInput && state.canDispatch && state.foregroundPID != nil && state.hasQueueSpace
             var queued: RebindAction?
-            let consumed = state.magicMouseNative.scroll(sender: sender, phase: phase, momentum: momentum,
-                direction: direction, revision: state.actionRevision, at: now) { direction in
-                    guard active, let action = actionRules[MatchKey(trigger: .magicMouseScroll(direction), modifiers: modifiers)]?.action else { return false }
-                    queued = action
-                    return true
+            let consumed = state.magicMouseNative.scroll(
+                sender: sender, phase: phase, momentum: momentum,
+                direction: direction, revision: state.actionRevision, at: now
+            ) { direction in
+                guard active, let action = actionRules[MatchKey(trigger: .magicMouseScroll(direction), modifiers: modifiers)]?.action else {
+                    return false
                 }
+                queued = action
+                return true
+            }
             if let queued { state.pending.append(queued) }
             if consumed {
                 state.inputActivity &+= 1

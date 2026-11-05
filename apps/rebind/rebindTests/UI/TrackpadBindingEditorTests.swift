@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct TrackpadBindingEditorTests {
@@ -7,20 +8,23 @@ import Testing
 
     @Test(arguments: TrackpadPreset.allCases)
     func savedPresetRoundTripsWithoutChangingIdentity(_ preset: TrackpadPreset) throws {
-        let existing = rebind.Binding(scope: .builtInTrackpad, trigger: preset.trigger,
+        let existing = rebind.Binding(
+            scope: .builtInTrackpad, trigger: preset.trigger,
             modifiers: [], action: action, isEnabled: false)
         let draft = BindingEditorDraft(scope: .builtInTrackpad, existing: existing)
         #expect(draft.trackpadPreset == preset)
         let candidate = try #require(draft.binding(scope: .builtInTrackpad, action: action, existing: existing))
         #expect(candidate == existing && candidate.isValid)
-        let restored = try JSONDecoder().decode(Configuration.self,
+        let restored = try JSONDecoder().decode(
+            Configuration.self,
             from: JSONEncoder().encode(Configuration(bindings: [candidate])))
         #expect(restored.bindings == [existing])
     }
 
     @Test(arguments: TrackpadPreset.allCases)
     func choosingCompletePresetRetainsOutputAndNormalizesTriggerOptions(_ preset: TrackpadPreset) throws {
-        let existing = rebind.Binding(scope: .builtInTrackpad, trigger: .fourFingerTap,
+        let existing = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .fourFingerTap,
             modifiers: [], action: action, isEnabled: false)
         var draft = BindingEditorDraft(scope: .builtInTrackpad, existing: existing)
         draft.activation = .hold
@@ -35,10 +39,14 @@ import Testing
     }
 
     @Test func onlyEngineBackedPresetsAreSelectable() {
-        #expect(Set(TrackpadPreset.allCases.map { $0.trigger }) ==
-            Set([InputTrigger.threeFingerTap, .fourFingerTap, .twoFingerDoubleTap, .threeFingerDoubleTap,
-                 .fourFingerDoubleTap] + (2...4).map { .trackpadClick(fingers: $0) }
-                + TrackpadCorner.allCases.map(InputTrigger.cornerTap)))
+        #expect(
+            Set(TrackpadPreset.allCases.map { $0.trigger })
+                == Set(
+                    [
+                        InputTrigger.threeFingerTap, .fourFingerTap, .twoFingerDoubleTap, .threeFingerDoubleTap,
+                        .fourFingerDoubleTap,
+                    ] + (2...4).map { .trackpadClick(fingers: $0) }
+                        + TrackpadCorner.allCases.map(InputTrigger.cornerTap)))
         #expect(TrackpadPreset(trigger: .mouseButton(3)) == nil)
         #expect(TrackpadPreset(trigger: .key(13)) == nil)
         #expect(BindingEditorDraft(scope: .builtInTrackpad, existing: nil).trackpadPreset == .fourFingerTap)
@@ -52,13 +60,15 @@ import Testing
         let request = RecordingRequest(target: .output)
         let replacement = MatchKey(trigger: .key(0), modifiers: [.command, .shift])
         draft.accept(RecordedInput(request: request, input: nil), for: request, scope: .builtInTrackpad)
-        draft.accept(RecordedInput(request: request, input: replacement),
-                     for: RecordingRequest(target: .output), scope: .builtInTrackpad)
+        draft.accept(
+            RecordedInput(request: request, input: replacement),
+            for: RecordingRequest(target: .output), scope: .builtInTrackpad)
         draft.accept(RecordedInput(request: request, input: replacement), for: nil, scope: .builtInTrackpad)
         #expect(draft.output == action.shortcut)
         let triggerRequest = RecordingRequest(target: .keyboardTrigger)
-        draft.accept(RecordedInput(request: triggerRequest, input: replacement),
-                     for: triggerRequest, scope: .builtInTrackpad)
+        draft.accept(
+            RecordedInput(request: triggerRequest, input: replacement),
+            for: triggerRequest, scope: .builtInTrackpad)
         #expect(draft.trackpadPreset == preset)
         draft.accept(RecordedInput(request: request, input: replacement), for: request, scope: .builtInTrackpad)
         #expect(draft.output == KeyboardShortcut(keyCode: 0, modifiers: [.command, .shift]))
@@ -67,7 +77,8 @@ import Testing
 
     @Test(arguments: TrackpadPreset.allCases)
     func duplicatePresetConflictsOnlyWithinSelectedProfile(_ preset: TrackpadPreset) throws {
-        let binding = rebind.Binding(scope: .builtInTrackpad, trigger: preset.trigger,
+        let binding = rebind.Binding(
+            scope: .builtInTrackpad, trigger: preset.trigger,
             modifiers: [], action: action)
         var configuration = Configuration(bindings: [binding])
         let original = configuration
@@ -118,10 +129,12 @@ import Testing
         #expect(lookUp != zoom)
         if language != .en {
             for preset in TrackpadPreset.allCases {
-                #expect(AppLocalization.string(preset.explanation, language: language) !=
-                        AppLocalization.string(preset.explanation, language: .en))
-                #expect(AppLocalization.string(preset.systemGestureHelp, language: language) !=
-                        AppLocalization.string(preset.systemGestureHelp, language: .en))
+                #expect(
+                    AppLocalization.string(preset.explanation, language: language)
+                        != AppLocalization.string(preset.explanation, language: .en))
+                #expect(
+                    AppLocalization.string(preset.systemGestureHelp, language: language)
+                        != AppLocalization.string(preset.systemGestureHelp, language: .en))
             }
         }
     }

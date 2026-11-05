@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct NativeTrackpadBufferTests {
@@ -32,8 +33,9 @@ struct NativeTrackpadBufferTests {
     }
 
     @Test func callbackTimingSurvivesAnEmptyContactArray() {
-        let empty = NativeTrackpadFrame.read(nil, count: 0, receipt: 20, revision: 2, activity: 5,
-                                            callbackFrame: 11, callbackTime: 1.02)
+        let empty = NativeTrackpadFrame.read(
+            nil, count: 0, receipt: 20, revision: 2, activity: 5,
+            callbackFrame: 11, callbackTime: 1.02)
         #expect(empty.valid && empty.count == 0 && empty.frame == 11 && empty.time == 1.02)
         #expect(empty.receipt == 20 && empty.revision == 2 && empty.activity == 5)
     }
@@ -41,17 +43,20 @@ struct NativeTrackpadBufferTests {
     @Test func callbackClockIsUsedConsistentlyWithAndWithoutContacts() {
         let pointer = records(4)
         defer { pointer.deallocate() }
-        let touching = NativeTrackpadFrame.read(pointer, count: 4, receipt: 0, revision: 0, activity: 0,
-                                               callbackFrame: 100, callbackTime: 2)
-        let released = NativeTrackpadFrame.read(nil, count: 0, receipt: 1, revision: 0, activity: 0,
-                                               callbackFrame: 101, callbackTime: 2.02)
+        let touching = NativeTrackpadFrame.read(
+            pointer, count: 4, receipt: 0, revision: 0, activity: 0,
+            callbackFrame: 100, callbackTime: 2)
+        let released = NativeTrackpadFrame.read(
+            nil, count: 0, receipt: 1, revision: 0, activity: 0,
+            callbackFrame: 101, callbackTime: 2.02)
         #expect(touching.valid && touching.count == 4 && touching.frame == 100 && touching.time == 2)
         #expect(released.valid && released.frame == 101 && released.time == 2.02)
     }
 
     @Test(arguments: [Double.nan, .infinity, -1]) func invalidCallbackTimeRejectsEvenAnEmptyArray(_ time: Double) {
-        let result = NativeTrackpadFrame.read(nil, count: 0, receipt: 0, revision: 0, activity: 0,
-                                             callbackFrame: 1, callbackTime: time)
+        let result = NativeTrackpadFrame.read(
+            nil, count: 0, receipt: 0, revision: 0, activity: 0,
+            callbackFrame: 1, callbackTime: time)
         #expect(!result.valid)
     }
 
@@ -75,7 +80,7 @@ struct NativeTrackpadBufferTests {
         defer { pointer.deallocate() }
         let record = pointer.advanced(by: 96)
         switch scenario {
-        case 0: break // fifth active contact
+        case 0: break  // fifth active contact
         case 1: record.storeBytes(of: Int32(0), toByteOffset: 16, as: Int32.self)
         case 2: record.storeBytes(of: Float.nan, toByteOffset: 32, as: Float.self)
         case 3: record.storeBytes(of: Int32(11), as: Int32.self)
@@ -89,7 +94,10 @@ struct NativeTrackpadBufferTests {
 
     @Test func bufferClosesOnPauseAndNeverRetainsNativePointers() throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         let pointer = records(4)
         defer { pointer.deallocate() }
@@ -114,7 +122,10 @@ struct NativeTrackpadBufferTests {
 
     @Test func overflowQuarantinesFramesUntilAcknowledged() throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         for _ in 0..<65 { buffer.receive(nil, count: 0) }
@@ -133,7 +144,10 @@ struct NativeTrackpadBufferTests {
     @Test(arguments: [1, 2, 10], [0, 4])
     func inFlightFrameCannotCrossCaptureRestarts(_ restarts: Int, _ contacts: Int) throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         // Model a callback admitted before stop and finishing its copy after
@@ -141,10 +155,14 @@ struct NativeTrackpadBufferTests {
         let admittedGeneration = buffer.state.withLock { $0.generation }
         let pointer = records(contacts)
         defer { pointer.deallocate() }
-        let delayed = NativeTrackpadFrame.read(pointer, count: Int32(contacts), receipt: 20,
-                                               revision: 0, activity: 0,
-                                               callbackFrame: 10, callbackTime: 1)
-        for _ in 0..<restarts { buffer.setAccepting(false); buffer.setAccepting(true) }
+        let delayed = NativeTrackpadFrame.read(
+            pointer, count: Int32(contacts), receipt: 20,
+            revision: 0, activity: 0,
+            callbackFrame: 10, callbackTime: 1)
+        for _ in 0..<restarts {
+            buffer.setAccepting(false)
+            buffer.setAccepting(true)
+        }
         buffer.state.withLock { $0.append(delayed, generation: admittedGeneration) }
         #expect(buffer.pop() == nil)
         #expect(buffer.takeOverflow() == false)
@@ -165,7 +183,10 @@ struct NativeTrackpadBufferTests {
 
     @Test func frameAdmittedBeforeOverflowCannotEnterRecoveredQueue() throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         let generation = buffer.state.withLock { $0.generation }
@@ -181,7 +202,10 @@ struct NativeTrackpadBufferTests {
 
     @Test func obsoleteFrameCannotOverflowOrClearCurrentQueue() throws {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         let generation = buffer.state.withLock { $0.generation }

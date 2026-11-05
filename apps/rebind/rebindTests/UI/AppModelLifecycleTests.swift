@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import rebind
 
 @MainActor struct AppModelLifecycleTests {
@@ -7,9 +8,11 @@ import Testing
         let model = AppModel(loadConfiguration: false, sessionAllowsInput: { true })
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.willSleepNotification))
         model.handleWorkspaceNotification(Notification(name: NSWorkspace.sessionDidResignActiveNotification))
-        model.handleWorkspaceNotification(Notification(name: wakeFirst ? NSWorkspace.didWakeNotification : NSWorkspace.sessionDidBecomeActiveNotification))
+        model.handleWorkspaceNotification(
+            Notification(name: wakeFirst ? NSWorkspace.didWakeNotification : NSWorkspace.sessionDidBecomeActiveNotification))
         #expect(model.mailbox.state.withLock { $0.suspended })
-        model.handleWorkspaceNotification(Notification(name: wakeFirst ? NSWorkspace.sessionDidBecomeActiveNotification : NSWorkspace.didWakeNotification))
+        model.handleWorkspaceNotification(
+            Notification(name: wakeFirst ? NSWorkspace.sessionDidBecomeActiveNotification : NSWorkspace.didWakeNotification))
         #expect(model.mailbox.state.withLock { $0.suspended } == false)
     }
 
@@ -54,7 +57,7 @@ import Testing
         model.recording = request
         model.mailbox.record(request)
         model.mailbox.captureLost(status: .permissionRequired)
-        model.refresh() // Session state is injected; actual permissions are read without requesting access.
+        model.refresh()  // Session state is injected; actual permissions are read without requesting access.
         #expect(model.recording == nil)
         #expect(model.lastRecording?.request == request)
         #expect(model.lastRecording?.input == nil)

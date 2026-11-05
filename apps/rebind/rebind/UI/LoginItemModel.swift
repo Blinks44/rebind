@@ -35,14 +35,14 @@ import Observation
         failedOperation = nil
         defer { operation = nil }
         do {
-            if enabled { try service.register() }
-            else { try await service.unregister() }
+            if enabled { try service.register() } else { try await service.unregister() }
         } catch {
             // An error does not establish whether OS registration changed.
             // Read the result below, including approval and not-found states.
         }
         status = service.status
-        let reachedRequestedState = enabled
+        let reachedRequestedState =
+            enabled
             ? status == .enabled || status == .requiresApproval
             : status == .off
         failedOperation = reachedRequestedState ? nil : requested

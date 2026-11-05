@@ -39,7 +39,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     var isTrackpad: Bool {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .trackpadClick: true
+            .twoFingerDoubleTap, .cornerTap, .trackpadClick:
+            true
         default: false
         }
     }
@@ -84,7 +85,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     var scope: DeviceScope {
         switch self {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .trackpadClick: .builtInTrackpad
+            .twoFingerDoubleTap, .cornerTap, .trackpadClick:
+            .builtInTrackpad
         case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: .magicMouse
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
@@ -97,7 +99,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .mouseButton(let number): number >= 2
         case .mouseGesture(let number, _), .buttonScroll(let number, _): number >= 2
         case .scroll, .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
-             .twoFingerDoubleTap, .cornerTap, .magicMouseSideTap: true
+            .twoFingerDoubleTap, .cornerTap, .magicMouseSideTap:
+            true
         case .trackpadClick(let fingers): (2...4).contains(fingers)
         case .magicMouseTap(let fingers): (1...3).contains(fingers)
         case .magicMouseClick(let fingers): fingers == 3

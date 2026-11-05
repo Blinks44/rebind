@@ -48,9 +48,10 @@ nonisolated enum VendorBatteryProtocol {
 
     static func razerValue(_ response: [UInt8], transaction: UInt8, charging: Bool = false) -> UInt8? {
         guard response.count == 90, response[0] == 2, response[1] == transaction,
-              response[2] == 0, response[3] == 0, response[4] == 0, response[5] >= 2,
-              response[6] == 7, response[7] == (charging ? 0x84 : 0x80),
-              response[88] == response[2..<88].reduce(0, ^) else { return nil }
+            response[2] == 0, response[3] == 0, response[4] == 0, response[5] >= 2,
+            response[6] == 7, response[7] == (charging ? 0x84 : 0x80),
+            response[88] == response[2..<88].reduce(0, ^)
+        else { return nil }
         let value = response[9]
         return charging && value > 1 ? nil : value
     }
@@ -87,7 +88,9 @@ nonisolated enum VendorBatteryProtocol {
             } else if response.count >= 3, response[1] == 0 {
                 // Direct macOS response: [percentage, high byte (0), charging].
                 (level, charging) = (response[0], response[2])
-            } else { return nil }
+            } else {
+                return nil
+            }
             guard level <= 100, charging <= 1 else { return nil }
             return PeripheralBatteryReading(percentage: Int(level), isCharging: charging == 1)
         }

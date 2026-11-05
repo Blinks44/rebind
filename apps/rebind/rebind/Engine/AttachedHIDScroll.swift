@@ -22,11 +22,12 @@ nonisolated enum AttachedHIDScroll {
     // Immutable after the one-time lookup; C function pointers carry no state.
     private static let functions: (copy: Copy, get: Get, set: Set, sender: Sender)? = {
         func symbol<T>(_ name: String) -> T? {
-            dlsym(UnsafeMutableRawPointer(bitPattern: -2), name).map { unsafeBitCast($0, to: T.self) } // RTLD_DEFAULT
+            dlsym(UnsafeMutableRawPointer(bitPattern: -2), name).map { unsafeBitCast($0, to: T.self) }  // RTLD_DEFAULT
         }
         guard let copy: Copy = symbol("CGEventCopyIOHIDEvent"), let get: Get = symbol("IOHIDEventGetFloatValue"),
-              let set: Set = symbol("IOHIDEventSetFloatValue"),
-              let sender: Sender = symbol("IOHIDEventGetSenderID") else { return nil }
+            let set: Set = symbol("IOHIDEventSetFloatValue"),
+            let sender: Sender = symbol("IOHIDEventGetSenderID")
+        else { return nil }
         return (copy, get, set, sender)
     }()
 

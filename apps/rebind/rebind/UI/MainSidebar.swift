@@ -22,44 +22,58 @@ struct MainSidebar: View {
             }
             .padding(.leading, 8).padding(.top, 50).accessibilityElement(children: .combine)
             VStack(spacing: 4) {
-                MainSidebarButton(title: LocalizedStringResource("keyboardNavigationTitle", table: "Navigation"), symbol: "keyboard",
-                    isSelected: selection == .input(.allKeyboards), keyboardFocus: focusedRow == 0) { selection = .input(.allKeyboards) }
-                    .focused($focusedRow, equals: 0)
-                    .accessibilityIdentifier("sidebar-keyboard")
-                    .keyboardShortcut("1", modifiers: .command)
-                MainSidebarButton(title: .mouseTitle, symbol: "computermouse",
-                    isSelected: selection == .input(.allMice), keyboardFocus: focusedRow == 1) { selection = .input(.allMice) }
-                    .focused($focusedRow, equals: 1)
-                    .accessibilityIdentifier("sidebar-mouse")
-                    .keyboardShortcut("2", modifiers: .command)
-                MainSidebarButton(title: LocalizedStringResource("trackpadNavigationTitle", table: "Navigation"), symbol: "rectangle.and.hand.point.up.left",
-                    isSelected: selection == .input(.builtInTrackpad), keyboardFocus: focusedRow == 2) { selection = .input(.builtInTrackpad) }
-                    .focused($focusedRow, equals: 2)
-                    .accessibilityIdentifier("sidebar-trackpad")
-                    .keyboardShortcut("3", modifiers: .command)
-                MainSidebarButton(title: DeviceScope.magicTrackpad.title, symbol: DeviceScope.magicTrackpad.symbol,
-                    isSelected: selection == .input(.magicTrackpad), keyboardFocus: focusedRow == 3) { selection = .input(.magicTrackpad) }
-                    .focused($focusedRow, equals: 3)
-                    .accessibilityIdentifier("sidebar-magic-trackpad")
-                    .keyboardShortcut("4", modifiers: .command)
-                MainSidebarButton(title: DeviceScope.magicMouse.title, symbol: DeviceScope.magicMouse.symbol,
-                    isSelected: selection == .input(.magicMouse), keyboardFocus: focusedRow == 4) { selection = .input(.magicMouse) }
-                    .focused($focusedRow, equals: 4)
-                    .accessibilityIdentifier("sidebar-magic-mouse")
-                    .keyboardShortcut("5", modifiers: .command)
+                MainSidebarButton(
+                    title: LocalizedStringResource("keyboardNavigationTitle", table: "Navigation"), symbol: "keyboard",
+                    isSelected: selection == .input(.allKeyboards), keyboardFocus: focusedRow == 0
+                ) { selection = .input(.allKeyboards) }
+                .focused($focusedRow, equals: 0)
+                .accessibilityIdentifier("sidebar-keyboard")
+                .keyboardShortcut("1", modifiers: .command)
+                MainSidebarButton(
+                    title: .mouseTitle, symbol: "computermouse",
+                    isSelected: selection == .input(.allMice), keyboardFocus: focusedRow == 1
+                ) { selection = .input(.allMice) }
+                .focused($focusedRow, equals: 1)
+                .accessibilityIdentifier("sidebar-mouse")
+                .keyboardShortcut("2", modifiers: .command)
+                MainSidebarButton(
+                    title: LocalizedStringResource("trackpadNavigationTitle", table: "Navigation"),
+                    symbol: "rectangle.and.hand.point.up.left",
+                    isSelected: selection == .input(.builtInTrackpad), keyboardFocus: focusedRow == 2
+                ) { selection = .input(.builtInTrackpad) }
+                .focused($focusedRow, equals: 2)
+                .accessibilityIdentifier("sidebar-trackpad")
+                .keyboardShortcut("3", modifiers: .command)
+                MainSidebarButton(
+                    title: DeviceScope.magicTrackpad.title, symbol: DeviceScope.magicTrackpad.symbol,
+                    isSelected: selection == .input(.magicTrackpad), keyboardFocus: focusedRow == 3
+                ) { selection = .input(.magicTrackpad) }
+                .focused($focusedRow, equals: 3)
+                .accessibilityIdentifier("sidebar-magic-trackpad")
+                .keyboardShortcut("4", modifiers: .command)
+                MainSidebarButton(
+                    title: DeviceScope.magicMouse.title, symbol: DeviceScope.magicMouse.symbol,
+                    isSelected: selection == .input(.magicMouse), keyboardFocus: focusedRow == 4
+                ) { selection = .input(.magicMouse) }
+                .focused($focusedRow, equals: 4)
+                .accessibilityIdentifier("sidebar-magic-mouse")
+                .keyboardShortcut("5", modifiers: .command)
                 // Connected hardware is app content, not a setting, so it sits with the categories.
                 Theme.separator.frame(height: 1).padding(.horizontal, 8).padding(.top, 12).padding(.bottom, 11).accessibilityHidden(true)
-                MainSidebarButton(title: .settingsDevices, symbol: "cable.connector",
-                    isSelected: selection == .devices, keyboardFocus: focusedRow == 5) { selection = .devices }
-                    .focused($focusedRow, equals: 5)
-                    .accessibilityIdentifier("sidebar-devices")
-                    .keyboardShortcut("6", modifiers: .command)
+                MainSidebarButton(
+                    title: .settingsDevices, symbol: "cable.connector",
+                    isSelected: selection == .devices, keyboardFocus: focusedRow == 5
+                ) { selection = .devices }
+                .focused($focusedRow, equals: 5)
+                .accessibilityIdentifier("sidebar-devices")
+                .keyboardShortcut("6", modifiers: .command)
             }.padding(.top, 18)
 
             Spacer(minLength: 16)
             Theme.separator.frame(height: 1).padding(.horizontal, 8).padding(.bottom, 15).accessibilityHidden(true)
             VStack(spacing: 4) {
-                MainSidebarButton(title: .settingsTitle, symbol: "gearshape", isSelected: isShowingSettings, keyboardFocus: focusedRow == 6) {
+                MainSidebarButton(title: .settingsTitle, symbol: "gearshape", isSelected: isShowingSettings, keyboardFocus: focusedRow == 6)
+                {
                     selection = .settings(.general)
                 }.focused($focusedRow, equals: 6).accessibilityIdentifier("sidebar-settings")
                 MainSidebarButton(title: .aboutTitle, symbol: "info.circle", keyboardFocus: focusedRow == 7, action: showAbout)

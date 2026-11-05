@@ -31,10 +31,12 @@ struct ReadOnlyNoticesText: NSViewRepresentable {
         view.isHorizontallyResizable = false
         view.autoresizingMask = [.width]
         view.textContainer?.widthTracksTextView = true
-        view.textContainer?.containerSize = NSSize(width: scroll.contentSize.width,
-                                                  height: CGFloat.greatestFiniteMagnitude)
-        view.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude,
-                              height: CGFloat.greatestFiniteMagnitude)
+        view.textContainer?.containerSize = NSSize(
+            width: scroll.contentSize.width,
+            height: CGFloat.greatestFiniteMagnitude)
+        view.maxSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude)
         scroll.documentView = view
         updateNSView(scroll, context: context)
         return scroll

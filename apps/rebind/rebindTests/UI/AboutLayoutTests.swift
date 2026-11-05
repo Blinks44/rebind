@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Resource and native UI checks do not load configuration or start input capture.
@@ -8,15 +9,17 @@ import XCTest
     func testLocalizedAboutAndNoticesFitNativeWindows() async throws {
         for language in AppLanguage.allCases.map(\.rawValue) {
             for appearance in [ColorScheme.light, .dark] {
-                try await check(AboutView()
-                    .environment(\.locale, Locale(identifier: language))
-                    .preferredColorScheme(appearance),
+                try await check(
+                    AboutView()
+                        .environment(\.locale, Locale(identifier: language))
+                        .preferredColorScheme(appearance),
                     sizes: [NSSize(width: 440, height: 448), NSSize(width: 600, height: 560)],
                     appearance: appearance, name: "about-\(language)-\(appearance)")
                 for text in [AboutInformation().notices, nil] {
-                    try await check(ThirdPartyNoticesView(text: text)
-                        .environment(\.locale, Locale(identifier: language))
-                        .preferredColorScheme(appearance),
+                    try await check(
+                        ThirdPartyNoticesView(text: text)
+                            .environment(\.locale, Locale(identifier: language))
+                            .preferredColorScheme(appearance),
                         sizes: [NSSize(width: 560, height: 400), NSSize(width: 640, height: 520)],
                         appearance: appearance, name: "licenses-\(language)-\(appearance)-\(text == nil)")
                 }
@@ -27,8 +30,9 @@ import XCTest
     func testLicenseTextIsReadOnlySelectableSearchableAndLocalized() async throws {
         for language in AppLanguage.allCases.map(\.rawValue) {
             let text = try XCTUnwrap(AboutInformation().notices)
-            let controller = NSHostingController(rootView: ReadOnlyNoticesText(text: text)
-                .environment(\.locale, Locale(identifier: language)))
+            let controller = NSHostingController(
+                rootView: ReadOnlyNoticesText(text: text)
+                    .environment(\.locale, Locale(identifier: language)))
             let window = NSWindow(contentViewController: controller)
             window.isReleasedWhenClosed = false
             defer { window.close() }
@@ -76,8 +80,10 @@ import XCTest
         XCTAssertFalse(view.isEditable)
     }
 
-    private func check<V: View>(_ root: V, sizes: [NSSize], appearance: ColorScheme,
-                                name: String) async throws {
+    private func check<V: View>(
+        _ root: V, sizes: [NSSize], appearance: ColorScheme,
+        name: String
+    ) async throws {
         let controller = NSHostingController(rootView: root)
         let window = NSWindow(contentViewController: controller)
         window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)

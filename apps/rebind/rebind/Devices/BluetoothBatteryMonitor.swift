@@ -45,7 +45,9 @@ import Observation
         if central == nil {
             // nil queue delivers all delegate calls on the main queue.
             central = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionShowPowerAlertKey: false])
-        } else { refresh() }
+        } else {
+            refresh()
+        }
     }
 
     func stop() {
@@ -82,8 +84,9 @@ import Observation
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         guard self.central === central else { return }
         authorization = CBManager.authorization
-        if central.state == .poweredOn { refresh() }
-        else {
+        if central.state == .poweredOn {
+            refresh()
+        } else {
             for id in Array(reads.keys) { finish(id) }
             cached = [:]
             disconnecting = []
@@ -113,24 +116,31 @@ import Observation
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
         guard error == nil, reads[peripheral.identifier] != nil,
-              let hid = peripheral.services?.first(where: { $0.uuid == Self.hid }),
-              let battery = peripheral.services?.first(where: { $0.uuid == Self.battery }) else {
-            finish(peripheral.identifier); return
+            let hid = peripheral.services?.first(where: { $0.uuid == Self.hid }),
+            let battery = peripheral.services?.first(where: { $0.uuid == Self.battery })
+        else {
+            finish(peripheral.identifier)
+            return
         }
         peripheral.discoverCharacteristics([Self.reportMap], for: hid)
         peripheral.discoverCharacteristics([Self.level], for: battery)
     }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: (any Error)?) {
-        guard error == nil, let read = reads[peripheral.identifier] else { finish(peripheral.identifier); return }
+        guard error == nil, let read = reads[peripheral.identifier] else {
+            finish(peripheral.identifier)
+            return
+        }
         if service.uuid == Self.hid {
             guard let map = service.characteristics?.first(where: { $0.uuid == Self.reportMap }) else {
-                finish(peripheral.identifier); return
+                finish(peripheral.identifier)
+                return
             }
             peripheral.readValue(for: map)
         } else if service.uuid == Self.battery {
             guard let level = service.characteristics?.first(where: { $0.uuid == Self.level }) else {
-                finish(peripheral.identifier); return
+                finish(peripheral.identifier)
+                return
             }
             read.level = level
             readLevelIfIdentified(read)
@@ -139,19 +149,27 @@ import Observation
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: (any Error)?) {
         guard error == nil, let read = reads[peripheral.identifier], let data = characteristic.value else {
-            finish(peripheral.identifier); return
+            finish(peripheral.identifier)
+            return
         }
         if characteristic.uuid == Self.reportMap {
             guard let kind = HIDReportMap.inputKind(data) else {
                 cached[peripheral.identifier] = nil
-                finish(peripheral.identifier); publish(); return
+                finish(peripheral.identifier)
+                publish()
+                return
             }
             read.kind = kind
             readLevelIfIdentified(read)
         } else if characteristic.uuid == Self.level {
             guard let kind = read.kind, data.count == 1, let level = data.first, level <= 100,
-                  let name = peripheral.name, !name.isEmpty else { finish(peripheral.identifier); return }
-            cached[peripheral.identifier] = DeviceBattery(id: "ble-\(peripheral.identifier)", name: name, kind: kind,
+                let name = peripheral.name, !name.isEmpty
+            else {
+                finish(peripheral.identifier)
+                return
+            }
+            cached[peripheral.identifier] = DeviceBattery(
+                id: "ble-\(peripheral.identifier)", name: name, kind: kind,
                 percentage: Int(level), isCharging: false)
             finish(peripheral.identifier)
             publish()

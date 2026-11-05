@@ -1,6 +1,7 @@
 import Foundation
 import HIDPP
 import Testing
+
 @testable import rebind
 
 private final class LightingKeyboard: HIDPPDeviceIO {
@@ -21,32 +22,48 @@ private final class LightingKeyboard: HIDPPDeviceIO {
     var writeObserved: (() -> Void)?
     private(set) var writes: [[UInt8]] = []
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         let b = Array(report)
         let function = b[3] >> 4
         var payload: [UInt8]
         switch (b[2], function) {
         case (20, 0): payload = brightnessInfo
         case (20, 1): payload = [UInt8(brightness >> 8), UInt8(brightness & 255)]
-        case (20, 2): brightness = UInt16(b[4]) << 8 | UInt16(b[5]); payload = []
+        case (20, 2):
+            brightness = UInt16(b[4]) << 8 | UInt16(b[5])
+            payload = []
         case (20, 3): payload = [illumination ? 1 : 0]
-        case (20, 4): illumination = b[4] != 0; payload = []
+        case (20, 4):
+            illumination = b[4] != 0
+            payload = []
         case (10, 0):
-            if b[4] == 255 { payload = [255, 0, 2, 0, 0, 0, 0, 0] }
-            else if b[5] == 255 { payload = [b[4], 0, 0, 1, supportsDisabled ? 2 : 1, 0, 0, 0] }
-            else { payload = [b[4], b[5], 0, supportsDisabled && b[5] == 1 ? 0 : 1, 0, 0, 0, 0] }
+            if b[4] == 255 {
+                payload = [255, 0, 2, 0, 0, 0, 0, 0]
+            } else if b[5] == 255 {
+                payload = [b[4], 0, 0, 1, supportsDisabled ? 2 : 1, 0, 0, 0]
+            } else {
+                payload = [b[4], b[5], 0, supportsDisabled && b[5] == 1 ? 0 : 1, 0, 0, 0, 0]
+            }
         case (10, 1):
             writes.append(b)
             writeObserved?()
             guard b[4] != failedZone else { return nil }
             payload = []
         case (10, 5):
-            if b[4] == 1 { flags = b[5]; events = b[6] }
+            if b[4] == 1 {
+                flags = b[5]
+                events = b[6]
+            }
             payload = [b[4], flags, events]
         case (10, 7):
             if b[4] == 0, rejectsPolicyRead { return nil }
-            if b[4] == 1 { policy = Array(b[5...10]); writes.append(b) }
+            if b[4] == 1 {
+                policy = Array(b[5...10])
+                writes.append(b)
+            }
             payload = [0] + policy
         case (10, 8):
             guard supportsPowerModes else { return nil }
@@ -69,7 +86,8 @@ private final class LightingKeyboard: HIDPPDeviceIO {
 
 struct KeyboardLightingOwnershipTests {
     @Test func idleTimeoutUsesNativeTimerAndDeviceDefaultRestoresCapturedPolicy() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
         let original = try #require(feature.read()?.powerPolicy)
         #expect(original.dimSeconds == 120 && original.offSeconds == 300)
@@ -94,10 +112,12 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func nativeIdleEventsExplicitlySwitchPowerAndWakeWithoutChangingBrightness() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
         let policy = try #require(feature.read()?.powerPolicy)
-        let settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0xFFFFFF,
+        let settings = KeyboardLightingSettings(
+            deviceKey: "keyboard", color: 0xFFFFFF,
             lowBattery: .red, idleTimeout: 30, devicePowerPolicy: policy)
         #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
         #expect(io.flags == 3 && io.events == 0x84)
@@ -123,15 +143,17 @@ struct KeyboardLightingOwnershipTests {
 
     @Test func deviceDefaultAndManualOffReleasePowerAndRestoreOriginalEventBits() throws {
         for manualOff in [false, true] {
-            let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+            let io = LightingKeyboard()
+            let ownership = KeyboardLightingOwnership()
             io.events = 0x82
             let feature = try lighting(io, ownership: ownership)
             let policy = try #require(feature.read()?.powerPolicy)
-            var settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0x123456,
+            var settings = KeyboardLightingSettings(
+                deviceKey: "keyboard", color: 0x123456,
                 idleTimeout: 30, devicePowerPolicy: policy)
             #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
             #expect(feature.armIdleNotifications(canWrite: { true }))
-            io.events |= 0x40 // An unrelated notification bit changed after our claim.
+            io.events |= 0x40  // An unrelated notification bit changed after our claim.
             if manualOff { settings.isEnabled = false } else { settings.idleTimeout = nil }
             #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
             #expect(feature.usesIdleNotifications == false)
@@ -147,9 +169,11 @@ struct KeyboardLightingOwnershipTests {
 
     @Test func revokedAccessAndFailedPowerCommandsDoNotLeaveEventOwnershipBehind() throws {
         for revoked in [false, true] {
-            let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+            let io = LightingKeyboard()
+            let ownership = KeyboardLightingOwnership()
             let feature = try lighting(io, ownership: ownership)
-            let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+            let settings = KeyboardLightingSettings(
+                deviceKey: "keyboard", idleTimeout: 30,
                 devicePowerPolicy: try #require(feature.read()?.powerPolicy))
             #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
             let writes = io.writes.count
@@ -163,9 +187,11 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func discoveryDefersIdleEventsUntilTheConnectionHandlerIsReady() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
-        let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+        let settings = KeyboardLightingSettings(
+            deviceKey: "keyboard", idleTimeout: 30,
             devicePowerPolicy: try #require(feature.read()?.powerPolicy))
         #expect(feature.apply(settings, percentage: 50, charging: false, deferIdleNotifications: true, canWrite: { true }))
         #expect(io.flags == 2 && io.events == 0x80)
@@ -176,9 +202,11 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func batteryColorRecoveryKeepsTheIdleSubscriptionWithoutASelectedColor() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
-        let settings = KeyboardLightingSettings(deviceKey: "keyboard", lowBattery: .red, idleTimeout: 30,
+        let settings = KeyboardLightingSettings(
+            deviceKey: "keyboard", lowBattery: .red, idleTimeout: 30,
             devicePowerPolicy: try #require(feature.read()?.powerPolicy))
         #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }))
         #expect(io.flags == 2 && io.events == 0x84)
@@ -191,9 +219,11 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func missingPolicyReadbackCannotConfirmASavedTimeout() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
-        let settings = KeyboardLightingSettings(deviceKey: "keyboard", idleTimeout: 30,
+        let settings = KeyboardLightingSettings(
+            deviceKey: "keyboard", idleTimeout: 30,
             devicePowerPolicy: try #require(feature.read()?.powerPolicy))
         io.rejectsPolicyRead = true
         #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }) == false)
@@ -206,7 +236,8 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func refreshRetainsClaimAndCleanupPreservesUnrelatedEventFlags() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let first = try lighting(io, ownership: ownership)
         let settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0x2080FF)
         #expect(first.apply(settings, percentage: 50, charging: false, canWrite: { true }))
@@ -218,10 +249,11 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func companionOwnershipAndRevokedWritesDoNotSendAnotherZone() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
         let settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0x123456)
-        io.flags = 1 // Someone else owns lighting; no Rebind claim exists.
+        io.flags = 1  // Someone else owns lighting; no Rebind claim exists.
         #expect(feature.apply(settings, percentage: 50, charging: false, canWrite: { true }) == false)
         #expect(io.writes.isEmpty)
         io.flags = 0
@@ -234,7 +266,8 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func failedFirstColorReturnsFirmwareOwnershipAndIdleBatteryRefreshWritesNothing() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
         let settings = KeyboardLightingSettings(deviceKey: "keyboard", color: 0x123456, lowBattery: .red)
         io.failedZone = 1
@@ -250,7 +283,8 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func explicitOnWakesNativeIdleAndReleasesOnlyItsTemporaryPowerLease() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         let feature = try lighting(io, ownership: ownership)
         io.powerMode = 3
         let settings = KeyboardLightingSettings(deviceKey: "keyboard")
@@ -265,12 +299,15 @@ struct KeyboardLightingOwnershipTests {
     }
 
     @Test func experimentalRGBWithoutBrightnessUsesAdvertisedDisabledEffectsOnly() throws {
-        let io = LightingKeyboard(), ownership = KeyboardLightingOwnership()
+        let io = LightingKeyboard()
+        let ownership = KeyboardLightingOwnership()
         io.supportsDisabled = true
         io.supportsPowerModes = false
         let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
-        let rgb = try #require(KeyboardLighting(transport: transport, brightnessIndex: nil, rgbIndex: 10,
-            ownership: ownership, slot: 1, isExperimental: true))
+        let rgb = try #require(
+            KeyboardLighting(
+                transport: transport, brightnessIndex: nil, rgbIndex: 10,
+                ownership: ownership, slot: 1, isExperimental: true))
         let state = try #require(rgb.read())
         #expect(state.isExperimental && state.brightnessValues.isEmpty && state.supportsPower)
         var settings = KeyboardLightingSettings(deviceKey: "mouse", color: 0x112233)
@@ -278,7 +315,7 @@ struct KeyboardLightingOwnershipTests {
         #expect(io.writes.filter { $0[2] == 10 && $0[3] >> 4 == 1 }.count == 2)
         settings.isEnabled = false
         #expect(rgb.apply(settings, percentage: nil, charging: false, canWrite: { true }))
-        #expect(io.writes.last?[5] == 1) // Disabled is ordinal 1, not an assumed zero.
+        #expect(io.writes.last?[5] == 1)  // Disabled is ordinal 1, not an assumed zero.
         #expect(rgb.read()?.isEnabled == false)
         #expect(io.writes.contains { $0[2] == 20 } == false)
     }
@@ -286,11 +323,15 @@ struct KeyboardLightingOwnershipTests {
     @Test func missingDisabledEffectHidesSwitchAndDoesNotInventAnOffCommand() throws {
         let io = LightingKeyboard()
         let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
-        let rgb = try #require(KeyboardLighting(transport: transport, brightnessIndex: nil, rgbIndex: 10,
-            ownership: KeyboardLightingOwnership(), slot: 1, isExperimental: true))
+        let rgb = try #require(
+            KeyboardLighting(
+                transport: transport, brightnessIndex: nil, rgbIndex: 10,
+                ownership: KeyboardLightingOwnership(), slot: 1, isExperimental: true))
         #expect(rgb.read()?.supportsPower == false)
-        #expect(rgb.apply(KeyboardLightingSettings(deviceKey: "mouse", isEnabled: false),
-            percentage: nil, charging: false, canWrite: { true }) == false)
+        #expect(
+            rgb.apply(
+                KeyboardLightingSettings(deviceKey: "mouse", isEnabled: false),
+                percentage: nil, charging: false, canWrite: { true }) == false)
         #expect(io.writes.isEmpty)
     }
 
@@ -298,8 +339,10 @@ struct KeyboardLightingOwnershipTests {
         let io = LightingKeyboard()
         io.brightnessInfo = [0, 200, 5, 7, 0, 10, 0]
         let transport = try #require(HIDPPTransport(device: io, deviceIndex: 1))
-        let rgb = try #require(KeyboardLighting(transport: transport, brightnessIndex: 20, rgbIndex: 10,
-            ownership: KeyboardLightingOwnership(), slot: 1, isExperimental: true))
+        let rgb = try #require(
+            KeyboardLighting(
+                transport: transport, brightnessIndex: 20, rgbIndex: 10,
+                ownership: KeyboardLightingOwnership(), slot: 1, isExperimental: true))
         #expect(rgb.read()?.brightnessValues == [13, 25, 50, 100])
         var settings = KeyboardLightingSettings(deviceKey: "keyboard", brightness: 13, color: 0x123456)
         #expect(rgb.apply(settings, percentage: 50, charging: false, canWrite: { true }))

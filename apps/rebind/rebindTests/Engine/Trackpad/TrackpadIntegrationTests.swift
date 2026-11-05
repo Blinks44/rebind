@@ -1,17 +1,21 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadIntegrationTests {
     private let shortcut = KeyboardShortcut(keyCode: 13, modifiers: .command)
     private let lift: UInt64 = 4_000_000_000
     private var runtime: TrackpadRuntime { .init(revision: 1, inputActivity: 0, fourFingerShortcut: shortcut) }
-    private var binding: rebind.Binding { .init(scope: .builtInTrackpad, trigger: .fourFingerTap, modifiers: [], action: .shortcut(shortcut)) }
+    private var binding: rebind.Binding {
+        .init(scope: .builtInTrackpad, trigger: .fourFingerTap, modifiers: [], action: .shortcut(shortcut))
+    }
 
     private func frame(_ id: Int32?, count: Int, at receipt: UInt64) -> NativeTrackpadFrame {
-        var value = NativeTrackpadFrame(receipt: receipt, revision: 1, activity: 0,
-                                       frame: id, time: id.map { Double($0) * 0.02 }, count: count)
+        var value = NativeTrackpadFrame(
+            receipt: receipt, revision: 1, activity: 0,
+            frame: id, time: id.map { Double($0) * 0.02 }, count: count)
         if count > 0 { value.first = .init(id: 0, x: 0.2, y: 0.5, pressure: 45) }
         if count > 1 { value.second = .init(id: 1, x: 0.3, y: 0.5, pressure: 45) }
         if count > 2 { value.third = .init(id: 2, x: 0.4, y: 0.5, pressure: 45) }
@@ -59,13 +63,21 @@ struct TrackpadIntegrationTests {
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         for (id, count) in [0, 4, 4, 0].enumerated() {
             let value = frame(Int32(id), count: count, at: lift - UInt64(3 - id) * 20_000_000)
-            buffer.state.withLock { $0.frames[id] = value; $0.count += 1 }
+            buffer.state.withLock {
+                $0.frames[id] = value
+                $0.count += 1
+            }
         }
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         var clockCalls = 0
         var events: [String] = []
-        session.consumeBufferedFrames(from: buffer, clock: { clockCalls += 1; return lift },
-                                      diagnose: { events.append($0.key) })
+        session.consumeBufferedFrames(
+            from: buffer,
+            clock: {
+                clockCalls += 1
+                return lift
+            },
+            diagnose: { events.append($0.key) })
         let ready = session.takeReady(at: lift + 60_000_000)
         #expect(ready)
         #expect(clockCalls == 4)
@@ -77,7 +89,10 @@ struct TrackpadIntegrationTests {
     @Test(arguments: [false, true])
     func bufferOverflowBeforeOrDuringDrainCancelsQualifiedTap(_ duringDrain: Bool) {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
@@ -94,15 +109,17 @@ struct TrackpadIntegrationTests {
         }
         var clocks = 0
         var events: [String] = []
-        session.consumeBufferedFrames(from: buffer, clock: {
-            clocks += 1
-            // Reproduce a producer losing frames after the consumer's last
-            // dequeue, before it classifies that terminal release.
-            if duringDrain && clocks == 4 {
-                for _ in 0..<65 { buffer.receive(nil, count: 0) }
-            }
-            return lift
-        }, diagnose: { events.append($0.key) })
+        session.consumeBufferedFrames(
+            from: buffer,
+            clock: {
+                clocks += 1
+                // Reproduce a producer losing frames after the consumer's last
+                // dequeue, before it classifies that terminal release.
+                if duringDrain && clocks == 4 {
+                    for _ in 0..<65 { buffer.receive(nil, count: 0) }
+                }
+                return lift
+            }, diagnose: { events.append($0.key) })
         let ready = session.takeReady(at: lift + 60_000_000)
         #expect(ready == false)
         #expect(events.filter { $0 == "buffer-overflow" }.count == 1)
@@ -111,7 +128,10 @@ struct TrackpadIntegrationTests {
     @Test(arguments: 0...2)
     func finalBufferCheckGuardsFramesLossAndStopAfterDrain(_ scenario: Int) {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
@@ -127,8 +147,9 @@ struct TrackpadIntegrationTests {
         default: buffer.setAccepting(false)
         }
         var events: [String] = []
-        let ready = session.takeReady(from: buffer, at: lift + 60_000_000,
-                                      diagnose: { events.append($0.key) })
+        let ready = session.takeReady(
+            from: buffer, at: lift + 60_000_000,
+            diagnose: { events.append($0.key) })
         #expect(ready == false)
         #expect(events.filter { $0 == "buffer-overflow" }.count == (scenario == 1 ? 1 : 0))
         session.consumeBufferedFrames(from: buffer, clock: { lift + 60_000_000 })
@@ -149,11 +170,13 @@ struct TrackpadIntegrationTests {
         }
         enqueue(4, count: 0)
         var clocks = 0
-        session.consumeBufferedFrames(from: buffer, clock: {
-            clocks += 1
-            enqueue(Int32(4 + clocks), count: clocks == 64 ? 4 : 0)
-            return lift + 20_000_000
-        })
+        session.consumeBufferedFrames(
+            from: buffer,
+            clock: {
+                clocks += 1
+                enqueue(Int32(4 + clocks), count: clocks == 64 ? 4 : 0)
+                return lift + 20_000_000
+            })
         #expect(clocks == 64)
         #expect(buffer.state.withLock { $0.count } == 1)
         let ready = session.takeReady(from: buffer, at: lift + 60_000_000)
@@ -165,7 +188,10 @@ struct TrackpadIntegrationTests {
 
     @Test func repeatedOverflowAndRecoveryProduceOnlyFreshSingleTaps() {
         let mailbox = EngineMailbox()
-        mailbox.state.withLock { $0.status = .active; $0.enabled = true }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.enabled = true
+        }
         let buffer = NativeTrackpadBuffer(mailbox: mailbox)
         buffer.setAccepting(true)
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
@@ -177,9 +203,11 @@ struct TrackpadIntegrationTests {
             let end = lift + UInt64(cycle) * 1_000_000_000
             completed(&session, at: end)
             for _ in 0..<65 { buffer.receive(nil, count: 0) }
-            session.consumeBufferedFrames(from: buffer, clock: { end }, diagnose: {
-                if $0.key == "buffer-overflow" { overflows += 1 }
-            })
+            session.consumeBufferedFrames(
+                from: buffer, clock: { end },
+                diagnose: {
+                    if $0.key == "buffer-overflow" { overflows += 1 }
+                })
             if session.takeReady(from: buffer, at: end + 60_000_000) { cancelledOutputs += 1 }
             completed(&session, at: end + 500_000_000)
             if session.takeReady(from: buffer, at: end + 560_000_000) { recoveredOutputs += 1 }
@@ -213,8 +241,9 @@ struct TrackpadIntegrationTests {
             if session.takeReady(from: buffer, at: end + 60_000_000) { obsoleteOutputs += 1 }
             let generation = buffer.state.withLock { $0.generation }
             for (id, count) in [0, 4, 4, 0].enumerated() {
-                let value = frame(Int32(id + 4), count: count,
-                                  at: end + 500_000_000 - UInt64(3 - id) * 20_000_000)
+                let value = frame(
+                    Int32(id + 4), count: count,
+                    at: end + 500_000_000 - UInt64(3 - id) * 20_000_000)
                 buffer.state.withLock { $0.append(value, generation: generation) }
             }
             session.consumeBufferedFrames(from: buffer, clock: { end + 500_000_000 })
@@ -245,12 +274,12 @@ struct TrackpadIntegrationTests {
         var current = runtime
         session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)
         session.consume(frame(1, count: 4, at: lift - 80_000_000), at: lift - 80_000_000)
-        current.inputActivity = 1 // physical button-down
+        current.inputActivity = 1  // physical button-down
         session.update(runtime: current, foreground: 100)
         var release = frame(2, count: 0, at: lift)
         release.activity = 1
         session.consume(release, at: lift)
-        current.inputActivity = 2 // physical up after contact release
+        current.inputActivity = 2  // physical up after contact release
         session.update(runtime: current, foreground: 100)
         let click = session.takeReady(at: lift + 60_000_000)
         #expect(click == false)
@@ -270,7 +299,7 @@ struct TrackpadIntegrationTests {
         session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)
         session.consume(frame(1, count: 4, at: lift - 80_000_000), at: lift - 80_000_000)
         var current = runtime
-        current.inputActivity = 1 // physical down
+        current.inputActivity = 1  // physical down
         session.update(runtime: current, foreground: 100)
         var held = frame(2, count: 4, at: lift - 60_000_000)
         held.activity = 1
@@ -286,8 +315,9 @@ struct TrackpadIntegrationTests {
         let click = session.takeReady(at: lift + 60_000_000)
         #expect(click == false)
         for (offset, count) in [4, 4, 0].enumerated() {
-            var value = frame(Int32(100 + offset), count: count,
-                              at: lift + 1_000_000_000 + UInt64(offset) * 20_000_000)
+            var value = frame(
+                Int32(100 + offset), count: count,
+                at: lift + 1_000_000_000 + UInt64(offset) * 20_000_000)
             value.activity = 2
             session.consume(value, at: value.receipt)
         }
@@ -306,7 +336,9 @@ struct TrackpadIntegrationTests {
         release.activity = 1
         if scenario == 1 { release.valid = false }
         if scenario == 2 { release.revision = 0 }
-        let now = scenario == 3 ? release.receipt + 100_000_001
+        let now =
+            scenario == 3
+            ? release.receipt + 100_000_001
             : scenario == 4 ? release.receipt - 1 : release.receipt
         session.consume(release, at: now)
         let pending = session.takeReady(at: lift + 60_000_000)
@@ -315,8 +347,9 @@ struct TrackpadIntegrationTests {
         // A subsequent real release must recover without restarting capture.
         for tap in 1...2 {
             for (offset, count) in [4, 4, 0].enumerated() {
-                var value = frame(Int32(tap * 100 + offset), count: count,
-                                  at: lift + UInt64(tap) * 1_000_000_000 + UInt64(offset) * 20_000_000)
+                var value = frame(
+                    Int32(tap * 100 + offset), count: count,
+                    at: lift + UInt64(tap) * 1_000_000_000 + UInt64(offset) * 20_000_000)
                 value.activity = 2
                 session.consume(value, at: value.receipt)
             }
@@ -357,8 +390,9 @@ struct TrackpadIntegrationTests {
             let time = lift - UInt64(3 - id) * 20_000_000
             session.consume(frame(Int32(id), count: count, at: time), at: time)
         }
-        let empty = NativeTrackpadFrame.read(nil, count: 0, receipt: lift, revision: 1, activity: 0,
-                                            callbackFrame: 3, callbackTime: 0.06)
+        let empty = NativeTrackpadFrame.read(
+            nil, count: 0, receipt: lift, revision: 1, activity: 0,
+            callbackFrame: 3, callbackTime: 0.06)
         session.consume(empty, at: lift)
         let ready = session.takeReady(at: lift + 60_000_000)
         #expect(ready)
@@ -370,7 +404,8 @@ struct TrackpadIntegrationTests {
         completed(&session, at: lift)
         let beforeClick = session.takeReady(at: lift + delay - 1)
         #expect(!beforeClick)
-        var next = runtime; next.inputActivity = 1
+        var next = runtime
+        next.inputActivity = 1
         session.update(runtime: next, foreground: 100)
         let ready = session.takeReady(at: lift + 60_000_000)
         #expect(!ready)
@@ -398,7 +433,7 @@ struct TrackpadIntegrationTests {
         }
         consume(0, count: 0, at: lift - 100_000_000, activity: 0)
         consume(1, count: 4, at: lift - 80_000_000, activity: 0)
-        current.inputActivity = 1 // physical down cancels this contact sequence
+        current.inputActivity = 1  // physical down cancels this contact sequence
         session.update(runtime: current, foreground: 100)
         consume(2, count: 4, at: lift - 60_000_000, activity: 1)
         if !lateMouseUp {
@@ -433,17 +468,20 @@ struct TrackpadIntegrationTests {
         completed(&session, at: lift)
         switch scenario {
         case 0:
-            var next = runtime; next.inputActivity = 1
+            var next = runtime
+            next.inputActivity = 1
             session.update(runtime: next, foreground: 100)
         case 1: session.update(runtime: runtime, foreground: 101)
         case 2: session.consume(frame(4, count: 1, at: lift + 20_000_000), at: lift + 20_000_000)
-        case 3: session.interrupt() // overflow, protection, native failure
+        case 3: session.interrupt()  // overflow, protection, native failure
         case 4:
-            var next = frame(4, count: 0, at: lift + 20_000_000); next.valid = false
+            var next = frame(4, count: 0, at: lift + 20_000_000)
+            next.valid = false
             session.consume(next, at: lift + 20_000_000)
         case 5: session.consume(frame(3, count: 0, at: lift + 20_000_000), at: lift + 20_000_000)
         case 6:
-            var next = runtime; next.revision = 2
+            var next = runtime
+            next.revision = 2
             session.update(runtime: next, foreground: 100)
         default: session.consume(frame(4, count: 0, at: lift + 20_000_000), at: lift + 200_000_000)
         }
@@ -474,8 +512,9 @@ struct TrackpadIntegrationTests {
 
     @Test func armingDelayAndMissingForegroundPreventDispatch() {
         for scenario in 0...1 {
-            var session = TrackpadTapSession(runtime: runtime, foreground: scenario == 0 ? nil : 100,
-                                            startedAt: scenario == 0 ? 0 : lift - 1_000_000_000)
+            var session = TrackpadTapSession(
+                runtime: runtime, foreground: scenario == 0 ? nil : 100,
+                startedAt: scenario == 0 ? 0 : lift - 1_000_000_000)
             completed(&session, at: lift)
             let ready = session.takeReady(at: lift + 60_000_000)
             #expect(!ready)
@@ -508,8 +547,9 @@ struct TrackpadIntegrationTests {
     }
 
     @Test func schema21MigratesWithoutChangingOldRules() throws {
-        let oldBinding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-                                       action: .shortcut(shortcut), activation: .hold, holdDurationMilliseconds: 1000)
+        let oldBinding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+            action: .shortcut(shortcut), activation: .hold, holdDurationMilliseconds: 1000)
         var old = Configuration(isEnabled: true, bindings: [oldBinding])
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = 21
@@ -522,7 +562,10 @@ struct TrackpadIntegrationTests {
     private func mailbox() -> EngineMailbox {
         let result = EngineMailbox()
         result.configure(Configuration(isEnabled: true, bindings: [binding]))
-        result.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        result.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         return result
     }
 
@@ -564,11 +607,17 @@ struct TrackpadIntegrationTests {
         let runtime = try #require(mailbox.trackpadRuntime())
         #expect(mailbox.submitTrackpad(runtime, pid: 100, at: 0))
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 #expect(shortcut.keyCode == 13 && shortcut.modifiers == .command && target.pid == 100 && canPerform())
-                calls.withLock { $0 += 1 }; return outcome
-            }, sendShortcut: { _ in Issue.record("Touch used global sender"); return false },
+                calls.withLock { $0 += 1 }
+                return outcome
+            },
+            sendShortcut: { _ in
+                Issue.record("Touch used global sender")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         worker.service(at: 20_000_000)
         #expect(calls.withLock { $0 } == 1)
@@ -596,7 +645,8 @@ struct TrackpadIntegrationTests {
         #expect(mailbox.submitTrackpad(runtime, pid: 100, at: 0))
         #expect(!mailbox.handle(InputEvent(trigger: .key(13), phase: .down, isSynthetic: true), secureInput: false))
         #expect(mailbox.nextAction()?.trackpadTarget != nil)
-        var duplicate = binding; duplicate.id = UUID()
+        var duplicate = binding
+        duplicate.id = UUID()
         #expect(throws: ConfigurationError.conflict) { try Configuration(bindings: [binding, duplicate]).validate() }
     }
 
@@ -604,7 +654,8 @@ struct TrackpadIntegrationTests {
         let mailbox = mailbox()
         let runtime = try #require(mailbox.trackpadRuntime())
         #expect(mailbox.submitTrackpad(runtime, pid: 100, at: 0))
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { _, _, canPerform in
                 #expect(canPerform())
                 mailbox.setEditing(true)
@@ -619,8 +670,12 @@ struct TrackpadIntegrationTests {
         let mailbox = mailbox()
         let runtime = try #require(mailbox.trackpadRuntime())
         #expect(mailbox.submitTrackpad(runtime, pid: 100, at: 0))
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            sendTrackpadShortcut: { _, _, _ in Issue.record("Expired touch posted"); return .performed },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            sendTrackpadShortcut: { _, _, _ in
+                Issue.record("Expired touch posted")
+                return .performed
+            },
             secureInput: { false }, postingAllowed: { true })
         worker.service(at: 100_000_001)
         #expect(mailbox.state.withLock { $0.enabled && !$0.emergencyPause && $0.actionFailed == nil })

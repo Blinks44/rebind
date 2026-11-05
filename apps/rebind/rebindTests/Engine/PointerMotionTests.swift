@@ -1,12 +1,15 @@
 import CoreGraphics
 import Testing
+
 @testable import rebind
 
 struct PointerMotionTests {
     @Test(arguments: [CGEventType.mouseMoved, .otherMouseDragged])
     func adapterUsesRelativeFieldsRatherThanAbsoluteCursorLocation(_ type: CGEventType) throws {
-        let event = try #require(CGEvent(mouseEventSource: nil, mouseType: type,
-                                        mouseCursorPosition: CGPoint(x: 0, y: 0), mouseButton: .center))
+        let event = try #require(
+            CGEvent(
+                mouseEventSource: nil, mouseType: type,
+                mouseCursorPosition: CGPoint(x: 0, y: 0), mouseButton: .center))
         event.setIntegerValueField(.mouseEventDeltaX, value: -30)
         event.setIntegerValueField(.mouseEventDeltaY, value: 10)
         let motion = PointerMotion.from(event)

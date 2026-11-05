@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct ApplicationQuitTests {
@@ -13,7 +14,7 @@ import Testing
         let client = QuitClient(identities: [identity])
         #expect(ApplicationQuitExecutor.perform(target, client: client, ownPID: 99, canPerform: { true }) == .performed)
         #expect(client.requests == [0])
-        #expect(client.identities[0].isTerminated == false) // Accepted request is not an exit acknowledgement.
+        #expect(client.identities[0].isTerminated == false)  // Accepted request is not an exit acknowledgement.
     }
 
     @Test(arguments: 0...7) func unsafeOrDifferentInstancesAreNeverQuit(_ scenario: Int) {
@@ -56,8 +57,10 @@ import Testing
 
     @Test(arguments: [true, false]) func cancellationBeforeAndAfterSelectionPreventsQuit(_ initial: Bool) {
         let client = QuitClient(identities: [identity])
-        #expect(ApplicationQuitExecutor.perform(target, client: client, ownPID: 99,
-            canPerform: { initial ? false : client.reads == 0 }) == .cancelled)
+        #expect(
+            ApplicationQuitExecutor.perform(
+                target, client: client, ownPID: 99,
+                canPerform: { initial ? false : client.reads == 0 }) == .cancelled)
         #expect(client.requests.isEmpty)
     }
 
@@ -82,5 +85,8 @@ import Testing
         onIdentityRead?()
         return identities[application]
     }
-    func terminate(_ application: Int) -> Bool { requests.append(application); return accepted }
+    func terminate(_ application: Int) -> Bool {
+        requests.append(application)
+        return accepted
+    }
 }

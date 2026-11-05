@@ -13,8 +13,10 @@ import Darwin
         perform(target, client: NativeApplicationQuitClient(), ownPID: getpid(), canPerform: canPerform)
     }
 
-    static func perform<Client: ApplicationQuitClient>(_ target: ApplicationTarget, client: Client,
-                                                       ownPID: pid_t, canPerform: () -> Bool) -> WindowActionResult {
+    static func perform<Client: ApplicationQuitClient>(
+        _ target: ApplicationTarget, client: Client,
+        ownPID: pid_t, canPerform: () -> Bool
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard target.isSupported else { return .unavailable }
         let matches = client.applications.filter { client.identity(of: $0).matches(target, ownPID: ownPID) }
@@ -32,9 +34,10 @@ import Darwin
     var applications: [NSRunningApplication] { NSWorkspace.shared.runningApplications }
 
     func identity(of application: NSRunningApplication) -> QuitApplicationIdentity {
-        QuitApplicationIdentity(processID: application.processIdentifier, bundleIdentifier: application.bundleIdentifier,
-                                url: application.bundleURL, isRegular: application.activationPolicy == .regular,
-                                isTerminated: application.isTerminated)
+        QuitApplicationIdentity(
+            processID: application.processIdentifier, bundleIdentifier: application.bundleIdentifier,
+            url: application.bundleURL, isRegular: application.activationPolicy == .regular,
+            isTerminated: application.isTerminated)
     }
 
     func terminate(_ application: NSRunningApplication) -> Bool { application.terminate() }

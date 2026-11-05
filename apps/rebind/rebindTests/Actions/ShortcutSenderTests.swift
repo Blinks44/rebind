@@ -1,5 +1,6 @@
 import CoreGraphics
 import Testing
+
 @testable import rebind
 
 struct ShortcutSenderTests {

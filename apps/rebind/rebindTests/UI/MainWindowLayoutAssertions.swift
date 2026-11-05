@@ -1,11 +1,14 @@
 import AppKit
 import XCTest
+
 @testable import rebind
 
 /// Verifies the native sidebar sizing anchor and actual scrolling content inside the window.
 @MainActor enum MainWindowLayoutAssertions {
-    static func verifyRegions(in view: NSView, context: String,
-                              file: StaticString = #filePath, line: UInt = #line) throws {
+    static func verifyRegions(
+        in view: NSView, context: String,
+        file: StaticString = #filePath, line: UInt = #line
+    ) throws {
         let views = descendants(of: view)
         let sidebar = try XCTUnwrap(views.first { $0 is MainWindowSizingView }, context, file: file, line: line)
         let viewport = view.bounds

@@ -13,8 +13,10 @@ nonisolated enum DockActions {
         action.isSpaceNavigation || isAvailable
     }
 
-    static func perform(_ action: DesktopAction, canPerform: () -> Bool,
-                        send: (String) -> Bool = sendNotification) -> WindowActionResult {
+    static func perform(
+        _ action: DesktopAction, canPerform: () -> Bool,
+        send: (String) -> Bool = sendNotification
+    ) -> WindowActionResult {
         if action.isSpaceNavigation { return SpaceShortcutSender.perform(action, canPerform: canPerform) }
         guard let name = action.dockNotification else { return .unavailable }
         guard canPerform() else { return .cancelled }

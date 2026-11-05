@@ -1,10 +1,12 @@
 import CoreGraphics
 import Testing
+
 @testable import rebind
 
 struct WindowLayoutGeometryTests {
-    private let display = WindowDisplay(frame: CGRect(x: 0, y: 0, width: 1001, height: 800),
-                                        visibleFrame: CGRect(x: 0, y: 25, width: 1001, height: 725))
+    private let display = WindowDisplay(
+        frame: CGRect(x: 0, y: 0, width: 1001, height: 800),
+        visibleFrame: CGRect(x: 0, y: 25, width: 1001, height: 725))
     private let window = CGRect(x: 100, y: 100, width: 300, height: 200)
 
     @Test func halvesShareAnEdgeAndCoverOnlyUsableArea() throws {
@@ -30,30 +32,37 @@ struct WindowLayoutGeometryTests {
     }
 
     @Test func nextDisplayKeepsSizeAndRelativePlaceWrapsAroundAndShrinksToFit() throws {
-        let second = WindowDisplay(frame: CGRect(x: 1001, y: 0, width: 600, height: 500),
-                                   visibleFrame: CGRect(x: 1001, y: 25, width: 600, height: 475))
+        let second = WindowDisplay(
+            frame: CGRect(x: 1001, y: 0, width: 600, height: 500),
+            visibleFrame: CGRect(x: 1001, y: 25, width: 600, height: 475))
         #expect(WindowLayoutGeometry.target(.nextDisplay, window: window, displays: [display]) == nil)
         let leftEdge = CGRect(x: 0, y: 25, width: 300, height: 200)
-        #expect(WindowLayoutGeometry.target(.nextDisplay, window: leftEdge, displays: [display, second])
-            == CGRect(x: 1001, y: 25, width: 300, height: 200))
+        #expect(
+            WindowLayoutGeometry.target(.nextDisplay, window: leftEdge, displays: [display, second])
+                == CGRect(x: 1001, y: 25, width: 300, height: 200))
         let rightBottom = CGRect(x: 701, y: 550, width: 300, height: 200)
-        #expect(WindowLayoutGeometry.target(.nextDisplay, window: rightBottom, displays: [display, second])
-            == CGRect(x: 1301, y: 300, width: 300, height: 200))
+        #expect(
+            WindowLayoutGeometry.target(.nextDisplay, window: rightBottom, displays: [display, second])
+                == CGRect(x: 1301, y: 300, width: 300, height: 200))
         let large = CGRect(x: 0, y: 25, width: 900, height: 700)
         #expect(WindowLayoutGeometry.target(.nextDisplay, window: large, displays: [display, second]) == second.visibleFrame)
         let onSecond = CGRect(x: 1001, y: 25, width: 300, height: 200)
-        #expect(WindowLayoutGeometry.target(.nextDisplay, window: onSecond, displays: [display, second])
-            == CGRect(x: 0, y: 25, width: 300, height: 200))
+        #expect(
+            WindowLayoutGeometry.target(.nextDisplay, window: onSecond, displays: [display, second])
+                == CGRect(x: 0, y: 25, width: 300, height: 200))
     }
 
     @Test func centerPreservesSizeAndRejectsOversizedWindows() {
-        #expect(WindowLayoutGeometry.target(.center, window: window, displays: [display]) == CGRect(x: 350.5, y: 287.5, width: 300, height: 200))
+        #expect(
+            WindowLayoutGeometry.target(.center, window: window, displays: [display]) == CGRect(x: 350.5, y: 287.5, width: 300, height: 200)
+        )
         #expect(WindowLayoutGeometry.target(.center, window: CGRect(x: 0, y: 100, width: 1100, height: 300), displays: [display]) == nil)
     }
 
     @Test func largestOverlapSelectsDisplayAndTiesUseStableInputOrder() {
-        let right = WindowDisplay(frame: CGRect(x: 1001, y: -500, width: 1200, height: 900),
-                                  visibleFrame: CGRect(x: 1001, y: -475, width: 1200, height: 850))
+        let right = WindowDisplay(
+            frame: CGRect(x: 1001, y: -500, width: 1200, height: 900),
+            visibleFrame: CGRect(x: 1001, y: -475, width: 1200, height: 850))
         let crossing = CGRect(x: 900, y: 50, width: 600, height: 250)
         #expect(WindowLayoutGeometry.target(.fill, window: crossing, displays: [display, right]) == right.visibleFrame)
         let tie = CGRect(x: 901, y: 50, width: 200, height: 250)
@@ -62,16 +71,22 @@ struct WindowLayoutGeometryTests {
     }
 
     @Test func cocoaConversionUsesPrimaryTopAndPointsOnAllSides() {
-        let converted = WindowDisplay.fromCocoa(frame: CGRect(x: -1200, y: 800, width: 1200, height: 900),
+        let converted = WindowDisplay.fromCocoa(
+            frame: CGRect(x: -1200, y: 800, width: 1200, height: 900),
             visibleFrame: CGRect(x: -1150, y: 800, width: 1150, height: 875), primaryTop: 800)
         #expect(converted.frame == CGRect(x: -1200, y: -900, width: 1200, height: 900))
         #expect(converted.visibleFrame == CGRect(x: -1150, y: -875, width: 1150, height: 875))
-        #expect(WindowDisplay.fromCocoa(frame: CGRect(x: 0, y: -700, width: 1000, height: 700),
-            visibleFrame: CGRect(x: 0, y: -650, width: 1000, height: 650), primaryTop: 800).visibleFrame == CGRect(x: 0, y: 800, width: 1000, height: 650))
+        #expect(
+            WindowDisplay.fromCocoa(
+                frame: CGRect(x: 0, y: -700, width: 1000, height: 700),
+                visibleFrame: CGRect(x: 0, y: -650, width: 1000, height: 650), primaryTop: 800
+            ).visibleFrame == CGRect(x: 0, y: 800, width: 1000, height: 650))
     }
 
-    @Test(arguments: [CGRect.zero, CGRect.null, CGRect.infinite, CGRect(x: 0, y: 0, width: -1, height: 300),
-                      CGRect(x: CGFloat.nan, y: 0, width: 100, height: 100)])
+    @Test(arguments: [
+        CGRect.zero, CGRect.null, CGRect.infinite, CGRect(x: 0, y: 0, width: -1, height: 300),
+        CGRect(x: CGFloat.nan, y: 0, width: 100, height: 100),
+    ])
     func invalidWindowGeometryIsRejected(_ rect: CGRect) {
         #expect(WindowLayoutGeometry.target(.fill, window: rect, displays: [display]) == nil)
     }

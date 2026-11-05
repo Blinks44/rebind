@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ConfigurationFileOperationsTests {
@@ -22,11 +23,15 @@ struct ConfigurationFileOperationsTests {
         try FileManager.default.linkItem(at: original, to: hardlink)
         for target in [original, symlink, hardlink] {
             do {
-                if raw { try await ConfigurationFileOperations.exportOriginal(at: original, to: target) }
-                else { try await ConfigurationFileOperations.export(ConfigurationBackup(configuration: Configuration()),
-                                                                   to: target, protecting: original) }
+                if raw {
+                    try await ConfigurationFileOperations.exportOriginal(at: original, to: target)
+                } else {
+                    try await ConfigurationFileOperations.export(
+                        ConfigurationBackup(configuration: Configuration()),
+                        to: target, protecting: original)
+                }
                 Issue.record("Original destination was accepted")
-            } catch is ConfigurationReplacementError { }
+            } catch is ConfigurationReplacementError {}
             #expect(try Data(contentsOf: original) == bytes)
         }
     }
@@ -46,7 +51,7 @@ struct ConfigurationFileOperationsTests {
         do {
             try await ConfigurationFileOperations.exportOriginal(at: directory.appending(path: "missing.json"), to: destination)
             Issue.record("Missing source was accepted")
-        } catch { }
+        } catch {}
         #expect(try Data(contentsOf: destination) == previous)
     }
 
@@ -64,7 +69,10 @@ struct ConfigurationFileOperationsTests {
         let bytes = try Data(contentsOf: destination)
         let task = Task { try await ConfigurationFileOperations.export(backup, to: destination, protecting: original) }
         task.cancel()
-        do { try await task.value; Issue.record("Cancelled export committed") } catch is CancellationError { }
+        do {
+            try await task.value
+            Issue.record("Cancelled export committed")
+        } catch is CancellationError {}
         #expect(try Data(contentsOf: destination) == bytes)
         #expect(!FileManager.default.fileExists(atPath: original.path))
     }

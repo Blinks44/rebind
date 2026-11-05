@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct HeldOutputTests {
@@ -94,9 +95,13 @@ struct HeldOutputTests {
         let mailbox = mailbox([binding(.shortcut(output))])
         let sent = Mutex<[HeldKeyCommand.Phase]>([])
         let secure = Mutex(false)
-        let worker = ActionWorker(mailbox: mailbox,
+        let worker = ActionWorker(
+            mailbox: mailbox,
             capabilities: { AudioOutputCapabilities(deviceID: 1, volume: true, mute: true) },
-            sendShortcut: { _ in Issue.record("A held key is not a pulse"); return false },
+            sendShortcut: { _ in
+                Issue.record("A held key is not a pulse")
+                return false
+            },
             sendHeldKey: { command in sent.withLock { $0.append(command.phase) } },
             secureInput: { secure.withLock { $0 } }, postingAllowed: { true })
         #expect(mailbox.handle(event(.down), secureInput: false))
@@ -120,8 +125,9 @@ struct HeldOutputTests {
         hold.activation = .doublePress
         #expect(hold.isValid == false)
         // A gesture button decides its click on release, so it cannot also hold an output.
-        let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
-                                     action: .shortcut(output))
+        let gesture = rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
+            action: .shortcut(output))
         #expect(InputMatcher.compile([gesture, binding(.shortcut(output))]).isEmpty)
         #expect(throws: ConfigurationError.conflict) {
             try Configuration(bindings: [gesture, binding(.shortcut(output))]).validate()
@@ -138,16 +144,20 @@ struct HeldOutputTests {
     }
 
     @Test func systemKeyRepeatValuesAreBounded() {
-        #expect(AppModel.keyRepeat(delay: 0.5, interval: 0.083)
-            == KeyRepeatTiming(delayNanoseconds: 500_000_000, intervalNanoseconds: 83_000_000))
-        #expect(AppModel.keyRepeat(delay: 0, interval: 0)
-            == KeyRepeatTiming(delayNanoseconds: 200_000_000, intervalNanoseconds: 30_000_000))
-        #expect(AppModel.keyRepeat(delay: .nan, interval: .infinity)
-            == KeyRepeatTiming(delayNanoseconds: 500_000_000, intervalNanoseconds: 80_000_000))
+        #expect(
+            AppModel.keyRepeat(delay: 0.5, interval: 0.083)
+                == KeyRepeatTiming(delayNanoseconds: 500_000_000, intervalNanoseconds: 83_000_000))
+        #expect(
+            AppModel.keyRepeat(delay: 0, interval: 0)
+                == KeyRepeatTiming(delayNanoseconds: 200_000_000, intervalNanoseconds: 30_000_000))
+        #expect(
+            AppModel.keyRepeat(delay: .nan, interval: .infinity)
+                == KeyRepeatTiming(delayNanoseconds: 500_000_000, intervalNanoseconds: 80_000_000))
     }
 
     @Test func overlappingTriggersShareTheOutputKeyUntilTheLastRelease() {
-        let first = InputTrigger.mouseButton(3), second = InputTrigger.mouseButton(4)
+        let first = InputTrigger.mouseButton(3)
+        let second = InputTrigger.mouseButton(4)
         let mailbox = mailbox([binding(.shortcut(output), trigger: first), binding(.shortcut(output), trigger: second)])
         #expect(mailbox.handle(event(.down, first), secureInput: false))
         #expect(mailbox.nextHeldKey(at: 0) == command(.press))
@@ -160,7 +170,8 @@ struct HeldOutputTests {
     }
 
     @Test func aSharedOutputKeyRepeatsAtTheNormalRate() {
-        let first = InputTrigger.mouseButton(3), second = InputTrigger.mouseButton(4)
+        let first = InputTrigger.mouseButton(3)
+        let second = InputTrigger.mouseButton(4)
         let mailbox = mailbox([binding(.shortcut(output), trigger: first), binding(.shortcut(output), trigger: second)])
         #expect(mailbox.handle(event(.down, first), secureInput: false))
         #expect(mailbox.nextHeldKey(at: 0) == command(.press))
@@ -198,7 +209,9 @@ struct HeldOutputTests {
     @Test func quittingCannotDeliverAReleaseBeforeAnInflightPress() {
         let mailbox = mailbox([binding(.shortcut(output))])
         #expect(mailbox.handle(event(.down), secureInput: false))
-        let entered = DispatchSemaphore(value: 0), proceed = DispatchSemaphore(value: 0), finished = DispatchSemaphore(value: 0)
+        let entered = DispatchSemaphore(value: 0)
+        let proceed = DispatchSemaphore(value: 0)
+        let finished = DispatchSemaphore(value: 0)
         let phases = Mutex<[HeldKeyCommand.Phase]>([])
         Thread {
             mailbox.deliverNextHeldKey(at: 0) { command in
@@ -210,7 +223,7 @@ struct HeldOutputTests {
         #expect(entered.wait(timeout: .now() + 2) == .success)
         mailbox.stop()
         Thread {
-            while mailbox.deliverNextHeldKey(at: 1, send: { command in phases.withLock { $0.append(command.phase) } }) { }
+            while mailbox.deliverNextHeldKey(at: 1, send: { command in phases.withLock { $0.append(command.phase) } }) {}
             finished.signal()
         }.start()
         proceed.signal()

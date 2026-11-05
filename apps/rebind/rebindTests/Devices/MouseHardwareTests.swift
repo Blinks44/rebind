@@ -1,6 +1,7 @@
 import Foundation
 import HIDPP
 import Testing
+
 @testable import rebind
 
 struct CompanionAppTests {
@@ -12,8 +13,11 @@ struct CompanionAppTests {
         #expect(running([("com.logi.optionsplus", "logioptionsplus")]) == ["Logi Options+"])
         #expect(running([(nil, "logioptionsplus_agent")]) == ["Logi Options+"])
         #expect(running([("com.logi.ghub.agent", "lghub_agent")]) == ["Logitech G HUB"])
-        #expect(running([("com.logi.ghub", nil), ("com.logi.ghub.agent", nil),
-                         ("com.logi.optionsplus.helper", nil)]) == ["Logi Options+", "Logitech G HUB"])
+        #expect(
+            running([
+                ("com.logi.ghub", nil), ("com.logi.ghub.agent", nil),
+                ("com.logi.optionsplus.helper", nil),
+            ]) == ["Logi Options+", "Logitech G HUB"])
     }
 
     @Test func ignoresUnrelatedProcesses() {
@@ -21,7 +25,8 @@ struct CompanionAppTests {
     }
 
     @Test func launchdHelpersAreNamedByTheirEnclosingBundle() {
-        #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/System/Applications/Calculator.app/Contents/MacOS/Calculator")
+        #expect(
+            CompanionAppMonitor.bundleIdentifier(ofExecutable: "/System/Applications/Calculator.app/Contents/MacOS/Calculator")
                 == "com.apple.calculator")
         #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/usr/bin/true") == nil)
         #expect(CompanionAppMonitor.bundleIdentifier(ofExecutable: "/nonexistent/X.app/Contents/MacOS/X") == nil)
@@ -58,14 +63,14 @@ struct CompanionAppTests {
         #expect(scans == 1)
         #expect(monitor.controller(ofVendor: 0x046D)?.name == "Logi Options+")
         monitor.setConnectedVendors([0x046D])
-        #expect(scans == 1) // Same relevant vendor, another HID interface is not a new scan.
+        #expect(scans == 1)  // Same relevant vendor, another HID interface is not a new scan.
         monitor.setConnectedVendors([])
         monitor.refresh()
         #expect(scans == 1)
         #expect(monitor.running.isEmpty)
         #expect(changes == 2)
         monitor.setConnectedVendors([0x046D])
-        #expect(scans == 2) // Reconnect rechecks the helper before settings can be applied.
+        #expect(scans == 2)  // Reconnect rechecks the helper before settings can be applied.
         #expect(monitor.controller(ofVendor: 0x046D, gaming: true) != nil)
     }
 }
@@ -79,8 +84,9 @@ struct ProbeOrderTests {
 }
 
 struct MouseHardwareSettingsTests {
-    private let settings = MouseHardwareSettings(deviceKey: MouseHardwareSettings.deviceKey(vendorID: 0x046D, name: "MX Master 3S"),
-                                                 wheelMode: .smartShift, smartShiftSensitivity: 12, dpi: 1600)
+    private let settings = MouseHardwareSettings(
+        deviceKey: MouseHardwareSettings.deviceKey(vendorID: 0x046D, name: "MX Master 3S"),
+        wheelMode: .smartShift, smartShiftSensitivity: 12, dpi: 1600)
 
     @Test func storedSettingsRoundTripAndValidate() throws {
         #expect(settings.deviceKey == "046d:MX Master 3S")
@@ -124,8 +130,10 @@ private final class MockMouse: HIDPPDeviceIO, @unchecked Sendable {
     var mode: [UInt8] = [0x02, 16, 10]
     var dpi = 1000
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         let bytes = [UInt8](report)
         let function = bytes[3] >> 4
         var payload: [UInt8] = []
@@ -134,10 +142,14 @@ private final class MockMouse: HIDPPDeviceIO, @unchecked Sendable {
             let features: [UInt16: UInt8] = [0x2110: 0x0E, 0x2201: 0x0F]
             payload = [features[UInt16(bytes[4]) << 8 | UInt16(bytes[5])] ?? 0]
         case (0x0E, 0): payload = mode
-        case (0x0E, 1): mode = Array(bytes[4...6]); writes.append(Array(bytes[2...6]))
-        case (0x0F, 1): payload = [0x00, 0x00, 0xC8, 0xE0, 0x32, 0x0F, 0xA0, 0x00, 0x00] // 200...4000 by 50
+        case (0x0E, 1):
+            mode = Array(bytes[4...6])
+            writes.append(Array(bytes[2...6]))
+        case (0x0F, 1): payload = [0x00, 0x00, 0xC8, 0xE0, 0x32, 0x0F, 0xA0, 0x00, 0x00]  // 200...4000 by 50
         case (0x0F, 2): payload = [0x00, UInt8(dpi >> 8), UInt8(dpi & 0xFF), 0x00, 0x00]
-        case (0x0F, 3): dpi = Int(bytes[5]) << 8 | Int(bytes[6]); writes.append(Array(bytes[2...6]))
+        case (0x0F, 3):
+            dpi = Int(bytes[5]) << 8 | Int(bytes[6])
+            writes.append(Array(bytes[2...6]))
         default: return nil
         }
         let reply = Data(bytes[0...3] + payload + [UInt8](repeating: 0, count: max(0, 16 - payload.count)))
@@ -149,8 +161,9 @@ struct LogitechMouseTests {
     @Test func aCompanionAppStartingDuringARequestPreventsLaterWrites() throws {
         let device = MockMouse()
         let mouse = try #require(LogitechDevice(io: device, slot: nil))
-        _ = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1600),
-                        canWrite: { device.writes.isEmpty })
+        _ = mouse.apply(
+            MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1600),
+            canWrite: { device.writes.isEmpty })
         // Only the first write (pointer speed) went out; the wheel mode was never written.
         #expect(device.writes.count == 1)
         #expect(device.dpi == 1600 && device.mode == [0x02, 16, 10])
@@ -181,7 +194,7 @@ struct LogitechMouseTests {
         #expect(state.wheelMode == .smartShift && state.smartShiftSensitivity == 16 && state.dpi == 1000)
         #expect(state.supportedDPI.first == 200 && state.supportedDPI.last == 4000 && state.supportedDPI.count == 77)
 
-        let applied = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1610)) // nearest: 1600
+        let applied = mouse.apply(MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysFreeSpin, dpi: 1610))  // nearest: 1600
         // Pointer speed first: a mouse that just connected moves at its own speed until then.
         #expect(device.writes == [[0x0F, 0x38, 0x00, 0x06, 0x40], [0x0E, 0x18, 0x01, 0x00, 0x00]])
         #expect(applied.wheelMode == .alwaysFreeSpin && applied.dpi == 1600)
@@ -204,21 +217,29 @@ struct LogitechMouseTests {
 }
 
 struct MouseHardwareExpectedStateTests {
-    private let state = LogitechDeviceState(name: "MX Master 2S", wheelMode: .smartShift, smartShiftSensitivity: 16,
-                                           dpi: 1000, supportedDPI: [400, 800, 1000, 1600])
+    private let state = LogitechDeviceState(
+        name: "MX Master 2S", wheelMode: .smartShift, smartShiftSensitivity: 16,
+        dpi: 1000, supportedDPI: [400, 800, 1000, 1600])
 
     @Test func aNewChoiceShowsAtOnceRoundedToWhatTheMouseAccepts() throws {
-        let expected = try #require(MouseHardware.expected(state, after: MouseHardwareSettings(
-            deviceKey: "k", wheelMode: .alwaysFreeSpin, smartShiftSensitivity: 20, dpi: 1500)))
+        let expected = try #require(
+            MouseHardware.expected(
+                state,
+                after: MouseHardwareSettings(
+                    deviceKey: "k", wheelMode: .alwaysFreeSpin, smartShiftSensitivity: 20, dpi: 1500)))
         #expect(expected.wheelMode == .alwaysFreeSpin && expected.smartShiftSensitivity == 16 && expected.dpi == 1600)
-        let sensitivity = try #require(MouseHardware.expected(state, after: MouseHardwareSettings(
-            deviceKey: "k", wheelMode: .smartShift, smartShiftSensitivity: 30)))
+        let sensitivity = try #require(
+            MouseHardware.expected(
+                state,
+                after: MouseHardwareSettings(
+                    deviceKey: "k", wheelMode: .smartShift, smartShiftSensitivity: 30)))
         #expect(sensitivity.wheelMode == .smartShift && sensitivity.smartShiftSensitivity == 30 && sensitivity.dpi == 1000)
     }
 
     @Test func featuresTheMouseLacksStayAbsent() throws {
         let dpiOnly = LogitechDeviceState(name: "M", dpi: 800, supportedDPI: [800, 1600])
-        let expected = try #require(MouseHardware.expected(dpiOnly, after: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysClick, dpi: 1600)))
+        let expected = try #require(
+            MouseHardware.expected(dpiOnly, after: MouseHardwareSettings(deviceKey: "k", wheelMode: .alwaysClick, dpi: 1600)))
         #expect(expected.wheelMode == nil && expected.dpi == 1600)
     }
 }
@@ -240,8 +261,10 @@ private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
     private(set) var featureQueries: [UInt16] = []
     var kind: UInt8? = 0
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         let bytes = [UInt8](report)
         var payload: [UInt8] = []
         switch (bytes[2], bytes[3] >> 4) {
@@ -255,7 +278,9 @@ private final class MockKeyboard: HIDPPDeviceIO, @unchecked Sendable {
             guard let kind else { return nil }
             payload = [kind]
         case (0x05, 1): payload = [45, 0x04, 0x00]
-        default: writes += 1; return nil
+        default:
+            writes += 1
+            return nil
         }
         let reply = Data(bytes[0...3] + payload + [UInt8](repeating: 0, count: max(0, 16 - payload.count)))
         return matching(reply) ? reply : nil

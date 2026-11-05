@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 @main
-struct rebindApp: App {
+struct RebindApp: App {
     @NSApplicationDelegateAdaptor(RebindAppDelegate.self) private var delegate
 
     private var opensWindowAtLaunch: Bool {
@@ -12,16 +12,16 @@ struct rebindApp: App {
 
     @ViewBuilder private var mainContent: some View {
         #if DEBUG
-        if RebindAppDelegate.isWindowFixture {
-            ContentView(model: delegate.model, persistsWindowSelection: false)
-                .environment(\.locale, delegate.model.activeLanguage.locale)
-        } else if ProcessInfo.processInfo.arguments.contains("--application-fixture") {
-            ApplicationUIFixture()
-        } else {
-            ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
-        }
+            if RebindAppDelegate.isWindowFixture {
+                ContentView(model: delegate.model, persistsWindowSelection: false)
+                    .environment(\.locale, delegate.model.activeLanguage.locale)
+            } else if ProcessInfo.processInfo.arguments.contains("--application-fixture") {
+                ApplicationUIFixture()
+            } else {
+                ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+            }
         #else
-        ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
+            ContentView(model: delegate.model).environment(\.locale, delegate.model.activeLanguage.locale)
         #endif
     }
 
@@ -31,27 +31,27 @@ struct rebindApp: App {
                 .background { ActiveSpaceWindow() }
                 .background { MainWindowRegistration(presenter: RebindAppDelegate.mainWindow) }
         }
-            .windowToolbarStyle(.unified(showsTitle: false))
-            .defaultSize(width: 1080, height: 720)
-            // "Start in the background" keeps the window closed at launch, including at login, unless
-            // Rebind shows neither a Dock nor a Menu Bar icon: then the window is its only way in.
-            .defaultLaunchBehavior(opensWindowAtLaunch ? .automatic : .suppressed)
-            .restorationBehavior(.disabled)
-            .commands {
-                BindingsCommands()
-                CommandGroup(replacing: .appSettings) {
-                    Button(.settingsTitle) {
-                        delegate.model.requestedDestination = .settings(delegate.model.settingsSection)
-                        RebindAppDelegate.mainWindow.show()
-                    }.keyboardShortcut(",", modifiers: .command)
-                }
-                CommandGroup(replacing: .appInfo) {
-                    AboutCommand(language: delegate.model.activeLanguage)
-                    Button(AppLocalization.string(.checkForUpdates, language: delegate.model.activeLanguage)) {
-                        RebindAppDelegate.updater.checkForUpdates()
-                    }.disabled(!RebindAppDelegate.updater.canCheckForUpdates || delegate.model.recording != nil)
-                }
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .defaultSize(width: 1080, height: 720)
+        // "Start in the background" keeps the window closed at launch, including at login, unless
+        // Rebind shows neither a Dock nor a Menu Bar icon: then the window is its only way in.
+        .defaultLaunchBehavior(opensWindowAtLaunch ? .automatic : .suppressed)
+        .restorationBehavior(.disabled)
+        .commands {
+            BindingsCommands()
+            CommandGroup(replacing: .appSettings) {
+                Button(.settingsTitle) {
+                    delegate.model.requestedDestination = .settings(delegate.model.settingsSection)
+                    RebindAppDelegate.mainWindow.show()
+                }.keyboardShortcut(",", modifiers: .command)
             }
+            CommandGroup(replacing: .appInfo) {
+                AboutCommand(language: delegate.model.activeLanguage)
+                Button(AppLocalization.string(.checkForUpdates, language: delegate.model.activeLanguage)) {
+                    RebindAppDelegate.updater.checkForUpdates()
+                }.disabled(!RebindAppDelegate.updater.canCheckForUpdates || delegate.model.recording != nil)
+            }
+        }
         Window(.aboutTitle, id: "about") {
             AboutView().environment(\.locale, delegate.model.activeLanguage.locale)
                 .background { ActiveSpaceWindow() }
@@ -65,16 +65,16 @@ struct rebindApp: App {
 final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     static var isWindowFixture: Bool {
         #if DEBUG
-        ProcessInfo.processInfo.arguments.contains("--window-fixture")
+            ProcessInfo.processInfo.arguments.contains("--window-fixture")
         #else
-        false
+            false
         #endif
     }
 
     private static var runningTests: Bool {
         if isWindowFixture { return true }
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
+            if ProcessInfo.processInfo.arguments.contains("--application-fixture") { return true }
         #endif
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
             || NSClassFromString("XCTestCase") != nil
@@ -86,13 +86,17 @@ final class RebindAppDelegate: NSObject, NSApplicationDelegate {
     override init() {
         let runningTests = Self.runningTests
         // Secondary scenes must also stay away from production storage in debug fixtures/tests.
-        let store: ConfigurationStore = runningTests
-            ? ConfigurationStore(url: FileManager.default.temporaryDirectory
-                .appending(path: "RebindTestScene-\(UUID())").appending(path: "configuration.json"))
+        let store: ConfigurationStore =
+            runningTests
+            ? ConfigurationStore(
+                url: FileManager.default.temporaryDirectory
+                    .appending(path: "RebindTestScene-\(UUID())").appending(path: "configuration.json"))
             : .applicationStore
-        model = AppModel(store: store, loadConfiguration: !runningTests, languagePreferenceSaved: { preference in
-            if !runningTests { AppLanguageDefaults(defaults: .standard).apply(preference) }
-        })
+        model = AppModel(
+            store: store, loadConfiguration: !runningTests,
+            languagePreferenceSaved: { preference in
+                if !runningTests { AppLanguageDefaults(defaults: .standard).apply(preference) }
+            })
         super.init()
         if Self.isWindowFixture {
             model.setPresencePreference(\.opensWindowAtLaunch, to: false)

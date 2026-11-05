@@ -16,16 +16,19 @@ nonisolated struct WorkspaceRequest: Equatable, Sendable {
 nonisolated enum WorkspacePreparation {
     // File metadata is read on the action thread, never inside the event tap or
     // by the UI polling callback. No content is opened during preparation.
-    static func prepare(_ action: WorkspaceAction,
-                        settingsApplication: () -> URL? = {
-                            NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences")
-                        }) -> WorkspaceTarget? {
+    static func prepare(
+        _ action: WorkspaceAction,
+        settingsApplication: () -> URL? = {
+            NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences")
+        }
+    ) -> WorkspaceTarget? {
         guard action.isSupported else { return nil }
         switch action {
         case .openApplication(let target), .activateApplication(let target), .quitApplication(let target):
             let url = target.url.standardizedFileURL.resolvingSymlinksInPath()
             guard let bundle = Bundle(url: url), bundle.bundleIdentifier == target.bundleIdentifier,
-                  bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL" else { return nil }
+                bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL"
+            else { return nil }
             let prepared = ApplicationTarget(url: url, bundleIdentifier: target.bundleIdentifier)
             if case .quitApplication = action { return .quitApplication(prepared) }
             let activateOnly: Bool
@@ -33,8 +36,11 @@ nonisolated enum WorkspacePreparation {
             return .application(prepared, activateOnly: activateOnly)
         case .previousApplication: return .previousApplication
         case .openApps:
-            return prepare(.openApplication(ApplicationTarget(url: URL(filePath: "/System/Applications/Apps.app"),
-                bundleIdentifier: "com.apple.apps.launcher")))
+            return prepare(
+                .openApplication(
+                    ApplicationTarget(
+                        url: URL(filePath: "/System/Applications/Apps.app"),
+                        bundleIdentifier: "com.apple.apps.launcher")))
         case .openSystemSettings:
             // Public Launch Services lookup; no pane URL/private scheme or hardcoded app path.
             guard let url = settingsApplication() else { return nil }
@@ -43,7 +49,8 @@ nonisolated enum WorkspacePreparation {
         case .openFile(let url):
             let url = url.standardizedFileURL.resolvingSymlinksInPath()
             guard WorkspaceAction.isLocalFile(url), url.pathExtension.lowercased() != "app",
-                  (try? url.checkResourceIsReachable()) == true else { return nil }
+                (try? url.checkResourceIsReachable()) == true
+            else { return nil }
             return .document(url)
         }
     }

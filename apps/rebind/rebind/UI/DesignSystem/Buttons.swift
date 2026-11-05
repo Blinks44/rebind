@@ -14,9 +14,13 @@ struct PrimaryButtonStyle: ButtonStyle {
             .background {
                 Capsule(style: .circular).fill(Theme.accentFill)
                     .overlay {
-                        Capsule(style: .circular).fill(LinearGradient(stops: [.init(color: .white.opacity(0.24), location: 0),
-                                                              .init(color: .white.opacity(0), location: 0.55)],
-                                                      startPoint: .top, endPoint: .bottom))
+                        Capsule(style: .circular).fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .white.opacity(0.24), location: 0),
+                                    .init(color: .white.opacity(0), location: 0.55),
+                                ],
+                                startPoint: .top, endPoint: .bottom))
                     }
                     .shadow(color: Theme.accentGlow, radius: 8, y: 6)
             }

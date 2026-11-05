@@ -30,8 +30,11 @@ struct GeneralSettingsView: View {
                 if !model.configuration.showsDockIcon && !model.configuration.showsMenuBarIcon {
                     Banner(severity: .information, title: .hiddenEverywhereTitle, message: .hiddenEverywhereDescription)
                 }
-                Toggle(isOn: SwiftUI.Binding(get: { !model.configuration.opensWindowAtLaunch },
-                                             set: { model.setPresencePreference(\.opensWindowAtLaunch, to: !$0) })) {
+                Toggle(
+                    isOn: SwiftUI.Binding(
+                        get: { !model.configuration.opensWindowAtLaunch },
+                        set: { model.setPresencePreference(\.opensWindowAtLaunch, to: !$0) })
+                ) {
                     settingLabel(.startInBackground, description: .startInBackgroundDescription)
                 }
                 .toggleStyle(ThemeSwitchStyle()).disabled(model.storageLocked).modifier(CardRow())
@@ -52,18 +55,23 @@ struct GeneralSettingsView: View {
     @ViewBuilder private var runtimeStatus: some View {
         switch model.generalRuntime {
         case .missingAccess:
-            Banner(severity: .warning, title: model.generalRuntime.title,
-                           message: model.generalRuntime.description) {
+            Banner(
+                severity: .warning, title: model.generalRuntime.title,
+                message: model.generalRuntime.description
+            ) {
                 Button(.permissionsTitle, action: openPermissions).secondaryButton()
             }
         case .engineError:
-            Banner(severity: .error, title: model.generalRuntime.title,
-                           message: model.generalRuntime.description) {
+            Banner(
+                severity: .error, title: model.generalRuntime.title,
+                message: model.generalRuntime.description
+            ) {
                 Button(.tryAgain, action: model.retryRemapping).secondaryButton()
             }
         case .storageLocked:
-            Banner(severity: .warning, title: model.generalRuntime.title,
-                           message: model.generalRuntime.description)
+            Banner(
+                severity: .warning, title: model.generalRuntime.title,
+                message: model.generalRuntime.description)
         case .active, .paused, .starting, .secureInput, .suspended:
             VStack(alignment: .leading, spacing: 8) {
                 Text(model.generalRuntime.title).font(Theme.headline).accessibilityAddTraits(.isHeader)
@@ -80,18 +88,26 @@ struct GeneralSettingsView: View {
         SwiftUI.Binding(get: { model.configuration.isEnabled }, set: { model.setEnabled($0) })
     }
 
-    private func presenceToggle(_ title: LocalizedStringResource, description: LocalizedStringResource,
-                                _ keyPath: WritableKeyPath<Configuration, Bool>,
-                                applied: @escaping (Bool) -> Void = { _ in }) -> some View {
-        Toggle(isOn: SwiftUI.Binding(get: { model.configuration[keyPath: keyPath] }, set: {
-            model.setPresencePreference(keyPath, to: $0)
-            applied(model.configuration[keyPath: keyPath])
-        })) { settingLabel(title, description: description) }
+    private func presenceToggle(
+        _ title: LocalizedStringResource, description: LocalizedStringResource,
+        _ keyPath: WritableKeyPath<Configuration, Bool>,
+        applied: @escaping (Bool) -> Void = { _ in }
+    ) -> some View {
+        Toggle(
+            isOn: SwiftUI.Binding(
+                get: { model.configuration[keyPath: keyPath] },
+                set: {
+                    model.setPresencePreference(keyPath, to: $0)
+                    applied(model.configuration[keyPath: keyPath])
+                })
+        ) { settingLabel(title, description: description) }
         .toggleStyle(ThemeSwitchStyle()).disabled(model.storageLocked).modifier(CardRow())
     }
 
-    private func settingLabel(_ title: LocalizedStringResource,
-                              description: LocalizedStringResource) -> some View {
+    private func settingLabel(
+        _ title: LocalizedStringResource,
+        description: LocalizedStringResource
+    ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
             Text(description).font(Theme.callout).foregroundStyle(Theme.textSecondary)

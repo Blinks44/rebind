@@ -1,4 +1,5 @@
 import Testing
+
 @testable import rebind
 
 struct InputMatcherTests {
@@ -11,8 +12,9 @@ struct InputMatcherTests {
     @Test(arguments: [ModifierSet(), .control, [.control, .option], [.control, .shift], .command, [.control, .function]])
     func exactModifiers(_ modifiers: ModifierSet) {
         var matcher = InputMatcher()
-        let result = matcher.handle(InputEvent(trigger: .key(0), modifiers: modifiers, phase: .down),
-                                    rules: InputMatcher.compile([rule()]), enabled: true)
+        let result = matcher.handle(
+            InputEvent(trigger: .key(0), modifiers: modifiers, phase: .down),
+            rules: InputMatcher.compile([rule()]), enabled: true)
         #expect(result.suppress == (modifiers == .control))
         #expect(result.shortcut == (modifiers == .control ? output : nil))
     }
@@ -32,8 +34,11 @@ struct InputMatcherTests {
         var matcher = InputMatcher()
         let rules = InputMatcher.compile([rule()])
         #expect(matcher.handle(InputEvent(trigger: .key(0), phase: .down), rules: rules, enabled: true).suppress == false)
-        #expect(matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down, isRepeat: true), rules: rules, enabled: true).suppress == false)
-        #expect(matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .up), rules: rules, enabled: true).suppress == false)
+        #expect(
+            matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down, isRepeat: true), rules: rules, enabled: true)
+                .suppress == false)
+        #expect(
+            matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .up), rules: rules, enabled: true).suppress == false)
     }
 
     @Test(arguments: [UInt32(3), 4, 8, 31, 1000, .max])
@@ -42,7 +47,8 @@ struct InputMatcherTests {
         let trigger = InputTrigger.mouseButton(number)
         let rules = InputMatcher.compile([rule(trigger)])
         #expect(matcher.handle(InputEvent(trigger: trigger, phase: .down), rules: rules, enabled: true).suppress == false)
-        #expect(matcher.handle(InputEvent(trigger: trigger, modifiers: .control, phase: .down), rules: rules, enabled: true).shortcut == output)
+        #expect(
+            matcher.handle(InputEvent(trigger: trigger, modifiers: .control, phase: .down), rules: rules, enabled: true).shortcut == output)
         #expect(matcher.handle(InputEvent(trigger: trigger, phase: .drag), rules: rules, enabled: true).suppress)
         #expect(matcher.handle(InputEvent(trigger: trigger, phase: .up), rules: rules, enabled: false).suppress)
     }
@@ -82,7 +88,8 @@ struct InputMatcherTests {
         var matcher = InputMatcher()
         let emergency = MatchKey.emergencyBypass
         #expect(rule(emergency.trigger, modifiers: emergency.modifiers).isValid == false)
-        let result = matcher.handle(InputEvent(trigger: emergency.trigger, modifiers: emergency.modifiers, phase: .down), rules: [:], enabled: false)
+        let result = matcher.handle(
+            InputEvent(trigger: emergency.trigger, modifiers: emergency.modifiers, phase: .down), rules: [:], enabled: false)
         #expect(result.emergencyPause)
         #expect(result.shortcut == nil)
         #expect(result.suppress)

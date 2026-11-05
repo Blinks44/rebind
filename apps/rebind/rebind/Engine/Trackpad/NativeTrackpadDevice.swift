@@ -1,8 +1,8 @@
-import Synchronization
-import Dispatch
 import Darwin
+import Dispatch
 import Foundation
 import IOKit
+import Synchronization
 
 // Only this adapter touches the private framework. A device, its registration,
 // framework handle and Sendable callback context live until process exit: private
@@ -21,8 +21,11 @@ import IOKit
         static func == (lhs: Self, rhs: Self) -> Bool { lhs.registryEntryID == rhs.registryEntryID }
     }
 
-    private typealias Callback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer?, Int32,
-                                                Double, Int32, UnsafeMutableRawPointer) -> Void
+    private typealias Callback =
+        @convention(c) (
+            UnsafeMutableRawPointer, UnsafeMutableRawPointer?, Int32,
+            Double, Int32, UnsafeMutableRawPointer
+        ) -> Void
 
     private struct Framework {
         let createList: @convention(c) () -> Unmanaged<CFArray>?
@@ -40,21 +43,28 @@ import IOKit
             // New major OS releases require another private-ABI audit. This is a
             // compatibility gate, not a hardware-verification claim for macOS 15 or 26.
             guard (15...27).contains(ProcessInfo.processInfo.operatingSystemVersion.majorVersion),
-                  let handle = dlopen("/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
-                                      RTLD_LOCAL | RTLD_LAZY) else { return nil }
+                let handle = dlopen(
+                    "/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport",
+                    RTLD_LOCAL | RTLD_LAZY)
+            else { return nil }
             func symbol<T>(_ name: String) -> T? { dlsym(handle, name).map { unsafeBitCast($0, to: T.self) } }
             guard let createList: @convention(c) () -> Unmanaged<CFArray>? = symbol("MTDeviceCreateList"),
-                  let isBuiltIn: @convention(c) (UnsafeMutableRawPointer) -> Bool = symbol("MTDeviceIsBuiltIn"),
-                  let service: @convention(c) (UnsafeMutableRawPointer) -> io_service_t = symbol("MTDeviceGetService"),
-                  let dimensions: @convention(c) (UnsafeMutableRawPointer, UnsafeMutablePointer<Int32>, UnsafeMutablePointer<Int32>) -> Int32
-                    = symbol("MTDeviceGetSensorSurfaceDimensions"),
-                  let start: @convention(c) (UnsafeMutableRawPointer, Int32) -> Int32 = symbol("MTDeviceStart"),
-                  let stop: @convention(c) (UnsafeMutableRawPointer) -> Int32 = symbol("MTDeviceStop"),
-                  let register: @convention(c) (UnsafeMutableRawPointer, Callback?, UnsafeMutableRawPointer?) -> Void
-                    = symbol("MTRegisterContactFrameCallbackWithRefcon") else { return nil }
+                let isBuiltIn: @convention(c) (UnsafeMutableRawPointer) -> Bool = symbol("MTDeviceIsBuiltIn"),
+                let service: @convention(c) (UnsafeMutableRawPointer) -> io_service_t = symbol("MTDeviceGetService"),
+                let dimensions: @convention(c) (UnsafeMutableRawPointer, UnsafeMutablePointer<Int32>, UnsafeMutablePointer<Int32>) -> Int32
+                = symbol("MTDeviceGetSensorSurfaceDimensions"),
+                let start: @convention(c) (UnsafeMutableRawPointer, Int32) -> Int32 = symbol("MTDeviceStart"),
+                let stop: @convention(c) (UnsafeMutableRawPointer) -> Int32 = symbol("MTDeviceStop"),
+                let register: @convention(c) (UnsafeMutableRawPointer, Callback?, UnsafeMutableRawPointer?) -> Void = symbol(
+                    "MTRegisterContactFrameCallbackWithRefcon")
+            else { return nil }
             self.createList = createList
-            self.isBuiltIn = isBuiltIn; self.service = service; self.dimensions = dimensions
-            self.start = start; self.stop = stop; self.register = register
+            self.isBuiltIn = isBuiltIn
+            self.service = service
+            self.dimensions = dimensions
+            self.start = start
+            self.stop = stop
+            self.register = register
             familyID = symbol("MTDeviceGetFamilyID") as (@convention(c) (UnsafeMutableRawPointer, UnsafeMutablePointer<Int32>) -> Int32)?
             supportsForce = symbol("MTDeviceSupportsForce") as (@convention(c) (UnsafeMutableRawPointer) -> Bool)?
         }
@@ -78,7 +88,10 @@ import IOKit
     static func acquire(mailbox: EngineMailbox, kind: Kind = .builtIn) -> NativeTrackpadDevice? {
         let previous = adapters[kind]
         guard let framework, let found = connected(framework, kind: kind) else {
-            if let previous { previous.stop(); retired.append(previous) }
+            if let previous {
+                previous.stop()
+                retired.append(previous)
+            }
             adapters[kind] = nil
             return nil
         }
@@ -86,7 +99,10 @@ import IOKit
             Unmanaged<AnyObject>.fromOpaque(found.device).release()
             return previous
         }
-        if let previous { previous.stop(); retired.append(previous) }
+        if let previous {
+            previous.stop()
+            retired.append(previous)
+        }
         let result = NativeTrackpadDevice(mailbox: mailbox, kind: kind, connection: found)
         adapters[kind] = result
         return result
@@ -99,15 +115,20 @@ import IOKit
         return withExtendedLifetime(list) {
             for object in list {
                 let device = Unmanaged.passUnretained(object).toOpaque()
-                var width: Int32 = 0, height: Int32 = 0, registryEntryID: UInt64 = 0
+                var width: Int32 = 0
+                var height: Int32 = 0
+                var registryEntryID: UInt64 = 0
                 guard framework.isBuiltIn(device) == (kind == .builtIn),
-                      framework.dimensions(device, &width, &height) == 0, width > 0, height > 0,
-                      IORegistryEntryGetRegistryEntryID(framework.service(device), &registryEntryID) == KERN_SUCCESS,
-                      registryEntryID != 0 else { continue }
+                    framework.dimensions(device, &width, &height) == 0, width > 0, height > 0,
+                    IORegistryEntryGetRegistryEntryID(framework.service(device), &registryEntryID) == KERN_SUCCESS,
+                    registryEntryID != 0
+                else { continue }
                 if kind == .magicMouse {
                     var family: Int32 = 0
                     guard width < height, framework.familyID?(device, &family) == 0, family == 112 else { continue }
-                } else if width <= height { continue }
+                } else if width <= height {
+                    continue
+                }
                 // Retain within the list's lifetime; acquisition adopts the extra ownership below.
                 _ = Unmanaged.passUnretained(object).retain()
                 return Connection(device: device, registryEntryID: registryEntryID)
@@ -120,7 +141,8 @@ import IOKit
         let device = connection?.device
         // A Magic Trackpad reports no finger force through this framework (probe, 2026-10-16).
         let reportsForce = device.map { Self.framework?.supportsForce?($0) == true } ?? false
-        buffer = NativeTrackpadBuffer(mailbox: mailbox, isMagicTrackpad: kind == .magicTrackpad, reportsForce: reportsForce, isMagicMouse: kind == .magicMouse)
+        buffer = NativeTrackpadBuffer(
+            mailbox: mailbox, isMagicTrackpad: kind == .magicTrackpad, reportsForce: reportsForce, isMagicMouse: kind == .magicMouse)
         self.connection = connection
         guard let device, let framework = Self.framework else { return }
         if kind == .magicMouse {
@@ -128,7 +150,9 @@ import IOKit
             var id: UInt64 = 0
             if IORegistryEntryGetRegistryEntryID(service, &id) == KERN_SUCCESS { mouseSources.insert(id) }
             var iterator: io_iterator_t = 0
-            if IORegistryEntryCreateIterator(service, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &iterator) == KERN_SUCCESS {
+            if IORegistryEntryCreateIterator(service, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &iterator)
+                == KERN_SUCCESS
+            {
                 defer { IOObjectRelease(iterator) }
                 while case let child = IOIteratorNext(iterator), child != 0 {
                     if IORegistryEntryGetRegistryEntryID(child, &id) == KERN_SUCCESS { mouseSources.insert(id) }
@@ -138,10 +162,12 @@ import IOKit
         }
         // Permanent process-owned device retains the buffer independently of UI.
         let context = Unmanaged.passUnretained(buffer).toOpaque()
-        framework.register(device, { _, data, count, time, frame, context in
-            Unmanaged<NativeTrackpadBuffer>.fromOpaque(context).takeUnretainedValue()
-                .receive(data, count: count, callbackFrame: frame, callbackTime: time)
-        }, context)
+        framework.register(
+            device,
+            { _, data, count, time, frame, context in
+                Unmanaged<NativeTrackpadBuffer>.fromOpaque(context).takeUnretainedValue()
+                    .receive(data, count: count, callbackFrame: frame, callbackTime: time)
+            }, context)
         // Registration returns Void; MTDeviceStart supplies the actual status.
         available = true
     }
@@ -155,7 +181,10 @@ import IOKit
         buffer.setAccepting(true)
         // Mode 0 matches the verified probe. No private settings/gesture suppression.
         running = framework.start(device, 0) == 0
-        if !running { buffer.setAccepting(false); failed = true }
+        if !running {
+            buffer.setAccepting(false)
+            failed = true
+        }
         return running
     }
 

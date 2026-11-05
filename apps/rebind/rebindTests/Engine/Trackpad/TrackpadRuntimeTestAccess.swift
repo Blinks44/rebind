@@ -16,18 +16,23 @@ extension TrackpadRuntime {
     }
 
     var threeFingerShortcut: KeyboardShortcut? {
-        get { self[shortcut: .single(.threeFinger)] } set { self[shortcut: .single(.threeFinger)] = newValue }
+        get { self[shortcut: .single(.threeFinger)] }
+        set { self[shortcut: .single(.threeFinger)] = newValue }
     }
     var fourFingerShortcut: KeyboardShortcut? {
-        get { self[shortcut: .single(.fourFinger)] } set { self[shortcut: .single(.fourFinger)] = newValue }
+        get { self[shortcut: .single(.fourFinger)] }
+        set { self[shortcut: .single(.fourFinger)] = newValue }
     }
     var threeFingerDoubleShortcut: KeyboardShortcut? {
-        get { self[shortcut: .double(.threeFinger)] } set { self[shortcut: .double(.threeFinger)] = newValue }
+        get { self[shortcut: .double(.threeFinger)] }
+        set { self[shortcut: .double(.threeFinger)] = newValue }
     }
     var fourFingerDoubleShortcut: KeyboardShortcut? {
-        get { self[shortcut: .double(.fourFinger)] } set { self[shortcut: .double(.fourFinger)] = newValue }
+        get { self[shortcut: .double(.fourFinger)] }
+        set { self[shortcut: .double(.fourFinger)] = newValue }
     }
     var twoFingerDoubleShortcut: KeyboardShortcut? {
-        get { self[shortcut: .twoFingerDouble] } set { self[shortcut: .twoFingerDouble] = newValue }
+        get { self[shortcut: .twoFingerDouble] }
+        set { self[shortcut: .twoFingerDouble] = newValue }
     }
 }

@@ -11,14 +11,16 @@ final class MainWindowSizingView: NSView {
         super.viewDidMoveToWindow()
         windowObservations = []
         if let window {
-            windowObservations = [NSWindow.didResizeNotification, NSWindow.didBecomeKeyNotification,
-                                  NSWindow.didResignKeyNotification, NSWindow.didExitFullScreenNotification].map { name in
+            windowObservations = [
+                NSWindow.didResizeNotification, NSWindow.didBecomeKeyNotification,
+                NSWindow.didResignKeyNotification, NSWindow.didExitFullScreenNotification,
+            ].map { name in
                 NotificationCenter.default.publisher(for: name)
-                .filter { [weak window] notification in
-                    (notification.object as? NSWindow) === window
-                }
-                .receive(on: RunLoop.main)
-                .sink { [weak self] _ in self?.scheduleMinimumSize() }
+                    .filter { [weak window] notification in
+                        (notification.object as? NSWindow) === window
+                    }
+                    .receive(on: RunLoop.main)
+                    .sink { [weak self] _ in self?.scheduleMinimumSize() }
             }
         }
         scheduleMinimumSize()

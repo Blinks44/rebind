@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ButtonScrollTests {
@@ -41,14 +42,16 @@ struct ButtonScrollTests {
         drag.motion = PointerMotion(deltaX: 400, deltaY: 0)
         // A wheel-only button does not capture movement or treat it as a gesture.
         #expect(matcher.handle(drag, rules: rules, enabled: true) == MatchDecision())
-        #expect(matcher.handle(button(.up, at: 2), rules: rules, enabled: true)
-            == MatchDecision(suppress: true, action: .mouse(.backClick)))
+        #expect(
+            matcher.handle(button(.up, at: 2), rules: rules, enabled: true)
+                == MatchDecision(suppress: true, action: .mouse(.backClick)))
     }
 
     @Test func aPressRuleOnTheSameButtonRunsOnAPlainClickAndGesturesCoexist() {
         let pressRule = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: press)
-        let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
-                                     action: .dock(.missionControl))
+        let gesture = rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
+            action: .dock(.missionControl))
         let rules = InputMatcher.compile([wheelRule(), pressRule, gesture])
         #expect(rules.count == 3)
         var matcher = InputMatcher()

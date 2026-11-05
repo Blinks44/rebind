@@ -33,5 +33,5 @@ struct MainWindowRegistration: NSViewRepresentable {
         return view
     }
 
-    func updateNSView(_ view: Probe, context: Context) { }
+    func updateNSView(_ view: Probe, context: Context) {}
 }

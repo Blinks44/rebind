@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct DesktopActionTests {
@@ -34,8 +35,10 @@ struct DesktopActionTests {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "config.json"))
         let url = try #require(URL(string: "https://example.com"))
-        let previous: [RebindAction] = [.shortcut(.init(keyCode: 0, modifiers: .command)), .system(.toggleMute),
-            .window(.minimize), .workspace(.openURL(url)), .appleShortcut(.init(id: UUID(), name: "Test"))]
+        let previous: [RebindAction] = [
+            .shortcut(.init(keyCode: 0, modifiers: .command)), .system(.toggleMute),
+            .window(.minimize), .workspace(.openURL(url)), .appleShortcut(.init(id: UUID(), name: "Test")),
+        ]
         let bindings = previous.enumerated().map { index, action in
             rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32(index + 2)), modifiers: [], action: action)
         }
@@ -55,8 +58,9 @@ struct DesktopActionTests {
 
     @Test(arguments: 1...10)
     func desktopCannotMasqueradeInOlderSchemasEvenInInactiveProfiles(_ version: Int) throws {
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                    action: .desktop(.missionControl, shortcut: KeyboardShortcut(keyCode: 126, modifiers: .control)))
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .desktop(.missionControl, shortcut: KeyboardShortcut(keyCode: 126, modifiers: .control)))
         var old = Configuration(bindings: version < 6 ? [binding] : [])
         if version >= 6 { old.profiles.append(RuleProfile(name: "Inactive", bindings: [binding])) }
         old.schemaVersion = version
@@ -65,8 +69,11 @@ struct DesktopActionTests {
     }
 
     @Test func unsupportedStoredKeyAndUnknownDesktopActionFailValidation() throws {
-        var configuration = Configuration(bindings: [rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-            action: .desktop(.missionControl, shortcut: .init(keyCode: 55, modifiers: [])))])
+        var configuration = Configuration(bindings: [
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+                action: .desktop(.missionControl, shortcut: .init(keyCode: 55, modifiers: [])))
+        ])
         #expect(throws: ConfigurationError.invalid) { try configuration.validate() }
         configuration.bindings[0].action = .desktop(.missionControl, shortcut: KeyboardShortcut(keyCode: 126, modifiers: .control))
         let text = String(decoding: try JSONEncoder().encode(configuration), as: UTF8.self)
@@ -94,12 +101,17 @@ struct DesktopActionTests {
     func generatedNativeShortcutsAreTaggedAndNeverFeedBack(_ desktop: DesktopAction) throws {
         let events = try #require(SpaceShortcutSender.events(desktop))
         #expect(events.count == 2)
-        #expect(events.allSatisfy { ($0.type == .keyDown || $0.type == .keyUp)
-            && $0.flags == [.maskControl, .maskSecondaryFn] && $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
+        #expect(
+            events.allSatisfy {
+                ($0.type == .keyDown || $0.type == .keyUp)
+                    && $0.flags == [.maskControl, .maskSecondaryFn]
+                    && $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag
+            })
         let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [], action: .dock(desktop))
         var matcher = InputMatcher()
-        let result = matcher.handle(InputEvent(trigger: binding.trigger, phase: .down, isSynthetic: true),
-                                   rules: InputMatcher.compile([binding]), enabled: true)
+        let result = matcher.handle(
+            InputEvent(trigger: binding.trigger, phase: .down, isSynthetic: true),
+            rules: InputMatcher.compile([binding]), enabled: true)
         #expect(!result.suppress && result.action == nil)
     }
 
@@ -107,16 +119,29 @@ struct DesktopActionTests {
         let mailbox = readyMailbox()
         let audio = AudioOutputCapabilities(deviceID: 17, volume: true, mute: true)
         let calls = Mutex<[RebindAction]>([])
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio },
-            performAudio: { action, _, _ in calls.withLock { $0.append(.system(action)) }; return .performed },
-            sendShortcut: { shortcut in calls.withLock { $0.append(.shortcut(shortcut)) }; return true },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio },
+            performAudio: { action, _, _ in
+                calls.withLock { $0.append(.system(action)) }
+                return .performed
+            },
+            sendShortcut: { shortcut in
+                calls.withLock { $0.append(.shortcut(shortcut)) }
+                return true
+            },
             performDock: { action, allowed in
-                #expect(allowed()); calls.withLock { $0.append(.dock(action)) }; return .performed
+                #expect(allowed())
+                calls.withLock { $0.append(.dock(action)) }
+                return .performed
             },
             secureInput: { false }, postingAllowed: { true })
         mailbox.updateAudioCapabilities(audio)
-        mailbox.state.withLock { $0.pending = [.system(.toggleMute), .dock(.nextSpace),
-                                             .shortcut(.init(keyCode: 0, modifiers: .command))] }
+        mailbox.state.withLock {
+            $0.pending = [
+                .system(.toggleMute), .dock(.nextSpace),
+                .shortcut(.init(keyCode: 0, modifiers: .command)),
+            ]
+        }
         for tick in 0...2 { worker.service(at: UInt64(tick)) }
         #expect(calls.withLock { $0 } == [.system(.toggleMute), .dock(.nextSpace), .shortcut(.init(keyCode: 0, modifiers: .command))])
         #expect(mailbox.state.withLock { $0.pending.isEmpty && $0.actionFailed == nil })
@@ -125,10 +150,19 @@ struct DesktopActionTests {
     @Test(arguments: 0...5)
     func lifecycleChangeAfterDequeuePreventsGesturePostingAndStaleError(_ change: Int) {
         let mailbox = readyMailbox()
-        let calls = Mutex(0), preflights = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performDock: { _, _ in calls.withLock { $0 += 1 }; return .performed }, secureInput: { false }, postingAllowed: {
-                let count = preflights.withLock { $0 += 1; return $0 }
+        let calls = Mutex(0)
+        let preflights = Mutex(0)
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            performDock: { _, _ in
+                calls.withLock { $0 += 1 }
+                return .performed
+            }, secureInput: { false },
+            postingAllowed: {
+                let count = preflights.withLock {
+                    $0 += 1
+                    return $0
+                }
                 if count == 2 {
                     switch change {
                     case 0: mailbox.configure(Configuration(isEnabled: true))
@@ -150,8 +184,12 @@ struct DesktopActionTests {
     func secureInputAndRevokedPostingCancelBeforeNativeSending(_ secure: Bool) {
         let mailbox = readyMailbox()
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            performDock: { _, _ in calls.withLock { $0 += 1 }; return .performed }, secureInput: { secure }, postingAllowed: { secure })
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            performDock: { _, _ in
+                calls.withLock { $0 += 1 }
+                return .performed
+            }, secureInput: { secure }, postingAllowed: { secure })
         worker.service(at: 0)
         #expect(calls.withLock { $0 } == 0)
         #expect(mailbox.state.withLock { $0.pending.isEmpty && $0.status == (secure ? .secureInput : .permissionRequired) })
@@ -159,7 +197,8 @@ struct DesktopActionTests {
 
     @Test func gestureFailureReportsErrorWithoutPausingUnrelatedRules() {
         let mailbox = readyMailbox()
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             performDock: { _, _ in .unavailable }, secureInput: { false }, postingAllowed: { true })
         worker.service(at: 0)
         #expect(mailbox.state.withLock { $0.enabled && !$0.emergencyPause && $0.pending.isEmpty })
@@ -178,7 +217,8 @@ struct DesktopActionTests {
 
     private func readyMailbox() -> EngineMailbox {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
             action: .dock(.nextSpace))
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         mailbox.state.withLock { $0.status = .active }

@@ -1,15 +1,19 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct ConfigurationStoreProtectionTests {
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindProtectedSave-\(UUID())/configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindProtectedSave-\(UUID())/configuration.json"))
     }
 
-    @Test(arguments: [Data("{broken".utf8), Data("{\"schemaVersion\":999}".utf8),
-                      Data(repeating: 0x20, count: ConfigurationStore.maximumBytes + 1)])
+    @Test(arguments: [
+        Data("{broken".utf8), Data("{\"schemaVersion\":999}".utf8),
+        Data(repeating: 0x20, count: ConfigurationStore.maximumBytes + 1),
+    ])
     func saveCannotReplaceAnOriginalChangedAfterLoad(_ bytes: Data) throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }

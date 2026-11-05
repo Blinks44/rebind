@@ -1,7 +1,7 @@
 import AppKit
 import ApplicationServices
-import Dispatch
 import Darwin
+import Dispatch
 
 nonisolated enum WindowActionResult: Equatable, Sendable {
     case performed, cancelled, unavailable
@@ -27,11 +27,14 @@ nonisolated enum WindowActionExecutor {
         perform(action, client: AXWindowAccessibility(), ownPID: getpid(), canPerform: canPerform)
     }
 
-    static func perform<Client: WindowAccessibility>(_ action: WindowAction, client: Client,
-                                                     ownPID: pid_t, canPerform: () -> Bool) -> WindowActionResult {
+    static func perform<Client: WindowAccessibility>(
+        _ action: WindowAction, client: Client,
+        ownPID: pid_t, canPerform: () -> Bool
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard client.trusted, let app = client.application,
-              let pid = client.processID(of: app), pid > 0, pid != ownPID else { return .unavailable }
+            let pid = client.processID(of: app), pid > 0, pid != ownPID
+        else { return .unavailable }
         let target: Client.Element
         let attribute: String?
         let window: Client.Element?
@@ -43,7 +46,8 @@ nonisolated enum WindowActionExecutor {
             window = nil
         case .close, .minimize, .toggleFullScreen:
             guard let focused = client.element(kAXFocusedWindowAttribute, of: app),
-                  client.processID(of: focused) == pid, client.isWindow(focused) else { return .unavailable }
+                client.processID(of: focused) == pid, client.isWindow(focused)
+            else { return .unavailable }
             window = focused
             if action == .minimize {
                 guard client.isSettable(kAXMinimizedAttribute, of: focused) else { return .unavailable }
@@ -52,7 +56,8 @@ nonisolated enum WindowActionExecutor {
             } else {
                 let buttonAttribute = action == .close ? kAXCloseButtonAttribute : kAXFullScreenButtonAttribute
                 guard let button = client.element(buttonAttribute, of: focused),
-                      client.processID(of: button) == pid, client.isEnabled(button) else { return .unavailable }
+                    client.processID(of: button) == pid, client.isEnabled(button)
+                else { return .unavailable }
                 target = button
                 attribute = nil
             }
@@ -80,17 +85,22 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
         // AXFocusedApplication even though their own window attributes work.
         // AppKit supplies the PID; direct AXFrontmost validates it against a
         // stale workspace snapshot before any executor can use the handle.
-        Self.focusedApplication(processID: {
-            guard let app = NSWorkspace.shared.frontmostApplication,
-                  !app.isTerminated, app.isActive else { return nil }
-            return app.processIdentifier
-        }, makeApplication: AXUIElementCreateApplication, isFrontmost: {
-            (value(kAXFrontmostAttribute, of: $0) as? Bool) == true
-        })
+        Self.focusedApplication(
+            processID: {
+                guard let app = NSWorkspace.shared.frontmostApplication,
+                    !app.isTerminated, app.isActive
+                else { return nil }
+                return app.processIdentifier
+            }, makeApplication: AXUIElementCreateApplication,
+            isFrontmost: {
+                (value(kAXFrontmostAttribute, of: $0) as? Bool) == true
+            })
     }
 
-    static func focusedApplication<Element>(processID: () -> pid_t?, makeApplication: (pid_t) -> Element,
-                                           isFrontmost: (Element) -> Bool) -> Element? {
+    static func focusedApplication<Element>(
+        processID: () -> pid_t?, makeApplication: (pid_t) -> Element,
+        isFrontmost: (Element) -> Bool
+    ) -> Element? {
         guard let pid = processID(), pid > 0 else { return nil }
         let app = makeApplication(pid)
         // The AX read can wait while the user switches apps. Never return a
@@ -146,7 +156,8 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
 
     func frame(of element: AXUIElement) -> CGRect? {
         guard let position = axValue(kAXPositionAttribute, of: element, type: .cgPoint),
-              let size = axValue(kAXSizeAttribute, of: element, type: .cgSize) else { return nil }
+            let size = axValue(kAXSizeAttribute, of: element, type: .cgSize)
+        else { return nil }
         var point = CGPoint.zero
         var dimensions = CGSize.zero
         guard AXValueGetValue(position, .cgPoint, &point), AXValueGetValue(size, .cgSize, &dimensions) else { return nil }
@@ -169,7 +180,8 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
     func setSize(_ size: CGSize, of element: AXUIElement) -> Bool {
         var size = size
         guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0,
-              let value = AXValueCreate(.cgSize, &size), prepare(element) else { return false }
+            let value = AXValueCreate(.cgSize, &size), prepare(element)
+        else { return false }
         return AXUIElementSetAttributeValue(element, kAXSizeAttribute as CFString, value) == .success
     }
 
@@ -177,13 +189,15 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
         guard prepare(application) else { return nil }
         var count = 0
         guard AXUIElementGetAttributeValueCount(application, kAXWindowsAttribute as CFString, &count) == .success,
-              count >= 0, count <= limit else { return nil }
+            count >= 0, count <= limit
+        else { return nil }
         if count == 0 { return [] }
         guard prepare(application) else { return nil }
         var values: CFArray?
         guard AXUIElementCopyAttributeValues(application, kAXWindowsAttribute as CFString, 0, count, &values) == .success,
-              let array = values as? [AnyObject], array.count == count,
-              array.allSatisfy({ CFGetTypeID($0) == AXUIElementGetTypeID() }) else { return nil }
+            let array = values as? [AnyObject], array.count == count,
+            array.allSatisfy({ CFGetTypeID($0) == AXUIElementGetTypeID() })
+        else { return nil }
         return array.map { unsafeDowncast($0, to: AXUIElement.self) }
     }
 
@@ -196,7 +210,8 @@ nonisolated struct AXWindowAccessibility: WindowLayoutAccessibility, WindowCycli
         guard prepare(element) else { return false }
         var actions: CFArray?
         guard AXUIElementCopyActionNames(element, &actions) == .success,
-              let names = actions as? [String] else { return false }
+            let names = actions as? [String]
+        else { return false }
         return names.contains(kAXRaiseAction as String)
     }
 

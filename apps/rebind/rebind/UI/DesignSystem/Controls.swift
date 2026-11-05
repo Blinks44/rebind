@@ -35,9 +35,9 @@ struct TriggerChip: View {
     }
 }
 
-private extension View {
+extension View {
     /// The raised keycap face: top-lit gradient, ledge, soft shadow and hairline.
-    func keycapSurface() -> some View {
+    fileprivate func keycapSurface() -> some View {
         background {
             RoundedRectangle(cornerRadius: 9, style: .continuous)
                 .fill(LinearGradient(colors: [Theme.keycapTop, Theme.keycapBottom], startPoint: .top, endPoint: .bottom))
@@ -76,7 +76,9 @@ struct ThemeSwitchStyle: ToggleStyle {
     }
 
     private func track(_ configuration: ToggleStyleConfiguration) -> some View {
-        Button { configuration.isOn.toggle() } label: {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
             Capsule(style: .circular).fill(configuration.isOn ? Theme.accent : Theme.toggleOff)
                 .overlay { if !configuration.isOn { Capsule(style: .circular).strokeBorder(Theme.borderSubtle) } }
                 .overlay(alignment: configuration.isOn ? .trailing : .leading) {
@@ -157,7 +159,7 @@ struct ThemeTextField: View {
     var symbol: String?
     var autofocus = false
     var focusRequest: UUID?
-    var onSubmit: () -> Void = { }
+    var onSubmit: () -> Void = {}
     @FocusState private var isFocused: Bool
 
     var body: some View {
@@ -198,9 +200,12 @@ struct OptionsMenu<Content: View>: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        AnchoredMenu(select: { _ in }, makeMenu: { _ in
-            NSHostingMenu(rootView: content.environment(\.locale, locale))
-        }, drawsSurface: false) {
+        AnchoredMenu(
+            select: { _ in },
+            makeMenu: { _ in
+                NSHostingMenu(rootView: content.environment(\.locale, locale))
+            }, drawsSurface: false
+        ) {
             Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28).contentShape(.rect)
         }
@@ -224,7 +229,9 @@ struct SegmentedPicker<Value: Hashable>: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(options, id: \.self) { option in
-                Button { selection = option } label: {
+                Button {
+                    selection = option
+                } label: {
                     Text(label(option)).font(Theme.calloutStrong).lineLimit(1)
                         .foregroundStyle(selection == option ? Theme.textPrimary : Theme.textSecondary)
                         .padding(.horizontal, 16)

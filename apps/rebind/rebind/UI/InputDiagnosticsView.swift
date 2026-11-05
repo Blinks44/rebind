@@ -7,15 +7,19 @@ struct InputDiagnosticsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(.inputDiagnostics).font(Theme.titleSmall).accessibilityAddTraits(.isHeader)
-            Text(.advancedDiagnosticsPrivacy).font(Theme.body).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
+            Text(.advancedDiagnosticsPrivacy).font(Theme.body).foregroundStyle(Theme.textSecondary).fixedSize(
+                horizontal: false, vertical: true)
             HStack {
-                Label(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsRecording : .advancedDiagnosticsStopped,
-                      systemImage: model.diagnostics.isRunning ? "record.circle" : "pause.circle")
+                Label(
+                    model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsRecording : .advancedDiagnosticsStopped,
+                    systemImage: model.diagnostics.isRunning ? "record.circle" : "pause.circle")
                 Spacer()
                 Button(model.diagnostics.isRunning ? LocalizedStringResource.advancedDiagnosticsStop : .advancedDiagnosticsStart) {
                     if model.diagnostics.isRunning { model.stopDiagnostics() } else { model.startDiagnostics() }
                 }.disabled(!model.diagnostics.isRunning && !model.canStartDiagnostics).secondaryButton()
-                Button(.advancedDiagnosticsClear) { model.clearDiagnostics() }.disabled(model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0).secondaryButton()
+                Button(.advancedDiagnosticsClear) { model.clearDiagnostics() }.disabled(
+                    model.diagnostics.entries.isEmpty && model.diagnostics.omitted == 0
+                ).secondaryButton()
             }
             if !model.canStartDiagnostics && !model.diagnostics.isRunning {
                 Label(.advancedDiagnosticsUnavailableTitle, systemImage: "exclamationmark.circle")
@@ -24,18 +28,25 @@ struct InputDiagnosticsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             VStack(spacing: 0) {
-                row([.advancedDiagnosticColumnTime, .advancedDiagnosticColumnInput, .advancedDiagnosticColumnRaw,
-                     .advancedDiagnosticColumnPhase, .advancedDiagnosticColumnModifiers, .advancedDiagnosticColumnOutcome]
+                row(
+                    [
+                        .advancedDiagnosticColumnTime, .advancedDiagnosticColumnInput, .advancedDiagnosticColumnRaw,
+                        .advancedDiagnosticColumnPhase, .advancedDiagnosticColumnModifiers, .advancedDiagnosticColumnOutcome,
+                    ]
                     .map { Text($0) }, font: Theme.overline, isHeader: true)
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(model.diagnostics.entries) { entry in
                             Theme.separator.frame(height: 1).padding(.horizontal, 20)
-                            row([Text(entry.elapsedMilliseconds, format: .number).monospacedDigit(),
-                                 Text(entry.inputLabel).font(Theme.bodyStrong), rawButton(entry), Text(entry.phaseLabel),
-                                 Text(entry.modifiers.glyphs + (entry.modifiers.contains(.function) ? "fn" : "")),
-                                 Text(entry.outcomeLabel)], font: Theme.body)
-                                .accessibilityElement(children: .combine)
+                            row(
+                                [
+                                    Text(entry.elapsedMilliseconds, format: .number).monospacedDigit(),
+                                    Text(entry.inputLabel).font(Theme.bodyStrong), rawButton(entry), Text(entry.phaseLabel),
+                                    Text(entry.modifiers.glyphs + (entry.modifiers.contains(.function) ? "fn" : "")),
+                                    Text(entry.outcomeLabel),
+                                ], font: Theme.body
+                            )
+                            .accessibilityElement(children: .combine)
                         }
                     }
                 }
@@ -55,7 +66,8 @@ struct InputDiagnosticsView: View {
             Text(.advancedDiagnosticCount(count1: model.diagnostics.entries.count, count2: Int(clamping: model.diagnostics.omitted)))
                 .font(Theme.caption).foregroundStyle(Theme.textSecondary)
             HStack {
-                Text(.advancedDiagnosticsLimits).font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(horizontal: false, vertical: true)
+                Text(.advancedDiagnosticsLimits).font(Theme.caption).foregroundStyle(Theme.textSecondary).fixedSize(
+                    horizontal: false, vertical: true)
                 Spacer()
                 Button(.diagnosticsClose) { dismiss() }.keyboardShortcut(.cancelAction).secondaryButton()
             }
@@ -91,15 +103,15 @@ struct InputDiagnosticsView: View {
     }
 }
 
-private extension InputDiagnostic {
-    var inputLabel: String {
+extension InputDiagnostic {
+    fileprivate var inputLabel: String {
         switch kind {
         case .button(let number): InputLabels.buttonName(number)
         case .wheel(let direction): AppLocalization.string(direction.label)
         case .unsupportedScroll: AppLocalization.string(.diagnosticsUnsupportedScroll)
         }
     }
-    var phaseLabel: LocalizedStringResource {
+    fileprivate var phaseLabel: LocalizedStringResource {
         switch phase {
         case .down: .diagnosticsDown
         case .up: .diagnosticsUp
@@ -108,7 +120,7 @@ private extension InputDiagnostic {
         case .activation: .holdActivation
         }
     }
-    var outcomeLabel: LocalizedStringResource {
+    fileprivate var outcomeLabel: LocalizedStringResource {
         switch outcome {
         case .passedThrough: .diagnosticsPassed
         case .adjusted: .diagnosticsAdjusted

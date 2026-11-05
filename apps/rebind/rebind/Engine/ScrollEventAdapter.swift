@@ -13,8 +13,9 @@ nonisolated enum ScrollEventAdapter {
 
     static func input(from event: CGEvent, adjustment: WheelAdjustment? = nil) -> InputEvent? {
         guard isMouseWheel(event),
-              event.getIntegerValueField(.eventSourceUserData) != ShortcutSender.eventTag,
-              event.getIntegerValueField(.scrollWheelEventDeltaAxis3) == 0 else { return nil }
+            event.getIntegerValueField(.eventSourceUserData) != ShortcutSender.eventTag,
+            event.getIntegerValueField(.scrollWheelEventDeltaAxis3) == 0
+        else { return nil }
 
         // A continuous wheel moves in points; its line delta stays zero for small turns.
         let continuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
@@ -30,8 +31,9 @@ nonisolated enum ScrollEventAdapter {
         case .right where adjustment?.reversesHorizontally == true: direction = .left
         default: break
         }
-        return InputEvent(trigger: .scroll(direction), modifiers: ModifierSet(flags: event.flags),
-                          phase: .scroll, timestamp: event.timestamp)
+        return InputEvent(
+            trigger: .scroll(direction), modifiers: ModifierSet(flags: event.flags),
+            phase: .scroll, timestamp: event.timestamp)
     }
 
     /// Reverses or multiplies a mouse wheel event in place. Trackpad, Magic Mouse and momentum
@@ -40,8 +42,10 @@ nonisolated enum ScrollEventAdapter {
         guard !adjustment.changesNothing, isMouseWheel(event) else { return }
         let axes: [(CGEventField, CGEventField, CGEventField, Int64)] = [
             (.scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1, adjustment.factor),
-            (.scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2,
-             adjustment.horizontalFactor)
+            (
+                .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2,
+                adjustment.horizontalFactor
+            ),
         ]
         for (lines, fixed, points, factor) in axes where factor != 1 {
             // Read all three first: writing the line delta makes Quartz recompute the others.
@@ -61,7 +65,7 @@ nonisolated enum ScrollEventAdapter {
         switch (vertical, horizontal) {
         case (let delta, 0) where delta != 0: delta > 0 ? .up : .down
         case (0, let delta) where delta != 0: delta > 0 ? .left : .right
-        default: nil // Zero or diagonal: never swallow an unmapped component.
+        default: nil  // Zero or diagonal: never swallow an unmapped component.
         }
     }
 }

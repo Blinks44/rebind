@@ -1,14 +1,17 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct InputHoldSettingsTests {
     @Test(arguments: [UInt32(100), 575, 5000])
     func changedDurationRetainsOtherRulesAndFailedDraftCanRetry(_ duration: UInt32) throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindHoldUI-\(UUID())/configuration.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindHoldUI-\(UUID())/configuration.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)), activation: .hold)
         var configuration = Configuration(bindings: [binding])
         configuration.languagePreference = .fr

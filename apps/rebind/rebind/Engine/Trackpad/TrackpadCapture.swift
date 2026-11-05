@@ -1,7 +1,7 @@
-import Synchronization
 import AppKit
 import Carbon
 import Dispatch
+import Synchronization
 
 // Consumes the bounded native buffer outside its synchronous callback. MainActor
 // owns private device start/stop and public foreground lookup; the existing serial
@@ -31,16 +31,19 @@ import Dispatch
         guard timer == nil else { return }
         if ProcessInfo.processInfo.arguments.contains("--diagnose-trackpad") {
             mailbox.state.withLock { $0.trackpadDiagnostics = TrackpadDiagnostics(startedAt: DispatchTime.now().uptimeNanoseconds) }
-            FileHandle.standardError.write(Data("trackpad_diagnostics_started=60s; aggregate reasons only; existing rules remain active\n".utf8))
+            FileHandle.standardError.write(
+                Data("trackpad_diagnostics_started=60s; aggregate reasons only; existing rules remain active\n".utf8))
         }
         timer = Timer(timeInterval: 0.01, target: self, selector: #selector(poll), userInfo: nil, repeats: true)
         if let timer { RunLoop.main.add(timer, forMode: .common) }
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(foregroundChanged),
-                                                         name: NSWorkspace.didActivateApplicationNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(foregroundChanged),
+            name: NSWorkspace.didActivateApplicationNotification, object: nil)
     }
 
     func stop() {
-        timer?.invalidate(); timer = nil
+        timer?.invalidate()
+        timer = nil
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         stopCapture()
         reportDiagnostics(finishing: true)
@@ -67,8 +70,9 @@ import Dispatch
 
     private func foregroundPID() -> Int32? {
         guard let app = NSWorkspace.shared.frontmostApplication,
-              app.isActive, !app.isTerminated, app.activationPolicy == .regular,
-              app.processIdentifier > 0, app.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return nil }
+            app.isActive, !app.isTerminated, app.activationPolicy == .regular,
+            app.processIdentifier > 0, app.processIdentifier != ProcessInfo.processInfo.processIdentifier
+        else { return nil }
         return app.processIdentifier
     }
 
@@ -87,9 +91,10 @@ import Dispatch
     }
 
     @objc private func poll() {
-        service(allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
-                foregroundPID: foregroundPID(),
-                modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)))
+        service(
+            allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
+            foregroundPID: foregroundPID(),
+            modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)))
     }
 
     /// Services both trackpads with one permission, foreground and held-modifier snapshot.
@@ -168,8 +173,7 @@ import Dispatch
         if surface.revision != runtime.revision {
             stop(&surface)
             mailbox.state.withLock {
-                if isMagic { $0.magicTrackpadClicks.beginCapture(at: now) }
-                else { $0.trackpadClicks.beginCapture(at: now) }
+                if isMagic { $0.magicTrackpadClicks.beginCapture(at: now) } else { $0.trackpadClicks.beginCapture(at: now) }
             }
             guard let device = surface.device, device.start() else {
                 mailbox.recordTrackpadDiagnostic(surface.device?.failed == true ? .captureFailed : .captureUnavailable)
@@ -187,12 +191,15 @@ import Dispatch
         }
         if let event = surface.session?.update(runtime: runtime, foreground: pid) { mailbox.recordTrackpadDiagnostic(event) }
         let mailbox = mailbox
-        surface.session?.consumeBufferedFrames(from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
-                                               diagnose: { mailbox.recordTrackpadDiagnostic($0) })
+        surface.session?.consumeBufferedFrames(
+            from: device.buffer, clock: { DispatchTime.now().uptimeNanoseconds },
+            diagnose: { mailbox.recordTrackpadDiagnostic($0) })
         let decisionTime = DispatchTime.now().uptimeNanoseconds
         // A busy UI cancels rather than executing old actions after it unblocks.
-        if let gesture = surface.session?.takeReadyGesture(from: device.buffer, at: decisionTime,
-                              diagnose: { mailbox.recordTrackpadDiagnostic($0) }), let pid {
+        if let gesture = surface.session?.takeReadyGesture(
+            from: device.buffer, at: decisionTime,
+            diagnose: { mailbox.recordTrackpadDiagnostic($0) }), let pid
+        {
             let queued = mailbox.submitTrackpad(runtime, gesture: gesture, pid: pid, at: decisionTime)
             mailbox.recordTrackpadDiagnostic(queued ? .queued : .queueUnavailable)
         }

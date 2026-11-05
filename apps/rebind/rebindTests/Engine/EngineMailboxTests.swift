@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct EngineMailboxTests {
@@ -13,8 +14,9 @@ struct EngineMailboxTests {
 
     private func configured() -> EngineMailbox {
         let mailbox = EngineMailbox()
-        let binding = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: .control,
-                                     action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+        let binding = rebind.Binding(
+            scope: .allKeyboards, trigger: .key(0), modifiers: .control,
+            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         return mailbox
     }
@@ -75,8 +77,9 @@ struct EngineMailboxTests {
     @Test func queueIsBoundedAndOverflowPassesThrough() {
         let mailbox = EngineMailbox()
         let bindings = (UInt32(2)...20).map {
-            rebind.Binding(scope: .allMice, trigger: .mouseButton($0), modifiers: [],
-                           action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseButton($0), modifiers: [],
+                action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
         }
         mailbox.configure(Configuration(isEnabled: true, bindings: bindings))
         for number in UInt32(2)...17 {

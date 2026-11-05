@@ -36,8 +36,9 @@ nonisolated struct ConfigurationStore: Sendable {
             .filter { $0.lastPathComponent.hasPrefix("configuration-") }
             .sorted { $0.lastPathComponent > $1.lastPathComponent }
         guard copies.first.flatMap({ try? Data(contentsOf: $0) }) != data else { return }
-        let stamp = date.formatted(.iso8601.year().month().day().time(includingFractionalSeconds: false)
-            .timeSeparator(.omitted).dateTimeSeparator(.standard))
+        let stamp = date.formatted(
+            .iso8601.year().month().day().time(includingFractionalSeconds: false)
+                .timeSeparator(.omitted).dateTimeSeparator(.standard))
         try? data.write(to: backupDirectory.appending(path: "configuration-\(stamp).json"), options: .atomic)
         for old in copies.dropFirst(Self.keptBackups - 1) { try? manager.removeItem(at: old) }
     }
@@ -48,11 +49,11 @@ nonisolated struct ConfigurationStore: Sendable {
         if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), !isDirectory.boolValue {
             // Startup validation is insufficient: another process may have
             // replaced the original after launch. Reuse the bounded read/codec.
-            do { _ = try ConfigurationBackup(contentsOf: url) }
-            catch { throw ConfigurationStoreError.protectedOriginal }
+            do { _ = try ConfigurationBackup(contentsOf: url) } catch { throw ConfigurationStoreError.protectedOriginal }
         }
-        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
-                                                withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(),
+            withIntermediateDirectories: true)
         // Directory/write failures remain retryable; this is not interprocess locking.
         try data.write(to: url, options: .atomic)
     }

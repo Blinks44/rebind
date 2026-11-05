@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct AddedLanguagesTests {
@@ -17,7 +18,8 @@ import Testing
     func catalogStringsAreServedInTheNewLanguages(_ sample: (AppLanguage, String, String)) {
         #expect(AppLocalization.string(.addBinding, language: sample.0) == sample.1)
         #expect(AppLocalization.string(.settingsTitle, language: sample.0) == sample.2)
-        #expect(AppLocalization.string(.mouseBindingCount(2), language: sample.0)
+        #expect(
+            AppLocalization.string(.mouseBindingCount(2), language: sample.0)
                 != AppLocalization.string(.mouseBindingCount(2), language: .en))
     }
 

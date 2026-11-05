@@ -10,8 +10,10 @@ nonisolated enum ScreenLockExecutor {
     static func supportsSystemVersion(_ major: Int) -> Bool { (15...27).contains(major) }
     static var isAvailable: Bool { lock != nil }
 
-    static func perform(canPerform: () -> Bool,
-                        resolveRequest: () -> (() -> Void)? = { lock.map { function in { function() } } }) -> WindowActionResult {
+    static func perform(
+        canPerform: () -> Bool,
+        resolveRequest: () -> (() -> Void)? = { lock.map { function in { function() } } }
+    ) -> WindowActionResult {
         guard canPerform() else { return .cancelled }
         guard let function = resolveRequest() else { return .unavailable }
         // Dynamic loading can wait; recheck generation and protected context.

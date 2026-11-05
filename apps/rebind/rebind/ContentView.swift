@@ -33,7 +33,8 @@ struct ContentView: View {
             Group {
                 switch selection {
                 case .input(let scope):
-                    BindingsView(model: model, scope: scope,
+                    BindingsView(
+                        model: model, scope: scope,
                         allowsSearch: editor == nil && pendingDeletion == nil && !showingProfiles
                             && setupPresentation.context == nil,
                         add: addBinding,
@@ -65,13 +66,16 @@ struct ContentView: View {
         }
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-        .sheet(item: $setupPresentation.context, onDismiss: {
-            // A second sheet cannot open while the first is still closing.
-            guard addsBindingAfterSetup else { return }
-            addsBindingAfterSetup = false
-            selection = .input(.allKeyboards)
-            editor = EditorSelection(scope: .allKeyboards, binding: nil)
-        }) { context in
+        .sheet(
+            item: $setupPresentation.context,
+            onDismiss: {
+                // A second sheet cannot open while the first is still closing.
+                guard addsBindingAfterSetup else { return }
+                addsBindingAfterSetup = false
+                selection = .input(.allKeyboards)
+                editor = EditorSelection(scope: .allKeyboards, binding: nil)
+            }
+        ) { context in
             PermissionSetupView(model: model, context: context, addFirstBinding: { addsBindingAfterSetup = true })
         }
         .sheet(item: $editor) { selection in
@@ -100,7 +104,8 @@ struct ContentView: View {
         .onChange(of: model.requestedDestination) { openRequestedDestination() }
         .onChange(of: model.permissions.allowsRemapping) { wasAllowed, isAllowed in
             // Recover once while idle. Active editors and later revocations keep the inline notice.
-            setupPresentation.permissionsChanged(wasAllowed: wasAllowed, isAllowed: isAllowed,
+            setupPresentation.permissionsChanged(
+                wasAllowed: wasAllowed, isAllowed: isAllowed,
                 canPresent: NSApp.isActive && editor == nil && pendingDeletion == nil
                     && !showingProfiles)
         }
@@ -110,7 +115,9 @@ struct ContentView: View {
                 if let binding = pendingDeletion { model.delete(binding.id) }
                 pendingDeletion = nil
             }
-        } message: { Text(.deleteBindingConfirmation) }
+        } message: {
+            Text(.deleteBindingConfirmation)
+        }
     }
 
     /// Command-N may retain its native key-equivalent registration across category changes.
@@ -132,13 +139,15 @@ struct ContentView: View {
     }
 
     private var settingsSection: SwiftUI.Binding<SettingsSection> {
-        SwiftUI.Binding(get: {
-            if case .settings(let section) = selection { return section }
-            return .general
-        }, set: {
-            model.settingsSection = $0
-            selection = .settings($0)
-        })
+        SwiftUI.Binding(
+            get: {
+                if case .settings(let section) = selection { return section }
+                return .general
+            },
+            set: {
+                model.settingsSection = $0
+                selection = .settings($0)
+            })
     }
 }
 

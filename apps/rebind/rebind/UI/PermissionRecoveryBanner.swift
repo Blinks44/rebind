@@ -7,9 +7,11 @@ struct PermissionRecoveryBanner: View {
 
     var body: some View {
         if let requirement = model.permissions.requirement {
-            Banner(severity: .warning,
+            Banner(
+                severity: .warning,
                 title: requirement == .accessibility ? .recoveryAccessibilityTitle : .recoveryEventTitle,
-                message: requirement == .accessibility ? .recoverySavedRules : .recoverySendingPurpose) {
+                message: requirement == .accessibility ? .recoverySavedRules : .recoverySendingPurpose
+            ) {
                 HStack(spacing: 10) {
                     if requirement == .accessibility {
                         Button(.openSystemSettings) { model.requestAccessibility() }.secondaryButton()

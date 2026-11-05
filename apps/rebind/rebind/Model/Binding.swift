@@ -52,7 +52,8 @@ extension Binding {
         isEnabled = try values.decode(Bool.self, forKey: .isEnabled)
         // Older schemas predate activation. Unknown/new enum values still fail.
         activation = values.contains(.activation) ? try values.decode(PressActivation.self, forKey: .activation) : .press
-        holdDurationMilliseconds = values.contains(.holdDurationMilliseconds)
+        holdDurationMilliseconds =
+            values.contains(.holdDurationMilliseconds)
             ? try values.decode(UInt32.self, forKey: .holdDurationMilliseconds) : 500
         holdsOutput = values.contains(.holdsOutput) ? try values.decode(Bool.self, forKey: .holdsOutput) : false
         note = try values.decodeIfPresent(String.self, forKey: .note)

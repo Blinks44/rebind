@@ -7,7 +7,8 @@ nonisolated struct PeripheralBatteryReading: Equatable, Sendable {
 
     static func normalized(_ value: Int, minimum: Int, maximum: Int) -> Self? {
         guard minimum >= 0, maximum > minimum, maximum <= 65_535,
-              (minimum...maximum).contains(value) else { return nil }
+            (minimum...maximum).contains(value)
+        else { return nil }
         return Self(percentage: Int((Double(value - minimum) * 100 / Double(maximum - minimum)).rounded()))
     }
 }

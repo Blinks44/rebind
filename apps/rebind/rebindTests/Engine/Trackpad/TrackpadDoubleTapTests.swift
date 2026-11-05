@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadDoubleTapTests {
@@ -13,32 +14,43 @@ struct TrackpadDoubleTapTests {
         var session: TrackpadTapSession
         var nextID: Int32 = 1
 
-        init(singles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
-             doubles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
-             twoFingerDouble: Bool = false,
-             interval: UInt64 = 500_000_000) throws {
+        init(
+            singles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
+            doubles: [TrackpadSingleTap] = TrackpadSingleTap.allCases,
+            twoFingerDouble: Bool = false,
+            interval: UInt64 = 500_000_000
+        ) throws {
             mailbox = EngineMailbox()
-            let gestures = singles.map(TrackpadTapGesture.single) + doubles.map(TrackpadTapGesture.double)
+            let gestures =
+                singles.map(TrackpadTapGesture.single) + doubles.map(TrackpadTapGesture.double)
                 + (twoFingerDouble ? [TrackpadTapGesture.twoFingerDouble] : [])
             let rules = gestures.enumerated().map { index, gesture in
-                rebind.Binding(scope: .builtInTrackpad, trigger: gesture.trigger, modifiers: [],
-                               action: .shortcut(.init(keyCode: UInt16(13 + index), modifiers: .command)))
+                rebind.Binding(
+                    scope: .builtInTrackpad, trigger: gesture.trigger, modifiers: [],
+                    action: .shortcut(.init(keyCode: UInt16(13 + index), modifiers: .command)))
             }
             mailbox.configure(Configuration(isEnabled: true, bindings: rules), doublePressIntervalNanoseconds: interval)
-            mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+            mailbox.state.withLock {
+                $0.status = .active
+                $0.foregroundPID = 100
+            }
             runtime = try #require(mailbox.trackpadRuntime())
             buffer = NativeTrackpadBuffer(mailbox: mailbox)
             buffer.setAccepting(true)
             session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
-            let neutral = NativeTrackpadFrame(receipt: 3_900_000_000, revision: runtime.revision,
+            let neutral = NativeTrackpadFrame(
+                receipt: 3_900_000_000, revision: runtime.revision,
                 activity: runtime.inputActivity, frame: 0, time: 3.9, count: 0)
             session.consume(neutral, at: neutral.receipt)
         }
 
-        mutating func frame(fingers: Int, at time: UInt64, offset: Float = 0,
-                            moved: Bool = false, gap: Bool = false) -> NativeTrackpadFrame {
+        mutating func frame(
+            fingers: Int, at time: UInt64, offset: Float = 0,
+            moved: Bool = false, gap: Bool = false
+        ) -> NativeTrackpadFrame {
             if gap { nextID += 1 }
-            var value = NativeTrackpadFrame(receipt: time, revision: runtime.revision,
+            var value = NativeTrackpadFrame(
+                receipt: time, revision: runtime.revision,
                 activity: runtime.inputActivity, frame: nextID, time: Double(time) / 1_000_000_000, count: fingers)
             nextID += 1
             if fingers > 0 { value.first = .init(id: 0, x: (moved ? 0.45 : 0.2) + offset, y: 0.5, pressure: 45) }
@@ -48,21 +60,27 @@ struct TrackpadDoubleTapTests {
             return value
         }
 
-        mutating func consume(fingers: Int, at time: UInt64, offset: Float = 0,
-                              moved: Bool = false, gap: Bool = false) {
+        mutating func consume(
+            fingers: Int, at time: UInt64, offset: Float = 0,
+            moved: Bool = false, gap: Bool = false
+        ) {
             let value = frame(fingers: fingers, at: time, offset: offset, moved: moved, gap: gap)
             session.consume(value, at: time)
         }
 
-        mutating func tap(_ tap: TrackpadSingleTap, endingAt time: UInt64, offset: Float = 0,
-                          moved: Bool = false, gap: Bool = false) {
+        mutating func tap(
+            _ tap: TrackpadSingleTap, endingAt time: UInt64, offset: Float = 0,
+            moved: Bool = false, gap: Bool = false
+        ) {
             consume(fingers: tap.rawValue, at: time - 40_000_000, offset: offset)
             consume(fingers: tap.rawValue, at: time - 20_000_000, offset: offset, moved: moved, gap: gap)
             consume(fingers: 0, at: time)
         }
 
-        mutating func tapTwoFinger(endingAt time: UInt64, offset: Float = 0,
-                                  moved: Bool = false, gap: Bool = false) {
+        mutating func tapTwoFinger(
+            endingAt time: UInt64, offset: Float = 0,
+            moved: Bool = false, gap: Bool = false
+        ) {
             consume(fingers: 2, at: time - 40_000_000, offset: offset)
             consume(fingers: 2, at: time - 20_000_000, offset: offset, moved: moved, gap: gap)
             consume(fingers: 0, at: time)
@@ -151,7 +169,8 @@ struct TrackpadDoubleTapTests {
         case 3:
             h.consume(fingers: tap.rawValue, at: lift + 210_000_000)
             var empty = h.frame(fingers: 0, at: lift + 250_000_000)
-            empty.frame = nil; empty.time = nil
+            empty.frame = nil
+            empty.time = nil
             h.session.consume(empty, at: empty.receipt)
         default:
             h.consume(fingers: tap.rawValue, at: lift + 210_000_000)
@@ -189,7 +208,11 @@ struct TrackpadDoubleTapTests {
         switch defect {
         case 0:
             let contact = h.frame(fingers: tap.rawValue, at: lift + 145_000_000)
-            h.buffer.state.withLock { $0.frames[0] = contact; $0.head = 0; $0.count = 1 }
+            h.buffer.state.withLock {
+                $0.frames[0] = contact
+                $0.head = 0
+                $0.count = 1
+            }
         case 1: h.buffer.state.withLock { $0.overflow = true }
         case 2: h.buffer.setAccepting(false)
         default: break
@@ -206,12 +229,17 @@ struct TrackpadDoubleTapTests {
         let result = h.ready(at: lift + 150_000_000)
         let gesture = try #require(result)
         let outputs = Mutex<[KeyboardShortcut]>([])
-        let worker = ActionWorker(mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 #expect(target.pid == 100 && canPerform())
                 outputs.withLock { $0.append(shortcut) }
                 return .performed
-            }, sendShortcut: { _ in Issue.record("Trackpad used global output"); return false },
+            },
+            sendShortcut: { _ in
+                Issue.record("Trackpad used global output")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         #expect(h.mailbox.submitTrackpad(h.runtime, gesture: gesture, pid: 100, at: lift + 150_000_000))
         worker.service(at: lift + 160_000_000)
@@ -287,7 +315,8 @@ struct TrackpadDoubleTapTests {
         var h = try Harness()
         h.tap(tap, endingAt: lift)
         var empty = h.frame(fingers: 0, at: lift + 10_000_000)
-        empty.frame = nil; empty.time = nil
+        empty.frame = nil
+        empty.time = nil
         h.session.consume(empty, at: empty.receipt)
         // Untimed neutrality resets the native frame clock, not the completed tap.
         #expect(h.ready(at: lift + 60_000_000) == nil)
@@ -318,13 +347,17 @@ struct TrackpadDoubleTapTests {
     func disabledAndInactiveDoubleRulesDoNotDelaySingle(_ tap: TrackpadSingleTap) throws {
         var h = try Harness(singles: [tap], doubles: [tap])
         let shortcut = try #require(h.runtime.shortcut(for: .double(tap)))
-        var disabled = rebind.Binding(scope: .builtInTrackpad, trigger: TrackpadTapGesture.double(tap).trigger,
+        var disabled = rebind.Binding(
+            scope: .builtInTrackpad, trigger: TrackpadTapGesture.double(tap).trigger,
             modifiers: [], action: .shortcut(shortcut))
         disabled.isEnabled = false
-        let single = rebind.Binding(scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
-                                   action: .shortcut(shortcut))
+        let single = rebind.Binding(
+            scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
+            action: .shortcut(shortcut))
         var config = Configuration(isEnabled: true, bindings: [single, disabled])
-        var active = disabled; active.id = UUID(); active.isEnabled = true
+        var active = disabled
+        active.id = UUID()
+        active.isEnabled = true
         config.profiles.append(RuleProfile(name: "Inactive", bindings: [active]))
         try config.validate()
         h.mailbox.configure(config)
@@ -341,11 +374,16 @@ struct TrackpadDoubleTapTests {
     func spoofedShortcutAndQuartzDoubleTriggerCannotDispatch(_ tap: TrackpadSingleTap) throws {
         let h = try Harness()
         var spoofed = h.runtime
-        if tap == .threeFinger { spoofed.threeFingerDoubleShortcut = .init(keyCode: 0, modifiers: .command) }
-        else { spoofed.fourFingerDoubleShortcut = .init(keyCode: 0, modifiers: .command) }
+        if tap == .threeFinger {
+            spoofed.threeFingerDoubleShortcut = .init(keyCode: 0, modifiers: .command)
+        } else {
+            spoofed.fourFingerDoubleShortcut = .init(keyCode: 0, modifiers: .command)
+        }
         #expect(h.mailbox.submitTrackpad(spoofed, gesture: .double(tap), pid: 100, at: lift) == false)
-        #expect(h.mailbox.handle(InputEvent(trigger: TrackpadTapGesture.double(tap).trigger, phase: .down),
-                                 secureInput: false) == false)
+        #expect(
+            h.mailbox.handle(
+                InputEvent(trigger: TrackpadTapGesture.double(tap).trigger, phase: .down),
+                secureInput: false) == false)
         #expect(h.mailbox.nextAction() == nil)
     }
 
@@ -367,9 +405,13 @@ struct TrackpadDoubleTapTests {
         h.tap(tap, endingAt: lift)
         #expect(h.ready(at: lift + 60_000_000) == nil)
         var value = h.frame(fingers: tap.rawValue, at: lift + 200_000_000)
-        value.frame = nil; value.time = nil
+        value.frame = nil
+        value.time = nil
         let rejection = h.session.consume(value, at: value.receipt)
-        guard case .invalidFrame = rejection else { Issue.record("Untimed contact was not rejected"); return }
+        guard case .invalidFrame = rejection else {
+            Issue.record("Untimed contact was not rejected")
+            return
+        }
         h.consume(fingers: tap.rawValue, at: lift + 220_000_000)
         h.consume(fingers: tap.rawValue, at: lift + 240_000_000)
         h.consume(fingers: 0, at: lift + 260_000_000)
@@ -385,8 +427,7 @@ struct TrackpadDoubleTapTests {
         #expect(h.ready(at: lift + 60_000_000) == .single(tap))
         var spoofed = h.runtime
         let shortcut = try #require(spoofed.shortcut(for: .single(tap)))
-        if tap == .threeFinger { spoofed.threeFingerDoubleShortcut = shortcut }
-        else { spoofed.fourFingerDoubleShortcut = shortcut }
+        if tap == .threeFinger { spoofed.threeFingerDoubleShortcut = shortcut } else { spoofed.fourFingerDoubleShortcut = shortcut }
         #expect(h.mailbox.submitTrackpad(spoofed, gesture: .double(tap), pid: 100, at: lift) == false)
     }
 
@@ -466,12 +507,17 @@ struct TrackpadDoubleTapTests {
         let result = h.ready(at: lift + 150_000_000)
         #expect(result == .twoFingerDouble)
         let outputs = Mutex<[KeyboardShortcut]>([])
-        let worker = ActionWorker(mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: h.mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 #expect(target.pid == 100 && canPerform())
                 outputs.withLock { $0.append(shortcut) }
                 return .performed
-            }, sendShortcut: { _ in Issue.record("Two-finger double used global output"); return false },
+            },
+            sendShortcut: { _ in
+                Issue.record("Two-finger double used global output")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         #expect(h.mailbox.submitTrackpad(h.runtime, gesture: .twoFingerDouble, pid: 100, at: lift + 150_000_000))
         worker.service(at: lift + 160_000_000)
@@ -494,11 +540,13 @@ struct TrackpadDoubleTapTests {
     @Test func disabledTwoFingerDoubleRuleProducesNoOutputAndKeepsOtherRulesWorking() throws {
         var h = try Harness(singles: [], doubles: [], twoFingerDouble: true)
         let shortcut = try #require(h.runtime.twoFingerDoubleShortcut)
-        var disabled = rebind.Binding(scope: .builtInTrackpad, trigger: .twoFingerDoubleTap, modifiers: [],
-                                      action: .shortcut(shortcut))
+        var disabled = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .twoFingerDoubleTap, modifiers: [],
+            action: .shortcut(shortcut))
         disabled.isEnabled = false
-        let single = rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [],
-                                    action: .shortcut(shortcut))
+        let single = rebind.Binding(
+            scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [],
+            action: .shortcut(shortcut))
         let config = Configuration(isEnabled: true, bindings: [single, disabled])
         try config.validate()
         h.mailbox.configure(config)

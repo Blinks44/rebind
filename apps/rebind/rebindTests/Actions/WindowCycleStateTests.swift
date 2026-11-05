@@ -1,4 +1,5 @@
 import Testing
+
 @testable import rebind
 
 struct WindowCycleStateTests {
@@ -17,8 +18,11 @@ struct WindowCycleStateTests {
         var state = WindowCycleState<Int>()
         state.commit(application: 1, revision: 4, order: [10, 20, 30])
         let observed = change == 0 ? [30, 10] : (change == 1 ? [30, 10, 20, 40] : [30, 10, 20])
-        #expect(try #require(state.order(application: change == 2 ? 2 : 1,
-            revision: change == 3 ? 5 : 4, observed: observed)) == observed)
+        #expect(
+            try #require(
+                state.order(
+                    application: change == 2 ? 2 : 1,
+                    revision: change == 3 ? 5 : 4, observed: observed)) == observed)
     }
 
     @Test func malformedAndExcessiveListsAreRejectedAndOneWindowIsNoOp() {

@@ -1,16 +1,20 @@
 import Testing
+
 @testable import rebind
 
 struct ScrollMatcherTests {
     private let output = KeyboardShortcut(keyCode: 13, modifiers: .command)
     private var rules: [MatchKey: CompiledBinding] {
-        InputMatcher.compile(ScrollDirection.allCases.map {
-            rebind.Binding(scope: .allMice, trigger: .scroll($0), modifiers: .control, action: .shortcut(output))
-        })
+        InputMatcher.compile(
+            ScrollDirection.allCases.map {
+                rebind.Binding(scope: .allMice, trigger: .scroll($0), modifiers: .control, action: .shortcut(output))
+            })
     }
 
-    private func scroll(_ direction: ScrollDirection = .up, at timestamp: UInt64,
-                        modifiers: ModifierSet = .control) -> InputEvent {
+    private func scroll(
+        _ direction: ScrollDirection = .up, at timestamp: UInt64,
+        modifiers: ModifierSet = .control
+    ) -> InputEvent {
         InputEvent(trigger: .scroll(direction), modifiers: modifiers, phase: .scroll, timestamp: timestamp)
     }
 
@@ -87,6 +91,8 @@ struct ScrollMatcherTests {
         var combined = rules
         combined[keyboard] = CompiledBinding(action: .shortcut(output), activation: .press)
         _ = matcher.handle(scroll(at: 0), rules: combined, enabled: true)
-        #expect(matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down), rules: combined, enabled: true).shortcut == output)
+        #expect(
+            matcher.handle(InputEvent(trigger: .key(0), modifiers: .control, phase: .down), rules: combined, enabled: true).shortcut
+                == output)
     }
 }

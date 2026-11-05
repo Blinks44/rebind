@@ -24,8 +24,10 @@ struct MainSidebarButton: View {
             .opacity(isEnabled ? 1 : 0.45)
             .padding(.horizontal, 14)
             .frame(maxWidth: .infinity).frame(height: 40)
-            .background(isSelected ? Theme.accentSoft : isHovered && isEnabled ? Theme.hoverSurface : .clear,
-                        in: .rect(cornerRadius: 14, style: .continuous))
+            .background(
+                isSelected ? Theme.accentSoft : isHovered && isEnabled ? Theme.hoverSurface : .clear,
+                in: .rect(cornerRadius: 14, style: .continuous)
+            )
             .overlay {
                 if isSelected && (contrast == .increased || differentiateWithoutColor) {
                     RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Theme.accent)

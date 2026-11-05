@@ -13,8 +13,10 @@ final class MenuPointerSpeedView: NSView {
 
     /// `note` replaces the value while the slider is disabled for a reason the user can fix,
     /// such as a companion app that owns the mouse's settings.
-    init(name: String, dpi: Int, values: [Int], enabled: Bool, note: String? = nil, accessibilityLabel: String,
-         valueText: @escaping (Int) -> String, commit: @escaping (Int) -> Void) {
+    init(
+        name: String, dpi: Int, values: [Int], enabled: Bool, note: String? = nil, accessibilityLabel: String,
+        valueText: @escaping (Int) -> String, commit: @escaping (Int) -> Void
+    ) {
         self.values = values
         self.valueText = valueText
         self.commit = commit
@@ -23,8 +25,9 @@ final class MenuPointerSpeedView: NSView {
         autoresizingMask = .width
 
         let font = NSFont.menuFont(ofSize: 0)
-        let icon = NSImageView(image: NSImage(systemSymbolName: DeviceBattery.Kind.mouse.symbol, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(scale: .small)) ?? NSImage())
+        let icon = NSImageView(
+            image: NSImage(systemSymbolName: DeviceBattery.Kind.mouse.symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(.init(scale: .small)) ?? NSImage())
         icon.contentTintColor = enabled ? .labelColor : .disabledControlTextColor
         let nameLabel = NSTextField(labelWithString: name)
         nameLabel.font = font

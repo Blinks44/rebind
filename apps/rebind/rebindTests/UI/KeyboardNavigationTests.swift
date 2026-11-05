@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Native focus routing only: no input capture or real configuration.
@@ -21,10 +22,12 @@ import XCTest
         probe.requestFocus = true
         try await Task.sleep(for: .milliseconds(100))
         XCTAssertTrue(probe.focused)
-        let event = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
-            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
-            context: nil, characters: "\u{F703}",
-            charactersIgnoringModifiers: "\u{F703}", isARepeat: false, keyCode: 124))
+        let event = try XCTUnwrap(
+            NSEvent.keyEvent(
+                with: .keyDown, location: .zero, modifierFlags: [],
+                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                context: nil, characters: "\u{F703}",
+                charactersIgnoringModifiers: "\u{F703}", isARepeat: false, keyCode: 124))
         window.sendEvent(event)
         XCTAssertTrue(probe.receivedArrow)
         probe.requestFocus = false
@@ -46,12 +49,16 @@ import XCTest
         NSApp.activate()
         window.makeKeyAndOrderFront(nil)
         try await Task.sleep(for: .milliseconds(100))
-        for (key, code, destination) in [("2", UInt16(19), MainDestination.input(.allMice)),
-                                          ("5", UInt16(23), MainDestination.input(.magicMouse)),
-                                          ("6", UInt16(22), MainDestination.devices)] {
-            let event = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: .command,
-                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
-                context: nil, characters: key, charactersIgnoringModifiers: key, isARepeat: false, keyCode: code))
+        for (key, code, destination) in [
+            ("2", UInt16(19), MainDestination.input(.allMice)),
+            ("5", UInt16(23), MainDestination.input(.magicMouse)),
+            ("6", UInt16(22), MainDestination.devices),
+        ] {
+            let event = try XCTUnwrap(
+                NSEvent.keyEvent(
+                    with: .keyDown, location: .zero, modifierFlags: .command,
+                    timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                    context: nil, characters: key, charactersIgnoringModifiers: key, isARepeat: false, keyCode: code))
             XCTAssertTrue(window.performKeyEquivalent(with: event))
             XCTAssertEqual(probe.destination, destination)
         }
@@ -60,8 +67,10 @@ import XCTest
     func testTabAndSpaceReachActualSidebarWithoutProgrammaticFocus() async throws {
         let probe = Probe()
         probe.destination = .input(.magicMouse)
-        let controller = NSHostingController(rootView: MainSidebar(
-            selection: .init(get: { probe.destination }, set: { probe.destination = $0 }), showAbout: {})
+        let controller = NSHostingController(
+            rootView: MainSidebar(
+                selection: .init(get: { probe.destination }, set: { probe.destination = $0 }), showAbout: {}
+            )
             .frame(width: 240, height: 700))
         let window = NSWindow(contentViewController: controller)
         window.isReleasedWhenClosed = false
@@ -74,7 +83,8 @@ import XCTest
         window.makeKeyAndOrderFront(nil)
         try await Task.sleep(for: .milliseconds(100))
         guard NSApp.isActive, window.isKeyWindow else {
-            throw XCTSkip("Physical Tab traversal requires an active app and key window; use the Debug keyboard fixture for live acceptance.")
+            throw XCTSkip(
+                "Physical Tab traversal requires an active app and key window; use the Debug keyboard fixture for live acceptance.")
         }
         sendKey("\t", code: 48, to: window)
         try await Task.sleep(for: .milliseconds(40))
@@ -90,8 +100,10 @@ import XCTest
 
     func testTabAndArrowsReachActualSettingsPicker() async throws {
         let probe = Probe()
-        let controller = NSHostingController(rootView: SettingsSectionPicker(
-            selection: .init(get: { probe.section }, set: { probe.section = $0 })).frame(width: 900).padding())
+        let controller = NSHostingController(
+            rootView: SettingsSectionPicker(
+                selection: .init(get: { probe.section }, set: { probe.section = $0 })
+            ).frame(width: 900).padding())
         let window = NSWindow(contentViewController: controller)
         window.isReleasedWhenClosed = false
         defer { window.close() }
@@ -103,7 +115,8 @@ import XCTest
         window.makeKeyAndOrderFront(nil)
         try await Task.sleep(for: .milliseconds(100))
         guard NSApp.isActive, window.isKeyWindow else {
-            throw XCTSkip("Physical Tab traversal requires an active app and key window; use the Debug keyboard fixture for live acceptance.")
+            throw XCTSkip(
+                "Physical Tab traversal requires an active app and key window; use the Debug keyboard fixture for live acceptance.")
         }
         sendKey("\t", code: 48, to: window)
         try await Task.sleep(for: .milliseconds(40))
@@ -112,16 +125,21 @@ import XCTest
     }
 
     private func sendKey(_ characters: String, code: UInt16, to window: NSWindow) {
-        guard let event = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
-            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
-            context: nil, characters: characters, charactersIgnoringModifiers: characters, isARepeat: false, keyCode: code) else {
+        guard
+            let event = NSEvent.keyEvent(
+                with: .keyDown, location: .zero, modifierFlags: [],
+                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                context: nil, characters: characters, charactersIgnoringModifiers: characters, isARepeat: false, keyCode: code)
+        else {
             XCTFail("Could not construct a fixture key event")
             return
         }
         NSApp.sendEvent(event)
-        if let up = NSEvent.keyEvent(with: .keyUp, location: .zero, modifierFlags: [],
+        if let up = NSEvent.keyEvent(
+            with: .keyUp, location: .zero, modifierFlags: [],
             timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
-            context: nil, characters: characters, charactersIgnoringModifiers: characters, isARepeat: false, keyCode: code) {
+            context: nil, characters: characters, charactersIgnoringModifiers: characters, isARepeat: false, keyCode: code)
+        {
             NSApp.sendEvent(up)
         }
     }
@@ -138,11 +156,14 @@ import XCTest
         let probe: Probe
         @FocusState private var focused: Bool
         var body: some View {
-            Button("Focus fixture") { }
+            Button("Focus fixture") {}
                 .focusable(interactions: .edit)
                 .focused($focused)
                 .keyboardFocusRing(isFocused: focused)
-                .onKeyPress(.rightArrow) { probe.receivedArrow = true; return .handled }
+                .onKeyPress(.rightArrow) {
+                    probe.receivedArrow = true
+                    return .handled
+                }
                 .onChange(of: probe.requestFocus) { focused = probe.requestFocus }
                 .onChange(of: focused) { probe.focused = focused }
                 .padding(20)

@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct ActionDispatchTests {
@@ -11,10 +12,12 @@ struct ActionDispatchTests {
         let mailbox = EngineMailbox()
         let checks = Mutex(0)
         let output = Mutex(AudioOutputCapabilities(deviceID: 17, volume: true, mute: true))
-        let worker = ActionWorker(mailbox: mailbox, capabilities: {
-            checks.withLock { $0 += 1 }
-            return output.withLock { $0 }
-        }, secureInput: { false }, postingAllowed: { true })
+        let worker = ActionWorker(
+            mailbox: mailbox,
+            capabilities: {
+                checks.withLock { $0 += 1 }
+                return output.withLock { $0 }
+            }, secureInput: { false }, postingAllowed: { true })
         worker.service(at: 0)
         for second in 1..<60 { worker.service(at: UInt64(second) * 1_000_000_000) }
         #expect(checks.withLock { $0 } == 1)
@@ -59,12 +62,17 @@ struct ActionDispatchTests {
         let mailbox = mailbox()
         let calls = Mutex<[RebindAction]>([])
         let audio = audio
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio },
             performAudio: { action, device, _ in
                 #expect(device == 17)
                 calls.withLock { $0.append(.system(action)) }
                 return .performed
-            }, sendShortcut: { value in calls.withLock { $0.append(.shortcut(value)) }; return true },
+            },
+            sendShortcut: { value in
+                calls.withLock { $0.append(.shortcut(value)) }
+                return true
+            },
             secureInput: { false }, postingAllowed: { true })
         mailbox.state.withLock { $0.pending = [.system(.volumeDown), .shortcut(shortcut), .system(.toggleMute)] }
         worker.service(at: 0)
@@ -98,7 +106,8 @@ struct ActionDispatchTests {
 
     @Test func outputReplacementCancelsQueueAndHoldButPreservesOwnedRelease() throws {
         let mailbox = mailbox()
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .system(.toggleMute), activation: .hold)
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .system(.toggleMute), activation: .hold)
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         #expect(press(mailbox))
         mailbox.updateAudioCapabilities(AudioOutputCapabilities(deviceID: 21, volume: true, mute: true))
@@ -113,9 +122,16 @@ struct ActionDispatchTests {
         let calls = Mutex(0)
         let preflights = Mutex(0)
         let audio = audio
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio },
-            performAudio: { _, _, _ in calls.withLock { $0 += 1 }; return .performed },
-            sendShortcut: { _ in calls.withLock { $0 += 1 }; return true }, secureInput: { false },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio },
+            performAudio: { _, _, _ in
+                calls.withLock { $0 += 1 }
+                return .performed
+            },
+            sendShortcut: { _ in
+                calls.withLock { $0 += 1 }
+                return true
+            }, secureInput: { false },
             postingAllowed: {
                 preflights.withLock { count in
                     // First preflight precedes dequeue; second changes state
@@ -137,9 +153,16 @@ struct ActionDispatchTests {
         let mailbox = mailbox()
         let audio = audio
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio },
-            performAudio: { _, _, _ in calls.withLock { $0 += 1 }; return .performed },
-            sendShortcut: { _ in calls.withLock { $0 += 1 }; return true },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio },
+            performAudio: { _, _, _ in
+                calls.withLock { $0 += 1 }
+                return .performed
+            },
+            sendShortcut: { _ in
+                calls.withLock { $0 += 1 }
+                return true
+            },
             secureInput: { secure }, postingAllowed: { secure })
         #expect(press(mailbox))
         worker.service(at: 0)
@@ -151,7 +174,8 @@ struct ActionDispatchTests {
     @Test func audioFailureReportsErrorWithoutDisablingUnrelatedRules() {
         let mailbox = mailbox()
         let audio = audio
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio }, performAudio: { _, _, _ in .unavailable },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio }, performAudio: { _, _, _ in .unavailable },
             sendShortcut: { _ in true }, secureInput: { false }, postingAllowed: { true })
         #expect(press(mailbox))
         worker.service(at: 0)
@@ -163,7 +187,8 @@ struct ActionDispatchTests {
     @Test func failedShortcutStopsOutputAndRequestsEmergencyPause() {
         let mailbox = mailbox(action: .shortcut(shortcut))
         let audio = audio
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { audio }, performAudio: { _, _, _ in .performed },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { audio }, performAudio: { _, _, _ in .performed },
             sendShortcut: { _ in false }, secureInput: { false }, postingAllowed: { true })
         #expect(press(mailbox))
         worker.service(at: 0)

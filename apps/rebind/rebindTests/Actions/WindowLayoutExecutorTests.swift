@@ -1,13 +1,18 @@
 import ApplicationServices
 import Testing
+
 @testable import rebind
 
 struct WindowLayoutExecutorTests {
     // The second display lets "next display" resolve; every other layout stays on the first.
-    private let displays = [WindowDisplay(frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
-                                         visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725)),
-                            WindowDisplay(frame: CGRect(x: 1000, y: 0, width: 1600, height: 900),
-                                         visibleFrame: CGRect(x: 1000, y: 25, width: 1600, height: 875))]
+    private let displays = [
+        WindowDisplay(
+            frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725)),
+        WindowDisplay(
+            frame: CGRect(x: 1000, y: 0, width: 1600, height: 900),
+            visibleFrame: CGRect(x: 1000, y: 25, width: 1600, height: 875)),
+    ]
 
     @Test(arguments: WindowLayoutAction.allCases)
     func requestedGeometryIsAppliedAndReadBack(_ action: WindowLayoutAction) {
@@ -34,7 +39,8 @@ struct WindowLayoutExecutorTests {
         case 9: client.sizeWritable = false
         default: client.frameAvailable = false
         }
-        #expect(WindowLayoutExecutor.perform(.leftHalf, displays: displays, client: client, ownPID: 99, canPerform: { true }) == .unavailable)
+        #expect(
+            WindowLayoutExecutor.perform(.leftHalf, displays: displays, client: client, ownPID: 99, canPerform: { true }) == .unavailable)
         #expect(client.writes.isEmpty)
     }
 
@@ -48,8 +54,10 @@ struct WindowLayoutExecutorTests {
     @Test(arguments: 0...3)
     func cancellationStopsAtEachMutationBoundaryWithoutRollback(_ acceptedWrites: Int) {
         let client = LayoutClient()
-        #expect(WindowLayoutExecutor.perform(.fill, displays: displays, client: client, ownPID: 99,
-            canPerform: { client.writes.count < acceptedWrites }) == .cancelled)
+        #expect(
+            WindowLayoutExecutor.perform(
+                .fill, displays: displays, client: client, ownPID: 99,
+                canPerform: { client.writes.count < acceptedWrites }) == .cancelled)
         #expect(client.writes.count == acceptedWrites)
     }
 
@@ -62,8 +70,10 @@ struct WindowLayoutExecutorTests {
             }
             return true
         }
-        #expect(WindowLayoutExecutor.perform(.fill, displays: displays, client: client, ownPID: 99,
-            canPerform: { client.onGate?() ?? true }) == .unavailable)
+        #expect(
+            WindowLayoutExecutor.perform(
+                .fill, displays: displays, client: client, ownPID: 99,
+                canPerform: { client.onGate?() ?? true }) == .unavailable)
         #expect(client.writes.count == acceptedWrites)
     }
 
@@ -78,7 +88,8 @@ struct WindowLayoutExecutorTests {
     @Test func appMinimumSizeConstraintIsReportedDespiteAcceptedAXWrites() {
         let client = LayoutClient()
         client.minimumWidth = 700
-        #expect(WindowLayoutExecutor.perform(.leftHalf, displays: displays, client: client, ownPID: 99, canPerform: { true }) == .unavailable)
+        #expect(
+            WindowLayoutExecutor.perform(.leftHalf, displays: displays, client: client, ownPID: 99, canPerform: { true }) == .unavailable)
         #expect(client.writes == ["size", "position", "size"])
         #expect(client.currentFrame.width == 700)
     }
@@ -123,8 +134,14 @@ nonisolated private final class LayoutClient: WindowLayoutAccessibility {
         attribute == kAXPositionAttribute ? positionWritable : sizeWritable
     }
     func isEnabled(_ element: String) -> Bool { true }
-    func setTrue(_ attribute: String, of element: String) -> Bool { Issue.record("Unexpected boolean mutation"); return false }
-    func press(_ element: String) -> Bool { Issue.record("Unexpected press"); return false }
+    func setTrue(_ attribute: String, of element: String) -> Bool {
+        Issue.record("Unexpected boolean mutation")
+        return false
+    }
+    func press(_ element: String) -> Bool {
+        Issue.record("Unexpected press")
+        return false
+    }
     func frame(of element: String) -> CGRect? { frameAvailable ? currentFrame : nil }
     func setPosition(_ position: CGPoint, of element: String) -> Bool {
         writes.append("position")

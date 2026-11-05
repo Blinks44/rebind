@@ -5,8 +5,9 @@ struct ActivationPicker: View {
     @SwiftUI.Binding var selection: PressActivation
 
     var body: some View {
-        SegmentedPicker(selection: $selection, title: .activationTitle, options: PressActivation.allCases,
-                        label: { $0.title }, fillsWidth: true)
+        SegmentedPicker(
+            selection: $selection, title: .activationTitle, options: PressActivation.allCases,
+            label: { $0.title }, fillsWidth: true)
     }
 }
 

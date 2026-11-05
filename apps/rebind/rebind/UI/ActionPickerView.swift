@@ -9,7 +9,10 @@ struct ActionPickerView: View {
     @State private var hovered: ActionKind?
 
     var body: some View {
-        Button { search = ""; presented = true } label: {
+        Button {
+            search = ""
+            presented = true
+        } label: {
             SelectorLabel(title: selection.title, symbol: selection.symbol)
         }
         .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).modifier(ControlSurface()).keyboardFocusRing()
@@ -20,9 +23,11 @@ struct ActionPickerView: View {
 
     private var list: some View {
         VStack(spacing: 0) {
-            ThemeTextField(title: .searchActions, text: $search, symbol: "magnifyingglass", autofocus: true,
-                           onSubmit: { if let first = matchingKinds.first(where: isAvailable) { choose(first) } })
-                .padding(8)
+            ThemeTextField(
+                title: .searchActions, text: $search, symbol: "magnifyingglass", autofocus: true,
+                onSubmit: { if let first = matchingKinds.first(where: isAvailable) { choose(first) } }
+            )
+            .padding(8)
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(ActionKind.Category.allCases) { category in
@@ -59,7 +64,9 @@ struct ActionPickerView: View {
 
     private func row(_ kind: ActionKind) -> some View {
         let available = isAvailable(kind)
-        return Button { choose(kind) } label: {
+        return Button {
+            choose(kind)
+        } label: {
             HStack(spacing: 12) {
                 ActionTile(symbol: kind.symbol)
                 VStack(alignment: .leading, spacing: 2) {
@@ -76,12 +83,16 @@ struct ActionPickerView: View {
                 }
             }
             .padding(.horizontal, 10).padding(.vertical, 6).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .background(hovered == kind && available ? Theme.hoverSurface : .clear,
-                        in: .rect(cornerRadius: 12, style: .continuous))
+            .background(
+                hovered == kind && available ? Theme.hoverSurface : .clear,
+                in: .rect(cornerRadius: 12, style: .continuous)
+            )
             .opacity(available ? 1 : 0.45)
             .contentShape(.rect)
         }
-        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).keyboardFocusRing(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).keyboardFocusRing(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
         .disabled(!available).padding(.horizontal, 4)
         .onHover { hovered = $0 ? kind : (hovered == kind ? nil : hovered) }
     }

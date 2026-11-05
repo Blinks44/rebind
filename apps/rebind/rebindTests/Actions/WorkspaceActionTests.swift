@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct WorkspaceActionTests {
@@ -8,7 +9,10 @@ struct WorkspaceActionTests {
         #expect(WorkspaceAction.webURL(address) != nil)
     }
 
-    @Test(arguments: ["", "example.com", "https:///", "file:///tmp/a", "javascript:alert(1)", "shortcuts://run-shortcut?name=X", "https://user:secret@example.com", "https://example.com/\na", "https://example.com/a b", String(repeating: "a", count: 8193)])
+    @Test(arguments: [
+        "", "example.com", "https:///", "file:///tmp/a", "javascript:alert(1)", "shortcuts://run-shortcut?name=X",
+        "https://user:secret@example.com", "https://example.com/\na", "https://example.com/a b", String(repeating: "a", count: 8193),
+    ])
     func rejectsIncompleteOrUnsupportedWebAddresses(_ address: String) {
         #expect(WorkspaceAction.webURL(address) == nil)
     }
@@ -26,8 +30,12 @@ struct WorkspaceActionTests {
         #expect(ActionKind.activateApplication.configuredAction(shortcut: nil) == nil)
         #expect(ActionKind.openURL.configuredAction(shortcut: nil) == nil)
         #expect(ActionKind.openFile.configuredAction(shortcut: nil) == nil)
-        #expect(ActionKind.openApplication.configuredAction(shortcut: nil, application: application) == .workspace(.openApplication(application)))
-        #expect(ActionKind.activateApplication.configuredAction(shortcut: nil, application: application) == .workspace(.activateApplication(application)))
+        #expect(
+            ActionKind.openApplication.configuredAction(shortcut: nil, application: application)
+                == .workspace(.openApplication(application)))
+        #expect(
+            ActionKind.activateApplication.configuredAction(shortcut: nil, application: application)
+                == .workspace(.activateApplication(application)))
         #expect(ActionKind.openURL.configuredAction(shortcut: nil, webAddress: "https://example.com") == .workspace(.openURL(url)))
         #expect(ActionKind.openFile.configuredAction(shortcut: nil, file: file) == .workspace(.openFile(file)))
         var invalid = application
@@ -40,9 +48,14 @@ struct WorkspaceActionTests {
     }
 
     @Test func activationMatchesTheChosenCopyAcrossDirectoryURLRepresentations() {
-        let selected = ApplicationTarget(url: URL(filePath: "/Applications/Example.app", directoryHint: .isDirectory), bundleIdentifier: "org.example.app")
-        #expect(selected.matchesRunningApplication(bundleIdentifier: "org.example.app", url: URL(filePath: "/Applications/Example.app", directoryHint: .notDirectory)))
-        #expect(selected.matchesRunningApplication(bundleIdentifier: "org.example.app", url: URL(filePath: "/Users/example/Applications/Example.app")) == false)
+        let selected = ApplicationTarget(
+            url: URL(filePath: "/Applications/Example.app", directoryHint: .isDirectory), bundleIdentifier: "org.example.app")
+        #expect(
+            selected.matchesRunningApplication(
+                bundleIdentifier: "org.example.app", url: URL(filePath: "/Applications/Example.app", directoryHint: .notDirectory)))
+        #expect(
+            selected.matchesRunningApplication(
+                bundleIdentifier: "org.example.app", url: URL(filePath: "/Users/example/Applications/Example.app")) == false)
         #expect(selected.matchesRunningApplication(bundleIdentifier: "org.example.other", url: selected.url) == false)
         #expect(selected.matchesRunningApplication(bundleIdentifier: "org.example.app", url: nil) == false)
     }
@@ -95,7 +108,7 @@ struct WorkspaceActionTests {
         let store = ConfigurationStore(url: folder.appending(path: "config.json"))
         let bindings = [
             rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .window(.close)),
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [], action: .system(.volumeDown))
+            rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [], action: .system(.volumeDown)),
         ]
         var original = Configuration(isEnabled: true, bindings: bindings)
         try original.createProfile(name: "Second", copying: RuleProfile.defaultID)

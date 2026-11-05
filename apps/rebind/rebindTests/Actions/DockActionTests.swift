@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct DockActionTests {
@@ -8,7 +9,12 @@ struct DockActionTests {
     func directActionsSendOnlyTheirFixedNotification(_ action: DesktopAction) throws {
         let notification = try #require(action.dockNotification)
         var sent: [String] = []
-        let result = DockActions.perform(action, canPerform: { true }, send: { sent.append($0); return true })
+        let result = DockActions.perform(
+            action, canPerform: { true },
+            send: {
+                sent.append($0)
+                return true
+            })
         #expect(result == .performed && sent == [notification])
         #expect(action.dockNotification != nil)
         #expect(RebindAction.dock(action).isSupported)
@@ -17,10 +23,28 @@ struct DockActionTests {
 
     @Test func cancellationInvalidTargetAndNativeFailureNeverUseKeyboardFallback() {
         var calls = 0
-        #expect(DockActions.perform(.missionControl, canPerform: { false }, send: { _ in calls += 1; return true }) == .cancelled)
-        #expect(DockActions.perform(.nextSpace, canPerform: { false }, send: { _ in calls += 1; return true }) == .cancelled)
+        #expect(
+            DockActions.perform(
+                .missionControl, canPerform: { false },
+                send: { _ in
+                    calls += 1
+                    return true
+                }) == .cancelled)
+        #expect(
+            DockActions.perform(
+                .nextSpace, canPerform: { false },
+                send: { _ in
+                    calls += 1
+                    return true
+                }) == .cancelled)
         #expect(calls == 0)
-        #expect(DockActions.perform(.showDesktop, canPerform: { true }, send: { _ in calls += 1; return false }) == .unavailable)
+        #expect(
+            DockActions.perform(
+                .showDesktop, canPerform: { true },
+                send: { _ in
+                    calls += 1
+                    return false
+                }) == .unavailable)
         #expect(calls == 1 && RebindAction.dock(.nextSpace).isSupported)
     }
 
@@ -30,16 +54,20 @@ struct DockActionTests {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "config.json"))
         let custom = KeyboardShortcut(keyCode: 99, modifiers: .option)
-        var old = Configuration(isEnabled: true, bindings: DesktopAction.allCases.enumerated().map { i, action in
-            rebind.Binding(scope: .allMice, trigger: .mouseButton(UInt32(i + 2)), modifiers: .control,
-                           action: .dock(action))
-        })
+        var old = Configuration(
+            isEnabled: true,
+            bindings: DesktopAction.allCases.enumerated().map { i, action in
+                rebind.Binding(
+                    scope: .allMice, trigger: .mouseButton(UInt32(i + 2)), modifiers: .control,
+                    action: .dock(action))
+            })
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = schema
         for profile in old.profiles.indices {
             for index in old.profiles[profile].bindings.indices {
                 if case .dock(let action) = old.profiles[profile].bindings[index].action,
-                   schema == 11 || action.isSpaceNavigation {
+                    schema == 11 || action.isSpaceNavigation
+                {
                     old.profiles[profile].bindings[index].action = .desktop(action, shortcut: custom)
                 }
             }
@@ -74,13 +102,21 @@ struct DockActionTests {
     @Test func workerRoutesNativeActionWithoutAnyKeyPostingAndDoesNotPauseOnFailure() {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true, bindings: [nativeBinding()]))
-        mailbox.state.withLock { $0.status = .active; $0.pending = [.dock(.missionControl)] }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.dock(.missionControl)]
+        }
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-            sendShortcut: { _ in Issue.record("Native Dock action emitted a key"); return false },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            sendShortcut: { _ in
+                Issue.record("Native Dock action emitted a key")
+                return false
+            },
             performDock: { action, allowed in
                 #expect(action == .missionControl && allowed())
-                calls.withLock { $0 += 1 }; return .unavailable
+                calls.withLock { $0 += 1 }
+                return .unavailable
             }, secureInput: { false }, postingAllowed: { true })
         worker.service(at: 0)
         #expect(calls.withLock { $0 } == 1)
@@ -90,8 +126,12 @@ struct DockActionTests {
     @Test func generationChangeBeforeMutationCancelsNativeActionAndLateError() {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true))
-        mailbox.state.withLock { $0.status = .active; $0.pending = [.dock(.showDesktop)] }
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.dock(.showDesktop)]
+        }
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             performDock: { _, allowed in
                 #expect(allowed())
                 mailbox.setEditing(true)

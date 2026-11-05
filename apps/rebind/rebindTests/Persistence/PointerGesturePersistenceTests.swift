@@ -1,16 +1,19 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct PointerGesturePersistenceTests {
     private let output = KeyboardShortcut(keyCode: 0, modifiers: .command)
     private func binding(_ direction: PointerDirection = .left, button: UInt32 = 3) -> rebind.Binding {
-        rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: button, direction: direction),
-                       modifiers: .control, action: .shortcut(output))
+        rebind.Binding(
+            scope: .allMice, trigger: .mouseGesture(button: button, direction: direction),
+            modifiers: .control, action: .shortcut(output))
     }
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindPointer-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindPointer-\(UUID())", directoryHint: .isDirectory).appending(path: "configuration.json"))
     }
 
     @Test(arguments: PointerDirection.allCases)
@@ -28,7 +31,9 @@ struct PointerGesturePersistenceTests {
     @Test func version4UserHoldConfigurationMigratesWithoutRewriting() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let bytes = Data(#"{"isEnabled":true,"schemaVersion":4,"bindings":[{"isEnabled":true,"scope":"allMice","id":"00000000-0000-0000-0000-000000000005","activation":"hold","modifiers":0,"holdDurationMilliseconds":1000,"trigger":{"mouseButton":{"_0":4}},"action":{"shortcut":{"_0":{"keyCode":0,"modifiers":1}}}}]}"#.utf8)
+        let bytes = Data(
+            #"{"isEnabled":true,"schemaVersion":4,"bindings":[{"isEnabled":true,"scope":"allMice","id":"00000000-0000-0000-0000-000000000005","activation":"hold","modifiers":0,"holdDurationMilliseconds":1000,"trigger":{"mouseButton":{"_0":4}},"action":{"shortcut":{"_0":{"keyCode":0,"modifiers":1}}}}]}"#
+                .utf8)
         try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try bytes.write(to: store.url)
         let migrated = try store.load()
@@ -55,8 +60,9 @@ struct PointerGesturePersistenceTests {
     @Test(arguments: [PressActivation.hold, .doublePress])
     func pressModesConflictWithGestureFamilyAndCompileFailOpen(_ activation: PressActivation) {
         let rules = PointerDirection.allCases.map { binding($0) }
-        let ordinary = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-                                      action: .shortcut(output), activation: activation)
+        let ordinary = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+            action: .shortcut(output), activation: activation)
         #expect(throws: ConfigurationError.conflict) { try Configuration(bindings: rules + [ordinary]).validate() }
         #expect(InputMatcher.compile(rules + [ordinary]).isEmpty)
     }
@@ -91,7 +97,9 @@ struct PointerGesturePersistenceTests {
         for version in 1...4 {
             #expect(throws: ConfigurationError.invalid) { try Configuration(schemaVersion: version, bindings: [binding()]).migrated() }
         }
-        #expect(throws: ConfigurationError.incompatible) { try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated() }
+        #expect(throws: ConfigurationError.incompatible) {
+            try Configuration(schemaVersion: Configuration.currentSchemaVersion + 1).migrated()
+        }
         #expect(try Data(contentsOf: store.url) == bytes)
     }
 

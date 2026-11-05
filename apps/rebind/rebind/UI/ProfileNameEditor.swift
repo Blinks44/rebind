@@ -36,7 +36,10 @@ struct ProfileNameEditor: View {
                     .disabled(model.storageLocked || name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }.controlSize(.large).padding(.top, 8)
         }.padding(28).frame(width: 440).background(Theme.sheetSurface)
-            .onAppear { model.error = nil; model.beginEditing() }
+            .onAppear {
+                model.error = nil
+                model.beginEditing()
+            }
             .onDisappear { model.endEditing() }
     }
 

@@ -28,8 +28,10 @@ struct AdvancedSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                SettingsActionCard(title: .advancedDiagnosticsTitle,
-                                   description: model.storageLocked ? .advancedDiagnosticsUnavailableBody : .advancedDiagnosticsDescription) {
+                SettingsActionCard(
+                    title: .advancedDiagnosticsTitle,
+                    description: model.storageLocked ? .advancedDiagnosticsUnavailableBody : .advancedDiagnosticsDescription
+                ) {
                     Button(.advancedDiagnosticsAction) { showingDiagnostics = true }.secondaryButton()
                 }
                 if model.storageLocked {
@@ -43,21 +45,27 @@ struct AdvancedSettingsView: View {
                     SettingsActionCard(title: .advancedResetUnavailableTitle, description: .advancedResetUnavailableBody) { EmptyView() }
                 } else {
                     if editing.isValidating {
-                        Banner(severity: .information, title: .advancedConfigurationTitle,
-                                       message: .advancedValidationDescription) {
+                        Banner(
+                            severity: .information, title: .advancedConfigurationTitle,
+                            message: .advancedValidationDescription
+                        ) {
                             ProgressView().controlSize(.small)
                         }
                     } else {
-                        SettingsActionCard(title: .advancedConfigurationTitle,
-                                           description: .advancedConfigurationDescription) {
+                        SettingsActionCard(
+                            title: .advancedConfigurationTitle,
+                            description: .advancedConfigurationDescription
+                        ) {
                             transferActions
                         }
                     }
                     if let feedback = editing.feedback, !feedbackBelongsToReset {
                         feedbackCard(feedback)
                     }
-                    SettingsActionCard(title: .advancedResetTitle,
-                                       description: editing.isValidating ? .advancedValidationResetDescription : .advancedResetDescription) {
+                    SettingsActionCard(
+                        title: .advancedResetTitle,
+                        description: editing.isValidating ? .advancedValidationResetDescription : .advancedResetDescription
+                    ) {
                         Button(.advancedResetAction) { editing.reviewReset() }.disabled(busy).secondaryButton()
                     }
                     if let feedback = editing.feedback, feedbackBelongsToReset {
@@ -80,8 +88,7 @@ struct AdvancedSettingsView: View {
             .detailMargins().padding(.bottom, 32)
         }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
-            if case .success(let url) = result { request = FileRequest(importURL: url) }
-            else { editing.importPanelFailed() }
+            if case .success(let url) = result { request = FileRequest(importURL: url) } else { editing.importPanelFailed() }
         }
         .sheet(isPresented: $showingDiagnostics) { InputDiagnosticsView(model: model) }
         .background { AdvancedWindowAnchor(view: windowAnchor).frame(width: 0, height: 0).accessibilityHidden(true) }
@@ -92,14 +99,12 @@ struct AdvancedSettingsView: View {
             let response = await AdvancedConfirmationAlert.present(alert, for: window)
             confirmation = nil
             guard !Task.isCancelled, editing.review?.id == review.id else { return }
-            if response == .alertSecondButtonReturn { editing.confirmReplacement() }
-            else { editing.cancelReview() }
+            if response == .alertSecondButtonReturn { editing.confirmReplacement() } else { editing.cancelReview() }
         }
         .task(id: request) {
             guard let current = request else { return }
             defer { if request?.id == current.id { request = nil } }
-            if let url = current.importURL { await editing.validateImport(at: url) }
-            else { await exportWithPanel() }
+            if let url = current.importURL { await editing.validateImport(at: url) } else { await exportWithPanel() }
         }
         .onDisappear {
             panel?.cancel(nil)
@@ -163,23 +168,30 @@ struct AdvancedSettingsView: View {
     @ViewBuilder private func feedbackCard(_ feedback: AdvancedSettingsModel.Feedback) -> some View {
         switch feedback {
         case .imported(let profiles, let bindings):
-            Banner(severity: .success, title: .advancedImportSuccess,
-                           message: .advancedImportSuccessDescription(count1: profiles, count2: bindings))
+            Banner(
+                severity: .success, title: .advancedImportSuccess,
+                message: .advancedImportSuccessDescription(count1: profiles, count2: bindings))
         case .reset:
             Banner(severity: .success, title: .advancedResetSuccess, message: .advancedResetSuccessDescription)
         case .exported:
             Banner(severity: .success, title: .advancedExportSuccess)
         case .invalidBackup, .incompatibleBackup:
-            Banner(severity: .error, title: .advancedImportRejectedTitle,
-                           message: feedback == .incompatibleBackup ? .advancedImportRejectedBody : .advancedInvalidBackupBody) {
+            Banner(
+                severity: .error, title: .advancedImportRejectedTitle,
+                message: feedback == .incompatibleBackup ? .advancedImportRejectedBody : .advancedInvalidBackupBody
+            ) {
                 Button(.advancedChooseBackup) { importing = true }.disabled(busy).secondaryButton()
             }
         case .writeFailed:
             Banner(severity: .error, title: .advancedWriteFailedTitle, message: .advancedWriteFailedBody) {
                 Button(.advancedRetry) {
                     // A retry requests a fresh review; it never silently commits a stale one.
-                    if editing.review?.isReset == true { editing.reviewReset() }
-                    else { editing.cancelReview(); importing = true }
+                    if editing.review?.isReset == true {
+                        editing.reviewReset()
+                    } else {
+                        editing.cancelReview()
+                        importing = true
+                    }
                 }.disabled(busy).secondaryButton()
             }
         case .exportFailed:
@@ -195,5 +207,5 @@ struct AdvancedSettingsView: View {
 private struct AdvancedWindowAnchor: NSViewRepresentable {
     let view: NSView
     func makeNSView(context: Context) -> NSView { view }
-    func updateNSView(_ nsView: NSView, context: Context) { }
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }

@@ -1,7 +1,7 @@
-import Synchronization
 import AppKit
 import Carbon
 import Dispatch
+import Synchronization
 
 /// Main-actor device lifecycle and bounded dequeue; the callback only copies frames.
 @MainActor final class MagicMouseCapture: NSObject {
@@ -19,8 +19,10 @@ import Dispatch
     /// The scheduled deadline, including a distant deadline when capture is dormant.
     var nextPollDate: Date? { timer?.fireDate }
 
-    init(mailbox: EngineMailbox, acquireDevice: (() -> (any MagicMouseCaptureDevice)?)? = nil,
-         clock: @escaping () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }) {
+    init(
+        mailbox: EngineMailbox, acquireDevice: (() -> (any MagicMouseCaptureDevice)?)? = nil,
+        clock: @escaping () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }
+    ) {
         self.mailbox = mailbox
         self.acquireDevice = acquireDevice ?? { NativeTrackpadDevice.acquire(mailbox: mailbox, kind: .magicMouse) }
         self.clock = clock
@@ -30,7 +32,8 @@ import Dispatch
         guard timer == nil else { return }
         timer = Timer(timeInterval: 0.01, target: self, selector: #selector(poll), userInfo: nil, repeats: true)
         if let timer { RunLoop.main.add(timer, forMode: .common) }
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(foregroundChanged),
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(foregroundChanged),
             name: NSWorkspace.didActivateApplicationNotification, object: nil)
     }
 
@@ -48,7 +51,8 @@ import Dispatch
     }
 
     func stop() {
-        timer?.invalidate(); timer = nil
+        timer?.invalidate()
+        timer = nil
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         stopCapture()
         mailbox.state.withLock { $0.magicMouseStatus = .idle }
@@ -71,18 +75,20 @@ import Dispatch
 
     private func foregroundPID() -> Int32? {
         guard let app = NSWorkspace.shared.frontmostApplication, app.isActive, !app.isTerminated,
-              app.activationPolicy == .regular, app.processIdentifier > 0,
-              app.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return nil }
+            app.activationPolicy == .regular, app.processIdentifier > 0,
+            app.processIdentifier != ProcessInfo.processInfo.processIdentifier
+        else { return nil }
         return app.processIdentifier
     }
 
     @objc private func poll() {
-        service(allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
-                foregroundPID: foregroundPID(),
-                modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
-                buttonsDown: (0..<64).contains {
-                    CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
-                })
+        service(
+            allowingInput: !IsSecureEventInputEnabled() && AXIsProcessTrusted() && CGPreflightPostEventAccess(),
+            foregroundPID: foregroundPID(),
+            modifiers: ModifierSet(flags: CGEventSource.flagsState(.combinedSessionState)),
+            buttonsDown: (0..<64).contains {
+                CGEventSource.buttonState(.combinedSessionState, button: CGMouseButton(rawValue: UInt32($0)) ?? .left)
+            })
     }
 
     /// One bounded service pass; environment and acquisition are isolated from recognition.

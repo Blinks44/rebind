@@ -1,6 +1,7 @@
 import AppKit
 import IOKit.hidsystem
 import Testing
+
 @testable import rebind
 
 struct MediaKeySenderTests {
@@ -8,7 +9,11 @@ struct MediaKeySenderTests {
     func constructsNativeAuxiliaryPairsWithExactCodesPhasesNoRepeatOrModifiers(_ action: MediaAction) throws {
         let pair = try #require(MediaKeySender.events(action))
         #expect(pair.count == 2)
-        #expect(action.keyCode == [.playPause: 16, .nextTrack: 17, .previousTrack: 18, .fastForward: 19, .rewind: 20, .brightnessUp: 2, .brightnessDown: 3][action])
+        #expect(
+            action.keyCode
+                == [
+                    .playPause: 16, .nextTrack: 17, .previousTrack: 18, .fastForward: 19, .rewind: 20, .brightnessUp: 2, .brightnessDown: 3,
+                ][action])
         let sources = try pair.map { try #require(CGEventSource(event: $0)) }
         #expect(sources[0].sourceStateID == sources[1].sourceStateID)
         #expect(sources[0].sourceStateID != .hidSystemState && sources[0].sourceStateID != .combinedSessionState)
@@ -26,40 +31,56 @@ struct MediaKeySenderTests {
     }
 
     @Test func sanitizesInheritedModifiersAndTagsBothEvents() throws {
-        let events = try #require(MediaKeySender.events(.playPause, make: { _, _ in
-            let event = CGEvent(source: nil)
-            event?.flags = [.maskCommand, .maskAlternate, .maskControl, .maskShift, .maskSecondaryFn]
-            return event
-        }))
+        let events = try #require(
+            MediaKeySender.events(
+                .playPause,
+                make: { _, _ in
+                    let event = CGEvent(source: nil)
+                    event?.flags = [.maskCommand, .maskAlternate, .maskControl, .maskShift, .maskSecondaryFn]
+                    return event
+                }))
         #expect(events.map { $0.flags.rawValue } == [0xa00, 0xb00])
         #expect(events.allSatisfy { $0.getIntegerValueField(.eventSourceUserData) == ShortcutSender.eventTag })
     }
 
     @Test func initialCancellationSkipsConstructionAndPosting() {
         var calls = 0
-        #expect(MediaKeySender.perform(.playPause, canPerform: { false },
-            build: { _ in calls += 1; return nil }, post: { _, _ in calls += 1 }) == .cancelled)
+        #expect(
+            MediaKeySender.perform(
+                .playPause, canPerform: { false },
+                build: { _ in
+                    calls += 1
+                    return nil
+                }, post: { _, _ in calls += 1 }) == .cancelled)
         #expect(calls == 0)
     }
 
     @Test(arguments: [0, 1, 2]) func sourceOrEitherEventFailureNeverPostsPartialPair(_ failure: Int) {
-        var calls = 0, posts = 0
-        let result = MediaKeySender.perform(.nextTrack, canPerform: { true }, build: { action in
-            MediaKeySender.events(action, source: { failure == 0 ? nil : CGEventSource(stateID: .privateState) },
-                make: { _, _ in
-                    calls += 1
-                    return calls == failure ? nil : CGEvent(source: nil)
-                })
-        }, post: { _, _ in posts += 1 })
+        var calls = 0
+        var posts = 0
+        let result = MediaKeySender.perform(
+            .nextTrack, canPerform: { true },
+            build: { action in
+                MediaKeySender.events(
+                    action, source: { failure == 0 ? nil : CGEventSource(stateID: .privateState) },
+                    make: { _, _ in
+                        calls += 1
+                        return calls == failure ? nil : CGEvent(source: nil)
+                    })
+            }, post: { _, _ in posts += 1 })
         #expect(result == .unavailable && posts == 0)
     }
 
     @Test func cancellationDuringConstructionPreventsBothEvents() {
-        var allowed = true, posts = 0
-        #expect(MediaKeySender.perform(.previousTrack, canPerform: { allowed }, build: { action in
-            allowed = false
-            return MediaKeySender.events(action)
-        }, post: { _, _ in posts += 1 }) == .cancelled)
+        var allowed = true
+        var posts = 0
+        #expect(
+            MediaKeySender.perform(
+                .previousTrack, canPerform: { allowed },
+                build: { action in
+                    allowed = false
+                    return MediaKeySender.events(action)
+                }, post: { _, _ in posts += 1 }) == .cancelled)
         #expect(posts == 0)
     }
 
@@ -67,11 +88,13 @@ struct MediaKeySenderTests {
     func begunPairCompletesReleaseAtHIDTapAfterCancellation(_ action: MediaAction) throws {
         var allowed = true
         var posted: [CGEvent] = []
-        let result = MediaKeySender.perform(action, canPerform: { allowed }, post: { event, location in
-            #expect(location == .cghidEventTap)
-            posted.append(event)
-            allowed = false
-        })
+        let result = MediaKeySender.perform(
+            action, canPerform: { allowed },
+            post: { event, location in
+                #expect(location == .cghidEventTap)
+                posted.append(event)
+                allowed = false
+            })
         #expect(result == .performed && posted.count == 2)
         let up = try #require(posted.last.flatMap { NSEvent(cgEvent: $0) })
         #expect((up.data1 >> 8) & 0xff == 11 && up.data1 >> 16 == action.keyCode)
@@ -82,10 +105,12 @@ struct MediaKeySenderTests {
         let keyCode = try #require(action.keyCode)
         #expect(keyCode == [.volumeUp: 0, .volumeDown: 1, .toggleMute: 7][action])
         var posted: [CGEvent] = []
-        let result = MediaKeySender.perform(action, canPerform: { true }, post: { event, location in
-            #expect(location == .cghidEventTap)
-            posted.append(event)
-        })
+        let result = MediaKeySender.perform(
+            action, canPerform: { true },
+            post: { event, location in
+                #expect(location == .cghidEventTap)
+                posted.append(event)
+            })
         #expect(result == .performed)
         let native = try posted.map { try #require(NSEvent(cgEvent: $0)) }
         #expect(native.map { $0.data1 } == [keyCode << 16 | 0xa00, keyCode << 16 | 0xb00])

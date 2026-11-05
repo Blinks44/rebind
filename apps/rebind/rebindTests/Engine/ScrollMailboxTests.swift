@@ -1,12 +1,17 @@
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct ScrollMailboxTests {
     private var configuration: Configuration {
-        Configuration(isEnabled: true, bindings: [rebind.Binding(
-            scope: .allMice, trigger: .scroll(.up), modifiers: .control,
-            action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))])
+        Configuration(
+            isEnabled: true,
+            bindings: [
+                rebind.Binding(
+                    scope: .allMice, trigger: .scroll(.up), modifiers: .control,
+                    action: .shortcut(KeyboardShortcut(keyCode: 13, modifiers: .command)))
+            ])
     }
     private func impulse(at timestamp: UInt64 = 0) -> InputEvent {
         InputEvent(trigger: .scroll(.up), modifiers: .control, phase: .scroll, timestamp: timestamp)

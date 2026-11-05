@@ -1,11 +1,15 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct WindowLayoutActionTests {
-    private let displays = [WindowDisplay(frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
-                                         visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725))]
+    private let displays = [
+        WindowDisplay(
+            frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            visibleFrame: CGRect(x: 0, y: 25, width: 1000, height: 725))
+    ]
 
     @Test(arguments: WindowLayoutAction.allCases, [InputTrigger.key(0), .mouseButton(99), .scroll(.right)])
     @MainActor func catalogAndExistingInputsUseTypedAction(_ layout: WindowLayoutAction, _ trigger: InputTrigger) throws {
@@ -16,9 +20,13 @@ struct WindowLayoutActionTests {
         #expect(action.label == String(localized: kind.title))
         #expect(try JSONDecoder().decode(RebindAction.self, from: JSONEncoder().encode(action)) == action)
         let mailbox = EngineMailbox()
-        mailbox.configure(Configuration(isEnabled: true, bindings: [rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control, action: action)]))
+        mailbox.configure(
+            Configuration(
+                isEnabled: true, bindings: [rebind.Binding(scope: trigger.scope, trigger: trigger, modifiers: .control, action: action)]))
         mailbox.state.withLock { $0.status = .active }
-        #expect(mailbox.handle(InputEvent(trigger: trigger, modifiers: .control, phase: trigger.isScroll ? .scroll : .down), secureInput: false))
+        #expect(
+            mailbox.handle(InputEvent(trigger: trigger, modifiers: .control, phase: trigger.isScroll ? .scroll : .down), secureInput: false)
+        )
         #expect(mailbox.nextAction()?.action == action)
         if !trigger.isScroll { #expect(mailbox.handle(InputEvent(trigger: trigger, phase: .up), secureInput: false)) }
     }
@@ -28,8 +36,13 @@ struct WindowLayoutActionTests {
         defer { try? FileManager.default.removeItem(at: folder) }
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: folder.appending(path: "configuration.json"))
-        var old = Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-            action: .media(.playPause), activation: .hold, holdDurationMilliseconds: 1000)])
+        var old = Configuration(
+            isEnabled: true,
+            bindings: [
+                .init(
+                    scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+                    action: .media(.playPause), activation: .hold, holdDurationMilliseconds: 1000)
+            ])
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = 15
         let bytes = try JSONEncoder().encode(old)
@@ -63,8 +76,12 @@ struct WindowLayoutActionTests {
         let mailbox = readyMailbox()
         let calls = Mutex(0)
         let expected = displays
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { .init() },
-            sendShortcut: { _ in Issue.record("Layout reached keyboard sender"); return false },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { .init() },
+            sendShortcut: { _ in
+                Issue.record("Layout reached keyboard sender")
+                return false
+            },
             performWindowLayout: { action, displays, canPerform in
                 #expect(action == .leftHalf && displays == expected && canPerform())
                 calls.withLock { $0 += 1 }
@@ -79,8 +96,12 @@ struct WindowLayoutActionTests {
     @Test(arguments: [UInt64(0), 2_000_000_101])
     func staleOrFutureSnapshotFailsWithoutAXCalls(_ now: UInt64) {
         let mailbox = readyMailbox()
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { .init() },
-            performWindowLayout: { _, _, _ in Issue.record("Stale geometry reached AX"); return .performed },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { .init() },
+            performWindowLayout: { _, _, _ in
+                Issue.record("Stale geometry reached AX")
+                return .performed
+            },
             layoutClock: { now }, secureInput: { false }, postingAllowed: { true })
         worker.service(at: now)
         #expect(mailbox.state.withLock { $0.actionFailed == .windowLayout(.leftHalf) && !$0.emergencyPause })
@@ -89,7 +110,8 @@ struct WindowLayoutActionTests {
     @Test(arguments: 0...8) func finalGateCancelsForGeometryOrLifecycleChange(_ change: Int) {
         let mailbox = readyMailbox()
         let clock = Mutex<UInt64>(100)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { .init() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { .init() },
             performWindowLayout: { _, _, canPerform in
                 #expect(canPerform())
                 switch change {
@@ -130,7 +152,10 @@ struct WindowLayoutActionTests {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true))
         mailbox.updateWindowDisplays(.init(displays: displays, capturedAt: 100))
-        mailbox.state.withLock { $0.status = .active; $0.pending = [.windowLayout(.leftHalf)] }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.windowLayout(.leftHalf)]
+        }
         return mailbox
     }
 }

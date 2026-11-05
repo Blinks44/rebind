@@ -1,13 +1,18 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct PeripheralBatteryTests {
     @Test func aLaterBatteryReplyCanPopulateAnInitiallyUnknownDevice() {
         let device = ConnectedAccessory(id: "receiver#1", name: "Keyboard", kind: .keyboard, vendorID: 0x046D)
         let known = MouseHardware.refreshedBatteries([], inputs: [device], readings: [(device.id, 49, false)])
-        #expect(known == [DeviceBattery(id: device.id, name: device.name, kind: .keyboard,
-                                      percentage: 49, isCharging: false, vendorID: device.vendorID)])
+        #expect(
+            known == [
+                DeviceBattery(
+                    id: device.id, name: device.name, kind: .keyboard,
+                    percentage: 49, isCharging: false, vendorID: device.vendorID)
+            ])
         #expect(MouseHardware.refreshedBatteries(known, inputs: [device], readings: [(device.id, nil, false)]) == known)
         #expect(MouseHardware.refreshedBatteries(known, inputs: [device], readings: [(device.id, 101, false)]) == known)
         #expect(MouseHardware.refreshedBatteries([], inputs: [device], readings: [("old#1", 80, false)]).isEmpty)
@@ -84,7 +89,8 @@ struct VendorBatteryProtocolTests {
     @Test func aeroxRepliesKeepTheFirmwareScaleAndChargingFlag() {
         let coarse = VendorBatteryProtocol.Family.steelSeries(command: 0xD2, directPercentage: false)
         #expect(VendorBatteryProtocol.steelSeriesReading([0xD2, 11], family: coarse) == PeripheralBatteryReading(percentage: 50))
-        #expect(VendorBatteryProtocol.steelSeriesReading([0, 0xD2, 0, 0x95], family: coarse)
+        #expect(
+            VendorBatteryProtocol.steelSeriesReading([0, 0xD2, 0, 0x95], family: coarse)
                 == PeripheralBatteryReading(percentage: 100, isCharging: true))
         #expect(VendorBatteryProtocol.steelSeriesReading([0x92, 11], family: coarse) == nil)
         #expect(VendorBatteryProtocol.steelSeriesReading([0xD2, 0], family: coarse) == nil)
@@ -95,7 +101,8 @@ struct VendorBatteryProtocolTests {
     }
 
     @Test func rivalSupportsKnownEchoAndDirectRepliesWithoutTreatingSilenceAsFull() {
-        #expect(VendorBatteryProtocol.steelSeriesReading([0xAA, 1, 65, 1], family: .rival)
+        #expect(
+            VendorBatteryProtocol.steelSeriesReading([0xAA, 1, 65, 1], family: .rival)
                 == PeripheralBatteryReading(percentage: 65, isCharging: true))
         #expect(VendorBatteryProtocol.steelSeriesReading([0, 0xAA, 1, 65, 0], family: .rival)?.percentage == 65)
         #expect(VendorBatteryProtocol.steelSeriesReading([65, 0, 0], family: .rival)?.percentage == 65)
@@ -123,8 +130,10 @@ struct HIDReportMapTests {
     }
 
     @Test func truncatedUnbalancedAndOversizedDescriptorsFailClosed() {
-        for data in [Data(), Data([0x05]), Data([0xB4]), Data([0xC0]), Data([0xFE, 3, 0, 0]),
-                     Data([0x05, 1, 0x09, 6, 0xA1, 1]), Data(repeating: 0, count: 4097)] {
+        for data in [
+            Data(), Data([0x05]), Data([0xB4]), Data([0xC0]), Data([0xFE, 3, 0, 0]),
+            Data([0x05, 1, 0x09, 6, 0xA1, 1]), Data(repeating: 0, count: 4097),
+        ] {
             #expect(HIDReportMap.inputKind(data) == nil)
         }
     }

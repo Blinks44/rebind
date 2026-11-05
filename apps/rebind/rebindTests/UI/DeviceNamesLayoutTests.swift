@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Isolated views only: no live discovery, input capture or user configuration.
@@ -8,19 +9,26 @@ import XCTest
     func testKeyboardIdentityAndNamingSheetFitAllLanguages() async throws {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindDeviceLayout-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
-                             loadConfiguration: false, readPermissions: { InputPermissions() })
+        let model = AppModel(
+            store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
+            loadConfiguration: false, readPermissions: { InputPermissions() })
         let original = "G915 TKL LIGHTSPEED Wireless RGB Mechanical Gaming Keyboard"
         for language in ["en", "ru", "de", "fr", "es", "zh-Hans"] {
             for appearance in [ColorScheme.light, .dark] {
-                let identity = DeviceIdentityView(name: "G915", original: original, subtitle: "", kind: .keyboard,
-                    battery: DeviceBattery(id: "fixture", name: original, kind: .keyboard, percentage: 48,
-                                           isCharging: false), rename: {})
-                let views = [AnyView(Card { identity }.padding(20).background { ThemeCanvas() }),
-                             AnyView(DeviceNameEditor(model: model, deviceKey: "046d:G915", original: original))]
+                let identity = DeviceIdentityView(
+                    name: "G915", original: original, subtitle: "", kind: .keyboard,
+                    battery: DeviceBattery(
+                        id: "fixture", name: original, kind: .keyboard, percentage: 48,
+                        isCharging: false), rename: {})
+                let views = [
+                    AnyView(Card { identity }.padding(20).background { ThemeCanvas() }),
+                    AnyView(DeviceNameEditor(model: model, deviceKey: "046d:G915", original: original)),
+                ]
                 for (index, view) in views.enumerated() {
-                    let controller = NSHostingController(rootView: view
-                        .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
+                    let controller = NSHostingController(
+                        rootView:
+                            view
+                            .environment(\.locale, Locale(identifier: language)).preferredColorScheme(appearance))
                     let window = NSWindow(contentViewController: controller)
                     window.appearance = NSAppearance(named: appearance == .dark ? .darkAqua : .aqua)
                     window.isReleasedWhenClosed = false

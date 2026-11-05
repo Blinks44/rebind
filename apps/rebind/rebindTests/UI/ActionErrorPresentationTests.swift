@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import rebind
 
 @MainActor struct ActionErrorPresentationTests {
@@ -24,8 +25,9 @@ import Testing
     func preferenceSaveClearsOnlyItsStorageFailure(message: LocalizedStringResource) {
         let directory = FileManager.default.temporaryDirectory.appending(path: "RebindNotice-\(UUID())")
         defer { try? FileManager.default.removeItem(at: directory) }
-        let model = AppModel(store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
-                             loadConfiguration: false)
+        let model = AppModel(
+            store: ConfigurationStore(url: directory.appending(path: "configuration.json")),
+            loadConfiguration: false)
         model.error = message
         model.setPresencePreference(\.hidesTrackpadGestureWarning, to: true)
         #expect(model.error == (message == .storageWriteFailed ? nil : message))

@@ -1,30 +1,38 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 @MainActor struct ConfigurationRestorationTests {
     @Test(arguments: PressActivation.allCases, [false, true])
     func exportResetImportResumeRestoresSelectedProfileAndActivation(_ activation: PressActivation, _ initiallyEnabled: Bool) async throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindRestore-\(UUID())/configuration.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindRestore-\(UUID())/configuration.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         let oldOutput = KeyboardShortcut(keyCode: 0, modifiers: .command)
         let selectedOutput = KeyboardShortcut(keyCode: 13, modifiers: .command)
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(99), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(99), modifiers: [],
             action: .shortcut(oldOutput), activation: activation, holdDurationMilliseconds: 500)
         var original = Configuration(isEnabled: initiallyEnabled, bindings: [binding])
         original.hasCompletedSetup = true
         try original.createProfile(name: "Profil Русский Français", copying: original.selectedProfileID)
         original.bindings[0].action = .shortcut(selectedOutput)
         try store.save(original)
-        let app = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+        let app = AppModel(
+            store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
             loginItem: LoginItemModel(service: LoginItemServiceStub()))
         app.mailbox.configure(original)
         app.mailbox.state.withLock { $0.status = .active }
         let outputs = Mutex<[KeyboardShortcut]>([])
-        let worker = ActionWorker(mailbox: app.mailbox, capabilities: { AudioOutputCapabilities() },
-            sendShortcut: { value in outputs.withLock { $0.append(value) }; return true },
+        let worker = ActionWorker(
+            mailbox: app.mailbox, capabilities: { AudioOutputCapabilities() },
+            sendShortcut: { value in
+                outputs.withLock { $0.append(value) }
+                return true
+            },
             secureInput: { false }, postingAllowed: { true })
         let page = AdvancedSettingsModel(app: app)
         let backup = store.url.deletingLastPathComponent().appending(path: "backup.json")
@@ -74,7 +82,8 @@ import Testing
         #expect(app.mailbox.state.withLock { $0.matcher.hasSuppressedInput } == false)
         #expect(try Data(contentsOf: backup) == backupBytes)
         #expect(try store.load() == app.configuration)
-        let relaunched = AppModel(store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
+        let relaunched = AppModel(
+            store: store, readPermissions: { InputPermissions(accessibility: true, posting: true) },
             loginItem: LoginItemModel(service: LoginItemServiceStub()))
         #expect(relaunched.configuration == app.configuration)
     }

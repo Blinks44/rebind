@@ -1,13 +1,16 @@
-import Testing
 import Synchronization
+import Testing
+
 @testable import rebind
 
 struct TrackpadDiagnosticsTests {
     @Test func timingSamplesHaveFixedCardinalityAndShareOptInLifetime() throws {
         var diagnostics = TrackpadDiagnostics(startedAt: 1_000)
-        let durations: [UInt64] = [0, 10_000_000, 10_000_001, 20_000_000, 20_000_001,
-                                  60_000_000, 60_000_001, 100_000_000, 100_000_001,
-                                  160_000_000, 160_000_001, UInt64.max]
+        let durations: [UInt64] = [
+            0, 10_000_000, 10_000_001, 20_000_000, 20_000_001,
+            60_000_000, 60_000_001, 100_000_000, 100_000_001,
+            160_000_000, 160_000_001, UInt64.max,
+        ]
         for duration in durations {
             diagnostics.record(.frameAge(nanoseconds: duration), at: 1_000)
             diagnostics.record(.postedQueueAge(nanoseconds: duration), at: 1_000)

@@ -33,14 +33,18 @@ struct BindingEditor: View {
         let workspace: WorkspaceAction?
         if case .workspace(let value) = existing?.action { workspace = value } else { workspace = nil }
         _application = State(initialValue: workspace?.application)
-        if case .openURL(let url) = workspace { _webAddress = State(initialValue: url.absoluteString) }
-        else { _webAddress = State(initialValue: "") }
-        if case .openFile(let url) = workspace { _file = State(initialValue: url) }
-        else { _file = State(initialValue: nil) }
-        if case .appleShortcut(let target) = existing?.action { _appleShortcut = State(initialValue: target) }
-        else { _appleShortcut = State(initialValue: nil) }
-        if case .text(let text) = existing?.action { _snippet = State(initialValue: text) }
-        else { _snippet = State(initialValue: "") }
+        if case .openURL(let url) = workspace {
+            _webAddress = State(initialValue: url.absoluteString)
+        } else {
+            _webAddress = State(initialValue: "")
+        }
+        if case .openFile(let url) = workspace { _file = State(initialValue: url) } else { _file = State(initialValue: nil) }
+        if case .appleShortcut(let target) = existing?.action {
+            _appleShortcut = State(initialValue: target)
+        } else {
+            _appleShortcut = State(initialValue: nil)
+        }
+        if case .text(let text) = existing?.action { _snippet = State(initialValue: text) } else { _snippet = State(initialValue: "") }
     }
 
     var body: some View {
@@ -55,8 +59,10 @@ struct BindingEditor: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     switch scope {
-                    case .allMice: MouseTriggerEditor(draft: $draft, model: model, record: { record(draft.mouseTarget) },
-                                                      recordTapOutput: { record(.tapOutput) })
+                    case .allMice:
+                        MouseTriggerEditor(
+                            draft: $draft, model: model, record: { record(draft.mouseTarget) },
+                            recordTapOutput: { record(.tapOutput) })
                     case .builtInTrackpad, .magicTrackpad: TrackpadTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                     case .magicMouse: MagicMouseTriggerEditor(draft: $draft, isRecording: model.recording != nil)
                     case .allKeyboards: keyboardTrigger
@@ -76,35 +82,50 @@ struct BindingEditor: View {
             Theme.separator.frame(height: 1)
             HStack(spacing: 10) {
                 if existing != nil, !isCopy {
-                    Button(.deleteBinding, systemImage: "trash") { model.cancelRecording(); confirmingDeletion = true }
-                        .destructiveButton()
-                        .disabled(model.recording != nil || model.storageLocked)
+                    Button(.deleteBinding, systemImage: "trash") {
+                        model.cancelRecording()
+                        confirmingDeletion = true
+                    }
+                    .destructiveButton()
+                    .disabled(model.recording != nil || model.storageLocked)
                 }
                 Spacer()
-                Button(.cancel) { model.cancelRecording(); dismiss() }
-                    .accessibilityIdentifier("binding-editor-cancel")
-                    .secondaryButton().controlSize(.large)
+                Button(.cancel) {
+                    model.cancelRecording()
+                    dismiss()
+                }
+                .accessibilityIdentifier("binding-editor-cancel")
+                .secondaryButton().controlSize(.large)
                 Button(.editorSaveBinding, action: save).keyboardShortcut(.defaultAction)
                     .accessibilityIdentifier("binding-editor-save")
                     .primaryButton()
-                    .disabled(candidate == nil || validationError != nil
-                        || !actionKind.isAvailable(with: model.audioCapabilities)
-                        || model.recording != nil || model.storageLocked)
+                    .disabled(
+                        candidate == nil || validationError != nil
+                            || !actionKind.isAvailable(with: model.audioCapabilities)
+                            || model.recording != nil || model.storageLocked)
             }.padding(.horizontal, 28).padding(.vertical, 20)
         }
         .frame(width: 520).frame(idealHeight: 640, maxHeight: 760)
         .background(Theme.sheetSurface)
         .alert(.deleteBinding, isPresented: $confirmingDeletion) {
-            Button(.cancel, role: .cancel) { }
+            Button(.cancel, role: .cancel) {}
             Button(.deleteBinding, role: .destructive) {
-                guard let existing, configurationRevision == model.configurationReplacementRevision else { dismiss(); return }
+                guard let existing, configurationRevision == model.configurationReplacementRevision else {
+                    dismiss()
+                    return
+                }
                 model.delete(existing.id)
                 dismiss()
             }
-        } message: { Text(.deleteBindingConfirmation) }
+        } message: {
+            Text(.deleteBindingConfirmation)
+        }
         .onExitCommand { if model.recording != nil { model.cancelRecording() } else { dismiss() } }
         .sheet(isPresented: $showingPermissions) { PermissionSetupView(model: model, context: .recovery) }
-        .onAppear { model.error = nil; model.beginEditing() }
+        .onAppear {
+            model.error = nil
+            model.beginEditing()
+        }
         .onDisappear { model.endEditing() }
         .onChange(of: model.configurationReplacementRevision) { dismiss() }
         .onChange(of: draft.mouseTarget) {
@@ -117,7 +138,10 @@ struct BindingEditor: View {
         .onChange(of: draft.holdDurationMilliseconds) { model.cancelRecording() }
         .onChange(of: draft.pointerDirection) { model.cancelRecording() }
         .onChange(of: draft.scrollDirection) { model.cancelRecording() }
-        .onChange(of: draft.magicMousePreset) { model.cancelRecording(); recordingRequest = nil }
+        .onChange(of: draft.magicMousePreset) {
+            model.cancelRecording()
+            recordingRequest = nil
+        }
         .onChange(of: draft.trackpadPreset) {
             model.cancelRecording()
             recordingRequest = nil
@@ -153,7 +177,8 @@ struct BindingEditor: View {
     private var keyboardTrigger: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionLabel(.triggerTitle)
-            BindingCaptureField(value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
+            BindingCaptureField(
+                value: draft.trigger.map { InputLabels.trigger($0.trigger, modifiers: $0.modifiers) },
                 target: .keyboardTrigger, recording: model.recording, canRecord: model.canRecord,
                 record: { record(.keyboardTrigger) }, cancel: model.cancelRecording,
                 clear: { draft.trigger = nil }, shortcut: keyboardTriggerShortcut)
@@ -186,7 +211,8 @@ struct BindingEditor: View {
             SectionLabel(.actionTitle)
             ActionPickerView(model: model, selection: $actionKind)
             if actionKind == .keyboardShortcut {
-                BindingCaptureField(value: draft.output.map(InputLabels.shortcut), target: .output,
+                BindingCaptureField(
+                    value: draft.output.map(InputLabels.shortcut), target: .output,
                     recording: model.recording, canRecord: model.canRecord,
                     record: { record(.output) }, cancel: model.cancelRecording,
                     clear: { draft.output = nil }, wrapsControls: true, shortcut: draft.output)
@@ -248,7 +274,9 @@ struct BindingEditor: View {
         if actionKind == .insertText { return .insertTextHint }
         if actionKind.modifierAction != nil { return .holdModifierHint }
         if actionKind == .navigateBack || actionKind == .navigateForward { return .navigationActionHint }
-        if let shortcut = actionKind.fixedShortcut, [.spotlight, .emojiSymbols].contains(actionKind) { return .systemShortcutSettingsHint(InputLabels.shortcut(shortcut)) }
+        if let shortcut = actionKind.fixedShortcut, [.spotlight, .emojiSymbols].contains(actionKind) {
+            return .systemShortcutSettingsHint(InputLabels.shortcut(shortcut))
+        }
         if actionKind == .toggleMicrophoneMute { return .microphoneMuteHint }
         if actionKind == .openApps { return .openAppsHint }
         if actionKind == .fillWindowWithStageManager { return .stageManagerFillHint }
@@ -270,20 +298,28 @@ struct BindingEditor: View {
 
     @ViewBuilder private var feedback: some View {
         if validationError != .conflict, scope.isTrackpad, let preset = draft.trackpadPreset {
-            Banner(severity: .information, title: .trackpadSystemGestureWarning,
-                           message: preset.systemGestureHelp) {
+            Banner(
+                severity: .information, title: .trackpadSystemGestureWarning,
+                message: preset.systemGestureHelp
+            ) {
                 Button(.openSystemSettings, action: openSystemSettings).secondaryButton()
             }
         }
         if validationError != .conflict, scope == .magicMouse, let gestureHelp = draft.magicMousePreset.systemGestureHelp {
-            Banner(severity: .information, title: .touchNativeGestureTitle,
-                   message: gestureHelp)
+            Banner(
+                severity: .information, title: .touchNativeGestureTitle,
+                message: gestureHelp)
         }
         if !model.canRecord {
-            Banner(severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
-                           message: recordingUnavailableHint) {
+            Banner(
+                severity: .warning, title: .advancedDiagnosticsUnavailableTitle,
+                message: recordingUnavailableHint
+            ) {
                 if !model.permissions.allowsRemapping {
-                    Button(.mouseOpenPermissions) { model.cancelRecording(); showingPermissions = true }.secondaryButton()
+                    Button(.mouseOpenPermissions) {
+                        model.cancelRecording()
+                        showingPermissions = true
+                    }.secondaryButton()
                 }
             }
         }
@@ -295,18 +331,24 @@ struct BindingEditor: View {
         if let error = model.error {
             if error == .storageWriteFailed {
                 Banner(severity: .error, title: .bindingSaveFailed, message: .bindingSaveFailedDescription)
-            } else { Banner(severity: .error, title: error) }
+            } else {
+                Banner(severity: .error, title: error)
+            }
         }
         if validationError == .conflict {
-            Banner(severity: .warning,
+            Banner(
+                severity: .warning,
                 title: .mouseTriggerConflict(model.configuration.selectedProfile?.title ?? ""),
                 message: conflictHelp)
-        } else if validationError != nil { Banner(severity: .error, title: .bindingInvalid) }
+        } else if validationError != nil {
+            Banner(severity: .error, title: .bindingInvalid)
+        }
     }
 
     private var configuredAction: RebindAction? {
-        actionKind.configuredAction(shortcut: draft.output, application: application, webAddress: webAddress, file: file,
-                                    appleShortcut: appleShortcut, text: snippet)
+        actionKind.configuredAction(
+            shortcut: draft.output, application: application, webAddress: webAddress, file: file,
+            appleShortcut: appleShortcut, text: snippet)
     }
 
     private var candidate: Binding? {
@@ -329,7 +371,8 @@ struct BindingEditor: View {
     private func openSystemSettings() {
         model.cancelRecording()
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences"),
-              NSWorkspace.shared.open(url) else {
+            NSWorkspace.shared.open(url)
+        else {
             model.error = .openSystemSettingsFailed
             return
         }
@@ -341,7 +384,10 @@ struct BindingEditor: View {
     }
 
     private func save() {
-        guard configurationRevision == model.configurationReplacementRevision else { dismiss(); return }
+        guard configurationRevision == model.configurationReplacementRevision else {
+            dismiss()
+            return
+        }
         guard let candidate, validationError == nil, actionKind.isAvailable(with: model.audioCapabilities) else { return }
         if model.saveBinding(candidate, profileID: profileID) { dismiss() }
     }

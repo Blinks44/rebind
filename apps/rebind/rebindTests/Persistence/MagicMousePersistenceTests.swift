@@ -1,12 +1,14 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct MagicMousePersistenceTests {
     @Test(arguments: 1...3)
     func categoryAndModifiersRoundTripInTheirIntroducedSchema(_ fingers: Int) throws {
-        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseTap(fingers: fingers), modifiers: .option,
-                                  action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+        let rule = rebind.Binding(
+            scope: .magicMouse, trigger: .magicMouseTap(fingers: fingers), modifiers: .option,
+            action: .shortcut(.init(keyCode: 13, modifiers: .command)))
         let configuration = Configuration(isEnabled: true, bindings: [rule])
         try configuration.validate()
         let copy = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(configuration))
@@ -41,7 +43,8 @@ struct MagicMousePersistenceTests {
         try configuration.validate()
         let data = try JSONEncoder().encode(configuration)
         #expect(try JSONDecoder().decode(Configuration.self, from: data) == configuration)
-        var old = configuration; old.schemaVersion = 43
+        var old = configuration
+        old.schemaVersion = 43
         #expect(throws: ConfigurationError.invalid) { try old.migrated() }
     }
 
@@ -52,14 +55,17 @@ struct MagicMousePersistenceTests {
         try configuration.validate()
         let data = try JSONEncoder().encode(configuration)
         #expect(try JSONDecoder().decode(Configuration.self, from: data) == configuration)
-        var old = configuration; old.schemaVersion = 48
+        var old = configuration
+        old.schemaVersion = 48
         #expect(throws: ConfigurationError.invalid) { try old.migrated() }
         var invalid = rule
         invalid.scope = .builtInTrackpad
         #expect(invalid.isValid == false)
     }
 
-    @Test(arguments: [InputTrigger.magicMouseClick(fingers: 2), .magicMouseClick(fingers: 4), .magicMouseScroll(.left), .magicMouseScroll(.right)])
+    @Test(arguments: [
+        InputTrigger.magicMouseClick(fingers: 2), .magicMouseClick(fingers: 4), .magicMouseScroll(.left), .magicMouseScroll(.right),
+    ])
     func unsupportedNativeGesturesAreRejected(_ trigger: InputTrigger) {
         #expect(trigger.isSupported == false)
     }
@@ -72,9 +78,11 @@ struct MagicMousePersistenceTests {
     }
 
     @Test func oldTrackpadAndMouseRulesMigrateWithoutChangingTheirCategories() throws {
-        let rules = [rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing),
-                     .init(scope: .magicTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing),
-                     .init(scope: .allMice, trigger: .mouseButton(2), modifiers: [], action: .doNothing)]
+        let rules = [
+            rebind.Binding(scope: .builtInTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing),
+            .init(scope: .magicTrackpad, trigger: .threeFingerTap, modifiers: [], action: .doNothing),
+            .init(scope: .allMice, trigger: .mouseButton(2), modifiers: [], action: .doNothing),
+        ]
         var old = Configuration(isEnabled: true, bindings: rules)
         old.schemaVersion = 41
         let migrated = try old.migrated()

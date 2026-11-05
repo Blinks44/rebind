@@ -1,6 +1,7 @@
 import Foundation
 import HIDPP
 import Testing
+
 @testable import rebind
 
 private final class GestureMouse: HIDPPDeviceIO {
@@ -8,8 +9,10 @@ private final class GestureMouse: HIDPPDeviceIO {
     var acknowledgesWrites = true
     private(set) var writes: [Bool] = []
 
-    func performSynchronousOutputReportRequest(_ report: Data, timeout: TimeInterval,
-                                               matching: @escaping (Data) -> Bool) -> Data? {
+    func performSynchronousOutputReportRequest(
+        _ report: Data, timeout: TimeInterval,
+        matching: @escaping (Data) -> Bool
+    ) -> Data? {
         let bytes = Array(report)
         var payload: [UInt8]
         switch (bytes[2], bytes[3] >> 4) {

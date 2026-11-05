@@ -1,5 +1,5 @@
-import Foundation
 import CoreFoundation
+import Foundation
 import Synchronization
 
 nonisolated enum EngineStatus: Sendable {
@@ -81,7 +81,10 @@ nonisolated final class EngineMailbox: Sendable {
         var diagnostics = InputDiagnostics()
         var profileID = RuleProfile.defaultID
 
-        init() { pending.reserveCapacity(Self.maximumPending); held.reserveCapacity(Self.maximumHeldOutputs) }
+        init() {
+            pending.reserveCapacity(Self.maximumPending)
+            held.reserveCapacity(Self.maximumHeldOutputs)
+        }
 
         static let maximumPending = 16
 
@@ -98,8 +101,9 @@ nonisolated final class EngineMailbox: Sendable {
         /// under the pointer, which receives the scroll, opts out (the app in front when unknown).
         func activeSmoothScrolling(sender: UInt64?) -> SmoothScrollingSettings? {
             guard let sender, let settings = smoothScrollingBySender[sender], status == .active, enabled,
-                  !suspended, !stopped, !editing, recording == nil,
-                  !((pointerBundleID ?? foregroundBundleID).map(smoothScrollingExclusions.contains) ?? false) else { return nil }
+                !suspended, !stopped, !editing, recording == nil,
+                !((pointerBundleID ?? foregroundBundleID).map(smoothScrollingExclusions.contains) ?? false)
+            else { return nil }
             return settings
         }
 
@@ -146,7 +150,9 @@ nonisolated final class EngineMailbox: Sendable {
             if held[index].pressedAt == nil {
                 let action = held.remove(at: index).action
                 if !action.requiresHeldOutput, hasQueueSpace { pending.append(action) }
-            } else { held[index].released = true }
+            } else {
+                held[index].released = true
+            }
         }
 
         /// Modifiers Rebind is holding for the user; the tap adds them to the input it passes on.
@@ -201,9 +207,13 @@ nonisolated final class EngineMailbox: Sendable {
                     // A modifier is down once; only keys and step actions repeat.
                     if output.action.requiresHeldOutput { continue }
                     // A shared key repeats once per interval: only its earliest owner repeats.
-                    if let keyCode = output.action.shortcut?.keyCode, held[..<index].contains(where: {
-                        $0.pressedAt != nil && $0.action.shortcut?.keyCode == keyCode
-                    }) { continue }
+                    if let keyCode = output.action.shortcut?.keyCode,
+                        held[..<index].contains(where: {
+                            $0.pressedAt != nil && $0.action.shortcut?.keyCode == keyCode
+                        })
+                    {
+                        continue
+                    }
                     let last = output.lastRepeatAt
                     let next = last.map { $0 &+ keyRepeat.intervalNanoseconds } ?? pressedAt &+ keyRepeat.delayNanoseconds
                     isDue = now >= next
@@ -316,14 +326,17 @@ nonisolated final class EngineMailbox: Sendable {
     func retryCapture() {
         state.withLock {
             guard $0.enabled, !$0.suspended, !$0.stopped,
-                  $0.status == .tapFailed || $0.status == .interrupted || $0.status == .outputFailed else { return }
+                $0.status == .tapFailed || $0.status == .interrupted || $0.status == .outputFailed
+            else { return }
             $0.retryID &+= 1
         }
         wakeTap()
     }
 
-    func configure(_ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000,
-                   keyRepeat: KeyRepeatTiming = KeyRepeatTiming()) {
+    func configure(
+        _ configuration: Configuration, doublePressIntervalNanoseconds: UInt64 = 500_000_000,
+        keyRepeat: KeyRepeatTiming = KeyRepeatTiming()
+    ) {
         let bindings = configuration.bindings
         let general = bindings.filter { $0.application == nil }
         let compiled = InputMatcher.compile(general)
@@ -348,15 +361,17 @@ nonisolated final class EngineMailbox: Sendable {
             $0.selectRules()
             $0.enabled = configuration.isEnabled
             $0.excludedApplications = Set(configuration.excludedApplications.filter { !$0.allowsBindings }.map(\.bundleIdentifier))
-            $0.smoothScrollingExclusions = Set(configuration.excludedApplications.filter { !$0.allowsSmoothScrolling }
-                .map(\.bundleIdentifier))
+            $0.smoothScrollingExclusions = Set(
+                configuration.excludedApplications.filter { !$0.allowsSmoothScrolling }
+                    .map(\.bundleIdentifier))
             $0.cancelQueuedWork()
             $0.matcher.doublePressIntervalNanoseconds = max(1, doublePressIntervalNanoseconds)
             $0.keyRepeat = keyRepeat
             $0.matcher.pointerThreshold = configuration.pointerGestureDistance.points
-            let wheel = WheelAdjustment(reverses: configuration.reversesMouseWheel,
-                                        multiplier: configuration.mouseWheelSpeed.multiplier,
-                                        reversesHorizontally: configuration.reversesHorizontalScrolling)
+            let wheel = WheelAdjustment(
+                reverses: configuration.reversesMouseWheel,
+                multiplier: configuration.mouseWheelSpeed.multiplier,
+                reversesHorizontally: configuration.reversesHorizontalScrolling)
             $0.wheel = wheel.changesNothing ? nil : wheel
         }
         signalWork()
@@ -373,7 +388,8 @@ nonisolated final class EngineMailbox: Sendable {
             if previous != bundleIdentifier { state.smoothScrollingRevision &+= 1 }
             // Only apps with rules of their own change the rule set; other switches keep it.
             let rules = state.applicationRules
-            let rulesChanged = previous != bundleIdentifier
+            let rulesChanged =
+                previous != bundleIdentifier
                 && [previous, bundleIdentifier].contains { $0.map { rules[$0] != nil } ?? false }
             if rulesChanged { state.selectRules() }
             guard state.isMatching != wasMatching || rulesChanged else { return }
@@ -420,7 +436,10 @@ nonisolated final class EngineMailbox: Sendable {
             // An unclaimed stale request can be discarded immediately. A native
             // request already accepted must finish before another action starts.
             if let request = $0.workspaceRequest, !$0.workspaceClaimed,
-               !$0.dispatchIsCurrent(request.dispatch) { $0.workspaceRequest = nil }
+                !$0.dispatchIsCurrent(request.dispatch)
+            {
+                $0.workspaceRequest = nil
+            }
             guard $0.canDispatch, $0.workspaceRequest == nil else { return nil }
             if let dispatch = $0.trackpadDispatch {
                 $0.trackpadDispatch = nil
@@ -428,8 +447,9 @@ nonisolated final class EngineMailbox: Sendable {
             }
             guard !$0.pending.isEmpty else { return nil }
             let action = $0.pending.removeFirst()
-            return ActionDispatch(action: action, revision: $0.actionRevision,
-                                  deviceID: $0.audioCapabilities.deviceID(for: action))
+            return ActionDispatch(
+                action: action, revision: $0.actionRevision,
+                deviceID: $0.audioCapabilities.deviceID(for: action))
         }
     }
 
@@ -453,7 +473,8 @@ nonisolated final class EngineMailbox: Sendable {
     func setPointerApplication(_ bundleIdentifier: String?) {
         state.withLock {
             guard $0.pointerBundleID != bundleIdentifier else { return }
-            let exclusions = $0.smoothScrollingExclusions, foreground = $0.foregroundBundleID
+            let exclusions = $0.smoothScrollingExclusions
+            let foreground = $0.foregroundBundleID
             func excluded(_ pointer: String?) -> Bool { (pointer ?? foreground).map(exclusions.contains) ?? false }
             let changesDecision = excluded($0.pointerBundleID) != excluded(bundleIdentifier)
             $0.pointerBundleID = bundleIdentifier
@@ -533,7 +554,10 @@ nonisolated final class EngineMailbox: Sendable {
     func claimWorkspace() -> WorkspaceRequest? {
         state.withLock {
             guard let request = $0.workspaceRequest, !$0.workspaceClaimed else { return nil }
-            guard $0.dispatchIsCurrent(request.dispatch) else { $0.workspaceRequest = nil; return nil }
+            guard $0.dispatchIsCurrent(request.dispatch) else {
+                $0.workspaceRequest = nil
+                return nil
+            }
             $0.workspaceClaimed = true
             return request
         }
@@ -643,8 +667,9 @@ nonisolated final class EngineMailbox: Sendable {
     /// there is no system event to suppress or give back.
     func handleOffTapButton(_ button: UInt32, down: Bool, modifiers: ModifierSet, secureInput: Bool) {
         let now = DispatchTime.now().uptimeNanoseconds
-        let event = InputEvent(trigger: .mouseButton(button), modifiers: modifiers, phase: down ? .down : .up,
-                               timestamp: now, receivedAt: now)
+        let event = InputEvent(
+            trigger: .mouseButton(button), modifiers: modifiers, phase: down ? .down : .up,
+            timestamp: now, receivedAt: now)
         _ = handle(event, secureInput: secureInput)
     }
 
@@ -660,8 +685,14 @@ nonisolated final class EngineMailbox: Sendable {
                 let action = $0.rules[MatchKey(trigger: .magicMouseClick(fingers: 3), modifiers: event.modifiers)]?.action
                 let active = !secureInput && $0.canDispatch && $0.foregroundPID != nil && $0.hasQueueSpace && action != nil
                 var admitted = false
-                if $0.magicMouseNative.click(sender: sender, button: button, phase: event.phase,
-                    revision: $0.actionRevision, at: event.receivedAt ?? event.timestamp, admit: { admitted = active; return active }) {
+                if $0.magicMouseNative.click(
+                    sender: sender, button: button, phase: event.phase,
+                    revision: $0.actionRevision, at: event.receivedAt ?? event.timestamp,
+                    admit: {
+                        admitted = active
+                        return active
+                    })
+                {
                     $0.inputActivity &+= 1
                     $0.matcher.cancelHold()
                     if admitted, let action { $0.pending.append(action) }
@@ -671,7 +702,8 @@ nonisolated final class EngineMailbox: Sendable {
             // Trackpad click rules and configured corner taps replace the click itself.
             var tapClick = false
             if case .mouseButton(let button) = event.trigger, button <= 1, !secureInput,
-               !$0.magicMouseNative.containsSource(sender) {
+                !$0.magicMouseNative.containsSource(sender)
+            {
                 switch $0.resolveTrackpadClick(button: button, event: event) {
                 case .pass: break
                 case .tapClick:
@@ -685,8 +717,10 @@ nonisolated final class EngineMailbox: Sendable {
         }
     }
 
-    func handlePointerMotion(_ motion: PointerMotion, modifiers: ModifierSet, receivedAt: UInt64,
-                             secureInput: Bool) -> Bool {
+    func handlePointerMotion(
+        _ motion: PointerMotion, modifiers: ModifierSet, receivedAt: UInt64,
+        secureInput: Bool
+    ) -> Bool {
         defer { signalIfWorkWaiting() }
         return state.withLock { state in
             guard !state.stopped, !state.suspended, !secureInput else {
@@ -698,24 +732,31 @@ nonisolated final class EngineMailbox: Sendable {
                 if state.trackpadDispatch?.trackpadTarget?.isMagicMouse == true { state.trackpadDispatch = nil }
             }
             guard let source = state.matcher.pointerGestureSource else { return false }
-            let event = InputEvent(trigger: source, modifiers: modifiers, phase: .drag,
-                                   receivedAt: receivedAt, motion: motion)
+            let event = InputEvent(
+                trigger: source, modifiers: modifiers, phase: .drag,
+                receivedAt: receivedAt, motion: motion)
             return Self.handleAndDiagnose(event, state: &state, secureInput: secureInput)
         }
     }
 
-    private static func handleAndDiagnose(_ event: InputEvent, state: inout State, secureInput: Bool,
-                                          isTapClick: Bool = false) -> Bool {
+    private static func handleAndDiagnose(
+        _ event: InputEvent, state: inout State, secureInput: Bool,
+        isTapClick: Bool = false
+    ) -> Bool {
         // Any real key/button/wheel activity invalidates a delayed touch action; a
         // click macOS made from a tap is part of that tap, not new activity.
         // No key code/text is retained by the touch recognizer.
-        if event.phase != .drag, !isTapClick { state.inputActivity &+= 1; state.trackpadDispatch = nil }
+        if event.phase != .drag, !isTapClick {
+            state.inputActivity &+= 1
+            state.trackpadDispatch = nil
+        }
         let queuedCount = state.pending.count + state.held.count
         let suppressed = handle(event, state: &state, secureInput: secureInput)
         // A wheel event passed on is reversed or sped up by the tap right after this.
-        state.diagnostics.record(event, suppressed: suppressed,
-                                 queued: state.pending.count + state.held.count > queuedCount,
-                                 adjusted: !suppressed && event.phase == .scroll && state.activeWheelAdjustment != nil)
+        state.diagnostics.record(
+            event, suppressed: suppressed,
+            queued: state.pending.count + state.held.count > queuedCount,
+            adjusted: !suppressed && event.phase == .scroll && state.activeWheelAdjustment != nil)
         return suppressed
     }
 
@@ -751,8 +792,9 @@ nonisolated final class EngineMailbox: Sendable {
             $0.magicMouseActivity &+= 1
             $0.trackpadDispatch = nil
             $0.matcher.cancelHold()
-            $0.diagnostics.append(kind: .unsupportedScroll, phase: .scroll, modifiers: modifiers,
-                                  outcome: .passedThrough, at: now)
+            $0.diagnostics.append(
+                kind: .unsupportedScroll, phase: .scroll, modifiers: modifiers,
+                outcome: .passedThrough, at: now)
         }
     }
 
@@ -763,8 +805,9 @@ nonisolated final class EngineMailbox: Sendable {
         }
         // Evaluate once: a disabled pre-pass would cancel a temporal sequence.
         // Ownership/emergency bypass still work during pause, editing or recording.
-        let decision = state.matcher.handle(event, rules: state.recording == nil ? state.rules : [:],
-                                            enabled: state.matchesRules, canDispatch: state.hasQueueSpace)
+        let decision = state.matcher.handle(
+            event, rules: state.recording == nil ? state.rules : [:],
+            enabled: state.matchesRules, canDispatch: state.hasQueueSpace)
         if decision.emergencyPause {
             state.actionRevision &+= 1
             state.pause()
@@ -779,7 +822,9 @@ nonisolated final class EngineMailbox: Sendable {
         if let action = decision.action {
             if decision.holdsOutput, state.held.count < State.maximumHeldOutputs {
                 state.held.append(HeldOutput(trigger: event.trigger, action: action))
-            } else if !action.requiresHeldOutput { state.pending.append(action) }
+            } else if !action.requiresHeldOutput {
+                state.pending.append(action)
+            }
         }
         if decision.suppress { return true }
         if let request = state.recording {
@@ -790,15 +835,18 @@ nonisolated final class EngineMailbox: Sendable {
                 let matchesCategory: Bool
                 switch (request.target, event.trigger) {
                 case (.mouseTrigger, .mouseButton), (.gestureTrigger, .mouseButton),
-                     (.buttonScrollTrigger, .mouseButton): matchesCategory = true
+                    (.buttonScrollTrigger, .mouseButton):
+                    matchesCategory = true
                 case (.scrollTrigger, .scroll): matchesCategory = true
                 case (.keyboardTrigger, .key), (.output, .key), (.tapOutput, .key): matchesCategory = true
                 default: matchesCategory = false
                 }
                 guard matchesCategory, event.trigger.isSupported,
-                      event.modifiers.subtracting(.supported).isEmpty else { return false }
-                state.recorded = RecordedInput(request: request,
-                                               input: MatchKey(trigger: event.trigger, modifiers: event.modifiers))
+                    event.modifiers.subtracting(.supported).isEmpty
+                else { return false }
+                state.recorded = RecordedInput(
+                    request: request,
+                    input: MatchKey(trigger: event.trigger, modifiers: event.modifiers))
             }
             state.recording = nil
             state.matcher.consume(event)
@@ -816,15 +864,20 @@ nonisolated final class EngineMailbox: Sendable {
             }
             state.matcher.expirePointerGesture(at: now)
             let holdKey = state.matcher.holdKey
-            if let action = state.matcher.pollHold(at: now, rules: state.rules, enabled: state.matchesRules,
-                                                   canDispatch: state.hasQueueSpace) {
+            if let action = state.matcher.pollHold(
+                at: now, rules: state.rules, enabled: state.matchesRules,
+                canDispatch: state.hasQueueSpace)
+            {
                 // The trigger is still down, so a held output lasts from here to its release.
                 if let holdKey, state.rules[holdKey]?.holdsOutput == true, state.held.count < State.maximumHeldOutputs {
                     state.held.append(HeldOutput(trigger: holdKey.trigger, action: action))
-                } else if !action.requiresHeldOutput { state.pending.append(action) }
+                } else if !action.requiresHeldOutput {
+                    state.pending.append(action)
+                }
                 if let holdKey, case .mouseButton(let number) = holdKey.trigger {
-                    state.diagnostics.append(kind: .button(number), phase: .activation, modifiers: holdKey.modifiers,
-                                             outcome: .queued, at: now)
+                    state.diagnostics.append(
+                        kind: .button(number), phase: .activation, modifiers: holdKey.modifiers,
+                        outcome: .queued, at: now)
                 }
             }
         }

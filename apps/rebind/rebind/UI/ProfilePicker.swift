@@ -28,8 +28,9 @@ struct ProfilePicker: View {
     private func select(_ index: Int) {
         guard !model.storageLocked else { return }
         let profiles = model.configuration.profiles
-        if index == profiles.count { manageProfiles() }
-        else if profiles.indices.contains(index) {
+        if index == profiles.count {
+            manageProfiles()
+        } else if profiles.indices.contains(index) {
             // Save transactionally before changing the engine's active profile.
             model.selectProfile(profiles[index].id)
         }
@@ -38,16 +39,18 @@ struct ProfilePicker: View {
     private func makeMenu(target: MenuSelectionTarget) -> NSMenu {
         let menu = NSMenu()
         for (index, profile) in model.configuration.profiles.enumerated() {
-            let item = NSMenuItem(title: profile.title,
-                                  action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+            let item = NSMenuItem(
+                title: profile.title,
+                action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
             item.target = target
             item.tag = index
             item.state = profile.id == model.configuration.selectedProfileID ? .on : .off
             menu.addItem(item)
         }
         menu.addItem(.separator())
-        let manage = NSMenuItem(title: AppLocalization.string(.manageProfiles),
-                                action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
+        let manage = NSMenuItem(
+            title: AppLocalization.string(.manageProfiles),
+            action: #selector(MenuSelectionTarget.selectItem(_:)), keyEquivalent: "")
         manage.target = target
         manage.tag = model.configuration.profiles.count
         menu.addItem(manage)

@@ -59,7 +59,11 @@ struct BindingRow: View {
         if !others.isEmpty {
             Menu(.copyBindingToProfile, systemImage: "square.on.square") {
                 ForEach(others) { profile in
-                    Button { model.copyBinding(binding, toProfile: profile.id) } label: { Text(verbatim: profile.title) }
+                    Button {
+                        model.copyBinding(binding, toProfile: profile.id)
+                    } label: {
+                        Text(verbatim: profile.title)
+                    }
                 }
             }
         }

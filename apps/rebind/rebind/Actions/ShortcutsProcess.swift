@@ -6,9 +6,11 @@ import System
 nonisolated enum ShortcutsProcess {
     enum Failure: Error, Equatable { case failed, cancelled, timedOut, invalidOutput }
 
-    static func execute(arguments: [String], collectOutput: Bool, timeout: TimeInterval,
-                        canContinue: @escaping @Sendable () -> Bool,
-                        executable: URL = URL(filePath: "/usr/bin/shortcuts")) async throws -> Data {
+    static func execute(
+        arguments: [String], collectOutput: Bool, timeout: TimeInterval,
+        canContinue: @escaping @Sendable () -> Bool,
+        executable: URL = URL(filePath: "/usr/bin/shortcuts")
+    ) async throws -> Data {
         guard !Task.isCancelled, canContinue() else { throw Failure.cancelled }
         guard timeout.isFinite, timeout > 0 else { throw Failure.timedOut }
         let clock = ContinuousClock()
@@ -22,12 +24,14 @@ nonisolated enum ShortcutsProcess {
                     let output: Data
                     let status: TerminationStatus
                     if collectOutput {
-                        let result = try await Subprocess.run(.path(FilePath(executable.path)), arguments: Arguments(arguments),
+                        let result = try await Subprocess.run(
+                            .path(FilePath(executable.path)), arguments: Arguments(arguments),
                             platformOptions: options, input: .none, output: .data(limit: 262_144), error: .discarded)
                         output = result.standardOutput
                         status = result.terminationStatus
                     } else {
-                        let result = try await Subprocess.run(.path(FilePath(executable.path)), arguments: Arguments(arguments),
+                        let result = try await Subprocess.run(
+                            .path(FilePath(executable.path)), arguments: Arguments(arguments),
                             platformOptions: options, input: .none, output: .discarded, error: .discarded)
                         output = Data()
                         status = result.terminationStatus
@@ -49,9 +53,7 @@ nonisolated enum ShortcutsProcess {
                 guard let output = try await group.next() else { throw Failure.failed }
                 return output
             }
-        } catch is CancellationError { throw Failure.cancelled }
-        catch let error as SubprocessError where error.code == .outputLimitExceeded { throw Failure.invalidOutput }
-        catch let error as Failure { throw error }
-        catch { throw Failure.failed }
+        } catch is CancellationError { throw Failure.cancelled } catch let error as SubprocessError where error.code == .outputLimitExceeded
+        { throw Failure.invalidOutput } catch let error as Failure { throw error } catch { throw Failure.failed }
     }
 }

@@ -1,24 +1,30 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct ProfileTransferTests {
     private func binding(_ button: UInt32) -> rebind.Binding {
-        rebind.Binding(scope: .allMice, trigger: .mouseButton(button), modifiers: [],
-                       action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(button), modifiers: [],
+            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
     }
 
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindTransfer-\(UUID())").appending(path: "config.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindTransfer-\(UUID())").appending(path: "config.json"))
     }
 
     @Test func anExportedProfileCarriesOnlyThatProfileAndNoAppPreferences() throws {
         var configuration = Configuration(isEnabled: true, bindings: [binding(3)])
         try configuration.createProfile(name: "Work")
         configuration.bindings = [binding(4)]
-        configuration.excludedApplications = [ExcludedApplication(target: ApplicationTarget(
-            url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))]
+        configuration.excludedApplications = [
+            ExcludedApplication(
+                target: ApplicationTarget(
+                    url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))
+        ]
         configuration.reversesMouseWheel = true
         let work = configuration.selectedProfileID
         let exported = try configuration.exportingProfile(work)

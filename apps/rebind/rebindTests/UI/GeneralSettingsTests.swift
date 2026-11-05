@@ -1,11 +1,13 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct GeneralSettingsTests {
     private func store() -> ConfigurationStore {
-        ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindGeneral-\(UUID())/configuration.json"))
+        ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindGeneral-\(UUID())/configuration.json"))
     }
 
     @Test(arguments: [true, false])
@@ -14,8 +16,11 @@ import Testing
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         var configuration = Configuration(isEnabled: enabled)
         try configuration.createProfile(name: "Test")
-        configuration.bindings = [rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-            action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))]
+        configuration.bindings = [
+            rebind.Binding(
+                scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+                action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
+        ]
         try store.save(configuration)
         let bytes = try Data(contentsOf: store.url)
         let service = LoginItemServiceStub()
@@ -50,7 +55,8 @@ import Testing
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try FileManager.default.createDirectory(at: store.url, withIntermediateDirectories: true)
-        let model = AppModel(store: store, loadConfiguration: false,
+        let model = AppModel(
+            store: store, loadConfiguration: false,
             loginItem: LoginItemModel(service: LoginItemServiceStub()))
         model.mailbox.configure(Configuration())
         model.setEnabled(true)
@@ -61,7 +67,8 @@ import Testing
     @Test func failedPauseStillCancelsOutputAndRetainsSuppressedReleaseOwnership() throws {
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
-        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+        let binding = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
             action: .shortcut(KeyboardShortcut(keyCode: 0, modifiers: .command)))
         try store.save(Configuration(isEnabled: true, bindings: [binding]))
         let model = AppModel(store: store, loginItem: LoginItemModel(service: LoginItemServiceStub()))
@@ -83,7 +90,8 @@ import Testing
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try store.save(Configuration(isEnabled: true))
-        let model = AppModel(store: store, sessionAllowsInput: { true },
+        let model = AppModel(
+            store: store, sessionAllowsInput: { true },
             readPermissions: { InputPermissions(accessibility: true, posting: true) },
             loginItem: LoginItemModel(service: LoginItemServiceStub()))
         model.mailbox.configure(model.configuration)
@@ -107,10 +115,14 @@ import Testing
         let store = store()
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         try store.save(Configuration(isEnabled: true))
-        let model = AppModel(store: store, readPermissions: { permissions },
+        let model = AppModel(
+            store: store, readPermissions: { permissions },
             loginItem: LoginItemModel(service: LoginItemServiceStub()))
         model.mailbox.configure(model.configuration)
-        model.mailbox.state.withLock { $0.status = .tapFailed; $0.suspended = permissions.allowsRemapping }
+        model.mailbox.state.withLock {
+            $0.status = .tapFailed
+            $0.suspended = permissions.allowsRemapping
+        }
         let retry = model.mailbox.state.withLock { $0.retryID }
         model.retryRemapping()
         #expect(model.mailbox.state.withLock { $0.retryID == retry })

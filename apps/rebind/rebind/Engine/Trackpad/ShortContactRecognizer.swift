@@ -6,10 +6,17 @@ nonisolated struct ShortContactRecognizer: Sendable {
     enum Surface: Sendable { case trackpad, magicMouse }
 
     enum Rejection: String, Sendable {
-        case invalidMetadata = "invalid-metadata", frameGap = "frame-gap", nativeTime = "native-time"
-        case neutralRequired = "neutral-required", changedContacts = "changed-contacts"
-        case placementSpread = "placement-spread", travel = "travel", duration = "duration"
-        case liftSpread = "lift-spread", fingerCount = "finger-count", transientPeak = "transient-peak"
+        case invalidMetadata = "invalid-metadata"
+        case frameGap = "frame-gap"
+        case nativeTime = "native-time"
+        case neutralRequired = "neutral-required"
+        case changedContacts = "changed-contacts"
+        case placementSpread = "placement-spread"
+        case travel = "travel"
+        case duration = "duration"
+        case liftSpread = "lift-spread"
+        case fingerCount = "finger-count"
+        case transientPeak = "transient-peak"
     }
     private(set) var rejection: Rejection?
     // Transient qualified origin only; excluded from Codable diagnostic payloads.
@@ -79,11 +86,12 @@ nonisolated struct ShortContactRecognizer: Sendable {
         rejection = nil
         origin = nil
         guard time.isFinite, time >= 0, contacts.count <= 16,
-              Set(contacts.map(\.id)).count == contacts.count,
-              contacts.allSatisfy({
-                  $0.x.isFinite && $0.y.isFinite && (0...1).contains($0.x) && (0...1).contains($0.y)
-                  && $0.pressure.isFinite && $0.pressure >= 0
-              }) else {
+            Set(contacts.map(\.id)).count == contacts.count,
+            contacts.allSatisfy({
+                $0.x.isFinite && $0.y.isFinite && (0...1).contains($0.x) && (0...1).contains($0.y)
+                    && $0.pressure.isFinite && $0.pressure >= 0
+            })
+        else {
             interrupt()
             rejection = .invalidMetadata
             return nil
@@ -92,10 +100,12 @@ nonisolated struct ShortContactRecognizer: Sendable {
             // A forward gap after known release is idle silence, including between
             // the taps of a pair. Never bridge missing samples inside a stroke;
             // backwards/repeated native IDs and nonmonotonic time still cancel.
-            let idleGap = stroke == nil && !needsNeutral
+            let idleGap =
+                stroke == nil && !needsNeutral
                 && Int64(frame) > Int64(previousFrame) + 1
             if (Int64(frame) != Int64(previousFrame) + 1 && !idleGap)
-                || time <= previousTime || (stroke != nil && time - previousTime > 0.05) {
+                || time <= previousTime || (stroke != nil && time - previousTime > 0.05)
+            {
                 continuity &+= 1
                 stroke = nil
                 needsNeutral = true
@@ -109,24 +119,45 @@ nonisolated struct ShortContactRecognizer: Sendable {
             needsNeutral = false
             defer { stroke = nil }
             guard let stroke else { return nil }
-            guard stroke.valid else { rejection = stroke.rejection; return nil }
+            guard stroke.valid else {
+                rejection = stroke.rejection
+                return nil
+            }
             guard TrackpadTapSequence.candidateFingerCounts.contains(stroke.peakCount),
-                  stroke.origins.count == stroke.peakCount else { rejection = .fingerCount; return nil }
-            guard time - stroke.started >= minimumDuration, time - stroke.started <= maximumDuration else { rejection = .duration; return nil }
-            guard stroke.peakFrames >= 2, (stroke.peakEnded ?? time) - stroke.peakStarted >= minimumPeakDuration else { rejection = .transientPeak; return nil }
-            guard stroke.firstLift.map({ time - $0 <= fingerSpread }) ?? true else { rejection = .liftSpread; return nil }
+                stroke.origins.count == stroke.peakCount
+            else {
+                rejection = .fingerCount
+                return nil
+            }
+            guard time - stroke.started >= minimumDuration, time - stroke.started <= maximumDuration else {
+                rejection = .duration
+                return nil
+            }
+            guard stroke.peakFrames >= 2, (stroke.peakEnded ?? time) - stroke.peakStarted >= minimumPeakDuration else {
+                rejection = .transientPeak
+                return nil
+            }
+            guard stroke.firstLift.map({ time - $0 <= fingerSpread }) ?? true else {
+                rejection = .liftSpread
+                return nil
+            }
             let sum = stroke.origins.values.reduce((x: Float(0), y: Float(0))) { ($0.x + $1.x, $0.y + $1.y) }
             origin = (sum.x / Float(stroke.peakCount), sum.y / Float(stroke.peakCount))
-            return Candidate(fingers: stroke.peakCount,
-                             durationMilliseconds: Int(((time - stroke.started) * 1000).rounded()),
-                             peakPressure: stroke.pressure)
+            return Candidate(
+                fingers: stroke.peakCount,
+                durationMilliseconds: Int(((time - stroke.started) * 1000).rounded()),
+                peakPressure: stroke.pressure)
         }
-        guard !needsNeutral else { if rejection == nil { rejection = .neutralRequired }; return nil }
+        guard !needsNeutral else {
+            if rejection == nil { rejection = .neutralRequired }
+            return nil
+        }
         var current = stroke ?? Stroke(started: time)
         let ids = Set(contacts.map(\.id))
         if !current.previousIDs.isSubset(of: ids), current.firstLift == nil { current.firstLift = time }
         if current.firstLift != nil, contacts.count > current.previousCount {
-            current.valid = false; if current.rejection == nil { current.rejection = .changedContacts }
+            current.valid = false
+            if current.rejection == nil { current.rejection = .changedContacts }
         }
         if contacts.count > current.peakCount {
             current.peakCount = contacts.count
@@ -140,9 +171,11 @@ nonisolated struct ShortContactRecognizer: Sendable {
         }
         for contact in contacts {
             if let origin = current.origins[contact.id] {
-                let dx = contact.x - origin.x, dy = contact.y - origin.y
+                let dx = contact.x - origin.x
+                let dy = contact.y - origin.y
                 if dx * dx + dy * dy > maximumTravel * maximumTravel {
-                    current.valid = false; if current.rejection == nil { current.rejection = .travel }
+                    current.valid = false
+                    if current.rejection == nil { current.rejection = .travel }
                 }
             } else {
                 if time - current.started > fingerSpread || current.firstLift != nil || current.origins.count >= 4 {

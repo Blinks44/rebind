@@ -1,6 +1,7 @@
 import Foundation
-import Testing
 import Synchronization
+import Testing
+
 @testable import rebind
 
 @MainActor struct ApplicationCommandsTests {
@@ -30,8 +31,10 @@ import Synchronization
             #expect(!matcher.handle(InputEvent(trigger: source, phase: phase), rules: rules, enabled: true).suppress)
             var decision = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: phase), rules: rules, enabled: true)
             if trigger.isPointerGesture {
-                decision = matcher.handle(InputEvent(trigger: source, modifiers: .control, phase: .drag,
-                    motion: .init(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
+                decision = matcher.handle(
+                    InputEvent(
+                        trigger: source, modifiers: .control, phase: .drag,
+                        motion: .init(deltaX: -50, deltaY: 0)), rules: rules, enabled: true)
             }
             #expect(decision.suppress && decision.action == action)
             if !trigger.isScroll { #expect(matcher.handle(InputEvent(trigger: source, phase: .up), rules: rules, enabled: true).suppress) }
@@ -46,7 +49,8 @@ import Synchronization
         try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
         let info = contents.appending(path: "Info.plist")
         func writeBundle(_ id: String) throws {
-            let bytes = try PropertyListSerialization.data(fromPropertyList: ["CFBundleIdentifier": id, "CFBundlePackageType": "APPL"], format: .xml, options: 0)
+            let bytes = try PropertyListSerialization.data(
+                fromPropertyList: ["CFBundleIdentifier": id, "CFBundlePackageType": "APPL"], format: .xml, options: 0)
             try bytes.write(to: info)
         }
         try writeBundle("org.example.app")
@@ -57,20 +61,26 @@ import Synchronization
         let settingsURL = directory.appending(path: "Settings.app", directoryHint: .isDirectory)
         let settingsContents = settingsURL.appending(path: "Contents", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: settingsContents, withIntermediateDirectories: true)
-        let settingsBytes = try PropertyListSerialization.data(fromPropertyList:
-            ["CFBundleIdentifier": "com.apple.systempreferences", "CFBundlePackageType": "APPL"], format: .xml, options: 0)
+        let settingsBytes = try PropertyListSerialization.data(
+            fromPropertyList: ["CFBundleIdentifier": "com.apple.systempreferences", "CFBundlePackageType": "APPL"], format: .xml, options: 0
+        )
         try settingsBytes.write(to: settingsContents.appending(path: "Info.plist"))
         let settings = ApplicationTarget(url: settingsURL, bundleIdentifier: "com.apple.systempreferences")
-        #expect(WorkspacePreparation.prepare(.openSystemSettings, settingsApplication: { settingsURL }) == .application(settings, activateOnly: false))
+        #expect(
+            WorkspacePreparation.prepare(.openSystemSettings, settingsApplication: { settingsURL })
+                == .application(settings, activateOnly: false))
         #expect(WorkspacePreparation.prepare(.quitApplication(ApplicationTarget(url: url, bundleIdentifier: "org.example.other"))) == nil)
     }
 
     @Test(arguments: [true, false]) func quitRoutingChecksFinalGateAndReportsOnlyFailure(_ accepted: Bool) async throws {
         let (mailbox, _) = try queued(.quitApplication(app), target: .quitApplication(app))
         var calls = 0
-        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
-            Issue.record("Unrelated workspace action switched apps"); return .unavailable
-        },
+        let executor = WorkspaceActionExecutor(
+            mailbox: mailbox,
+            previousApplication: { _ in
+                Issue.record("Unrelated workspace action switched apps")
+                return .unavailable
+            },
             openApplication: { _ in Issue.record("Quit cold-launched an app") },
             quitApplication: { target, canPerform in
                 #expect(target == app && canPerform())
@@ -85,24 +95,29 @@ import Synchronization
 
     @Test(arguments: 0...7) func quitFinalGateCancelsWithoutLateError(_ change: Int) async throws {
         let (mailbox, _) = try queued(.quitApplication(app), target: .quitApplication(app))
-        let secure = Mutex(false), allowed = Mutex(true)
-        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
-            Issue.record("Unrelated workspace action switched apps"); return .unavailable
-        }, quitApplication: { _, canPerform in
-            #expect(canPerform())
-            switch change {
-            case 0: mailbox.configure(Configuration(isEnabled: false))
-            case 1: mailbox.configure(Configuration(isEnabled: true))
-            case 2: mailbox.setEditing(true)
-            case 3: mailbox.record(.init(target: .mouseTrigger))
-            case 4: mailbox.suspend(true)
-            case 5: mailbox.stop()
-            case 6: secure.withLock { $0 = true }
-            default: allowed.withLock { $0 = false }
-            }
-            #expect(!canPerform())
-            return .cancelled
-        }, secureInput: { secure.withLock { $0 } }, postingAllowed: { allowed.withLock { $0 } })
+        let secure = Mutex(false)
+        let allowed = Mutex(true)
+        let executor = WorkspaceActionExecutor(
+            mailbox: mailbox,
+            previousApplication: { _ in
+                Issue.record("Unrelated workspace action switched apps")
+                return .unavailable
+            },
+            quitApplication: { _, canPerform in
+                #expect(canPerform())
+                switch change {
+                case 0: mailbox.configure(Configuration(isEnabled: false))
+                case 1: mailbox.configure(Configuration(isEnabled: true))
+                case 2: mailbox.setEditing(true)
+                case 3: mailbox.record(.init(target: .mouseTrigger))
+                case 4: mailbox.suspend(true)
+                case 5: mailbox.stop()
+                case 6: secure.withLock { $0 = true }
+                default: allowed.withLock { $0 = false }
+                }
+                #expect(!canPerform())
+                return .cancelled
+            }, secureInput: { secure.withLock { $0 } }, postingAllowed: { allowed.withLock { $0 } })
         await executor.service()
         #expect(mailbox.state.withLock { $0.actionFailed == nil && $0.workspaceRequest == nil })
     }
@@ -110,12 +125,16 @@ import Synchronization
     @Test func settingsRoutesToNativeApplicationOpeningAndHandlesFailure() async throws {
         let (mailbox, _) = try queued(.openSystemSettings, target: .application(app, activateOnly: false))
         var calls: [URL] = []
-        let executor = WorkspaceActionExecutor(mailbox: mailbox, previousApplication: { _ in
-            Issue.record("Unrelated workspace action switched apps"); return .unavailable
-        }, openApplication: { url in
-            calls.append(url)
-            throw CommandTestError.rejected
-        }, openDocument: { _ in Issue.record("Settings used a URL scheme") }, secureInput: { false }, postingAllowed: { true })
+        let executor = WorkspaceActionExecutor(
+            mailbox: mailbox,
+            previousApplication: { _ in
+                Issue.record("Unrelated workspace action switched apps")
+                return .unavailable
+            },
+            openApplication: { url in
+                calls.append(url)
+                throw CommandTestError.rejected
+            }, openDocument: { _ in Issue.record("Settings used a URL scheme") }, secureInput: { false }, postingAllowed: { true })
         await executor.service()
         #expect(calls == [app.url])
         #expect(mailbox.state.withLock { $0.actionFailed == .workspace(.openSystemSettings) && !$0.emergencyPause })
@@ -136,8 +155,13 @@ import Synchronization
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let store = ConfigurationStore(url: directory.appending(path: "config.json"))
-        var old = Configuration(isEnabled: true, bindings: [.init(scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
-            action: .windowLayout(.leftHalf), activation: .hold, holdDurationMilliseconds: 1000)])
+        var old = Configuration(
+            isEnabled: true,
+            bindings: [
+                .init(
+                    scope: .allMice, trigger: .mouseButton(3), modifiers: .control,
+                    action: .windowLayout(.leftHalf), activation: .hold, holdDurationMilliseconds: 1000)
+            ])
         try old.createProfile(name: "Other", copying: old.selectedProfileID)
         old.schemaVersion = 16
         let bytes = try JSONEncoder().encode(old)
@@ -162,7 +186,10 @@ import Synchronization
     private func queued(_ action: WorkspaceAction, target: WorkspaceTarget) throws -> (EngineMailbox, WorkspaceRequest) {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true))
-        mailbox.state.withLock { $0.status = .active; $0.pending = [.workspace(action)] }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.pending = [.workspace(action)]
+        }
         let dispatch = try #require(mailbox.nextAction())
         let request = WorkspaceRequest(dispatch: dispatch, target: target)
         mailbox.submitWorkspace(request)

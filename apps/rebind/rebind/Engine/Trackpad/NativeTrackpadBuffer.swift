@@ -21,25 +21,40 @@ nonisolated struct NativeTrackpadFrame: Sendable {
 
     // Native memory validity/ABI remains a private-framework hardware assumption.
     // Validate the count before reading anything, including a nil/zero data pointer.
-    static func read(_ data: UnsafeRawPointer?, count: Int32, receipt: UInt64,
-                     revision: UInt64, activity: UInt64,
-                     callbackFrame: Int32? = nil, callbackTime: Double? = nil) -> Self {
+    static func read(
+        _ data: UnsafeRawPointer?, count: Int32, receipt: UInt64,
+        revision: UInt64, activity: UInt64,
+        callbackFrame: Int32? = nil, callbackTime: Double? = nil
+    ) -> Self {
         var result = Self(receipt: receipt, revision: revision, activity: activity)
-        guard (0...16).contains(count), count == 0 || data != nil else { result.valid = false; return result }
+        guard (0...16).contains(count), count == 0 || data != nil else {
+            result.valid = false
+            return result
+        }
         // The callback has timing even when its contact array is empty. Use one
         // native clock/frame sequence for both contact and zero-contact frames;
         // local receipt time still independently bounds consumer staleness.
         if callbackFrame != nil || callbackTime != nil {
             guard let callbackFrame, let callbackTime, callbackTime.isFinite,
-                  callbackTime >= 0 else { result.valid = false; return result }
+                callbackTime >= 0
+            else {
+                result.valid = false
+                return result
+            }
             result.frame = callbackFrame
             result.time = callbackTime
         }
         guard count > 0, let data else { return result }
         let frame = data.loadUnaligned(as: Int32.self)
         let time = data.loadUnaligned(fromByteOffset: 8, as: Double.self)
-        if callbackFrame == nil { result.frame = frame; result.time = time }
-        guard time.isFinite, time >= 0 else { result.valid = false; return result }
+        if callbackFrame == nil {
+            result.frame = frame
+            result.time = time
+        }
+        guard time.isFinite, time >= 0 else {
+            result.valid = false
+            return result
+        }
         for index in 0..<Int(count) {
             let pointer = data.advanced(by: index * 96)
             let state = pointer.loadUnaligned(fromByteOffset: 20, as: Int32.self)
@@ -48,14 +63,22 @@ nonisolated struct NativeTrackpadFrame: Sendable {
             let y = pointer.loadUnaligned(fromByteOffset: 36, as: Float.self)
             let pressure = pointer.loadUnaligned(fromByteOffset: 52, as: Float.self)
             guard pointer.loadUnaligned(as: Int32.self) == frame,
-                  pointer.loadUnaligned(fromByteOffset: 8, as: Double.self) == time,
-                  (0...7).contains(state), x.isFinite, y.isFinite, (0...1).contains(x), (0...1).contains(y),
-                  pressure.isFinite, pressure >= 0 else { result.valid = false; return result }
+                pointer.loadUnaligned(fromByteOffset: 8, as: Double.self) == time,
+                (0...7).contains(state), x.isFinite, y.isFinite, (0...1).contains(x), (0...1).contains(y),
+                pressure.isFinite, pressure >= 0
+            else {
+                result.valid = false
+                return result
+            }
             // Same making/touching filter as the verified standalone probe.
             guard state == 3 || state == 4 else { continue }
             guard result.count < 4,
-                  result.first?.id != id, result.second?.id != id,
-                  result.third?.id != id, result.fourth?.id != id else { result.valid = false; return result }
+                result.first?.id != id, result.second?.id != id,
+                result.third?.id != id, result.fourth?.id != id
+            else {
+                result.valid = false
+                return result
+            }
             let contact = ShortContactRecognizer.Contact(id: id, x: x, y: y, pressure: pressure)
             switch result.count {
             case 0: result.first = contact
@@ -87,7 +110,9 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         mutating func clear() {
             generation &+= 1
             for index in frames.indices { frames[index] = nil }
-            head = 0; count = 0; overflow = false
+            head = 0
+            count = 0
+            overflow = false
         }
 
         /// Publishes a copied frame only into the queue generation that admitted its callback.
@@ -96,7 +121,11 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
             // Quarantine this discontinuous stream until the consumer has
             // acknowledged the loss and cancelled its recognition state.
             guard !overflow else { return }
-            guard count < frames.count else { clear(); overflow = true; return }
+            guard count < frames.count else {
+                clear()
+                overflow = true
+                return
+            }
             frames[(head + count) % frames.count] = frame
             count += 1
         }
@@ -115,15 +144,19 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
         self.isMagicMouse = isMagicMouse
     }
 
-    func receive(_ data: UnsafeRawPointer?, count: Int32,
-                 callbackFrame: Int32? = nil, callbackTime: Double? = nil) {
+    func receive(
+        _ data: UnsafeRawPointer?, count: Int32,
+        callbackFrame: Int32? = nil, callbackTime: Double? = nil
+    ) {
         let receipt = DispatchTime.now().uptimeNanoseconds
-        guard let (generation, wake) = state.withLock({ state -> (UInt64, (@Sendable () -> Void)?)? in
-            guard state.accepting else { return nil }
-            state.lastReceipt = receipt
-            defer { state.sleeping = false }
-            return (state.generation, state.sleeping ? state.wake : nil)
-        }) else { return }
+        guard
+            let (generation, wake) = state.withLock({ state -> (UInt64, (@Sendable () -> Void)?)? in
+                guard state.accepting else { return nil }
+                state.lastReceipt = receipt
+                defer { state.sleeping = false }
+                return (state.generation, state.sleeping ? state.wake : nil)
+            })
+        else { return }
         // Only the first frame after a quiet period; it schedules a poll, nothing more.
         wake?()
         let snapshot = mailbox.state.withLock { state -> (UInt64, UInt64)? in
@@ -131,10 +164,12 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
             return (state.actionRevision, isMagicMouse ? state.magicMouseActivity : state.inputActivity)
         }
         guard let snapshot else { return }
-        let frame = NativeTrackpadFrame.read(data, count: count, receipt: receipt,
-                                            revision: snapshot.0, activity: snapshot.1,
-                                            callbackFrame: callbackFrame, callbackTime: callbackTime)
-        let magic = isMagicTrackpad, force = reportsForce
+        let frame = NativeTrackpadFrame.read(
+            data, count: count, receipt: receipt,
+            revision: snapshot.0, activity: snapshot.1,
+            callbackFrame: callbackFrame, callbackTime: callbackTime)
+        let magic = isMagicTrackpad
+        let force = reportsForce
         if isMagicMouse {
             // Stop/restart may retire an admitted callback while it copies native memory.
             // This lock order is buffer -> mailbox; lifecycle operations never nest them.
@@ -147,14 +182,20 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
             }
         } else {
             mailbox.state.withLock {
-                magic ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
+                magic
+                    ? $0.magicTrackpadClicks.observe(frame, reportsForce: force)
                     : $0.trackpadClicks.observe(frame, reportsForce: force)
             }
         }
         state.withLock { $0.append(frame, generation: generation) }
     }
 
-    func setAccepting(_ accepting: Bool) { state.withLock { $0.clear(); $0.accepting = accepting } }
+    func setAccepting(_ accepting: Bool) {
+        state.withLock {
+            $0.clear()
+            $0.accepting = accepting
+        }
+    }
     func setWake(_ wake: @escaping @Sendable () -> Void) { state.withLock { $0.wake = wake } }
 
     /// Marks the buffer sleeping when nothing is waiting and no frame arrived since `cutoff`;
@@ -166,7 +207,13 @@ nonisolated final class NativeTrackpadBuffer: Sendable {
             return true
         }
     }
-    func takeOverflow() -> Bool { state.withLock { let result = $0.overflow; $0.overflow = false; return result } }
+    func takeOverflow() -> Bool {
+        state.withLock {
+            let result = $0.overflow
+            $0.overflow = false
+            return result
+        }
+    }
     func pop() -> NativeTrackpadFrame? {
         state.withLock {
             guard $0.count > 0 else { return nil }

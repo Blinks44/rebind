@@ -1,6 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct TrackpadSingleTapTests {
@@ -9,20 +10,25 @@ struct TrackpadSingleTapTests {
     private let fourOutput = KeyboardShortcut(keyCode: 13, modifiers: .command)
 
     private func binding(_ tap: TrackpadSingleTap) -> rebind.Binding {
-        .init(scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
-              action: .shortcut(tap == .threeFinger ? threeOutput : fourOutput))
+        .init(
+            scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
+            action: .shortcut(tap == .threeFinger ? threeOutput : fourOutput))
     }
 
     private func mailbox(_ taps: [TrackpadSingleTap] = TrackpadSingleTap.allCases) -> EngineMailbox {
         let mailbox = EngineMailbox()
         mailbox.configure(Configuration(isEnabled: true, bindings: taps.map(binding)))
-        mailbox.state.withLock { $0.status = .active; $0.foregroundPID = 100 }
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+        }
         return mailbox
     }
 
     private func frame(_ id: Int32, count: Int, at time: UInt64, runtime: TrackpadRuntime) -> NativeTrackpadFrame {
-        var frame = NativeTrackpadFrame(receipt: time, revision: runtime.revision, activity: runtime.inputActivity,
-                                        frame: id, time: Double(time) / 1_000_000_000, count: count)
+        var frame = NativeTrackpadFrame(
+            receipt: time, revision: runtime.revision, activity: runtime.inputActivity,
+            frame: id, time: Double(time) / 1_000_000_000, count: count)
         if count > 0 { frame.first = .init(id: 0, x: 0.2, y: 0.5, pressure: 45) }
         if count > 1 { frame.second = .init(id: 1, x: 0.3, y: 0.5, pressure: 45) }
         if count > 2 { frame.third = .init(id: 2, x: 0.4, y: 0.5, pressure: 45) }
@@ -30,8 +36,10 @@ struct TrackpadSingleTapTests {
         return frame
     }
 
-    private func complete(_ session: inout TrackpadTapSession, fingers: Int, at end: UInt64,
-                          runtime: TrackpadRuntime, firstID: Int32 = 0) {
+    private func complete(
+        _ session: inout TrackpadTapSession, fingers: Int, at end: UInt64,
+        runtime: TrackpadRuntime, firstID: Int32 = 0
+    ) {
         for (offset, count) in [0, fingers, fingers, 0].enumerated() {
             let time = end - UInt64(3 - offset) * 20_000_000
             session.consume(frame(firstID + Int32(offset), count: count, at: time, runtime: runtime), at: time)
@@ -71,12 +79,17 @@ struct TrackpadSingleTapTests {
         buffer.setAccepting(true)
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         let outputs = Mutex<[KeyboardShortcut]>([])
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { shortcut, target, canPerform in
                 #expect(target.pid == 100 && canPerform())
                 outputs.withLock { $0.append(shortcut) }
                 return .performed
-            }, sendShortcut: { _ in Issue.record("Touch used global output"); return false },
+            },
+            sendShortcut: { _ in
+                Issue.record("Touch used global output")
+                return false
+            },
             secureInput: { false }, postingAllowed: { true })
         for (index, tap) in [TrackpadSingleTap.threeFinger, .fourFinger, .threeFinger].enumerated() {
             let end = lift + UInt64(index) * 1_000_000_000
@@ -100,17 +113,21 @@ struct TrackpadSingleTapTests {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         complete(&session, fingers: tap.rawValue, at: lift, runtime: runtime)
         switch cause {
-        case 0: runtime.inputActivity += 1; session.update(runtime: runtime, foreground: 100)
+        case 0:
+            runtime.inputActivity += 1
+            session.update(runtime: runtime, foreground: 100)
         case 1: session.update(runtime: runtime, foreground: 101)
-        case 2: runtime.revision += 1; session.update(runtime: runtime, foreground: 100)
+        case 2:
+            runtime.revision += 1
+            session.update(runtime: runtime, foreground: 100)
         case 3: buffer.state.withLock { $0.overflow = true }
         case 4: buffer.setAccepting(false)
         case 5:
             var invalid = frame(4, count: 0, at: lift + 20_000_000, runtime: runtime)
             invalid.valid = false
             session.consume(invalid, at: invalid.receipt)
-        case 6: session.interrupt() // protected context, pause or capture loss
-        default: break // busy consumer: missed the maximum-lateness deadline
+        case 6: session.interrupt()  // protected context, pause or capture loss
+        default: break  // busy consumer: missed the maximum-lateness deadline
         }
         let poll = lift + (cause == 7 ? 160_000_001 : 60_000_000)
         #expect(session.takeReadyTap(from: buffer, at: poll) == nil)
@@ -130,7 +147,10 @@ struct TrackpadSingleTapTests {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         complete(&session, fingers: tap.rawValue, at: lift, runtime: runtime)
         let contact = frame(4, count: tap.rawValue, at: lift + 20_000_000, runtime: runtime)
-        buffer.state.withLock { $0.frames[0] = contact; $0.count = 1 }
+        buffer.state.withLock {
+            $0.frames[0] = contact
+            $0.count = 1
+        }
         #expect(session.takeReadyTap(from: buffer, at: lift + 60_000_000) == nil)
         session.consumeBufferedFrames(from: buffer, clock: { lift + 60_000_000 })
         #expect(session.takeReadyTap(from: buffer, at: lift + 70_000_000) == nil)
@@ -145,7 +165,8 @@ struct TrackpadSingleTapTests {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         complete(&session, fingers: tap.rawValue, at: lift, runtime: runtime)
         #expect(session.takeReadyTap(from: buffer, at: lift + delay - 1) == nil)
-        var next = runtime; next.inputActivity += 1
+        var next = runtime
+        next.inputActivity += 1
         session.update(runtime: next, foreground: 100)
         #expect(session.takeReadyTap(from: buffer, at: lift + 60_000_000) == nil)
     }
@@ -171,7 +192,8 @@ struct TrackpadSingleTapTests {
     }
 
     @Test func disabledAndInactiveProfileRulesDoNotArmCapture() throws {
-        var disabled = binding(.threeFinger); disabled.isEnabled = false
+        var disabled = binding(.threeFinger)
+        disabled.isEnabled = false
         var config = Configuration(isEnabled: true, bindings: [disabled])
         config.profiles.append(RuleProfile(name: "Inactive", bindings: [binding(.threeFinger), binding(.fourFinger)]))
         let mailbox = EngineMailbox()
@@ -235,8 +257,9 @@ struct TrackpadSingleTapTests {
         for index in 0...(longContact ? 24 : 3) {
             let end = longContact ? 24 : 3
             let time = lift + UInt64(index) * 20_000_000
-            var value = frame(Int32(index), count: index == 0 || index == end ? 0 : tap.rawValue,
-                              at: time, runtime: runtime)
+            var value = frame(
+                Int32(index), count: index == 0 || index == end ? 0 : tap.rawValue,
+                at: time, runtime: runtime)
             if !longContact && index == 2 { value.first = .init(id: 0, x: 0.4, y: 0.5, pressure: 45) }
             session.consume(value, at: time)
         }
@@ -248,7 +271,8 @@ struct TrackpadSingleTapTests {
         let mailbox = mailbox()
         let runtime = try #require(mailbox.trackpadRuntime())
         let calls = Mutex(0)
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
             sendTrackpadShortcut: { _, _, canPerform in
                 calls.withLock { $0 += 1 }
                 #expect(canPerform())

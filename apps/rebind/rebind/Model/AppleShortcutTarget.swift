@@ -18,8 +18,9 @@ nonisolated struct AppleShortcutTarget: Codable, Equatable, Hashable, Identifiab
         var identifiers = Set<UUID>()
         for line in text.split(separator: "\n", omittingEmptySubsequences: true) {
             guard targets.count < 4096, line.hasSuffix(")"),
-                  let suffix = line.range(of: " (", options: .backwards),
-                  let id = UUID(uuidString: String(line[suffix.upperBound..<line.index(before: line.endIndex)])) else {
+                let suffix = line.range(of: " (", options: .backwards),
+                let id = UUID(uuidString: String(line[suffix.upperBound..<line.index(before: line.endIndex)]))
+            else {
                 throw ListError.invalidOutput
             }
             let target = Self(id: id, name: String(line[..<suffix.lowerBound]))

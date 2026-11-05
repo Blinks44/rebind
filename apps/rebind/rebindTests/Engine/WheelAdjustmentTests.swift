@@ -1,12 +1,15 @@
 import CoreGraphics
 import Foundation
 import Testing
+
 @testable import rebind
 
 @MainActor struct WheelAdjustmentTests {
     private func wheel(vertical: Int32, horizontal: Int32 = 0) throws -> CGEvent {
-        try #require(CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
-                             wheel1: vertical, wheel2: horizontal, wheel3: 0))
+        try #require(
+            CGEvent(
+                scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
+                wheel1: vertical, wheel2: horizontal, wheel3: 0))
     }
 
     @Test func aSteppedWheelEventIsReversedAndMultipliedOnBothAxes() throws {
@@ -32,8 +35,10 @@ import Testing
     @Test func aContinuousWheelWithoutPhaseIsReversed() throws {
         // A high-resolution wheel (such as an MX Master without Logitech software) arrives as
         // continuous pixel scrolling with no gesture phase.
-        let wheel = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
-                                         wheel1: 12, wheel2: 0, wheel3: 0))
+        let wheel = try #require(
+            CGEvent(
+                scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
+                wheel1: 12, wheel2: 0, wheel3: 0))
         #expect(wheel.getIntegerValueField(.scrollWheelEventIsContinuous) == 1)
         let before = wheel.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
         ScrollEventAdapter.adjust(wheel, by: WheelAdjustment(reverses: true, multiplier: 2))
@@ -43,8 +48,10 @@ import Testing
 
     @Test(arguments: [CGEventField.scrollWheelEventScrollPhase, .scrollWheelEventMomentumPhase])
     func trackpadAndMomentumScrollingIsNeverChanged(_ phase: CGEventField) throws {
-        let trackpad = try #require(CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
-                                            wheel1: 12, wheel2: 0, wheel3: 0))
+        let trackpad = try #require(
+            CGEvent(
+                scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
+                wheel1: 12, wheel2: 0, wheel3: 0))
         trackpad.setIntegerValueField(phase, value: 2)
         let before = trackpad.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
         ScrollEventAdapter.adjust(trackpad, by: WheelAdjustment(reverses: true, multiplier: 2))
@@ -65,8 +72,11 @@ import Testing
         configuration.mouseWheelSpeed = .fast
         mailbox.configure(configuration)
         #expect(mailbox.wheelAdjustment == WheelAdjustment(reverses: true, multiplier: 2))
-        configuration.excludedApplications = [ExcludedApplication(target: ApplicationTarget(
-            url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))]
+        configuration.excludedApplications = [
+            ExcludedApplication(
+                target: ApplicationTarget(
+                    url: URL(filePath: "/Applications/Game.app"), bundleIdentifier: "com.example.game"))
+        ]
         mailbox.configure(configuration)
         mailbox.setForegroundApplication("com.example.game")
         #expect(mailbox.wheelAdjustment == nil)
@@ -79,14 +89,19 @@ import Testing
     }
 
     @Test func theSupportReportHasCountsAndStatesButNoRuleContent() throws {
-        let store = ConfigurationStore(url: FileManager.default.temporaryDirectory
-            .appending(path: "RebindReport-\(UUID())").appending(path: "config.json"))
+        let store = ConfigurationStore(
+            url: FileManager.default.temporaryDirectory
+                .appending(path: "RebindReport-\(UUID())").appending(path: "config.json"))
         defer { try? FileManager.default.removeItem(at: store.url.deletingLastPathComponent()) }
         var secret = rebind.Binding(scope: .allKeyboards, trigger: .key(0), modifiers: .command, action: .text("my secret snippet"))
         secret.note = "private note"
-        let app = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-            action: .workspace(.openApplication(ApplicationTarget(url: URL(filePath: "/Applications/Secret.app"),
-                                                                  bundleIdentifier: "com.example.secret"))))
+        let app = rebind.Binding(
+            scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+            action: .workspace(
+                .openApplication(
+                    ApplicationTarget(
+                        url: URL(filePath: "/Applications/Secret.app"),
+                        bundleIdentifier: "com.example.secret"))))
         try store.save(Configuration(bindings: [secret, app]))
         let report = AppModel(store: store).supportReport(system: "Version 27.0")
         #expect(report.contains("macOS: Version 27.0"))

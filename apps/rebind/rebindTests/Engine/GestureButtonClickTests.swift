@@ -1,16 +1,20 @@
 import Testing
+
 @testable import rebind
 
 /// A button that carries pointer gestures still clicks when it is released without movement.
 struct GestureButtonClickTests {
-    private let gesture = rebind.Binding(scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
-                                         action: .shortcut(.init(keyCode: 123, modifiers: .control)))
-    private let press = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [],
-                                       action: .shortcut(.init(keyCode: 33, modifiers: .command)))
+    private let gesture = rebind.Binding(
+        scope: .allMice, trigger: .mouseGesture(button: 3, direction: .left), modifiers: [],
+        action: .shortcut(.init(keyCode: 123, modifiers: .control)))
+    private let press = rebind.Binding(
+        scope: .allMice, trigger: .mouseButton(3), modifiers: [],
+        action: .shortcut(.init(keyCode: 33, modifiers: .command)))
 
     private func event(_ phase: InputEvent.Phase, at time: UInt64, dx: Int64 = 0) -> InputEvent {
-        InputEvent(trigger: .mouseButton(3), phase: phase, timestamp: time, receivedAt: time,
-                   motion: phase == .drag ? PointerMotion(deltaX: dx, deltaY: 0) : nil)
+        InputEvent(
+            trigger: .mouseButton(3), phase: phase, timestamp: time, receivedAt: time,
+            motion: phase == .drag ? PointerMotion(deltaX: dx, deltaY: 0) : nil)
     }
 
     @Test func clickWithoutMovementRunsThePressRuleOnRelease() throws {
@@ -20,7 +24,8 @@ struct GestureButtonClickTests {
         #expect(rules.count == 2)
         var matcher = InputMatcher()
         #expect(matcher.handle(event(.down, at: 1_000), rules: rules, enabled: true) == MatchDecision(suppress: true))
-        #expect(matcher.handle(event(.up, at: 90_000_000), rules: rules, enabled: true)
+        #expect(
+            matcher.handle(event(.up, at: 90_000_000), rules: rules, enabled: true)
                 == MatchDecision(suppress: true, action: press.action))
         #expect(!matcher.hasSuppressedInput)
     }
@@ -38,7 +43,8 @@ struct GestureButtonClickTests {
         let rules = InputMatcher.compile([gesture])
         var matcher = InputMatcher()
         _ = matcher.handle(event(.down, at: 1_000), rules: rules, enabled: true)
-        #expect(matcher.handle(event(.up, at: 90_000_000), rules: rules, enabled: true)
+        #expect(
+            matcher.handle(event(.up, at: 90_000_000), rules: rules, enabled: true)
                 == MatchDecision(suppress: true, action: .mouse(.backClick)))
     }
 

@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 import Synchronization
 import Testing
+
 @testable import rebind
 
 struct CatalogActionTests {
@@ -58,9 +59,13 @@ struct CatalogActionTests {
         mailbox.configure(Configuration(isEnabled: true, bindings: [binding]))
         mailbox.state.withLock { $0.status = .active }
         let typed = Mutex<[String]>([])
-        let worker = ActionWorker(mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
-                                  performText: { text, _ in typed.withLock { $0.append(text) }; return .performed },
-                                  secureInput: { false }, postingAllowed: { true })
+        let worker = ActionWorker(
+            mailbox: mailbox, capabilities: { AudioOutputCapabilities() },
+            performText: { text, _ in
+                typed.withLock { $0.append(text) }
+                return .performed
+            },
+            secureInput: { false }, postingAllowed: { true })
         #expect(mailbox.handle(InputEvent(trigger: .mouseButton(3), phase: .down), secureInput: false))
         worker.service(at: 0)
         #expect(typed.withLock { $0 } == ["Hi"])
@@ -78,10 +83,12 @@ struct CatalogActionTests {
         var allowed = true
         var posted: [CGEventType] = []
         let text = String(repeating: "a", count: 100)
-        let result = TextSender.perform(text, canPerform: { allowed }, post: {
-            posted.append($0.type)
-            allowed = false
-        })
+        let result = TextSender.perform(
+            text, canPerform: { allowed },
+            post: {
+                posted.append($0.type)
+                allowed = false
+            })
         #expect(result == .cancelled)
         #expect(posted == [.keyDown, .keyUp])
     }

@@ -1,13 +1,15 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct TrackpadDoubleTapPersistenceTests {
     private let doubles: [InputTrigger] = [.threeFingerDoubleTap, .fourFingerDoubleTap, .twoFingerDoubleTap]
 
     private func binding(_ trigger: InputTrigger) -> rebind.Binding {
-        .init(scope: .builtInTrackpad, trigger: trigger, modifiers: [],
-              action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+        .init(
+            scope: .builtInTrackpad, trigger: trigger, modifiers: [],
+            action: .shortcut(.init(keyCode: 13, modifiers: .command)))
     }
 
     @Test func allDoubleRulesRoundTripWithoutColliding() throws {

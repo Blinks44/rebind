@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct AppShortContactTests {
@@ -13,8 +14,9 @@ struct AppShortContactTests {
             _ = recognizer.consume(frame: 0, time: 0, contacts: [])
             _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(4))
             _ = recognizer.consume(frame: 2, time: 0.03, contacts: contacts(changedContacts ? 3 : 4))
-            _ = recognizer.consume(frame: 3, time: 0.05,
-                                   contacts: contacts(4, offset: changedContacts ? 0 : 0.06))
+            _ = recognizer.consume(
+                frame: 3, time: 0.05,
+                contacts: contacts(4, offset: changedContacts ? 0 : 0.06))
             let candidate = recognizer.consume(frame: 4, time: 0.07, contacts: [])
             #expect(candidate == nil)
             #expect(recognizer.rejection == (changedContacts ? .changedContacts : .travel))
@@ -57,8 +59,9 @@ struct AppShortContactTests {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         for (index, count) in [1, 2, 3, 4, 4, 3, 1].enumerated() {
-            let candidate = recognizer.consume(frame: Int32(index + 1), time: Double(index + 1) * 0.02,
-                                               contacts: contacts(count))
+            let candidate = recognizer.consume(
+                frame: Int32(index + 1), time: Double(index + 1) * 0.02,
+                contacts: contacts(count))
             #expect(candidate == nil)
         }
         let result = recognizer.consume(frame: 8, time: 0.16, contacts: [])
@@ -80,11 +83,13 @@ struct AppShortContactTests {
             var recognizer = ShortContactRecognizer()
             _ = recognizer.consume(frame: 0, time: 0, contacts: [])
             for frame in 1...22 {
-                _ = recognizer.consume(frame: Int32(frame), time: Double(frame) * 0.02,
-                                       contacts: contacts(3, offset: moving ? 0.06 : 0))
+                _ = recognizer.consume(
+                    frame: Int32(frame), time: Double(frame) * 0.02,
+                    contacts: contacts(3, offset: moving ? 0.06 : 0))
                 if moving {
-                    _ = recognizer.consume(frame: Int32(frame + 1), time: Double(frame + 1) * 0.02,
-                                           contacts: contacts(3))
+                    _ = recognizer.consume(
+                        frame: Int32(frame + 1), time: Double(frame + 1) * 0.02,
+                        contacts: contacts(3))
                     break
                 }
             }
@@ -120,8 +125,9 @@ struct AppShortContactTests {
             _ = recognizer.consume(frame: 0, time: 0, contacts: [])
             _ = recognizer.consume(frame: 1, time: 0.01, contacts: contacts(3))
             if scenario == 3 { recognizer.interrupt() }
-            _ = recognizer.consume(frame: scenario == 0 ? 3 : 2,
-                                   time: scenario == 1 ? 0.005 : (scenario == 2 ? 0.1 : 0.03), contacts: contacts(3))
+            _ = recognizer.consume(
+                frame: scenario == 0 ? 3 : 2,
+                time: scenario == 1 ? 0.005 : (scenario == 2 ? 0.1 : 0.03), contacts: contacts(3))
             let endedFrame: Int32 = scenario == 0 ? 4 : 3
             let endedTime = scenario == 2 ? 0.12 : 0.05
             let candidate = recognizer.consume(frame: endedFrame, time: endedTime, contacts: [])
@@ -216,14 +222,15 @@ struct AppShortContactTests {
         let counts = [1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 2, 2, 1, 1, 0]
         var candidate: ShortContactRecognizer.Candidate?
         for (index, count) in counts.enumerated() {
-            candidate = recognizer.consume(frame: Int32(index + 1), time: Double(index + 1) * 0.02,
-                                           contacts: contacts(count, offset: index >= 8 ? 0.03 : 0))
+            candidate = recognizer.consume(
+                frame: Int32(index + 1), time: Double(index + 1) * 0.02,
+                contacts: contacts(count, offset: index >= 8 ? 0.03 : 0))
             if index < counts.count - 1 { #expect(candidate == nil) }
         }
         #expect(candidate?.fingers == 4 && candidate?.durationMilliseconds == 320)
     }
 
-    @Test func OpposingFingerMovementCannotHideBehindAStableCentroid() {
+    @Test func opposingFingerMovementCannotHideBehindAStableCentroid() {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         _ = recognizer.consume(frame: 1, time: 0.02, contacts: contacts(4))
@@ -239,8 +246,9 @@ struct AppShortContactTests {
         var recognizer = ShortContactRecognizer()
         _ = recognizer.consume(frame: 0, time: 0, contacts: [])
         for index in 1...11 {
-            _ = recognizer.consume(frame: Int32(index), time: Double(index) * 0.02,
-                                   contacts: contacts(index < 3 ? 4 : 3))
+            _ = recognizer.consume(
+                frame: Int32(index), time: Double(index) * 0.02,
+                contacts: contacts(index < 3 ? 4 : 3))
         }
         let candidate = recognizer.consume(frame: 12, time: 0.24, contacts: [])
         #expect(candidate == nil)

@@ -1,14 +1,18 @@
 import AppKit
 import ApplicationServices
 import Testing
+
 @testable import rebind
 
 struct ScreenLockSessionTests {
     @Test(arguments: 0...8) func onlyKnownUnlockedConsoleSessionAllowsInput(_ scenario: Int) {
-        let onConsole = kCGSessionOnConsoleKey as String, locked = "CGSSessionScreenIsLocked"
-        let sessions: [[String: Any]?] = [nil, [:], [onConsole: true], [onConsole: true, locked: false],
+        let onConsole = kCGSessionOnConsoleKey as String
+        let locked = "CGSSessionScreenIsLocked"
+        let sessions: [[String: Any]?] = [
+            nil, [:], [onConsole: true], [onConsole: true, locked: false],
             [onConsole: true, locked: true], [onConsole: false], [onConsole: 1],
-            [onConsole: true, locked: 0], [onConsole: true, locked: "false"]]
+            [onConsole: true, locked: 0], [onConsole: true, locked: "false"],
+        ]
         #expect(ScreenLockSession.allowsInput(session: sessions[scenario]) == (scenario == 2 || scenario == 3))
     }
 

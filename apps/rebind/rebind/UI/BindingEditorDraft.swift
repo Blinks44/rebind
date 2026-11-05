@@ -39,8 +39,10 @@ nonisolated struct BindingEditorDraft {
     }
 
     init(scope: DeviceScope, existing: Binding?) {
-        trigger = existing?.matchKey.pressSource
-            ?? (scope.isTrackpad ? MatchKey(trigger: .fourFingerTap, modifiers: [])
+        trigger =
+            existing?.matchKey.pressSource
+            ?? (scope.isTrackpad
+                ? MatchKey(trigger: .fourFingerTap, modifiers: [])
                 : scope == .magicMouse ? MatchKey(trigger: .magicMouseTap(fingers: 1), modifiers: []) : nil)
         output = existing?.action.shortcut
         activation = existing?.activation ?? .press
@@ -89,7 +91,8 @@ nonisolated struct BindingEditorDraft {
             trigger = input
         case .mouseTrigger, .gestureTrigger, .buttonScrollTrigger:
             guard scope == .allMice, recorded.request.target == mouseTarget,
-                  case .mouseButton = input.trigger, input.trigger.isSupported else { return }
+                case .mouseButton = input.trigger, input.trigger.isSupported
+            else { return }
             trigger = input
         case .scrollTrigger:
             guard scope == .allMice, mouseTarget == .scrollTrigger, case .scroll = input.trigger else { return }
@@ -115,17 +118,25 @@ nonisolated struct BindingEditorDraft {
             default: return nil
             }
         }
-        var binding = Binding(scope: scope, trigger: source, modifiers: trigger.modifiers, action: action,
+        var binding = Binding(
+            scope: scope, trigger: source, modifiers: trigger.modifiers, action: action,
             activation: source.isScroll || source.holdsButton ? .press : activation,
             holdDurationMilliseconds: holdDurationMilliseconds)
-        binding.holdsOutput = (holdsOutput || action.requiresHeldOutput) && binding.activation != .doublePress
+        binding.holdsOutput =
+            (holdsOutput || action.requiresHeldOutput) && binding.activation != .doublePress
             && source.canHoldOutput && action.canBeHeld
         binding.tapShortcut = binding.activation == .hold ? tapOutput : nil
         binding.application = ruleApplication
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
-        binding.note = trimmed.isEmpty ? nil : String(trimmed.prefix(Binding.maximumNoteLength))
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        if let existing { binding.id = existing.id; binding.isEnabled = existing.isEnabled }
+        binding.note =
+            trimmed.isEmpty
+            ? nil
+            : String(trimmed.prefix(Binding.maximumNoteLength))
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        if let existing {
+            binding.id = existing.id
+            binding.isEnabled = existing.isEnabled
+        }
         return binding
     }
 }

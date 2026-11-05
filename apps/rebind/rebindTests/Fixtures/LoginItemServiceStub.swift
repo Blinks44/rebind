@@ -1,4 +1,5 @@
 import Foundation
+
 @testable import rebind
 
 /// No native registration, System Settings opening or permission mutation.

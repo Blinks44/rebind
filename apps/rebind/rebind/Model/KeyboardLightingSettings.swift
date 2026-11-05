@@ -37,9 +37,10 @@ nonisolated struct KeyboardLightingSettings: Codable, Hashable, Sendable {
     /// A missing charge is unknown, not an empty battery. Charging and recovery restore the preference.
     func output(percentage: Int?, charging: Bool, supportsBlinking: Bool) -> Output {
         let low = isEnabled && percentage.map { (0..<10).contains($0) } == true && !charging && lowBattery != .keepColor
-        return Output(brightness: isEnabled ? (low ? min(brightness, 25) : brightness) : 0,
-                      color: low ? 0xFF0000 : color,
-                      breathing: low && lowBattery == .blinkingRed && supportsBlinking)
+        return Output(
+            brightness: isEnabled ? (low ? min(brightness, 25) : brightness) : 0,
+            color: low ? 0xFF0000 : color,
+            breathing: low && lowBattery == .blinkingRed && supportsBlinking)
     }
 
     struct Output: Equatable, Sendable {

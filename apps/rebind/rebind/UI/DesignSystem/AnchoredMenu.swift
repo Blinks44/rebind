@@ -17,17 +17,19 @@ struct AnchoredMenu<Label: View>: View {
         Button {
             let event = NSApp.currentEvent?.type
             requestMenu(restoreKeyboardFocus: event == .keyDown || event == .keyUp)
-        } label: { label }
-            .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
-            .background { MenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
-            .background { if drawsSurface { Color.clear.modifier(ControlSurface()) } }
-            .focused($focused)
-            .keyboardFocusRing(isFocused: focused)
-            .onKeyPress(.downArrow) {
-                guard isEnabled else { return .ignored }
-                requestMenu(restoreKeyboardFocus: true)
-                return .handled
-            }
+        } label: {
+            label
+        }
+        .buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance()))
+        .background { MenuAnchorView(view: anchorView).allowsHitTesting(false).accessibilityHidden(true) }
+        .background { if drawsSurface { Color.clear.modifier(ControlSurface()) } }
+        .focused($focused)
+        .keyboardFocusRing(isFocused: focused)
+        .onKeyPress(.downArrow) {
+            guard isEnabled else { return .ignored }
+            requestMenu(restoreKeyboardFocus: true)
+            return .handled
+        }
     }
 
     private func requestMenu(restoreKeyboardFocus: Bool) {

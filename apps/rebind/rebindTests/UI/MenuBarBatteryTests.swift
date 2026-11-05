@@ -1,12 +1,15 @@
 import AppKit
 import Testing
+
 @testable import rebind
 
 @MainActor struct MenuBarBatteryTests {
     private let rows: [(battery: DeviceBattery, name: String)] = [
         (DeviceBattery(id: "mouse", name: "MX Master 3S", kind: .mouse, percentage: 80, isCharging: true), "MX Master 3S"),
-        (DeviceBattery(id: "keyboard", name: "G915 TKL", kind: .keyboard, percentage: 10, isCharging: false),
-         String(repeating: "Клавиатура ", count: 6).trimmingCharacters(in: .whitespaces)),
+        (
+            DeviceBattery(id: "keyboard", name: "G915 TKL", kind: .keyboard, percentage: 10, isCharging: false),
+            String(repeating: "Клавиатура ", count: 6).trimmingCharacters(in: .whitespaces)
+        ),
     ]
 
     @Test(arguments: AppLanguage.allCases)
@@ -23,9 +26,13 @@ import Testing
                 window.setContentSize(NSSize(width: width + extra, height: 24))
                 view.layoutSubtreeIfNeeded()
                 #expect(abs(view.batteryImage.frame.maxX - (view.bounds.maxX - 14)) < 0.5)
-                #expect(view.levelLabel.alignmentRect(forFrame: view.levelLabel.frame).minX >= view.nameLabel.alignmentRect(forFrame: view.nameLabel.frame).maxX + 23.5)
+                #expect(
+                    view.levelLabel.alignmentRect(forFrame: view.levelLabel.frame).minX >= view.nameLabel.alignmentRect(
+                        forFrame: view.nameLabel.frame
+                    ).maxX + 23.5)
                 #expect(view.nameLabel.stringValue == row.name)
-                #expect(view.levelLabel.stringValue == AppLocalization.string(.batteryMenuLevel(row.battery.percentage), language: language))
+                #expect(
+                    view.levelLabel.stringValue == AppLocalization.string(.batteryMenuLevel(row.battery.percentage), language: language))
                 #expect(view.batteryImage.image != nil)
             }
             #expect(view.accessibilityRole() == .menuItem)

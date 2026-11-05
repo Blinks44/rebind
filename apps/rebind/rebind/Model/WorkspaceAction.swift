@@ -7,7 +7,9 @@ nonisolated struct ApplicationTarget: Codable, Equatable, Sendable {
     var isSupported: Bool {
         WorkspaceAction.isLocalFile(url) && url.pathExtension.lowercased() == "app"
             && !bundleIdentifier.isEmpty && bundleIdentifier.utf8.count <= 255
-            && !bundleIdentifier.unicodeScalars.contains { CharacterSet.whitespacesAndNewlines.contains($0) || CharacterSet.controlCharacters.contains($0) }
+            && !bundleIdentifier.unicodeScalars.contains {
+                CharacterSet.whitespacesAndNewlines.contains($0) || CharacterSet.controlCharacters.contains($0)
+            }
             && bundleIdentifier != "blinks44.rebind"
     }
 
@@ -22,7 +24,8 @@ extension ApplicationTarget {
     /// A user-picked application bundle, or nil when it is not an app Rebind can target.
     init?(bundleURL url: URL) {
         guard let bundle = Bundle(url: url), let identifier = bundle.bundleIdentifier,
-              bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL" else { return nil }
+            bundle.infoDictionary?["CFBundlePackageType"] as? String == "APPL"
+        else { return nil }
         self.init(url: url.standardizedFileURL, bundleIdentifier: identifier)
         guard isSupported else { return nil }
     }
@@ -65,10 +68,11 @@ nonisolated enum WorkspaceAction: Codable, Equatable, Sendable {
     static func webURL(_ text: String) -> URL? {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, text.utf8.count <= 8192,
-              !text.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }),
-              let url = URL(string: text, encodingInvalidCharacters: false),
-              let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme),
-              let host = url.host, !host.isEmpty, url.user == nil, url.password == nil else { return nil }
+            !text.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }),
+            let url = URL(string: text, encodingInvalidCharacters: false),
+            let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme),
+            let host = url.host, !host.isEmpty, url.user == nil, url.password == nil
+        else { return nil }
         return url
     }
 

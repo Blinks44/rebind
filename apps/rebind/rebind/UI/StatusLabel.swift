@@ -30,8 +30,11 @@ struct StatusLabel: View {
 
     private var statusText: some View {
         Text(status).font(Theme.calloutStrong)
-            .foregroundStyle(isWarning ? Theme.warningText
-                             : isVerified ? Theme.successText : Theme.textSecondary)
+            .foregroundStyle(
+                isWarning
+                    ? Theme.warningText
+                    : isVerified ? Theme.successText : Theme.textSecondary
+            )
             .fixedSize(horizontal: false, vertical: true)
     }
 }

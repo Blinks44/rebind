@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import XCTest
+
 @testable import rebind
 
 /// Local control specimens, without AppModel, storage or input capture.
@@ -36,7 +37,9 @@ import XCTest
                     OptionsMenu(label: .profileOptions) { Button("Fixture item") {} }
                     OptionsMenu(label: .profileOptions) { Button("Fixture item") {} }.disabled(true)
                     Text("Native plain reference")
-                    Menu { Button("Fixture item") {} } label: {
+                    Menu {
+                        Button("Fixture item") {}
+                    } label: {
                         Image(systemName: "ellipsis").font(.system(size: 13, weight: .bold))
                             .foregroundStyle(Theme.iconSecondary).frame(width: 28, height: 28)
                     }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
@@ -44,7 +47,8 @@ import XCTest
                 HStack(spacing: 24) {
                     Toggle("Enabled", isOn: $enabled).toggleStyle(ThemeSwitchStyle())
                     CircleIconButton(symbol: "plus", action: {})
-                    Button {} label: {
+                    Button {
+                    } label: {
                         Image(systemName: "xmark.circle.fill").font(.system(size: 15))
                             .foregroundStyle(Theme.iconTertiary).frame(width: 28, height: 28)
                     }.buttonStyle(KeyboardButtonStyle(KeyboardPlainAppearance())).keyboardFocusRing(Circle())
@@ -57,8 +61,9 @@ import XCTest
                 }
                 SettingsSectionPicker(selection: $section)
                 MenuSelector(selection: $section, title: .settingsTitle, choices: SettingsSection.allCases, label: { $0.title })
-                Banner(severity: .information, title: .touchNativeGestureTitle, message: .magicMouseOneFingerConflict,
-                       dismiss: {})
+                Banner(
+                    severity: .information, title: .touchNativeGestureTitle, message: .magicMouseOneFingerConflict,
+                    dismiss: {})
                 Spacer(minLength: 0)
             }.padding(28).frame(width: 740, height: 540).background { ThemeCanvas() }
         }

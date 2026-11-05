@@ -1,5 +1,5 @@
-import Synchronization
 import HIDPP
+import Synchronization
 
 /// A HID++ connection owns diversion until an acknowledged release, even when a refresh
 /// replaces its feature adapters or a companion app prevents further settings writes.

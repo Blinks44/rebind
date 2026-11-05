@@ -1,11 +1,13 @@
 import Foundation
 import Testing
+
 @testable import rebind
 
 struct TrackpadSingleTapPersistenceTests {
     private func binding(_ tap: TrackpadSingleTap) -> rebind.Binding {
-        .init(scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
-              action: .shortcut(.init(keyCode: 13, modifiers: .command)))
+        .init(
+            scope: .builtInTrackpad, trigger: tap.trigger, modifiers: [],
+            action: .shortcut(.init(keyCode: 13, modifiers: .command)))
     }
 
     @Test func bothPresetsRoundTripAndConflictsRemainIndependent() throws {

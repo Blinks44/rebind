@@ -7,7 +7,8 @@ nonisolated struct PointerMotion: Sendable {
     var deltaY: Int64
 
     static func from(_ event: CGEvent) -> Self {
-        Self(deltaX: event.getIntegerValueField(.mouseEventDeltaX),
-             deltaY: event.getIntegerValueField(.mouseEventDeltaY))
+        Self(
+            deltaX: event.getIntegerValueField(.mouseEventDeltaX),
+            deltaY: event.getIntegerValueField(.mouseEventDeltaY))
     }
 }
