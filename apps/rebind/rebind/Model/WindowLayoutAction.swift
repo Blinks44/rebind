@@ -1,5 +1,5 @@
 nonisolated enum WindowLayoutAction: String, Codable, CaseIterable, Hashable, Sendable {
-    case leftHalf, rightHalf, fill, center, fillWithStageManager
+    case leftHalf, rightHalf, fill, center, fillWithStageManager, fillCentered
     case topHalf, bottomHalf, topLeft, topRight, bottomLeft, bottomRight
     /// Moves the window to the next display, keeping its size where it fits.
     case nextDisplay

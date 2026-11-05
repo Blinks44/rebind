@@ -11,7 +11,7 @@ struct StandardActionTests {
         let kinds: [ActionKind] = [
             .spotlight, .forceQuitWindow, .emojiSymbols, .toggleDock, .hideOthers, .lookUp,
             .quitFrontApplication, .newWindow, .find, .reload, .save, .openApps, .fastForward, .rewind,
-            .toggleMicrophoneMute, .fillWindowWithStageManager,
+            .toggleMicrophoneMute, .fillWindowWithStageManager, .fillWindowCentered,
         ]
         for kind in kinds {
             #expect(NSImage(systemSymbolName: kind.symbol, accessibilityDescription: nil) != nil)
@@ -151,7 +151,7 @@ struct LeftInsetFillTests {
 
     @Test func fillNeedsOnlyDisplayGeometryEvenWithoutStageManagerMetadata() throws {
         let target = try #require(WindowLayoutGeometry.target(.fillWithStageManager, window: window, displays: [display]))
-        #expect(target.minX == 220)
+        #expect(target.minX == 244)
         #expect(target.minY == display.visibleFrame.minY && target.maxY == display.visibleFrame.maxY)
         #expect(target.maxX == display.visibleFrame.maxX)
         #expect(WindowLayoutGeometry.target(.fill, window: window, displays: [display]) == display.visibleFrame)
@@ -166,7 +166,7 @@ struct LeftInsetFillTests {
             WindowLayoutGeometry.target(
                 .fillWithStageManager,
                 window: CGRect(x: -1600, y: 0, width: 800, height: 600), displays: [display, external]))
-        #expect(target.minX == -1700)
+        #expect(target.minX == -1737)
         #expect(target.maxX == external.visibleFrame.maxX)
         #expect(target.minY == external.visibleFrame.minY && target.maxY == external.visibleFrame.maxY)
     }
@@ -174,11 +174,90 @@ struct LeftInsetFillTests {
     @Test func unsafeNarrowAreaAndFullScreenRemainUnavailable() {
         let narrow = WindowDisplay(
             frame: CGRect(x: 0, y: 0, width: 400, height: 800),
-            visibleFrame: CGRect(x: 0, y: 30, width: 400, height: 770))
+            visibleFrame: CGRect(x: 0, y: 30, width: 60, height: 770))
         #expect(
             WindowLayoutGeometry.target(
                 .fillWithStageManager,
                 window: CGRect(x: 20, y: 50, width: 300, height: 500), displays: [narrow]) == nil)
         #expect(WindowLayoutGeometry.target(.fillWithStageManager, window: display.frame, displays: [display]) == nil)
+    }
+}
+
+struct CenteredFillTests {
+    private let window = CGRect(x: 300, y: 100, width: 800, height: 600)
+
+    @Test(arguments: [CGFloat(0), 100, 300], [false, true])
+    func equalDisplayMarginsRespectEitherSideDock(_ dockWidth: CGFloat, _ dockOnRight: Bool) throws {
+        let frame = CGRect(x: -2560, y: -200, width: 2560, height: 1440)
+        let display = WindowDisplay(
+            frame: frame,
+            visibleFrame: CGRect(x: frame.minX + (dockOnRight ? 0 : dockWidth), y: -170, width: 2560 - dockWidth, height: 1329))
+        let original = CGRect(x: -1800, y: 0, width: 800, height: 600)
+        let target = try #require(WindowLayoutGeometry.target(.fillCentered, window: original, displays: [display]))
+        let margin = max(244, dockWidth)
+        #expect(target.minX - frame.minX == margin)
+        #expect(frame.maxX - target.maxX == margin)
+        #expect(target.minY == display.visibleFrame.minY && target.maxY == display.visibleFrame.maxY)
+        #expect(display.visibleFrame.contains(target))
+        #expect(WindowLayoutGeometry.target(.fillCentered, window: target, displays: [display]) == target)
+        let left = try #require(WindowLayoutGeometry.target(.fillWithStageManager, window: original, displays: [display]))
+        #expect(left.minX == target.minX || dockOnRight)
+        #expect(left.maxX == display.visibleFrame.maxX)
+    }
+
+    @Test func fillsHeightAndWidthWithoutChangingOrdinaryFillOrCenter() throws {
+        let display = WindowDisplay(
+            frame: CGRect(x: 0, y: 0, width: 2560, height: 1440),
+            visibleFrame: CGRect(x: 0, y: 30, width: 2560, height: 1329))
+        let target = try #require(WindowLayoutGeometry.target(.fillCentered, window: window, displays: [display]))
+        #expect(target == CGRect(x: 244, y: 30, width: 2072, height: 1329))
+        #expect(WindowLayoutGeometry.target(.fill, window: window, displays: [display]) == display.visibleFrame)
+        let centered = try #require(WindowLayoutGeometry.target(.center, window: window, displays: [display]))
+        #expect(centered.size == window.size)
+        #expect(centered.midX == display.visibleFrame.midX && centered.midY == display.visibleFrame.midY)
+        #expect(WindowLayoutGeometry.target(.fillCentered, window: display.frame, displays: [display]) == nil)
+    }
+
+    @Test(arguments: [CGFloat(0), 499, 500, 501])
+    func sideDockMustLeavePositiveCenteredWidth(_ dockWidth: CGFloat) {
+        let display = WindowDisplay(
+            frame: CGRect(x: 0, y: 0, width: 1000, height: 800),
+            visibleFrame: CGRect(x: dockWidth, y: 30, width: 1000 - dockWidth, height: 770))
+        let target = WindowLayoutGeometry.target(.fillCentered, window: CGRect(x: 10, y: 50, width: 100, height: 200), displays: [display])
+        #expect((target == nil) == (dockWidth >= 500))
+    }
+
+    @Test(arguments: [(CGFloat(1440), CGFloat(137)), (1920, 183), (2560, 244), (3840, 366), (5120, 488)])
+    func bothLayoutsUseTheSelectedDisplaysCalibratedProportion(_ width: CGFloat, _ margin: CGFloat) throws {
+        let display = WindowDisplay(
+            frame: CGRect(x: -width, y: 0, width: width, height: 1080),
+            visibleFrame: CGRect(x: -width, y: 30, width: width, height: 1000))
+        let primary = WindowDisplay(
+            frame: CGRect(x: 0, y: 0, width: 2560, height: 1440),
+            visibleFrame: CGRect(x: 0, y: 30, width: 2560, height: 1329))
+        let original = CGRect(x: -width + 100, y: 100, width: 800, height: 600)
+        let left = try #require(WindowLayoutGeometry.target(.fillWithStageManager, window: original, displays: [primary, display]))
+        let center = try #require(WindowLayoutGeometry.target(.fillCentered, window: original, displays: [primary, display]))
+        #expect(left.minX - display.frame.minX == margin)
+        #expect(center.minX == left.minX)
+        #expect(display.frame.maxX - center.maxX == margin)
+        #expect(left.maxX == display.visibleFrame.maxX)
+        #expect(WindowLayoutGeometry.target(.fillCentered, window: center, displays: [primary, display]) == center)
+    }
+
+    @Test func schema49PreservesExistingLeftMarginButRejectsNewPayloadInInactiveProfile() throws {
+        let binding = rebind.Binding(scope: .allMice, trigger: .mouseButton(3), modifiers: [], action: .windowLayout(.fillWithStageManager))
+        var previous = Configuration(schemaVersion: 49, bindings: [binding])
+        #expect(try previous.migrated().bindings == [binding])
+        previous.profiles.append(
+            RuleProfile(
+                name: "Other",
+                bindings: [
+                    rebind.Binding(scope: .allMice, trigger: .mouseButton(4), modifiers: [], action: .windowLayout(.fillCentered))
+                ]))
+        let decoded = try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(previous))
+        #expect(throws: ConfigurationError.invalid) { try decoded.migrated() }
+        previous.schemaVersion = Configuration.currentSchemaVersion
+        #expect(try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(previous)).migrated() == previous)
     }
 }

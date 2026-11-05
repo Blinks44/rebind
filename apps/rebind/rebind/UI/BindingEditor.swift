@@ -280,6 +280,7 @@ struct BindingEditor: View {
         if actionKind == .toggleMicrophoneMute { return .microphoneMuteHint }
         if actionKind == .openApps { return .openAppsHint }
         if actionKind == .fillWindowWithStageManager { return .stageManagerFillHint }
+        if actionKind == .fillWindowCentered { return .centeredFillHint }
         if let shortcut = actionKind.fixedShortcut { return .namedShortcutHint(InputLabels.shortcut(shortcut)) }
         if let mouse = actionKind.mouseAction { return mouse.scrollLines == nil ? .mouseActionHint : .scrollActionHint }
         if actionKind == .nextDisplay { return .nextDisplayHint }

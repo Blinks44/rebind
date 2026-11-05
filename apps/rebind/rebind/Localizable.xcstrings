@@ -1,6 +1,170 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "centeredFillHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fills the available height, leaving equal margins of at least about 9.53% of the display width on each side. Works whether Stage Manager is on or off."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заполняет доступную высоту с одинаковыми отступами по бокам: около 9,53% ширины экрана или больше с учётом Dock. Работает независимо от Stage Manager."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füllt die verfügbare Höhe mit gleichen Rändern aus: etwa 9,53 % der Bildschirmbreite pro Seite, bei Bedarf mehr Platz für das Dock. Funktioniert unabhängig von Stage Manager."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplit la hauteur disponible avec des marges identiques d’environ 9,53 % de la largeur de l’écran de chaque côté, ou plus pour laisser place au Dock. Fonctionne indépendamment de Stage Manager."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rellena la altura disponible con márgenes iguales de aproximadamente el 9,53 % del ancho de la pantalla a cada lado, o mayores para respetar el Dock. Funciona independientemente de Stage Manager."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "填满可用高度，两侧保留相等边距，各约为屏幕宽度的 9.53%，必要时增大以避开程序坞。无论台前调度是否开启均可使用。"
+          }
+        }
+      }
+    },
+    "fillWindowCenteredAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill Centered"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заполнить по центру"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zentriert ausfüllen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplir au centre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rellenar en el centro"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "居中填充"
+          }
+        }
+      }
+    },
+    "chooseApplicationFromDisk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App von der Festplatte auswählen…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose App from Disk…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir app del disco…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir une app sur le disque…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбрать приложение с диска…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从磁盘选择 App…"
+          }
+        }
+      }
+    },
+    "runningApplicationsTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufende Apps"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running Apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps en ejecución"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps en cours d’exécution"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запущенные приложения"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在运行的 App"
+          }
+        }
+      }
+    },
     "magicMouseEditorScope %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -28424,37 +28588,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fills the available area, leaving a fixed 220 pt margin on the left. Works whether Stage Manager is on or off."
+            "value" : "Fills the available area, leaving a left margin of about 9.53% of the display width. Works whether Stage Manager is on or off."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заполняет доступную область, оставляя слева фиксированный отступ 220 пт. Работает независимо от Stage Manager."
+            "value" : "Заполняет доступную область с левым отступом около 9,53% ширины экрана. Работает независимо от Stage Manager."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Füllt den verfügbaren Bereich mit einem festen linken Rand von 220 pt aus. Funktioniert unabhängig von Stage Manager."
+            "value" : "Füllt den verfügbaren Bereich mit einem linken Rand von etwa 9,53 % der Bildschirmbreite aus. Funktioniert unabhängig von Stage Manager."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remplit l’espace disponible en laissant une marge fixe de 220 pt à gauche, que Stage Manager soit activé ou non."
+            "value" : "Remplit l’espace disponible avec une marge à gauche d’environ 9,53 % de la largeur de l’écran, que Stage Manager soit activé ou non."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rellena el área disponible dejando un margen fijo de 220 pt a la izquierda, esté Stage Manager activado o no."
+            "value" : "Rellena el área disponible dejando un margen izquierdo de aproximadamente el 9,53 % del ancho de la pantalla, esté Stage Manager activado o no."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "填充可用区域，并在左侧保留固定的 220 点边距。无论台前调度是否开启，均可使用。"
+            "value" : "填满可用区域，左侧保留约为屏幕宽度 9.53% 的边距。无论台前调度是否开启均可使用。"
           }
         }
       }

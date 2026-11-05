@@ -33,6 +33,9 @@ nonisolated struct WindowDisplaySnapshot: Equatable, Sendable {
 }
 
 nonisolated enum WindowLayoutGeometry {
+    /// Calibrated display-width ratio; not an implementation of Apple's Stage Manager formula.
+    static let fillMarginFraction: CGFloat = 244.0 / 2560.0
+
     static func valid(_ rect: CGRect) -> Bool {
         [rect.origin.x, rect.origin.y, rect.width, rect.height, rect.maxX, rect.maxY].allSatisfy(\.isFinite)
             && rect.width > 0 && rect.height > 0
@@ -63,14 +66,21 @@ nonisolated enum WindowLayoutGeometry {
         // ordinary oversized window, rather than mutating a full-screen Space.
         if window.insetBy(dx: -1, dy: -1).contains(display.frame) { return nil }
         let usable = display.visibleFrame
+        let fillMargin = (display.frame.width * fillMarginFraction).rounded()
         switch action {
         case .fill: return usable
         case .fillWithStageManager:
             // Keep the stored case name compatible with existing bindings. This layout is now
             // unconditional: Stage Manager may hide its strip or be switched off entirely.
-            let inset = max(0, display.frame.minX + 220 - usable.minX)
+            let inset = max(0, display.frame.minX + fillMargin - usable.minX)
             guard inset < usable.width / 2 else { return nil }
             return CGRect(x: usable.minX + inset, y: usable.minY, width: usable.width - inset, height: usable.height)
+        case .fillCentered:
+            // Keep both display-edge margins equal, including a wider side Dock exclusion.
+            let margin = max(fillMargin, usable.minX - display.frame.minX, display.frame.maxX - usable.maxX)
+            let width = display.frame.width - 2 * margin
+            guard width > 0 else { return nil }
+            return CGRect(x: display.frame.minX + margin, y: usable.minY, width: width, height: usable.height)
         case .leftHalf:
             return CGRect(x: usable.minX, y: usable.minY, width: floor(usable.width / 2), height: usable.height)
         case .rightHalf:

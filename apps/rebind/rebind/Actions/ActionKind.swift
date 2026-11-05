@@ -19,7 +19,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
     case screenshotScreen, screenshotArea, screenshotTools
     case topHalf, bottomHalf, topLeftQuarter, topRightQuarter, bottomLeftQuarter, bottomRightQuarter, nextDisplay
     case spotlight, forceQuitWindow, emojiSymbols, toggleDock, hideOthers, lookUp, quitFrontApplication, newWindow, find, reload, save
-    case openApps, fastForward, rewind, toggleMicrophoneMute, fillWindowWithStageManager
+    case openApps, fastForward, rewind, toggleMicrophoneMute, fillWindowWithStageManager, fillWindowCentered
     var id: Self { self }
 
     enum Category: CaseIterable, Identifiable {
@@ -173,6 +173,7 @@ nonisolated enum ActionKind: String, CaseIterable, Identifiable, Sendable {
         case .leftHalf: .leftHalf
         case .rightHalf: .rightHalf
         case .fillWindowWithStageManager: .fillWithStageManager
+        case .fillWindowCentered: .fillCentered
         case .fillWindow: .fill
         case .centerWindow: .center
         case .topHalf: .topHalf

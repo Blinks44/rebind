@@ -1,10 +1,12 @@
 # Rebind: current state
 
-Updated **2026-11-05**, checkout `main`. Published **[1.3.2 (42)](https://github.com/Blinks44/rebind/releases/tag/v1.3.2)**, schema **49**: battery-menu alignment, explicit one-finger side-tap labels and the initial-selection fix (build 42 replaced build 41 under maintainer authorization). Tester accepted both changes; installed opening-state and keyboard/VoiceOver checks remain in UI-026. Release evidence for 1.1.0–1.3.2 is in [history](history/README.md). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
+Updated **2026-11-06**, checkout `main`. Published **[1.3.2 (42)](https://github.com/Blinks44/rebind/releases/tag/v1.3.2)**, schema **49**: battery-menu alignment, explicit one-finger side-tap labels and the initial-selection fix (build 42 replaced build 41 under maintainer authorization). Tester accepted both changes; installed opening-state and keyboard/VoiceOver checks remain in UI-026. Release evidence for 1.1.0–1.3.2 is in [history](history/README.md). Inspect Git status on resume. Startup: [WORKFLOW](WORKFLOW.md) and [PLAN](PLAN.md).
 
 Tooling: default products are outside Desktop; test/packaging intermediates are temporary and cleaned automatically; `dev.sh clean` clears build/run products ([DEV-001](tasks/DEV-001-build-cache-lifecycle.md); the full-suite navigation timing check remains open: 997 pass/one fail/two skipped, the focused run passes). Since 2026-11-05 `dev.sh format`/`lint` run the Xcode-bundled swift-format; the formatting-only build 43 is local and unpublished ([history](history/2026-11.md#2026-11-05-swift-formatting-agent-permissions-and-docs-cleanup)).
 
 ## Product and current artifact
+
+Local **1.3.2 (46), schema 50** adds centered Fill and a shared calibrated margin of 9.53125% of display width (244 pt at 2560 pt) ([ACTION-002](tasks/ACTION-002-centered-fill.md)), retaining build 44’s running-app exclusions ([UI-027](tasks/UI-027-running-app-exclusions.md)). Targeted action/persistence checks, lint, build and signed app/DMG/image checks pass. Current unpublished package: `apps/rebind/build/release/Rebind.dmg`; build 44 is preserved separately. Installed margin delivery/Mission Control and VM checks remain task-owned.
 
 Native macOS **15+**, Swift 6 / SwiftUI/AppKit, scheme/module `rebind`, bundle `blinks44.rebind`. Recorded environment: Apple silicon macOS 27, Xcode 27.1 / Swift 6.4 / SDK 27; macOS 15 checked in a VM (UI and rules), macOS 26/Intel and real-Mac macOS 15 touch input unverified.
 
@@ -26,6 +28,8 @@ Website: `apps/website/` is live at rebind.moduix.dev ([WEB-002](tasks/WEB-002-w
 
 | Task | Concrete next step |
 | --- | --- |
+| [UI-027](tasks/UI-027-running-app-exclusions.md) | Included in build 46: verify installed running-VM selection/scrolling, persistence and keyboard/VoiceOver; original scoped evidence is build 44. |
+| [ACTION-002](tasks/ACTION-002-centered-fill.md) | Build 46 scales both margins by 244/2560 of display width; verify installed delivery/Mission Control. Exact Apple formula remains partial research. |
 | [UI-026](tasks/UI-026-menu-battery-alignment.md) | Build 42 fixes automatic keyboard-row selection on opening; verify installed opening state, keyboard and VoiceOver. |
 | [FIX-005](tasks/FIX-005-builtin-trackpad-after-sleep.md) | Installed 1.3.1+: built-in gestures after a two-hour lid-closed sleep without relaunch. |
 | [PLAT-001](tasks/PLAT-001-macos-15-support.md) | Touch input on a real Mac with macOS 15. |

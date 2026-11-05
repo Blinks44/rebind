@@ -8,6 +8,8 @@
 - Requirements: SPEC §5 (A1/A2), §11
 - Code baseline: `main` at `59a3aee`, build 17; action/model/worker/audio/layout/catalog/persistence/test surfaces owned by this session
 
+Current margin behavior is extended by [ACTION-002](ACTION-002-centered-fill.md): build 46 uses a shared calibrated 244/2560 display-width ratio and Fill Centered (build 45 introduced it with a fixed 244 pt margin). The 220 pt results below remain historical evidence for builds 19–20.
+
 ## Outcome and scope
 
 Add simple, reliable actions the catalog still lacks (review 2026-10-24 against `ActionKind`):

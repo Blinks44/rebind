@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Configuration: Codable, Equatable, Sendable {
-    static let currentSchemaVersion = 49
+    static let currentSchemaVersion = 50
     static let maximumProfiles = 20
     static let maximumExcludedApplications = 50
     var schemaVersion: Int
@@ -370,7 +370,9 @@ nonisolated extension Binding {
         case .dock(let desktop): introduced(in: desktop.isSpaceNavigation ? 13 : 12, true)
         case .mouse(let mouse): introduced(in: mouse.isNewInSchema31 ? 31 : 14, true)
         case .media(let media): introduced(in: [.fastForward, .rewind].contains(media) ? 45 : (media.isBrightness ? 30 : 15), true)
-        case .windowLayout(let layout): introduced(in: layout == .fillWithStageManager ? 45 : (layout.isNewInSchema34 ? 34 : 16), true)
+        case .windowLayout(let layout):
+            let schema = layout == .fillCentered ? 50 : (layout == .fillWithStageManager ? 45 : (layout.isNewInSchema34 ? 34 : 16))
+            introduced(in: schema, true)
         case .sleepSystem: introduced(in: 18, true)
         case .lockScreen: introduced(in: 19, true)
         case .windowCycle: introduced(in: 20, true)

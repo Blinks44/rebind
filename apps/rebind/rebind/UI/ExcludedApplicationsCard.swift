@@ -21,11 +21,15 @@ struct ExcludedApplicationsCard: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    Button(.addExcludedApp) {
-                        selectionFailed = false
-                        showingPicker = true
-                    }
-                    .secondaryButton().fixedSize().disabled(atLimit)
+                    RunningApplicationMenu(
+                        excludedIdentifiers: Set(applications.map(\.bundleIdentifier)),
+                        selectApplication: addApplication,
+                        browse: {
+                            selectionFailed = false
+                            showingPicker = true
+                        }
+                    )
+                    .fixedSize().disabled(atLimit)
                 }
                 if !applications.isEmpty {
                     HStack(spacing: 0) {
@@ -48,11 +52,16 @@ struct ExcludedApplicationsCard: View {
             guard case .success(let url) = result else { return }
             let accessed = url.startAccessingSecurityScopedResource()
             defer { if accessed { url.stopAccessingSecurityScopedResource() } }
-            guard let target = ApplicationTarget(bundleURL: url), model.excludeApplication(target) else {
+            guard let target = ApplicationTarget(bundleURL: url) else {
                 selectionFailed = true
                 return
             }
+            addApplication(target)
         }
+    }
+
+    private func addApplication(_ target: ApplicationTarget) {
+        selectionFailed = !model.excludeApplication(target)
     }
 
     /// Each switch column is as wide as its title so the switches line up under it.
@@ -64,7 +73,7 @@ struct ExcludedApplicationsCard: View {
     }
 
     private func row(_ application: ExcludedApplication) -> some View {
-        let name = application.target.url.deletingPathExtension().lastPathComponent
+        let name = application.target.exclusionDisplayName
         let id = application.bundleIdentifier
         return HStack(spacing: 12) {
             Image(nsImage: NSWorkspace.shared.icon(forFile: application.target.url.path)).resizable()

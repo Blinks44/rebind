@@ -28,6 +28,7 @@ extension ActionKind {
         case .rewind: .rewindAction
         case .toggleMicrophoneMute: .toggleMicrophoneMuteAction
         case .fillWindowWithStageManager: .fillWindowWithStageManagerAction
+        case .fillWindowCentered: .fillWindowCenteredAction
         case .keyboardShortcut: .outputShortcut
         case .navigateBack: .navigateBackAction
         case .navigateForward: .navigateForwardAction
@@ -186,6 +187,7 @@ extension ActionKind {
         case .rewind: "backward"
         case .toggleMicrophoneMute: "mic.slash"
         case .fillWindowWithStageManager: "rectangle.trailinghalf.inset.filled"
+        case .fillWindowCentered: "rectangle.center.inset.filled"
         case .keyboardShortcut: "command"
         case .volumeUp: "speaker.wave.3"
         case .volumeDown: "speaker.wave.1"
