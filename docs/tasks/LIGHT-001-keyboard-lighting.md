@@ -160,4 +160,4 @@ Build-30 checks on Apple silicon/macOS 27.0.1/Xcode 27.1:
 
 Tester follow-up, 2026-10-28, after the build-30 package handoff: automatic lighting-off now works on the same G915 TKL; a subsequent report also confirms lighting turns on again after key press. This accepts the reported 30-second-preset off/wake scenario, without a measured elapsed time or independent installed-hash check. Device default, relaunch/reconnect/power-cycle, G HUB and genuine battery acceptance are not implied. No code/package change or checks rerun for this evidence update.
 
-Published in **1.1.0 (31)** from `29d8fdb`; build-30 app behavior is unchanged apart from release version/build metadata. [REL-006](REL-006-release-1.1.0.md) owns the current artifact/checksum/public download verification. Earlier build-30 hashes remain historical evidence.
+Published in **1.1.0 (31)** from `29d8fdb`; build-30 app behavior is unchanged apart from release version/build metadata. [1.1.0 release](../history/2026-10.md#2026-10-28-publish-rebind-110) owns the current artifact/checksum/public download verification. Earlier build-30 hashes remain historical evidence.

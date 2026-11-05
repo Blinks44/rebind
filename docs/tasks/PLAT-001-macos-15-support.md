@@ -19,7 +19,7 @@ User request 2026-10-29: lower the minimum from macOS 26 to macOS 15, which stil
 - [x] Launch, first run, permissions, main window/sidebar/toolbar appearance and Settings on macOS 15 (tester, build 35, VM; menu bar/Sparkle not itemized).
 - [ ] Keyboard and mouse rules, window/Space/media/system actions and Lock Screen on macOS 15. Rules generally work (tester, build 35; e.g. mouse button 3 → Minimize Front Window); individual actions and Lock Screen not itemized.
 - [ ] Trackpad and Magic Mouse gestures on a real Mac with macOS 15 (multitouch does not reach a VM).
-- [x] README, website and release notes switched to macOS 15 for 1.3.0 ([REL-008](REL-008-release-1.3.0.md)).
+- [x] README, website and release notes switched to macOS 15 for 1.3.0 ([1.3.0 release](../history/2026-10.md#2026-10-29-rebind-130)).
 
 ## Implementation and verification
 

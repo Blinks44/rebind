@@ -2,7 +2,7 @@
 
 - Updated: 2026-10-29
 - Stage: done
-- Owner: none; released in 1.2.0 (33) ([REL-007](REL-007-release-1.2.0.md))
+- Owner: none; released in 1.2.0 (33) ([1.2.0 release](../history/2026-10.md#2026-10-2829-devices-in-the-main-window-rebind-120))
 - Ownership checked: main 6577b19
 - Owned surfaces: sidebar, Devices page, Settings tabs (General/Input/Devices), affected strings in six languages
 - Requirements: SPEC §10 information architecture and key screens, §3.2 mouse settings; user decision 2026-10-28

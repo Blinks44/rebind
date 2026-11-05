@@ -47,4 +47,8 @@ Runtime checks above need the installed build 9 and a clean or reset configurati
 
 ## Next handoff
 
-v1.0.0 (build 15) and v1.1.0 (build 31) are published. The latest-release appcast and public DMG/checksum downloads match 1.1.0 (31), including EdDSA verification ([REL-006](REL-006-release-1.1.0.md)). Next: verify the actual offered update, download, install and relaunch from an identified installed 1.0.0 artifact, with rules/profiles and actual Accessibility access preserved. Record the source build: a local build-30 → published build-31 update is distinct from published build-15 → build-31 acceptance. First-run accessibility/locale checks stay with the accessibility pass.
+v1.0.0 (build 15) and v1.1.0 (build 31) are published. The latest-release appcast and public DMG/checksum downloads match 1.1.0 (31), including EdDSA verification ([1.1.0 release](../history/2026-10.md#2026-10-28-publish-rebind-110)). Next: verify the actual offered update, download, install and relaunch from an identified installed 1.0.0 artifact, with rules/profiles and actual Accessibility access preserved. Record the source build: a local build-30 → published build-31 update is distinct from published build-15 → build-31 acceptance. First-run accessibility/locale checks stay with the accessibility pass.
+
+## Open update check (2026-11-05)
+
+- [ ] Sparkle offers the latest release (1.3.1 → 1.3.2 build 42) from an installed earlier build, shows the notes, updates and keeps rules and Accessibility access. 1.2.0 → 1.3.0 was tester-confirmed on 2026-10-29. Moved here from the retired 1.3.1/1.3.2 release records.

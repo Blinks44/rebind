@@ -47,6 +47,9 @@ xcuserdata/
 .env*
 !.env.example
 
+# Personal working files for people and agents (notes, logs, captures); never committed.
+/.local/
+
 # Private per-user agent overrides; shared settings and skills remain versioned.
 .claude/settings.local.json
 CLAUDE.local.md

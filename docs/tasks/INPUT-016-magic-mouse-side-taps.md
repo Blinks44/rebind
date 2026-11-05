@@ -43,7 +43,7 @@ Scoped copy update owned by Codex on `main` / `7425ee5`, preserving the precedin
 
 Live Sketch screen 58 Light/Dark and Foundations 10 updated and screenshot-reviewed; new labels fit the existing menu width. Sketch saved; file contents checked, SHA-256 `de67f92dc7562a9a08cb2025d101b9148cee0156a3019be8812e651b1b653bcc`. Final `dev.sh build` passes at 1.3.1 (40). Existing `MagicMouseEditorLayoutTests/testTapPresetsAndWarningsFitAllLanguages` passes across all eight presets, six languages, two themes and two heights. Catalog inspection confirms all 12 localized side-tap labels include the finger count. Signed `release.sh` packaging passes (app/DMG signatures and image verification): `apps/rebind/build/release/Rebind.dmg`, 1.3.1 (40), SHA-256 `2f7585ad3fd93f81122a34acd41a5ea2119e471f4920840694236b43dd274dfa`. Contains the preceding UI-026 menu fix. No new behavioral tests needed for this copy-only change; physical acceptance above remains open.
 
-Tester accepted the copy result on 2026-11-04 (exact installed build unspecified). Included in 1.3.2 (41), [REL-010](REL-010-release-1.3.2.md). Copy correction complete; physical acceptance above remains open.
+Tester accepted the copy result on 2026-11-04 (exact installed build unspecified). Included in 1.3.2 (41), [1.3.2 release](../history/2026-11.md#2026-11-04-rebind-132-published). Copy correction complete; physical acceptance above remains open.
 
 ## Next handoff
 

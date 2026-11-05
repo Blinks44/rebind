@@ -21,7 +21,7 @@ All three surface kinds now use one acquisition path: `MTDeviceCreateList`, filt
 
 - Build **1.3.0 (37)**, Debug/Release equal, schema 49 unchanged.
 - `dev.sh test`: 971 Swift Testing tests / 149 suites pass, `Test-rebind-2026.10.30_19-47-25-+0300.xcresult`. Existing connection tests cover registry-ID identity; the private-framework replacement itself is not unit-testable.
-- `release.sh` passed for local 1.3.0 (37); the tester installed it and reports gestures working so far (2026-10-30). Published as 1.3.1 (38), same code ([REL-009](REL-009-release-1.3.1.md)).
+- `release.sh` passed for local 1.3.0 (37); the tester installed it and reports gestures working so far (2026-10-30). Published as 1.3.1 (38), same code ([1.3.1 release](../history/2026-10.md#2026-10-30-rebind-131)).
 
 ## Remaining acceptance / next
 

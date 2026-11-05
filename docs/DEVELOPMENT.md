@@ -24,7 +24,11 @@ apps/rebind/scripts/dev.sh build-for-testing
 apps/rebind/scripts/dev.sh test
 apps/rebind/scripts/dev.sh release
 apps/rebind/scripts/dev.sh run
+apps/rebind/scripts/dev.sh format
+apps/rebind/scripts/dev.sh lint
 ```
+
+`format` rewrites Swift sources in `rebind/` and `rebindTests/` with the `swift format` bundled in the Xcode toolchain (no install); `lint` checks them in strict mode and fails on any finding. Rules live in `apps/rebind/.swift-format` (4-space indentation, 140-column lines, otherwise upstream defaults), the same as Monny. The vendored `Packages/HIDPP` keeps its upstream formatting.
 
 The script respects `DEVELOPER_DIR` or a valid `xcode-select` selection, then
 falls back to `/Applications/Xcode.app/Contents/Developer`. It never modifies

@@ -25,6 +25,7 @@ You need full Xcode with a Swift 6.2+ compiler and a macOS 26+ SDK.
 ```sh
 apps/rebind/scripts/dev.sh build
 apps/rebind/scripts/dev.sh test
+apps/rebind/scripts/dev.sh lint
 ```
 
 The test run opens a Rebind window for a few minutes while layout tests render; leave it open. See the [development guide](docs/DEVELOPMENT.md) for details.
