@@ -30,6 +30,46 @@ struct TrackpadIntegrationTests {
         }
     }
 
+    @Test(arguments: [false, true], [false, true])
+    func ordinaryKeyPairDoesNotDelayTheNextCompleteTap(_ external: Bool, _ duringContact: Bool) throws {
+        let mailbox = EngineMailbox()
+        let rule = rebind.Binding(
+            scope: external ? .magicTrackpad : .builtInTrackpad,
+            trigger: .fourFingerTap, modifiers: [], action: .shortcut(shortcut))
+        mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
+        mailbox.state.withLock { $0.status = .active }
+        var current = try #require(mailbox.trackpadRuntime(magicTrackpad: external))
+        var session = TrackpadTapSession(runtime: current, foreground: 100, startedAt: 0)
+        func sample(_ id: Int32, count: Int, at time: UInt64) -> NativeTrackpadFrame {
+            var value = frame(id, count: count, at: time)
+            value.revision = current.revision
+            value.activity = current.inputActivity
+            return value
+        }
+        session.consume(sample(0, count: 0, at: lift), at: lift)
+        if duringContact {
+            session.consume(sample(1, count: 4, at: lift + 20_000_000), at: lift + 20_000_000)
+        }
+        for phase in [InputEvent.Phase.down, .up] {
+            #expect(mailbox.handle(.init(trigger: .key(0), phase: phase), secureInput: false) == false)
+            current = try #require(mailbox.trackpadRuntime(magicTrackpad: external))
+            session.update(runtime: current, foreground: 100)
+        }
+        // Activity during contact discards that stroke; its release rearms immediately.
+        if duringContact {
+            session.consume(sample(2, count: 0, at: lift + 40_000_000), at: lift + 40_000_000)
+            let interruptedReady = session.takeReady(at: lift + 40_000_000)
+            #expect(interruptedReady == false)
+        }
+        session.consume(sample(3, count: 4, at: lift + 60_000_000), at: lift + 60_000_000)
+        session.consume(sample(4, count: 4, at: lift + 80_000_000), at: lift + 80_000_000)
+        session.consume(sample(5, count: 0, at: lift + 100_000_000), at: lift + 100_000_000)
+        let ready = session.takeReady(at: lift + 160_000_000)
+        let duplicate = session.takeReady(at: lift + 170_000_000)
+        #expect(ready)
+        #expect(duplicate == false)
+    }
+
     @Test func callbackReceivedBeforePollingDecisionCanBeConsumedOnNextPoll() {
         var session = TrackpadTapSession(runtime: runtime, foreground: 100, startedAt: 0)
         session.consume(frame(0, count: 0, at: lift - 100_000_000), at: lift - 100_000_000)

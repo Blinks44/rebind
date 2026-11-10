@@ -10,6 +10,8 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
+Magic Mouse catalog **2026-11-10** ([INPUT-017](tasks/INPUT-017-magic-mouse-two-finger-click.md), [INPUT-018](tasks/INPUT-018-magic-mouse-three-finger-scroll.md)): live screen 58 Light/menu screenshot and Foundations 07 inspected; menu structure re-inspected for the scroll extension. The native selector now has five taps, two physical clicks and four vertical-scroll entries, with dividers before the first click and first scroll. Each count lists up then down. Six-language titles and count-specific help reuse existing controls. Sketch remains unchanged; synchronize screen 58 Light/Dark and Foundations 07/08/10 from eight to eleven choices in a future authorized design pass.
+
 Running-app exclusions **2026-11-06** ([UI-027](tasks/UI-027-running-app-exclusions.md)): General frame 31 Light/Dark inspected live. Native Add App now opens the existing anchored-menu pattern with running apps and a disk-picker action; the capsule gains a chevron. Sketch is unchanged; synchronize this scoped interaction/copy in a future authorized design pass.
 
 Side-tap copy **2026-11-04** ([INPUT-016](tasks/INPUT-016-magic-mouse-side-taps.md)): screen 58 Light/Dark and Foundations 10 now explicitly say “Tap · 1 finger, left side” and “Tap · 1 finger, right side”. Existing menu geometry retained; screenshots reviewed and Sketch saved, SHA-256 `de67f92dc7562a9a08cb2025d101b9148cee0156a3019be8812e651b1b653bcc`. Build 40 adopts the same clarification in all six app languages.

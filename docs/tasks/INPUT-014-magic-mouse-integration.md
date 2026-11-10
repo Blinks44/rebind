@@ -1,6 +1,6 @@
 # INPUT-014: Magic Mouse taps in Rebind
 
-- Updated: 2026-10-19
+- Updated: 2026-11-10
 - Stage: awaiting_verification
 - Owner: Unassigned; controller lifecycle and requested runtime smoke pass released 2026-10-19. Core dedicated design states saved in INPUT-015 iteration 1; native reconciliation and remaining accessibility/platform acceptance stay open.
 - Ownership checked: started on `main` `772c704` with INPUT-013 changes preserved. Current checkout is `main` `e070ec9`, including the integration, adapter corrections and permission fix (confirmed 2026-10-19); earlier build/test entries below retain their original `38fb12c` plus uncommitted-diff provenance. The original Debug artifact used for the user's trackpad retest is preserved.
@@ -9,7 +9,7 @@
 
 ## Implemented scope
 
-Experimental stationary one/two-finger single-tap candidates now have their own Magic Mouse category, complete gesture selector, optional single held Command/Option/Control/Shift, per-app rules, profile persistence and shared one-shot action catalog/output recorder. Basic tap action delivery is user-confirmed on 2026-10-19; native-double coexistence has a reported conflict below. Three/four-finger gestures, swipes, holds and native-double replacement remain research-gated; this testing pool does not reduce broader release gates.
+Experimental stationary one/two-finger single-tap candidates now have their own Magic Mouse category, complete gesture selector, optional single held Command/Option/Control/Shift, per-app rules, profile persistence and shared one-shot action catalog/output recorder. Basic tap action delivery is user-confirmed on 2026-10-19; native-double coexistence has a reported conflict below. Later additions in INPUT-015/016 and [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md) extend this original two-tap integration to nine presets. The tester accepted ordinary use of all eight preceding presets on 2026-11-10. Swipes, holds, four/five-finger gestures and native-double replacement remain deferred; broader release gates remain open.
 
 - `NativeTrackpadDevice` shares the existing isolated private observer with a separate family-112 portrait surface adapter/buffer. Only the first matching connected mouse is acquired; no physical-device rule selector/routing. IOKit registry-entry identity distinguishes a live connection from its temporary discovery wrappers; a removed/replaced connection resets the session. Created-list ownership is balanced when reusing an adapter; retired callback contexts stay alive until process exit because callback quiescence is undocumented.
 - Callback registration now returns **Void**, with actual start/stop status checked. This repairs the app's earlier Boolean ABI declaration for all touch surfaces; it needs a physical trackpad regression check separately from the user's unchanged older artifact. OS major gate remains 26/27; no root, new permission or OS preference mutation.
@@ -113,3 +113,7 @@ Do not repeat that same smoke pass as wholly unverified. The bounded controller 
 - [ ] Broader acceptance: held-modifier/per-app/excluded-app action matrix, sleep/protected-context/focus stress and separate shared-ABI trackpad checks. Do not reopen the confirmed smoke pass without affected changes.
 - [ ] Native review/design: keyboard arrows/focus/VoiceOver and accessibility preferences; reconcile native UI against saved core Magic Mouse screens 54–57; remaining menu/validation design variants stay in INPUT-015. Scoped live Sketch/shared-component and isolated native layout review is complete, not full-state parity. macOS 26/Intel and multiple simultaneous Magic Mice remain unverified.
 - [x] Integration baseline full rerun/follow-up logic run; ownership correction scoped regression/build/signature and diff/local-link review. Requested runtime smoke acceptance is now recorded above; broader release-support acceptance remains open.
+
+## Current gesture acceptance — 2026-11-10
+
+The tester exercised all eight currently available Magic Mouse presets successfully with no issues found, including side taps, three-finger physical click and vertical scroll presets. Ordinary physical delivery is accepted; do not request another general basic-delivery pass. Exact artifact/device/OS were not restated. Specific settings, resting-contact/native-conflict edge cases, cancellation stress, multi-mouse, accessibility and platform checks remain open. [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md#earlier-gesture-acceptance) records the scope and the newly requested two-finger click, which was not part of this pass.

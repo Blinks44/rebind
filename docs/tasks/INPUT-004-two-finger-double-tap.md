@@ -47,3 +47,7 @@ Built-in two-finger double delivery is user-confirmed in checklist 3.2; secondar
 ## Next handoff
 
 On a named current bundle verify built-in regression, lone-tap behavior, external pairs and Smart Zoom/secondary-click coexistence. Complete editor/accessibility checks through UI-014.
+
+## Current physical report — 2026-11-10
+
+The tester confirms ordinary operation of the current built-in and external trackpad presets, with two-finger double-tap Smart Zoom overlap and an intermittent approximately one-second tap gap after ordinary keyboard keys on both surfaces (clicks seem unaffected). Exact artifact/OS/settings were not restated. [INPUT-019](INPUT-019-trackpad-coexistence-and-typing.md) owns the exceptions and investigation; preserve basic delivery acceptance and the remaining named safety/settings/reconnect/accessibility/platform checks.

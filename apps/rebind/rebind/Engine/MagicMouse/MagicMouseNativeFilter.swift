@@ -56,7 +56,7 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
     /// Only a matched down acquires ownership; its release/drag survives rule/context changes.
     mutating func click(
         sender: UInt64?, button: UInt32, phase: InputEvent.Phase,
-        revision: UInt64, at now: UInt64, admit: () -> Bool
+        revision: UInt64, at now: UInt64, admit: (Int) -> Bool
     ) -> Bool {
         guard let sender, button <= 1 else { return false }
         let owner = button == 0 ? leftOwner : rightOwner
@@ -66,8 +66,8 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
             }
             return true
         }
-        guard phase == .down, owner == nil, count(sender: sender, revision: revision, at: now) == 3,
-            admit()
+        guard phase == .down, owner == nil, let fingers = count(sender: sender, revision: revision, at: now),
+            fingers == 2 || fingers == 3, admit(fingers)
         else { return false }
         if button == 0 { leftOwner = sender } else { rightOwner = sender }
         return true
@@ -86,7 +86,7 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
     mutating func scroll(
         sender: UInt64?, phase: Int64, momentum: Int64,
         direction: ScrollDirection?, revision: UInt64, at now: UInt64,
-        admit: (ScrollDirection) -> Bool
+        admit: (Int, ScrollDirection) -> Bool
     ) -> Bool {
         guard let sender, sources.contains(sender) || scrollOwner == sender else { return false }
         expireScroll(at: now)
@@ -97,8 +97,8 @@ nonisolated struct MagicMouseNativeFilter: Sendable {
                 return true
             }
             scrollOwner = nil
-            guard let direction, count(sender: sender, revision: revision, at: now) == 2,
-                firedStroke != stroke, passedStroke != stroke, admit(direction)
+            guard let direction, let fingers = count(sender: sender, revision: revision, at: now),
+                fingers == 2 || fingers == 3, firedStroke != stroke, passedStroke != stroke, admit(fingers, direction)
             else {
                 passedStroke = stroke
                 return false
@@ -131,8 +131,9 @@ extension EngineMailbox {
             let consumed = state.magicMouseNative.scroll(
                 sender: sender, phase: phase, momentum: momentum,
                 direction: direction, revision: state.actionRevision, at: now
-            ) { direction in
-                guard active, let action = actionRules[MatchKey(trigger: .magicMouseScroll(direction), modifiers: modifiers)]?.action else {
+            ) { fingers, direction in
+                let trigger: InputTrigger = fingers == 2 ? .magicMouseScroll(direction) : .magicMouseThreeFingerScroll(direction)
+                guard active, let action = actionRules[MatchKey(trigger: trigger, modifiers: modifiers)]?.action else {
                     return false
                 }
                 queued = action

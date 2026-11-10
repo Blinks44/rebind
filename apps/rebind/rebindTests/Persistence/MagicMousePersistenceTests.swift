@@ -64,10 +64,41 @@ struct MagicMousePersistenceTests {
     }
 
     @Test(arguments: [
-        InputTrigger.magicMouseClick(fingers: 2), .magicMouseClick(fingers: 4), .magicMouseScroll(.left), .magicMouseScroll(.right),
+        InputTrigger.magicMouseClick(fingers: 1), .magicMouseClick(fingers: 4), .magicMouseScroll(.left), .magicMouseScroll(.right),
     ])
     func unsupportedNativeGesturesAreRejected(_ trigger: InputTrigger) {
         #expect(trigger.isSupported == false)
+    }
+
+    @Test func twoFingerClickRequiresSchema51AndPreservesExistingRules() throws {
+        let click = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: 2), modifiers: .option, action: .doNothing)
+        let configuration = Configuration(isEnabled: true, bindings: [click])
+        try configuration.validate()
+        #expect(try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(configuration)) == configuration)
+        var old = configuration
+        old.schemaVersion = 50
+        #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+        let existing = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: 3), modifiers: [], action: .doNothing)
+        let migrated = try Configuration(schemaVersion: 50, bindings: [existing]).migrated()
+        #expect(migrated.bindings == [existing])
+    }
+
+    @Test(arguments: [ScrollDirection.up, .down])
+    func threeFingerScrollRequiresSchema52AndPreservesTwoFingerIdentity(_ direction: ScrollDirection) throws {
+        let rule = rebind.Binding(
+            scope: .magicMouse, trigger: .magicMouseThreeFingerScroll(direction), modifiers: .option, action: .doNothing)
+        let configuration = Configuration(bindings: [rule])
+        try configuration.validate()
+        #expect(try JSONDecoder().decode(Configuration.self, from: JSONEncoder().encode(configuration)) == configuration)
+        var old = configuration
+        old.schemaVersion = 51
+        #expect(throws: ConfigurationError.invalid) { try old.migrated() }
+        let twoFinger = rebind.Binding(scope: .magicMouse, trigger: .magicMouseScroll(direction), modifiers: [], action: .doNothing)
+        let migrated = try Configuration(schemaVersion: 51, bindings: [twoFinger]).migrated()
+        #expect(migrated.bindings == [twoFinger])
+        #expect(twoFinger.trigger != rule.trigger)
+        #expect(InputTrigger.magicMouseThreeFingerScroll(.left).isSupported == false)
+        #expect(InputTrigger.magicMouseThreeFingerScroll(.right).isSupported == false)
     }
 
     @Test func schema42PreservesExistingMouseTaps() throws {

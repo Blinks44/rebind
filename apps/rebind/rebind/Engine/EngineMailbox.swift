@@ -682,20 +682,23 @@ nonisolated final class EngineMailbox: Sendable {
             $0.magicMouseActivity &+= 1
             if $0.trackpadDispatch?.trackpadTarget?.isMagicMouse == true { $0.trackpadDispatch = nil }
             if case .mouseButton(let button) = event.trigger, button <= 1 {
-                let action = $0.rules[MatchKey(trigger: .magicMouseClick(fingers: 3), modifiers: event.modifiers)]?.action
-                let active = !secureInput && $0.canDispatch && $0.foregroundPID != nil && $0.hasQueueSpace && action != nil
-                var admitted = false
+                let rules = $0.rules
+                let active = !secureInput && $0.canDispatch && $0.foregroundPID != nil && $0.hasQueueSpace
+                var queued: RebindAction?
                 if $0.magicMouseNative.click(
                     sender: sender, button: button, phase: event.phase,
                     revision: $0.actionRevision, at: event.receivedAt ?? event.timestamp,
-                    admit: {
-                        admitted = active
-                        return active
+                    admit: { fingers in
+                        guard active,
+                            let action = rules[MatchKey(trigger: .magicMouseClick(fingers: fingers), modifiers: event.modifiers)]?.action
+                        else { return false }
+                        queued = action
+                        return true
                     })
                 {
                     $0.inputActivity &+= 1
                     $0.matcher.cancelHold()
-                    if admitted, let action { $0.pending.append(action) }
+                    if let queued { $0.pending.append(queued) }
                     return true
                 }
             }

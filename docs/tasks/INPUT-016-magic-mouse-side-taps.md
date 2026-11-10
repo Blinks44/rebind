@@ -1,6 +1,6 @@
 # INPUT-016: Magic Mouse left and right taps
 
-- Updated: 2026-11-04
+- Updated: 2026-11-10
 - Stage: awaiting_verification
 - Owner: unassigned (implementation chat released)
 - Ownership checked: 2026-10-29, released
@@ -24,7 +24,7 @@ Rejected again with the reasons from [INPUT-015](INPUT-015-touch-release-scope.m
 ## Acceptance
 
 - [x] Recognition, fallback, dispatch revalidation and persistence covered by tests.
-- [ ] Real Magic Mouse: left/right are not mirrored (native X orientation is assumed from trackpads and other projects, not measured on the mouse).
+- [x] Real Magic Mouse: ordinary left/right delivery and orientation accepted in the 2026-11-10 all-current-gestures tester pass (exact artifact/model/OS unspecified).
 - [ ] Real Magic Mouse: a tap with another finger resting on the mouse. The recognizer counts all contacts, so a resting finger turns the tap into a two-finger contact; decide whether that is acceptable.
 - [ ] Smart Zoom overlap and false positives during ordinary clicking/scrolling, as for the existing one-finger tap.
 - [x] Sketch: Magic Mouse selector (screen 58 Light/Dark) shows eight presets; Foundations 07/08/10 updated (saved 2026-10-29, see DESIGN).
@@ -47,4 +47,4 @@ Tester accepted the copy result on 2026-11-04 (exact installed build unspecified
 
 ## Next handoff
 
-Tester with a Magic Mouse: add a rule to "Tap · 1 finger, left side" and another to "Tap · 1 finger, right side", tap each half with one finger and the mouse still, then tap the middle; report mirrored sides, missed taps, taps while another finger rests, and any Smart Zoom double effect. Design: done.
+Ordinary side-tap operation is tester-confirmed on 2026-11-10; see [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md#earlier-gesture-acceptance). Only the specific resting-finger and native-overlap/false-positive edge checks above remain. Design: done.

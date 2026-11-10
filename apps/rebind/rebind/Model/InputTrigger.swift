@@ -23,15 +23,17 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
     /// A one-finger stationary tap on the left or right half; it takes precedence over `magicMouseTap(fingers: 1)`.
     case magicMouseSideTap(MagicMouseSide)
 
-    /// A physical press with three contacts, distinct from a light tap.
+    /// A physical press with two or three contacts, distinct from a light tap.
     case magicMouseClick(fingers: Int)
     /// Two-finger vertical finger movement; independent of Natural Scrolling.
     case magicMouseScroll(ScrollDirection)
+    /// Three-finger vertical movement; the original scroll case retains its two-finger identity.
+    case magicMouseThreeFingerScroll(ScrollDirection)
 
     var isTouchGesture: Bool { isTrackpad || isMagicMouse }
     var isMagicMouse: Bool {
         switch self {
-        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: true
+        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll, .magicMouseThreeFingerScroll: true
         default: false
         }
     }
@@ -87,7 +89,7 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
         case .fourFingerTap, .threeFingerTap, .threeFingerDoubleTap, .fourFingerDoubleTap,
             .twoFingerDoubleTap, .cornerTap, .trackpadClick:
             .builtInTrackpad
-        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll: .magicMouse
+        case .magicMouseTap, .magicMouseSideTap, .magicMouseClick, .magicMouseScroll, .magicMouseThreeFingerScroll: .magicMouse
         case .key: .allKeyboards
         case .mouseButton, .mouseGesture, .scroll, .buttonScroll: .allMice
         }
@@ -103,8 +105,8 @@ nonisolated enum InputTrigger: Codable, Hashable, Sendable {
             true
         case .trackpadClick(let fingers): (2...4).contains(fingers)
         case .magicMouseTap(let fingers): (1...3).contains(fingers)
-        case .magicMouseClick(let fingers): fingers == 3
-        case .magicMouseScroll(let direction): direction == .up || direction == .down
+        case .magicMouseClick(let fingers): fingers == 2 || fingers == 3
+        case .magicMouseScroll(let direction), .magicMouseThreeFingerScroll(let direction): direction == .up || direction == .down
         }
     }
 }

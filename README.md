@@ -32,7 +32,7 @@ Rebind runs on **macOS 15 and later**, with SwiftUI/AppKit and a calm, soft nati
 - Press, double press and hold. A hold binding can also send a shortcut on a short press.
 - Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
 - Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
-- Experimental Magic Mouse taps with one, two or three fingers, one-finger taps on the left or right half, a physical three-finger click and two-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
+- Experimental Magic Mouse taps with one, two or three fingers, one-finger taps on the left or right half, physical two- and three-finger clicks and two- or three-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
 
 **Actions**
 

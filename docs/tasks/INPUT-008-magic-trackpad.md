@@ -36,3 +36,7 @@ User reports the external trackpad tested and working like the built-in one, wit
 ## Next handoff
 
 Retain the supplied general external-trackpad acceptance; focus on the remaining named checks only if affected or required for final release. Keyboard-navigation repair is UI-024; bounded gesture additions are INPUT-015.
+
+## Current physical report — 2026-11-10
+
+The tester confirms ordinary operation of the current built-in and external trackpad presets, with two-finger double-tap Smart Zoom overlap and an intermittent approximately one-second tap gap after ordinary keyboard keys on both surfaces (clicks seem unaffected). Exact artifact/OS/settings were not restated. [INPUT-019](INPUT-019-trackpad-coexistence-and-typing.md) owns the exceptions and investigation; preserve basic delivery acceptance and the remaining named safety/settings/reconnect/accessibility/platform checks.

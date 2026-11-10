@@ -1,6 +1,6 @@
 # INPUT-015: Finish touch-device designs and bounded release functionality
 
-- Updated: 2026-10-19
+- Updated: 2026-11-10
 - Stage: awaiting_verification
 - Owner: Unassigned; native click/scroll implementation slice released 2026-10-19. Preserve parallel signing/DMG and earlier keyboard/touch work.
 - Ownership checked: `main` `e070ec9`; preserve the uncommitted INPUT-014 controller, tests and documentation. Iterations 1–3 append screens 54–63 and Foundations 07–09; all pre-existing source subtrees preserved.
@@ -18,7 +18,7 @@ Cover both the gesture that triggers a rule and the command it executes. Existin
 | Area | Actual implementation | Next decision / work |
 | --- | --- | --- |
 | Built-in and external trackpads | Same 12 presets per category: 3/4-finger single taps; 2/3/4-finger doubles; 2/3/4-finger clicks; four corner taps. Each can select one held modifier. | Current-pool category/editor/conflict/recovery designs are ready, reusing shared menu and action patterns. Reconcile native UI; do not reimplement the existing pool. |
-| Magic Mouse | One/two/three-finger singles, optional held modifier, shared catalog; one/two-finger controller recovery/ordinary-input smoke user-confirmed in INPUT-014; new three-finger physical acceptance open. | Current states/menus and native copy are adopted. Three-finger stationary tap is implemented as Experimental; verify physical delivery/false positives. Four/five-finger mouse variants are deferred for practical scope. |
+| Magic Mouse | Eight preceding tap/side-tap/three-finger click/vertical-scroll presets accepted in ordinary use by the tester on 2026-11-10; two-finger physical click adds a ninth Experimental preset in [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md). | Verify only the new physical click for basic delivery; specific settings, false-positive stress, safety, accessibility and platform gates remain. Four/five-finger mouse variants remain deferred. |
 | Commands executed by a rule | All three categories already use the shared one-shot catalog: shortcuts, clicks/scroll, media/audio/brightness, supported windows/Spaces/system/workspace actions, text, control and Apple Shortcuts. | Audit availability/parameter/editor coverage and identify concrete useful omissions. No separate reduced touch catalog. Modifier-hold output requires a real hold lifecycle and is not a one-shot tap action. |
 | Magic Mouse double taps | Not implemented; native Smart Zoom/Mission Control overlap. Fast singles without native-double arbitration are an accepted decision. | A new double preset needs a specific arbitration decision; do not silently delay existing singles. |
 | Holds, swipes, pinch/rotation, Force Click, fifth contact | Not part of the current release pool; some have native ownership or acquisition limits. | Evaluate cost and safety, rather than treating a generic recognizer as release readiness. Include only after a bounded mechanism/interaction decision. Otherwise record the reason for deferral. |
@@ -117,7 +117,7 @@ Matched physical downs queue one action and own only that source/button's drags/
 
 ## Next handoff
 
-Use the isolated Debug build from this slice for actual app acceptance: assign three-finger click and both two-finger directions, verify one action per complete stroke, native click/scroll replacement, ordinary one-finger click/scroll and trackpad passthrough. Test both Natural Scrolling settings, stale/ambiguous starts, pause while pressed/scrolling, momentum, reconnect and modifier changes. The app's normal keyboard/editor walkthrough remains under UI-024; preserve the accepted external-trackpad behavior. Finish the source-menu reconciliation, then freeze the finite pool and continue release acceptance. Do not repeat the diagnostic probe as a prerequisite; its supplied results are recorded above.
+Ordinary physical delivery of all eight preceding presets is accepted as of 2026-11-10. [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md) owns the new two-finger click and current package. Retain specific checks for both Natural Scrolling settings, stale/ambiguous starts, pause while pressed/scrolling, momentum, reconnect and modifier changes. Keyboard/VoiceOver stays under UI-024; no repeat of accepted basic delivery or the diagnostic probe is required. Synchronize the ninth choice during a scoped design pass.
 
 ## User app acceptance — 2026-10-19
 
@@ -138,3 +138,7 @@ Both full screen-58 frames and the final Foundations 10 frame were screenshot-re
 ## Pre-release copy reconciliation — 2026-10-20
 
 [REL-004](REL-004-release-copy-and-documentation-audit.md) now owns the latest saved English copy/notes and 1.0.0/2 candidate. The six-choice menu and finite input pool are unchanged. General tester acceptance is preserved; the copy audit adds no new hardware claim. DESIGN identifies the current saved source hash; earlier hashes here remain dated history.
+
+## Current gesture acceptance — 2026-11-10
+
+The tester exercised all eight currently available Magic Mouse presets successfully with no issues found, including side taps, three-finger physical click and vertical scroll presets. Ordinary physical delivery is accepted; do not request another general basic-delivery pass. Exact artifact/device/OS were not restated. Specific settings, resting-contact/native-conflict edge cases, cancellation stress, multi-mouse, accessibility and platform checks remain open. [INPUT-017](INPUT-017-magic-mouse-two-finger-click.md#earlier-gesture-acceptance) records the scope and the newly requested two-finger click, which was not part of this pass.

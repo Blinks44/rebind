@@ -740,6 +740,47 @@
         }
       }
     },
+    "magicMouseTwoFingerClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click · 2 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажатие · 2 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klick · 2 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic · 2 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clic · 2 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按 · 双指"
+          }
+        }
+      }
+    },
     "magicMouseTwoFingerTap" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26613,6 +26654,47 @@
         }
       }
     },
+    "magicMouseThreeFingerScrollHelp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move three fingers in the chosen direction. Each recognized stroke runs the action once instead of scrolling. If the start of a stroke is not recognized, it scrolls as usual. Direction follows your fingers, regardless of Natural Scrolling."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проведите тремя пальцами в выбранном направлении. Каждый распознанный жест выполняет действие один раз вместо прокрутки. Если начало жеста не распознано, прокрутка работает как обычно. Направление определяется движением пальцев и не зависит от «Естественной прокрутки»."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewegen Sie drei Finger in die gewählte Richtung. Jede erkannte Bewegung löst die Aktion einmal aus, statt zu scrollen. Wird der Beginn nicht erkannt, wird normal gescrollt. Die Richtung folgt Ihren Fingern, unabhängig von „Natürliches Scrollen“."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacez trois doigts dans la direction choisie. Chaque geste reconnu exécute l’action une fois au lieu de faire défiler. Si le début n’est pas reconnu, le défilement reste normal. La direction suit vos doigts, indépendamment du défilement naturel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mueve tres dedos en la dirección elegida. Cada gesto reconocido ejecuta la acción una vez en lugar de desplazar. Si no se reconoce el inicio, se desplaza con normalidad. La dirección sigue tus dedos, independientemente del desplazamiento natural."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用三指向所选方向移动。每个识别到的手势会执行一次操作，取代滚动。若未能识别起始动作，则照常滚动。方向以手指移动为准，不受“自然滚动”影响。"
+          }
+        }
+      }
+    },
     "magicMouseScrollHelp" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26736,6 +26818,47 @@
         }
       }
     },
+    "magicMouseThreeFingerScrollDown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll down · 3 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прокрутка вниз · 3 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach unten scrollen · 3 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défilement vers le bas · 3 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desplazar abajo · 3 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向下滚动 · 三指"
+          }
+        }
+      }
+    },
     "magicMouseTwoFingerScrollDown" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26773,6 +26896,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "向下滚动 · 双指"
+          }
+        }
+      }
+    },
+    "magicMouseThreeFingerScrollUp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scroll up · 3 fingers"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прокрутка вверх · 3 пальца"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach oben scrollen · 3 Finger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défilement vers le haut · 3 doigts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desplazar arriba · 3 dedos"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向上滚动 · 三指"
           }
         }
       }

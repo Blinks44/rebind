@@ -18,54 +18,55 @@ struct MagicMouseNativeTests {
         return filter
     }
 
-    @Test(arguments: [UInt32(0), 1])
-    func physicalClickOwnsOnlyItsSourceAndPairedRelease(_ button: UInt32) {
-        var f = filter()
+    @Test(arguments: [UInt32(0), 1], [2, 3])
+    func physicalClickOwnsOnlyItsSourceAndPairedRelease(_ button: UInt32, _ fingers: Int) {
+        var f = filter(count: fingers)
         var actions = 0
-        let firstDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) {
+        let firstDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) { _ in
             actions += 1
             return true
         }
         #expect(firstDownConsumed)
-        let repeatedDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) {
+        let repeatedDownConsumed = f.click(sender: 42, button: button, phase: .down, revision: 0, at: now) { _ in
             actions += 1
             return true
         }
         #expect(repeatedDownConsumed)
         #expect(actions == 1)
         f.invalidateContacts()
-        let otherReleasePassed = f.click(sender: 99, button: button, phase: .up, revision: 9, at: now + 1, admit: { false }) == false
+        let otherReleasePassed = f.click(sender: 99, button: button, phase: .up, revision: 9, at: now + 1, admit: { _ in false }) == false
         #expect(otherReleasePassed)
-        let dragConsumed = f.click(sender: 42, button: button, phase: .drag, revision: 9, at: now + 1, admit: { false })
+        let dragConsumed = f.click(sender: 42, button: button, phase: .drag, revision: 9, at: now + 1, admit: { _ in false })
         #expect(dragConsumed)
-        let releaseConsumed = f.click(sender: 42, button: button, phase: .up, revision: 9, at: now + 2, admit: { false })
+        let releaseConsumed = f.click(sender: 42, button: button, phase: .up, revision: 9, at: now + 2, admit: { _ in false })
         #expect(releaseConsumed)
         #expect(f.hasOwnedInput == false)
-        let unmatchedReleasePassed = f.click(sender: 42, button: button, phase: .up, revision: 9, at: now + 3, admit: { false }) == false
+        let unmatchedReleasePassed =
+            f.click(sender: 42, button: button, phase: .up, revision: 9, at: now + 3, admit: { _ in false }) == false
         #expect(unmatchedReleasePassed)
     }
 
     @Test(arguments: 0...7)
     func uncertainOrInactiveClickPassesItsWholePair(_ cause: Int) {
-        var f = filter(count: cause < 3 ? cause : 3)
+        var f = filter(count: cause < 3 ? [0, 1, 4][cause] : 3)
         let sender: UInt64? = cause == 3 ? 99 : cause == 4 ? nil : 42
         let revision: UInt64 = cause == 5 ? 1 : 0
         let time = cause == 6 ? now + 100_000_001 : now
-        let downPassed = f.click(sender: sender, button: 0, phase: .down, revision: revision, at: time, admit: { cause != 7 }) == false
+        let downPassed = f.click(sender: sender, button: 0, phase: .down, revision: revision, at: time, admit: { _ in cause != 7 }) == false
         #expect(downPassed)
-        let upPassed = f.click(sender: sender, button: 0, phase: .up, revision: revision, at: time + 1, admit: { true }) == false
+        let upPassed = f.click(sender: sender, button: 0, phase: .up, revision: revision, at: time + 1, admit: { _ in true }) == false
         #expect(upPassed)
     }
 
     @Test func replacementConnectionDoesNotInheritOldPressOwnership() {
         var f = filter()
-        let downConsumed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: now, admit: { true })
+        let downConsumed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: now, admit: { _ in true })
         #expect(downConsumed)
         f.begin(sources: [77], at: now)
         #expect(f.hasOwnedInput == false)
         let reconnectTime = now + 4_000_000_000
         f.observe(frame(3, at: reconnectTime))
-        let newDownConsumed = f.click(sender: 77, button: 0, phase: .down, revision: 0, at: reconnectTime, admit: { true })
+        let newDownConsumed = f.click(sender: 77, button: 0, phase: .down, revision: 0, at: reconnectTime, admit: { _ in true })
         #expect(newDownConsumed)
     }
 
@@ -73,93 +74,97 @@ struct MagicMouseNativeTests {
         var f = filter()
         f.begin(sources: [42], at: now)
         f.observe(frame(3, at: now))
-        let armingPassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: now, admit: { true }) == false
+        let armingPassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: now, admit: { _ in true }) == false
         #expect(armingPassed)
         var bad = frame(3, at: now + 4_000_000_000)
         bad.valid = false
         f.observe(bad)
-        let invalidFramePassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: bad.receipt, admit: { true }) == false
+        let invalidFramePassed = f.click(sender: 42, button: 0, phase: .down, revision: 0, at: bad.receipt, admit: { _ in true }) == false
         #expect(invalidFramePassed)
     }
 
-    @Test(arguments: [ScrollDirection.up, .down])
-    func scrollRunsOnceAndOwnsItsMomentumAfterContactAndRuleLoss(_ direction: ScrollDirection) {
-        var f = filter(count: 2)
+    @Test(arguments: [ScrollDirection.up, .down], [2, 3])
+    func scrollRunsOnceAndOwnsItsMomentumAfterContactAndRuleLoss(_ direction: ScrollDirection, _ fingers: Int) {
+        var f = filter(count: fingers)
         var actions = 0
-        let beginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now) { value in
+        let beginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now) { count, value in
+            #expect(count == fingers)
             #expect(value == direction)
             actions += 1
             return true
         }
         #expect(beginConsumed)
-        let repeatBeginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 1) { _ in
+        let repeatBeginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 1) { _, _ in
             actions += 1
             return true
         }
         #expect(repeatBeginConsumed)
         #expect(actions == 1)
         let otherDevicePassed =
-            f.scroll(sender: 99, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 2, admit: { _ in true }) == false
+            f.scroll(sender: 99, phase: 1, momentum: 0, direction: direction, revision: 0, at: now + 2, admit: { _, _ in true }) == false
         #expect(otherDevicePassed)
         f.invalidateContacts()
         for (phase, momentum) in [(Int64(2), Int64(0)), (4, 0), (0, 1), (0, 2), (0, 3)] {
             let tailConsumed = f.scroll(
                 sender: 42, phase: phase, momentum: momentum, direction: nil, revision: 99,
-                at: now + 3, admit: { _ in false })
+                at: now + 3, admit: { _, _ in false })
             #expect(tailConsumed)
         }
         #expect(f.hasOwnedInput == false)
     }
 
-    @Test(arguments: [0, 1, 3, 4])
+    @Test(arguments: [0, 1, 4, 5])
     func ambiguousScrollNeverGetsTakenOverMidstream(_ count: Int) {
         var f = filter(count: count)
-        let beginPassed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
+        let beginPassed =
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _, _ in true }) == false
         #expect(beginPassed)
         f.observe(frame(2, at: now + 1))
         for phase: Int64 in [2, 4] {
             let tailPassed =
-                f.scroll(sender: 42, phase: phase, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+                f.scroll(sender: 42, phase: phase, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _, _ in true }) == false
             #expect(tailPassed)
         }
         let momentumPassed =
-            f.scroll(sender: 42, phase: 0, momentum: 1, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+            f.scroll(sender: 42, phase: 0, momentum: 1, direction: .up, revision: 0, at: now + 2, admit: { _, _ in true }) == false
         #expect(momentumPassed)
     }
 
     @Test func ambiguousBeganCannotBeReclassifiedWithinTheSameContactStroke() {
         var f = filter(count: 1)
         let ambiguousBeginPassed =
-            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _, _ in true }) == false
         #expect(ambiguousBeginPassed)
         f.observe(frame(2, at: now + 1))
         let laterBeginPassed =
-            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _ in true }) == false
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2, admit: { _, _ in true }) == false
         #expect(laterBeginPassed)
     }
 
     @Test func unassignedDirectionsAndHorizontalStartsRemainNative() {
         var f = filter(count: 2)
         let horizontalPassed =
-            f.scroll(sender: 42, phase: 1, momentum: 0, direction: nil, revision: 0, at: now, admit: { _ in true }) == false
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: nil, revision: 0, at: now, admit: { _, _ in true }) == false
         #expect(horizontalPassed)
         let unassignedPassed =
-            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now, admit: { $0 == .up }) == false
+            f.scroll(sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now, admit: { _, direction in direction == .up })
+            == false
         #expect(unassignedPassed)
-        let changedPassed = f.scroll(sender: 42, phase: 2, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true }) == false
+        let changedPassed =
+            f.scroll(sender: 42, phase: 2, momentum: 0, direction: .up, revision: 0, at: now, admit: { _, _ in true }) == false
         #expect(changedPassed)
     }
 
     @Test func completedStrokeNeedsNewContactAndDormantOwnershipExpires() {
         var f = filter(count: 2)
-        let beginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _ in true })
+        let beginConsumed = f.scroll(sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now, admit: { _, _ in true })
         #expect(beginConsumed)
         f.expireScroll(at: now + 1_000_000_001)
         #expect(f.hasOwnedInput == false)
         f.observe(frame(2, at: now + 2_000_000_000))
         let sameStrokeConsumed = f.scroll(
             sender: 42, phase: 1, momentum: 0, direction: .up, revision: 0, at: now + 2_000_000_000,
-            admit: { _ in
+            admit: { _, _ in
                 Issue.record("Same contact stroke fired twice")
                 return false
             })
@@ -167,7 +172,7 @@ struct MagicMouseNativeTests {
         f.observe(frame(0, at: now + 2_000_000_001))
         f.observe(frame(2, at: now + 2_000_000_002))
         let nextStrokeConsumed = f.scroll(
-            sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now + 2_000_000_002, admit: { _ in true })
+            sender: 42, phase: 1, momentum: 0, direction: .down, revision: 0, at: now + 2_000_000_002, admit: { _, _ in true })
         #expect(nextStrokeConsumed)
     }
 
@@ -180,15 +185,16 @@ struct MagicMouseNativeTests {
         #expect(EventTapWorker.fingerScrollDirection(vertical: .nan, horizontal: 0, inverted: false) == nil)
     }
 
-    @Test func mailboxOwnsClickReleaseAcrossPauseWithoutDuplicatingAction() throws {
+    @Test(arguments: [2, 3])
+    func mailboxOwnsClickReleaseAcrossPauseWithoutDuplicatingAction(_ fingers: Int) throws {
         let mailbox = EngineMailbox()
-        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: 3), modifiers: .option, action: .doNothing)
+        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: fingers), modifiers: .option, action: .doNothing)
         mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
         mailbox.state.withLock {
             $0.status = .active
             $0.foregroundPID = 100
             $0.magicMouseNative.begin(sources: [42], at: 0)
-            $0.magicMouseNative.observe(frame(3, at: now, revision: $0.actionRevision))
+            $0.magicMouseNative.observe(frame(fingers, at: now, revision: $0.actionRevision))
         }
         let down = InputEvent(trigger: .mouseButton(0), modifiers: .option, phase: .down, receivedAt: now)
         #expect(mailbox.handle(down, secureInput: false, sender: 42))
@@ -200,15 +206,68 @@ struct MagicMouseNativeTests {
         #expect(mailbox.handle(.init(trigger: .mouseButton(0), phase: .up, receivedAt: now + 1), secureInput: true, sender: 42))
     }
 
-    @Test func mailboxQueuesOneScrollActionAndKeepsCancellationOwnership() {
+    @Test(arguments: [2, 3], [2, 3])
+    func exactContactCountSelectsOnlyItsOwnRule(_ contacts: Int, _ assigned: Int) {
         let mailbox = EngineMailbox()
-        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseScroll(.up), modifiers: [], action: .doNothing)
+        let rule = rebind.Binding(scope: .magicMouse, trigger: .magicMouseClick(fingers: assigned), modifiers: [], action: .doNothing)
         mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
         mailbox.state.withLock {
             $0.status = .active
             $0.foregroundPID = 100
             $0.magicMouseNative.begin(sources: [42], at: 0)
-            $0.magicMouseNative.observe(frame(2, at: now, revision: $0.actionRevision))
+            $0.magicMouseNative.observe(frame(contacts, at: now, revision: $0.actionRevision))
+        }
+        let matched = contacts == assigned
+        #expect(mailbox.handle(.init(trigger: .mouseButton(0), phase: .down, receivedAt: now), secureInput: false, sender: 42) == matched)
+        #expect((mailbox.nextAction()?.action == .doNothing) == matched)
+        // A contact change cannot take over a press whose down passed through.
+        mailbox.state.withLock {
+            $0.magicMouseNative.observe(frame(assigned, at: now + 1, revision: $0.actionRevision))
+        }
+        #expect(mailbox.handle(.init(trigger: .mouseButton(0), phase: .up, receivedAt: now + 1), secureInput: false, sender: 42) == matched)
+        #expect(mailbox.nextAction() == nil)
+    }
+
+    @Test(arguments: [2, 3], [2, 3])
+    func scrollNeverFallsBackToAnotherFingerCountOrTakesOverItsStream(_ contacts: Int, _ assigned: Int) {
+        let mailbox = EngineMailbox()
+        let trigger: InputTrigger = assigned == 2 ? .magicMouseScroll(.up) : .magicMouseThreeFingerScroll(.up)
+        let rule = rebind.Binding(scope: .magicMouse, trigger: trigger, modifiers: .option, action: .doNothing)
+        mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+            $0.magicMouseNative.begin(sources: [42], at: 0)
+            $0.magicMouseNative.observe(frame(contacts, at: now, revision: $0.actionRevision))
+        }
+        let matched = contacts == assigned
+        #expect(
+            mailbox.handleMagicMouseScroll(
+                sender: 42, phase: 1, momentum: 0, direction: .up, modifiers: .option, at: now, secureInput: false) == matched)
+        #expect((mailbox.nextAction()?.action == .doNothing) == matched)
+        mailbox.state.withLock {
+            $0.magicMouseNative.observe(frame(assigned, at: now + 1, revision: $0.actionRevision))
+        }
+        #expect(
+            mailbox.handleMagicMouseScroll(
+                sender: 42, phase: 2, momentum: 0, direction: .up, modifiers: .option, at: now + 1, secureInput: false) == matched)
+        #expect(
+            mailbox.handleMagicMouseScroll(
+                sender: 42, phase: 0, momentum: 3, direction: nil, modifiers: [], at: now + 2, secureInput: false) == matched)
+        #expect(mailbox.nextAction() == nil)
+    }
+
+    @Test(arguments: [2, 3])
+    func mailboxQueuesOneScrollActionAndKeepsCancellationOwnership(_ fingers: Int) {
+        let mailbox = EngineMailbox()
+        let trigger: InputTrigger = fingers == 2 ? .magicMouseScroll(.up) : .magicMouseThreeFingerScroll(.up)
+        let rule = rebind.Binding(scope: .magicMouse, trigger: trigger, modifiers: [], action: .doNothing)
+        mailbox.configure(Configuration(isEnabled: true, bindings: [rule]))
+        mailbox.state.withLock {
+            $0.status = .active
+            $0.foregroundPID = 100
+            $0.magicMouseNative.begin(sources: [42], at: 0)
+            $0.magicMouseNative.observe(frame(fingers, at: now, revision: $0.actionRevision))
         }
         #expect(
             mailbox.handleMagicMouseScroll(sender: 42, phase: 1, momentum: 0, direction: .up, modifiers: [], at: now, secureInput: false))

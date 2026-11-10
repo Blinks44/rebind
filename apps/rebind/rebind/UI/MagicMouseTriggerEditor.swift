@@ -11,7 +11,7 @@ struct MagicMouseTriggerEditor: View {
             MenuSelector(
                 selection: $draft.magicMousePreset, title: .magicMouseGestureTitle,
                 choices: MagicMousePreset.allCases, label: { $0.title },
-                startsGroup: { [.threeFingerClick, .twoFingerScrollUp].contains($0) }
+                startsGroup: { [.twoFingerClick, .twoFingerScrollUp].contains($0) }
             )
             .frame(maxWidth: .infinity, minHeight: 36)
             .disabled(isRecording)

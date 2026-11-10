@@ -27,7 +27,7 @@ The user confirms the requested targeted app/website copy review for build 16 ([
 
 ## Preserve existing feature acceptance
 
-General external-trackpad behavior, all six Magic Mouse gestures, ordinary-input/idle/edit/record/pause/reconnect smoke, G HUB/DPI, ordinary hold/repeat and pointer-window scroll exclusions have tester-confirmed subsets. The [October 18 record](manual-test-2026-10-18.md) and owning tasks retain exact limits. Do not repeat their full inventories because unrelated UI code changed.
+General external-trackpad behavior, all eleven Magic Mouse gestures (tester accepted the original eight, two-finger click and both three-finger scroll directions on 2026-11-10; [evidence limits and remaining checks](../tasks/INPUT-018-magic-mouse-three-finger-scroll.md)), ordinary-input/idle/edit/record/pause/reconnect smoke, G HUB/DPI, ordinary hold/repeat and pointer-window scroll exclusions have tester-confirmed subsets. The [October 18 record](manual-test-2026-10-18.md) and owning tasks retain exact limits. Do not repeat their full inventories because unrelated UI code changed.
 
 Disposable no-engine production-hierarchy fixtures cover compact menus, editor/Settings/Command-N/F routes, profile creation/switching, deletion cancellation, Add/Edit focus return and import/export panel cancellation. These prove sampled UI paths, not permission/remapping behavior, actual file transactions or all normal-build accessibility. Six-language Light/Dark layouts pass; fluent proofreading remains separate.
 
