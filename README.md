@@ -45,11 +45,11 @@
 
 ## Why Rebind
 
-Rebind brings keyboard remapping, extra mouse buttons, drag gestures, per-mouse smooth scrolling, Logitech HID++ hardware controls, and curated touch gestures into **one fast native Swift app**—without Electron, heavy vendor suites, accounts, or telemetry.
+Rebind brings keyboard remapping, extra mouse buttons, drag gestures, per-mouse smooth scrolling, Logitech HID++ hardware controls, and curated touch gestures into **one fast native Swift app**, without Electron, heavy vendor suites, accounts, or telemetry.
 
-- **Accessibility only** — never asks for Input Monitoring, never logs keystrokes, and starts paused with zero bindings.
-- **Fail-open by design** — press **⌃⌥⇧⌘ Escape** anytime to pause all rules immediately; errors fall back to normal macOS input.
-- **100% local** — rules and profiles stay in plain JSON inside `~/Library/Application Support/Rebind` with automatic rolling backups.
+- **Accessibility only**: never asks for Input Monitoring, never logs keystrokes, and starts paused with zero bindings.
+- **Fail-open by design**: press **⌃⌥⇧⌘ Escape** anytime to pause all rules immediately; errors fall back to normal macOS input.
+- **100% local**: rules and profiles stay in plain JSON inside `~/Library/Application Support/Rebind` with automatic rolling backups.
 
 ---
 
@@ -141,17 +141,17 @@ You can also open `apps/rebind/rebind.xcodeproj` in Xcode, select the **rebind**
 
 Full third-party licenses live in [NOTICE.txt](NOTICE.txt) and [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
-- [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT) — signed in-app updates.
-- [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT) — vendored `HIDPP` package, smooth scrolling glide approach, and high-res scroll reversal scaling.
-- [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0) — HID++ SmartShift &amp; device name payload reference only (no code copied).
+- [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT): signed in-app updates.
+- [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT): vendored `HIDPP` package, smooth scrolling glide approach, and high-res scroll reversal scaling.
+- [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0): HID++ SmartShift &amp; device name payload reference only (no code copied).
 - [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) (MIT), [spacekit](https://github.com/cehbz/spacekit) (MIT), [Sanne](https://github.com/anandghegde/sanne) (MIT), and [Subsurface](https://github.com/mrkai77/Subsurface) (Apache-2.0).
 
 ---
 
 ## Also by Sergey V.
 
-- [**Hearth**](https://hearth.moduix.dev) — Local dev environment dashboard for runtimes, projects, Docker, Kubernetes, databases, and AI agents.
-- [**Monny**](https://monny.moduix.dev) — Native macOS system monitor for CPU, memory, disk, network, Apple silicon sensors, and AI usage quotas.
+- [**Hearth**](https://hearth.moduix.dev): Local dev environment dashboard for runtimes, projects, Docker, Kubernetes, databases, and AI agents.
+- [**Monny**](https://monny.moduix.dev): Native macOS system monitor for CPU, memory, disk, network, Apple silicon sensors, and AI usage quotas.
 
 ---
 

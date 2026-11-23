@@ -40,10 +40,10 @@ for (const locale of settings.locales) {
     for (const id of ['features', 'screens', 'privacy', 'install', 'faq']) {
       assert.ok(html.includes(`id="${id}"`), `Missing section id="${id}"`)
     }
-    assert.ok(html.includes('/screenshots/panel-keyboard-light.webp'))
+    assert.ok(html.includes('/screenshots/panel-mouse-light.webp'))
     assert.ok(html.includes('loading="lazy"'))
     assert.ok(html.includes(site.homebrewCommand))
-    assert.ok(html.includes(site.quarantineCommand))
+    assert.ok(html.includes('SHA256SUMS.txt'))
     assert.ok(html.includes(`lang="${locale}"`))
     assert.equal(html.match(/<title>/g)?.length, 1)
     assert.equal(html.match(/name="description"/g)?.length, 1)

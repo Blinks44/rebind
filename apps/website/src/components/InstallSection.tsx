@@ -1,4 +1,4 @@
-import { AlertTriangle, Download, ExternalLink, FileCheck2, Terminal } from 'lucide-react'
+import { Download, ExternalLink, ShieldCheck, Terminal } from 'lucide-react'
 import { CopyButton } from '@/components/CopyButton'
 import { site } from '@/config/site'
 import * as m from '@/integrations/i18n/paraglide/messages'
@@ -20,67 +20,62 @@ export function InstallSection({ release }: InstallSectionProps) {
 
         <div className="install-grid" data-reveal>
           <div className="install-card">
-            <div className="install-card-head">
-              <h3>{m.installDmgTitle()}</h3>
-              <span className="rb-keycap">v{release.version}</span>
-            </div>
+            <span className="install-card-icon" aria-hidden="true">
+              <Download size={20} />
+            </span>
+            <h3>{m.installDmgTitle()}</h3>
             <p>{m.installDmgDesc({ size: release.dmg.sizeLabel })}</p>
             <div>
-              <a href={release.dmg.url} className="btn-rb-primary">
+              <a href={release.dmg.url} className="btn-rebind-primary">
                 <Download size={16} aria-hidden="true" />
                 <span>{m.installDmgCta({ version: release.version })}</span>
               </a>
             </div>
-            <div className="install-links">
-              <a
-                href={release.checksumsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="install-link"
-              >
-                <FileCheck2 size={14} aria-hidden="true" />
-                <span>SHA256SUMS.txt</span>
-              </a>
-              <a
-                href={release.releaseUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="install-link"
-              >
-                <ExternalLink size={14} aria-hidden="true" />
-                <span>{m.installAllReleases()}</span>
-              </a>
-            </div>
+            <p className="install-meta">{m.installDmgMeta()}</p>
           </div>
 
           <div className="install-card">
-            <div className="install-card-head">
-              <h3>{m.installBrewTitle()}</h3>
-              <Terminal size={18} style={{ color: 'var(--rb-accent)' }} aria-hidden="true" />
-            </div>
+            <span className="install-card-icon" aria-hidden="true">
+              <Terminal size={20} />
+            </span>
+            <h3>{m.installBrewTitle()}</h3>
             <p>{m.installBrewDesc()}</p>
             <div className="install-cmd-box">
               <code>{site.homebrewCommand}</code>
               <CopyButton text={site.homebrewCommand} showLabel />
             </div>
-            <div className="install-links">
-              <a href={site.homebrewTap} target="_blank" rel="noreferrer" className="install-link">
-                <ExternalLink size={14} aria-hidden="true" />
-                <span>blinks44/homebrew-tap</span>
-              </a>
-            </div>
+            <p className="install-meta">{m.installBrewNote()}</p>
           </div>
         </div>
 
-        <div className="first-launch-callout" data-reveal>
-          <div className="first-launch-head">
-            <AlertTriangle size={16} aria-hidden="true" />
-            <span>{m.installFirstLaunchTitle()}</span>
+        <div className="install-trust-bar" data-reveal>
+          <div className="install-trust-left">
+            <ShieldCheck size={20} color="var(--rb-green)" aria-hidden="true" />
+            <div>
+              <strong>{m.installTrustTitle()}</strong>
+              <span>{m.installTrustDesc()}</span>
+            </div>
           </div>
-          <p>{m.installFirstLaunchDesc()}</p>
-          <div className="install-cmd-box">
-            <code>{site.quarantineCommand}</code>
-            <CopyButton text={site.quarantineCommand} showLabel />
+
+          <div className="install-trust-links">
+            <a
+              href={release.checksumsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-rebind-outline"
+            >
+              <span>SHA256SUMS.txt</span>
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
+            <a
+              href={release.releaseUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-rebind-outline"
+            >
+              <span>{m.installAllReleases()}</span>
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
           </div>
         </div>
       </div>

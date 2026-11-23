@@ -1,8 +1,10 @@
 import {
   Dialog,
   DialogBackdrop,
+  DialogBody,
   DialogCloseIcon,
   DialogContent,
+  DialogHeader,
   DialogPositioner,
   DialogTitle,
 } from '@moduix/react/dialog'
@@ -29,6 +31,7 @@ interface FeatureShowcaseProps {
 type TimingMode = 'press' | 'double' | 'hold'
 type GestureDir = 'up' | 'left' | 'right' | 'down'
 type WheelMode = 'smartshift' | 'ratchet' | 'freespin'
+type LightboxSize = 'full' | 'medium' | 'narrow'
 
 export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
   const [timing, setTiming] = useState<TimingMode>('hold')
@@ -42,18 +45,25 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
     src: string
     w: number
     h: number
-    narrow?: boolean
+    size: LightboxSize
   }>({
     title: '',
-    src: `/screenshots/keyboard-${theme}.webp`,
+    src: `/screenshots/editor-app-${theme}.webp`,
     w: 2160,
     h: 1440,
+    size: 'full',
   })
 
   const suffix = theme === 'dark' ? 'dark' : 'light'
 
-  const openShot = (title: string, src: string, w: number, h: number, narrow = false) => {
-    setLightboxShot({ title, src, w, h, narrow })
+  const openShot = (
+    title: string,
+    src: string,
+    w: number,
+    h: number,
+    size: LightboxSize = 'full',
+  ) => {
+    setLightboxShot({ title, src, w, h, size })
     setLightboxOpen(true)
   }
 
@@ -88,7 +98,22 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
     freespin: m.demoWheelFreeSpinNote(),
   }
 
-  const tabs = [
+  const tabs: Array<{
+    id: string
+    label: string
+    icon: typeof Keyboard
+    experimental?: boolean
+    title: string
+    body: string
+    bullets: string[]
+    previewSrc: string
+    previewW: number
+    previewH: number
+    fullSrc: string
+    fullW: number
+    fullH: number
+    size: LightboxSize
+  }> = [
     {
       id: 'keyboard',
       label: m.tabKeyboard(),
@@ -96,10 +121,13 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featKeyboardTitle(),
       body: m.featKeyboardBody(),
       bullets: [m.featKeyboardB1(), m.featKeyboardB2(), m.featKeyboardB3()],
-      shot: `/screenshots/editor-app-${suffix}.webp`,
-      shotAlt: m.featKeyboardTitle(),
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-editor-app-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/editor-app-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
+      size: 'full',
     },
     {
       id: 'mouse',
@@ -108,10 +136,13 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featMouseTitle(),
       body: m.featMouseBody(),
       bullets: [m.featMouseB1(), m.featMouseB2(), m.featMouseB3()],
-      shot: `/screenshots/editor-gesture-${suffix}.webp`,
-      shotAlt: m.featMouseTitle(),
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-editor-gesture-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/editor-gesture-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
+      size: 'full',
     },
     {
       id: 'logitech',
@@ -120,10 +151,13 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featLogitechTitle(),
       body: m.featLogitechBody(),
       bullets: [m.featLogitechB1(), m.featLogitechB2(), m.featLogitechB3()],
-      shot: `/screenshots/devices-logitech-${suffix}.webp`,
-      shotAlt: m.featLogitechTitle(),
-      w: 1664,
-      h: 1320,
+      previewSrc: `/screenshots/devices-logitech-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1320,
+      fullSrc: `/screenshots/devices-logitech-${suffix}.webp`,
+      fullW: 1664,
+      fullH: 1320,
+      size: 'medium',
     },
     {
       id: 'touch',
@@ -133,10 +167,13 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featTouchTitle(),
       body: m.featTouchBody(),
       bullets: [m.featTouchB1(), m.featTouchB2(), m.featTouchB3()],
-      shot: `/screenshots/magic-mouse-${suffix}.webp`,
-      shotAlt: m.featTouchTitle(),
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-magic-mouse-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/magic-mouse-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
+      size: 'full',
     },
     {
       id: 'profiles',
@@ -145,11 +182,13 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featProfilesTitle(),
       body: m.featProfilesBody(),
       bullets: [m.featProfilesB1(), m.featProfilesB2(), m.featProfilesB3()],
-      shot: `/screenshots/starter-setups-${suffix}.webp`,
-      shotAlt: m.featProfilesTitle(),
-      w: 1360,
-      h: 1200,
-      narrow: true,
+      previewSrc: `/screenshots/starter-setups-${suffix}.webp`,
+      previewW: 1360,
+      previewH: 1200,
+      fullSrc: `/screenshots/starter-setups-${suffix}.webp`,
+      fullW: 1360,
+      fullH: 1200,
+      size: 'narrow',
     },
     {
       id: 'safety',
@@ -158,12 +197,22 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       title: m.featSafetyTitle(),
       body: m.featSafetyBody(),
       bullets: [m.featSafetyB1(), m.featSafetyB2(), m.featSafetyB3()],
-      shot: `/screenshots/settings-${suffix}.webp`,
-      shotAlt: m.featSafetyTitle(),
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-settings-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/settings-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
+      size: 'full',
     },
   ]
+
+  const contentClass =
+    lightboxShot.size === 'medium'
+      ? 'lightbox-content lightbox-content-medium'
+      : lightboxShot.size === 'narrow'
+        ? 'lightbox-content lightbox-content-narrow'
+        : 'lightbox-content'
 
   return (
     <section id="features" className="section">
@@ -193,14 +242,12 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
                 <div className="showcase-copy">
                   {tab.experimental ? (
                     <div className="showcase-exp-badge">
-                      <FlaskConical size={13} aria-hidden="true" />
+                      <FlaskConical size={12} aria-hidden="true" />
                       <span>{m.experimentalBadge()}</span>
                     </div>
                   ) : null}
-
                   <h3>{tab.title}</h3>
                   <p>{tab.body}</p>
-
                   <ul className="showcase-bullets">
                     {tab.bullets.map((bullet) => (
                       <li key={bullet}>
@@ -306,14 +353,14 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
                 <button
                   type="button"
                   className="showcase-shot-btn"
-                  onClick={() => openShot(tab.title, tab.shot, tab.w, tab.h, tab.narrow)}
+                  onClick={() => openShot(tab.title, tab.fullSrc, tab.fullW, tab.fullH, tab.size)}
                   aria-label={`${m.zoomLabel()}: ${tab.title}`}
                 >
                   <img
-                    src={tab.shot}
-                    alt={tab.shotAlt}
-                    width={tab.w}
-                    height={tab.h}
+                    src={tab.previewSrc}
+                    alt={tab.title}
+                    width={tab.previewW}
+                    height={tab.previewH}
                     loading="lazy"
                     decoding="async"
                   />
@@ -331,22 +378,22 @@ export function FeatureShowcase({ theme }: FeatureShowcaseProps) {
       <Dialog open={lightboxOpen} onOpenChange={(details) => setLightboxOpen(details.open)}>
         <DialogBackdrop />
         <DialogPositioner>
-          <DialogContent className="lightbox-content">
-            <div className="lightbox-header">
+          <DialogContent className={contentClass}>
+            <DialogHeader className="lightbox-header">
               <DialogTitle>
                 {m.lightboxPrefix()} · {lightboxShot.title}
               </DialogTitle>
               <DialogCloseIcon />
-            </div>
-            <div className="lightbox-body">
+            </DialogHeader>
+            <DialogBody className="lightbox-body">
               <img
                 src={lightboxShot.src}
                 alt={lightboxShot.title}
                 width={lightboxShot.w}
                 height={lightboxShot.h}
-                className={`lightbox-img ${lightboxShot.narrow ? 'is-narrow' : ''}`}
+                className="lightbox-img"
               />
-            </div>
+            </DialogBody>
           </DialogContent>
         </DialogPositioner>
       </Dialog>

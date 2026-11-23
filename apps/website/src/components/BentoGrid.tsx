@@ -1,8 +1,10 @@
 import {
   Dialog,
   DialogBackdrop,
+  DialogBody,
   DialogCloseIcon,
   DialogContent,
+  DialogHeader,
   DialogPositioner,
   DialogTitle,
 } from '@moduix/react/dialog'
@@ -36,49 +38,67 @@ export function BentoGrid({ theme }: BentoGridProps) {
       id: 'keyboard',
       title: m.bentoKeyboardTitle(),
       sub: m.bentoKeyboardSub(),
-      src: `/screenshots/keyboard-${suffix}.webp`,
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-keyboard-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/keyboard-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
     },
     {
       id: 'mouse',
       title: m.bentoMouseTitle(),
       sub: m.bentoMouseSub(),
-      src: `/screenshots/mouse-${suffix}.webp`,
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-mouse-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/mouse-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
     },
     {
       id: 'devices',
       title: m.bentoDevicesTitle(),
       sub: m.bentoDevicesSub(),
-      src: `/screenshots/devices-${suffix}.webp`,
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-devices-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/devices-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
     },
     {
       id: 'trackpad',
       title: m.bentoTrackpadTitle(),
       sub: m.bentoTrackpadSub(),
-      src: `/screenshots/trackpad-${suffix}.webp`,
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-trackpad-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/trackpad-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
     },
     {
       id: 'magic-mouse',
       title: m.bentoMagicMouseTitle(),
       sub: m.bentoMagicMouseSub(),
-      src: `/screenshots/magic-mouse-${suffix}.webp`,
-      w: 2160,
-      h: 1440,
+      previewSrc: `/screenshots/panel-magic-mouse-${suffix}.webp`,
+      previewW: 1664,
+      previewH: 1440,
+      fullSrc: `/screenshots/magic-mouse-${suffix}.webp`,
+      fullW: 2160,
+      fullH: 1440,
     },
     {
       id: 'starter-setups',
       title: m.bentoStartersTitle(),
       sub: m.bentoStartersSub(),
-      src: `/screenshots/starter-setups-${suffix}.webp`,
-      w: 1360,
-      h: 1200,
+      previewSrc: `/screenshots/starter-setups-${suffix}.webp`,
+      previewW: 1360,
+      previewH: 1200,
+      fullSrc: `/screenshots/starter-setups-${suffix}.webp`,
+      fullW: 1360,
+      fullH: 1200,
       narrow: true,
     },
   ]
@@ -101,9 +121,9 @@ export function BentoGrid({ theme }: BentoGridProps) {
               onClick={() => {
                 setActiveCard({
                   title: card.title,
-                  src: card.src,
-                  w: card.w,
-                  h: card.h,
+                  src: card.fullSrc,
+                  w: card.fullW,
+                  h: card.fullH,
                   narrow: card.narrow,
                 })
                 setLightboxOpen(true)
@@ -115,10 +135,10 @@ export function BentoGrid({ theme }: BentoGridProps) {
               <p className="bento-card-sub">{card.sub}</p>
               <div className="bento-card-media">
                 <img
-                  src={card.src}
+                  src={card.previewSrc}
                   alt={card.title}
-                  width={card.w}
-                  height={card.h}
+                  width={card.previewW}
+                  height={card.previewH}
                   loading="lazy"
                   decoding="async"
                 />
@@ -135,22 +155,24 @@ export function BentoGrid({ theme }: BentoGridProps) {
       <Dialog open={lightboxOpen} onOpenChange={(details) => setLightboxOpen(details.open)}>
         <DialogBackdrop />
         <DialogPositioner>
-          <DialogContent className="lightbox-content">
-            <div className="lightbox-header">
+          <DialogContent
+            className={`lightbox-content ${activeCard.narrow ? 'lightbox-content-narrow' : ''}`}
+          >
+            <DialogHeader className="lightbox-header">
               <DialogTitle>
                 {m.lightboxPrefix()} · {activeCard.title}
               </DialogTitle>
               <DialogCloseIcon />
-            </div>
-            <div className="lightbox-body">
+            </DialogHeader>
+            <DialogBody className="lightbox-body">
               <img
                 src={activeCard.src}
                 alt={activeCard.title}
                 width={activeCard.w}
                 height={activeCard.h}
-                className={`lightbox-img ${activeCard.narrow ? 'is-narrow' : ''}`}
+                className="lightbox-img"
               />
-            </div>
+            </DialogBody>
           </DialogContent>
         </DialogPositioner>
       </Dialog>
