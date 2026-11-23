@@ -146,7 +146,13 @@ def main():
     dmg = OUTPUT / "Rebind.dmg"
     with tempfile.TemporaryDirectory(prefix="rebind-dmg-") as staging:
         run("ditto", destination, Path(staging) / "Rebind.app")
-        run("create-dmg", "--overwrite", "--volname", "Rebind",
+        # Opt-in for GUI sessions where Finder rejects create-dmg window styling.
+        # Keep signing and image verification identical; never fall back silently.
+        dmg_layout_options = []
+        if os.environ.get("REBIND_DMG_SKIP_FINDER_LAYOUT") == "1":
+            dmg_layout_options = ["--skip-jenkins"]
+            print("DMG layout: Finder styling explicitly skipped; background/icon positions are not configured.", flush=True)
+        run("create-dmg", *dmg_layout_options, "--overwrite", "--volname", "Rebind",
             "--volicon", destination / "Contents/Resources/AppIcon.icns",
             "--background", APP_ROOT / "scripts/dmg/background.tiff",
             "--window-size", "660", "420", "--icon-size", "128", "--text-size", "13",

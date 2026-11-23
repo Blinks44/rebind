@@ -710,6 +710,56 @@ import Synchronization
         return trySave(updated) ? backup.configuration.profiles.count : nil
     }
 
+    /// Reuses the atomic profile save; preview/install never dispatch an action.
+    func installStarterSetup(_ review: StarterSetupReview, name: String, expectedRevision: UInt64) -> StarterSetupResult? {
+        guard !storageLocked else {
+            error = .storageUnreadable
+            return nil
+        }
+        guard configuration == review.configuration, configurationReplacementRevision == expectedRevision else {
+            error = .starterReviewChanged
+            return nil
+        }
+        if review.destinationID == nil && !profileNameIsAvailable(name) {
+            error = .profileInvalid
+            return nil
+        }
+        // A target can disappear while its preview is open. Never widen its scope.
+        guard
+            review.additions.allSatisfy({ binding in
+                guard let target = binding.application else { return true }
+                return Bundle(url: target.url)?.bundleIdentifier == target.bundleIdentifier
+            })
+        else {
+            error = .starterMissingSafari
+            return nil
+        }
+        do {
+            let installation = try review.installing(name: name)
+            let activeRulesChanged = installation.configuration.bindings != configuration.bindings
+            let saved = activeRulesChanged ? trySave(installation.configuration) : saveWithoutEngine(installation.configuration)
+            return saved ? installation.result : nil
+        } catch {
+            showConfigurationError(error)
+            return nil
+        }
+    }
+
+    func starterProfileName(_ base: String) -> String {
+        var name = String(base.prefix(76))
+        var suffix = 2
+        while !profileNameIsAvailable(name) {
+            name = "\(String(base.prefix(76))) \(suffix)"
+            suffix += 1
+        }
+        return name
+    }
+
+    func starterProfileNameIsValid(_ name: String) -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return RuleProfile(name: trimmed).hasValidName && profileNameIsAvailable(trimmed)
+    }
+
     private static func sameName(_ lhs: String, _ rhs: String) -> Bool {
         lhs.compare(
             rhs, options: [.caseInsensitive, .diacriticInsensitive],

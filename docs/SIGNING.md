@@ -49,6 +49,8 @@ Subsequent same-signer updates must preserve rules/profiles and be checked for a
 
 `REBIND_SIGN_IDENTITY` selects an exact certificate name/fingerprint; `REBIND_SIGN_KEYCHAIN` selects an existing unlocked keychain. Normal releases need neither. There is only one package directory, `build/release/`; no separate signer-specific output/configuration or cross-repository script dependency. Keep the same intended identity in both repositories when deliberately updating their pinned fingerprint.
 
+If Finder rejects create-dmg's window styling in the logged-in GUI session (for example `statusbar visible`, error -10006), `REBIND_DMG_SKIP_FINDER_LAYOUT=1 apps/rebind/scripts/release.sh` explicitly selects create-dmg's supported `--skip-jenkins` mode. The package retains the app and Applications link but has no configured background or icon positions. This is opt-in, never an automatic fallback; signatures, integrity checks and appcast generation remain required. Record the layout limitation with the artifact.
+
 ## Update signing key
 
 Sparkle verifies every downloaded update with an **EdDSA (ed25519) key**, separate from the code-signing certificate. The private key was created once on 2026-10-21 with Sparkle's `generate_keys` and is stored in the login keychain (item account `ed25519`); the public key is `SUPublicEDKey` in `apps/rebind/Info.plist`. `release.sh` uses it through `generate_appcast`; macOS may ask once to allow keychain access.

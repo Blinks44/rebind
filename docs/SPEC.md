@@ -319,6 +319,10 @@ Required runtime behavior:
 - No SwiftData/SQLite/Core Data unless actual requirements demonstrate a need.
 - Never store unstable HID pointers or raw platform objects as persistent identifiers.
 
+### Starter setups (approved design, 2026-11-10)
+
+[SETUP-001](tasks/SETUP-001-starter-setups.md) defines four small offline bundles using existing rule/action models: browser navigation, window management, Magic Mouse basics and conventional mouse basics. The user approved the saved design on 2026-11-10; implementation and verification are owned by the task. Preview every trigger, action, app scope and known native conflict; select individual entries. Default to a new named profile without switching; adding to the current profile is explicit and previews conflicts. Skip duplicates/conflicts or cancel; never overwrite. Save selected additions atomically, preserve preferences and roll back on failure. Preview/install never execute an action or change permissions/OS settings. Missing apps/devices/access need honest guidance. Manual import/export stays intact. Catalog mappings live in the built-in catalog and the approved Sketch source; installed/device/accessibility evidence remains task-owned.
+
 ## 10. Interface and design (CORE)
 
 ### Presence (2026-10-13)

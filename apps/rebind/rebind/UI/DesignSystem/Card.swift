@@ -4,11 +4,12 @@ import SwiftUI
 struct Card<Content: View>: View {
     @Environment(\.colorSchemeContrast) private var contrast
     var insets = EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20)
+    var cornerRadius: CGFloat = Theme.cardRadius
     var severity: BannerSeverity?
     @ViewBuilder var content: Content
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         content
             .padding(insets)
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -10,6 +10,8 @@ User decision 2026-10-12: the calm look of the current **Rebind.sketch** replace
 
 ## Current source: Rebind.sketch
 
+Starter setups **2026-11-10** ([SETUP-001](tasks/SETUP-001-starter-setups.md)): new `06 · Starter setups · Review` page, frames 70–80 Light/Dark and self-contained interaction notes. Entry, four bundles, selectable previews/destination, conflicts, requirements, failure and result are saved and screenshot-reviewed. **User approved on 2026-11-10**; build 50 implements the flow with adaptive native controls. Six-language/two-theme native bounds checks pass; selected screenshots reviewed. Installed keyboard/VoiceOver and physical binding delivery remain open. Save checksum is task-owned.
+
 Magic Mouse catalog **2026-11-10** ([INPUT-017](tasks/INPUT-017-magic-mouse-two-finger-click.md), [INPUT-018](tasks/INPUT-018-magic-mouse-three-finger-scroll.md)): live screen 58 Light/menu screenshot and Foundations 07 inspected; menu structure re-inspected for the scroll extension. The native selector now has five taps, two physical clicks and four vertical-scroll entries, with dividers before the first click and first scroll. Each count lists up then down. Six-language titles and count-specific help reuse existing controls. Sketch remains unchanged; synchronize screen 58 Light/Dark and Foundations 07/08/10 from eight to eleven choices in a future authorized design pass.
 
 Running-app exclusions **2026-11-06** ([UI-027](tasks/UI-027-running-app-exclusions.md)): General frame 31 Light/Dark inspected live. Native Add App now opens the existing anchored-menu pattern with running apps and a disk-picker action; the capsule gains a chevron. Sketch is unchanged; synchronize this scoped interaction/copy in a future authorized design pass.

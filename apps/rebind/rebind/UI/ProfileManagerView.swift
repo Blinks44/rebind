@@ -7,6 +7,7 @@ struct ProfileManagerView: View {
     @State private var editing: ProfileEditOperation?
     @State private var pendingDeletion: RuleProfile?
     @State private var importing = false
+    @State private var showingStarterSetups = false
     @State private var importURL: URL?
     @State private var notice: Notice?
 
@@ -41,6 +42,15 @@ struct ProfileManagerView: View {
                 }
                 .padding(.horizontal, 28).padding(.vertical, 20)
             }
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(.starterEntryTitle).font(Theme.bodyStrong).foregroundStyle(Theme.textPrimary)
+                    Text(.starterEntryHint).font(Theme.callout).foregroundStyle(Theme.textSecondary)
+                }
+                Spacer(minLength: 8)
+                Button(.starterTitle) { showingStarterSetups = true }.secondaryButton()
+                    .disabled(importURL != nil)
+            }.padding(.horizontal, 28).padding(.bottom, 20)
             if let notice {
                 Text(notice.text).font(Theme.callout).foregroundStyle(notice.isError ? Theme.dangerText : Theme.successText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -67,6 +77,7 @@ struct ProfileManagerView: View {
         }
         .frame(width: 560, height: 480)
         .background(Theme.sheetSurface)
+        .sheet(isPresented: $showingStarterSetups) { StarterSetupsView(model: model) }
         .sheet(item: $editing) { ProfileNameEditor(model: model, operation: $0) }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             guard case .success(let url) = result else { return }

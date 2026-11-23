@@ -7,6 +7,7 @@ struct MenuSelector<Selection: Hashable>: View {
     let title: LocalizedStringResource
     let choices: [Selection]
     let label: (Selection) -> LocalizedStringResource
+    var isChoiceEnabled: (Selection) -> Bool = { _ in true }
     var compact = false
     var singleLine = false
     /// Choices that start a new group, shown after a separator.
@@ -30,12 +31,13 @@ struct MenuSelector<Selection: Hashable>: View {
             menuAction()
             return
         }
-        guard choices.indices.contains(index) else { return }
+        guard choices.indices.contains(index), isChoiceEnabled(choices[index]) else { return }
         selection = choices[index]
     }
 
     private func makeMenu(target: MenuSelectionTarget) -> NSMenu {
         let menu = NSMenu()
+        menu.autoenablesItems = false
         for (index, choice) in choices.enumerated() {
             if index > 0, startsGroup(choice) { menu.addItem(.separator()) }
             var resource = label(choice)
@@ -46,6 +48,7 @@ struct MenuSelector<Selection: Hashable>: View {
             item.target = target
             item.tag = index
             item.state = choice == selection ? .on : .off
+            item.isEnabled = isChoiceEnabled(choice)
             menu.addItem(item)
         }
         if var title = menuActionTitle, menuAction != nil {
