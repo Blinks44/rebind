@@ -1135,6 +1135,8 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  min-width: 0;
+  flex: 1 1 320px;
 }
 
 .install-trust-left svg {
@@ -1155,7 +1157,16 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 .install-trust-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+
+.install-trust-links .btn-rb-outline {
+  height: 36px;
+  padding: 0 0.9rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
 }
 
 @media (max-width: 820px) {

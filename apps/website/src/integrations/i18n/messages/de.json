@@ -147,7 +147,7 @@
   "installDmgTitle": "Direkter Download (DMG)",
   "installDmgDesc": "Eigenständige native Swift-App (~{size}) mit Sparkle-Updates und SHA-256-Prüfsumme.",
   "installDmgCta": "Rebind v{version} laden",
-  "installAllReleases": "Versionshinweise & ältere Builds",
+  "installAllReleases": "Alle Releases",
   "installBrewTitle": "Homebrew Cask",
   "installBrewDesc": "Installiere direkt über unseren offiziellen Tap und halte Rebind mit deinen anderen Mac-Tools aktuell.",
   "faqEyebrow": "FAQ",
@@ -177,6 +177,6 @@
   "shellNavAbout": "Über Rebind",
   "installDmgMeta": "macOS 15 Sequoia oder neuer · Apple Silicon & Intel · MIT-Lizenz",
   "installBrewNote": "Jederzeit aktualisierbar mit brew upgrade --cask blinks44/tap/rebind",
-  "installTrustTitle": "Open Source, signierte Releases und prüfbare Prüfsummen",
-  "installTrustDesc": "Transparent über GitHub Actions gebaut, mit Ed25519-signierten Sparkle-Updates und SHA-256-Prüfsummen."
+  "installTrustTitle": "Signierte Releases & SHA-256",
+  "installTrustDesc": "Über GitHub Actions gebaut, mit Ed25519-Sparkle-Updates."
 }
