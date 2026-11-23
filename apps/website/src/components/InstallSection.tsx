@@ -26,7 +26,7 @@ export function InstallSection({ release }: InstallSectionProps) {
             <h3>{m.installDmgTitle()}</h3>
             <p>{m.installDmgDesc({ size: release.dmg.sizeLabel })}</p>
             <div>
-              <a href={release.dmg.url} className="btn-rebind-primary">
+              <a href={release.dmg.url} className="btn-rb-primary">
                 <Download size={16} aria-hidden="true" />
                 <span>{m.installDmgCta({ version: release.version })}</span>
               </a>
@@ -62,7 +62,7 @@ export function InstallSection({ release }: InstallSectionProps) {
               href={release.checksumsUrl}
               target="_blank"
               rel="noreferrer"
-              className="btn-rebind-outline"
+              className="btn-rb-outline"
             >
               <span>SHA256SUMS.txt</span>
               <ExternalLink size={13} aria-hidden="true" />
@@ -71,7 +71,7 @@ export function InstallSection({ release }: InstallSectionProps) {
               href={release.releaseUrl}
               target="_blank"
               rel="noreferrer"
-              className="btn-rebind-outline"
+              className="btn-rb-outline"
             >
               <span>{m.installAllReleases()}</span>
               <ExternalLink size={13} aria-hidden="true" />
