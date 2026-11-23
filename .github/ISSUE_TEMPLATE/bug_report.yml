@@ -1,0 +1,33 @@
+name: Bug Report
+description: Report broken remapping, device detection, scrolling, or UI behavior
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      placeholder: Describe what you expected and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Configure binding ...
+        2. Trigger with ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Mac model, macOS version, Rebind version, and input devices
+      placeholder: e.g. MacBook Pro M4 Pro, macOS 15.4, Rebind 1.3.2, Logitech MX Master 3S
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Diagnostics or screenshots (optional)
+      placeholder: Paste diagnostics output or drop screenshots (redact personal info).

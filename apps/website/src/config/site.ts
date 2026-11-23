@@ -3,10 +3,23 @@ export const site = {
   origin: 'https://rebind.moduix.dev',
   repository: 'https://github.com/blinks44/rebind',
   releases: 'https://github.com/blinks44/rebind/releases',
-  author: { name: 'Sergey V.', x: 'https://x.com/TheBlinks182', xHandle: '@TheBlinks182' },
-  // The DMG name includes the build number: update it with every published release.
-  downloadUrl: 'https://github.com/blinks44/rebind/releases/latest/download/Rebind.dmg' as
-    | string
-    | undefined,
+  discussions: 'https://github.com/blinks44/rebind/discussions',
+  homebrewTap: 'https://github.com/blinks44/homebrew-tap',
+  homebrewCommand: 'brew install --cask blinks44/tap/rebind',
+  quarantineCommand: 'xattr -dr com.apple.quarantine /Applications/Rebind.app',
+  fallbackVersion: '1.3.2',
+  fallbackDmgSize: '7.8 MB',
+  downloadUrl: 'https://github.com/blinks44/rebind/releases/latest/download/Rebind.dmg',
+  checksumsUrl: 'https://github.com/blinks44/rebind/releases/latest/download/SHA256SUMS.txt',
+  author: {
+    name: 'Sergey V.',
+    x: 'https://x.com/TheBlinks182',
+    xHandle: '@TheBlinks182',
+    github: 'https://github.com/blinks44',
+  },
+  suite: {
+    hearth: 'https://hearth.moduix.dev',
+    monny: 'https://monny.moduix.dev',
+  },
   indexingEnabled: true,
 } as const

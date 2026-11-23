@@ -1,1 +1,0 @@
-export { GesturesSection } from './GesturesSection'

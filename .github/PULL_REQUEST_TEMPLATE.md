@@ -1,9 +1,9 @@
-**What this changes**
+## Summary
 
+<!-- Explain what this change does and why. -->
 
-**How it was checked**
-- [ ] `apps/rebind/scripts/dev.sh lint` and `apps/rebind/scripts/dev.sh test` pass
-- [ ] Tried in the running app (say on which macOS and device)
+## Verification
 
-**Not tested**
-<!-- For example hardware you do not own, or languages you could not translate. -->
+- [ ] Built and ran locally (`apps/rebind/scripts/dev.sh doctor` / tests)
+- [ ] Updated docs/localization if user-facing behavior changed
+- [ ] Website checks pass (`pnpm check && pnpm build` in `apps/website`, if touched)

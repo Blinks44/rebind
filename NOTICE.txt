@@ -1,0 +1,8 @@
+Rebind
+Copyright (c) 2026 Sergey V. (Blinks44)
+
+Licensed under the MIT License. See LICENSE for full terms.
+
+Third-Party Notices:
+- Sparkle (https://sparkle-project.org) — MIT License
+- Website UI components powered by @moduix/react, @ark-ui/react, TanStack Start, Lucide icons, and Paraglide JS.

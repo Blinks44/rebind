@@ -1,163 +1,160 @@
+<div align="center">
+  <img src="apps/website/public/app-icon.png" alt="Rebind icon" width="96" height="96" />
+  <h1>Rebind</h1>
+  <p><strong>Native macOS input remapper for keyboards, multi-button &amp; Logitech HID++ mice, smooth scrolling, Trackpad, and Magic Mouse.</strong></p>
+  <p>
+    <a href="https://rebind.moduix.dev"><img src="https://img.shields.io/badge/Website-rebind.moduix.dev-2F66F5?style=flat-square" alt="Website" /></a>
+    <a href="https://github.com/Blinks44/rebind/releases/latest"><img src="https://img.shields.io/github/v/release/Blinks44/rebind?style=flat-square&color=2F66F5" alt="Latest Release" /></a>
+    <img src="https://img.shields.io/badge/macOS-15%2B-111827?style=flat-square&logo=apple&logoColor=white" alt="macOS 15+" />
+    <img src="https://img.shields.io/badge/Swift-6-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 6" />
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-16A34A?style=flat-square" alt="MIT License" /></a>
+  </p>
+  <p>
+    <a href="https://rebind.moduix.dev">Website</a> ·
+    <a href="#installation">Install</a> ·
+    <a href="#features">Features</a> ·
+    <a href="docs/CAPABILITIES.md">Capabilities</a> ·
+    <a href="docs/USAGE.md">User Guide</a> ·
+    <a href="CHANGELOG.md">Changelog</a>
+  </p>
+</div>
+
 <p align="center">
-  <img src="docs/images/app-icon.png" alt="Rebind app icon" width="128" height="128">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/rebind-dark.webp" />
+    <img src="docs/images/rebind-light.webp" alt="Rebind main window showing keyboard bindings" width="900" />
+  </picture>
 </p>
 
-<h1 align="center">Rebind</h1>
+<details>
+<summary><strong>More screenshots (Mouse, Logitech HID++ &amp; Smooth Scroll, Magic Mouse, Starter Setups)</strong></summary>
 
-<p align="center">
-  Remap keys, mouse buttons and trackpad gestures to shortcuts and macOS actions.<br>
-  Free, open source, native on macOS 15+.
-</p>
+<br />
 
-A native macOS utility for mapping keyboard and mouse input to shortcuts and system actions. Create a binding, choose its trigger and action, and keep it running from the menu bar while you work in other apps.
-
-Rebind runs on **macOS 15 and later**, with SwiftUI/AppKit and a calm, soft native design built on a shared design system. Rules stay on your Mac; no account, cloud backend or analytics are required.
-
-**Status:** version 1.3. Keyboard and mouse remapping is the stable core; trackpad and Magic Mouse gestures are experimental. Testing so far has been on Apple silicon with macOS 27, plus a macOS 15 virtual machine. The [capability matrix](docs/CAPABILITIES.md) lists what has been tried on real hardware.
-
-## Repository layout
-
-| Path | Contents |
+| Mouse &amp; Gesture Rules | Logitech HID++ &amp; Per-Mouse Scroll |
 | --- | --- |
-| `apps/rebind/` | The macOS app: Xcode project, sources, tests, the `scripts/dev.sh` build script and developer tools |
-| `apps/website/` | The project website: TanStack Start/React 19 on Vite, moduix, six-language Paraglide and Cloudflare Workers ([README](apps/website/README.md)) |
-| `docs/` | Specification, design notes, roadmap, current state and verification records |
-| `AGENTS.md`, `.agents/` | Instructions and skills for coding and design agents |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="apps/website/public/screenshots/mouse-dark.webp" /><img src="apps/website/public/screenshots/mouse-light.webp" alt="Rebind Mouse bindings view" /></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="apps/website/public/screenshots/devices-dark.webp" /><img src="apps/website/public/screenshots/devices-light.webp" alt="Rebind Devices &amp; Logitech HID++ view" /></picture> |
+
+| Magic Mouse (Experimental) | Built-In Offline Starter Setups |
+| --- | --- |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="apps/website/public/screenshots/magic-mouse-dark.webp" /><img src="apps/website/public/screenshots/magic-mouse-light.webp" alt="Rebind Magic Mouse view" /></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="apps/website/public/screenshots/starter-setups-dark.webp" /><img src="apps/website/public/screenshots/starter-setups-light.webp" alt="Rebind Starter Setups catalog" /></picture> |
+
+</details>
+
+---
+
+## Why Rebind
+
+Rebind brings keyboard remapping, extra mouse buttons, drag gestures, per-mouse smooth scrolling, Logitech HID++ hardware controls, and curated touch gestures into **one fast native Swift app**—without Electron, heavy vendor suites, accounts, or telemetry.
+
+- **Accessibility only** — never asks for Input Monitoring, never logs keystrokes, and starts paused with zero bindings.
+- **Fail-open by design** — press **⌃⌥⇧⌘ Escape** anytime to pause all rules immediately; errors fall back to normal macOS input.
+- **100% local** — rules and profiles stay in plain JSON inside `~/Library/Application Support/Rebind` with automatic rolling backups.
+
+---
+
+## Installation
+
+Requires **macOS 15 Sequoia or later** (Universal binary).
+
+### Homebrew (recommended)
+
+```sh
+brew install --cask blinks44/tap/rebind
+```
+
+### Direct download
+
+1. Download [`Rebind.dmg`](https://github.com/Blinks44/rebind/releases/latest/download/Rebind.dmg) from the [latest release](https://github.com/Blinks44/rebind/releases/latest) (optional verification via [`SHA256SUMS.txt`](https://github.com/Blinks44/rebind/releases/latest/download/SHA256SUMS.txt)).
+2. Open the DMG and drag **Rebind** into **Applications**.
+3. Follow the first-run guide to grant **Accessibility** permission.
+
+> **First launch note:** Rebind is signed with a stable certificate so Accessibility permissions survive updates, but is not yet notarized by Apple. If macOS blocks the first launch, click **Open Anyway** in **System Settings → Privacy & Security**, or clear the quarantine attribute:
+>
+> ```sh
+> xattr -dr com.apple.quarantine /Applications/Rebind.app
+> ```
+
+---
 
 ## Features
 
 **Triggers**
 
-- Keyboard keys and shortcuts; middle and extra mouse buttons, with Command, Control, Option and Shift.
-- Press, double press and hold. A hold binding can also send a shortcut on a short press.
-- Mouse wheel steps, a held button plus movement in four directions, and a held button plus the wheel.
-- Trackpad taps with three or four fingers, double taps, clicks with two to four fingers and corner taps, each optionally with one held modifier key. The built-in trackpad and an external Magic Trackpad have separate bindings.
-- Experimental Magic Mouse taps with one, two or three fingers, one-finger taps on the left or right half, physical two- and three-finger clicks and two- or three-finger scroll up/down. Each supports one optional held modifier and the shared action catalog. Native Smart Zoom and Mission Control may also respond to repeated taps.
+- **Keyboard:** physical keys and shortcuts with **Press**, **Double Press**, and **Hold** (with optional separate short-press action).
+- **Mouse:** Button 4/5+, middle click, extra gaming mouse buttons, **Button + Movement** gestures (4 directions), and **Button + Wheel** chords.
+- **Trackpad &amp; Magic Trackpad (Experimental):** 12 curated presets including 3-/4-finger taps, 2-finger double taps, multi-finger clicks, and corner taps, with optional held modifier key.
+- **Magic Mouse (Experimental):** 8 curated presets including 2-finger taps/clicks, side taps, and 3-finger scroll.
 
-**Actions**
+**Hardware &amp; Scrolling**
 
-- Keyboard shortcuts, kept pressed and repeated while the trigger is held if you choose; named commands such as Copy, Paste, Undo, Back, Forward, tab and zoom commands and screenshots.
-- Hold Command, Option, Control or Shift from a mouse button or key.
-- Insert text, mouse clicks and scrolling, or do nothing to switch a key off.
-- Windows: halves, quarters, fill, center, move to the next display, close, minimize, full screen, next and previous window.
-- Apps and system: open, activate or quit an app, previous app, open a file, folder or web address, Apple Shortcuts, Mission Control and desktops, volume, media keys, display brightness, sleep and lock.
-- Rebind itself: pause, next and previous profile.
+- **Independent wheel direction:** reverse vertical and horizontal mouse scrolling without affecting trackpad natural scrolling.
+- **Per-mouse smooth scrolling:** tune glide strength (*Gentle*, *Standard*, *Strong*) and wheel speed separately per mouse.
+- **Logitech HID++ 2.0:** configure pointer speed (DPI), SmartShift mode and sensitivity, High-resolution wheel, Gesture button, live menu bar battery charge, and compatible keyboard lighting (e.g. G915 TKL). Warns when Logi Options+ or G HUB is active.
 
-**Everything else**
+**Actions &amp; Profiles**
 
-- Named profiles with manual selection; duplicate a binding, copy it to another profile, give it a note; export and import single profiles or a full backup.
-- Bindings for all apps or for one app, which then replaces the general binding with the same trigger there.
-- Excluded apps, such as games and virtual machines, with bindings and smooth scrolling switched off separately.
-- Reverse vertical and horizontal scrolling separately, speed up the wheel, smooth scrolling set per mouse, adjustable mouse gesture distance.
-- Logitech mice: SmartShift wheel mode and sensitivity, pointer resolution (DPI), high-resolution wheel, battery charge, and the gesture button as a trigger; kept per model and restored when the mouse connects; a warning while a vendor app such as Logi Options+ or G HUB may take over the mouse.
-- Automatic backups of the last 10 different configurations loaded at launch, plus full export/import and individual profile files.
-- Runs from the menu bar with a paused state you can see, optional Dock icon, launch at login and an emergency pause shortcut.
-- Updates through [Sparkle](https://sparkle-project.org): Rebind checks once a day (or on **Check for Updates**), shows what changed and asks before installing a signed update.
-- English, Russian, German, French, Spanish and Simplified Chinese.
+- **Unified action catalog:** shortcuts, named macOS commands, modifier holds, mouse clicks/scroll, Insert Text (stored locally in plain text), window tiling (halves, quarters, Fill, Center, Fill with Left Margin, Fill Centered, next display), Mission Control &amp; Spaces, media/volume/brightness, lock/sleep, open app/file/URL, Apple Shortcuts, pause/profile switch.
+- **Profiles &amp; Starter Setups:** per-app rules, excluded apps (e.g. games/VMs), manual profile switching from the menu bar, JSON import/export, and **4 built-in offline Starter Setups** (*Browser Navigation*, *Window Management*, *Magic Mouse Basics*, *Mouse Basics*) with trigger &amp; conflict preview.
+- **Menu bar &amp; updates:** live multi-device battery percentages, inline DPI slider, Ed25519-signed [Sparkle](https://sparkle-project.org) updates, and 6 UI languages (English, Russian, German, French, Spanish, Simplified Chinese).
 
-Profiles apply to input categories rather than individual physical devices. Not available: Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes, pinch and rotation, and the Logitech thumb wheel as a trigger (it scrolls sideways as usual). Trackpad and Magic Mouse touch capture rely on a private macOS interface and are experimental; macOS gestures stay active, so the system may respond to the same tap. Much of the feature set is verified by automated tests only; see the [capability matrix](docs/CAPABILITIES.md) for what has been tried on real hardware.
+> **Honest scope:** Caps Lock and Fn remapping, Magic Mouse swipes/holds, trackpad swipes/pinch/rotate, and the Logitech thumb wheel as a trigger are not supported. Trackpad and Magic Mouse touch capture rely on private macOS APIs and are marked **Experimental**. See [docs/CAPABILITIES.md](docs/CAPABILITIES.md) for the full hardware verification matrix.
 
-## Requirements
+---
 
-- macOS **15 or later**.
-- Full Xcode with a **Swift 6.2+ compiler** and a **macOS 26+ SDK** to build from source.
-- The Accessibility permission, which Rebind asks for on first launch.
+## Repository Layout
 
-Rebind is a universal app. It has been run on Apple silicon with macOS 27 and in a macOS 15 virtual machine, where the app and keyboard and mouse bindings work. Trackpad and Magic Mouse gestures on macOS 15, macOS 26 and Intel Macs have not been tested yet.
+| Path | Contents |
+| --- | --- |
+| `apps/rebind/` | Native macOS app (Xcode project, Swift 6 sources, local `HIDPP` package, Swift Testing suite, `scripts/dev.sh`, `scripts/release.sh`) |
+| `apps/website/` | Public landing page ([rebind.moduix.dev](https://rebind.moduix.dev)): TanStack Start, React 19, `@moduix/react`, Paraglide i18n, Cloudflare Workers |
+| `docs/` | Product spec, design guidelines, capability matrix, user/dev/release guides, and verification records |
 
-## Install
+---
 
-Rebind is signed by the maintainer but **not notarized by Apple**, so macOS blocks the first launch until you allow it. The "Source code" archives on the Releases page are not installers; download the DMG.
+## Build From Source
 
-1. Download [Rebind.dmg](https://github.com/Blinks44/rebind/releases/latest/download/Rebind.dmg) from the latest release and open it.
-2. Drag **Rebind** onto the **Applications** folder, then open it from there. macOS shows a warning that it could not verify the app; close the warning.
-3. Open **System Settings → Privacy & Security**, scroll down to the message about Rebind and click **Open Anyway**, then confirm.
-4. Rebind opens and guides you through the one permission it needs, **Accessibility**.
-
-Later versions arrive through the built-in updater. If macOS asks for Accessibility access again after an update, turn Rebind off and on in that list. See also [Apple’s first-launch instructions](https://support.apple.com/en-us/102445).
-
-If you would rather not trust a prebuilt app, build it yourself from this repository (below).
-
-## Build and run
-
-From the repository directory:
+Requires full Xcode with a **Swift 6.2+ compiler** and a **macOS 26+ SDK**.
 
 ```sh
-apps/rebind/scripts/dev.sh doctor
-apps/rebind/scripts/dev.sh run
+apps/rebind/scripts/dev.sh doctor   # check Xcode toolchain & targets
+apps/rebind/scripts/dev.sh run      # build Debug and launch Rebind.app
+apps/rebind/scripts/dev.sh test     # run Swift Testing suite
 ```
 
-`doctor` reports the selected toolchain and project targets. `run` builds Debug and opens `Rebind.app`. The script selects full Xcode per process without changing your system's `xcode-select` setting.
+You can also open `apps/rebind/rebind.xcodeproj` in Xcode, select the **rebind** scheme, and press **⌘R**. See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) and [docs/RELEASING.md](docs/RELEASING.md) for signing and DMG packaging details.
 
-Alternatively, open `apps/rebind/rebind.xcodeproj` in Xcode, select the **rebind** scheme and run with **⌘R**. Local development builds can use **Sign to Run Locally**; rebuilds may require renewing macOS permission grants.
-
-To build a Release app:
-
-```sh
-apps/rebind/scripts/dev.sh release
-```
-
-The result is `~/Library/Caches/Rebind/DerivedData/Build/Products/Release/Rebind.app`. To package a release for other people, use `apps/rebind/scripts/release.sh` (see the development guide). See the [development guide](docs/DEVELOPMENT.md) for toolchain overrides, tests and signing details.
-
-## First launch
-
-1. Open Rebind. New configurations start paused with no bindings.
-2. Follow the first-run guide (or **Settings → Permissions**) to open **System Settings → Privacy & Security → Accessibility** and turn on Rebind. Relaunch it if macOS asks.
-3. If Accessibility is on but Rebind still cannot send events, choose **Allow Event Sending** and check the status again.
-4. Pick an input category, add a binding with a trigger and an action, save it and turn bindings on.
-
-For example, map **Control + Mouse Button 4 → Command+A** or assign a long press on an extra mouse button to a shortcut. Unmatched inputs retain normal system behavior.
-
-Pause from the menu bar whenever needed. While bindings are on, **⌃⌥⇧⌘ Escape** pauses them immediately. Rebind does not need Input Monitoring; the few actions that need another permission explain it where you set them up.
-
-## How it works
-
-The selected profile supplies the active bindings. A global Quartz event tap captures supported keyboard/mouse input and a bounded matcher decides whether to pass it through or trigger an action. Actions run separately from the synchronous event callback; synthesized events are tagged to prevent feedback loops. The experimental trackpad path uses an isolated private multitouch adapter.
-
-Configuration is stored locally at `~/Library/Application Support/Rebind/configuration.json` using versioned JSON and atomic writes. Rebind does not keep a history of what you type. Text you deliberately save in an Insert Text action is part of your unencrypted local configuration and backups; do not store passwords there. Secure Input and permission/lifecycle checks guard recording and dispatch.
-
-Input processing makes no network requests and sends no analytics. The update check downloads the public appcast from GitHub Releases once a day (turn it off in **Settings → General**) or when you choose **Check for Updates**; it sends no bindings, input, device or system data. Opening a website or running an Apple Shortcut follows the action you configure.
+---
 
 ## Technology
 
 | Area | Stack |
 | --- | --- |
-| Language and UI | Swift 6 language mode, SwiftUI, AppKit, Observation |
-| Input | Core Graphics / Quartz Event Services, owned Core Foundation run loop |
-| Actions | Accessibility, NSWorkspace, Core Audio, IOKit, native Shortcuts CLI |
-| Mice | IOKit HID, Logitech HID++ 2.0 through the vendored HIDPP package |
-| Storage and localization | Codable/JSON, atomic local files, String Catalogs |
-| Tests | Swift Testing with an Xcode-hosted test target |
-| Build and assets | Xcode, SF Symbols, Sketch, Icon Composer |
+| Language &amp; UI | Swift 6 language mode, SwiftUI, AppKit, Observation |
+| Input &amp; Actions | Quartz Event Services (CGEventTap), Accessibility, NSWorkspace, Core Audio, IOKit |
+| Mice &amp; HID++ | IOKit HID, Logitech HID++ 2.0 via vendored `HIDPP` package |
+| Storage &amp; Updates | Atomic versioned JSON, String Catalogs (6 languages), [Sparkle 2](https://sparkle-project.org) (Ed25519 signed) |
 
-The app uses two Swift packages: [Sparkle](https://sparkle-project.org) 2.10.0 for updates and the vendored local `HIDPP` package (`apps/rebind/Packages/HIDPP`). Some experimental trackpad/Dock/lock paths and the high-resolution wheel adjustment use private macOS APIs and may break after macOS updates. [Third-party notices](apps/rebind/rebind/Resources/ThirdPartyNotices.txt) document credited sources.
+---
 
 ## Acknowledgements
 
-Rebind builds on the work of these open-source projects. Each is credited with its license in [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt), which the app also shows under About.
+Full third-party licenses live in [NOTICE.txt](NOTICE.txt) and [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
 
-- [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT): signed in-app updates.
-- [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT): the vendored `HIDPP` package for Logitech HID++, the approach of the smooth scrolling glide, and scaling the HID event attached to a scroll event so that reversing works on high-resolution wheels.
-- [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0): its HID++ feature documentation informed the SmartShift and device name payloads. Reference only; no code was copied.
-- [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) (MIT): media key events, the screen lock entry point and window raising were checked against it.
-- [spacekit](https://github.com/cehbz/spacekit) (MIT): the Control+Arrow events for switching desktops.
-- [Sanne](https://github.com/anandghegde/sanne) (MIT): the corner regions for one-finger corner taps.
-- [Subsurface](https://github.com/mrkai77/Subsurface) (Apache-2.0): the private multitouch signatures and contact layout used by the trackpad adapter were compared with it.
+- [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT) — signed in-app updates.
+- [LinearMouse](https://github.com/linearmouse/linearmouse) (MIT) — vendored `HIDPP` package, smooth scrolling glide approach, and high-res scroll reversal scaling.
+- [Solaar](https://github.com/pwr-Solaar/Solaar) (GPL-2.0) — HID++ SmartShift &amp; device name payload reference only (no code copied).
+- [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) (MIT), [spacekit](https://github.com/cehbz/spacekit) (MIT), [Sanne](https://github.com/anandghegde/sanne) (MIT), and [Subsurface](https://github.com/mrkai77/Subsurface) (Apache-2.0).
 
-## Documentation
+---
 
-- [User guide](docs/USAGE.md): setup, everyday examples, conflicts and recovery.
-- [Release guide](docs/RELEASING.md): versioning, signed DMG, GitHub assets and website publication.
-- [Development guide](docs/DEVELOPMENT.md): build, tests, signing and detailed local setup.
-- [Capabilities](docs/CAPABILITIES.md): implementation status, verified subsets and limitations.
-- [Specification](docs/SPEC.md) and [roadmap](docs/PLAN.md): product requirements and remaining work.
-- [Documentation index](docs/README.md): design, architecture conventions, verification and contributor/agent workflow.
-- [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md), [code of conduct](CODE_OF_CONDUCT.md) and [changelog](CHANGELOG.md).
+## Also by Sergey V.
 
-## Author
+- [**Hearth**](https://hearth.moduix.dev) — Local dev environment dashboard for runtimes, projects, Docker, Kubernetes, databases, and AI agents.
+- [**Monny**](https://monny.moduix.dev) — Native macOS system monitor for CPU, memory, disk, network, Apple silicon sensors, and AI usage quotas.
 
-Rebind is made by Sergey V. Follow [@TheBlinks182 on X](https://x.com/TheBlinks182) for updates and new releases.
+---
 
 ## License
 
-Rebind is released under the [MIT License](LICENSE): you may use, change and redistribute it, including in forks, as long as the copyright notice and the license text stay with every copy. Bundled third-party notices are in [ThirdPartyNotices.txt](apps/rebind/rebind/Resources/ThirdPartyNotices.txt).
+Released under the [MIT License](LICENSE). Made by Sergey V. ([@TheBlinks182](https://x.com/TheBlinks182)).

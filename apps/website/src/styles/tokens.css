@@ -1,39 +1,151 @@
-/* Rebind.sketch > 05 · Website > Implementation notes, reviewed 2026-10-23.
-   Calm owns control geometry; the website uses the Light theme only. */
 :root {
-  color-scheme: light;
-  --moduix-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --moduix-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --moduix-background: #f5f7fb;
-  --moduix-foreground: #111318;
+  --rb-bg: #f7f9fc;
+  --rb-surface: #eef2f8;
+  --rb-surface-2: #e4eaf4;
+  --rb-card: #ffffff;
+  --rb-border: #dfe5f0;
+  --rb-border-strong: #c7d2e4;
+  --rb-text: #0f172a;
+  --rb-text-secondary: #475569;
+  --rb-text-muted: #64748b;
+
+  --rb-accent: #2f66f5;
+  --rb-accent-hover: #1d52db;
+  --rb-accent-soft: #ebf2ff;
+  --rb-accent-border: #c5daff;
+  --rb-accent-text: #1d4ed8;
+
+  --rb-green: #16a34a;
+  --rb-green-soft: #e9f9ef;
+  --rb-amber: #d97706;
+  --rb-amber-soft: #fef4e6;
+  --rb-danger: #dc2626;
+  --rb-danger-soft: #feeceb;
+
+  --rb-key-top: linear-gradient(180deg, #ffffff 0%, #f1f5fb 100%);
+  --rb-key-border: #cbd5e1;
+  --rb-key-ledge: #b8c4d8;
+
+  --rb-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --rb-shadow-md: 0 10px 30px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --rb-shadow-lg: 0 26px 72px rgba(15, 23, 42, 0.14), 0 6px 22px rgba(15, 23, 42, 0.06);
+
+  --rb-radius-sm: 8px;
+  --rb-radius-md: 12px;
+  --rb-radius-lg: 18px;
+  --rb-radius-xl: 24px;
+
+  --moduix-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  --moduix-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
   --moduix-primary: #2f66f5;
   --moduix-primary-foreground: #ffffff;
-  --moduix-card: #ffffffd9;
-  --moduix-card-foreground: #111318;
-  --moduix-popover: #fffffff2;
-  --moduix-popover-foreground: #111318;
-  --moduix-border: #0f172a0f;
-  --moduix-muted-foreground: #3c3c43bf;
-  --moduix-accent: #2f66f51f;
-  --moduix-accent-foreground: #111318;
-  --moduix-ring: #2f66f5;
-  --moduix-button-radius: var(--moduix-radius-full);
-  --moduix-menu-trigger-radius: var(--moduix-radius-full);
-  --rebind-canvas-top: #f5f7fb;
-  --rebind-canvas-bottom: #edf1f8;
-  --rebind-canvas-glow: #dce7ff8c;
-  --rebind-text-secondary: #3c3c43bf;
-  --rebind-text-tertiary: #3c3c43bf;
-  --rebind-separator: #0f172a12;
-  --rebind-keycap-top: #ffffff;
-  --rebind-keycap-bottom: #eef1f6;
-  --rebind-keycap-ledge: #d3d9e4;
-  --rebind-keycap-border: #0f172a1a;
-  --rebind-keycap-highlight: #ffffffe6;
-  --rebind-keycap-text: #1b2230;
-  --rebind-card-border: #ffffffcc;
-  --rebind-card-shadow: 0 24px 60px #0f172a12, 0 1px 2px #0f172a0a;
-  --rebind-track: #0f172a08;
-  --rebind-content-width: 75rem;
-  --rebind-page-gutter: clamp(1.25rem, 4vw, 3rem);
+  --moduix-ring: rgba(47, 102, 245, 0.34);
+}
+
+:root[data-theme='dark'],
+:root[data-moduix-color-scheme='dark'] {
+  --rb-bg: #0b0f19;
+  --rb-surface: #121826;
+  --rb-surface-2: #192236;
+  --rb-card: #131a2a;
+  --rb-border: #232f4a;
+  --rb-border-strong: #324368;
+  --rb-text: #f8fafc;
+  --rb-text-secondary: #a1b0c9;
+  --rb-text-muted: #7082a1;
+
+  --rb-accent: #6e94ff;
+  --rb-accent-hover: #85a6ff;
+  --rb-accent-soft: rgba(110, 148, 255, 0.14);
+  --rb-accent-border: rgba(110, 148, 255, 0.34);
+  --rb-accent-text: #a5c0ff;
+
+  --rb-green: #3dd68c;
+  --rb-green-soft: rgba(61, 214, 140, 0.14);
+  --rb-amber: #ffb84d;
+  --rb-amber-soft: rgba(255, 184, 77, 0.15);
+  --rb-danger: #ff6b6e;
+  --rb-danger-soft: rgba(255, 107, 110, 0.15);
+
+  --rb-key-top: linear-gradient(180deg, #27324b 0%, #1b2438 100%);
+  --rb-key-border: #3a4c73;
+  --rb-key-ledge: #0b101d;
+
+  --rb-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.38);
+  --rb-shadow-md: 0 12px 34px rgba(0, 0, 0, 0.46), 0 2px 8px rgba(0, 0, 0, 0.32);
+  --rb-shadow-lg: 0 32px 84px rgba(0, 0, 0, 0.62), 0 8px 24px rgba(0, 0, 0, 0.38);
+
+  --moduix-primary: #6e94ff;
+  --moduix-primary-foreground: #0b0f19;
+  --moduix-ring: rgba(110, 148, 255, 0.42);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--rb-bg);
+  color: var(--rb-text);
+  font-family: var(--moduix-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--rb-bg);
+  color: var(--rb-text);
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+.mono {
+  font-family: var(--moduix-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-inline: 1.1rem;
+  }
+}
+
+/* Tactile raised keycap motif echoing Rebind Theme.swift */
+.rb-keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 28px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 7px;
+  background: var(--rb-key-top);
+  border: 1px solid var(--rb-key-border);
+  box-shadow:
+    0 2px 0 var(--rb-key-ledge),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: var(--rb-text);
+  font-family: var(--moduix-font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+:root[data-theme='dark'] .rb-keycap {
+  box-shadow:
+    0 2px 0 var(--rb-key-ledge),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.rb-keycap.is-accent {
+  background: var(--rb-accent-soft);
+  border-color: var(--rb-accent-border);
+  color: var(--rb-accent-text);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--rb-accent) 26%, transparent);
 }

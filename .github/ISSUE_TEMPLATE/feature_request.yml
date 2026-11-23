@@ -1,0 +1,18 @@
+name: Feature Request
+description: Suggest a new trigger, action, device integration, or starter setup
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      placeholder: Describe the workflow you want to automate or simplify.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      placeholder: Describe how you expect the trigger, action, or setting to work.
+    validations:
+      required: true

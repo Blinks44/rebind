@@ -1,6 +1,6 @@
 import { defaultLocale, type Locale, localePath, locales, openGraphLocales } from '@/config/locales'
 import { site } from '@/config/site'
-import { m } from '@/integrations/i18n/paraglide/messages'
+import * as m from '@/integrations/i18n/paraglide/messages'
 
 export function pageHead(locale: Locale, notFound = false) {
   const title = notFound ? m.notFoundTitle({}, { locale }) : m.metaTitle({}, { locale })
@@ -23,15 +23,15 @@ export function pageHead(locale: Locale, notFound = false) {
       { property: 'og:locale', content: openGraphLocales[locale] },
       ...(!notFound ? [{ property: 'og:url', content: url }] : []),
       { property: 'og:image', content: `${site.origin}/og-image.jpg` },
-      { property: 'og:image:width', content: '2400' },
-      { property: 'og:image:height', content: '1260' },
-      { property: 'og:image:alt', content: 'Rebind' },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:alt', content: 'Rebind for macOS' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:creator', content: site.author.xHandle },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
       { name: 'twitter:image', content: `${site.origin}/og-image.jpg` },
-      { name: 'twitter:image:alt', content: 'Rebind' },
+      { name: 'twitter:image:alt', content: 'Rebind for macOS' },
     ],
     links: notFound
       ? []
@@ -62,10 +62,16 @@ export function pageHead(locale: Locale, notFound = false) {
               inLanguage: locale,
               operatingSystem: 'macOS 15+',
               applicationCategory: 'UtilitiesApplication',
+              license: 'https://opensource.org/licenses/MIT',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+              },
               author: {
                 '@type': 'Person',
                 name: site.author.name,
-                sameAs: [site.author.x, 'https://github.com/blinks44'],
+                sameAs: [site.author.x, site.author.github],
               },
             }),
           },
