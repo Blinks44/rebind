@@ -178,5 +178,21 @@
   "installDmgMeta": "macOS 15 Sequoia o posterior · Apple Silicon e Intel · Licencia MIT",
   "installBrewNote": "Actualiza en cualquier momento con brew upgrade --cask blinks44/tap/rebind",
   "installTrustTitle": "Versiones firmadas y SHA-256",
-  "installTrustDesc": "Compilado en GitHub Actions con actualizaciones Sparkle Ed25519."
+  "installTrustDesc": "Compilado en GitHub Actions con actualizaciones Sparkle Ed25519.",
+  "stripRule1Trigger": "Botón 4 + ←",
+  "stripRule1Action": "Espacio siguiente",
+  "stripRule1Tag": "Gesto de ratón",
+  "stripRule1Note": "Mantén el botón lateral 4 y mueve a la izquierda para cambiar de Espacio en macOS sin usar el teclado.",
+  "stripRule2Trigger": "Doble ⌘",
+  "stripRule2Action": "Centrar ventana",
+  "stripRule2Tag": "Ritmo de tecla",
+  "stripRule2Note": "Acciones separadas para pulsación, doble pulsación y mantener en teclas físicas y perfiles por app.",
+  "stripRule3Trigger": "Toque 3 dedos",
+  "stripRule3Action": "Clic central",
+  "stripRule3Tag": "Trackpad · Exp.",
+  "stripRule3Note": "Ajustes táctiles seleccionados para Trackpad integrado y Magic Trackpad, con tecla modificadora opcional.",
+  "stripRule4Trigger": "MagSpeed",
+  "stripRule4Action": "SmartShift · 1600 DPI",
+  "stripRule4Tag": "Logitech HID++",
+  "stripRule4Note": "Control HID++ 2.0 nativo de DPI, umbral SmartShift, rueda de alta resolución y batería en la barra de menús."
 }

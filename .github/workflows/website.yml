@@ -10,19 +10,24 @@ on:
     paths:
       - "apps/website/**"
       - ".github/workflows/website.yml"
+  workflow_dispatch:
 
 concurrency:
   group: website-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
-  verify:
+  check:
+    name: Website (lint, typecheck, test, build)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: apps/website
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 12.14.0
@@ -31,6 +36,9 @@ jobs:
           node-version: 24
           cache: pnpm
           cache-dependency-path: apps/website/pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm check
-      - run: pnpm build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Check (i18n, format, lint, typecheck, test)
+        run: pnpm check
+      - name: Build
+        run: pnpm build

@@ -450,11 +450,127 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
   margin-bottom: 1.1rem;
 }
 
+.binding-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.binding-recipe-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid var(--rb-border);
+  background: var(--rb-surface);
+  color: var(--rb-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease,
+    background-color 140ms ease;
+}
+
+.binding-recipe-card:hover {
+  border-color: color-mix(in srgb, var(--rb-accent) 42%, var(--rb-border));
+  transform: translateY(-1px);
+}
+
+.binding-recipe-card.is-active {
+  border-color: var(--rb-accent);
+  background: color-mix(in srgb, var(--rb-accent-soft) 52%, var(--rb-surface));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--rb-accent) 12%, transparent);
+}
+
+.binding-recipe-tag {
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rb-text-muted);
+}
+
+.binding-recipe-card.is-active .binding-recipe-tag {
+  color: var(--rb-accent);
+}
+
+.binding-recipe-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.binding-recipe-keycap {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 0.55rem;
+  border-radius: 7px;
+  border: 1px solid var(--rb-border-strong);
+  border-bottom-width: 2px;
+  background: var(--rb-surface);
+  color: var(--rb-text);
+  font-family: var(--moduix-font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.binding-recipe-arrow {
+  color: var(--rb-text-faint);
+  flex-shrink: 0;
+}
+
+.binding-recipe-card.is-active .binding-recipe-arrow {
+  color: var(--rb-accent);
+}
+
+.binding-recipe-action {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--rb-text);
+}
+
+.binding-detail-note {
+  margin: 0 auto 1.25rem;
+  max-width: 680px;
+  text-align: center;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--rb-text-muted);
+}
+
 .devices-pill-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.6rem;
+}
+
+.device-pill.is-highlighted {
+  border-color: color-mix(in srgb, var(--rb-accent) 45%, var(--rb-border));
+  background: var(--rb-accent-soft);
+  color: var(--rb-accent);
+}
+
+@media (max-width: 980px) {
+  .binding-showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .binding-showcase-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .device-pill {

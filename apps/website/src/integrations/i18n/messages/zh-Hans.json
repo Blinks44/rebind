@@ -178,5 +178,21 @@
   "installDmgMeta": "支持 macOS 15 Sequoia 及以上 · Apple Silicon 与 Intel · MIT 协议",
   "installBrewNote": "随时可通过 brew upgrade --cask blinks44/tap/rebind 升级",
   "installTrustTitle": "签名发布与 SHA-256 校验",
-  "installTrustDesc": "通过 GitHub Actions 构建，支持 Ed25519 Sparkle 更新。"
+  "installTrustDesc": "通过 GitHub Actions 构建，支持 Ed25519 Sparkle 更新。",
+  "stripRule1Trigger": "侧键 4 + ←",
+  "stripRule1Action": "下一个桌面空间",
+  "stripRule1Tag": "鼠标手势",
+  "stripRule1Note": "按住鼠标侧键 4 并向左轻推，无需键盘即可切换 macOS 桌面空间。",
+  "stripRule2Trigger": "双击 ⌘",
+  "stripRule2Action": "窗口居中",
+  "stripRule2Tag": "按键节奏",
+  "stripRule2Note": "支持为物理按键分别设置单击、双击与长按动作，并按应用切换配置。",
+  "stripRule3Trigger": "三指轻点",
+  "stripRule3Action": "鼠标中键",
+  "stripRule3Tag": "触控板 · 实验性",
+  "stripRule3Note": "内置触控板与妙控板精选多指预设，可搭配修饰键触发。",
+  "stripRule4Trigger": "MagSpeed",
+  "stripRule4Action": "SmartShift · 1600 DPI",
+  "stripRule4Tag": "Logitech HID++",
+  "stripRule4Note": "原生 HID++ 2.0 调节 DPI、SmartShift 阈值、高分辨率滚轮，并在菜单栏实时显示电量。"
 }

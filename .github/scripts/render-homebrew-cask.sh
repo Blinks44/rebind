@@ -1,13 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:?version required (without leading v)}"
-SHA256="${2:?sha256 required}"
+if [ "$#" -ne 2 ]; then
+  echo "usage: $0 <version> <dmg-sha256>" >&2
+  exit 1
+fi
 
-cat <<EOF
+version="$1"
+sha256="$2"
+
+if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+  echo "error: invalid version: $version" >&2
+  exit 1
+fi
+
+if ! [[ "$sha256" =~ ^[0-9a-fA-F]{64}$ ]]; then
+  echo "error: invalid sha256: $sha256" >&2
+  exit 1
+fi
+
+sha256=$(printf '%s' "$sha256" | tr '[:upper:]' '[:lower:]')
+
+cat <<CASK
 cask "rebind" do
-  version "${VERSION}"
-  sha256 "${SHA256}"
+  version "${version}"
+  sha256 "${sha256}"
 
   url "https://github.com/Blinks44/rebind/releases/download/v#{version}/Rebind.dmg"
   name "Rebind"
@@ -38,4 +55,4 @@ cask "rebind" do
     Rebind also asks for Accessibility permission on first launch.
   EOS
 end
-EOF
+CASK

@@ -1,4 +1,4 @@
-name: Update Homebrew Tap
+name: Homebrew Tap
 
 on:
   release:
@@ -6,45 +6,73 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag (e.g. v1.3.2)"
+        description: "Release tag to sync (e.g. v1.3.2)"
         required: true
+        type: string
+
+concurrency:
+  group: homebrew-tap
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   update-cask:
+    name: Update Blinks44/homebrew-tap cask
+    if: github.event_name == 'workflow_dispatch' || !github.event.release.prerelease
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Resolve tag and SHA-256
-        id: meta
+      - uses: actions/checkout@v7
+      - name: Resolve tag and DMG checksum
+        id: release
         env:
           GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG="${{ github.event.inputs.tag || github.event.release.tag_name }}"
-          VERSION="${TAG#v}"
-          SHA256="$(curl -fsSL "https://github.com/Blinks44/rebind/releases/download/${TAG}/SHA256SUMS.txt" | awk '/Rebind\.dmg$/ {print $1}')"
-          test -n "${SHA256}"
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout homebrew-tap
-        uses: actions/checkout@v4
-        with:
-          repository: Blinks44/homebrew-tap
-          path: tap
-          ssh-key: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
-
-      - name: Render Casks/rebind.rb and push
+          tag="${INPUT_TAG:-$EVENT_TAG}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release tag: $tag"
+            exit 1
+          fi
+          version="${tag#v}"
+          mkdir -p release-sums
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "SHA256SUMS.txt" --dir release-sums
+          sha256="$(awk '$2 == "Rebind.dmg" { print $1; exit }' release-sums/SHA256SUMS.txt)"
+          if [ -z "$sha256" ]; then
+            echo "::error::Missing Rebind.dmg in SHA256SUMS.txt for $tag"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
+      - name: Commit and push Casks/rebind.rb to Blinks44/homebrew-tap
+        env:
+          HOMEBREW_TAP_DEPLOY_KEY: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
+          VERSION: ${{ steps.release.outputs.version }}
+          SHA256: ${{ steps.release.outputs.sha256 }}
         run: |
-          .github/scripts/render-homebrew-cask.sh "${{ steps.meta.outputs.version }}" "${{ steps.meta.outputs.sha256 }}" > tap/Casks/rebind.rb
-          cd tap
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet Casks/rebind.rb; then
-            echo "Cask already up to date"
+          if [ -z "$HOMEBREW_TAP_DEPLOY_KEY" ]; then
+            echo "::warning::HOMEBREW_TAP_DEPLOY_KEY secret is not set; skipping Blinks44/homebrew-tap update"
             exit 0
           fi
+          key_file="$RUNNER_TEMP/homebrew_tap_key"
+          known_hosts="$RUNNER_TEMP/github_known_hosts"
+          trap 'rm -f "$key_file" "$known_hosts"' EXIT
+          install -m 600 /dev/null "$key_file"
+          printf '%s\n' "$HOMEBREW_TAP_DEPLOY_KEY" > "$key_file"
+          ssh-keyscan -t ed25519 github.com > "$known_hosts" 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i $key_file -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$known_hosts"
+          git clone git@github.com:Blinks44/homebrew-tap.git tap
+          mkdir -p tap/Casks
+          bash .github/scripts/render-homebrew-cask.sh "$VERSION" "$SHA256" > tap/Casks/rebind.rb
+          cd tap
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+            echo "Casks/rebind.rb is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/rebind.rb
-          git commit -m "chore: bump rebind to v${{ steps.meta.outputs.version }}"
-          git push origin main
+          git commit -m "cask: update rebind to ${VERSION}"
+          git push origin HEAD
