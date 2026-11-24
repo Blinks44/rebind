@@ -94,6 +94,9 @@ body {
   background: var(--rb-bg);
   color: var(--rb-text);
   line-height: 1.55;
+}
+
+body:not([data-scroll-lock]) {
   overflow-x: clip;
 }
 

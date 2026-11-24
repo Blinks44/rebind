@@ -84,13 +84,19 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 /* Navbar (centered desktop nav + compact GitHub icon next to theme toggle) */
 .site-nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 40;
   background: color-mix(in srgb, var(--rb-bg) 84%, transparent);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-bottom: 1px solid var(--rb-border);
+}
+
+.site-nav + main {
+  padding-top: 66px;
 }
 
 .site-nav-inner {
@@ -569,7 +575,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 560px) {
   .binding-showcase-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -613,6 +619,8 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 .showcase-tab-trigger {
   display: inline-flex !important;
   align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
   gap: 0.45rem;
   padding: 0.54rem 0.96rem !important;
   border-radius: 10px !important;
@@ -849,7 +857,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 960px) {
   .showcase-panel {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding: 1.35rem;
   }
 }
@@ -932,7 +940,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 640px) {
   .bento-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1151,7 +1159,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
   }
 
   .privacy-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .metrics-row {
@@ -1161,7 +1169,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 600px) {
   .privacy-rules {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1173,6 +1181,8 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 }
 
 .install-card {
+  min-width: 0;
+  max-width: 100%;
   padding: 2rem;
   border-radius: var(--rb-radius-xl);
   background: var(--rb-card);
@@ -1214,6 +1224,8 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
   padding: 0.65rem 0.7rem 0.65rem 0.95rem;
   border-radius: 11px;
   background: var(--rb-surface);
@@ -1221,11 +1233,17 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 }
 
 .install-cmd-box code {
+  flex: 1;
+  min-width: 0;
   font-family: var(--moduix-font-mono);
   font-size: 0.82rem;
   color: var(--rb-text);
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.install-cmd-box button {
+  flex-shrink: 0;
 }
 
 .install-meta {
@@ -1287,7 +1305,35 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 820px) {
   .install-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .showcase-tabs-list {
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .showcase-tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .install-card {
+    padding: 1.35rem;
+  }
+
+  .install-cmd-box {
+    padding: 0.6rem 0.6rem 0.6rem 0.85rem;
+  }
+
+  .install-cmd-box code {
+    font-size: 0.78rem;
   }
 }
 
@@ -1443,7 +1489,7 @@ html[data-reveal-ready='true'] [data-reveal][data-revealed='true'] {
 
 @media (max-width: 640px) {
   .suite-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
