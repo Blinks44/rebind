@@ -2,6 +2,13 @@
 
 Notable changes to Rebind. Versions follow the app version shown in **About Rebind**.
 
+## 1.4.0: 2026-11-25
+
+- Magic Mouse: added two-finger physical click and three-finger vertical scrolling.
+- Added Starter Setups in Profile Manager for ready-to-use browser, window, mouse and Magic Mouse bindings.
+- Added the Fill Centered window action and scaled both margin fills to the display width.
+- Excluded apps can now be picked directly from running apps, in addition to browsing disk.
+
 ## 1.3.2: 2026-11-04
 
 - Aligned battery indicators to the right edge of the menu and increased the icon size.
