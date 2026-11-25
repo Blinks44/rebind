@@ -56,3 +56,6 @@ CLAUDE.local.md
 
 # Known Sparkle private-key export basename; the public Info.plist key stays visible.
 sparkle_ed25519.key
+
+# Materialized builtin skills from antigravity-acp; shared .agents/skills stay versioned.
+/skills/system/
