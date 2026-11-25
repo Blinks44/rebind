@@ -3,13 +3,16 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import settings from '../../project.inlang/settings.json' with { type: 'json' }
+import { siteRoutes } from '../config/locales.ts'
 import { site } from '../config/site.ts'
 
 const origin = process.env.WEBSITE_TEST_ORIGIN ?? 'http://127.0.0.1:4173'
 const productionOrigin = site.origin
 
-function localePath(locale: string) {
-  return locale === settings.baseLocale ? '/' : `/${locale}/`
+function localePath(locale: string, routePath = '/') {
+  const normalized = routePath.endsWith('/') ? routePath : `${routePath}/`
+  if (locale === settings.baseLocale) return normalized
+  return normalized === '/' ? `/${locale}/` : `/${locale}${normalized}`
 }
 
 for (const locale of settings.locales) {
@@ -28,8 +31,10 @@ for (const locale of settings.locales) {
     for (const key of [
       'heroTitlePrefix',
       'heroTitleAccent',
+      'whoTitle',
       'featuresTitle',
       'bentoTitle',
+      'replacesTitle',
       'privacyTitle',
       'installTitle',
       'faqTitle',
@@ -37,7 +42,7 @@ for (const locale of settings.locales) {
     ]) {
       assert.ok(html.includes(messages[key]), `Missing section ${locale}/${key}`)
     }
-    for (const id of ['features', 'screens', 'privacy', 'install', 'faq']) {
+    for (const id of ['features', 'screens', 'replaces', 'privacy', 'install', 'faq']) {
       assert.ok(html.includes(`id="${id}"`), `Missing section id="${id}"`)
     }
     assert.ok(html.includes('/screenshots/panel-mouse-light.webp'))
@@ -73,9 +78,11 @@ test('Worker serves crawler files and immutable hashed assets', async () => {
   assert.equal(sitemap.status, 200)
   assert.match(sitemap.headers.get('content-type') ?? '', /xml/)
   const xml = await sitemap.text()
-  assert.equal(xml.match(/<loc>/g)?.length, settings.locales.length)
-  for (const locale of settings.locales) {
-    assert.ok(xml.includes(`${productionOrigin}${localePath(locale)}</loc>`))
+  assert.equal(xml.match(/<loc>/g)?.length, siteRoutes.length * settings.locales.length)
+  for (const route of siteRoutes) {
+    for (const locale of settings.locales) {
+      assert.ok(xml.includes(`${productionOrigin}${localePath(locale, route)}</loc>`))
+    }
   }
 
   const html = await (await fetch(origin)).text()

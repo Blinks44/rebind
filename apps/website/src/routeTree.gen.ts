@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AlternativesLinearmouseMosRouteImport } from './routes/alternatives/linearmouse-mos'
+import { Route as AlternativesLogiOptionsGhubRouteImport } from './routes/alternatives/logi-options-ghub'
+import { Route as AlternativesSteermouseRouteImport } from './routes/alternatives/steermouse'
+import { Route as GuidesMxMasterMacSetupRouteImport } from './routes/guides/mx-master-mac-setup'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlternativesLinearmouseMosRoute =
+  AlternativesLinearmouseMosRouteImport.update({
+    id: '/alternatives/linearmouse-mos',
+    path: '/alternatives/linearmouse-mos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AlternativesLogiOptionsGhubRoute =
+  AlternativesLogiOptionsGhubRouteImport.update({
+    id: '/alternatives/logi-options-ghub',
+    path: '/alternatives/logi-options-ghub',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AlternativesSteermouseRoute = AlternativesSteermouseRouteImport.update({
+  id: '/alternatives/steermouse',
+  path: '/alternatives/steermouse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesMxMasterMacSetupRoute = GuidesMxMasterMacSetupRouteImport.update({
+  id: '/guides/mx-master-mac-setup',
+  path: '/guides/mx-master-mac-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alternatives/linearmouse-mos': typeof AlternativesLinearmouseMosRoute
+  '/alternatives/logi-options-ghub': typeof AlternativesLogiOptionsGhubRoute
+  '/alternatives/steermouse': typeof AlternativesSteermouseRoute
+  '/guides/mx-master-mac-setup': typeof GuidesMxMasterMacSetupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alternatives/linearmouse-mos': typeof AlternativesLinearmouseMosRoute
+  '/alternatives/logi-options-ghub': typeof AlternativesLogiOptionsGhubRoute
+  '/alternatives/steermouse': typeof AlternativesSteermouseRoute
+  '/guides/mx-master-mac-setup': typeof GuidesMxMasterMacSetupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alternatives/linearmouse-mos': typeof AlternativesLinearmouseMosRoute
+  '/alternatives/logi-options-ghub': typeof AlternativesLogiOptionsGhubRoute
+  '/alternatives/steermouse': typeof AlternativesSteermouseRoute
+  '/guides/mx-master-mac-setup': typeof GuidesMxMasterMacSetupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/alternatives/linearmouse-mos'
+    | '/alternatives/logi-options-ghub'
+    | '/alternatives/steermouse'
+    | '/guides/mx-master-mac-setup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/alternatives/linearmouse-mos'
+    | '/alternatives/logi-options-ghub'
+    | '/alternatives/steermouse'
+    | '/guides/mx-master-mac-setup'
+  id:
+    | '__root__'
+    | '/'
+    | '/alternatives/linearmouse-mos'
+    | '/alternatives/logi-options-ghub'
+    | '/alternatives/steermouse'
+    | '/guides/mx-master-mac-setup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlternativesLinearmouseMosRoute: typeof AlternativesLinearmouseMosRoute
+  AlternativesLogiOptionsGhubRoute: typeof AlternativesLogiOptionsGhubRoute
+  AlternativesSteermouseRoute: typeof AlternativesSteermouseRoute
+  GuidesMxMasterMacSetupRoute: typeof GuidesMxMasterMacSetupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +106,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/alternatives/linearmouse-mos': {
+      id: '/alternatives/linearmouse-mos'
+      path: '/alternatives/linearmouse-mos'
+      fullPath: '/alternatives/linearmouse-mos'
+      preLoaderRoute: typeof AlternativesLinearmouseMosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alternatives/logi-options-ghub': {
+      id: '/alternatives/logi-options-ghub'
+      path: '/alternatives/logi-options-ghub'
+      fullPath: '/alternatives/logi-options-ghub'
+      preLoaderRoute: typeof AlternativesLogiOptionsGhubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alternatives/steermouse': {
+      id: '/alternatives/steermouse'
+      path: '/alternatives/steermouse'
+      fullPath: '/alternatives/steermouse'
+      preLoaderRoute: typeof AlternativesSteermouseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/mx-master-mac-setup': {
+      id: '/guides/mx-master-mac-setup'
+      path: '/guides/mx-master-mac-setup'
+      fullPath: '/guides/mx-master-mac-setup'
+      preLoaderRoute: typeof GuidesMxMasterMacSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlternativesLinearmouseMosRoute: AlternativesLinearmouseMosRoute,
+  AlternativesLogiOptionsGhubRoute: AlternativesLogiOptionsGhubRoute,
+  AlternativesSteermouseRoute: AlternativesSteermouseRoute,
+  GuidesMxMasterMacSetupRoute: GuidesMxMasterMacSetupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

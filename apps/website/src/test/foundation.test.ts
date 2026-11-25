@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { localePath, locales } from '@/config/locales'
+import { localePath, locales, siteRoutes } from '@/config/locales'
 import { site } from '@/config/site'
 import de from '@/integrations/i18n/messages/de.json'
 import en from '@/integrations/i18n/messages/en.json'
@@ -47,11 +47,14 @@ describe('localized public pages', () => {
     })
   })
 
-  it('lists only the six real landing URLs in the sitemap', () => {
+  it('lists all localized routes in the sitemap', () => {
     const xml = sitemap()
-    expect(xml.match(/<loc>/g)).toHaveLength(6)
-    for (const locale of locales)
-      expect(xml).toContain(`<loc>${site.origin}${localePath(locale)}</loc>`)
+    expect(xml.match(/<loc>/g)).toHaveLength(siteRoutes.length * locales.length)
+    for (const route of siteRoutes) {
+      for (const locale of locales) {
+        expect(xml).toContain(`<loc>${site.origin}${localePath(locale, route)}</loc>`)
+      }
+    }
   })
 
   it('isolates concurrent SSR languages without cookies or shared global locale', async () => {

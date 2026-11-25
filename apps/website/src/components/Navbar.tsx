@@ -19,6 +19,7 @@ import {
   MenuRadioItemGroup,
   MenuTrigger,
 } from '@moduix/react/menu'
+import { Link } from '@tanstack/react-router'
 import { Check, ChevronDown, Globe, Menu as MenuIcon, Moon, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { languageNames, type Locale, locales } from '@/config/locales'
@@ -31,6 +32,15 @@ interface NavbarProps {
   theme: ColorScheme
   onToggleTheme: () => void
 }
+
+type NavItem =
+  | { id: string; to: '/'; hash: string; label: string }
+  | {
+      id: string
+      to: '/alternatives/logi-options-ghub/' | '/guides/mx-master-mac-setup/'
+      hash?: undefined
+      label: string
+    }
 
 const LOCALE_CODES: Record<Locale, string> = {
   en: 'EN',
@@ -53,12 +63,12 @@ export function Navbar({ theme, onToggleTheme }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const currentLocale = getLocale() as Locale
 
-  const navItems = [
-    { href: '#features', label: m.navFeatures() },
-    { href: '#screens', label: m.navScreens() },
-    { href: '#privacy', label: m.navPrivacy() },
-    { href: '#install', label: m.navInstall() },
-    { href: '#faq', label: m.navFaq() },
+  const navItems: NavItem[] = [
+    { id: 'features', to: '/', hash: 'features', label: m.navFeatures() },
+    { id: 'alternatives', to: '/alternatives/logi-options-ghub/', label: m.navAlternatives() },
+    { id: 'guides', to: '/guides/mx-master-mac-setup/', label: m.navGuides() },
+    { id: 'install', to: '/', hash: 'install', label: m.navInstall() },
+    { id: 'faq', to: '/', hash: 'faq', label: m.navFaq() },
   ]
 
   const onSelectLocale = (value: string) => {
@@ -71,16 +81,16 @@ export function Navbar({ theme, onToggleTheme }: NavbarProps) {
   return (
     <header className="site-nav">
       <div className="container site-nav-inner">
-        <a href="#top" className="site-brand">
+        <Link to="/" className="site-brand">
           <img src="/app-icon.png" alt="Rebind" width={28} height={28} />
           <span>{site.name}</span>
-        </a>
+        </Link>
 
         <nav className="site-nav-links" aria-label={m.navPrimaryLabel()}>
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="site-nav-link">
+            <Link key={item.id} to={item.to} hash={item.hash} className="site-nav-link">
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -98,19 +108,11 @@ export function Navbar({ theme, onToggleTheme }: NavbarProps) {
                   onValueChange={(details) => onSelectLocale(details.value)}
                 >
                   {locales.map((loc) => (
-                    <MenuRadioItem key={loc} value={loc} className="lang-menu-item">
-                      <MenuItemText>
-                        <span>{languageNames[loc]}</span>
-                      </MenuItemText>
-                      <span className="lang-menu-code">
-                        {loc === currentLocale ? (
-                          <MenuItemIndicator>
-                            <Check size={13} aria-hidden="true" />
-                          </MenuItemIndicator>
-                        ) : (
-                          LOCALE_CODES[loc]
-                        )}
-                      </span>
+                    <MenuRadioItem key={loc} value={loc}>
+                      <MenuItemIndicator>
+                        <Check size={14} aria-hidden="true" />
+                      </MenuItemIndicator>
+                      <MenuItemText>{languageNames[loc]}</MenuItemText>
                     </MenuRadioItem>
                   ))}
                 </MenuRadioItemGroup>
@@ -143,9 +145,9 @@ export function Navbar({ theme, onToggleTheme }: NavbarProps) {
             )}
           </button>
 
-          <a href="#install" className="btn-rb-dark nav-download-btn">
+          <Link to="/" hash="install" className="btn-rb-dark nav-download-btn">
             {m.navDownload()}
-          </a>
+          </Link>
 
           <Drawer open={drawerOpen} onOpenChange={(details) => setDrawerOpen(details.open)}>
             <DrawerTrigger
@@ -164,14 +166,15 @@ export function Navbar({ theme, onToggleTheme }: NavbarProps) {
                 <DrawerBody>
                   <div className="drawer-nav-list">
                     {navItems.map((item) => (
-                      <a
-                        key={item.href}
-                        href={item.href}
+                      <Link
+                        key={item.id}
+                        to={item.to}
+                        hash={item.hash}
                         className="drawer-nav-link"
                         onClick={() => setDrawerOpen(false)}
                       >
                         {item.label}
-                      </a>
+                      </Link>
                     ))}
                     <a
                       href={site.repository}

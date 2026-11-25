@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { site } from '@/config/site'
 import * as m from '@/integrations/i18n/paraglide/messages'
 
@@ -11,6 +12,10 @@ export function Footer() {
         </div>
 
         <div className="footer-links">
+          <Link to="/alternatives/logi-options-ghub/">{m.footerCompareLogi()}</Link>
+          <Link to="/alternatives/steermouse/">{m.footerCompareSteermouse()}</Link>
+          <Link to="/alternatives/linearmouse-mos/">{m.footerCompareLinear()}</Link>
+          <Link to="/guides/mx-master-mac-setup/">{m.footerGuideMx()}</Link>
           <a href={site.repository} target="_blank" rel="noreferrer">
             GitHub
           </a>

@@ -9,17 +9,18 @@ import { pageHead } from '@/integrations/seo'
 import { themeInitScript } from '@/lib/theme'
 
 export const Route = createRootRoute({
-  head: () => {
+  head: ({ matches }) => {
     const locale = getLocale() as Locale
-    const seo = pageHead(locale, true)
+    const isNotFound = matches.length <= 1
+    const fallbackSeo = isNotFound ? pageHead(locale, { notFound: true }) : null
+
     return {
-      ...seo,
       meta: [
         { charSet: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#f7f9fc', media: '(prefers-color-scheme: light)' },
         { name: 'theme-color', content: '#0b0f19', media: '(prefers-color-scheme: dark)' },
-        ...seo.meta,
+        ...(fallbackSeo?.meta ?? []),
       ],
       links: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -31,9 +32,8 @@ export const Route = createRootRoute({
         { rel: 'stylesheet', href: appCss },
         { rel: 'icon', type: 'image/png', href: '/app-icon.png' },
         { rel: 'apple-touch-icon', href: '/app-icon.png' },
-        ...seo.links,
       ],
-      scripts: [{ children: themeInitScript }, ...seo.scripts],
+      scripts: [{ children: themeInitScript }],
     }
   },
   shellComponent: RootDocument,

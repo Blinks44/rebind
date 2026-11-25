@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { BentoGrid } from '@/components/BentoGrid'
 import { DevicesStrip } from '@/components/DevicesStrip'
-import { FaqSection } from '@/components/FaqSection'
+import { FaqSection, getLandingFaqItems } from '@/components/FaqSection'
 import { FeatureShowcase } from '@/components/FeatureShowcase'
 import { FinalCta } from '@/components/FinalCta'
 import { Footer } from '@/components/Footer'
@@ -9,6 +9,8 @@ import { Hero } from '@/components/Hero'
 import { InstallSection } from '@/components/InstallSection'
 import { Navbar } from '@/components/Navbar'
 import { PrivacyMenuBarSection } from '@/components/PrivacyMenuBarSection'
+import { ReplacesSection } from '@/components/ReplacesSection'
+import { WhoItIsForSection } from '@/components/WhoItIsForSection'
 import type { Locale } from '@/config/locales'
 import { getLocale } from '@/integrations/i18n/paraglide/runtime'
 import { fallbackReleaseInfo, getLatestRelease } from '@/integrations/releases'
@@ -17,7 +19,13 @@ import { useRevealObserver } from '@/lib/reveal'
 import { useTheme } from '@/lib/theme'
 
 export const Route = createFileRoute('/')({
-  head: () => pageHead(getLocale() as Locale, false),
+  head: () => {
+    const locale = getLocale() as Locale
+    return pageHead(locale, {
+      path: '/',
+      faq: getLandingFaqItems(locale),
+    })
+  },
   loader: async () => {
     try {
       return await getLatestRelease()
@@ -39,8 +47,10 @@ function LandingPage() {
       <main>
         <Hero theme={theme} release={release} />
         <DevicesStrip />
+        <WhoItIsForSection />
         <FeatureShowcase theme={theme} />
         <BentoGrid theme={theme} />
+        <ReplacesSection />
         <PrivacyMenuBarSection release={release} />
         <InstallSection release={release} />
         <FaqSection />
