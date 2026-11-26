@@ -42,10 +42,43 @@ export function fallbackReleaseInfo(): ReleaseInfo {
     dmg: {
       name: 'Rebind.dmg',
       url: site.downloadUrl,
-      sizeBytes: 8_216_148,
+      sizeBytes: 8_490_489,
       sizeLabel: site.fallbackDmgSize,
     },
     checksumsUrl: site.checksumsUrl,
+  }
+}
+
+export function extractTagFromLocation(location: string | null | undefined): string | null {
+  if (!location) return null
+  const match = location.match(/\/releases\/tag\/([^/?#]+)/)
+  if (!match?.[1]) return null
+  try {
+    return decodeURIComponent(match[1])
+  } catch {
+    return match[1]
+  }
+}
+
+export function releaseInfoForTag(rawTag: string): ReleaseInfo {
+  const fallback = fallbackReleaseInfo()
+  const tag = rawTag.trim()
+  const version = tag.replace(/^v/i, '') || site.fallbackVersion
+  const normalizedTag = tag || `v${version}`
+  const encodedTag = encodeURIComponent(normalizedTag)
+  const base = `${site.releases}/download/${encodedTag}`
+
+  return {
+    version,
+    tag: normalizedTag,
+    releaseUrl: `${site.releases}/tag/${encodedTag}`,
+    dmg: {
+      name: 'Rebind.dmg',
+      url: `${base}/Rebind.dmg`,
+      sizeBytes: fallback.dmg.sizeBytes,
+      sizeLabel: fallback.dmg.sizeLabel,
+    },
+    checksumsUrl: `${base}/SHA256SUMS.txt`,
   }
 }
 
@@ -74,8 +107,10 @@ export function parseGitHubRelease(payload: GitHubReleasePayload): ReleaseInfo {
   }
 }
 
-export async function fetchLatestRelease(): Promise<ReleaseInfo> {
-  const now = Date.now()
+export async function fetchLatestRelease(
+  fetcher: typeof fetch = fetch,
+  now = Date.now(),
+): Promise<ReleaseInfo> {
   if (cached && cached.expiresAt > now) {
     return cached.value
   }
@@ -83,7 +118,26 @@ export async function fetchLatestRelease(): Promise<ReleaseInfo> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), 3500)
   try {
-    const response = await fetch('https://api.github.com/repos/blinks44/rebind/releases/latest', {
+    // Prefer the unthrottled /releases/latest redirect so shared Cloudflare
+    // Workers egress IPs never trip api.github.com's 60 req/hr limit.
+    const redirectResponse = await fetcher(`${site.releases}/latest`, {
+      method: 'HEAD',
+      redirect: 'manual',
+      headers: {
+        'User-Agent': 'rebind-website',
+      },
+      signal: controller.signal,
+    })
+    const redirectedTag =
+      extractTagFromLocation(redirectResponse.headers?.get('location')) ??
+      extractTagFromLocation(redirectResponse.url)
+    if (redirectedTag) {
+      const resolved = releaseInfoForTag(redirectedTag)
+      cached = { value: resolved, expiresAt: now + CACHE_TTL_MS }
+      return resolved
+    }
+
+    const response = await fetcher('https://api.github.com/repos/blinks44/rebind/releases/latest', {
       headers: {
         Accept: 'application/vnd.github+json',
         'User-Agent': 'rebind-website',

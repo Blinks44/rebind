@@ -7,8 +7,8 @@ export const site = {
   homebrewTap: 'https://github.com/Blinks44/homebrew-tap',
   homebrewCommand: 'brew install --cask blinks44/tap/rebind',
   quarantineCommand: 'xattr -dr com.apple.quarantine /Applications/Rebind.app',
-  fallbackVersion: '1.3.2',
-  fallbackDmgSize: '7.8 MB',
+  fallbackVersion: '1.4.0',
+  fallbackDmgSize: '8.1 MB',
   downloadUrl: 'https://github.com/Blinks44/rebind/releases/latest/download/Rebind.dmg',
   checksumsUrl: 'https://github.com/Blinks44/rebind/releases/latest/download/SHA256SUMS.txt',
   author: {
